@@ -1,0 +1,65 @@
+.navbar {
+    background-color: var(--bg-secondary);
+    border-bottom: 1px solid var(--border-color);
+    padding: var(--spacing-md) 0;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    backdrop-filter: blur(10px);
+    background-color: rgba(var(--bg-secondary-rgb, 248, 250, 252), 0.8);
+    box-shadow: var(--shadow-sm);
+}
+
+[data-theme="dark"] .navbar {
+    background-color: rgba(30, 41, 59, 0.8);
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 var(--spacing-lg);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-md);
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.logo svg {
+    color: var(--color-primary);
+}
+
+.actions {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-md);
+}
+
+.userEmail {
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+    display: none;
+}
+
+@media (min-width: 768px) {
+    .userEmail {
+        display: block;
+    }
+}
+
+@media (max-width: 640px) {
+    .logo span {
+        display: none;
+    }
+
+    .actions {
+        gap: var(--spacing-sm);
+    }
+}

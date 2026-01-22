@@ -1,0 +1,42 @@
+.toggle {
+    width: 44px;
+    height: 44px;
+    border-radius: var(--radius-full);
+    background-color: var(--bg-tertiary);
+    border: 1px solid var(--border-color);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-primary);
+    transition: all var(--transition-base);
+    position: relative;
+    overflow: hidden;
+}
+
+.toggle::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, var(--color-primary), var(--color-accent));
+    opacity: 0;
+    transition: opacity var(--transition-base);
+}
+
+.toggle:hover::before {
+    opacity: 0.1;
+}
+
+.toggle:hover {
+    transform: scale(1.05);
+    border-color: var(--color-primary);
+}
+
+.toggle svg {
+    position: relative;
+    z-index: 1;
+    transition: transform var(--transition-base);
+}
+
+.toggle:active svg {
+    transform: rotate(20deg);
+}
