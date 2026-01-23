@@ -6,6 +6,14 @@
   /* Purple */
   --color-accent: #06b6d4;
   /* Cyan */
+  --color-success: #22c55e;
+  /* Green */
+  --color-warning: #f59e0b;
+  /* Amber */
+  --color-danger: #ef4444;
+  /* Red */
+  --color-info: #3b82f6;
+  /* Blue */
 
   /* Light Theme Colors */
   --bg-primary: #ffffff;

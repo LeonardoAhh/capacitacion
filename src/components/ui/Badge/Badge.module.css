@@ -57,6 +57,12 @@
 }
 
 .white {
+    background-color: var(--bg-tertiary);
+    color: var(--text-secondary);
+    border: 1px solid var(--border-color);
+}
+
+[data-theme="dark"] .white {
     background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.2));
     color: #ffffff;
     border: 1px solid rgba(255, 255, 255, 0.1);
