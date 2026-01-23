@@ -6,7 +6,7 @@ import { cn } from '@/lib/utils';
 /**
  * Badge component for status indicators
  * @param {Object} props
- * @param {'default' | 'secondary' | 'success' | 'warning' | 'danger' | 'info'} props.variant
+ * @param {'default' | 'secondary' | 'success' | 'warning' | 'danger' | 'info' | 'white'} props.variant
  * @param {'sm' | 'md' | 'lg'} props.size
  * @param {boolean} props.dot - Show a dot indicator
  * @param {React.ReactNode} props.children

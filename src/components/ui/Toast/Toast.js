@@ -48,7 +48,7 @@ export function ToastProvider({ children }) {
     return (
         <ToastContext.Provider value={{ toast, addToast, removeToast }}>
             {children}
-            {mounted && createPortal(
+            {mounted && toasts.length > 0 && createPortal(
                 <div className={styles.toastContainer}>
                     {toasts.map((t) => (
                         <ToastItem

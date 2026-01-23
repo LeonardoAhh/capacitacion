@@ -12,6 +12,7 @@ import { Badge } from '@/components/ui/Badge/Badge';
 import { Button } from '@/components/ui/Button/Button';
 import { Skeleton } from '@/components/ui/Skeleton/Skeleton';
 import { Progress, CircularProgress } from '@/components/ui/Progress/Progress';
+import { Dialog, DialogHeader, DialogTitle, DialogBody, DialogClose } from '@/components/ui/Dialog/Dialog';
 import styles from './page.module.css';
 
 export default function DashboardPage() {
@@ -28,6 +29,8 @@ export default function DashboardPage() {
         upcoming: [],
         overdue: []
     });
+    const [expiringEmployees, setExpiringEmployees] = useState([]);
+    const [showExpiringModal, setShowExpiringModal] = useState(false);
 
     useEffect(() => {
         if (!authLoading && !user) {
@@ -75,12 +78,18 @@ export default function DashboardPage() {
                 return endDate >= now;
             }).length;
 
-            const expiringContracts = employees.filter(emp => {
+            const expiringEmployeesList = employees.filter(emp => {
                 if (!emp.contractEndDate) return false;
                 const endDate = new Date(emp.contractEndDate + 'T00:00:00');
                 const daysUntilExpiry = Math.ceil((endDate - now) / (1000 * 60 * 60 * 24));
                 return daysUntilExpiry >= 0 && daysUntilExpiry <= 30;
-            }).length;
+            }).map(emp => {
+                const endDate = new Date(emp.contractEndDate + 'T00:00:00');
+                const daysUntilExpiry = Math.ceil((endDate - now) / (1000 * 60 * 60 * 24));
+                return { ...emp, daysUntilExpiry };
+            }).sort((a, b) => a.daysUntilExpiry - b.daysUntilExpiry);
+
+            const expiringContracts = expiringEmployeesList.length;
 
             const upcomingEvaluations = [];
             const overdueEvaluations = [];
@@ -126,6 +135,7 @@ export default function DashboardPage() {
 
             setStats({ totalEmployees, activeContracts, expiringContracts });
             setEvaluations({ upcoming: upcomingEvaluations, overdue: overdueEvaluations });
+            setExpiringEmployees(expiringEmployeesList);
         } catch (error) {
             console.error('Error loading stats:', error);
         } finally {
@@ -232,7 +242,10 @@ export default function DashboardPage() {
                                 </CardContent>
                             </Card>
 
-                            <Card className={styles.statCard3}>
+                            <Card
+                                className={`${styles.statCard3} ${stats.expiringContracts > 0 ? styles.clickableCard : ''}`}
+                                onClick={() => stats.expiringContracts > 0 && setShowExpiringModal(true)}
+                            >
                                 <CardContent>
                                     <div className={styles.statCardInner}>
                                         <div className={styles.statIcon + ' ' + styles.warningIcon}>
@@ -404,6 +417,59 @@ export default function DashboardPage() {
                     </div>
                 </div>
             </main>
+
+            {/* Modal de Próximos a Vencer */}
+            <Dialog open={showExpiringModal} onOpenChange={setShowExpiringModal}>
+                <DialogHeader>
+                    <DialogClose onClose={() => setShowExpiringModal(false)} />
+                    <DialogTitle>Contratos Próximos a Vencer</DialogTitle>
+                    <p className={styles.modalDescription}>
+                        Empleados con contratos que vencen en los próximos 30 días
+                    </p>
+                </DialogHeader>
+                <DialogBody>
+                    <div className={styles.expiringList}>
+                        {expiringEmployees.map((emp, idx) => (
+                            <Link
+                                key={emp.id || idx}
+                                href={`/employees/${emp.id}`}
+                                className={styles.expiringItem}
+                                onClick={() => setShowExpiringModal(false)}
+                            >
+                                <div className={styles.expiringAvatar}>
+                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                                        <circle cx="12" cy="7" r="4" />
+                                    </svg>
+                                </div>
+                                <div className={styles.expiringInfo}>
+                                    <div className={styles.expiringName}>
+                                        <span className={styles.employeeId}>{emp.employeeId}</span>
+                                        <span className={styles.employeeName}>{emp.name}</span>
+                                    </div>
+                                    <div className={styles.expiringDetails}>
+                                        <span className={styles.expiringPosition}>{emp.position || 'Sin puesto asignado'}</span>
+                                    </div>
+                                </div>
+                                <div className={styles.expiringDate}>
+                                    <span className={styles.dateValue}>{formatDate(emp.contractEndDate)}</span>
+                                    <Badge
+                                        variant={emp.daysUntilExpiry <= 7 ? 'danger' : 'warning'}
+                                        size="sm"
+                                    >
+                                        {emp.daysUntilExpiry === 0
+                                            ? '¡Hoy!'
+                                            : emp.daysUntilExpiry === 1
+                                                ? 'Mañana'
+                                                : `${emp.daysUntilExpiry} días`
+                                        }
+                                    </Badge>
+                                </div>
+                            </Link>
+                        ))}
+                    </div>
+                </DialogBody>
+            </Dialog>
         </>
     );
 }

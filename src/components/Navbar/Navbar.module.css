@@ -36,6 +36,11 @@
     color: var(--color-primary);
 }
 
+.sparklesText {
+    font-size: 1.5rem;
+    line-height: 1;
+}
+
 .actions {
     display: flex;
     align-items: center;

@@ -662,7 +662,7 @@ export default function EmployeesPage() {
                                             <td>{employee.area}</td>
                                             <td>{employee.department}</td>
                                             <td>
-                                                <Badge variant="secondary" size="sm">Turno {employee.shift}</Badge>
+                                                <Badge variant="white" size="sm">Turno {employee.shift}</Badge>
                                             </td>
                                             <td>{formatDate(employee.startDate)}</td>
                                             <td>{formatDate(employee.contractEndDate)}</td>

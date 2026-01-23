@@ -5,6 +5,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/Button/Button';
 import { Input } from '@/components/ui/Input/Input';
+import SparklesText from '@/components/ui/SparklesText/SparklesText';
 import styles from './page.module.css';
 
 export default function LoginPage() {
@@ -76,8 +77,7 @@ export default function LoginPage() {
                             <path d="M16 3.13a4 4 0 0 1 0 7.75" />
                         </svg>
                     </div>
-                    <h1>Bienvenido</h1>
-                    <p className={styles.subtitle}>Sistema de Gestión de Empleados</p>
+                    <SparklesText className>Sistema Vertx</SparklesText>
                 </div>
 
                 <form onSubmit={handleSubmit} className={styles.form}>
@@ -96,7 +96,7 @@ export default function LoginPage() {
                         id="email"
                         type="email"
                         label="Correo Electrónico"
-                        placeholder="tu@correo.com"
+                        placeholder="••••••••"
                         icon={EmailIcon}
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
