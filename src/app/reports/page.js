@@ -9,6 +9,30 @@ import Navbar from '@/components/Navbar/Navbar';
 import Link from 'next/link';
 import styles from './page.module.css';
 
+// UI Components
+import { Badge } from '@/components/ui/Badge/Badge';
+import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/Card/Card';
+import { Button } from '@/components/ui/Button/Button';
+import { Progress, CircularProgress } from '@/components/ui/Progress/Progress';
+import { Skeleton } from '@/components/ui/Skeleton/Skeleton';
+import {
+    BarChart,
+    Bar,
+    XAxis,
+    YAxis,
+    CartesianGrid,
+    Tooltip,
+    ResponsiveContainer,
+    PieChart,
+    Pie,
+    Cell,
+    Legend,
+    LineChart,
+    Line,
+    Area,
+    AreaChart
+} from 'recharts';
+
 // Configuración de plazos del Plan de Formación
 const TRAINING_PLAN_CONFIG = [
     { DEPARTAMENTO: "ALMACEN", ÁREA: "ALMACEN", DIAS: 60 },
@@ -37,6 +61,20 @@ const TRAINING_PLAN_CONFIG = [
 const MONTHS = [
     'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
     'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'
+];
+
+// Colores vibrantes para gráficos
+const CHART_COLORS = [
+    '#3b82f6', // Blue
+    '#22c55e', // Green  
+    '#f59e0b', // Amber
+    '#8b5cf6', // Purple
+    '#ef4444', // Red
+    '#06b6d4', // Cyan
+    '#ec4899', // Pink
+    '#14b8a6', // Teal
+    '#f97316', // Orange
+    '#6366f1', // Indigo
 ];
 
 export default function ReportsPage() {
@@ -289,6 +327,225 @@ export default function ReportsPage() {
                                 </div>
                             </div>
 
+                            {/* Sección de Gráficos Interactivos */}
+                            <div className={styles.chartsGrid}>
+                                {/* Gráfico de Barras - Cumplimiento Mensual */}
+                                <div className={styles.chartCard}>
+                                    <div className={styles.chartHeader}>
+                                        <div>
+                                            <h3 className={styles.chartTitle}>Cumplimiento Mensual</h3>
+                                            <p className={styles.chartSubtitle}>Programados vs Entregados por mes</p>
+                                        </div>
+                                    </div>
+                                    <div className={styles.chartWrapper}>
+                                        <ResponsiveContainer width="100%" height="100%">
+                                            <BarChart data={monthlyStats} margin={{ top: 10, right: 10, left: -10, bottom: 0 }}>
+                                                <CartesianGrid strokeDasharray="3 3" stroke="var(--border-color)" opacity={0.5} />
+                                                <XAxis
+                                                    dataKey="monthName"
+                                                    tick={{ fontSize: 11, fill: 'var(--text-secondary)' }}
+                                                    tickFormatter={(value) => value.substring(0, 3)}
+                                                    axisLine={{ stroke: 'var(--border-color)' }}
+                                                />
+                                                <YAxis
+                                                    tick={{ fontSize: 11, fill: 'var(--text-secondary)' }}
+                                                    axisLine={{ stroke: 'var(--border-color)' }}
+                                                />
+                                                <Tooltip
+                                                    contentStyle={{
+                                                        backgroundColor: 'var(--bg-primary)',
+                                                        border: '1px solid var(--border-color)',
+                                                        borderRadius: '8px',
+                                                        boxShadow: 'var(--shadow-lg)'
+                                                    }}
+                                                    labelStyle={{ color: 'var(--text-primary)', fontWeight: 600 }}
+                                                />
+                                                <Bar dataKey="scheduled" name="Programados" fill="#3b82f6" radius={[4, 4, 0, 0]} />
+                                                <Bar dataKey="delivered" name="Entregados" fill="#22c55e" radius={[4, 4, 0, 0]} />
+                                            </BarChart>
+                                        </ResponsiveContainer>
+                                    </div>
+                                    <div className={styles.chartLegend}>
+                                        <div className={styles.legendItem}>
+                                            <span className={styles.legendDot} style={{ backgroundColor: '#3b82f6' }}></span>
+                                            <span>Programados</span>
+                                        </div>
+                                        <div className={styles.legendItem}>
+                                            <span className={styles.legendDot} style={{ backgroundColor: '#22c55e' }}></span>
+                                            <span>Entregados</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {/* Gráfico de Pie - Distribución General */}
+                                <div className={styles.chartCard}>
+                                    <div className={styles.chartHeader}>
+                                        <div>
+                                            <h3 className={styles.chartTitle}>Distribución General</h3>
+                                            <p className={styles.chartSubtitle}>Estado actual de entregas</p>
+                                        </div>
+                                    </div>
+                                    <div className={styles.chartWrapper}>
+                                        <ResponsiveContainer width="100%" height="100%">
+                                            <PieChart>
+                                                <Pie
+                                                    data={[
+                                                        { name: 'Entregados', value: totals.delivered },
+                                                        { name: 'Pendientes', value: totals.pending }
+                                                    ]}
+                                                    cx="50%"
+                                                    cy="50%"
+                                                    innerRadius={60}
+                                                    outerRadius={90}
+                                                    paddingAngle={5}
+                                                    dataKey="value"
+                                                    label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
+                                                    labelLine={{ stroke: 'var(--text-secondary)' }}
+                                                >
+                                                    <Cell fill="#22c55e" />
+                                                    <Cell fill="#f59e0b" />
+                                                </Pie>
+                                                <Tooltip
+                                                    contentStyle={{
+                                                        backgroundColor: 'var(--bg-primary)',
+                                                        border: '1px solid var(--border-color)',
+                                                        borderRadius: '8px',
+                                                        boxShadow: 'var(--shadow-lg)'
+                                                    }}
+                                                />
+                                            </PieChart>
+                                        </ResponsiveContainer>
+                                    </div>
+                                    <div className={styles.chartLegend}>
+                                        <div className={styles.legendItem}>
+                                            <span className={styles.legendDot} style={{ backgroundColor: '#22c55e' }}></span>
+                                            <span>Entregados ({totals.delivered})</span>
+                                        </div>
+                                        <div className={styles.legendItem}>
+                                            <span className={styles.legendDot} style={{ backgroundColor: '#f59e0b' }}></span>
+                                            <span>Pendientes ({totals.pending})</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {/* Gráfico de Área - Tendencia de Cumplimiento */}
+                                <div className={`${styles.chartCard} ${styles.fullWidth}`}>
+                                    <div className={styles.chartHeader}>
+                                        <div>
+                                            <h3 className={styles.chartTitle}>Tendencia de Cumplimiento Acumulado</h3>
+                                            <p className={styles.chartSubtitle}>Evolución del porcentaje de cumplimiento mensual</p>
+                                        </div>
+                                    </div>
+                                    <div className={styles.chartWrapper}>
+                                        <ResponsiveContainer width="100%" height="100%">
+                                            <AreaChart
+                                                data={monthlyStats.map(m => ({
+                                                    ...m,
+                                                    cumPercentage: m.scheduled > 0 ? Math.round((m.delivered / m.scheduled) * 100) : 0
+                                                }))}
+                                                margin={{ top: 10, right: 30, left: 0, bottom: 0 }}
+                                            >
+                                                <defs>
+                                                    <linearGradient id="colorPercentage" x1="0" y1="0" x2="0" y2="1">
+                                                        <stop offset="5%" stopColor="#8b5cf6" stopOpacity={0.4} />
+                                                        <stop offset="95%" stopColor="#8b5cf6" stopOpacity={0} />
+                                                    </linearGradient>
+                                                </defs>
+                                                <CartesianGrid strokeDasharray="3 3" stroke="var(--border-color)" opacity={0.5} />
+                                                <XAxis
+                                                    dataKey="monthName"
+                                                    tick={{ fontSize: 11, fill: 'var(--text-secondary)' }}
+                                                    tickFormatter={(value) => value.substring(0, 3)}
+                                                    axisLine={{ stroke: 'var(--border-color)' }}
+                                                />
+                                                <YAxis
+                                                    tick={{ fontSize: 11, fill: 'var(--text-secondary)' }}
+                                                    axisLine={{ stroke: 'var(--border-color)' }}
+                                                    domain={[0, 100]}
+                                                    tickFormatter={(value) => `${value}%`}
+                                                />
+                                                <Tooltip
+                                                    contentStyle={{
+                                                        backgroundColor: 'var(--bg-primary)',
+                                                        border: '1px solid var(--border-color)',
+                                                        borderRadius: '8px',
+                                                        boxShadow: 'var(--shadow-lg)'
+                                                    }}
+                                                    formatter={(value) => [`${value}%`, 'Cumplimiento']}
+                                                    labelStyle={{ color: 'var(--text-primary)', fontWeight: 600 }}
+                                                />
+                                                <Area
+                                                    type="monotone"
+                                                    dataKey="cumPercentage"
+                                                    stroke="#8b5cf6"
+                                                    strokeWidth={3}
+                                                    fill="url(#colorPercentage)"
+                                                />
+                                            </AreaChart>
+                                        </ResponsiveContainer>
+                                    </div>
+                                </div>
+
+                                {/* Gráfico de Barras Horizontal - Top Departamentos */}
+                                <div className={`${styles.chartCard} ${styles.fullWidth}`}>
+                                    <div className={styles.chartHeader}>
+                                        <div>
+                                            <h3 className={styles.chartTitle}>Cumplimiento por Departamento</h3>
+                                            <p className={styles.chartSubtitle}>Porcentaje de planes entregados por área</p>
+                                        </div>
+                                    </div>
+                                    <div className={styles.chartWrapper}>
+                                        <ResponsiveContainer width="100%" height="100%">
+                                            <BarChart
+                                                data={departmentStats.slice(0, 8)}
+                                                layout="vertical"
+                                                margin={{ top: 5, right: 30, left: 80, bottom: 5 }}
+                                            >
+                                                <CartesianGrid strokeDasharray="3 3" stroke="var(--border-color)" opacity={0.5} />
+                                                <XAxis
+                                                    type="number"
+                                                    domain={[0, 100]}
+                                                    tick={{ fontSize: 11, fill: 'var(--text-secondary)' }}
+                                                    tickFormatter={(value) => `${value}%`}
+                                                    axisLine={{ stroke: 'var(--border-color)' }}
+                                                />
+                                                <YAxis
+                                                    type="category"
+                                                    dataKey="name"
+                                                    tick={{ fontSize: 11, fill: 'var(--text-secondary)' }}
+                                                    axisLine={{ stroke: 'var(--border-color)' }}
+                                                    width={75}
+                                                />
+                                                <Tooltip
+                                                    contentStyle={{
+                                                        backgroundColor: 'var(--bg-primary)',
+                                                        border: '1px solid var(--border-color)',
+                                                        borderRadius: '8px',
+                                                        boxShadow: 'var(--shadow-lg)'
+                                                    }}
+                                                    formatter={(value, name, props) => [
+                                                        `${value}%`,
+                                                        `Cumplimiento (${props.payload.delivered}/${props.payload.scheduled})`
+                                                    ]}
+                                                    labelStyle={{ color: 'var(--text-primary)', fontWeight: 600 }}
+                                                />
+                                                <Bar
+                                                    dataKey="percentage"
+                                                    radius={[0, 4, 4, 0]}
+                                                >
+                                                    {departmentStats.slice(0, 8).map((entry, index) => (
+                                                        <Cell
+                                                            key={`cell-${index}`}
+                                                            fill={entry.percentage >= 80 ? '#22c55e' : entry.percentage >= 50 ? '#f59e0b' : '#ef4444'}
+                                                        />
+                                                    ))}
+                                                </Bar>
+                                            </BarChart>
+                                        </ResponsiveContainer>
+                                    </div>
+                                </div>
+                            </div>
+
                             {/* Estadísticas por Mes */}
                             <section className={styles.section}>
                                 <h2>Cumplimiento por Mes - {selectedYear}</h2>
@@ -297,14 +554,18 @@ export default function ReportsPage() {
                                         <div key={month.month} className={styles.monthCard}>
                                             <div className={styles.monthHeader}>
                                                 <span className={styles.monthName}>{month.monthName}</span>
-                                                <span className={styles.monthPercentage}>{month.percentage}%</span>
+                                                <Badge
+                                                    variant={month.percentage >= 80 ? 'success' : month.percentage >= 50 ? 'warning' : 'danger'}
+                                                    size="sm"
+                                                >
+                                                    {month.percentage}%
+                                                </Badge>
                                             </div>
-                                            <div className={styles.progressBar}>
-                                                <div
-                                                    className={styles.progressFill}
-                                                    style={{ width: `${month.percentage}%` }}
-                                                ></div>
-                                            </div>
+                                            <Progress
+                                                value={month.percentage}
+                                                variant={month.percentage >= 80 ? 'success' : month.percentage >= 50 ? 'warning' : 'danger'}
+                                                size="sm"
+                                            />
                                             <div className={styles.monthStats}>
                                                 <span>{month.delivered} / {month.scheduled}</span>
                                             </div>
@@ -404,14 +665,15 @@ export default function ReportsPage() {
                                     <div key={idx} className={styles.employeeRow}>
                                         <span className={styles.empId}>{emp.employeeId}</span>
                                         <span className={styles.empName}>{emp.name}</span>
-                                        <span className={styles.empShift}>{emp.shift}</span>
+                                        <Badge variant="secondary" size="sm">Turno {emp.shift}</Badge>
                                         <span className={styles.empDate}>{formatDate(emp.deliveryDate)}</span>
-                                        <span
-                                            className={styles.empStatus}
-                                            style={{ color: status.color, background: `${status.color}15` }}
+                                        <Badge
+                                            variant={status.label === 'Entregado' ? 'success' : status.label === 'Pendiente' ? 'warning' : 'danger'}
+                                            size="sm"
+                                            dot={status.label !== 'Entregado'}
                                         >
                                             {status.label}
-                                        </span>
+                                        </Badge>
                                     </div>
                                 );
                             })}

@@ -144,30 +144,43 @@
 }
 
 /* Skeleton Loading */
-.skeleton {
-    animation: pulse 1.5s ease-in-out infinite;
+.skeletonCard {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-lg);
 }
 
-.skeletonIcon {
-    width: 64px;
-    height: 64px;
-    border-radius: var(--radius-lg);
-    background-color: var(--bg-tertiary);
+.skeletonContent {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-sm);
 }
 
-.skeletonText {
-    height: 40px;
-    width: 80px;
-    background-color: var(--bg-tertiary);
-    border-radius: var(--radius-sm);
-    margin-bottom: var(--spacing-sm);
+/* Stat Card Inner Layout */
+.statCardInner {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-lg);
 }
 
-.skeletonTitle {
-    height: 20px;
-    width: 140px;
-    background-color: var(--bg-tertiary);
-    border-radius: var(--radius-sm);
+.warningIcon {
+    background: linear-gradient(135deg, #f59e0b, #d97706) !important;
+    box-shadow: 0 8px 16px rgba(245, 158, 11, 0.3) !important;
+}
+
+/* Card Styling Overrides */
+.evalCardUpcoming {
+    border-left: 4px solid var(--color-accent);
+}
+
+.evalCardOverdue {
+    border-left: 4px solid #ef4444;
+}
+
+.evalHeaderRow {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-md);
 }
 
 /* Evaluations Section */

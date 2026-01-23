@@ -1,0 +1,117 @@
+.inputWrapper {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-xs);
+}
+
+.label {
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--text-secondary);
+}
+
+.required {
+    color: #ef4444;
+    margin-left: 2px;
+}
+
+.inputContainer {
+    display: flex;
+    align-items: center;
+    background-color: var(--bg-primary);
+    border: 2px solid var(--border-color);
+    border-radius: var(--radius-md);
+    transition: all var(--transition-fast);
+}
+
+.inputContainer:focus-within {
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.hasError {
+    border-color: #ef4444;
+}
+
+.hasError:focus-within {
+    border-color: #ef4444;
+    box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1);
+}
+
+/* Sizes */
+.sm {
+    height: 36px;
+}
+
+.md {
+    height: 42px;
+}
+
+.lg {
+    height: 48px;
+}
+
+/* Icon positions */
+.iconLeft {
+    padding-left: var(--spacing-sm);
+}
+
+.iconRight {
+    padding-right: var(--spacing-sm);
+}
+
+.iconWrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-tertiary);
+    padding: 0 var(--spacing-sm);
+}
+
+.input {
+    flex: 1;
+    height: 100%;
+    padding: 0 var(--spacing-md);
+    background: transparent;
+    border: none;
+    font-size: 0.95rem;
+    color: var(--text-primary);
+    outline: none;
+}
+
+.input::placeholder {
+    color: var(--text-tertiary);
+}
+
+.textarea {
+    min-height: 120px;
+    padding: var(--spacing-md);
+    resize: vertical;
+    background-color: var(--bg-primary);
+    border: 2px solid var(--border-color);
+    border-radius: var(--radius-md);
+    transition: all var(--transition-fast);
+}
+
+.textarea:focus {
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.hasErrorInput {
+    border-color: #ef4444;
+}
+
+.hasErrorInput:focus {
+    border-color: #ef4444;
+    box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1);
+}
+
+.helperText {
+    font-size: 0.8rem;
+    color: var(--text-tertiary);
+}
+
+.errorText {
+    color: #ef4444;
+}

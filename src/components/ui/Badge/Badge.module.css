@@ -1,0 +1,82 @@
+.badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+    font-weight: 500;
+    border-radius: var(--radius-full);
+    transition: all var(--transition-fast);
+    white-space: nowrap;
+}
+
+/* Sizes */
+.sm {
+    font-size: 0.7rem;
+    padding: 0.125rem 0.5rem;
+}
+
+.md {
+    font-size: 0.75rem;
+    padding: 0.25rem 0.625rem;
+}
+
+.lg {
+    font-size: 0.85rem;
+    padding: 0.375rem 0.875rem;
+}
+
+/* Variants */
+.default {
+    background-color: var(--bg-tertiary);
+    color: var(--text-primary);
+}
+
+.secondary {
+    background-color: var(--color-secondary);
+    background: linear-gradient(135deg, rgba(139, 92, 246, 0.15), rgba(139, 92, 246, 0.25));
+    color: #8b5cf6;
+}
+
+.success {
+    background: linear-gradient(135deg, rgba(34, 197, 94, 0.15), rgba(34, 197, 94, 0.25));
+    color: #22c55e;
+}
+
+.warning {
+    background: linear-gradient(135deg, rgba(245, 158, 11, 0.15), rgba(245, 158, 11, 0.25));
+    color: #f59e0b;
+}
+
+.danger {
+    background: linear-gradient(135deg, rgba(239, 68, 68, 0.15), rgba(239, 68, 68, 0.25));
+    color: #ef4444;
+}
+
+.info {
+    background: linear-gradient(135deg, rgba(59, 130, 246, 0.15), rgba(59, 130, 246, 0.25));
+    color: #3b82f6;
+}
+
+/* Dot indicator */
+.withDot {
+    padding-left: 0.5rem;
+}
+
+.dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background-color: currentColor;
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+
+    0%,
+    100% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0.5;
+    }
+}

@@ -1,5 +1,6 @@
 import { AuthProvider } from '@/contexts/AuthContext';
 import { ThemeProvider } from '@/contexts/ThemeContext';
+import { ToastProvider } from '@/components/ui/Toast/Toast';
 import '@/styles/globals.css';
 import { Inter } from 'next/font/google';
 
@@ -19,7 +20,9 @@ export default function RootLayout({ children }) {
             <body className={inter.className}>
                 <ThemeProvider>
                     <AuthProvider>
-                        {children}
+                        <ToastProvider>
+                            {children}
+                        </ToastProvider>
                     </AuthProvider>
                 </ThemeProvider>
             </body>

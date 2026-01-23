@@ -18,6 +18,28 @@ import Navbar from '@/components/Navbar/Navbar';
 import Link from 'next/link';
 import styles from './page.module.css';
 
+// UI Components
+import { Button, IconButton } from '@/components/ui/Button/Button';
+import { Badge } from '@/components/ui/Badge/Badge';
+import { Avatar } from '@/components/ui/Avatar/Avatar';
+import { Dialog, DialogHeader, DialogTitle, DialogDescription, DialogBody, DialogFooter, DialogClose } from '@/components/ui/Dialog/Dialog';
+import { useToast } from '@/components/ui/Toast/Toast';
+import { Skeleton, SkeletonTable } from '@/components/ui/Skeleton/Skeleton';
+import { Combobox } from '@/components/ui/Combobox/Combobox';
+
+// Datos de puestos, departamentos y áreas
+import puestosData from '../../../puestos.json';
+import datosData from '../../../datos.json';
+
+// Procesar datos para los comboboxes
+const PUESTOS_OPTIONS = puestosData.map(p => p.puesto);
+const DEPARTAMENTOS_OPTIONS = [...new Set(datosData.map(d => d.departamento))];
+const getAreasForDepartment = (dept) => {
+    return datosData
+        .filter(d => d.departamento === dept)
+        .map(d => d.área);
+};
+
 // Configuración de plazos del Plan de Formación
 const TRAINING_PLAN_CONFIG = [
     { DEPARTAMENTO: "ALMACÉN", ÁREA: "ALMACÉN", DIAS: 60 },
@@ -46,12 +68,14 @@ const TRAINING_PLAN_CONFIG = [
 export default function EmployeesPage() {
     const { user, loading: authLoading } = useAuth();
     const router = useRouter();
+    const { toast } = useToast();
     const [employees, setEmployees] = useState([]);
     const [loading, setLoading] = useState(true);
     const [showForm, setShowForm] = useState(false);
     const [editingEmployee, setEditingEmployee] = useState(null);
     const [searchTerm, setSearchTerm] = useState('');
     const [deleteModal, setDeleteModal] = useState({ show: false, employee: null });
+    const [saving, setSaving] = useState(false);
 
     const [formData, setFormData] = useState({
         employeeId: '',
@@ -169,6 +193,7 @@ export default function EmployeesPage() {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        setSaving(true);
 
         try {
             const dates = calculateDates(formData.startDate);
@@ -181,8 +206,10 @@ export default function EmployeesPage() {
 
             if (editingEmployee) {
                 await updateDoc(doc(db, 'employees', editingEmployee.id), employeeData);
+                toast.success('¡Actualizado!', 'El empleado se actualizó correctamente.');
             } else {
                 await addDoc(collection(db, 'employees'), employeeData);
+                toast.success('¡Guardado!', 'El empleado se registró correctamente.');
             }
 
             setFormData({
@@ -203,7 +230,9 @@ export default function EmployeesPage() {
             loadEmployees();
         } catch (error) {
             console.error('Error saving employee:', error);
-            alert('Error al guardar el empleado');
+            toast.error('Error', 'No se pudo guardar el empleado. Intenta de nuevo.');
+        } finally {
+            setSaving(false);
         }
     };
 
@@ -235,10 +264,11 @@ export default function EmployeesPage() {
         try {
             await deleteDoc(doc(db, 'employees', deleteModal.employee.id));
             setDeleteModal({ show: false, employee: null });
+            toast.success('Eliminado', 'El empleado fue eliminado correctamente.');
             loadEmployees();
         } catch (error) {
             console.error('Error deleting employee:', error);
-            alert('Error al eliminar el empleado. Por favor, intenta de nuevo.');
+            toast.error('Error', 'No se pudo eliminar el empleado. Intenta de nuevo.');
         }
     };
 
@@ -322,7 +352,7 @@ export default function EmployeesPage() {
                                             id="employeeId"
                                             type="text"
                                             className="input-field"
-                                            placeholder="EMP-001"
+                                            placeholder=""
                                             value={formData.employeeId}
                                             onChange={(e) => setFormData({ ...formData, employeeId: e.target.value })}
                                             required
@@ -335,7 +365,7 @@ export default function EmployeesPage() {
                                             id="name"
                                             type="text"
                                             className="input-field"
-                                            placeholder="JUAN PÉREZ"
+                                            placeholder=""
                                             value={formData.name}
                                             onChange={(e) => setFormData({ ...formData, name: e.target.value.toUpperCase() })}
                                             spellCheck="true"
@@ -345,53 +375,40 @@ export default function EmployeesPage() {
                                         />
                                     </div>
 
-                                    <div className={styles.inputGroup}>
-                                        <label htmlFor="position" className="label">Puesto</label>
-                                        <input
-                                            id="position"
-                                            type="text"
-                                            className="input-field"
-                                            placeholder="OPERADOR"
-                                            value={formData.position}
-                                            onChange={(e) => setFormData({ ...formData, position: e.target.value.toUpperCase() })}
-                                            spellCheck="true"
-                                            autoComplete="off"
-                                            style={{ textTransform: 'uppercase' }}
-                                            required
-                                        />
-                                    </div>
+                                    <Combobox
+                                        label="Puesto"
+                                        value={formData.position}
+                                        onChange={(value) => setFormData({ ...formData, position: value })}
+                                        options={PUESTOS_OPTIONS}
+                                        placeholder="Seleccionar puesto..."
+                                        searchPlaceholder="Buscar puesto..."
+                                        required
+                                    />
 
-                                    <div className={styles.inputGroup}>
-                                        <label htmlFor="area" className="label">Área</label>
-                                        <input
-                                            id="area"
-                                            type="text"
-                                            className="input-field"
-                                            placeholder="PRODUCCIÓN"
-                                            value={formData.area}
-                                            onChange={(e) => setFormData({ ...formData, area: e.target.value.toUpperCase() })}
-                                            spellCheck="true"
-                                            autoComplete="off"
-                                            style={{ textTransform: 'uppercase' }}
-                                            required
-                                        />
-                                    </div>
+                                    <Combobox
+                                        label="Departamento"
+                                        value={formData.department}
+                                        onChange={(value) => setFormData({
+                                            ...formData,
+                                            department: value,
+                                            area: '' // Reset area when department changes
+                                        })}
+                                        options={DEPARTAMENTOS_OPTIONS}
+                                        placeholder="Seleccionar departamento..."
+                                        searchPlaceholder="Buscar departamento..."
+                                        required
+                                    />
 
-                                    <div className={styles.inputGroup}>
-                                        <label htmlFor="department" className="label">Departamento</label>
-                                        <input
-                                            id="department"
-                                            type="text"
-                                            className="input-field"
-                                            placeholder="MANUFACTURA"
-                                            value={formData.department}
-                                            onChange={(e) => setFormData({ ...formData, department: e.target.value.toUpperCase() })}
-                                            spellCheck="true"
-                                            autoComplete="off"
-                                            style={{ textTransform: 'uppercase' }}
-                                            required
-                                        />
-                                    </div>
+                                    <Combobox
+                                        label="Área"
+                                        value={formData.area}
+                                        onChange={(value) => setFormData({ ...formData, area: value })}
+                                        options={formData.department ? getAreasForDepartment(formData.department) : []}
+                                        placeholder={formData.department ? "Seleccionar área..." : "Primero selecciona departamento"}
+                                        searchPlaceholder="Buscar área..."
+                                        disabled={!formData.department}
+                                        required
+                                    />
 
                                     <div className={styles.inputGroup}>
                                         <label htmlFor="shift" className="label">Turno</label>
@@ -638,16 +655,14 @@ export default function EmployeesPage() {
                                         <tr key={employee.id}>
                                             <td>{employee.employeeId}</td>
                                             <td className={styles.nameCell}>
-                                                <div className={styles.avatar}>
-                                                    {employee.name.charAt(0).toUpperCase()}
-                                                </div>
+                                                <Avatar name={employee.name} size="sm" />
                                                 {employee.name}
                                             </td>
                                             <td>{employee.position || '-'}</td>
                                             <td>{employee.area}</td>
                                             <td>{employee.department}</td>
                                             <td>
-                                                <span className={styles.badge}>{employee.shift}</span>
+                                                <Badge variant="secondary" size="sm">Turno {employee.shift}</Badge>
                                             </td>
                                             <td>{formatDate(employee.startDate)}</td>
                                             <td>{formatDate(employee.contractEndDate)}</td>
@@ -685,37 +700,33 @@ export default function EmployeesPage() {
             </main>
 
             {/* Modal de Confirmación de Eliminación */}
-            {deleteModal.show && (
-                <div className={styles.modalOverlay} onClick={cancelDelete}>
-                    <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
-                        <div className={styles.modalIcon}>
-                            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                <circle cx="12" cy="12" r="10" />
-                                <line x1="12" y1="8" x2="12" y2="12" />
-                                <line x1="12" y1="16" x2="12.01" y2="16" />
+            <Dialog open={deleteModal.show} onOpenChange={(open) => !open && cancelDelete()}>
+                <DialogHeader>
+                    <DialogTitle>¿Eliminar Empleado?</DialogTitle>
+                    <DialogDescription>
+                        Estás a punto de eliminar a <strong>{deleteModal.employee?.name}</strong>.
+                        Esta acción no se puede deshacer.
+                    </DialogDescription>
+                    <DialogClose onClose={cancelDelete} />
+                </DialogHeader>
+                <DialogFooter>
+                    <Button variant="secondary" onClick={cancelDelete}>
+                        Cancelar
+                    </Button>
+                    <Button
+                        variant="danger"
+                        onClick={confirmDelete}
+                        icon={
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                <polyline points="3 6 5 6 21 6" />
+                                <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
                             </svg>
-                        </div>
-                        <h3>¿Eliminar Empleado?</h3>
-                        <p>
-                            Estás a punto de eliminar a <strong>{deleteModal.employee?.name}</strong>.
-                            <br />
-                            Esta acción no se puede deshacer.
-                        </p>
-                        <div className={styles.modalActions}>
-                            <button onClick={cancelDelete} className={styles.cancelBtn}>
-                                Cancelar
-                            </button>
-                            <button onClick={confirmDelete} className={styles.confirmDeleteBtn}>
-                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                    <polyline points="3 6 5 6 21 6" />
-                                    <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
-                                </svg>
-                                Eliminar
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            )}
+                        }
+                    >
+                        Eliminar
+                    </Button>
+                </DialogFooter>
+            </Dialog>
         </>
     );
 }

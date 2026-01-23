@@ -3,6 +3,8 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useRouter } from 'next/navigation';
+import { Button } from '@/components/ui/Button/Button';
+import { Input } from '@/components/ui/Input/Input';
 import styles from './page.module.css';
 
 export default function LoginPage() {
@@ -34,6 +36,28 @@ export default function LoginPage() {
         }
     };
 
+    const EmailIcon = (
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
+            <polyline points="22,6 12,13 2,6" />
+        </svg>
+    );
+
+    const LockIcon = (
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+            <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+        </svg>
+    );
+
+    const LoginIcon = (
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4" />
+            <polyline points="10 17 15 12 10 7" />
+            <line x1="15" y1="12" x2="3" y2="12" />
+        </svg>
+    );
+
     return (
         <div className={styles.container}>
             <div className={styles.background}>
@@ -53,6 +77,7 @@ export default function LoginPage() {
                         </svg>
                     </div>
                     <h1>Bienvenido</h1>
+                    <p className={styles.subtitle}>Sistema de Gestión de Empleados</p>
                 </div>
 
                 <form onSubmit={handleSubmit} className={styles.form}>
@@ -67,66 +92,38 @@ export default function LoginPage() {
                         </div>
                     )}
 
-                    <div className={styles.inputGroup}>
-                        <label htmlFor="email" className="label">Correo Electrónico</label>
-                        <div className={styles.inputWrapper}>
-                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
-                                <polyline points="22,6 12,13 2,6" />
-                            </svg>
-                            <input
-                                id="email"
-                                type="email"
-                                className="input-field"
-                                placeholder="••••••••"
-                                value={email}
-                                onChange={(e) => setEmail(e.target.value)}
-                                required
-                            />
-                        </div>
-                    </div>
+                    <Input
+                        id="email"
+                        type="email"
+                        label="Correo Electrónico"
+                        placeholder="tu@correo.com"
+                        icon={EmailIcon}
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                        required
+                    />
 
-                    <div className={styles.inputGroup}>
-                        <label htmlFor="password" className="label">Contraseña</label>
-                        <div className={styles.inputWrapper}>
-                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
-                                <path d="M7 11V7a5 5 0 0 1 10 0v4" />
-                            </svg>
-                            <input
-                                id="password"
-                                type="password"
-                                className="input-field"
-                                placeholder="••••••••"
-                                value={password}
-                                onChange={(e) => setPassword(e.target.value)}
-                                required
-                            />
-                        </div>
-                    </div>
+                    <Input
+                        id="password"
+                        type="password"
+                        label="Contraseña"
+                        placeholder="••••••••"
+                        icon={LockIcon}
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                        required
+                    />
 
-                    <button
+                    <Button
                         type="submit"
-                        className="btn btn-primary"
-                        disabled={loading}
-                        style={{ width: '100%', marginTop: 'var(--spacing-md)' }}
+                        variant="primary"
+                        size="lg"
+                        fullWidth
+                        loading={loading}
+                        icon={!loading ? LoginIcon : undefined}
                     >
-                        {loading ? (
-                            <>
-                                <div className="spinner" style={{ width: '20px', height: '20px', borderWidth: '2px' }}></div>
-                                Iniciando sesión...
-                            </>
-                        ) : (
-                            <>
-                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                    <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4" />
-                                    <polyline points="10 17 15 12 10 7" />
-                                    <line x1="15" y1="12" x2="3" y2="12" />
-                                </svg>
-                                Iniciar Sesión
-                            </>
-                        )}
-                    </button>
+                        {loading ? 'Iniciando sesión...' : 'Iniciar Sesión'}
+                    </Button>
                 </form>
 
                 <div className={styles.footer}>

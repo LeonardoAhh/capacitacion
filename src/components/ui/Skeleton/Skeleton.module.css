@@ -1,0 +1,86 @@
+.skeleton {
+    background: linear-gradient(90deg,
+            var(--bg-tertiary) 25%,
+            var(--border-color) 50%,
+            var(--bg-tertiary) 75%);
+    background-size: 200% 100%;
+    animation: shimmer 1.5s infinite;
+}
+
+/* Variants */
+.text {
+    height: 16px;
+    border-radius: var(--radius-sm);
+}
+
+.rectangular {
+    border-radius: var(--radius-md);
+}
+
+.circular {
+    border-radius: 50%;
+}
+
+/* Text Wrapper */
+.textWrapper {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-sm);
+}
+
+/* Card Wrapper */
+.cardWrapper {
+    background-color: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-xl);
+    overflow: hidden;
+}
+
+.cardContent {
+    padding: var(--spacing-lg);
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-sm);
+}
+
+/* Avatar Wrapper */
+.avatarWrapper {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-md);
+}
+
+.avatarText {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-xs);
+}
+
+/* Table Wrapper */
+.tableWrapper {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-sm);
+}
+
+.tableRow {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: var(--spacing-lg);
+    padding: var(--spacing-md) 0;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.tableRow:last-child {
+    border-bottom: none;
+}
+
+@keyframes shimmer {
+    0% {
+        background-position: -200% 0;
+    }
+
+    100% {
+        background-position: 200% 0;
+    }
+}

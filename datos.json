@@ -1,0 +1,82 @@
+[
+    {
+        "departamento": "ALMACÉN",
+        "área": "ALMACÉN"
+    },
+    {
+        "departamento": "CALIDAD",
+        "área": "A. CALIDAD 1ER TURNO"
+    },
+    {
+        "departamento": "CALIDAD",
+        "área": "A. CALIDAD 2DO TURNO"
+    },
+    {
+        "departamento": "CALIDAD",
+        "área": "METROLOGÍA"
+    },
+    {
+        "departamento": "CALIDAD",
+        "área": "CALIDAD ADMINISTRATIVO"
+    },
+    {
+        "departamento": "CALIDAD",
+        "área": "SGI"
+    },
+    {
+        "departamento": "CALIDAD",
+        "área": "RESIDENTES DE CALIDAD"
+    },
+    {
+        "departamento": "GERENCIA DE PLANTA",
+        "área": "GERENCIA"
+    },
+    {
+        "departamento": "LOGISTICA",
+        "área": "LOGÍSTICA"
+    },
+    {
+        "departamento": "MANTENIMIENTO",
+        "área": "MANTENIMIENTO"
+    },
+    {
+        "departamento": "PRODUCCIÓN",
+        "área": "PRODUCCIÓN ADMINISTRATIVO"
+    },
+    {
+        "departamento": "PRODUCCIÓN",
+        "área": "PRODUCCIÓN MONTAJE"
+    },
+    {
+        "departamento": "PRODUCCIÓN",
+        "área": "PRODUCCIÓN 1ER TURNO"
+    },
+    {
+        "departamento": "PRODUCCIÓN",
+        "área": "PRODUCCIÓN 2DO TURNO"
+    },
+    {
+        "departamento": "PRODUCCIÓN",
+        "área": "PRODUCCIÓN 3ER TURNO"
+    },
+    {
+        "departamento": "PRODUCCIÓN",
+        "área": "PRODUCCIÓN 4TO TURNO"
+    },
+    {
+        "departamento": "PROYECTOS",
+        "área": "PROYECTOS"
+    },
+    {
+        "departamento": "RECURSOS HUMANOS",
+        "área": "RECURSOS HUMANOS"
+    },
+    {
+        "departamento": "SISTEMAS",
+        "área": "SISTEMAS"
+    },
+    {
+        "departamento": "TALLER DE MOLDES",
+        "área": "MOLDES"
+    }
+]

@@ -1,0 +1,218 @@
+.button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--spacing-sm);
+    font-family: inherit;
+    font-weight: 500;
+    border: none;
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    transition: all var(--transition-base);
+    position: relative;
+    overflow: hidden;
+    white-space: nowrap;
+}
+
+.button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* Sizes */
+.sm {
+    height: 32px;
+    padding: 0 var(--spacing-md);
+    font-size: 0.8rem;
+}
+
+.md {
+    height: 40px;
+    padding: 0 var(--spacing-lg);
+    font-size: 0.9rem;
+}
+
+.lg {
+    height: 48px;
+    padding: 0 var(--spacing-xl);
+    font-size: 1rem;
+}
+
+/* Variants */
+.primary {
+    background: linear-gradient(135deg, var(--color-primary), var(--color-accent));
+    color: white;
+    box-shadow: var(--shadow-md);
+}
+
+.primary:hover:not(:disabled) {
+    box-shadow: var(--shadow-lg);
+    transform: translateY(-1px);
+}
+
+.primary:active:not(:disabled) {
+    transform: translateY(0);
+}
+
+.secondary {
+    background-color: var(--bg-tertiary);
+    color: var(--text-primary);
+    border: 1px solid var(--border-color);
+}
+
+.secondary:hover:not(:disabled) {
+    background-color: var(--bg-secondary);
+    border-color: var(--color-primary);
+}
+
+.outline {
+    background: transparent;
+    color: var(--color-primary);
+    border: 2px solid var(--color-primary);
+}
+
+.outline:hover:not(:disabled) {
+    background-color: rgba(59, 130, 246, 0.1);
+}
+
+.ghost {
+    background: transparent;
+    color: var(--text-secondary);
+}
+
+.ghost:hover:not(:disabled) {
+    background-color: var(--bg-tertiary);
+    color: var(--text-primary);
+}
+
+.danger {
+    background: linear-gradient(135deg, #ef4444, #dc2626);
+    color: white;
+    box-shadow: var(--shadow-md);
+}
+
+.danger:hover:not(:disabled) {
+    box-shadow: var(--shadow-lg);
+    transform: translateY(-1px);
+}
+
+.success {
+    background: linear-gradient(135deg, #22c55e, #16a34a);
+    color: white;
+    box-shadow: var(--shadow-md);
+}
+
+.success:hover:not(:disabled) {
+    box-shadow: var(--shadow-lg);
+    transform: translateY(-1px);
+}
+
+/* Full width */
+.fullWidth {
+    width: 100%;
+}
+
+/* Loading state */
+.loading {
+    color: transparent;
+}
+
+.loading .content {
+    visibility: hidden;
+}
+
+.spinner {
+    position: absolute;
+    width: 18px;
+    height: 18px;
+    border: 2px solid currentColor;
+    border-top-color: transparent;
+    border-radius: 50%;
+    animation: spin 0.6s linear infinite;
+}
+
+.primary .spinner,
+.danger .spinner,
+.success .spinner {
+    border-color: rgba(255, 255, 255, 0.3);
+    border-top-color: white;
+}
+
+.icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.icon svg {
+    width: 18px;
+    height: 18px;
+}
+
+/* Icon Button */
+.iconButton {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+}
+
+.iconButton:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* Icon Button Sizes */
+.iconSm {
+    width: 28px;
+    height: 28px;
+}
+
+.iconMd {
+    width: 36px;
+    height: 36px;
+}
+
+.iconLg {
+    width: 44px;
+    height: 44px;
+}
+
+/* Icon Button Variants */
+.iconGhost {
+    background: transparent;
+    color: var(--text-secondary);
+}
+
+.iconGhost:hover:not(:disabled) {
+    background-color: var(--bg-tertiary);
+    color: var(--text-primary);
+}
+
+.iconPrimary {
+    background-color: var(--color-primary);
+    color: white;
+}
+
+.iconPrimary:hover:not(:disabled) {
+    opacity: 0.9;
+}
+
+.iconDanger {
+    background: transparent;
+    color: var(--text-secondary);
+}
+
+.iconDanger:hover:not(:disabled) {
+    background-color: rgba(239, 68, 68, 0.1);
+    color: #ef4444;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}

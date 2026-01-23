@@ -1,0 +1,105 @@
+.progressWrapper {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-md);
+}
+
+.progress {
+    flex: 1;
+    background-color: var(--bg-tertiary);
+    border-radius: var(--radius-full);
+    overflow: hidden;
+}
+
+/* Sizes */
+.xs {
+    height: 4px;
+}
+
+.sm {
+    height: 6px;
+}
+
+.md {
+    height: 8px;
+}
+
+.lg {
+    height: 12px;
+}
+
+.indicator {
+    height: 100%;
+    border-radius: var(--radius-full);
+    transition: width 0.5s ease-out;
+}
+
+.animated {
+    background-size: 200% 100%;
+    animation: shimmer 2s linear infinite;
+}
+
+/* Variants */
+.default {
+    background: linear-gradient(90deg, var(--color-primary), var(--color-accent));
+}
+
+.success {
+    background: linear-gradient(90deg, #22c55e, #16a34a);
+}
+
+.warning {
+    background: linear-gradient(90deg, #f59e0b, #d97706);
+}
+
+.danger {
+    background: linear-gradient(90deg, #ef4444, #dc2626);
+}
+
+.value {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    min-width: 45px;
+    text-align: right;
+}
+
+@keyframes shimmer {
+    0% {
+        background-position: 200% 0;
+    }
+
+    100% {
+        background-position: -200% 0;
+    }
+}
+
+/* Circular Progress */
+.circularWrapper {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.circularSvg {
+    transform: rotate(-90deg);
+}
+
+.circularBg {
+    fill: none;
+    stroke: var(--bg-tertiary);
+}
+
+.circularIndicator {
+    fill: none;
+    stroke-linecap: round;
+    transition: stroke-dashoffset 0.5s ease-out;
+}
+
+.circularValue {
+    position: absolute;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--text-primary);
+}

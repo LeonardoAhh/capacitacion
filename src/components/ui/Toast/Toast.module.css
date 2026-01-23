@@ -1,0 +1,129 @@
+.toastContainer {
+    position: fixed;
+    bottom: var(--spacing-xl);
+    right: var(--spacing-xl);
+    z-index: 9999;
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-md);
+    max-width: 420px;
+    width: 100%;
+    pointer-events: none;
+}
+
+.toast {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--spacing-md);
+    padding: var(--spacing-lg);
+    background-color: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-xl);
+    animation: toastSlideIn 0.3s ease-out;
+    pointer-events: auto;
+}
+
+.iconWrapper {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.content {
+    flex: 1;
+    min-width: 0;
+}
+
+.title {
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: var(--text-primary);
+    margin-bottom: 0.25rem;
+}
+
+.description {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    line-height: 1.4;
+}
+
+.closeBtn {
+    flex-shrink: 0;
+    width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    border: none;
+    border-radius: var(--radius-sm);
+    color: var(--text-tertiary);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+}
+
+.closeBtn:hover {
+    background-color: var(--bg-tertiary);
+    color: var(--text-primary);
+}
+
+/* Variants */
+.default .iconWrapper {
+    color: var(--text-secondary);
+}
+
+.success {
+    border-left: 4px solid #22c55e;
+}
+
+.success .iconWrapper {
+    color: #22c55e;
+}
+
+.error {
+    border-left: 4px solid #ef4444;
+}
+
+.error .iconWrapper {
+    color: #ef4444;
+}
+
+.warning {
+    border-left: 4px solid #f59e0b;
+}
+
+.warning .iconWrapper {
+    color: #f59e0b;
+}
+
+.info {
+    border-left: 4px solid #3b82f6;
+}
+
+.info .iconWrapper {
+    color: #3b82f6;
+}
+
+@keyframes toastSlideIn {
+    from {
+        opacity: 0;
+        transform: translateX(100%);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+/* Responsive */
+@media (max-width: 480px) {
+    .toastContainer {
+        left: var(--spacing-md);
+        right: var(--spacing-md);
+        bottom: var(--spacing-md);
+        max-width: none;
+    }
+}

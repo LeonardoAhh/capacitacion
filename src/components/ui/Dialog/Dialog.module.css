@@ -1,0 +1,129 @@
+.dialogRoot {
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: var(--spacing-lg);
+}
+
+.overlay {
+    position: absolute;
+    inset: 0;
+    background-color: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(4px);
+    animation: fadeIn 0.2s ease-out;
+}
+
+.content {
+    position: relative;
+    background-color: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-xl);
+    box-shadow: var(--shadow-xl);
+    width: 100%;
+    max-width: 500px;
+    max-height: 85vh;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    animation: dialogSlideIn 0.3s ease-out;
+}
+
+.header {
+    padding: var(--spacing-xl);
+    padding-bottom: var(--spacing-md);
+    position: relative;
+}
+
+.title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin: 0;
+    padding-right: var(--spacing-2xl);
+}
+
+.description {
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+    margin: var(--spacing-sm) 0 0 0;
+    line-height: 1.5;
+}
+
+.body {
+    padding: 0 var(--spacing-xl);
+    padding-bottom: var(--spacing-xl);
+    overflow-y: auto;
+    flex: 1;
+}
+
+.footer {
+    padding: var(--spacing-lg) var(--spacing-xl);
+    background-color: var(--bg-tertiary);
+    border-top: 1px solid var(--border-color);
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: var(--spacing-md);
+}
+
+.closeButton {
+    position: absolute;
+    top: var(--spacing-lg);
+    right: var(--spacing-lg);
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--radius-md);
+    background: transparent;
+    color: var(--text-tertiary);
+    border: none;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+}
+
+.closeButton:hover {
+    background-color: var(--bg-tertiary);
+    color: var(--text-primary);
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes dialogSlideIn {
+    from {
+        opacity: 0;
+        transform: scale(0.95) translateY(-10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
+}
+
+/* Responsive */
+@media (max-width: 640px) {
+    .content {
+        max-height: 90vh;
+        margin: var(--spacing-md);
+    }
+
+    .header,
+    .body,
+    .footer {
+        padding-left: var(--spacing-lg);
+        padding-right: var(--spacing-lg);
+    }
+}
