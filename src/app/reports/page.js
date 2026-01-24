@@ -97,6 +97,7 @@ export default function ReportsPage() {
         if (user) {
             loadReports();
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [user, selectedYear]);
 
     const calculateTrainingPlanDate = (startDate, department, area) => {

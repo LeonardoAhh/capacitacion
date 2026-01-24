@@ -69,6 +69,7 @@ export default function EmployeesPage() {
         if (user) {
             refresh();
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [user]);
 
     // Handle Search
@@ -78,6 +79,7 @@ export default function EmployeesPage() {
             searchEmployees(searchTerm);
         }, 500);
         return () => clearTimeout(timeoutId);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [searchTerm]);
 
     // Handlers
