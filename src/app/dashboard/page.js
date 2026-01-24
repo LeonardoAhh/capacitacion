@@ -45,12 +45,12 @@ export default function DashboardPage() {
             loadStats();
             loadUserData();
 
-            // Check for Welcome Flag (Just Logged In)
             if (sessionStorage.getItem('showWelcome')) {
                 setShowWelcomeModal(true);
                 sessionStorage.removeItem('showWelcome');
             }
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [user]);
 
     const loadUserData = async () => {

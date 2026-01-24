@@ -38,6 +38,7 @@ export default function EmpleadosPage() {
 
     useEffect(() => {
         loadEmployees();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     useEffect(() => {

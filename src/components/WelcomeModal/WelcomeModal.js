@@ -66,7 +66,7 @@ export default function WelcomeModal({ open, onOpenChange }) {
                 </div>
 
                 <div className={styles.tip}>
-                    <strong>Tip:</strong> Usa el menú de "Acciones Rápidas" en el Dashboard para navegar velozmente.
+                    <strong>Tip:</strong> Usa el menú de &quot;Acciones Rápidas&quot; en el Dashboard para navegar velozmente.
                 </div>
 
             </DialogBody>
