@@ -1,0 +1,6258 @@
+[
+    {
+        "position": "ALMACENISTA DE MATERIA PRIMA",
+        "requiredCourses": "INDUCCIÓN A LA EMPRESA"
+    },
+    {
+        "position": "ALMACENISTA DE MATERIA PRIMA",
+        "requiredCourses": "MÉTODO PEPS"
+    },
+    {
+        "position": "ALMACENISTA DE MATERIA PRIMA",
+        "requiredCourses": "NOM-009-STPS-2011"
+    },
+    {
+        "position": "ALMACENISTA DE MATERIA PRIMA",
+        "requiredCourses": "NOM-035-STPS-2018"
+    },
+    {
+        "position": "ALMACENISTA DE MATERIA PRIMA",
+        "requiredCourses": "NOM-036-1-STPS-2018"
+    },
+    {
+        "position": "ALMACENISTA DE MATERIA PRIMA",
+        "requiredCourses": "OPERACIÓN SEGURA DE MONTACARGAS"
+    },
+    {
+        "position": "ALMACENISTA DE MATERIA PRIMA",
+        "requiredCourses": "PLAN DE CONTINGENCIA DERRAME DE MATERIA PRIMA"
+    },
+    {
+        "position": "ALMACENISTA DE MATERIA PRIMA",
+        "requiredCourses": "SISTEMA DE GESTIÓN INTEGRAL"
+    },
+    {
+        "position": "ANALISTA DE CAPACITACIÓN",
+        "requiredCourses": "8DS PARA LA SOLUCION DE PROBLEMAS"
+    },
+    {
+        "position": "ANALISTA DE CAPACITACIÓN",
+        "requiredCourses": "DIAGRAMA DE TORTUGA"
+    },
+    {
+        "position": "ANALISTA DE CAPACITACIÓN",
+        "requiredCourses": "ESTRUCTURA DEL SGI Y DOCUMENTOS"
+    },
+    {
+        "position": "ANALISTA DE CAPACITACIÓN",
+        "requiredCourses": "FORMACIÓN DE INSTRUCTORES INTERNOS"
+    },
+    {
+        "position": "ANALISTA DE CAPACITACIÓN",
+        "requiredCourses": "INDUCCIÓN A LA EMPRESA"
+    },
+    {
+        "position": "ANALISTA DE CAPACITACIÓN",
+        "requiredCourses": "NOM-035-STPS-2018"
+    },
+    {
+        "position": "ANALISTA DE CAPACITACIÓN",
+        "requiredCourses": "SISTEMA DE GESTIÓN INTEGRAL"
+    },
+    {
+        "position": "ANALISTA DE RECLUTAMIENTO Y SELECCIÓN A",
+        "requiredCourses": "ESTRUCTURA DEL SGI Y DOCUMENTOS"
+    },
+    {
+        "position": "ANALISTA DE RECLUTAMIENTO Y SELECCIÓN A",
+        "requiredCourses": "INDUCCIÓN A LA EMPRESA"
+    },
+    {
+        "position": "ANALISTA DE RECLUTAMIENTO Y SELECCIÓN A",
+        "requiredCourses": "NOM-035-STPS-2018"
+    },
+    {
+        "position": "ANALISTA DE RECLUTAMIENTO Y SELECCIÓN A",
+        "requiredCourses": "SISTEMA DE GESTIÓN INTEGRAL"
+    },
+    {
+        "position": "ANALISTA DE RECLUTAMIENTO Y SELECCIÓN B",
+        "requiredCourses": "ESTRUCTURA DEL SGI Y DOCUMENTOS"
+    },
+    {
+        "position": "ANALISTA DE RECLUTAMIENTO Y SELECCIÓN B",
+        "requiredCourses": "NOM-035-STPS-2018"
+    },
+    {
+        "position": "ANALISTA DE RECLUTAMIENTO Y SELECCIÓN B",
+        "requiredCourses": "SISTEMA DE GESTIÓN INTEGRAL"
+    },
+    {
+        "position": "ANALISTA DE RECURSOS HUMANOS",
+        "requiredCourses": "ESTRUCTURA DEL SGI Y DOCUMENTOS"
+    },
+    {
+        "position": "ANALISTA DE RECURSOS HUMANOS",
+        "requiredCourses": "INDUCCIÓN A LA EMPRESA"
+    },
+    {
+        "position": "ANALISTA DE RECURSOS HUMANOS",
+        "requiredCourses": "NOM-035-STPS-2018"
+    },
+    {
+        "position": "ANALISTA DE RECURSOS HUMANOS",
+        "requiredCourses": "SISTEMA DE GESTIÓN INTEGRAL"
+    },
+    {
+        "position": "ANALISTA DE SEGURIDAD E HIGIENE",
+        "requiredCourses": "8DS PARA LA SOLUCION DE PROBLEMAS"
+    },
+    {
+        "position": "ANALISTA DE SEGURIDAD E HIGIENE",
+        "requiredCourses": "COMISIÓN DE SEGURIDAD E HIGIENE"
+    },
+    {
+        "position": "ANALISTA DE SEGURIDAD E HIGIENE",
+        "requiredCourses": "CONTROL DE CONTRATISTAS"
+    },
+    {
+        "position": "ANALISTA DE SEGURIDAD E HIGIENE",
+        "requiredCourses": "DIAGRAMA DE TORTUGA"
+    },
+    {
+        "position": "ANALISTA DE SEGURIDAD E HIGIENE",
+        "requiredCourses": "ESTRUCTURA DEL SGI Y DOCUMENTOS"
+    },
+    {
+        "position": "ANALISTA DE SEGURIDAD E HIGIENE",
+        "requiredCourses": "FORMACIÓN DE INSTRUCTORES INTERNOS"
+    },
+    {
+        "position": "ANALISTA DE SEGURIDAD E HIGIENE",
+        "requiredCourses": "INDUCCIÓN A LA EMPRESA"
+    },
+    {
+        "position": "ANALISTA DE SEGURIDAD E HIGIENE",
+        "requiredCourses": "NOM-018-STPS-2015"
+    },
+    {
+        "position": "ANALISTA DE SEGURIDAD E HIGIENE",
+        "requiredCourses": "NOM-035-STPS-2018"
+    },
+    {
+        "position": "ANALISTA DE SEGURIDAD E HIGIENE",
+        "requiredCourses": "SISTEMA DE GESTIÓN INTEGRAL"
+    },
+    {
+        "position": "ASISTENTE DE PRODUCCIÓN A",
+        "requiredCourses": "8DS PARA LA SOLUCION DE PROBLEMAS"
+    },
+    {
+        "position": "ASISTENTE DE PRODUCCIÓN A",
+        "requiredCourses": "AUDITORÍAS DE PROCESO EN CAPAS"
+    },
+    {
+        "position": "ASISTENTE DE PRODUCCIÓN A",
+        "requiredCourses": "COMPRENSIÓN DE LOS REQUISITOS ESPECIFICOS DEL CLIENTE"
+    },
+    {
+        "position": "ASISTENTE DE PRODUCCIÓN A",
+        "requiredCourses": "DIAGRAMA DE TORTUGA"
+    },
+    {
+        "position": "ASISTENTE DE PRODUCCIÓN A",
+        "requiredCourses": "FRIGEL"
+    },
+    {
+        "position": "ASISTENTE DE PRODUCCIÓN A",
+        "requiredCourses": "INDUCCIÓN A LA EMPRESA"
+    },
+    {
+        "position": "ASISTENTE DE PRODUCCIÓN A",
+        "requiredCourses": "NOM-035-STPS-2018"
+    },
+    {
+        "position": "ASISTENTE DE PRODUCCIÓN A",
+        "requiredCourses": "RPS"
+    },
+    {
+        "position": "ASISTENTE DE PRODUCCIÓN A",
+        "requiredCourses": "SISTEMA DE GESTIÓN INTEGRAL"
+    },
+    {
+        "position": "ASISTENTE DE PRODUCCIÓN A",
+        "requiredCourses": "SPC (2 EDICION) CONTROL DEL PROCESO ESTADISTICO"
+    },
+    {
+        "position": "ASISTENTE DE PRODUCCIÓN A",
+        "requiredCourses": "VDA 6.5 AUDITORÍAS DE PRODUCTO"
+    },
+    {
+        "position": "ASISTENTE DE PRODUCCIÓN B",
+        "requiredCourses": "8DS PARA LA SOLUCION DE PROBLEMAS"
+    },
+    {
+        "position": "ASISTENTE DE PRODUCCIÓN B",
+        "requiredCourses": "AUDITORÍAS DE PROCESO EN CAPAS"
+    },
+    {
+        "position": "ASISTENTE DE PRODUCCIÓN B",
+        "requiredCourses": "COMPRENSIÓN DE LOS REQUISITOS ESPECIFICOS DEL CLIENTE"
+    },
+    {
+        "position": "ASISTENTE DE PRODUCCIÓN B",
+        "requiredCourses": "DIAGRAMA DE TORTUGA"
+    },
+    {
+        "position": "ASISTENTE DE PRODUCCIÓN B",
+        "requiredCourses": "FRIGEL"
+    },
+    {
+        "position": "ASISTENTE DE PRODUCCIÓN B",
+        "requiredCourses": "INDUCCIÓN A LA EMPRESA"
+    },
+    {
+        "position": "ASISTENTE DE PRODUCCIÓN B",
+        "requiredCourses": "NOM-035-STPS-2018"
+    },
+    {
+        "position": "ASISTENTE DE PRODUCCIÓN B",
+        "requiredCourses": "RPS"
+    },
+    {
+        "position": "ASISTENTE DE PRODUCCIÓN B",
+        "requiredCourses": "SISTEMA DE GESTIÓN INTEGRAL"
+    },
+    {
+        "position": "ASISTENTE DE PRODUCCIÓN B",
+        "requiredCourses": "SPC (2 EDICION) CONTROL DEL PROCESO ESTADISTICO"
+    },
+    {
+        "position": "ASISTENTE DE PRODUCCIÓN B",
+        "requiredCourses": "VDA 6.5 AUDITORÍAS DE PRODUCTO"
+    },
+    {
+        "position": "ASISTENTE DE RECURSOS HUMANOS",
+        "requiredCourses": "AUDITORÍAS DE PROCESO EN CAPAS"
+    },
+    {
+        "position": "ASISTENTE DE RECURSOS HUMANOS",
+        "requiredCourses": "ESTRUCTURA DEL SGI Y DOCUMENTOS"
+    },
+    {
+        "position": "ASISTENTE DE RECURSOS HUMANOS",
+        "requiredCourses": "INDUCCIÓN A LA EMPRESA"
+    },
+    {
+        "position": "ASISTENTE DE RECURSOS HUMANOS",
+        "requiredCourses": "NOM-035-STPS-2018"
+    },
+    {
+        "position": "ASISTENTE DE RECURSOS HUMANOS",
+        "requiredCourses": "SISTEMA DE GESTIÓN INTEGRAL"
+    },
+    {
+        "position": "AUXILIAR ADMINISTRATIVO DE ALMACÉN A",
+        "requiredCourses": "8DS PARA LA SOLUCION DE PROBLEMAS"
+    },
+    {
+        "position": "AUXILIAR ADMINISTRATIVO DE ALMACÉN A",
+        "requiredCourses": "AUDITORÍAS DE PROCESO EN CAPAS"
+    },
+    {
+        "position": "AUXILIAR ADMINISTRATIVO DE ALMACÉN A",
+        "requiredCourses": "ESTRUCTURA DEL SGI Y DOCUMENTOS"
+    },
+    {
+        "position": "AUXILIAR ADMINISTRATIVO DE ALMACÉN A",
+        "requiredCourses": "INDUCCIÓN A LA EMPRESA"
+    },
+    {
+        "position": "AUXILIAR ADMINISTRATIVO DE ALMACÉN A",
+        "requiredCourses": "MÉTODO PEPS"
+    },
+    {
+        "position": "AUXILIAR ADMINISTRATIVO DE ALMACÉN A",
+        "requiredCourses": "NOM-035-STPS-2018"
+    },
+    {
+        "position": "AUXILIAR ADMINISTRATIVO DE ALMACÉN A",
+        "requiredCourses": "SISTEMA DE GESTIÓN INTEGRAL"
+    },
+    {
+        "position": "AUXILIAR ADMINISTRATIVO DE ALMACÉN B",
+        "requiredCourses": "8DS PARA LA SOLUCION DE PROBLEMAS"
+    },
+    {
+        "position": "AUXILIAR ADMINISTRATIVO DE ALMACÉN B",
+        "requiredCourses": "AUDITORÍAS DE PROCESO EN CAPAS"
+    },
+    {
+        "position": "AUXILIAR ADMINISTRATIVO DE ALMACÉN B",
+        "requiredCourses": "ESTRUCTURA DEL SGI Y DOCUMENTOS"
+    },
+    {
+        "position": "AUXILIAR ADMINISTRATIVO DE ALMACÉN B",
+        "requiredCourses": "INDUCCIÓN A LA EMPRESA"
+    },
+    {
+        "position": "AUXILIAR ADMINISTRATIVO DE ALMACÉN B",
+        "requiredCourses": "MÉTODO PEPS"
+    },
+    {
+        "position": "AUXILIAR ADMINISTRATIVO DE ALMACÉN B",
+        "requiredCourses": "NOM-035-STPS-2018"
+    },
+    {
+        "position": "AUXILIAR ADMINISTRATIVO DE ALMACÉN B",
+        "requiredCourses": "SISTEMA DE GESTIÓN INTEGRAL"
+    },
+    {
+        "position": "AUXILIAR ADMINISTRATIVO DE MANTENIMIENTO",
+        "requiredCourses": "8DS PARA LA SOLUCION DE PROBLEMAS"
+    },
+    {
+        "position": "AUXILIAR ADMINISTRATIVO DE MANTENIMIENTO",
+        "requiredCourses": "AUDITORÍAS DE PROCESO EN CAPAS"
+    },
+    {
+        "position": "AUXILIAR ADMINISTRATIVO DE MANTENIMIENTO",
+        "requiredCourses": "DIAGRAMA DE TORTUGA"
+    },
+    {
+        "position": "AUXILIAR ADMINISTRATIVO DE MANTENIMIENTO",
+        "requiredCourses": "ESTRUCTURA DEL SGI Y DOCUMENTOS"
+    },
+    {
+        "position": "AUXILIAR ADMINISTRATIVO DE MANTENIMIENTO",
+        "requiredCourses": "INDUCCIÓN A LA EMPRESA"
+    },
+    {
+        "position": "AUXILIAR ADMINISTRATIVO DE MANTENIMIENTO",
+        "requiredCourses": "NOM-005-STPS-1998"
+    },
+    {
+        "position": "AUXILIAR ADMINISTRATIVO DE MANTENIMIENTO",
+        "requiredCourses": "NOM-010-STPS-2014"
+    },
+    {
+        "position": "AUXILIAR ADMINISTRATIVO DE MANTENIMIENTO",
+        "requiredCourses": "PLAN DE CONTINGENCIA DE DERRAMES"
+    },
+    {
+        "position": "AUXILIAR ADMINISTRATIVO DE MANTENIMIENTO",
+        "requiredCourses": "SISTEMA DE GESTIÓN INTEGRAL"
+    },
+    {
+        "position": "AUXILIAR ADMINISTRATIVO DE MANTENIMIENTO",
+        "requiredCourses": "VDA 6.3 AUDITORÍAS DE PROCESO"
+    },
+    {
+        "position": "AUXILIAR ADMINISTRATIVO DE TALLER DE MOLDES",
+        "requiredCourses": "8DS PARA LA SOLUCION DE PROBLEMAS"
+    },
+    {
+        "position": "AUXILIAR ADMINISTRATIVO DE TALLER DE MOLDES",
+        "requiredCourses": "ASPECTOS E IMPACTOS AMBIENTALES"
+    },
+    {
+        "position": "AUXILIAR ADMINISTRATIVO DE TALLER DE MOLDES",
+        "requiredCourses": "AUDITORÍAS DE PROCESO EN CAPAS"
+    },
+    {
+        "position": "AUXILIAR ADMINISTRATIVO DE TALLER DE MOLDES",
+        "requiredCourses": "BUENAS PRACTICAS EN EL TALLER"
+    },
+    {
+        "position": "AUXILIAR ADMINISTRATIVO DE TALLER DE MOLDES",
+        "requiredCourses": "DIAGRAMA DE TORTUGA"
+    },
+    {
+        "position": "AUXILIAR ADMINISTRATIVO DE TALLER DE MOLDES",
+        "requiredCourses": "ESTRUCTURA DEL SGI Y DOCUMENTOS"
+    },
+    {
+        "position": "AUXILIAR ADMINISTRATIVO DE TALLER DE MOLDES",
+        "requiredCourses": "INDUCCIÓN A LA EMPRESA"
+    },
+    {
+        "position": "AUXILIAR ADMINISTRATIVO DE TALLER DE MOLDES",
+        "requiredCourses": "RPS"
+    },
+    {
+        "position": "AUXILIAR ADMINISTRATIVO DE TALLER DE MOLDES",
+        "requiredCourses": "SEGURIDAD Y PREVENCIÓN DE ACCIDENTES"
+    },
+    {
+        "position": "AUXILIAR ADMINISTRATIVO DE TALLER DE MOLDES",
+        "requiredCourses": "SISTEMA DE GESTIÓN INTEGRAL"
+    },
+    {
+        "position": "AUXILIAR DE ALMACÉN A",
+        "requiredCourses": "INDUCCIÓN A LA EMPRESA"
+    },
+    {
+        "position": "AUXILIAR DE ALMACÉN A",
+        "requiredCourses": "MÉTODO PEPS"
+    },
+    {
+        "position": "AUXILIAR DE ALMACÉN A",
+        "requiredCourses": "NOM-009-STPS-2011"
+    },
+    {
+        "position": "AUXILIAR DE ALMACÉN A",
+        "requiredCourses": "NOM-035-STPS-2018"
+    },
+    {
+        "position": "AUXILIAR DE ALMACÉN A",
+        "requiredCourses": "NOM-036-1-STPS-2018"
+    },
+    {
+        "position": "AUXILIAR DE ALMACÉN A",
+        "requiredCourses": "OPERACIÓN SEGURA DE MONTACARGAS"
+    },
+    {
+        "position": "AUXILIAR DE ALMACÉN A",
+        "requiredCourses": "SISTEMA DE GESTIÓN INTEGRAL"
+    },
+    {
+        "position": "AUXILIAR DE ALMACÉN B",
+        "requiredCourses": "INDUCCIÓN A LA EMPRESA"
+    },
+    {
+        "position": "AUXILIAR DE ALMACÉN B",
+        "requiredCourses": "MÉTODO PEPS"
+    },
+    {
+        "position": "AUXILIAR DE ALMACÉN B",
+        "requiredCourses": "NOM-009-STPS-2011"
+    },
+    {
+        "position": "AUXILIAR DE ALMACÉN B",
+        "requiredCourses": "NOM-035-STPS-2018"
+    },
+    {
+        "position": "AUXILIAR DE ALMACÉN B",
+        "requiredCourses": "NOM-036-1-STPS-2018"
+    },
+    {
+        "position": "AUXILIAR DE ALMACÉN B",
+        "requiredCourses": "OPERACIÓN SEGURA DE MONTACARGAS"
+    },
+    {
+        "position": "AUXILIAR DE ALMACÉN B",
+        "requiredCourses": "SISTEMA DE GESTIÓN INTEGRAL"
+    },
+    {
+        "position": "AUXILIAR DE ALMACÉN C",
+        "requiredCourses": "INDUCCIÓN A LA EMPRESA"
+    },
+    {
+        "position": "AUXILIAR DE ALMACÉN C",
+        "requiredCourses": "MÉTODO PEPS"
+    },
+    {
+        "position": "AUXILIAR DE ALMACÉN C",
+        "requiredCourses": "NOM-009-STPS-2011"
+    },
+    {
+        "position": "AUXILIAR DE ALMACÉN C",
+        "requiredCourses": "NOM-035-STPS-2018"
+    },
+    {
+        "position": "AUXILIAR DE ALMACÉN C",
+        "requiredCourses": "NOM-036-1-STPS-2018"
+    },
+    {
+        "position": "AUXILIAR DE ALMACÉN C",
+        "requiredCourses": "OPERACIÓN SEGURA DE MONTACARGAS"
+    },
+    {
+        "position": "AUXILIAR DE ALMACÉN C",
+        "requiredCourses": "SISTEMA DE GESTIÓN INTEGRAL"
+    },
+    {
+        "position": "AUXILIAR DE ALMACÉN D",
+        "requiredCourses": "INDUCCIÓN A LA EMPRESA"
+    },
+    {
+        "position": "AUXILIAR DE ALMACÉN D",
+        "requiredCourses": "MÉTODO PEPS"
+    },
+    {
+        "position": "AUXILIAR DE ALMACÉN D",
+        "requiredCourses": "NOM-009-STPS-2011"
+    },
+    {
+        "position": "AUXILIAR DE ALMACÉN D",
+        "requiredCourses": "NOM-035-STPS-2018"
+    },
+    {
+        "position": "AUXILIAR DE ALMACÉN D",
+        "requiredCourses": "NOM-036-1-STPS-2018"
+    },
+    {
+        "position": "AUXILIAR DE ALMACÉN D",
+        "requiredCourses": "OPERACIÓN SEGURA DE MONTACARGAS"
+    },
+    {
+        "position": "AUXILIAR DE ALMACÉN D",
+        "requiredCourses": "SISTEMA DE GESTIÓN INTEGRAL"
+    },
+    {
+        "position": "AUXILIAR DE BÁSCULA A",
+        "requiredCourses": "ALERTAS DE CALIDAD Y CATÁLOGO DE FALLAS"
+    },
+    {
+        "position": "AUXILIAR DE BÁSCULA A",
+        "requiredCourses": "FAMILIAS DEL PRODUCTO"
+    },
+    {
+        "position": "AUXILIAR DE BÁSCULA A",
+        "requiredCourses": "INDUCCIÓN A LA EMPRESA"
+    },
+    {
+        "position": "AUXILIAR DE BÁSCULA A",
+        "requiredCourses": "INSTRUCCIONES DE TRABAJO"
+    },
+    {
+        "position": "AUXILIAR DE BÁSCULA A",
+        "requiredCourses": "METODOLOGÍA 5S"
+    },
+    {
+        "position": "AUXILIAR DE BÁSCULA A",
+        "requiredCourses": "NOM-036-1-STPS-2018"
+    },
+    {
+        "position": "AUXILIAR DE BÁSCULA A",
+        "requiredCourses": "REPORTE DE PRODUCCIÓN"
+    },
+    {
+        "position": "AUXILIAR DE BÁSCULA A",
+        "requiredCourses": "SEGURIDAD Y PREVENCIÓN DE ACCIDENTES"
+    },
+    {
+        "position": "AUXILIAR DE BÁSCULA A",
+        "requiredCourses": "SEPARACIÓN DE RESIDUOS"
+    },
+    {
+        "position": "AUXILIAR DE BÁSCULA A",
+        "requiredCourses": "SISTEMA DE GESTIÓN INTEGRAL"
+    },
+    {
+        "position": "AUXILIAR DE BÁSCULA A",
+        "requiredCourses": "USO DE BÁSCULA"
+    },
+    {
+        "position": "AUXILIAR DE BÁSCULA B",
+        "requiredCourses": "ALERTAS DE CALIDAD Y CATÁLOGO DE FALLAS"
+    },
+    {
+        "position": "AUXILIAR DE BÁSCULA B",
+        "requiredCourses": "FAMILIAS DEL PRODUCTO"
+    },
+    {
+        "position": "AUXILIAR DE BÁSCULA B",
+        "requiredCourses": "INDUCCIÓN A LA EMPRESA"
+    },
+    {
+        "position": "AUXILIAR DE BÁSCULA B",
+        "requiredCourses": "INSTRUCCIONES DE TRABAJO"
+    },
+    {
+        "position": "AUXILIAR DE BÁSCULA B",
+        "requiredCourses": "METODOLOGÍA 5S"
+    },
+    {
+        "position": "AUXILIAR DE BÁSCULA B",
+        "requiredCourses": "NOM-036-1-STPS-2018"
+    },
+    {
+        "position": "AUXILIAR DE BÁSCULA B",
+        "requiredCourses": "REPORTE DE PRODUCCIÓN"
+    },
+    {
+        "position": "AUXILIAR DE BÁSCULA B",
+        "requiredCourses": "SEGURIDAD Y PREVENCIÓN DE ACCIDENTES"
+    },
+    {
+        "position": "AUXILIAR DE BÁSCULA B",
+        "requiredCourses": "SEPARACIÓN DE RESIDUOS"
+    },
+    {
+        "position": "AUXILIAR DE BÁSCULA B",
+        "requiredCourses": "SISTEMA DE GESTIÓN INTEGRAL"
+    },
+    {
+        "position": "AUXILIAR DE BÁSCULA B",
+        "requiredCourses": "USO DE BÁSCULA"
+    },
+    {
+        "position": "AUXILIAR DE CALIDAD",
+        "requiredCourses": "8DS PARA LA SOLUCION DE PROBLEMAS"
+    },
+    {
+        "position": "AUXILIAR DE CALIDAD",
+        "requiredCourses": "AMEF"
+    },
+    {
+        "position": "AUXILIAR DE CALIDAD",
+        "requiredCourses": "AUDITORÍAS DE PROCESO EN CAPAS"
+    },
+    {
+        "position": "AUXILIAR DE CALIDAD",
+        "requiredCourses": "COMPRENSIÓN DE LOS REQUISITOS ESPECIFICOS DEL CLIENTE"
+    },
+    {
+        "position": "AUXILIAR DE CALIDAD",
+        "requiredCourses": "CORE TOOLS"
+    },
+    {
+        "position": "AUXILIAR DE CALIDAD",
+        "requiredCourses": "DIAGRAMA DE TORTUGA"
+    },
+    {
+        "position": "AUXILIAR DE CALIDAD",
+        "requiredCourses": "ESTRUCTURA DEL SGI Y DOCUMENTOS"
+    },
+    {
+        "position": "AUXILIAR DE CALIDAD",
+        "requiredCourses": "INDUCCIÓN A LA EMPRESA"
+    },
+    {
+        "position": "AUXILIAR DE CALIDAD",
+        "requiredCourses": "INTERPRETACIÓN DE PLANOS"
+    },
+    {
+        "position": "AUXILIAR DE CALIDAD",
+        "requiredCourses": "INTRODUCCIÓN A LA METROLOGÍA Y MANEJO DE EQUIPOS DE MEDICIÓN"
+    },
+    {
+        "position": "AUXILIAR DE CALIDAD",
+        "requiredCourses": "IT-ASC-019"
+    },
+    {
+        "position": "AUXILIAR DE CALIDAD",
+        "requiredCourses": "KEYENCE"
+    },
+    {
+        "position": "AUXILIAR DE CALIDAD",
+        "requiredCourses": "MANEJO DE MATERIAL NO CONFORME"
+    },
+    {
+        "position": "AUXILIAR DE CALIDAD",
+        "requiredCourses": "NOM-035-STPS-2018"
+    },
+    {
+        "position": "AUXILIAR DE CALIDAD",
+        "requiredCourses": "NOM-036-1-STPS-2018"
+    },
+    {
+        "position": "AUXILIAR DE CALIDAD",
+        "requiredCourses": "PROCESO DE LIBREACIÓN DE MATERIA PRIMA"
+    },
+    {
+        "position": "AUXILIAR DE CALIDAD",
+        "requiredCourses": "SEGURIDAD Y PREVENCIÓN DE ACCIDENTES"
+    },
+    {
+        "position": "AUXILIAR DE CALIDAD",
+        "requiredCourses": "SISTEMA DE GESTIÓN INTEGRAL"
+    },
+    {
+        "position": "AUXILIAR DE CALIDAD",
+        "requiredCourses": "TRAZABILIDAD DEL PRODUCTO"
+    },
+    {
+        "position": "AUXILIAR DE CALIDAD",
+        "requiredCourses": "VALIDACIÓN DE ARRANQUE"
+    },
+    {
+        "position": "AUXILIAR DE CALIDAD",
+        "requiredCourses": "VDA 6.3 AUDITORÍAS DE PROCESO"
+    },
+    {
+        "position": "AUXILIAR DE CALIDAD",
+        "requiredCourses": "VDA 6.5 AUDITORÍAS DE PRODUCTO"
+    },
+    {
+        "position": "AUXILIAR DE LIMPIEZA A",
+        "requiredCourses": "INDUCCIÓN A LA EMPRESA"
+    },
+    {
+        "position": "AUXILIAR DE LIMPIEZA A",
+        "requiredCourses": "NOM-018-STPS-2015"
+    },
+    {
+        "position": "AUXILIAR DE LIMPIEZA A",
+        "requiredCourses": "NOM-035-STPS-2018"
+    },
+    {
+        "position": "AUXILIAR DE LIMPIEZA A",
+        "requiredCourses": "SISTEMA DE GESTIÓN INTEGRAL"
+    },
+    {
+        "position": "AUXILIAR DE LIMPIEZA B",
+        "requiredCourses": "INDUCCIÓN A LA EMPRESA"
+    },
+    {
+        "position": "AUXILIAR DE LIMPIEZA B",
+        "requiredCourses": "NOM-018-STPS-2015"
+    },
+    {
+        "position": "AUXILIAR DE LIMPIEZA B",
+        "requiredCourses": "NOM-035-STPS-2018"
+    },
+    {
+        "position": "AUXILIAR DE LIMPIEZA B",
+        "requiredCourses": "SISTEMA DE GESTIÓN INTEGRAL"
+    },
+    {
+        "position": "AUXILIAR DE MANTENIMIENTO A",
+        "requiredCourses": "INDUCCIÓN A LA EMPRESA"
+    },
+    {
+        "position": "AUXILIAR DE MANTENIMIENTO A",
+        "requiredCourses": "NOM-004-STPS-1999"
+    },
+    {
+        "position": "AUXILIAR DE MANTENIMIENTO A",
+        "requiredCourses": "NOM-005-STPS-1998"
+    },
+    {
+        "position": "AUXILIAR DE MANTENIMIENTO A",
+        "requiredCourses": "NOM-010-STPS-2014"
+    },
+    {
+        "position": "AUXILIAR DE MANTENIMIENTO A",
+        "requiredCourses": "NOM-036-1-STPS-2018"
+    },
+    {
+        "position": "AUXILIAR DE MANTENIMIENTO A",
+        "requiredCourses": "PLAN DE CONTINGENCIA DE DERRAMES"
+    },
+    {
+        "position": "AUXILIAR DE MANTENIMIENTO A",
+        "requiredCourses": "SISTEMA DE GESTIÓN INTEGRAL"
+    },
+    {
+        "position": "AUXILIAR DE MANTENIMIENTO B",
+        "requiredCourses": "INDUCCIÓN A LA EMPRESA"
+    },
+    {
+        "position": "AUXILIAR DE MANTENIMIENTO B",
+        "requiredCourses": "NOM-004-STPS-1999"
+    },
+    {
+        "position": "AUXILIAR DE MANTENIMIENTO B",
+        "requiredCourses": "NOM-005-STPS-1998"
+    },
+    {
+        "position": "AUXILIAR DE MANTENIMIENTO B",
+        "requiredCourses": "NOM-010-STPS-2014"
+    },
+    {
+        "position": "AUXILIAR DE MANTENIMIENTO B",
+        "requiredCourses": "NOM-036-1-STPS-2018"
+    },
+    {
+        "position": "AUXILIAR DE MANTENIMIENTO B",
+        "requiredCourses": "PLAN DE CONTINGENCIA DE DERRAMES"
+    },
+    {
+        "position": "AUXILIAR DE MANTENIMIENTO B",
+        "requiredCourses": "SISTEMA DE GESTIÓN INTEGRAL"
+    },
+    {
+        "position": "AUXILIAR DE MANTENIMIENTO C",
+        "requiredCourses": "INDUCCIÓN A LA EMPRESA"
+    },
+    {
+        "position": "AUXILIAR DE MANTENIMIENTO C",
+        "requiredCourses": "NOM-004-STPS-1999"
+    },
+    {
+        "position": "AUXILIAR DE MANTENIMIENTO C",
+        "requiredCourses": "NOM-005-STPS-1998"
+    },
+    {
+        "position": "AUXILIAR DE MANTENIMIENTO C",
+        "requiredCourses": "NOM-010-STPS-2014"
+    },
+    {
+        "position": "AUXILIAR DE MANTENIMIENTO C",
+        "requiredCourses": "NOM-036-1-STPS-2018"
+    },
+    {
+        "position": "AUXILIAR DE MANTENIMIENTO C",
+        "requiredCourses": "PLAN DE CONTINGENCIA DE DERRAMES"
+    },
+    {
+        "position": "AUXILIAR DE MANTENIMIENTO C",
+        "requiredCourses": "SISTEMA DE GESTIÓN INTEGRAL"
+    },
+    {
+        "position": "AUXILIAR DE METROLOGÍA",
+        "requiredCourses": "AUDITORÍAS DE PROCESO EN CAPAS"
+    },
+    {
+        "position": "AUXILIAR DE METROLOGÍA",
+        "requiredCourses": "ESTRUCTURA DEL SGI Y DOCUMENTOS"
+    },
+    {
+        "position": "AUXILIAR DE METROLOGÍA",
+        "requiredCourses": "INDUCCIÓN A LA EMPRESA"
+    },
+    {
+        "position": "AUXILIAR DE METROLOGÍA",
+        "requiredCourses": "INTERPRETACIÓN DE PLANOS"
+    },
+    {
+        "position": "AUXILIAR DE METROLOGÍA",
+        "requiredCourses": "INTRODUCCIÓN A LA METROLOGÍA Y MANEJO DE EQUIPOS DE MEDICIÓN"
+    },
+    {
+        "position": "AUXILIAR DE METROLOGÍA",
+        "requiredCourses": "KEYENCE"
+    },
+    {
+        "position": "AUXILIAR DE METROLOGÍA",
+        "requiredCourses": "NOM-010-STPS-2014"
+    },
+    {
+        "position": "AUXILIAR DE METROLOGÍA",
+        "requiredCourses": "PR-ASC-011"
+    },
+    {
+        "position": "AUXILIAR DE METROLOGÍA",
+        "requiredCourses": "SEGURIDAD Y PREVENCIÓN DE ACCIDENTES"
+    },
+    {
+        "position": "AUXILIAR DE METROLOGÍA",
+        "requiredCourses": "SISTEMA DE GESTIÓN INTEGRAL"
+    },
+    {
+        "position": "AUXILIAR DE PROYECTOS",
+        "requiredCourses": "AMEF"
+    },
+    {
+        "position": "AUXILIAR DE PROYECTOS",
+        "requiredCourses": "AUDITORÍAS DE PROCESO EN CAPAS"
+    },
+    {
+        "position": "AUXILIAR DE PROYECTOS",
+        "requiredCourses": "CORE TOOLS"
+    },
+    {
+        "position": "AUXILIAR DE PROYECTOS",
+        "requiredCourses": "ESTRUCTURA DEL SGI Y DOCUMENTOS"
+    },
+    {
+        "position": "AUXILIAR DE PROYECTOS",
+        "requiredCourses": "GD&T"
+    },
+    {
+        "position": "AUXILIAR DE PROYECTOS",
+        "requiredCourses": "IMDS"
+    },
+    {
+        "position": "AUXILIAR DE PROYECTOS",
+        "requiredCourses": "INDUCCIÓN A LA EMPRESA"
+    },
+    {
+        "position": "AUXILIAR DE PROYECTOS",
+        "requiredCourses": "METODOLOGÍA 5S"
+    },
+    {
+        "position": "AUXILIAR DE PROYECTOS",
+        "requiredCourses": "SEGURIDAD Y PREVENCIÓN DE ACCIDENTES"
+    },
+    {
+        "position": "AUXILIAR DE PROYECTOS",
+        "requiredCourses": "SISTEMA DE GESTIÓN INTEGRAL"
+    },
+    {
+        "position": "AUXILIAR DE PROYECTOS",
+        "requiredCourses": "SPC (2 EDICION) CONTROL DEL PROCESO ESTADISTICO"
+    },
+    {
+        "position": "AUXILIAR DE SCRAP A",
+        "requiredCourses": "FAMILIAS DEL PRODUCTO"
+    },
+    {
+        "position": "AUXILIAR DE SCRAP A",
+        "requiredCourses": "INDUCCIÓN A LA EMPRESA"
+    },
+    {
+        "position": "AUXILIAR DE SCRAP A",
+        "requiredCourses": "INSTRUCCIONES DE TRABAJO"
+    },
+    {
+        "position": "AUXILIAR DE SCRAP A",
+        "requiredCourses": "METODOLOGÍA 5S"
+    },
+    {
+        "position": "AUXILIAR DE SCRAP A",
+        "requiredCourses": "NOM-036-1-STPS-2018"
+    },
+    {
+        "position": "AUXILIAR DE SCRAP A",
+        "requiredCourses": "REPORTE DE PRODUCCIÓN"
+    },
+    {
+        "position": "AUXILIAR DE SCRAP A",
+        "requiredCourses": "SEGURIDAD Y PREVENCIÓN DE ACCIDENTES"
+    },
+    {
+        "position": "AUXILIAR DE SCRAP A",
+        "requiredCourses": "SEPARACIÓN DE RESIDUOS"
+    },
+    {
+        "position": "AUXILIAR DE SCRAP A",
+        "requiredCourses": "SISTEMA DE GESTIÓN INTEGRAL"
+    },
+    {
+        "position": "AUXILIAR DE SCRAP B",
+        "requiredCourses": "FAMILIAS DEL PRODUCTO"
+    },
+    {
+        "position": "AUXILIAR DE SCRAP B",
+        "requiredCourses": "INDUCCIÓN A LA EMPRESA"
+    },
+    {
+        "position": "AUXILIAR DE SCRAP B",
+        "requiredCourses": "INSTRUCCIONES DE TRABAJO"
+    },
+    {
+        "position": "AUXILIAR DE SCRAP B",
+        "requiredCourses": "METODOLOGÍA 5S"
+    },
+    {
+        "position": "AUXILIAR DE SCRAP B",
+        "requiredCourses": "NOM-036-1-STPS-2018"
+    },
+    {
+        "position": "AUXILIAR DE SCRAP B",
+        "requiredCourses": "REPORTE DE PRODUCCIÓN"
+    },
+    {
+        "position": "AUXILIAR DE SCRAP B",
+        "requiredCourses": "SEGURIDAD Y PREVENCIÓN DE ACCIDENTES"
+    },
+    {
+        "position": "AUXILIAR DE SCRAP B",
+        "requiredCourses": "SEPARACIÓN DE RESIDUOS"
+    },
+    {
+        "position": "AUXILIAR DE SCRAP B",
+        "requiredCourses": "SISTEMA DE GESTIÓN INTEGRAL"
+    },
+    {
+        "position": "AUXILIAR DE SUPERVISOR A",
+        "requiredCourses": "ALERTAS DE CALIDAD Y CATÁLOGO DE FALLAS"
+    },
+    {
+        "position": "AUXILIAR DE SUPERVISOR A",
+        "requiredCourses": "FAMILIAS DEL PRODUCTO"
+    },
+    {
+        "position": "AUXILIAR DE SUPERVISOR A",
+        "requiredCourses": "INDUCCIÓN A LA EMPRESA"
+    },
+    {
+        "position": "AUXILIAR DE SUPERVISOR A",
+        "requiredCourses": "INSTRUCCIONES DE TRABAJO"
+    },
+    {
+        "position": "AUXILIAR DE SUPERVISOR A",
+        "requiredCourses": "METODOLOGÍA 5S"
+    },
+    {
+        "position": "AUXILIAR DE SUPERVISOR A",
+        "requiredCourses": "REPORTE DE PRODUCCIÓN"
+    },
+    {
+        "position": "AUXILIAR DE SUPERVISOR A",
+        "requiredCourses": "SEGURIDAD Y PREVENCIÓN DE ACCIDENTES"
+    },
+    {
+        "position": "AUXILIAR DE SUPERVISOR A",
+        "requiredCourses": "SEPARACIÓN DE RESIDUOS"
+    },
+    {
+        "position": "AUXILIAR DE SUPERVISOR A",
+        "requiredCourses": "SISTEMA DE GESTIÓN INTEGRAL"
+    },
+    {
+        "position": "AUXILIAR DE SUPERVISOR A",
+        "requiredCourses": "VALIDACIÓN DE ARRANQUE"
+    },
+    {
+        "position": "AUXILIAR DE SUPERVISOR B",
+        "requiredCourses": "ALERTAS DE CALIDAD Y CATÁLOGO DE FALLAS"
+    },
+    {
+        "position": "AUXILIAR DE SUPERVISOR B",
+        "requiredCourses": "FAMILIAS DEL PRODUCTO"
+    },
+    {
+        "position": "AUXILIAR DE SUPERVISOR B",
+        "requiredCourses": "INDUCCIÓN A LA EMPRESA"
+    },
+    {
+        "position": "AUXILIAR DE SUPERVISOR B",
+        "requiredCourses": "INSTRUCCIONES DE TRABAJO"
+    },
+    {
+        "position": "AUXILIAR DE SUPERVISOR B",
+        "requiredCourses": "METODOLOGÍA 5S"
+    },
+    {
+        "position": "AUXILIAR DE SUPERVISOR B",
+        "requiredCourses": "REPORTE DE PRODUCCIÓN"
+    },
+    {
+        "position": "AUXILIAR DE SUPERVISOR B",
+        "requiredCourses": "SEGURIDAD Y PREVENCIÓN DE ACCIDENTES"
+    },
+    {
+        "position": "AUXILIAR DE SUPERVISOR B",
+        "requiredCourses": "SEPARACIÓN DE RESIDUOS"
+    },
+    {
+        "position": "AUXILIAR DE SUPERVISOR B",
+        "requiredCourses": "SISTEMA DE GESTIÓN INTEGRAL"
+    },
+    {
+        "position": "AUXILIAR DE SUPERVISOR B",
+        "requiredCourses": "VALIDACIÓN DE ARRANQUE"
+    },
+    {
+        "position": "AUXILIAR DEL SGI B",
+        "requiredCourses": "8DS PARA LA SOLUCION DE PROBLEMAS"
+    },
+    {
+        "position": "AUXILIAR DEL SGI B",
+        "requiredCourses": "AUDITORÍAS DE PROCESO EN CAPAS"
+    },
+    {
+        "position": "AUXILIAR DEL SGI B",
+        "requiredCourses": "COMPRENSIÓN DE LOS REQUISITOS ESPECIFICOS DEL CLIENTE"
+    },
+    {
+        "position": "AUXILIAR DEL SGI B",
+        "requiredCourses": "CORE TOOLS"
+    },
+    {
+        "position": "AUXILIAR DEL SGI B",
+        "requiredCourses": "DIAGRAMA DE TORTUGA"
+    },
+    {
+        "position": "AUXILIAR DEL SGI B",
+        "requiredCourses": "ESTRUCTURA DEL SGI Y DOCUMENTOS"
+    },
+    {
+        "position": "AUXILIAR DEL SGI B",
+        "requiredCourses": "FORMACIÓN DE INSTRUCTORES INTERNOS"
+    },
+    {
+        "position": "AUXILIAR DEL SGI B",
+        "requiredCourses": "INDUCCIÓN A LA EMPRESA"
+    },
+    {
+        "position": "AUXILIAR DEL SGI B",
+        "requiredCourses": "METODOLOGÍA 5S"
+    },
+    {
+        "position": "AUXILIAR DEL SGI B",
+        "requiredCourses": "NOM-035-STPS-2018"
+    },
+    {
+        "position": "AUXILIAR DEL SGI B",
+        "requiredCourses": "SEGURIDAD Y PREVENCIÓN DE ACCIDENTES"
+    },
+    {
+        "position": "AUXILIAR DEL SGI B",
+        "requiredCourses": "SISTEMA DE GESTIÓN INTEGRAL"
+    },
+    {
+        "position": "AUXILIAR DEL SGI B",
+        "requiredCourses": "VDA 6.5 AUDITORÍAS DE PRODUCTO"
+    },
+    {
+        "position": "AUXILIAR DEL SGI C",
+        "requiredCourses": "8DS PARA LA SOLUCION DE PROBLEMAS"
+    },
+    {
+        "position": "AUXILIAR DEL SGI C",
+        "requiredCourses": "AUDITORÍAS DE PROCESO EN CAPAS"
+    },
+    {
+        "position": "AUXILIAR DEL SGI C",
+        "requiredCourses": "COMPRENSIÓN DE LOS REQUISITOS ESPECIFICOS DEL CLIENTE"
+    },
+    {
+        "position": "AUXILIAR DEL SGI C",
+        "requiredCourses": "ESTRUCTURA DEL SGI Y DOCUMENTOS"
+    },
+    {
+        "position": "AUXILIAR DEL SGI C",
+        "requiredCourses": "FORMACIÓN DE INSTRUCTORES INTERNOS"
+    },
+    {
+        "position": "AUXILIAR DEL SGI C",
+        "requiredCourses": "INDUCCIÓN A LA EMPRESA"
+    },
+    {
+        "position": "AUXILIAR DEL SGI C",
+        "requiredCourses": "METODOLOGÍA 5S"
+    },
+    {
+        "position": "AUXILIAR DEL SGI C",
+        "requiredCourses": "NOM-035-STPS-2018"
+    },
+    {
+        "position": "AUXILIAR DEL SGI C",
+        "requiredCourses": "SEGURIDAD Y PREVENCIÓN DE ACCIDENTES"
+    },
+    {
+        "position": "AUXILIAR DEL SGI C",
+        "requiredCourses": "SISTEMA DE GESTIÓN INTEGRAL"
+    },
+    {
+        "position": "AUXILIAR PROGRAMADOR",
+        "requiredCourses": "INDUCCIÓN A LA EMPRESA"
+    },
+    {
+        "position": "AUXILIAR PROGRAMADOR",
+        "requiredCourses": "SEGURIDAD Y PREVENCIÓN DE ACCIDENTES"
+    },
+    {
+        "position": "CAPTURISTA RPS A",
+        "requiredCourses": "ALERTAS DE CALIDAD Y CATÁLOGO DE FALLAS"
+    },
+    {
+        "position": "CAPTURISTA RPS A",
+        "requiredCourses": "FAMILIAS DEL PRODUCTO"
+    },
+    {
+        "position": "CAPTURISTA RPS A",
+        "requiredCourses": "INDUCCIÓN A LA EMPRESA"
+    },
+    {
+        "position": "CAPTURISTA RPS A",
+        "requiredCourses": "INSTRUCCIONES DE TRABAJO"
+    },
+    {
+        "position": "CAPTURISTA RPS A",
+        "requiredCourses": "METODOLOGÍA 5S"
+    },
+    {
+        "position": "CAPTURISTA RPS A",
+        "requiredCourses": "REPORTE DE PRODUCCIÓN"
+    },
+    {
+        "position": "CAPTURISTA RPS A",
+        "requiredCourses": "RPS"
+    },
+    {
+        "position": "CAPTURISTA RPS A",
+        "requiredCourses": "SEGURIDAD Y PREVENCIÓN DE ACCIDENTES"
+    },
+    {
+        "position": "CAPTURISTA RPS A",
+        "requiredCourses": "SEPARACIÓN DE RESIDUOS"
+    },
+    {
+        "position": "CAPTURISTA RPS A",
+        "requiredCourses": "SISTEMA DE GESTIÓN INTEGRAL"
+    },
+    {
+        "position": "CAPTURISTA RPS B",
+        "requiredCourses": "ALERTAS DE CALIDAD Y CATÁLOGO DE FALLAS"
+    },
+    {
+        "position": "CAPTURISTA RPS B",
+        "requiredCourses": "FAMILIAS DEL PRODUCTO"
+    },
+    {
+        "position": "CAPTURISTA RPS B",
+        "requiredCourses": "INDUCCIÓN A LA EMPRESA"
+    },
+    {
+        "position": "CAPTURISTA RPS B",
+        "requiredCourses": "INSTRUCCIONES DE TRABAJO"
+    },
+    {
+        "position": "CAPTURISTA RPS B",
+        "requiredCourses": "METODOLOGÍA 5S"
+    },
+    {
+        "position": "CAPTURISTA RPS B",
+        "requiredCourses": "REPORTE DE PRODUCCIÓN"
+    },
+    {
+        "position": "CAPTURISTA RPS B",
+        "requiredCourses": "RPS"
+    },
+    {
+        "position": "CAPTURISTA RPS B",
+        "requiredCourses": "SEGURIDAD Y PREVENCIÓN DE ACCIDENTES"
+    },
+    {
+        "position": "CAPTURISTA RPS B",
+        "requiredCourses": "SEPARACIÓN DE RESIDUOS"
+    },
+    {
+        "position": "CAPTURISTA RPS B",
+        "requiredCourses": "SISTEMA DE GESTIÓN INTEGRAL"
+    },
+    {
+        "position": "CHECK LIST A",
+        "requiredCourses": "ALERTAS DE CALIDAD Y CATÁLOGO DE FALLAS"
+    },
+    {
+        "position": "CHECK LIST A",
+        "requiredCourses": "FAMILIAS DEL PRODUCTO"
+    },
+    {
+        "position": "CHECK LIST A",
+        "requiredCourses": "INDUCCIÓN A LA EMPRESA"
+    },
+    {
+        "position": "CHECK LIST A",
+        "requiredCourses": "INSTRUCCIONES DE TRABAJO"
+    },
+    {
+        "position": "CHECK LIST A",
+        "requiredCourses": "METODOLOGÍA 5S"
+    },
+    {
+        "position": "CHECK LIST A",
+        "requiredCourses": "REPORTE DE PRODUCCIÓN"
+    },
+    {
+        "position": "CHECK LIST A",
+        "requiredCourses": "SEGURIDAD Y PREVENCIÓN DE ACCIDENTES"
+    },
+    {
+        "position": "CHECK LIST A",
+        "requiredCourses": "SEPARACIÓN DE RESIDUOS"
+    },
+    {
+        "position": "CHECK LIST A",
+        "requiredCourses": "SISTEMA DE GESTIÓN INTEGRAL"
+    },
+    {
+        "position": "CHECK LIST B",
+        "requiredCourses": "ALERTAS DE CALIDAD Y CATÁLOGO DE FALLAS"
+    },
+    {
+        "position": "CHECK LIST B",
+        "requiredCourses": "FAMILIAS DEL PRODUCTO"
+    },
+    {
+        "position": "CHECK LIST B",
+        "requiredCourses": "INDUCCIÓN A LA EMPRESA"
+    },
+    {
+        "position": "CHECK LIST B",
+        "requiredCourses": "INSTRUCCIONES DE TRABAJO"
+    },
+    {
+        "position": "CHECK LIST B",
+        "requiredCourses": "METODOLOGÍA 5S"
+    },
+    {
+        "position": "CHECK LIST B",
+        "requiredCourses": "REPORTE DE PRODUCCIÓN"
+    },
+    {
+        "position": "CHECK LIST B",
+        "requiredCourses": "SEGURIDAD Y PREVENCIÓN DE ACCIDENTES"
+    },
+    {
+        "position": "CHECK LIST B",
+        "requiredCourses": "SEPARACIÓN DE RESIDUOS"
+    },
+    {
+        "position": "CHECK LIST B",
+        "requiredCourses": "SISTEMA DE GESTIÓN INTEGRAL"
+    },
+    {
+        "position": "CHOFER A",
+        "requiredCourses": "INDUCCIÓN A LA EMPRESA"
+    },
+    {
+        "position": "CHOFER A",
+        "requiredCourses": "NOM-035-STPS-2018"
+    },
+    {
+        "position": "CHOFER A",
+        "requiredCourses": "NOM-036-1-STPS-2018"
+    },
+    {
+        "position": "CHOFER A",
+        "requiredCourses": "SISTEMA DE GESTIÓN INTEGRAL"
+    },
+    {
+        "position": "CHOFER B",
+        "requiredCourses": "INDUCCIÓN A LA EMPRESA"
+    },
+    {
+        "position": "CHOFER B",
+        "requiredCourses": "NOM-035-STPS-2018"
+    },
+    {
+        "position": "CHOFER B",
+        "requiredCourses": "NOM-036-1-STPS-2018"
+    },
+    {
+        "position": "CHOFER B",
+        "requiredCourses": "SISTEMA DE GESTIÓN INTEGRAL"
+    },
+    {
+        "position": "COORDINADOR DE RECLUTAMIENTO Y SELECCIÓN",
+        "requiredCourses": "AUDITORÍAS DE PROCESO EN CAPAS"
+    },
+    {
+        "position": "COORDINADOR DE RECLUTAMIENTO Y SELECCIÓN",
+        "requiredCourses": "DIAGRAMA DE TORTUGA"
+    },
+    {
+        "position": "COORDINADOR DE RECLUTAMIENTO Y SELECCIÓN",
+        "requiredCourses": "ESTRUCTURA DEL SGI Y DOCUMENTOS"
+    },
+    {
+        "position": "COORDINADOR DE RECLUTAMIENTO Y SELECCIÓN",
+        "requiredCourses": "INDUCCIÓN A LA EMPRESA"
+    },
+    {
+        "position": "COORDINADOR DE RECLUTAMIENTO Y SELECCIÓN",
+        "requiredCourses": "NOM-035-STPS-2018"
+    },
+    {
+        "position": "COORDINADOR DE RECLUTAMIENTO Y SELECCIÓN",
+        "requiredCourses": "SISTEMA DE GESTIÓN INTEGRAL"
+    },
+    {
+        "position": "COORDINADOR DE RPS",
+        "requiredCourses": "INDUCCIÓN A LA EMPRESA"
+    },
+    {
+        "position": "COORDINADOR DE RPS",
+        "requiredCourses": "SISTEMA DE GESTIÓN INTEGRAL"
+    },
+    {
+        "position": "COORDINADOR DEL SGC",
+        "requiredCourses": "8DS PARA LA SOLUCION DE PROBLEMAS"
+    },
+    {
+        "position": "COORDINADOR DEL SGC",
+        "requiredCourses": "AUDITOR INTERNO IATF 16949 AUTOMOTRIZ"
+    },
+    {
+        "position": "COORDINADOR DEL SGC",
+        "requiredCourses": "AUDITOR ISO 14001:2015"
+    },
+    {
+        "position": "COORDINADOR DEL SGC",
+        "requiredCourses": "AUDITORÍAS DE PROCESO EN CAPAS"
+    },
+    {
+        "position": "COORDINADOR DEL SGC",
+        "requiredCourses": "COMPRENSIÓN DE LOS REQUISITOS ESPECIFICOS DEL CLIENTE"
+    },
+    {
+        "position": "COORDINADOR DEL SGC",
+        "requiredCourses": "CORE TOOLS"
+    },
+    {
+        "position": "COORDINADOR DEL SGC",
+        "requiredCourses": "CQI 23 PROCESO Y EVALUACION DEL SISTEMA DE MOLDEO 1ED"
+    },
+    {
+        "position": "COORDINADOR DEL SGC",
+        "requiredCourses": "DIAGRAMA DE TORTUGA"
+    },
+    {
+        "position": "COORDINADOR DEL SGC",
+        "requiredCourses": "ESTRUCTURA DEL SGI Y DOCUMENTOS"
+    },
+    {
+        "position": "COORDINADOR DEL SGC",
+        "requiredCourses": "FORMACIÓN DE INSTRUCTORES INTERNOS"
+    },
+    {
+        "position": "COORDINADOR DEL SGC",
+        "requiredCourses": "INDUCCIÓN A LA EMPRESA"
+    },
+    {
+        "position": "COORDINADOR DEL SGC",
+        "requiredCourses": "METODOLOGÍA 5S"
+    },
+    {
+        "position": "COORDINADOR DEL SGC",
+        "requiredCourses": "MI-GER-001"
+    },
+    {
+        "position": "COORDINADOR DEL SGC",
+        "requiredCourses": "NOM-035-STPS-2018"
+    },
+    {
+        "position": "COORDINADOR DEL SGC",
+        "requiredCourses": "PR-ASC-001"
+    },
+    {
+        "position": "COORDINADOR DEL SGC",
+        "requiredCourses": "SEGURIDAD Y PREVENCIÓN DE ACCIDENTES"
+    },
+    {
+        "position": "COORDINADOR DEL SGC",
+        "requiredCourses": "SISTEMA DE GESTIÓN INTEGRAL"
+    },
+    {
+        "position": "COORDINADOR DEL SGC",
+        "requiredCourses": "VDA 6.3 AUDITORÍAS DE PROCESO"
+    },
+    {
+        "position": "COORDINADOR DEL SGC",
+        "requiredCourses": "VDA 6.5 AUDITORÍAS DE PRODUCTO"
+    },
+    {
+        "position": "GERENTE DE CALIDAD",
+        "requiredCourses": "8DS PARA LA SOLUCION DE PROBLEMAS"
+    },
+    {
+        "position": "GERENTE DE CALIDAD",
+        "requiredCourses": "AMEF"
+    },
+    {
+        "position": "GERENTE DE CALIDAD",
+        "requiredCourses": "AUDITORÍAS DE PROCESO EN CAPAS"
+    },
+    {
+        "position": "GERENTE DE CALIDAD",
+        "requiredCourses": "COMPRENSIÓN DE LOS REQUISITOS ESPECIFICOS DEL CLIENTE"
+    },
+    {
+        "position": "GERENTE DE CALIDAD",
+        "requiredCourses": "CORE TOOLS"
+    },
+    {
+        "position": "GERENTE DE CALIDAD",
+        "requiredCourses": "DIAGRAMA DE TORTUGA"
+    },
+    {
+        "position": "GERENTE DE CALIDAD",
+        "requiredCourses": "ESTRUCTURA DEL SGI Y DOCUMENTOS"
+    },
+    {
+        "position": "GERENTE DE CALIDAD",
+        "requiredCourses": "GD&T"
+    },
+    {
+        "position": "GERENTE DE CALIDAD",
+        "requiredCourses": "INDUCCIÓN A LA EMPRESA"
+    },
+    {
+        "position": "GERENTE DE CALIDAD",
+        "requiredCourses": "INTERPRETACIÓN DE PLANOS"
+    },
+    {
+        "position": "GERENTE DE CALIDAD",
+        "requiredCourses": "INTRODUCCIÓN A LA METROLOGÍA Y MANEJO DE EQUIPOS DE MEDICIÓN"
+    },
+    {
+        "position": "GERENTE DE CALIDAD",
+        "requiredCourses": "IT-ASC-019"
+    },
+    {
+        "position": "GERENTE DE CALIDAD",
+        "requiredCourses": "KEYENCE"
+    },
+    {
+        "position": "GERENTE DE CALIDAD",
+        "requiredCourses": "MANEJO DE MATERIAL NO CONFORME"
+    },
+    {
+        "position": "GERENTE DE CALIDAD",
+        "requiredCourses": "MI-GER-001"
+    },
+    {
+        "position": "GERENTE DE CALIDAD",
+        "requiredCourses": "MSA (4 EDICION) SISTEMA DE ANALISIS DE MEDICIÓN"
+    },
+    {
+        "position": "GERENTE DE CALIDAD",
+        "requiredCourses": "NOM-035-STPS-2018"
+    },
+    {
+        "position": "GERENTE DE CALIDAD",
+        "requiredCourses": "NOM-036-1-STPS-2018"
+    },
+    {
+        "position": "GERENTE DE CALIDAD",
+        "requiredCourses": "PR-ASC-001"
+    },
+    {
+        "position": "GERENTE DE CALIDAD",
+        "requiredCourses": "SEGURIDAD Y PREVENCIÓN DE ACCIDENTES"
+    },
+    {
+        "position": "GERENTE DE CALIDAD",
+        "requiredCourses": "SISTEMA DE GESTIÓN INTEGRAL"
+    },
+    {
+        "position": "GERENTE DE CALIDAD",
+        "requiredCourses": "TRAZABILIDAD DEL PRODUCTO"
+    },
+    {
+        "position": "GERENTE DE CALIDAD",
+        "requiredCourses": "VALIDACIÓN DE ARRANQUE"
+    },
+    {
+        "position": "GERENTE DE CALIDAD",
+        "requiredCourses": "VDA 6.3 AUDITORÍAS DE PROCESO"
+    },
+    {
+        "position": "GERENTE DE CALIDAD",
+        "requiredCourses": "VDA 6.5 AUDITORÍAS DE PRODUCTO"
+    },
+    {
+        "position": "GERENTE DE PLANTA",
+        "requiredCourses": "INDUCCIÓN A LA EMPRESA"
+    },
+    {
+        "position": "GERENTE DE PLANTA",
+        "requiredCourses": "SISTEMA DE GESTIÓN INTEGRAL"
+    },
+    {
+        "position": "GERENTE DE PRODUCCIÓN",
+        "requiredCourses": "8DS PARA LA SOLUCION DE PROBLEMAS"
+    },
+    {
+        "position": "GERENTE DE PRODUCCIÓN",
+        "requiredCourses": "AUDITORÍAS DE PROCESO EN CAPAS"
+    },
+    {
+        "position": "GERENTE DE PRODUCCIÓN",
+        "requiredCourses": "COMPRENSIÓN DE LOS REQUISITOS ESPECIFICOS DEL CLIENTE"
+    },
+    {
+        "position": "GERENTE DE PRODUCCIÓN",
+        "requiredCourses": "DIAGRAMA DE TORTUGA"
+    },
+    {
+        "position": "GERENTE DE PRODUCCIÓN",
+        "requiredCourses": "GRÁFICAS DE CONTROL"
+    },
+    {
+        "position": "GERENTE DE PRODUCCIÓN",
+        "requiredCourses": "INDUCCIÓN A LA EMPRESA"
+    },
+    {
+        "position": "GERENTE DE PRODUCCIÓN",
+        "requiredCourses": "LLENADO CORRECTO DE DESVIACIÓN"
+    },
+    {
+        "position": "GERENTE DE PRODUCCIÓN",
+        "requiredCourses": "MI-GER-001"
+    },
+    {
+        "position": "GERENTE DE PRODUCCIÓN",
+        "requiredCourses": "MOLDEO CIENTIFICO"
+    },
+    {
+        "position": "GERENTE DE PRODUCCIÓN",
+        "requiredCourses": "NOM-035-STPS-2018"
+    },
+    {
+        "position": "GERENTE DE PRODUCCIÓN",
+        "requiredCourses": "PLAN DE CONTROL PSW Y DESVIACIÓN"
+    },
+    {
+        "position": "GERENTE DE PRODUCCIÓN",
+        "requiredCourses": "PR-ASC-001"
+    },
+    {
+        "position": "GERENTE DE PRODUCCIÓN",
+        "requiredCourses": "PROCESO DE INYECCIÓN DE PLÁSTICO"
+    },
+    {
+        "position": "GERENTE DE PRODUCCIÓN",
+        "requiredCourses": "RPS"
+    },
+    {
+        "position": "GERENTE DE PRODUCCIÓN",
+        "requiredCourses": "SISTEMA DE GESTIÓN INTEGRAL"
+    },
+    {
+        "position": "GERENTE DE PRODUCCIÓN",
+        "requiredCourses": "SPC (2 EDICION) CONTROL DEL PROCESO ESTADISTICO"
+    },
+    {
+        "position": "GERENTE DE PRODUCCIÓN",
+        "requiredCourses": "VDA 6.5 AUDITORÍAS DE PRODUCTO"
+    },
+    {
+        "position": "GERENTE DE PROYECTOS",
+        "requiredCourses": "8DS PARA LA SOLUCION DE PROBLEMAS"
+    },
+    {
+        "position": "GERENTE DE PROYECTOS",
+        "requiredCourses": "AMEF"
+    },
+    {
+        "position": "GERENTE DE PROYECTOS",
+        "requiredCourses": "AUDITORÍAS DE PROCESO EN CAPAS"
+    },
+    {
+        "position": "GERENTE DE PROYECTOS",
+        "requiredCourses": "CORE TOOLS"
+    },
+    {
+        "position": "GERENTE DE PROYECTOS",
+        "requiredCourses": "DIAGRAMA DE TORTUGA"
+    },
+    {
+        "position": "GERENTE DE PROYECTOS",
+        "requiredCourses": "ESTRUCTURA DEL SGI Y DOCUMENTOS"
+    },
+    {
+        "position": "GERENTE DE PROYECTOS",
+        "requiredCourses": "GD&T"
+    },
+    {
+        "position": "GERENTE DE PROYECTOS",
+        "requiredCourses": "GESTIÓN DE PROYECTOS"
+    },
+    {
+        "position": "GERENTE DE PROYECTOS",
+        "requiredCourses": "IMDS"
+    },
+    {
+        "position": "GERENTE DE PROYECTOS",
+        "requiredCourses": "INDUCCIÓN A LA EMPRESA"
+    },
+    {
+        "position": "GERENTE DE PROYECTOS",
+        "requiredCourses": "METODOLOGÍA 5S"
+    },
+    {
+        "position": "GERENTE DE PROYECTOS",
+        "requiredCourses": "MI-GER-001"
+    },
+    {
+        "position": "GERENTE DE PROYECTOS",
+        "requiredCourses": "PR-ASC-001"
+    },
+    {
+        "position": "GERENTE DE PROYECTOS",
+        "requiredCourses": "SEGURIDAD Y PREVENCIÓN DE ACCIDENTES"
+    },
+    {
+        "position": "GERENTE DE PROYECTOS",
+        "requiredCourses": "SISTEMA DE GESTIÓN INTEGRAL"
+    },
+    {
+        "position": "GERENTE DE PROYECTOS",
+        "requiredCourses": "SPC (2 EDICION) CONTROL DEL PROCESO ESTADISTICO"
+    },
+    {
+        "position": "GERENTE DE PROYECTOS",
+        "requiredCourses": "VDA 6.3 AUDITORÍAS DE PROCESO"
+    },
+    {
+        "position": "INGENIERO DE CALIDAD A",
+        "requiredCourses": "8DS PARA LA SOLUCION DE PROBLEMAS"
+    },
+    {
+        "position": "INGENIERO DE CALIDAD A",
+        "requiredCourses": "AMEF"
+    },
+    {
+        "position": "INGENIERO DE CALIDAD A",
+        "requiredCourses": "AUDITORÍAS DE PROCESO EN CAPAS"
+    },
+    {
+        "position": "INGENIERO DE CALIDAD A",
+        "requiredCourses": "COMPRENSIÓN DE LOS REQUISITOS ESPECIFICOS DEL CLIENTE"
+    },
+    {
+        "position": "INGENIERO DE CALIDAD A",
+        "requiredCourses": "CORE TOOLS"
+    },
+    {
+        "position": "INGENIERO DE CALIDAD A",
+        "requiredCourses": "DIAGRAMA DE TORTUGA"
+    },
+    {
+        "position": "INGENIERO DE CALIDAD A",
+        "requiredCourses": "ESTRUCTURA DEL SGI Y DOCUMENTOS"
+    },
+    {
+        "position": "INGENIERO DE CALIDAD A",
+        "requiredCourses": "GD&T"
+    },
+    {
+        "position": "INGENIERO DE CALIDAD A",
+        "requiredCourses": "INDUCCIÓN A LA EMPRESA"
+    },
+    {
+        "position": "INGENIERO DE CALIDAD A",
+        "requiredCourses": "INTERPRETACIÓN DE PLANOS"
+    },
+    {
+        "position": "INGENIERO DE CALIDAD A",
+        "requiredCourses": "INTRODUCCIÓN A LA METROLOGÍA Y MANEJO DE EQUIPOS DE MEDICIÓN"
+    },
+    {
+        "position": "INGENIERO DE CALIDAD A",
+        "requiredCourses": "IT-ASC-019"
+    },
+    {
+        "position": "INGENIERO DE CALIDAD A",
+        "requiredCourses": "KEYENCE"
+    },
+    {
+        "position": "INGENIERO DE CALIDAD A",
+        "requiredCourses": "MANEJO DE MATERIAL NO CONFORME"
+    },
+    {
+        "position": "INGENIERO DE CALIDAD A",
+        "requiredCourses": "MSA (4 EDICION) SISTEMA DE ANALISIS DE MEDICIÓN"
+    },
+    {
+        "position": "INGENIERO DE CALIDAD A",
+        "requiredCourses": "NOM-035-STPS-2018"
+    },
+    {
+        "position": "INGENIERO DE CALIDAD A",
+        "requiredCourses": "NOM-036-1-STPS-2018"
+    },
+    {
+        "position": "INGENIERO DE CALIDAD A",
+        "requiredCourses": "SEGURIDAD Y PREVENCIÓN DE ACCIDENTES"
+    },
+    {
+        "position": "INGENIERO DE CALIDAD A",
+        "requiredCourses": "SISTEMA DE GESTIÓN INTEGRAL"
+    },
+    {
+        "position": "INGENIERO DE CALIDAD A",
+        "requiredCourses": "TRAZABILIDAD DEL PRODUCTO"
+    },
+    {
+        "position": "INGENIERO DE CALIDAD A",
+        "requiredCourses": "VALIDACIÓN DE ARRANQUE"
+    },
+    {
+        "position": "INGENIERO DE CALIDAD A",
+        "requiredCourses": "VDA 6.3 AUDITORÍAS DE PROCESO"
+    },
+    {
+        "position": "INGENIERO DE CALIDAD A",
+        "requiredCourses": "VDA 6.5 AUDITORÍAS DE PRODUCTO"
+    },
+    {
+        "position": "INGENIERO DE CALIDAD B",
+        "requiredCourses": "8DS PARA LA SOLUCION DE PROBLEMAS"
+    },
+    {
+        "position": "INGENIERO DE CALIDAD B",
+        "requiredCourses": "AMEF"
+    },
+    {
+        "position": "INGENIERO DE CALIDAD B",
+        "requiredCourses": "AUDITORÍAS DE PROCESO EN CAPAS"
+    },
+    {
+        "position": "INGENIERO DE CALIDAD B",
+        "requiredCourses": "COMPRENSIÓN DE LOS REQUISITOS ESPECIFICOS DEL CLIENTE"
+    },
+    {
+        "position": "INGENIERO DE CALIDAD B",
+        "requiredCourses": "CORE TOOLS"
+    },
+    {
+        "position": "INGENIERO DE CALIDAD B",
+        "requiredCourses": "DIAGRAMA DE TORTUGA"
+    },
+    {
+        "position": "INGENIERO DE CALIDAD B",
+        "requiredCourses": "ESTRUCTURA DEL SGI Y DOCUMENTOS"
+    },
+    {
+        "position": "INGENIERO DE CALIDAD B",
+        "requiredCourses": "GD&T"
+    },
+    {
+        "position": "INGENIERO DE CALIDAD B",
+        "requiredCourses": "INDUCCIÓN A LA EMPRESA"
+    },
+    {
+        "position": "INGENIERO DE CALIDAD B",
+        "requiredCourses": "INTERPRETACIÓN DE PLANOS"
+    },
+    {
+        "position": "INGENIERO DE CALIDAD B",
+        "requiredCourses": "INTRODUCCIÓN A LA METROLOGÍA Y MANEJO DE EQUIPOS DE MEDICIÓN"
+    },
+    {
+        "position": "INGENIERO DE CALIDAD B",
+        "requiredCourses": "IT-ASC-019"
+    },
+    {
+        "position": "INGENIERO DE CALIDAD B",
+        "requiredCourses": "KEYENCE"
+    },
+    {
+        "position": "INGENIERO DE CALIDAD B",
+        "requiredCourses": "MANEJO DE MATERIAL NO CONFORME"
+    },
+    {
+        "position": "INGENIERO DE CALIDAD B",
+        "requiredCourses": "MSA (4 EDICION) SISTEMA DE ANALISIS DE MEDICIÓN"
+    },
+    {
+        "position": "INGENIERO DE CALIDAD B",
+        "requiredCourses": "NOM-035-STPS-2018"
+    },
+    {
+        "position": "INGENIERO DE CALIDAD B",
+        "requiredCourses": "NOM-036-1-STPS-2018"
+    },
+    {
+        "position": "INGENIERO DE CALIDAD B",
+        "requiredCourses": "SEGURIDAD Y PREVENCIÓN DE ACCIDENTES"
+    },
+    {
+        "position": "INGENIERO DE CALIDAD B",
+        "requiredCourses": "SISTEMA DE GESTIÓN INTEGRAL"
+    },
+    {
+        "position": "INGENIERO DE CALIDAD B",
+        "requiredCourses": "TRAZABILIDAD DEL PRODUCTO"
+    },
+    {
+        "position": "INGENIERO DE CALIDAD B",
+        "requiredCourses": "VALIDACIÓN DE ARRANQUE"
+    },
+    {
+        "position": "INGENIERO DE CALIDAD B",
+        "requiredCourses": "VDA 6.3 AUDITORÍAS DE PROCESO"
+    },
+    {
+        "position": "INGENIERO DE CALIDAD B",
+        "requiredCourses": "VDA 6.5 AUDITORÍAS DE PRODUCTO"
+    },
+    {
+        "position": "INGENIERO DE CALIDAD C",
+        "requiredCourses": "SISTEMA DE GESTIÓN INTEGRAL"
+    },
+    {
+        "position": "INGENIERO DE PROCESO A",
+        "requiredCourses": "8DS PARA LA SOLUCION DE PROBLEMAS"
+    },
+    {
+        "position": "INGENIERO DE PROCESO A",
+        "requiredCourses": "AJUSTE INICIAL DE LAS CONDICIONES DE MOLDEO"
+    },
+    {
+        "position": "INGENIERO DE PROCESO A",
+        "requiredCourses": "AUDITORÍAS DE PROCESO EN CAPAS"
+    },
+    {
+        "position": "INGENIERO DE PROCESO A",
+        "requiredCourses": "COLADA CALIENTE"
+    },
+    {
+        "position": "INGENIERO DE PROCESO A",
+        "requiredCourses": "COMPRENSIÓN DE LOS REQUISITOS ESPECIFICOS DEL CLIENTE"
+    },
+    {
+        "position": "INGENIERO DE PROCESO A",
+        "requiredCourses": "CONOCIMIENTO DE MOLDES, MANTENIMIENTO PREVENTIVO Y CORRECTIVO"
+    },
+    {
+        "position": "INGENIERO DE PROCESO A",
+        "requiredCourses": "FRIGEL"
+    },
+    {
+        "position": "INGENIERO DE PROCESO A",
+        "requiredCourses": "GD&T"
+    },
+    {
+        "position": "INGENIERO DE PROCESO A",
+        "requiredCourses": "GRÁFICAS DE CONTROL"
+    },
+    {
+        "position": "INGENIERO DE PROCESO A",
+        "requiredCourses": "IDENTIFICACIÓN DE RESINA - SUMINISTRO A MAQUINAS DE INYECCIÒN"
+    },
+    {
+        "position": "INGENIERO DE PROCESO A",
+        "requiredCourses": "INDUCCIÓN A LA EMPRESA"
+    },
+    {
+        "position": "INGENIERO DE PROCESO A",
+        "requiredCourses": "INSPECCIÓN VISUAL"
+    },
+    {
+        "position": "INGENIERO DE PROCESO A",
+        "requiredCourses": "MANIPULACION DE ROBOTS WITTMAN"
+    },
+    {
+        "position": "INGENIERO DE PROCESO A",
+        "requiredCourses": "MEDICION DE TIEMPOS Y MOVIMIENTOS"
+    },
+    {
+        "position": "INGENIERO DE PROCESO A",
+        "requiredCourses": "MOLDEO CIENTIFICO"
+    },
+    {
+        "position": "INGENIERO DE PROCESO A",
+        "requiredCourses": "NOM-005-STPS-1998"
+    },
+    {
+        "position": "INGENIERO DE PROCESO A",
+        "requiredCourses": "NOM-026-STPS-2008"
+    },
+    {
+        "position": "INGENIERO DE PROCESO A",
+        "requiredCourses": "NOM-030-STPS-2009"
+    },
+    {
+        "position": "INGENIERO DE PROCESO A",
+        "requiredCourses": "NOM-035-STPS-2018"
+    },
+    {
+        "position": "INGENIERO DE PROCESO A",
+        "requiredCourses": "NOM-036-1-STPS-2018"
+    },
+    {
+        "position": "INGENIERO DE PROCESO A",
+        "requiredCourses": "PLANEACIÓN Y CONTROL DE LA PRODUCCIÓN"
+    },
+    {
+        "position": "INGENIERO DE PROCESO A",
+        "requiredCourses": "PREVENCIÓN DE RIESGOS POR MAQUINARIA Y EQUIPO"
+    },
+    {
+        "position": "INGENIERO DE PROCESO A",
+        "requiredCourses": "PROCESO DE INYECCIÓN DE PLÁSTICO"
+    },
+    {
+        "position": "INGENIERO DE PROCESO A",
+        "requiredCourses": "R&R"
+    },
+    {
+        "position": "INGENIERO DE PROCESO A",
+        "requiredCourses": "RPS"
+    },
+    {
+        "position": "INGENIERO DE PROCESO A",
+        "requiredCourses": "SISTEMA DE GESTIÓN INTEGRAL"
+    },
+    {
+        "position": "INGENIERO DE PROCESO A",
+        "requiredCourses": "SPC (2 EDICION) CONTROL DEL PROCESO ESTADISTICO"
+    },
+    {
+        "position": "INGENIERO DE PROCESO A",
+        "requiredCourses": "TERMOREGULADORES"
+    },
+    {
+        "position": "INGENIERO DE PROCESO A",
+        "requiredCourses": "TRAZABILIDAD DEL PRODUCTO"
+    },
+    {
+        "position": "INGENIERO DE PROCESO A",
+        "requiredCourses": "VALIDACIÓN DE ARRANQUE"
+    },
+    {
+        "position": "INGENIERO DE PROCESO A",
+        "requiredCourses": "VDA 6.5 AUDITORÍAS DE PRODUCTO"
+    },
+    {
+        "position": "INGENIERO DE PROCESO B",
+        "requiredCourses": "8DS PARA LA SOLUCION DE PROBLEMAS"
+    },
+    {
+        "position": "INGENIERO DE PROCESO B",
+        "requiredCourses": "AJUSTE INICIAL DE LAS CONDICIONES DE MOLDEO"
+    },
+    {
+        "position": "INGENIERO DE PROCESO B",
+        "requiredCourses": "AUDITORÍAS DE PROCESO EN CAPAS"
+    },
+    {
+        "position": "INGENIERO DE PROCESO B",
+        "requiredCourses": "COLADA CALIENTE"
+    },
+    {
+        "position": "INGENIERO DE PROCESO B",
+        "requiredCourses": "COMPRENSIÓN DE LOS REQUISITOS ESPECIFICOS DEL CLIENTE"
+    },
+    {
+        "position": "INGENIERO DE PROCESO B",
+        "requiredCourses": "CONOCIMIENTO DE MOLDES, MANTENIMIENTO PREVENTIVO Y CORRECTIVO"
+    },
+    {
+        "position": "INGENIERO DE PROCESO B",
+        "requiredCourses": "FRIGEL"
+    },
+    {
+        "position": "INGENIERO DE PROCESO B",
+        "requiredCourses": "GD&T"
+    },
+    {
+        "position": "INGENIERO DE PROCESO B",
+        "requiredCourses": "GRÁFICAS DE CONTROL"
+    },
+    {
+        "position": "INGENIERO DE PROCESO B",
+        "requiredCourses": "IDENTIFICACIÓN DE RESINA - SUMINISTRO A MAQUINAS DE INYECCIÒN"
+    },
+    {
+        "position": "INGENIERO DE PROCESO B",
+        "requiredCourses": "INDUCCIÓN A LA EMPRESA"
+    },
+    {
+        "position": "INGENIERO DE PROCESO B",
+        "requiredCourses": "INSPECCIÓN VISUAL"
+    },
+    {
+        "position": "INGENIERO DE PROCESO B",
+        "requiredCourses": "MANIPULACION DE ROBOTS WITTMAN"
+    },
+    {
+        "position": "INGENIERO DE PROCESO B",
+        "requiredCourses": "MEDICION DE TIEMPOS Y MOVIMIENTOS"
+    },
+    {
+        "position": "INGENIERO DE PROCESO B",
+        "requiredCourses": "MOLDEO CIENTIFICO"
+    },
+    {
+        "position": "INGENIERO DE PROCESO B",
+        "requiredCourses": "NOM-005-STPS-1998"
+    },
+    {
+        "position": "INGENIERO DE PROCESO B",
+        "requiredCourses": "NOM-026-STPS-2008"
+    },
+    {
+        "position": "INGENIERO DE PROCESO B",
+        "requiredCourses": "NOM-030-STPS-2009"
+    },
+    {
+        "position": "INGENIERO DE PROCESO B",
+        "requiredCourses": "NOM-035-STPS-2018"
+    },
+    {
+        "position": "INGENIERO DE PROCESO B",
+        "requiredCourses": "NOM-036-1-STPS-2018"
+    },
+    {
+        "position": "INGENIERO DE PROCESO B",
+        "requiredCourses": "PLANEACIÓN Y CONTROL DE LA PRODUCCIÓN"
+    },
+    {
+        "position": "INGENIERO DE PROCESO B",
+        "requiredCourses": "PREVENCIÓN DE RIESGOS POR MAQUINARIA Y EQUIPO"
+    },
+    {
+        "position": "INGENIERO DE PROCESO B",
+        "requiredCourses": "PROCESO DE INYECCIÓN DE PLÁSTICO"
+    },
+    {
+        "position": "INGENIERO DE PROCESO B",
+        "requiredCourses": "R&R"
+    },
+    {
+        "position": "INGENIERO DE PROCESO B",
+        "requiredCourses": "RPS"
+    },
+    {
+        "position": "INGENIERO DE PROCESO B",
+        "requiredCourses": "SISTEMA DE GESTIÓN INTEGRAL"
+    },
+    {
+        "position": "INGENIERO DE PROCESO B",
+        "requiredCourses": "SPC (2 EDICION) CONTROL DEL PROCESO ESTADISTICO"
+    },
+    {
+        "position": "INGENIERO DE PROCESO B",
+        "requiredCourses": "TERMOREGULADORES"
+    },
+    {
+        "position": "INGENIERO DE PROCESO B",
+        "requiredCourses": "TRAZABILIDAD DEL PRODUCTO"
+    },
+    {
+        "position": "INGENIERO DE PROCESO B",
+        "requiredCourses": "VALIDACIÓN DE ARRANQUE"
+    },
+    {
+        "position": "INGENIERO DE PROCESO B",
+        "requiredCourses": "VDA 6.5 AUDITORÍAS DE PRODUCTO"
+    },
+    {
+        "position": "INGENIERO DE PROCESO C",
+        "requiredCourses": "8DS PARA LA SOLUCION DE PROBLEMAS"
+    },
+    {
+        "position": "INGENIERO DE PROCESO C",
+        "requiredCourses": "AJUSTE INICIAL DE LAS CONDICIONES DE MOLDEO"
+    },
+    {
+        "position": "INGENIERO DE PROCESO C",
+        "requiredCourses": "AUDITORÍAS DE PROCESO EN CAPAS"
+    },
+    {
+        "position": "INGENIERO DE PROCESO C",
+        "requiredCourses": "COLADA CALIENTE"
+    },
+    {
+        "position": "INGENIERO DE PROCESO C",
+        "requiredCourses": "COMPRENSIÓN DE LOS REQUISITOS ESPECIFICOS DEL CLIENTE"
+    },
+    {
+        "position": "INGENIERO DE PROCESO C",
+        "requiredCourses": "CONOCIMIENTO DE MOLDES, MANTENIMIENTO PREVENTIVO Y CORRECTIVO"
+    },
+    {
+        "position": "INGENIERO DE PROCESO C",
+        "requiredCourses": "FRIGEL"
+    },
+    {
+        "position": "INGENIERO DE PROCESO C",
+        "requiredCourses": "GD&T"
+    },
+    {
+        "position": "INGENIERO DE PROCESO C",
+        "requiredCourses": "GRÁFICAS DE CONTROL"
+    },
+    {
+        "position": "INGENIERO DE PROCESO C",
+        "requiredCourses": "IDENTIFICACIÓN DE RESINA - SUMINISTRO A MAQUINAS DE INYECCIÒN"
+    },
+    {
+        "position": "INGENIERO DE PROCESO C",
+        "requiredCourses": "INDUCCIÓN A LA EMPRESA"
+    },
+    {
+        "position": "INGENIERO DE PROCESO C",
+        "requiredCourses": "INSPECCIÓN VISUAL"
+    },
+    {
+        "position": "INGENIERO DE PROCESO C",
+        "requiredCourses": "MANIPULACION DE ROBOTS WITTMAN"
+    },
+    {
+        "position": "INGENIERO DE PROCESO C",
+        "requiredCourses": "MEDICION DE TIEMPOS Y MOVIMIENTOS"
+    },
+    {
+        "position": "INGENIERO DE PROCESO C",
+        "requiredCourses": "MOLDEO CIENTIFICO"
+    },
+    {
+        "position": "INGENIERO DE PROCESO C",
+        "requiredCourses": "NOM-005-STPS-1998"
+    },
+    {
+        "position": "INGENIERO DE PROCESO C",
+        "requiredCourses": "NOM-026-STPS-2008"
+    },
+    {
+        "position": "INGENIERO DE PROCESO C",
+        "requiredCourses": "NOM-030-STPS-2009"
+    },
+    {
+        "position": "INGENIERO DE PROCESO C",
+        "requiredCourses": "NOM-035-STPS-2018"
+    },
+    {
+        "position": "INGENIERO DE PROCESO C",
+        "requiredCourses": "NOM-036-1-STPS-2018"
+    },
+    {
+        "position": "INGENIERO DE PROCESO C",
+        "requiredCourses": "PLANEACIÓN Y CONTROL DE LA PRODUCCIÓN"
+    },
+    {
+        "position": "INGENIERO DE PROCESO C",
+        "requiredCourses": "PREVENCIÓN DE RIESGOS POR MAQUINARIA Y EQUIPO"
+    },
+    {
+        "position": "INGENIERO DE PROCESO C",
+        "requiredCourses": "PROCESO DE INYECCIÓN DE PLÁSTICO"
+    },
+    {
+        "position": "INGENIERO DE PROCESO C",
+        "requiredCourses": "R&R"
+    },
+    {
+        "position": "INGENIERO DE PROCESO C",
+        "requiredCourses": "RPS"
+    },
+    {
+        "position": "INGENIERO DE PROCESO C",
+        "requiredCourses": "SISTEMA DE GESTIÓN INTEGRAL"
+    },
+    {
+        "position": "INGENIERO DE PROCESO C",
+        "requiredCourses": "SPC (2 EDICION) CONTROL DEL PROCESO ESTADISTICO"
+    },
+    {
+        "position": "INGENIERO DE PROCESO C",
+        "requiredCourses": "TERMOREGULADORES"
+    },
+    {
+        "position": "INGENIERO DE PROCESO C",
+        "requiredCourses": "TRAZABILIDAD DEL PRODUCTO"
+    },
+    {
+        "position": "INGENIERO DE PROCESO C",
+        "requiredCourses": "VALIDACIÓN DE ARRANQUE"
+    },
+    {
+        "position": "INGENIERO DE PROCESO C",
+        "requiredCourses": "VDA 6.5 AUDITORÍAS DE PRODUCTO"
+    },
+    {
+        "position": "INGENIERO DE PROCESO D",
+        "requiredCourses": "8DS PARA LA SOLUCION DE PROBLEMAS"
+    },
+    {
+        "position": "INGENIERO DE PROCESO D",
+        "requiredCourses": "AJUSTE INICIAL DE LAS CONDICIONES DE MOLDEO"
+    },
+    {
+        "position": "INGENIERO DE PROCESO D",
+        "requiredCourses": "AUDITORÍAS DE PROCESO EN CAPAS"
+    },
+    {
+        "position": "INGENIERO DE PROCESO D",
+        "requiredCourses": "COLADA CALIENTE"
+    },
+    {
+        "position": "INGENIERO DE PROCESO D",
+        "requiredCourses": "COMPRENSIÓN DE LOS REQUISITOS ESPECIFICOS DEL CLIENTE"
+    },
+    {
+        "position": "INGENIERO DE PROCESO D",
+        "requiredCourses": "CONOCIMIENTO DE MOLDES, MANTENIMIENTO PREVENTIVO Y CORRECTIVO"
+    },
+    {
+        "position": "INGENIERO DE PROCESO D",
+        "requiredCourses": "FRIGEL"
+    },
+    {
+        "position": "INGENIERO DE PROCESO D",
+        "requiredCourses": "GD&T"
+    },
+    {
+        "position": "INGENIERO DE PROCESO D",
+        "requiredCourses": "GRÁFICAS DE CONTROL"
+    },
+    {
+        "position": "INGENIERO DE PROCESO D",
+        "requiredCourses": "IDENTIFICACIÓN DE RESINA - SUMINISTRO A MAQUINAS DE INYECCIÒN"
+    },
+    {
+        "position": "INGENIERO DE PROCESO D",
+        "requiredCourses": "INDUCCIÓN A LA EMPRESA"
+    },
+    {
+        "position": "INGENIERO DE PROCESO D",
+        "requiredCourses": "INSPECCIÓN VISUAL"
+    },
+    {
+        "position": "INGENIERO DE PROCESO D",
+        "requiredCourses": "MANIPULACION DE ROBOTS WITTMAN"
+    },
+    {
+        "position": "INGENIERO DE PROCESO D",
+        "requiredCourses": "MEDICION DE TIEMPOS Y MOVIMIENTOS"
+    },
+    {
+        "position": "INGENIERO DE PROCESO D",
+        "requiredCourses": "MOLDEO CIENTIFICO"
+    },
+    {
+        "position": "INGENIERO DE PROCESO D",
+        "requiredCourses": "NOM-005-STPS-1998"
+    },
+    {
+        "position": "INGENIERO DE PROCESO D",
+        "requiredCourses": "NOM-026-STPS-2008"
+    },
+    {
+        "position": "INGENIERO DE PROCESO D",
+        "requiredCourses": "NOM-030-STPS-2009"
+    },
+    {
+        "position": "INGENIERO DE PROCESO D",
+        "requiredCourses": "NOM-035-STPS-2018"
+    },
+    {
+        "position": "INGENIERO DE PROCESO D",
+        "requiredCourses": "NOM-036-1-STPS-2018"
+    },
+    {
+        "position": "INGENIERO DE PROCESO D",
+        "requiredCourses": "PLANEACIÓN Y CONTROL DE LA PRODUCCIÓN"
+    },
+    {
+        "position": "INGENIERO DE PROCESO D",
+        "requiredCourses": "PREVENCIÓN DE RIESGOS POR MAQUINARIA Y EQUIPO"
+    },
+    {
+        "position": "INGENIERO DE PROCESO D",
+        "requiredCourses": "PROCESO DE INYECCIÓN DE PLÁSTICO"
+    },
+    {
+        "position": "INGENIERO DE PROCESO D",
+        "requiredCourses": "R&R"
+    },
+    {
+        "position": "INGENIERO DE PROCESO D",
+        "requiredCourses": "RPS"
+    },
+    {
+        "position": "INGENIERO DE PROCESO D",
+        "requiredCourses": "SISTEMA DE GESTIÓN INTEGRAL"
+    },
+    {
+        "position": "INGENIERO DE PROCESO D",
+        "requiredCourses": "SPC (2 EDICION) CONTROL DEL PROCESO ESTADISTICO"
+    },
+    {
+        "position": "INGENIERO DE PROCESO D",
+        "requiredCourses": "TERMOREGULADORES"
+    },
+    {
+        "position": "INGENIERO DE PROCESO D",
+        "requiredCourses": "TRAZABILIDAD DEL PRODUCTO"
+    },
+    {
+        "position": "INGENIERO DE PROCESO D",
+        "requiredCourses": "VALIDACIÓN DE ARRANQUE"
+    },
+    {
+        "position": "INGENIERO DE PROCESO D",
+        "requiredCourses": "VDA 6.5 AUDITORÍAS DE PRODUCTO"
+    },
+    {
+        "position": "INGENIERO DE PROYECTOS A",
+        "requiredCourses": "AMEF"
+    },
+    {
+        "position": "INGENIERO DE PROYECTOS A",
+        "requiredCourses": "AUDITORÍAS DE PROCESO EN CAPAS"
+    },
+    {
+        "position": "INGENIERO DE PROYECTOS A",
+        "requiredCourses": "CORE TOOLS"
+    },
+    {
+        "position": "INGENIERO DE PROYECTOS A",
+        "requiredCourses": "ESTRUCTURA DEL SGI Y DOCUMENTOS"
+    },
+    {
+        "position": "INGENIERO DE PROYECTOS A",
+        "requiredCourses": "GD&T"
+    },
+    {
+        "position": "INGENIERO DE PROYECTOS A",
+        "requiredCourses": "IMDS"
+    },
+    {
+        "position": "INGENIERO DE PROYECTOS A",
+        "requiredCourses": "INDUCCIÓN A LA EMPRESA"
+    },
+    {
+        "position": "INGENIERO DE PROYECTOS A",
+        "requiredCourses": "METODOLOGÍA 5S"
+    },
+    {
+        "position": "INGENIERO DE PROYECTOS A",
+        "requiredCourses": "SEGURIDAD Y PREVENCIÓN DE ACCIDENTES"
+    },
+    {
+        "position": "INGENIERO DE PROYECTOS A",
+        "requiredCourses": "SISTEMA DE GESTIÓN INTEGRAL"
+    },
+    {
+        "position": "INGENIERO DE PROYECTOS A",
+        "requiredCourses": "SPC (2 EDICION) CONTROL DEL PROCESO ESTADISTICO"
+    },
+    {
+        "position": "INGENIERO DE PROYECTOS B",
+        "requiredCourses": "AMEF"
+    },
+    {
+        "position": "INGENIERO DE PROYECTOS B",
+        "requiredCourses": "AUDITORÍAS DE PROCESO EN CAPAS"
+    },
+    {
+        "position": "INGENIERO DE PROYECTOS B",
+        "requiredCourses": "CORE TOOLS"
+    },
+    {
+        "position": "INGENIERO DE PROYECTOS B",
+        "requiredCourses": "ESTRUCTURA DEL SGI Y DOCUMENTOS"
+    },
+    {
+        "position": "INGENIERO DE PROYECTOS B",
+        "requiredCourses": "GD&T"
+    },
+    {
+        "position": "INGENIERO DE PROYECTOS B",
+        "requiredCourses": "IMDS"
+    },
+    {
+        "position": "INGENIERO DE PROYECTOS B",
+        "requiredCourses": "INDUCCIÓN A LA EMPRESA"
+    },
+    {
+        "position": "INGENIERO DE PROYECTOS B",
+        "requiredCourses": "METODOLOGÍA 5S"
+    },
+    {
+        "position": "INGENIERO DE PROYECTOS B",
+        "requiredCourses": "SEGURIDAD Y PREVENCIÓN DE ACCIDENTES"
+    },
+    {
+        "position": "INGENIERO DE PROYECTOS B",
+        "requiredCourses": "SISTEMA DE GESTIÓN INTEGRAL"
+    },
+    {
+        "position": "INGENIERO DE PROYECTOS B",
+        "requiredCourses": "SPC (2 EDICION) CONTROL DEL PROCESO ESTADISTICO"
+    },
+    {
+        "position": "INGENIERO DE PROYECTOS C",
+        "requiredCourses": "AMEF"
+    },
+    {
+        "position": "INGENIERO DE PROYECTOS C",
+        "requiredCourses": "AUDITORÍAS DE PROCESO EN CAPAS"
+    },
+    {
+        "position": "INGENIERO DE PROYECTOS C",
+        "requiredCourses": "CORE TOOLS"
+    },
+    {
+        "position": "INGENIERO DE PROYECTOS C",
+        "requiredCourses": "ESTRUCTURA DEL SGI Y DOCUMENTOS"
+    },
+    {
+        "position": "INGENIERO DE PROYECTOS C",
+        "requiredCourses": "GD&T"
+    },
+    {
+        "position": "INGENIERO DE PROYECTOS C",
+        "requiredCourses": "IMDS"
+    },
+    {
+        "position": "INGENIERO DE PROYECTOS C",
+        "requiredCourses": "INDUCCIÓN A LA EMPRESA"
+    },
+    {
+        "position": "INGENIERO DE PROYECTOS C",
+        "requiredCourses": "METODOLOGÍA 5S"
+    },
+    {
+        "position": "INGENIERO DE PROYECTOS C",
+        "requiredCourses": "SEGURIDAD Y PREVENCIÓN DE ACCIDENTES"
+    },
+    {
+        "position": "INGENIERO DE PROYECTOS C",
+        "requiredCourses": "SISTEMA DE GESTIÓN INTEGRAL"
+    },
+    {
+        "position": "INGENIERO DE PROYECTOS C",
+        "requiredCourses": "SPC (2 EDICION) CONTROL DEL PROCESO ESTADISTICO"
+    },
+    {
+        "position": "INGENIERO DE PROYECTOS D",
+        "requiredCourses": "AMEF"
+    },
+    {
+        "position": "INGENIERO DE PROYECTOS D",
+        "requiredCourses": "AUDITORÍAS DE PROCESO EN CAPAS"
+    },
+    {
+        "position": "INGENIERO DE PROYECTOS D",
+        "requiredCourses": "CORE TOOLS"
+    },
+    {
+        "position": "INGENIERO DE PROYECTOS D",
+        "requiredCourses": "ESTRUCTURA DEL SGI Y DOCUMENTOS"
+    },
+    {
+        "position": "INGENIERO DE PROYECTOS D",
+        "requiredCourses": "GD&T"
+    },
+    {
+        "position": "INGENIERO DE PROYECTOS D",
+        "requiredCourses": "IMDS"
+    },
+    {
+        "position": "INGENIERO DE PROYECTOS D",
+        "requiredCourses": "INDUCCIÓN A LA EMPRESA"
+    },
+    {
+        "position": "INGENIERO DE PROYECTOS D",
+        "requiredCourses": "METODOLOGÍA 5S"
+    },
+    {
+        "position": "INGENIERO DE PROYECTOS D",
+        "requiredCourses": "SEGURIDAD Y PREVENCIÓN DE ACCIDENTES"
+    },
+    {
+        "position": "INGENIERO DE PROYECTOS D",
+        "requiredCourses": "SISTEMA DE GESTIÓN INTEGRAL"
+    },
+    {
+        "position": "INGENIERO DE PROYECTOS D",
+        "requiredCourses": "SPC (2 EDICION) CONTROL DEL PROCESO ESTADISTICO"
+    },
+    {
+        "position": "INSPECTOR DE CALIDAD A",
+        "requiredCourses": "AUDITORÍAS DE PROCESO EN CAPAS"
+    },
+    {
+        "position": "INSPECTOR DE CALIDAD A",
+        "requiredCourses": "CORE TOOLS"
+    },
+    {
+        "position": "INSPECTOR DE CALIDAD A",
+        "requiredCourses": "ESTRUCTURA DEL SGI Y DOCUMENTOS"
+    },
+    {
+        "position": "INSPECTOR DE CALIDAD A",
+        "requiredCourses": "INDUCCIÓN A LA EMPRESA"
+    },
+    {
+        "position": "INSPECTOR DE CALIDAD A",
+        "requiredCourses": "INTERPRETACIÓN DE PLANOS"
+    },
+    {
+        "position": "INSPECTOR DE CALIDAD A",
+        "requiredCourses": "INTRODUCCIÓN A LA METROLOGÍA Y MANEJO DE EQUIPOS DE MEDICIÓN"
+    },
+    {
+        "position": "INSPECTOR DE CALIDAD A",
+        "requiredCourses": "KEYENCE"
+    },
+    {
+        "position": "INSPECTOR DE CALIDAD A",
+        "requiredCourses": "MANEJO DE MATERIAL NO CONFORME"
+    },
+    {
+        "position": "INSPECTOR DE CALIDAD A",
+        "requiredCourses": "NOM-035-STPS-2018"
+    },
+    {
+        "position": "INSPECTOR DE CALIDAD A",
+        "requiredCourses": "NOM-036-1-STPS-2018"
+    },
+    {
+        "position": "INSPECTOR DE CALIDAD A",
+        "requiredCourses": "PROCESO DE LIBREACIÓN DE MATERIA PRIMA"
+    },
+    {
+        "position": "INSPECTOR DE CALIDAD A",
+        "requiredCourses": "SEGURIDAD Y PREVENCIÓN DE ACCIDENTES"
+    },
+    {
+        "position": "INSPECTOR DE CALIDAD A",
+        "requiredCourses": "SISTEMA DE GESTIÓN INTEGRAL"
+    },
+    {
+        "position": "INSPECTOR DE CALIDAD A",
+        "requiredCourses": "TRAZABILIDAD DEL PRODUCTO"
+    },
+    {
+        "position": "INSPECTOR DE CALIDAD A",
+        "requiredCourses": "VALIDACIÓN DE ARRANQUE"
+    },
+    {
+        "position": "INSPECTOR DE CALIDAD B",
+        "requiredCourses": "AUDITORÍAS DE PROCESO EN CAPAS"
+    },
+    {
+        "position": "INSPECTOR DE CALIDAD B",
+        "requiredCourses": "CORE TOOLS"
+    },
+    {
+        "position": "INSPECTOR DE CALIDAD B",
+        "requiredCourses": "ESTRUCTURA DEL SGI Y DOCUMENTOS"
+    },
+    {
+        "position": "INSPECTOR DE CALIDAD B",
+        "requiredCourses": "INDUCCIÓN A LA EMPRESA"
+    },
+    {
+        "position": "INSPECTOR DE CALIDAD B",
+        "requiredCourses": "INTERPRETACIÓN DE PLANOS"
+    },
+    {
+        "position": "INSPECTOR DE CALIDAD B",
+        "requiredCourses": "INTRODUCCIÓN A LA METROLOGÍA Y MANEJO DE EQUIPOS DE MEDICIÓN"
+    },
+    {
+        "position": "INSPECTOR DE CALIDAD B",
+        "requiredCourses": "KEYENCE"
+    },
+    {
+        "position": "INSPECTOR DE CALIDAD B",
+        "requiredCourses": "MANEJO DE MATERIAL NO CONFORME"
+    },
+    {
+        "position": "INSPECTOR DE CALIDAD B",
+        "requiredCourses": "NOM-035-STPS-2018"
+    },
+    {
+        "position": "INSPECTOR DE CALIDAD B",
+        "requiredCourses": "NOM-036-1-STPS-2018"
+    },
+    {
+        "position": "INSPECTOR DE CALIDAD B",
+        "requiredCourses": "PROCESO DE LIBREACIÓN DE MATERIA PRIMA"
+    },
+    {
+        "position": "INSPECTOR DE CALIDAD B",
+        "requiredCourses": "SEGURIDAD Y PREVENCIÓN DE ACCIDENTES"
+    },
+    {
+        "position": "INSPECTOR DE CALIDAD B",
+        "requiredCourses": "SISTEMA DE GESTIÓN INTEGRAL"
+    },
+    {
+        "position": "INSPECTOR DE CALIDAD B",
+        "requiredCourses": "TRAZABILIDAD DEL PRODUCTO"
+    },
+    {
+        "position": "INSPECTOR DE CALIDAD B",
+        "requiredCourses": "VALIDACIÓN DE ARRANQUE"
+    },
+    {
+        "position": "INSPECTOR DE CALIDAD C",
+        "requiredCourses": "AUDITORÍAS DE PROCESO EN CAPAS"
+    },
+    {
+        "position": "INSPECTOR DE CALIDAD C",
+        "requiredCourses": "CORE TOOLS"
+    },
+    {
+        "position": "INSPECTOR DE CALIDAD C",
+        "requiredCourses": "ESTRUCTURA DEL SGI Y DOCUMENTOS"
+    },
+    {
+        "position": "INSPECTOR DE CALIDAD C",
+        "requiredCourses": "INDUCCIÓN A LA EMPRESA"
+    },
+    {
+        "position": "INSPECTOR DE CALIDAD C",
+        "requiredCourses": "INTERPRETACIÓN DE PLANOS"
+    },
+    {
+        "position": "INSPECTOR DE CALIDAD C",
+        "requiredCourses": "INTRODUCCIÓN A LA METROLOGÍA Y MANEJO DE EQUIPOS DE MEDICIÓN"
+    },
+    {
+        "position": "INSPECTOR DE CALIDAD C",
+        "requiredCourses": "KEYENCE"
+    },
+    {
+        "position": "INSPECTOR DE CALIDAD C",
+        "requiredCourses": "MANEJO DE MATERIAL NO CONFORME"
+    },
+    {
+        "position": "INSPECTOR DE CALIDAD C",
+        "requiredCourses": "NOM-035-STPS-2018"
+    },
+    {
+        "position": "INSPECTOR DE CALIDAD C",
+        "requiredCourses": "NOM-036-1-STPS-2018"
+    },
+    {
+        "position": "INSPECTOR DE CALIDAD C",
+        "requiredCourses": "PROCESO DE LIBREACIÓN DE MATERIA PRIMA"
+    },
+    {
+        "position": "INSPECTOR DE CALIDAD C",
+        "requiredCourses": "SEGURIDAD Y PREVENCIÓN DE ACCIDENTES"
+    },
+    {
+        "position": "INSPECTOR DE CALIDAD C",
+        "requiredCourses": "SISTEMA DE GESTIÓN INTEGRAL"
+    },
+    {
+        "position": "INSPECTOR DE CALIDAD C",
+        "requiredCourses": "TRAZABILIDAD DEL PRODUCTO"
+    },
+    {
+        "position": "INSPECTOR DE CALIDAD C",
+        "requiredCourses": "VALIDACIÓN DE ARRANQUE"
+    },
+    {
+        "position": "INSPECTOR DE CALIDAD D",
+        "requiredCourses": "AUDITORÍAS DE PROCESO EN CAPAS"
+    },
+    {
+        "position": "INSPECTOR DE CALIDAD D",
+        "requiredCourses": "CORE TOOLS"
+    },
+    {
+        "position": "INSPECTOR DE CALIDAD D",
+        "requiredCourses": "ESTRUCTURA DEL SGI Y DOCUMENTOS"
+    },
+    {
+        "position": "INSPECTOR DE CALIDAD D",
+        "requiredCourses": "INDUCCIÓN A LA EMPRESA"
+    },
+    {
+        "position": "INSPECTOR DE CALIDAD D",
+        "requiredCourses": "INTERPRETACIÓN DE PLANOS"
+    },
+    {
+        "position": "INSPECTOR DE CALIDAD D",
+        "requiredCourses": "INTRODUCCIÓN A LA METROLOGÍA Y MANEJO DE EQUIPOS DE MEDICIÓN"
+    },
+    {
+        "position": "INSPECTOR DE CALIDAD D",
+        "requiredCourses": "KEYENCE"
+    },
+    {
+        "position": "INSPECTOR DE CALIDAD D",
+        "requiredCourses": "MANEJO DE MATERIAL NO CONFORME"
+    },
+    {
+        "position": "INSPECTOR DE CALIDAD D",
+        "requiredCourses": "NOM-035-STPS-2018"
+    },
+    {
+        "position": "INSPECTOR DE CALIDAD D",
+        "requiredCourses": "NOM-036-1-STPS-2018"
+    },
+    {
+        "position": "INSPECTOR DE CALIDAD D",
+        "requiredCourses": "PROCESO DE LIBREACIÓN DE MATERIA PRIMA"
+    },
+    {
+        "position": "INSPECTOR DE CALIDAD D",
+        "requiredCourses": "SEGURIDAD Y PREVENCIÓN DE ACCIDENTES"
+    },
+    {
+        "position": "INSPECTOR DE CALIDAD D",
+        "requiredCourses": "SISTEMA DE GESTIÓN INTEGRAL"
+    },
+    {
+        "position": "INSPECTOR DE CALIDAD D",
+        "requiredCourses": "TRAZABILIDAD DEL PRODUCTO"
+    },
+    {
+        "position": "INSPECTOR DE CALIDAD D",
+        "requiredCourses": "VALIDACIÓN DE ARRANQUE"
+    },
+    {
+        "position": "INSPECTOR RECIBO",
+        "requiredCourses": "8DS PARA LA SOLUCION DE PROBLEMAS"
+    },
+    {
+        "position": "INSPECTOR RECIBO",
+        "requiredCourses": "AMEF"
+    },
+    {
+        "position": "INSPECTOR RECIBO",
+        "requiredCourses": "AUDITORÍAS DE PROCESO EN CAPAS"
+    },
+    {
+        "position": "INSPECTOR RECIBO",
+        "requiredCourses": "COMPRENSIÓN DE LOS REQUISITOS ESPECIFICOS DEL CLIENTE"
+    },
+    {
+        "position": "INSPECTOR RECIBO",
+        "requiredCourses": "CORE TOOLS"
+    },
+    {
+        "position": "INSPECTOR RECIBO",
+        "requiredCourses": "ESTRUCTURA DEL SGI Y DOCUMENTOS"
+    },
+    {
+        "position": "INSPECTOR RECIBO",
+        "requiredCourses": "INDUCCIÓN A LA EMPRESA"
+    },
+    {
+        "position": "INSPECTOR RECIBO",
+        "requiredCourses": "INTERPRETACIÓN DE PLANOS"
+    },
+    {
+        "position": "INSPECTOR RECIBO",
+        "requiredCourses": "INTRODUCCIÓN A LA METROLOGÍA Y MANEJO DE EQUIPOS DE MEDICIÓN"
+    },
+    {
+        "position": "INSPECTOR RECIBO",
+        "requiredCourses": "KEYENCE"
+    },
+    {
+        "position": "INSPECTOR RECIBO",
+        "requiredCourses": "MANEJO DE MATERIAL NO CONFORME"
+    },
+    {
+        "position": "INSPECTOR RECIBO",
+        "requiredCourses": "NOM-035-STPS-2018"
+    },
+    {
+        "position": "INSPECTOR RECIBO",
+        "requiredCourses": "NOM-036-1-STPS-2018"
+    },
+    {
+        "position": "INSPECTOR RECIBO",
+        "requiredCourses": "PROCESO DE LIBREACIÓN DE MATERIA PRIMA"
+    },
+    {
+        "position": "INSPECTOR RECIBO",
+        "requiredCourses": "SEGURIDAD Y PREVENCIÓN DE ACCIDENTES"
+    },
+    {
+        "position": "INSPECTOR RECIBO",
+        "requiredCourses": "SISTEMA DE GESTIÓN INTEGRAL"
+    },
+    {
+        "position": "INSPECTOR RECIBO",
+        "requiredCourses": "TRAZABILIDAD DEL PRODUCTO"
+    },
+    {
+        "position": "INSPECTOR RECIBO",
+        "requiredCourses": "VALIDACIÓN DE ARRANQUE"
+    },
+    {
+        "position": "JEFE DE ALMACÉN",
+        "requiredCourses": "8DS PARA LA SOLUCION DE PROBLEMAS"
+    },
+    {
+        "position": "JEFE DE ALMACÉN",
+        "requiredCourses": "AUDITORÍAS DE PROCESO EN CAPAS"
+    },
+    {
+        "position": "JEFE DE ALMACÉN",
+        "requiredCourses": "COMPRENSIÓN DE LOS REQUISITOS ESPECIFICOS DEL CLIENTE"
+    },
+    {
+        "position": "JEFE DE ALMACÉN",
+        "requiredCourses": "ESTRUCTURA DEL SGI Y DOCUMENTOS"
+    },
+    {
+        "position": "JEFE DE ALMACÉN",
+        "requiredCourses": "INDUCCIÓN A LA EMPRESA"
+    },
+    {
+        "position": "JEFE DE ALMACÉN",
+        "requiredCourses": "MÉTODO PEPS"
+    },
+    {
+        "position": "JEFE DE ALMACÉN",
+        "requiredCourses": "MI-GER-001"
+    },
+    {
+        "position": "JEFE DE ALMACÉN",
+        "requiredCourses": "NOM-035-STPS-2018"
+    },
+    {
+        "position": "JEFE DE ALMACÉN",
+        "requiredCourses": "NOM-036-1-STPS-2018"
+    },
+    {
+        "position": "JEFE DE ALMACÉN",
+        "requiredCourses": "OPERACIÓN SEGURA DE MONTACARGAS"
+    },
+    {
+        "position": "JEFE DE ALMACÉN",
+        "requiredCourses": "PLAN DE CONTINGENCIA DERRAME DE MATERIA PRIMA"
+    },
+    {
+        "position": "JEFE DE ALMACÉN",
+        "requiredCourses": "PR-ASC-001"
+    },
+    {
+        "position": "JEFE DE ALMACÉN",
+        "requiredCourses": "SISTEMA DE GESTIÓN INTEGRAL"
+    },
+    {
+        "position": "JEFE DE LOGÍSTICA",
+        "requiredCourses": "8DS PARA LA SOLUCION DE PROBLEMAS"
+    },
+    {
+        "position": "JEFE DE LOGÍSTICA",
+        "requiredCourses": "ATAQUES CIBERNETICOS"
+    },
+    {
+        "position": "JEFE DE LOGÍSTICA",
+        "requiredCourses": "AUDITORÍAS DE PROCESO EN CAPAS"
+    },
+    {
+        "position": "JEFE DE LOGÍSTICA",
+        "requiredCourses": "COMPRENSIÓN DE LOS REQUISITOS ESPECIFICOS DEL CLIENTE"
+    },
+    {
+        "position": "JEFE DE LOGÍSTICA",
+        "requiredCourses": "CTPAT"
+    },
+    {
+        "position": "JEFE DE LOGÍSTICA",
+        "requiredCourses": "DIAGRAMA DE TORTUGA"
+    },
+    {
+        "position": "JEFE DE LOGÍSTICA",
+        "requiredCourses": "ESTRUCTURA DEL SGI Y DOCUMENTOS"
+    },
+    {
+        "position": "JEFE DE LOGÍSTICA",
+        "requiredCourses": "INDUCCIÓN A LA EMPRESA"
+    },
+    {
+        "position": "JEFE DE LOGÍSTICA",
+        "requiredCourses": "METODOLOGÍA 5S"
+    },
+    {
+        "position": "JEFE DE LOGÍSTICA",
+        "requiredCourses": "MI-GER-001"
+    },
+    {
+        "position": "JEFE DE LOGÍSTICA",
+        "requiredCourses": "NOM-035-STPS-2018"
+    },
+    {
+        "position": "JEFE DE LOGÍSTICA",
+        "requiredCourses": "PR-ASC-001"
+    },
+    {
+        "position": "JEFE DE LOGÍSTICA",
+        "requiredCourses": "SEGURIDAD Y PREVENCIÓN DE ACCIDENTES"
+    },
+    {
+        "position": "JEFE DE LOGÍSTICA",
+        "requiredCourses": "SISTEMA DE GESTIÓN INTEGRAL"
+    },
+    {
+        "position": "JEFE DE LOGÍSTICA",
+        "requiredCourses": "VDA 6.3 AUDITORÍAS DE PROCESO"
+    },
+    {
+        "position": "JEFE DE MANTENIMIENTO",
+        "requiredCourses": "8DS PARA LA SOLUCION DE PROBLEMAS"
+    },
+    {
+        "position": "JEFE DE MANTENIMIENTO",
+        "requiredCourses": "AUDITORÍAS DE PROCESO EN CAPAS"
+    },
+    {
+        "position": "JEFE DE MANTENIMIENTO",
+        "requiredCourses": "DIAGRAMA DE TORTUGA"
+    },
+    {
+        "position": "JEFE DE MANTENIMIENTO",
+        "requiredCourses": "ESTRUCTURA DEL SGI Y DOCUMENTOS"
+    },
+    {
+        "position": "JEFE DE MANTENIMIENTO",
+        "requiredCourses": "INDUCCIÓN A LA EMPRESA"
+    },
+    {
+        "position": "JEFE DE MANTENIMIENTO",
+        "requiredCourses": "MANTENIMIENTO A ROBOTS WITTMAN"
+    },
+    {
+        "position": "JEFE DE MANTENIMIENTO",
+        "requiredCourses": "MI-GER-001"
+    },
+    {
+        "position": "JEFE DE MANTENIMIENTO",
+        "requiredCourses": "NOM-004-STPS-1999"
+    },
+    {
+        "position": "JEFE DE MANTENIMIENTO",
+        "requiredCourses": "NOM-005-STPS-1998"
+    },
+    {
+        "position": "JEFE DE MANTENIMIENTO",
+        "requiredCourses": "NOM-009-STPS-2011"
+    },
+    {
+        "position": "JEFE DE MANTENIMIENTO",
+        "requiredCourses": "NOM-010-STPS-2014"
+    },
+    {
+        "position": "JEFE DE MANTENIMIENTO",
+        "requiredCourses": "NOM-020-STPS-2011"
+    },
+    {
+        "position": "JEFE DE MANTENIMIENTO",
+        "requiredCourses": "NOM-029-STPS-2011"
+    },
+    {
+        "position": "JEFE DE MANTENIMIENTO",
+        "requiredCourses": "NOM-035-STPS-2018"
+    },
+    {
+        "position": "JEFE DE MANTENIMIENTO",
+        "requiredCourses": "NOM-036-1-STPS-2018"
+    },
+    {
+        "position": "JEFE DE MANTENIMIENTO",
+        "requiredCourses": "OPERACIÓN Y MANTENIMIENTO DE TERMOREGULADORES, DESHUMIFICADORES Y CARGADORES"
+    },
+    {
+        "position": "JEFE DE MANTENIMIENTO",
+        "requiredCourses": "OPERACIÓN, MANTENIMIENTO EN INTERPRETACIÓN MAQUINA SYSTEC E INTELEC"
+    },
+    {
+        "position": "JEFE DE MANTENIMIENTO",
+        "requiredCourses": "PLAN DE CONTINGENCIA DE DERRAMES"
+    },
+    {
+        "position": "JEFE DE MANTENIMIENTO",
+        "requiredCourses": "PR-ASC-001"
+    },
+    {
+        "position": "JEFE DE MANTENIMIENTO",
+        "requiredCourses": "PROGRAMACIÓN BÁSICA DE ROBOT SEPRO"
+    },
+    {
+        "position": "JEFE DE MANTENIMIENTO",
+        "requiredCourses": "PROGRAMACIÓN BÁSICA DE ROBOT WITTMAN"
+    },
+    {
+        "position": "JEFE DE MANTENIMIENTO",
+        "requiredCourses": "SISTEMA DE GESTIÓN INTEGRAL"
+    },
+    {
+        "position": "JEFE DE MANTENIMIENTO",
+        "requiredCourses": "VDA 6.3 AUDITORÍAS DE PROCESO"
+    },
+    {
+        "position": "JEFE DE METROLOGÍA",
+        "requiredCourses": "8DS PARA LA SOLUCION DE PROBLEMAS"
+    },
+    {
+        "position": "JEFE DE METROLOGÍA",
+        "requiredCourses": "AMEF"
+    },
+    {
+        "position": "JEFE DE METROLOGÍA",
+        "requiredCourses": "AUDITORÍAS DE PROCESO EN CAPAS"
+    },
+    {
+        "position": "JEFE DE METROLOGÍA",
+        "requiredCourses": "COMPRENSIÓN DE LOS REQUISITOS ESPECIFICOS DEL CLIENTE"
+    },
+    {
+        "position": "JEFE DE METROLOGÍA",
+        "requiredCourses": "DIAGRAMA DE TORTUGA"
+    },
+    {
+        "position": "JEFE DE METROLOGÍA",
+        "requiredCourses": "ESTRUCTURA DEL SGI Y DOCUMENTOS"
+    },
+    {
+        "position": "JEFE DE METROLOGÍA",
+        "requiredCourses": "GD&T"
+    },
+    {
+        "position": "JEFE DE METROLOGÍA",
+        "requiredCourses": "INDUCCIÓN A LA EMPRESA"
+    },
+    {
+        "position": "JEFE DE METROLOGÍA",
+        "requiredCourses": "INTRODUCCIÓN A LA METROLOGÍA Y MANEJO DE EQUIPOS DE MEDICIÓN"
+    },
+    {
+        "position": "JEFE DE METROLOGÍA",
+        "requiredCourses": "KEYENCE"
+    },
+    {
+        "position": "JEFE DE METROLOGÍA",
+        "requiredCourses": "MANEJO DE MÁQUINA CMM"
+    },
+    {
+        "position": "JEFE DE METROLOGÍA",
+        "requiredCourses": "MSA (4 EDICION) SISTEMA DE ANALISIS DE MEDICIÓN"
+    },
+    {
+        "position": "JEFE DE METROLOGÍA",
+        "requiredCourses": "NOM-010-STPS-2014"
+    },
+    {
+        "position": "JEFE DE METROLOGÍA",
+        "requiredCourses": "NOM-035-STPS-2018"
+    },
+    {
+        "position": "JEFE DE METROLOGÍA",
+        "requiredCourses": "PR-ASC-011"
+    },
+    {
+        "position": "JEFE DE METROLOGÍA",
+        "requiredCourses": "SEGURIDAD Y PREVENCIÓN DE ACCIDENTES"
+    },
+    {
+        "position": "JEFE DE METROLOGÍA",
+        "requiredCourses": "SISTEMA DE GESTIÓN INTEGRAL"
+    },
+    {
+        "position": "JEFE DE METROLOGÍA",
+        "requiredCourses": "SPC (2 EDICION) CONTROL DEL PROCESO ESTADISTICO"
+    },
+    {
+        "position": "JEFE DE METROLOGÍA",
+        "requiredCourses": "VDA 6.3 AUDITORÍAS DE PROCESO"
+    },
+    {
+        "position": "JEFE DE METROLOGÍA",
+        "requiredCourses": "VDA 6.5 AUDITORÍAS DE PRODUCTO"
+    },
+    {
+        "position": "JEFE DE PROCESO",
+        "requiredCourses": "8DS PARA LA SOLUCION DE PROBLEMAS"
+    },
+    {
+        "position": "JEFE DE PROCESO",
+        "requiredCourses": "AJUSTE INICIAL DE LAS CONDICIONES DE MOLDEO"
+    },
+    {
+        "position": "JEFE DE PROCESO",
+        "requiredCourses": "AUDITORÍAS DE PROCESO EN CAPAS"
+    },
+    {
+        "position": "JEFE DE PROCESO",
+        "requiredCourses": "COLADA CALIENTE"
+    },
+    {
+        "position": "JEFE DE PROCESO",
+        "requiredCourses": "COMPRENSIÓN DE LOS REQUISITOS ESPECIFICOS DEL CLIENTE"
+    },
+    {
+        "position": "JEFE DE PROCESO",
+        "requiredCourses": "DIAGRAMA DE TORTUGA"
+    },
+    {
+        "position": "JEFE DE PROCESO",
+        "requiredCourses": "GD&T"
+    },
+    {
+        "position": "JEFE DE PROCESO",
+        "requiredCourses": "GRÁFICAS DE CONTROL"
+    },
+    {
+        "position": "JEFE DE PROCESO",
+        "requiredCourses": "INDUCCIÓN A LA EMPRESA"
+    },
+    {
+        "position": "JEFE DE PROCESO",
+        "requiredCourses": "INSPECCIÓN VISUAL"
+    },
+    {
+        "position": "JEFE DE PROCESO",
+        "requiredCourses": "LLENADO CORRECTO DE DESVIACIÓN"
+    },
+    {
+        "position": "JEFE DE PROCESO",
+        "requiredCourses": "MANIPULACION DE ROBOTS WITTMAN"
+    },
+    {
+        "position": "JEFE DE PROCESO",
+        "requiredCourses": "MEDICION DE TIEMPOS Y MOVIMIENTOS"
+    },
+    {
+        "position": "JEFE DE PROCESO",
+        "requiredCourses": "MI-GER-001"
+    },
+    {
+        "position": "JEFE DE PROCESO",
+        "requiredCourses": "MOLDEO CIENTIFICO"
+    },
+    {
+        "position": "JEFE DE PROCESO",
+        "requiredCourses": "NOM-030-STPS-2009"
+    },
+    {
+        "position": "JEFE DE PROCESO",
+        "requiredCourses": "NOM-035-STPS-2018"
+    },
+    {
+        "position": "JEFE DE PROCESO",
+        "requiredCourses": "PLAN DE CONTROL PSW Y DESVIACIÓN"
+    },
+    {
+        "position": "JEFE DE PROCESO",
+        "requiredCourses": "PR-ASC-001"
+    },
+    {
+        "position": "JEFE DE PROCESO",
+        "requiredCourses": "PROCESO DE INYECCIÓN DE PLÁSTICO"
+    },
+    {
+        "position": "JEFE DE PROCESO",
+        "requiredCourses": "R&R"
+    },
+    {
+        "position": "JEFE DE PROCESO",
+        "requiredCourses": "RPS"
+    },
+    {
+        "position": "JEFE DE PROCESO",
+        "requiredCourses": "SISTEMA DE GESTIÓN INTEGRAL"
+    },
+    {
+        "position": "JEFE DE PROCESO",
+        "requiredCourses": "SPC (2 EDICION) CONTROL DEL PROCESO ESTADISTICO"
+    },
+    {
+        "position": "JEFE DE PROCESO",
+        "requiredCourses": "VDA 6.5 AUDITORÍAS DE PRODUCTO"
+    },
+    {
+        "position": "JEFE DE PRODUCCIÓN",
+        "requiredCourses": "8DS PARA LA SOLUCION DE PROBLEMAS"
+    },
+    {
+        "position": "JEFE DE PRODUCCIÓN",
+        "requiredCourses": "AJUSTE INICIAL DE LAS CONDICIONES DE MOLDEO"
+    },
+    {
+        "position": "JEFE DE PRODUCCIÓN",
+        "requiredCourses": "AUDITORÍAS DE PROCESO EN CAPAS"
+    },
+    {
+        "position": "JEFE DE PRODUCCIÓN",
+        "requiredCourses": "COLADA CALIENTE"
+    },
+    {
+        "position": "JEFE DE PRODUCCIÓN",
+        "requiredCourses": "COMPRENSIÓN DE LOS REQUISITOS ESPECIFICOS DEL CLIENTE"
+    },
+    {
+        "position": "JEFE DE PRODUCCIÓN",
+        "requiredCourses": "DIAGRAMA DE TORTUGA"
+    },
+    {
+        "position": "JEFE DE PRODUCCIÓN",
+        "requiredCourses": "GD&T"
+    },
+    {
+        "position": "JEFE DE PRODUCCIÓN",
+        "requiredCourses": "GRÁFICAS DE CONTROL"
+    },
+    {
+        "position": "JEFE DE PRODUCCIÓN",
+        "requiredCourses": "INDUCCIÓN A LA EMPRESA"
+    },
+    {
+        "position": "JEFE DE PRODUCCIÓN",
+        "requiredCourses": "INSPECCIÓN VISUAL"
+    },
+    {
+        "position": "JEFE DE PRODUCCIÓN",
+        "requiredCourses": "LLENADO CORRECTO DE DESVIACIÓN"
+    },
+    {
+        "position": "JEFE DE PRODUCCIÓN",
+        "requiredCourses": "MANIPULACION DE ROBOTS WITTMAN"
+    },
+    {
+        "position": "JEFE DE PRODUCCIÓN",
+        "requiredCourses": "MEDICION DE TIEMPOS Y MOVIMIENTOS"
+    },
+    {
+        "position": "JEFE DE PRODUCCIÓN",
+        "requiredCourses": "MI-GER-001"
+    },
+    {
+        "position": "JEFE DE PRODUCCIÓN",
+        "requiredCourses": "MOLDEO CIENTIFICO"
+    },
+    {
+        "position": "JEFE DE PRODUCCIÓN",
+        "requiredCourses": "NOM-030-STPS-2009"
+    },
+    {
+        "position": "JEFE DE PRODUCCIÓN",
+        "requiredCourses": "NOM-035-STPS-2018"
+    },
+    {
+        "position": "JEFE DE PRODUCCIÓN",
+        "requiredCourses": "PLAN DE CONTROL PSW Y DESVIACIÓN"
+    },
+    {
+        "position": "JEFE DE PRODUCCIÓN",
+        "requiredCourses": "PR-ASC-001"
+    },
+    {
+        "position": "JEFE DE PRODUCCIÓN",
+        "requiredCourses": "PROCESO DE INYECCIÓN DE PLÁSTICO"
+    },
+    {
+        "position": "JEFE DE PRODUCCIÓN",
+        "requiredCourses": "R&R"
+    },
+    {
+        "position": "JEFE DE PRODUCCIÓN",
+        "requiredCourses": "RPS"
+    },
+    {
+        "position": "JEFE DE PRODUCCIÓN",
+        "requiredCourses": "SISTEMA DE GESTIÓN INTEGRAL"
+    },
+    {
+        "position": "JEFE DE PRODUCCIÓN",
+        "requiredCourses": "SPC (2 EDICION) CONTROL DEL PROCESO ESTADISTICO"
+    },
+    {
+        "position": "JEFE DE PRODUCCIÓN",
+        "requiredCourses": "VDA 6.5 AUDITORÍAS DE PRODUCTO"
+    },
+    {
+        "position": "JEFE DE RECURSOS HUMANOS",
+        "requiredCourses": "8DS PARA LA SOLUCION DE PROBLEMAS"
+    },
+    {
+        "position": "JEFE DE RECURSOS HUMANOS",
+        "requiredCourses": "AUDITORÍAS DE PROCESO EN CAPAS"
+    },
+    {
+        "position": "JEFE DE RECURSOS HUMANOS",
+        "requiredCourses": "COMISIÓN DE SEGURIDAD E HIGIENE"
+    },
+    {
+        "position": "JEFE DE RECURSOS HUMANOS",
+        "requiredCourses": "CONTROL DE CONTRATISTAS"
+    },
+    {
+        "position": "JEFE DE RECURSOS HUMANOS",
+        "requiredCourses": "DIAGRAMA DE TORTUGA"
+    },
+    {
+        "position": "JEFE DE RECURSOS HUMANOS",
+        "requiredCourses": "ESTRUCTURA DEL SGI Y DOCUMENTOS"
+    },
+    {
+        "position": "JEFE DE RECURSOS HUMANOS",
+        "requiredCourses": "INDUCCIÓN A LA EMPRESA"
+    },
+    {
+        "position": "JEFE DE RECURSOS HUMANOS",
+        "requiredCourses": "MI-GER-001"
+    },
+    {
+        "position": "JEFE DE RECURSOS HUMANOS",
+        "requiredCourses": "NOM-018-STPS-2015"
+    },
+    {
+        "position": "JEFE DE RECURSOS HUMANOS",
+        "requiredCourses": "NOM-035-STPS-2018"
+    },
+    {
+        "position": "JEFE DE RECURSOS HUMANOS",
+        "requiredCourses": "PR-ASC-001"
+    },
+    {
+        "position": "JEFE DE RECURSOS HUMANOS",
+        "requiredCourses": "SISTEMA DE GESTIÓN INTEGRAL"
+    },
+    {
+        "position": "LÍDER DE COTIZACIONES",
+        "requiredCourses": "AUDITORÍAS DE PROCESO EN CAPAS"
+    },
+    {
+        "position": "LÍDER DE COTIZACIONES",
+        "requiredCourses": "ESTRUCTURA DEL SGI Y DOCUMENTOS"
+    },
+    {
+        "position": "LÍDER DE COTIZACIONES",
+        "requiredCourses": "INDUCCIÓN A LA EMPRESA"
+    },
+    {
+        "position": "LÍDER DE COTIZACIONES",
+        "requiredCourses": "METODOLOGÍA 5S"
+    },
+    {
+        "position": "LÍDER DE COTIZACIONES",
+        "requiredCourses": "SEGURIDAD Y PREVENCIÓN DE ACCIDENTES"
+    },
+    {
+        "position": "LÍDER DE COTIZACIONES",
+        "requiredCourses": "SISTEMA DE GESTIÓN INTEGRAL"
+    },
+    {
+        "position": "LÍDER DE PROYECTOS A",
+        "requiredCourses": "AMEF"
+    },
+    {
+        "position": "LÍDER DE PROYECTOS A",
+        "requiredCourses": "AUDITORÍAS DE PROCESO EN CAPAS"
+    },
+    {
+        "position": "LÍDER DE PROYECTOS A",
+        "requiredCourses": "CORE TOOLS"
+    },
+    {
+        "position": "LÍDER DE PROYECTOS A",
+        "requiredCourses": "ESTRUCTURA DEL SGI Y DOCUMENTOS"
+    },
+    {
+        "position": "LÍDER DE PROYECTOS A",
+        "requiredCourses": "GD&T"
+    },
+    {
+        "position": "LÍDER DE PROYECTOS A",
+        "requiredCourses": "GESTIÓN DE PROYECTOS"
+    },
+    {
+        "position": "LÍDER DE PROYECTOS A",
+        "requiredCourses": "IMDS"
+    },
+    {
+        "position": "LÍDER DE PROYECTOS A",
+        "requiredCourses": "INDUCCIÓN A LA EMPRESA"
+    },
+    {
+        "position": "LÍDER DE PROYECTOS A",
+        "requiredCourses": "METODOLOGÍA 5S"
+    },
+    {
+        "position": "LÍDER DE PROYECTOS A",
+        "requiredCourses": "SEGURIDAD Y PREVENCIÓN DE ACCIDENTES"
+    },
+    {
+        "position": "LÍDER DE PROYECTOS A",
+        "requiredCourses": "SISTEMA DE GESTIÓN INTEGRAL"
+    },
+    {
+        "position": "LÍDER DE PROYECTOS A",
+        "requiredCourses": "SPC (2 EDICION) CONTROL DEL PROCESO ESTADISTICO"
+    },
+    {
+        "position": "LÍDER DE PROYECTOS B",
+        "requiredCourses": "AMEF"
+    },
+    {
+        "position": "LÍDER DE PROYECTOS B",
+        "requiredCourses": "AUDITORÍAS DE PROCESO EN CAPAS"
+    },
+    {
+        "position": "LÍDER DE PROYECTOS B",
+        "requiredCourses": "CORE TOOLS"
+    },
+    {
+        "position": "LÍDER DE PROYECTOS B",
+        "requiredCourses": "ESTRUCTURA DEL SGI Y DOCUMENTOS"
+    },
+    {
+        "position": "LÍDER DE PROYECTOS B",
+        "requiredCourses": "GD&T"
+    },
+    {
+        "position": "LÍDER DE PROYECTOS B",
+        "requiredCourses": "GESTIÓN DE PROYECTOS"
+    },
+    {
+        "position": "LÍDER DE PROYECTOS B",
+        "requiredCourses": "IMDS"
+    },
+    {
+        "position": "LÍDER DE PROYECTOS B",
+        "requiredCourses": "INDUCCIÓN A LA EMPRESA"
+    },
+    {
+        "position": "LÍDER DE PROYECTOS B",
+        "requiredCourses": "METODOLOGÍA 5S"
+    },
+    {
+        "position": "LÍDER DE PROYECTOS B",
+        "requiredCourses": "SEGURIDAD Y PREVENCIÓN DE ACCIDENTES"
+    },
+    {
+        "position": "LÍDER DE PROYECTOS B",
+        "requiredCourses": "SISTEMA DE GESTIÓN INTEGRAL"
+    },
+    {
+        "position": "LÍDER DE PROYECTOS B",
+        "requiredCourses": "SPC (2 EDICION) CONTROL DEL PROCESO ESTADISTICO"
+    },
+    {
+        "position": "LÍDER DE PROYECTOS C",
+        "requiredCourses": "AMEF"
+    },
+    {
+        "position": "LÍDER DE PROYECTOS C",
+        "requiredCourses": "AUDITORÍAS DE PROCESO EN CAPAS"
+    },
+    {
+        "position": "LÍDER DE PROYECTOS C",
+        "requiredCourses": "CORE TOOLS"
+    },
+    {
+        "position": "LÍDER DE PROYECTOS C",
+        "requiredCourses": "ESTRUCTURA DEL SGI Y DOCUMENTOS"
+    },
+    {
+        "position": "LÍDER DE PROYECTOS C",
+        "requiredCourses": "GD&T"
+    },
+    {
+        "position": "LÍDER DE PROYECTOS C",
+        "requiredCourses": "GESTIÓN DE PROYECTOS"
+    },
+    {
+        "position": "LÍDER DE PROYECTOS C",
+        "requiredCourses": "IMDS"
+    },
+    {
+        "position": "LÍDER DE PROYECTOS C",
+        "requiredCourses": "INDUCCIÓN A LA EMPRESA"
+    },
+    {
+        "position": "LÍDER DE PROYECTOS C",
+        "requiredCourses": "METODOLOGÍA 5S"
+    },
+    {
+        "position": "LÍDER DE PROYECTOS C",
+        "requiredCourses": "SEGURIDAD Y PREVENCIÓN DE ACCIDENTES"
+    },
+    {
+        "position": "LÍDER DE PROYECTOS C",
+        "requiredCourses": "SISTEMA DE GESTIÓN INTEGRAL"
+    },
+    {
+        "position": "LÍDER DE PROYECTOS C",
+        "requiredCourses": "SPC (2 EDICION) CONTROL DEL PROCESO ESTADISTICO"
+    },
+    {
+        "position": "MATERIALISTA A",
+        "requiredCourses": "ALERTAS DE CALIDAD Y CATÁLOGO DE FALLAS"
+    },
+    {
+        "position": "MATERIALISTA A",
+        "requiredCourses": "CURSO PARA MATERIALISTA DE PRODUCCIÓN"
+    },
+    {
+        "position": "MATERIALISTA A",
+        "requiredCourses": "FAMILIAS DEL PRODUCTO"
+    },
+    {
+        "position": "MATERIALISTA A",
+        "requiredCourses": "INDUCCIÓN A LA EMPRESA"
+    },
+    {
+        "position": "MATERIALISTA A",
+        "requiredCourses": "INSTRUCCIONES DE TRABAJO"
+    },
+    {
+        "position": "MATERIALISTA A",
+        "requiredCourses": "METODOLOGÍA 5S"
+    },
+    {
+        "position": "MATERIALISTA A",
+        "requiredCourses": "NOM-036-1-STPS-2018"
+    },
+    {
+        "position": "MATERIALISTA A",
+        "requiredCourses": "REPORTE DE PRODUCCIÓN"
+    },
+    {
+        "position": "MATERIALISTA A",
+        "requiredCourses": "SEGURIDAD Y PREVENCIÓN DE ACCIDENTES"
+    },
+    {
+        "position": "MATERIALISTA A",
+        "requiredCourses": "SEPARACIÓN DE RESIDUOS"
+    },
+    {
+        "position": "MATERIALISTA A",
+        "requiredCourses": "SISTEMA DE GESTIÓN INTEGRAL"
+    },
+    {
+        "position": "MATERIALISTA B",
+        "requiredCourses": "ALERTAS DE CALIDAD Y CATÁLOGO DE FALLAS"
+    },
+    {
+        "position": "MATERIALISTA B",
+        "requiredCourses": "CURSO PARA MATERIALISTA DE PRODUCCIÓN"
+    },
+    {
+        "position": "MATERIALISTA B",
+        "requiredCourses": "FAMILIAS DEL PRODUCTO"
+    },
+    {
+        "position": "MATERIALISTA B",
+        "requiredCourses": "INDUCCIÓN A LA EMPRESA"
+    },
+    {
+        "position": "MATERIALISTA B",
+        "requiredCourses": "INSTRUCCIONES DE TRABAJO"
+    },
+    {
+        "position": "MATERIALISTA B",
+        "requiredCourses": "METODOLOGÍA 5S"
+    },
+    {
+        "position": "MATERIALISTA B",
+        "requiredCourses": "NOM-036-1-STPS-2018"
+    },
+    {
+        "position": "MATERIALISTA B",
+        "requiredCourses": "REPORTE DE PRODUCCIÓN"
+    },
+    {
+        "position": "MATERIALISTA B",
+        "requiredCourses": "SEGURIDAD Y PREVENCIÓN DE ACCIDENTES"
+    },
+    {
+        "position": "MATERIALISTA B",
+        "requiredCourses": "SEPARACIÓN DE RESIDUOS"
+    },
+    {
+        "position": "MATERIALISTA B",
+        "requiredCourses": "SISTEMA DE GESTIÓN INTEGRAL"
+    },
+    {
+        "position": "METRÓLOGO A",
+        "requiredCourses": "AUDITORÍAS DE PROCESO EN CAPAS"
+    },
+    {
+        "position": "METRÓLOGO A",
+        "requiredCourses": "ESTRUCTURA DEL SGI Y DOCUMENTOS"
+    },
+    {
+        "position": "METRÓLOGO A",
+        "requiredCourses": "GD&T"
+    },
+    {
+        "position": "METRÓLOGO A",
+        "requiredCourses": "INDUCCIÓN A LA EMPRESA"
+    },
+    {
+        "position": "METRÓLOGO A",
+        "requiredCourses": "INTRODUCCIÓN A LA METROLOGÍA Y MANEJO DE EQUIPOS DE MEDICIÓN"
+    },
+    {
+        "position": "METRÓLOGO A",
+        "requiredCourses": "KEYENCE"
+    },
+    {
+        "position": "METRÓLOGO A",
+        "requiredCourses": "MANEJO DE MÁQUINA CMM"
+    },
+    {
+        "position": "METRÓLOGO A",
+        "requiredCourses": "MSA (4 EDICION) SISTEMA DE ANALISIS DE MEDICIÓN"
+    },
+    {
+        "position": "METRÓLOGO A",
+        "requiredCourses": "NOM-010-STPS-2014"
+    },
+    {
+        "position": "METRÓLOGO A",
+        "requiredCourses": "PR-ASC-011"
+    },
+    {
+        "position": "METRÓLOGO A",
+        "requiredCourses": "SEGURIDAD Y PREVENCIÓN DE ACCIDENTES"
+    },
+    {
+        "position": "METRÓLOGO A",
+        "requiredCourses": "SISTEMA DE GESTIÓN INTEGRAL"
+    },
+    {
+        "position": "METRÓLOGO A",
+        "requiredCourses": "SPC (2 EDICION) CONTROL DEL PROCESO ESTADISTICO"
+    },
+    {
+        "position": "METRÓLOGO B",
+        "requiredCourses": "AUDITORÍAS DE PROCESO EN CAPAS"
+    },
+    {
+        "position": "METRÓLOGO B",
+        "requiredCourses": "ESTRUCTURA DEL SGI Y DOCUMENTOS"
+    },
+    {
+        "position": "METRÓLOGO B",
+        "requiredCourses": "GD&T"
+    },
+    {
+        "position": "METRÓLOGO B",
+        "requiredCourses": "INDUCCIÓN A LA EMPRESA"
+    },
+    {
+        "position": "METRÓLOGO B",
+        "requiredCourses": "INTRODUCCIÓN A LA METROLOGÍA Y MANEJO DE EQUIPOS DE MEDICIÓN"
+    },
+    {
+        "position": "METRÓLOGO B",
+        "requiredCourses": "KEYENCE"
+    },
+    {
+        "position": "METRÓLOGO B",
+        "requiredCourses": "NOM-010-STPS-2014"
+    },
+    {
+        "position": "METRÓLOGO B",
+        "requiredCourses": "PR-ASC-011"
+    },
+    {
+        "position": "METRÓLOGO B",
+        "requiredCourses": "SEGURIDAD Y PREVENCIÓN DE ACCIDENTES"
+    },
+    {
+        "position": "METRÓLOGO B",
+        "requiredCourses": "SISTEMA DE GESTIÓN INTEGRAL"
+    },
+    {
+        "position": "METRÓLOGO C",
+        "requiredCourses": "AUDITORÍAS DE PROCESO EN CAPAS"
+    },
+    {
+        "position": "METRÓLOGO C",
+        "requiredCourses": "ESTRUCTURA DEL SGI Y DOCUMENTOS"
+    },
+    {
+        "position": "METRÓLOGO C",
+        "requiredCourses": "GD&T"
+    },
+    {
+        "position": "METRÓLOGO C",
+        "requiredCourses": "INDUCCIÓN A LA EMPRESA"
+    },
+    {
+        "position": "METRÓLOGO C",
+        "requiredCourses": "INTRODUCCIÓN A LA METROLOGÍA Y MANEJO DE EQUIPOS DE MEDICIÓN"
+    },
+    {
+        "position": "METRÓLOGO C",
+        "requiredCourses": "KEYENCE"
+    },
+    {
+        "position": "METRÓLOGO C",
+        "requiredCourses": "NOM-010-STPS-2014"
+    },
+    {
+        "position": "METRÓLOGO C",
+        "requiredCourses": "PR-ASC-011"
+    },
+    {
+        "position": "METRÓLOGO C",
+        "requiredCourses": "SEGURIDAD Y PREVENCIÓN DE ACCIDENTES"
+    },
+    {
+        "position": "METRÓLOGO C",
+        "requiredCourses": "SISTEMA DE GESTIÓN INTEGRAL"
+    },
+    {
+        "position": "MONTADOR DE MOLDES A",
+        "requiredCourses": "COLADA CALIENTE"
+    },
+    {
+        "position": "MONTADOR DE MOLDES A",
+        "requiredCourses": "COMPRENSIÓN DE LOS REQUISITOS ESPECIFICOS DEL CLIENTE"
+    },
+    {
+        "position": "MONTADOR DE MOLDES A",
+        "requiredCourses": "CONOCIMIENTO DE MOLDES, MANTENIMIENTO PREVENTIVO Y CORRECTIVO"
+    },
+    {
+        "position": "MONTADOR DE MOLDES A",
+        "requiredCourses": "FRIGEL"
+    },
+    {
+        "position": "MONTADOR DE MOLDES A",
+        "requiredCourses": "INDUCCIÓN A LA EMPRESA"
+    },
+    {
+        "position": "MONTADOR DE MOLDES A",
+        "requiredCourses": "INSPECCIÓN VISUAL"
+    },
+    {
+        "position": "MONTADOR DE MOLDES A",
+        "requiredCourses": "MEDICION DE TIEMPOS Y MOVIMIENTOS"
+    },
+    {
+        "position": "MONTADOR DE MOLDES A",
+        "requiredCourses": "MOLDEO CIENTIFICO"
+    },
+    {
+        "position": "MONTADOR DE MOLDES A",
+        "requiredCourses": "NOM-005-STPS-1998"
+    },
+    {
+        "position": "MONTADOR DE MOLDES A",
+        "requiredCourses": "NOM-018-STPS-2015"
+    },
+    {
+        "position": "MONTADOR DE MOLDES A",
+        "requiredCourses": "NOM-026-STPS-2008"
+    },
+    {
+        "position": "MONTADOR DE MOLDES A",
+        "requiredCourses": "NOM-030-STPS-2009"
+    },
+    {
+        "position": "MONTADOR DE MOLDES A",
+        "requiredCourses": "NOM-035-STPS-2018"
+    },
+    {
+        "position": "MONTADOR DE MOLDES A",
+        "requiredCourses": "NOM-036-1-STPS-2018"
+    },
+    {
+        "position": "MONTADOR DE MOLDES A",
+        "requiredCourses": "PLANEACIÓN Y CONTROL DE LA PRODUCCIÓN"
+    },
+    {
+        "position": "MONTADOR DE MOLDES A",
+        "requiredCourses": "PREVENCIÓN DE RIESGOS POR MAQUINARIA Y EQUIPO"
+    },
+    {
+        "position": "MONTADOR DE MOLDES A",
+        "requiredCourses": "PROCESO DE INYECCIÓN DE PLÁSTICO"
+    },
+    {
+        "position": "MONTADOR DE MOLDES A",
+        "requiredCourses": "RPS"
+    },
+    {
+        "position": "MONTADOR DE MOLDES A",
+        "requiredCourses": "SEGURIDAD EN MONTAJE / DESMONTAJE DE MOLDES"
+    },
+    {
+        "position": "MONTADOR DE MOLDES A",
+        "requiredCourses": "SISTEMA DE GESTIÓN INTEGRAL"
+    },
+    {
+        "position": "MONTADOR DE MOLDES A",
+        "requiredCourses": "SMED"
+    },
+    {
+        "position": "MONTADOR DE MOLDES A",
+        "requiredCourses": "TERMOREGULADORES"
+    },
+    {
+        "position": "MONTADOR DE MOLDES A",
+        "requiredCourses": "TRAZABILIDAD DEL PRODUCTO"
+    },
+    {
+        "position": "MONTADOR DE MOLDES B",
+        "requiredCourses": "COLADA CALIENTE"
+    },
+    {
+        "position": "MONTADOR DE MOLDES B",
+        "requiredCourses": "COMPRENSIÓN DE LOS REQUISITOS ESPECIFICOS DEL CLIENTE"
+    },
+    {
+        "position": "MONTADOR DE MOLDES B",
+        "requiredCourses": "CONOCIMIENTO DE MOLDES, MANTENIMIENTO PREVENTIVO Y CORRECTIVO"
+    },
+    {
+        "position": "MONTADOR DE MOLDES B",
+        "requiredCourses": "FRIGEL"
+    },
+    {
+        "position": "MONTADOR DE MOLDES B",
+        "requiredCourses": "INDUCCIÓN A LA EMPRESA"
+    },
+    {
+        "position": "MONTADOR DE MOLDES B",
+        "requiredCourses": "INSPECCIÓN VISUAL"
+    },
+    {
+        "position": "MONTADOR DE MOLDES B",
+        "requiredCourses": "MEDICION DE TIEMPOS Y MOVIMIENTOS"
+    },
+    {
+        "position": "MONTADOR DE MOLDES B",
+        "requiredCourses": "MOLDEO CIENTIFICO"
+    },
+    {
+        "position": "MONTADOR DE MOLDES B",
+        "requiredCourses": "NOM-005-STPS-1998"
+    },
+    {
+        "position": "MONTADOR DE MOLDES B",
+        "requiredCourses": "NOM-018-STPS-2015"
+    },
+    {
+        "position": "MONTADOR DE MOLDES B",
+        "requiredCourses": "NOM-026-STPS-2008"
+    },
+    {
+        "position": "MONTADOR DE MOLDES B",
+        "requiredCourses": "NOM-030-STPS-2009"
+    },
+    {
+        "position": "MONTADOR DE MOLDES B",
+        "requiredCourses": "NOM-035-STPS-2018"
+    },
+    {
+        "position": "MONTADOR DE MOLDES B",
+        "requiredCourses": "NOM-036-1-STPS-2018"
+    },
+    {
+        "position": "MONTADOR DE MOLDES B",
+        "requiredCourses": "PLANEACIÓN Y CONTROL DE LA PRODUCCIÓN"
+    },
+    {
+        "position": "MONTADOR DE MOLDES B",
+        "requiredCourses": "PREVENCIÓN DE RIESGOS POR MAQUINARIA Y EQUIPO"
+    },
+    {
+        "position": "MONTADOR DE MOLDES B",
+        "requiredCourses": "PROCESO DE INYECCIÓN DE PLÁSTICO"
+    },
+    {
+        "position": "MONTADOR DE MOLDES B",
+        "requiredCourses": "RPS"
+    },
+    {
+        "position": "MONTADOR DE MOLDES B",
+        "requiredCourses": "SEGURIDAD EN MONTAJE / DESMONTAJE DE MOLDES"
+    },
+    {
+        "position": "MONTADOR DE MOLDES B",
+        "requiredCourses": "SISTEMA DE GESTIÓN INTEGRAL"
+    },
+    {
+        "position": "MONTADOR DE MOLDES B",
+        "requiredCourses": "SMED"
+    },
+    {
+        "position": "MONTADOR DE MOLDES B",
+        "requiredCourses": "TERMOREGULADORES"
+    },
+    {
+        "position": "MONTADOR DE MOLDES B",
+        "requiredCourses": "TRAZABILIDAD DEL PRODUCTO"
+    },
+    {
+        "position": "MONTADOR DE MOLDES C",
+        "requiredCourses": "COLADA CALIENTE"
+    },
+    {
+        "position": "MONTADOR DE MOLDES C",
+        "requiredCourses": "COMPRENSIÓN DE LOS REQUISITOS ESPECIFICOS DEL CLIENTE"
+    },
+    {
+        "position": "MONTADOR DE MOLDES C",
+        "requiredCourses": "CONOCIMIENTO DE MOLDES, MANTENIMIENTO PREVENTIVO Y CORRECTIVO"
+    },
+    {
+        "position": "MONTADOR DE MOLDES C",
+        "requiredCourses": "FRIGEL"
+    },
+    {
+        "position": "MONTADOR DE MOLDES C",
+        "requiredCourses": "INDUCCIÓN A LA EMPRESA"
+    },
+    {
+        "position": "MONTADOR DE MOLDES C",
+        "requiredCourses": "INSPECCIÓN VISUAL"
+    },
+    {
+        "position": "MONTADOR DE MOLDES C",
+        "requiredCourses": "MEDICION DE TIEMPOS Y MOVIMIENTOS"
+    },
+    {
+        "position": "MONTADOR DE MOLDES C",
+        "requiredCourses": "MOLDEO CIENTIFICO"
+    },
+    {
+        "position": "MONTADOR DE MOLDES C",
+        "requiredCourses": "NOM-005-STPS-1998"
+    },
+    {
+        "position": "MONTADOR DE MOLDES C",
+        "requiredCourses": "NOM-018-STPS-2015"
+    },
+    {
+        "position": "MONTADOR DE MOLDES C",
+        "requiredCourses": "NOM-026-STPS-2008"
+    },
+    {
+        "position": "MONTADOR DE MOLDES C",
+        "requiredCourses": "NOM-030-STPS-2009"
+    },
+    {
+        "position": "MONTADOR DE MOLDES C",
+        "requiredCourses": "NOM-035-STPS-2018"
+    },
+    {
+        "position": "MONTADOR DE MOLDES C",
+        "requiredCourses": "NOM-036-1-STPS-2018"
+    },
+    {
+        "position": "MONTADOR DE MOLDES C",
+        "requiredCourses": "PLANEACIÓN Y CONTROL DE LA PRODUCCIÓN"
+    },
+    {
+        "position": "MONTADOR DE MOLDES C",
+        "requiredCourses": "PREVENCIÓN DE RIESGOS POR MAQUINARIA Y EQUIPO"
+    },
+    {
+        "position": "MONTADOR DE MOLDES C",
+        "requiredCourses": "PROCESO DE INYECCIÓN DE PLÁSTICO"
+    },
+    {
+        "position": "MONTADOR DE MOLDES C",
+        "requiredCourses": "RPS"
+    },
+    {
+        "position": "MONTADOR DE MOLDES C",
+        "requiredCourses": "SEGURIDAD EN MONTAJE / DESMONTAJE DE MOLDES"
+    },
+    {
+        "position": "MONTADOR DE MOLDES C",
+        "requiredCourses": "SISTEMA DE GESTIÓN INTEGRAL"
+    },
+    {
+        "position": "MONTADOR DE MOLDES C",
+        "requiredCourses": "SMED"
+    },
+    {
+        "position": "MONTADOR DE MOLDES C",
+        "requiredCourses": "TERMOREGULADORES"
+    },
+    {
+        "position": "MONTADOR DE MOLDES C",
+        "requiredCourses": "TRAZABILIDAD DEL PRODUCTO"
+    },
+    {
+        "position": "OPERADOR DE ACABADOS - GP12 A",
+        "requiredCourses": "ALERTAS DE CALIDAD Y CATÁLOGO DE FALLAS"
+    },
+    {
+        "position": "OPERADOR DE ACABADOS - GP12 A",
+        "requiredCourses": "FAMILIAS DEL PRODUCTO"
+    },
+    {
+        "position": "OPERADOR DE ACABADOS - GP12 A",
+        "requiredCourses": "INDUCCIÓN A LA EMPRESA"
+    },
+    {
+        "position": "OPERADOR DE ACABADOS - GP12 A",
+        "requiredCourses": "IT-ASC-019"
+    },
+    {
+        "position": "OPERADOR DE ACABADOS - GP12 A",
+        "requiredCourses": "METODOLOGÍA 5S"
+    },
+    {
+        "position": "OPERADOR DE ACABADOS - GP12 A",
+        "requiredCourses": "NOM-035-STPS-2018"
+    },
+    {
+        "position": "OPERADOR DE ACABADOS - GP12 A",
+        "requiredCourses": "NOM-036-1-STPS-2018"
+    },
+    {
+        "position": "OPERADOR DE ACABADOS - GP12 A",
+        "requiredCourses": "SEGURIDAD Y PREVENCIÓN DE ACCIDENTES"
+    },
+    {
+        "position": "OPERADOR DE ACABADOS - GP12 A",
+        "requiredCourses": "SISTEMA DE GESTIÓN INTEGRAL"
+    },
+    {
+        "position": "OPERADOR DE ACABADOS - GP12 B",
+        "requiredCourses": "ALERTAS DE CALIDAD Y CATÁLOGO DE FALLAS"
+    },
+    {
+        "position": "OPERADOR DE ACABADOS - GP12 B",
+        "requiredCourses": "FAMILIAS DEL PRODUCTO"
+    },
+    {
+        "position": "OPERADOR DE ACABADOS - GP12 B",
+        "requiredCourses": "INDUCCIÓN A LA EMPRESA"
+    },
+    {
+        "position": "OPERADOR DE ACABADOS - GP12 B",
+        "requiredCourses": "IT-ASC-019"
+    },
+    {
+        "position": "OPERADOR DE ACABADOS - GP12 B",
+        "requiredCourses": "METODOLOGÍA 5S"
+    },
+    {
+        "position": "OPERADOR DE ACABADOS - GP12 B",
+        "requiredCourses": "NOM-035-STPS-2018"
+    },
+    {
+        "position": "OPERADOR DE ACABADOS - GP12 B",
+        "requiredCourses": "NOM-036-1-STPS-2018"
+    },
+    {
+        "position": "OPERADOR DE ACABADOS - GP12 B",
+        "requiredCourses": "SEGURIDAD Y PREVENCIÓN DE ACCIDENTES"
+    },
+    {
+        "position": "OPERADOR DE ACABADOS - GP12 B",
+        "requiredCourses": "SISTEMA DE GESTIÓN INTEGRAL"
+    },
+    {
+        "position": "OPERADOR DE ACABADOS - GP12 C",
+        "requiredCourses": "ALERTAS DE CALIDAD Y CATÁLOGO DE FALLAS"
+    },
+    {
+        "position": "OPERADOR DE ACABADOS - GP12 C",
+        "requiredCourses": "FAMILIAS DEL PRODUCTO"
+    },
+    {
+        "position": "OPERADOR DE ACABADOS - GP12 C",
+        "requiredCourses": "INDUCCIÓN A LA EMPRESA"
+    },
+    {
+        "position": "OPERADOR DE ACABADOS - GP12 C",
+        "requiredCourses": "IT-ASC-019"
+    },
+    {
+        "position": "OPERADOR DE ACABADOS - GP12 C",
+        "requiredCourses": "METODOLOGÍA 5S"
+    },
+    {
+        "position": "OPERADOR DE ACABADOS - GP12 C",
+        "requiredCourses": "NOM-035-STPS-2018"
+    },
+    {
+        "position": "OPERADOR DE ACABADOS - GP12 C",
+        "requiredCourses": "NOM-036-1-STPS-2018"
+    },
+    {
+        "position": "OPERADOR DE ACABADOS - GP12 C",
+        "requiredCourses": "SEGURIDAD Y PREVENCIÓN DE ACCIDENTES"
+    },
+    {
+        "position": "OPERADOR DE ACABADOS - GP12 C",
+        "requiredCourses": "SISTEMA DE GESTIÓN INTEGRAL"
+    },
+    {
+        "position": "OPERADOR DE ACABADOS - GP12 D",
+        "requiredCourses": "ALERTAS DE CALIDAD Y CATÁLOGO DE FALLAS"
+    },
+    {
+        "position": "OPERADOR DE ACABADOS - GP12 D",
+        "requiredCourses": "FAMILIAS DEL PRODUCTO"
+    },
+    {
+        "position": "OPERADOR DE ACABADOS - GP12 D",
+        "requiredCourses": "INDUCCIÓN A LA EMPRESA"
+    },
+    {
+        "position": "OPERADOR DE ACABADOS - GP12 D",
+        "requiredCourses": "IT-ASC-019"
+    },
+    {
+        "position": "OPERADOR DE ACABADOS - GP12 D",
+        "requiredCourses": "METODOLOGÍA 5S"
+    },
+    {
+        "position": "OPERADOR DE ACABADOS - GP12 D",
+        "requiredCourses": "NOM-035-STPS-2018"
+    },
+    {
+        "position": "OPERADOR DE ACABADOS - GP12 D",
+        "requiredCourses": "NOM-036-1-STPS-2018"
+    },
+    {
+        "position": "OPERADOR DE ACABADOS - GP12 D",
+        "requiredCourses": "SEGURIDAD Y PREVENCIÓN DE ACCIDENTES"
+    },
+    {
+        "position": "OPERADOR DE ACABADOS - GP12 D",
+        "requiredCourses": "SISTEMA DE GESTIÓN INTEGRAL"
+    },
+    {
+        "position": "OPERADOR DE MÁQUINA A",
+        "requiredCourses": "ALERTAS DE CALIDAD Y CATÁLOGO DE FALLAS"
+    },
+    {
+        "position": "OPERADOR DE MÁQUINA A",
+        "requiredCourses": "FAMILIAS DEL PRODUCTO"
+    },
+    {
+        "position": "OPERADOR DE MÁQUINA A",
+        "requiredCourses": "INDUCCIÓN A LA EMPRESA"
+    },
+    {
+        "position": "OPERADOR DE MÁQUINA A",
+        "requiredCourses": "INSTRUCCIONES DE TRABAJO"
+    },
+    {
+        "position": "OPERADOR DE MÁQUINA A",
+        "requiredCourses": "METODOLOGÍA 5S"
+    },
+    {
+        "position": "OPERADOR DE MÁQUINA A",
+        "requiredCourses": "NOM-036-1-STPS-2018"
+    },
+    {
+        "position": "OPERADOR DE MÁQUINA A",
+        "requiredCourses": "REPORTE DE PRODUCCIÓN"
+    },
+    {
+        "position": "OPERADOR DE MÁQUINA A",
+        "requiredCourses": "SEGURIDAD Y PREVENCIÓN DE ACCIDENTES"
+    },
+    {
+        "position": "OPERADOR DE MÁQUINA A",
+        "requiredCourses": "SEPARACIÓN DE RESIDUOS"
+    },
+    {
+        "position": "OPERADOR DE MÁQUINA A",
+        "requiredCourses": "SISTEMA DE GESTIÓN INTEGRAL"
+    },
+    {
+        "position": "OPERADOR DE MÁQUINA B",
+        "requiredCourses": "ALERTAS DE CALIDAD Y CATÁLOGO DE FALLAS"
+    },
+    {
+        "position": "OPERADOR DE MÁQUINA B",
+        "requiredCourses": "FAMILIAS DEL PRODUCTO"
+    },
+    {
+        "position": "OPERADOR DE MÁQUINA B",
+        "requiredCourses": "INDUCCIÓN A LA EMPRESA"
+    },
+    {
+        "position": "OPERADOR DE MÁQUINA B",
+        "requiredCourses": "INSTRUCCIONES DE TRABAJO"
+    },
+    {
+        "position": "OPERADOR DE MÁQUINA B",
+        "requiredCourses": "METODOLOGÍA 5S"
+    },
+    {
+        "position": "OPERADOR DE MÁQUINA B",
+        "requiredCourses": "NOM-036-1-STPS-2018"
+    },
+    {
+        "position": "OPERADOR DE MÁQUINA B",
+        "requiredCourses": "REPORTE DE PRODUCCIÓN"
+    },
+    {
+        "position": "OPERADOR DE MÁQUINA B",
+        "requiredCourses": "SEGURIDAD Y PREVENCIÓN DE ACCIDENTES"
+    },
+    {
+        "position": "OPERADOR DE MÁQUINA B",
+        "requiredCourses": "SEPARACIÓN DE RESIDUOS"
+    },
+    {
+        "position": "OPERADOR DE MÁQUINA B",
+        "requiredCourses": "SISTEMA DE GESTIÓN INTEGRAL"
+    },
+    {
+        "position": "OPERADOR DE MÁQUINA C",
+        "requiredCourses": "ALERTAS DE CALIDAD Y CATÁLOGO DE FALLAS"
+    },
+    {
+        "position": "OPERADOR DE MÁQUINA C",
+        "requiredCourses": "FAMILIAS DEL PRODUCTO"
+    },
+    {
+        "position": "OPERADOR DE MÁQUINA C",
+        "requiredCourses": "INDUCCIÓN A LA EMPRESA"
+    },
+    {
+        "position": "OPERADOR DE MÁQUINA C",
+        "requiredCourses": "INSTRUCCIONES DE TRABAJO"
+    },
+    {
+        "position": "OPERADOR DE MÁQUINA C",
+        "requiredCourses": "METODOLOGÍA 5S"
+    },
+    {
+        "position": "OPERADOR DE MÁQUINA C",
+        "requiredCourses": "NOM-036-1-STPS-2018"
+    },
+    {
+        "position": "OPERADOR DE MÁQUINA C",
+        "requiredCourses": "REPORTE DE PRODUCCIÓN"
+    },
+    {
+        "position": "OPERADOR DE MÁQUINA C",
+        "requiredCourses": "SEGURIDAD Y PREVENCIÓN DE ACCIDENTES"
+    },
+    {
+        "position": "OPERADOR DE MÁQUINA C",
+        "requiredCourses": "SEPARACIÓN DE RESIDUOS"
+    },
+    {
+        "position": "OPERADOR DE MÁQUINA C",
+        "requiredCourses": "SISTEMA DE GESTIÓN INTEGRAL"
+    },
+    {
+        "position": "OPERADOR DE MÁQUINA D",
+        "requiredCourses": "ALERTAS DE CALIDAD Y CATÁLOGO DE FALLAS"
+    },
+    {
+        "position": "OPERADOR DE MÁQUINA D",
+        "requiredCourses": "FAMILIAS DEL PRODUCTO"
+    },
+    {
+        "position": "OPERADOR DE MÁQUINA D",
+        "requiredCourses": "INDUCCIÓN A LA EMPRESA"
+    },
+    {
+        "position": "OPERADOR DE MÁQUINA D",
+        "requiredCourses": "INSTRUCCIONES DE TRABAJO"
+    },
+    {
+        "position": "OPERADOR DE MÁQUINA D",
+        "requiredCourses": "METODOLOGÍA 5S"
+    },
+    {
+        "position": "OPERADOR DE MÁQUINA D",
+        "requiredCourses": "NOM-036-1-STPS-2018"
+    },
+    {
+        "position": "OPERADOR DE MÁQUINA D",
+        "requiredCourses": "REPORTE DE PRODUCCIÓN"
+    },
+    {
+        "position": "OPERADOR DE MÁQUINA D",
+        "requiredCourses": "SEGURIDAD Y PREVENCIÓN DE ACCIDENTES"
+    },
+    {
+        "position": "OPERADOR DE MÁQUINA D",
+        "requiredCourses": "SEPARACIÓN DE RESIDUOS"
+    },
+    {
+        "position": "OPERADOR DE MÁQUINA D",
+        "requiredCourses": "SISTEMA DE GESTIÓN INTEGRAL"
+    },
+    {
+        "position": "PLANEADOR DE PRODUCCIÓN",
+        "requiredCourses": "8DS PARA LA SOLUCION DE PROBLEMAS"
+    },
+    {
+        "position": "PLANEADOR DE PRODUCCIÓN",
+        "requiredCourses": "AUDITORÍAS DE PROCESO EN CAPAS"
+    },
+    {
+        "position": "PLANEADOR DE PRODUCCIÓN",
+        "requiredCourses": "COMPRENSIÓN DE LOS REQUISITOS ESPECIFICOS DEL CLIENTE"
+    },
+    {
+        "position": "PLANEADOR DE PRODUCCIÓN",
+        "requiredCourses": "DIAGRAMA DE TORTUGA"
+    },
+    {
+        "position": "PLANEADOR DE PRODUCCIÓN",
+        "requiredCourses": "GRÁFICAS DE CONTROL"
+    },
+    {
+        "position": "PLANEADOR DE PRODUCCIÓN",
+        "requiredCourses": "INDUCCIÓN A LA EMPRESA"
+    },
+    {
+        "position": "PLANEADOR DE PRODUCCIÓN",
+        "requiredCourses": "NOM-030-STPS-2009"
+    },
+    {
+        "position": "PLANEADOR DE PRODUCCIÓN",
+        "requiredCourses": "NOM-035-STPS-2018"
+    },
+    {
+        "position": "PLANEADOR DE PRODUCCIÓN",
+        "requiredCourses": "PROCESO DE INYECCIÓN DE PLÁSTICO"
+    },
+    {
+        "position": "PLANEADOR DE PRODUCCIÓN",
+        "requiredCourses": "RPS"
+    },
+    {
+        "position": "PLANEADOR DE PRODUCCIÓN",
+        "requiredCourses": "SISTEMA DE GESTIÓN INTEGRAL"
+    },
+    {
+        "position": "PLANEADOR DE PRODUCCIÓN",
+        "requiredCourses": "SPC (2 EDICION) CONTROL DEL PROCESO ESTADISTICO"
+    },
+    {
+        "position": "PLANEADOR DE PRODUCCIÓN",
+        "requiredCourses": "VDA 6.5 AUDITORÍAS DE PRODUCTO"
+    },
+    {
+        "position": "PREPARADOR A",
+        "requiredCourses": "ALERTAS DE CALIDAD Y CATÁLOGO DE FALLAS"
+    },
+    {
+        "position": "PREPARADOR A",
+        "requiredCourses": "CURSO PARA PREPARADOR DE PRODUCCIÓN"
+    },
+    {
+        "position": "PREPARADOR A",
+        "requiredCourses": "FAMILIAS DEL PRODUCTO"
+    },
+    {
+        "position": "PREPARADOR A",
+        "requiredCourses": "INDUCCIÓN A LA EMPRESA"
+    },
+    {
+        "position": "PREPARADOR A",
+        "requiredCourses": "INSTRUCCIONES DE TRABAJO"
+    },
+    {
+        "position": "PREPARADOR A",
+        "requiredCourses": "METODOLOGÍA 5S"
+    },
+    {
+        "position": "PREPARADOR A",
+        "requiredCourses": "NOM-036-1-STPS-2018"
+    },
+    {
+        "position": "PREPARADOR A",
+        "requiredCourses": "REPORTE DE PRODUCCIÓN"
+    },
+    {
+        "position": "PREPARADOR A",
+        "requiredCourses": "SEGURIDAD Y PREVENCIÓN DE ACCIDENTES"
+    },
+    {
+        "position": "PREPARADOR A",
+        "requiredCourses": "SEPARACIÓN DE RESIDUOS"
+    },
+    {
+        "position": "PREPARADOR A",
+        "requiredCourses": "SISTEMA DE GESTIÓN INTEGRAL"
+    },
+    {
+        "position": "PREPARADOR B",
+        "requiredCourses": "ALERTAS DE CALIDAD Y CATÁLOGO DE FALLAS"
+    },
+    {
+        "position": "PREPARADOR B",
+        "requiredCourses": "CURSO PARA PREPARADOR DE PRODUCCIÓN"
+    },
+    {
+        "position": "PREPARADOR B",
+        "requiredCourses": "FAMILIAS DEL PRODUCTO"
+    },
+    {
+        "position": "PREPARADOR B",
+        "requiredCourses": "INSTRUCCIONES DE TRABAJO"
+    },
+    {
+        "position": "PREPARADOR B",
+        "requiredCourses": "METODOLOGÍA 5S"
+    },
+    {
+        "position": "PREPARADOR B",
+        "requiredCourses": "NOM-036-1-STPS-2018"
+    },
+    {
+        "position": "PREPARADOR B",
+        "requiredCourses": "REPORTE DE PRODUCCIÓN"
+    },
+    {
+        "position": "PREPARADOR B",
+        "requiredCourses": "SEGURIDAD Y PREVENCIÓN DE ACCIDENTES"
+    },
+    {
+        "position": "PREPARADOR B",
+        "requiredCourses": "SEPARACIÓN DE RESIDUOS"
+    },
+    {
+        "position": "PREPARADOR B",
+        "requiredCourses": "SISTEMA DE GESTIÓN INTEGRAL"
+    },
+    {
+        "position": "RESIDENTE DE CALIDAD A",
+        "requiredCourses": "INDUCCIÓN A LA EMPRESA"
+    },
+    {
+        "position": "RESIDENTE DE CALIDAD A",
+        "requiredCourses": "INTRODUCCIÓN A LA METROLOGÍA Y MANEJO DE EQUIPOS DE MEDICIÓN"
+    },
+    {
+        "position": "RESIDENTE DE CALIDAD A",
+        "requiredCourses": "MANEJO DE MATERIAL NO CONFORME"
+    },
+    {
+        "position": "RESIDENTE DE CALIDAD A",
+        "requiredCourses": "NOM-035-STPS-2018"
+    },
+    {
+        "position": "RESIDENTE DE CALIDAD A",
+        "requiredCourses": "NOM-036-1-STPS-2018"
+    },
+    {
+        "position": "RESIDENTE DE CALIDAD A",
+        "requiredCourses": "SEGURIDAD Y PREVENCIÓN DE ACCIDENTES"
+    },
+    {
+        "position": "RESIDENTE DE CALIDAD A",
+        "requiredCourses": "SISTEMA DE GESTIÓN INTEGRAL"
+    },
+    {
+        "position": "RESIDENTE DE CALIDAD A",
+        "requiredCourses": "TRAZABILIDAD DEL PRODUCTO"
+    },
+    {
+        "position": "RESIDENTE DE CALIDAD A",
+        "requiredCourses": "VALIDACIÓN DE ARRANQUE"
+    },
+    {
+        "position": "RESIDENTE DE CALIDAD B",
+        "requiredCourses": "INDUCCIÓN A LA EMPRESA"
+    },
+    {
+        "position": "RESIDENTE DE CALIDAD B",
+        "requiredCourses": "INTRODUCCIÓN A LA METROLOGÍA Y MANEJO DE EQUIPOS DE MEDICIÓN"
+    },
+    {
+        "position": "RESIDENTE DE CALIDAD B",
+        "requiredCourses": "MANEJO DE MATERIAL NO CONFORME"
+    },
+    {
+        "position": "RESIDENTE DE CALIDAD B",
+        "requiredCourses": "NOM-035-STPS-2018"
+    },
+    {
+        "position": "RESIDENTE DE CALIDAD B",
+        "requiredCourses": "NOM-036-1-STPS-2018"
+    },
+    {
+        "position": "RESIDENTE DE CALIDAD B",
+        "requiredCourses": "SEGURIDAD Y PREVENCIÓN DE ACCIDENTES"
+    },
+    {
+        "position": "RESIDENTE DE CALIDAD B",
+        "requiredCourses": "SISTEMA DE GESTIÓN INTEGRAL"
+    },
+    {
+        "position": "RESIDENTE DE CALIDAD B",
+        "requiredCourses": "TRAZABILIDAD DEL PRODUCTO"
+    },
+    {
+        "position": "RESIDENTE DE CALIDAD B",
+        "requiredCourses": "VALIDACIÓN DE ARRANQUE"
+    },
+    {
+        "position": "RESIDENTE DE CALIDAD C",
+        "requiredCourses": "INDUCCIÓN A LA EMPRESA"
+    },
+    {
+        "position": "RESIDENTE DE CALIDAD C",
+        "requiredCourses": "INTRODUCCIÓN A LA METROLOGÍA Y MANEJO DE EQUIPOS DE MEDICIÓN"
+    },
+    {
+        "position": "RESIDENTE DE CALIDAD C",
+        "requiredCourses": "MANEJO DE MATERIAL NO CONFORME"
+    },
+    {
+        "position": "RESIDENTE DE CALIDAD C",
+        "requiredCourses": "NOM-035-STPS-2018"
+    },
+    {
+        "position": "RESIDENTE DE CALIDAD C",
+        "requiredCourses": "NOM-036-1-STPS-2018"
+    },
+    {
+        "position": "RESIDENTE DE CALIDAD C",
+        "requiredCourses": "SEGURIDAD Y PREVENCIÓN DE ACCIDENTES"
+    },
+    {
+        "position": "RESIDENTE DE CALIDAD C",
+        "requiredCourses": "SISTEMA DE GESTIÓN INTEGRAL"
+    },
+    {
+        "position": "RESIDENTE DE CALIDAD C",
+        "requiredCourses": "TRAZABILIDAD DEL PRODUCTO"
+    },
+    {
+        "position": "RESIDENTE DE CALIDAD C",
+        "requiredCourses": "VALIDACIÓN DE ARRANQUE"
+    },
+    {
+        "position": "SUPERVISOR DE ACABADOS - GP12 A",
+        "requiredCourses": "ALERTAS DE CALIDAD Y CATÁLOGO DE FALLAS"
+    },
+    {
+        "position": "SUPERVISOR DE ACABADOS - GP12 A",
+        "requiredCourses": "AUDITORÍAS DE PROCESO EN CAPAS"
+    },
+    {
+        "position": "SUPERVISOR DE ACABADOS - GP12 A",
+        "requiredCourses": "COMPRENSIÓN DE LOS REQUISITOS ESPECIFICOS DEL CLIENTE"
+    },
+    {
+        "position": "SUPERVISOR DE ACABADOS - GP12 A",
+        "requiredCourses": "ESTRUCTURA DEL SGI Y DOCUMENTOS"
+    },
+    {
+        "position": "SUPERVISOR DE ACABADOS - GP12 A",
+        "requiredCourses": "FAMILIAS DEL PRODUCTO"
+    },
+    {
+        "position": "SUPERVISOR DE ACABADOS - GP12 A",
+        "requiredCourses": "INDUCCIÓN A LA EMPRESA"
+    },
+    {
+        "position": "SUPERVISOR DE ACABADOS - GP12 A",
+        "requiredCourses": "IT-ASC-019"
+    },
+    {
+        "position": "SUPERVISOR DE ACABADOS - GP12 A",
+        "requiredCourses": "METODOLOGÍA 5S"
+    },
+    {
+        "position": "SUPERVISOR DE ACABADOS - GP12 A",
+        "requiredCourses": "NOM-035-STPS-2018"
+    },
+    {
+        "position": "SUPERVISOR DE ACABADOS - GP12 A",
+        "requiredCourses": "NOM-036-1-STPS-2018"
+    },
+    {
+        "position": "SUPERVISOR DE ACABADOS - GP12 A",
+        "requiredCourses": "SEGURIDAD Y PREVENCIÓN DE ACCIDENTES"
+    },
+    {
+        "position": "SUPERVISOR DE ACABADOS - GP12 A",
+        "requiredCourses": "SISTEMA DE GESTIÓN INTEGRAL"
+    },
+    {
+        "position": "SUPERVISOR DE ACABADOS - GP12 B",
+        "requiredCourses": "ALERTAS DE CALIDAD Y CATÁLOGO DE FALLAS"
+    },
+    {
+        "position": "SUPERVISOR DE ACABADOS - GP12 B",
+        "requiredCourses": "AUDITORÍAS DE PROCESO EN CAPAS"
+    },
+    {
+        "position": "SUPERVISOR DE ACABADOS - GP12 B",
+        "requiredCourses": "COMPRENSIÓN DE LOS REQUISITOS ESPECIFICOS DEL CLIENTE"
+    },
+    {
+        "position": "SUPERVISOR DE ACABADOS - GP12 B",
+        "requiredCourses": "ESTRUCTURA DEL SGI Y DOCUMENTOS"
+    },
+    {
+        "position": "SUPERVISOR DE ACABADOS - GP12 B",
+        "requiredCourses": "FAMILIAS DEL PRODUCTO"
+    },
+    {
+        "position": "SUPERVISOR DE ACABADOS - GP12 B",
+        "requiredCourses": "INDUCCIÓN A LA EMPRESA"
+    },
+    {
+        "position": "SUPERVISOR DE ACABADOS - GP12 B",
+        "requiredCourses": "IT-ASC-019"
+    },
+    {
+        "position": "SUPERVISOR DE ACABADOS - GP12 B",
+        "requiredCourses": "METODOLOGÍA 5S"
+    },
+    {
+        "position": "SUPERVISOR DE ACABADOS - GP12 B",
+        "requiredCourses": "NOM-035-STPS-2018"
+    },
+    {
+        "position": "SUPERVISOR DE ACABADOS - GP12 B",
+        "requiredCourses": "NOM-036-1-STPS-2018"
+    },
+    {
+        "position": "SUPERVISOR DE ACABADOS - GP12 B",
+        "requiredCourses": "SEGURIDAD Y PREVENCIÓN DE ACCIDENTES"
+    },
+    {
+        "position": "SUPERVISOR DE ACABADOS - GP12 B",
+        "requiredCourses": "SISTEMA DE GESTIÓN INTEGRAL"
+    },
+    {
+        "position": "SUPERVISOR DE ACABADOS - GP12 C",
+        "requiredCourses": "ALERTAS DE CALIDAD Y CATÁLOGO DE FALLAS"
+    },
+    {
+        "position": "SUPERVISOR DE ACABADOS - GP12 C",
+        "requiredCourses": "AUDITORÍAS DE PROCESO EN CAPAS"
+    },
+    {
+        "position": "SUPERVISOR DE ACABADOS - GP12 C",
+        "requiredCourses": "COMPRENSIÓN DE LOS REQUISITOS ESPECIFICOS DEL CLIENTE"
+    },
+    {
+        "position": "SUPERVISOR DE ACABADOS - GP12 C",
+        "requiredCourses": "ESTRUCTURA DEL SGI Y DOCUMENTOS"
+    },
+    {
+        "position": "SUPERVISOR DE ACABADOS - GP12 C",
+        "requiredCourses": "FAMILIAS DEL PRODUCTO"
+    },
+    {
+        "position": "SUPERVISOR DE ACABADOS - GP12 C",
+        "requiredCourses": "INDUCCIÓN A LA EMPRESA"
+    },
+    {
+        "position": "SUPERVISOR DE ACABADOS - GP12 C",
+        "requiredCourses": "IT-ASC-019"
+    },
+    {
+        "position": "SUPERVISOR DE ACABADOS - GP12 C",
+        "requiredCourses": "METODOLOGÍA 5S"
+    },
+    {
+        "position": "SUPERVISOR DE ACABADOS - GP12 C",
+        "requiredCourses": "NOM-035-STPS-2018"
+    },
+    {
+        "position": "SUPERVISOR DE ACABADOS - GP12 C",
+        "requiredCourses": "NOM-036-1-STPS-2018"
+    },
+    {
+        "position": "SUPERVISOR DE ACABADOS - GP12 C",
+        "requiredCourses": "SEGURIDAD Y PREVENCIÓN DE ACCIDENTES"
+    },
+    {
+        "position": "SUPERVISOR DE ACABADOS - GP12 C",
+        "requiredCourses": "SISTEMA DE GESTIÓN INTEGRAL"
+    },
+    {
+        "position": "SUPERVISOR DE LOGÍSTICA",
+        "requiredCourses": "8DS PARA LA SOLUCION DE PROBLEMAS"
+    },
+    {
+        "position": "SUPERVISOR DE LOGÍSTICA",
+        "requiredCourses": "AUDITORÍAS DE PROCESO EN CAPAS"
+    },
+    {
+        "position": "SUPERVISOR DE LOGÍSTICA",
+        "requiredCourses": "COMPRENSIÓN DE LOS REQUISITOS ESPECIFICOS DEL CLIENTE"
+    },
+    {
+        "position": "SUPERVISOR DE LOGÍSTICA",
+        "requiredCourses": "DIAGRAMA DE TORTUGA"
+    },
+    {
+        "position": "SUPERVISOR DE LOGÍSTICA",
+        "requiredCourses": "ESTRUCTURA DEL SGI Y DOCUMENTOS"
+    },
+    {
+        "position": "SUPERVISOR DE LOGÍSTICA",
+        "requiredCourses": "INDUCCIÓN A LA EMPRESA"
+    },
+    {
+        "position": "SUPERVISOR DE LOGÍSTICA",
+        "requiredCourses": "METODOLOGÍA 5S"
+    },
+    {
+        "position": "SUPERVISOR DE LOGÍSTICA",
+        "requiredCourses": "SEGURIDAD Y PREVENCIÓN DE ACCIDENTES"
+    },
+    {
+        "position": "SUPERVISOR DE LOGÍSTICA",
+        "requiredCourses": "SISTEMA DE GESTIÓN INTEGRAL"
+    },
+    {
+        "position": "SUPERVISOR DE LOGÍSTICA",
+        "requiredCourses": "VDA 6.3 AUDITORÍAS DE PROCESO"
+    },
+    {
+        "position": "SUPERVISOR DE METROLOGÍA",
+        "requiredCourses": "8DS PARA LA SOLUCION DE PROBLEMAS"
+    },
+    {
+        "position": "SUPERVISOR DE METROLOGÍA",
+        "requiredCourses": "AMEF"
+    },
+    {
+        "position": "SUPERVISOR DE METROLOGÍA",
+        "requiredCourses": "AUDITORÍAS DE PROCESO EN CAPAS"
+    },
+    {
+        "position": "SUPERVISOR DE METROLOGÍA",
+        "requiredCourses": "COMPRENSIÓN DE LOS REQUISITOS ESPECIFICOS DEL CLIENTE"
+    },
+    {
+        "position": "SUPERVISOR DE METROLOGÍA",
+        "requiredCourses": "DIAGRAMA DE TORTUGA"
+    },
+    {
+        "position": "SUPERVISOR DE METROLOGÍA",
+        "requiredCourses": "ESTRUCTURA DEL SGI Y DOCUMENTOS"
+    },
+    {
+        "position": "SUPERVISOR DE METROLOGÍA",
+        "requiredCourses": "GD&T"
+    },
+    {
+        "position": "SUPERVISOR DE METROLOGÍA",
+        "requiredCourses": "INDUCCIÓN A LA EMPRESA"
+    },
+    {
+        "position": "SUPERVISOR DE METROLOGÍA",
+        "requiredCourses": "INTRODUCCIÓN A LA METROLOGÍA Y MANEJO DE EQUIPOS DE MEDICIÓN"
+    },
+    {
+        "position": "SUPERVISOR DE METROLOGÍA",
+        "requiredCourses": "KEYENCE"
+    },
+    {
+        "position": "SUPERVISOR DE METROLOGÍA",
+        "requiredCourses": "MANEJO DE MÁQUINA CMM"
+    },
+    {
+        "position": "SUPERVISOR DE METROLOGÍA",
+        "requiredCourses": "MSA (4 EDICION) SISTEMA DE ANALISIS DE MEDICIÓN"
+    },
+    {
+        "position": "SUPERVISOR DE METROLOGÍA",
+        "requiredCourses": "NOM-010-STPS-2014"
+    },
+    {
+        "position": "SUPERVISOR DE METROLOGÍA",
+        "requiredCourses": "NOM-035-STPS-2018"
+    },
+    {
+        "position": "SUPERVISOR DE METROLOGÍA",
+        "requiredCourses": "PR-ASC-011"
+    },
+    {
+        "position": "SUPERVISOR DE METROLOGÍA",
+        "requiredCourses": "SEGURIDAD Y PREVENCIÓN DE ACCIDENTES"
+    },
+    {
+        "position": "SUPERVISOR DE METROLOGÍA",
+        "requiredCourses": "SISTEMA DE GESTIÓN INTEGRAL"
+    },
+    {
+        "position": "SUPERVISOR DE METROLOGÍA",
+        "requiredCourses": "SPC (2 EDICION) CONTROL DEL PROCESO ESTADISTICO"
+    },
+    {
+        "position": "SUPERVISOR DE MONTAJE",
+        "requiredCourses": "8DS PARA LA SOLUCION DE PROBLEMAS"
+    },
+    {
+        "position": "SUPERVISOR DE MONTAJE",
+        "requiredCourses": "COLADA CALIENTE"
+    },
+    {
+        "position": "SUPERVISOR DE MONTAJE",
+        "requiredCourses": "COMPRENSIÓN DE LOS REQUISITOS ESPECIFICOS DEL CLIENTE"
+    },
+    {
+        "position": "SUPERVISOR DE MONTAJE",
+        "requiredCourses": "CONOCIMIENTO DE MOLDES, MANTENIMIENTO PREVENTIVO Y CORRECTIVO"
+    },
+    {
+        "position": "SUPERVISOR DE MONTAJE",
+        "requiredCourses": "FRIGEL"
+    },
+    {
+        "position": "SUPERVISOR DE MONTAJE",
+        "requiredCourses": "INDUCCIÓN A LA EMPRESA"
+    },
+    {
+        "position": "SUPERVISOR DE MONTAJE",
+        "requiredCourses": "INSPECCIÓN VISUAL"
+    },
+    {
+        "position": "SUPERVISOR DE MONTAJE",
+        "requiredCourses": "MEDICION DE TIEMPOS Y MOVIMIENTOS"
+    },
+    {
+        "position": "SUPERVISOR DE MONTAJE",
+        "requiredCourses": "MOLDEO CIENTIFICO"
+    },
+    {
+        "position": "SUPERVISOR DE MONTAJE",
+        "requiredCourses": "NOM-005-STPS-1998"
+    },
+    {
+        "position": "SUPERVISOR DE MONTAJE",
+        "requiredCourses": "NOM-018-STPS-2015"
+    },
+    {
+        "position": "SUPERVISOR DE MONTAJE",
+        "requiredCourses": "NOM-026-STPS-2008"
+    },
+    {
+        "position": "SUPERVISOR DE MONTAJE",
+        "requiredCourses": "NOM-030-STPS-2009"
+    },
+    {
+        "position": "SUPERVISOR DE MONTAJE",
+        "requiredCourses": "NOM-035-STPS-2018"
+    },
+    {
+        "position": "SUPERVISOR DE MONTAJE",
+        "requiredCourses": "NOM-036-1-STPS-2018"
+    },
+    {
+        "position": "SUPERVISOR DE MONTAJE",
+        "requiredCourses": "PLANEACIÓN Y CONTROL DE LA PRODUCCIÓN"
+    },
+    {
+        "position": "SUPERVISOR DE MONTAJE",
+        "requiredCourses": "PREVENCIÓN DE RIESGOS POR MAQUINARIA Y EQUIPO"
+    },
+    {
+        "position": "SUPERVISOR DE MONTAJE",
+        "requiredCourses": "PROCESO DE INYECCIÓN DE PLÁSTICO"
+    },
+    {
+        "position": "SUPERVISOR DE MONTAJE",
+        "requiredCourses": "RPS"
+    },
+    {
+        "position": "SUPERVISOR DE MONTAJE",
+        "requiredCourses": "SEGURIDAD EN MONTAJE / DESMONTAJE DE MOLDES"
+    },
+    {
+        "position": "SUPERVISOR DE MONTAJE",
+        "requiredCourses": "SISTEMA DE GESTIÓN INTEGRAL"
+    },
+    {
+        "position": "SUPERVISOR DE MONTAJE",
+        "requiredCourses": "SMED"
+    },
+    {
+        "position": "SUPERVISOR DE MONTAJE",
+        "requiredCourses": "TERMOREGULADORES"
+    },
+    {
+        "position": "SUPERVISOR DE MONTAJE",
+        "requiredCourses": "TRAZABILIDAD DEL PRODUCTO"
+    },
+    {
+        "position": "SUPERVISOR DE MONTAJE",
+        "requiredCourses": "VALIDACIÓN DE ARRANQUE"
+    },
+    {
+        "position": "SUPERVISOR DE PRODUCCIÓN A",
+        "requiredCourses": "8DS PARA LA SOLUCION DE PROBLEMAS"
+    },
+    {
+        "position": "SUPERVISOR DE PRODUCCIÓN A",
+        "requiredCourses": "AJUSTE INICIAL DE LAS CONDICIONES DE MOLDEO"
+    },
+    {
+        "position": "SUPERVISOR DE PRODUCCIÓN A",
+        "requiredCourses": "AUDITORÍAS DE PROCESO EN CAPAS"
+    },
+    {
+        "position": "SUPERVISOR DE PRODUCCIÓN A",
+        "requiredCourses": "COLADA CALIENTE"
+    },
+    {
+        "position": "SUPERVISOR DE PRODUCCIÓN A",
+        "requiredCourses": "COMPRENSIÓN DE LOS REQUISITOS ESPECIFICOS DEL CLIENTE"
+    },
+    {
+        "position": "SUPERVISOR DE PRODUCCIÓN A",
+        "requiredCourses": "CONOCIMIENTO DE MOLDES, MANTENIMIENTO PREVENTIVO Y CORRECTIVO"
+    },
+    {
+        "position": "SUPERVISOR DE PRODUCCIÓN A",
+        "requiredCourses": "FRIGEL"
+    },
+    {
+        "position": "SUPERVISOR DE PRODUCCIÓN A",
+        "requiredCourses": "GRÁFICAS DE CONTROL"
+    },
+    {
+        "position": "SUPERVISOR DE PRODUCCIÓN A",
+        "requiredCourses": "IDENTIFICACIÓN DE RESINA - SUMINISTRO A MAQUINAS DE INYECCIÒN"
+    },
+    {
+        "position": "SUPERVISOR DE PRODUCCIÓN A",
+        "requiredCourses": "INDUCCIÓN A LA EMPRESA"
+    },
+    {
+        "position": "SUPERVISOR DE PRODUCCIÓN A",
+        "requiredCourses": "INSPECCIÓN VISUAL"
+    },
+    {
+        "position": "SUPERVISOR DE PRODUCCIÓN A",
+        "requiredCourses": "MANIPULACION DE ROBOTS WITTMAN"
+    },
+    {
+        "position": "SUPERVISOR DE PRODUCCIÓN A",
+        "requiredCourses": "MEDICION DE TIEMPOS Y MOVIMIENTOS"
+    },
+    {
+        "position": "SUPERVISOR DE PRODUCCIÓN A",
+        "requiredCourses": "MOLDEO CIENTIFICO"
+    },
+    {
+        "position": "SUPERVISOR DE PRODUCCIÓN A",
+        "requiredCourses": "NOM-005-STPS-1998"
+    },
+    {
+        "position": "SUPERVISOR DE PRODUCCIÓN A",
+        "requiredCourses": "NOM-026-STPS-2008"
+    },
+    {
+        "position": "SUPERVISOR DE PRODUCCIÓN A",
+        "requiredCourses": "NOM-030-STPS-2009"
+    },
+    {
+        "position": "SUPERVISOR DE PRODUCCIÓN A",
+        "requiredCourses": "NOM-035-STPS-2018"
+    },
+    {
+        "position": "SUPERVISOR DE PRODUCCIÓN A",
+        "requiredCourses": "NOM-036-1-STPS-2018"
+    },
+    {
+        "position": "SUPERVISOR DE PRODUCCIÓN A",
+        "requiredCourses": "PLANEACIÓN Y CONTROL DE LA PRODUCCIÓN"
+    },
+    {
+        "position": "SUPERVISOR DE PRODUCCIÓN A",
+        "requiredCourses": "PREVENCIÓN DE RIESGOS POR MAQUINARIA Y EQUIPO"
+    },
+    {
+        "position": "SUPERVISOR DE PRODUCCIÓN A",
+        "requiredCourses": "PROCESO DE INYECCIÓN DE PLÁSTICO"
+    },
+    {
+        "position": "SUPERVISOR DE PRODUCCIÓN A",
+        "requiredCourses": "R&R"
+    },
+    {
+        "position": "SUPERVISOR DE PRODUCCIÓN A",
+        "requiredCourses": "RPS"
+    },
+    {
+        "position": "SUPERVISOR DE PRODUCCIÓN A",
+        "requiredCourses": "SISTEMA DE GESTIÓN INTEGRAL"
+    },
+    {
+        "position": "SUPERVISOR DE PRODUCCIÓN A",
+        "requiredCourses": "SPC (2 EDICION) CONTROL DEL PROCESO ESTADISTICO"
+    },
+    {
+        "position": "SUPERVISOR DE PRODUCCIÓN A",
+        "requiredCourses": "TERMOREGULADORES"
+    },
+    {
+        "position": "SUPERVISOR DE PRODUCCIÓN A",
+        "requiredCourses": "TRAZABILIDAD DEL PRODUCTO"
+    },
+    {
+        "position": "SUPERVISOR DE PRODUCCIÓN A",
+        "requiredCourses": "VALIDACIÓN DE ARRANQUE"
+    },
+    {
+        "position": "SUPERVISOR DE PRODUCCIÓN A",
+        "requiredCourses": "VDA 6.5 AUDITORÍAS DE PRODUCTO"
+    },
+    {
+        "position": "SUPERVISOR DE PRODUCCIÓN B",
+        "requiredCourses": "8DS PARA LA SOLUCION DE PROBLEMAS"
+    },
+    {
+        "position": "SUPERVISOR DE PRODUCCIÓN B",
+        "requiredCourses": "AJUSTE INICIAL DE LAS CONDICIONES DE MOLDEO"
+    },
+    {
+        "position": "SUPERVISOR DE PRODUCCIÓN B",
+        "requiredCourses": "AUDITORÍAS DE PROCESO EN CAPAS"
+    },
+    {
+        "position": "SUPERVISOR DE PRODUCCIÓN B",
+        "requiredCourses": "COLADA CALIENTE"
+    },
+    {
+        "position": "SUPERVISOR DE PRODUCCIÓN B",
+        "requiredCourses": "COMPRENSIÓN DE LOS REQUISITOS ESPECIFICOS DEL CLIENTE"
+    },
+    {
+        "position": "SUPERVISOR DE PRODUCCIÓN B",
+        "requiredCourses": "CONOCIMIENTO DE MOLDES, MANTENIMIENTO PREVENTIVO Y CORRECTIVO"
+    },
+    {
+        "position": "SUPERVISOR DE PRODUCCIÓN B",
+        "requiredCourses": "FRIGEL"
+    },
+    {
+        "position": "SUPERVISOR DE PRODUCCIÓN B",
+        "requiredCourses": "GRÁFICAS DE CONTROL"
+    },
+    {
+        "position": "SUPERVISOR DE PRODUCCIÓN B",
+        "requiredCourses": "IDENTIFICACIÓN DE RESINA - SUMINISTRO A MAQUINAS DE INYECCIÒN"
+    },
+    {
+        "position": "SUPERVISOR DE PRODUCCIÓN B",
+        "requiredCourses": "INDUCCIÓN A LA EMPRESA"
+    },
+    {
+        "position": "SUPERVISOR DE PRODUCCIÓN B",
+        "requiredCourses": "INSPECCIÓN VISUAL"
+    },
+    {
+        "position": "SUPERVISOR DE PRODUCCIÓN B",
+        "requiredCourses": "MANIPULACION DE ROBOTS WITTMAN"
+    },
+    {
+        "position": "SUPERVISOR DE PRODUCCIÓN B",
+        "requiredCourses": "MEDICION DE TIEMPOS Y MOVIMIENTOS"
+    },
+    {
+        "position": "SUPERVISOR DE PRODUCCIÓN B",
+        "requiredCourses": "MOLDEO CIENTIFICO"
+    },
+    {
+        "position": "SUPERVISOR DE PRODUCCIÓN B",
+        "requiredCourses": "NOM-005-STPS-1998"
+    },
+    {
+        "position": "SUPERVISOR DE PRODUCCIÓN B",
+        "requiredCourses": "NOM-026-STPS-2008"
+    },
+    {
+        "position": "SUPERVISOR DE PRODUCCIÓN B",
+        "requiredCourses": "NOM-030-STPS-2009"
+    },
+    {
+        "position": "SUPERVISOR DE PRODUCCIÓN B",
+        "requiredCourses": "NOM-035-STPS-2018"
+    },
+    {
+        "position": "SUPERVISOR DE PRODUCCIÓN B",
+        "requiredCourses": "NOM-036-1-STPS-2018"
+    },
+    {
+        "position": "SUPERVISOR DE PRODUCCIÓN B",
+        "requiredCourses": "PLANEACIÓN Y CONTROL DE LA PRODUCCIÓN"
+    },
+    {
+        "position": "SUPERVISOR DE PRODUCCIÓN B",
+        "requiredCourses": "PREVENCIÓN DE RIESGOS POR MAQUINARIA Y EQUIPO"
+    },
+    {
+        "position": "SUPERVISOR DE PRODUCCIÓN B",
+        "requiredCourses": "PROCESO DE INYECCIÓN DE PLÁSTICO"
+    },
+    {
+        "position": "SUPERVISOR DE PRODUCCIÓN B",
+        "requiredCourses": "R&R"
+    },
+    {
+        "position": "SUPERVISOR DE PRODUCCIÓN B",
+        "requiredCourses": "RPS"
+    },
+    {
+        "position": "SUPERVISOR DE PRODUCCIÓN B",
+        "requiredCourses": "SISTEMA DE GESTIÓN INTEGRAL"
+    },
+    {
+        "position": "SUPERVISOR DE PRODUCCIÓN B",
+        "requiredCourses": "SPC (2 EDICION) CONTROL DEL PROCESO ESTADISTICO"
+    },
+    {
+        "position": "SUPERVISOR DE PRODUCCIÓN B",
+        "requiredCourses": "TERMOREGULADORES"
+    },
+    {
+        "position": "SUPERVISOR DE PRODUCCIÓN B",
+        "requiredCourses": "TRAZABILIDAD DEL PRODUCTO"
+    },
+    {
+        "position": "SUPERVISOR DE PRODUCCIÓN B",
+        "requiredCourses": "VALIDACIÓN DE ARRANQUE"
+    },
+    {
+        "position": "SUPERVISOR DE PRODUCCIÓN B",
+        "requiredCourses": "VDA 6.5 AUDITORÍAS DE PRODUCTO"
+    },
+    {
+        "position": "SUPERVISOR DE PRODUCCIÓN C",
+        "requiredCourses": "8DS PARA LA SOLUCION DE PROBLEMAS"
+    },
+    {
+        "position": "SUPERVISOR DE PRODUCCIÓN C",
+        "requiredCourses": "AJUSTE INICIAL DE LAS CONDICIONES DE MOLDEO"
+    },
+    {
+        "position": "SUPERVISOR DE PRODUCCIÓN C",
+        "requiredCourses": "AUDITORÍAS DE PROCESO EN CAPAS"
+    },
+    {
+        "position": "SUPERVISOR DE PRODUCCIÓN C",
+        "requiredCourses": "COLADA CALIENTE"
+    },
+    {
+        "position": "SUPERVISOR DE PRODUCCIÓN C",
+        "requiredCourses": "COMPRENSIÓN DE LOS REQUISITOS ESPECIFICOS DEL CLIENTE"
+    },
+    {
+        "position": "SUPERVISOR DE PRODUCCIÓN C",
+        "requiredCourses": "CONOCIMIENTO DE MOLDES, MANTENIMIENTO PREVENTIVO Y CORRECTIVO"
+    },
+    {
+        "position": "SUPERVISOR DE PRODUCCIÓN C",
+        "requiredCourses": "FRIGEL"
+    },
+    {
+        "position": "SUPERVISOR DE PRODUCCIÓN C",
+        "requiredCourses": "GRÁFICAS DE CONTROL"
+    },
+    {
+        "position": "SUPERVISOR DE PRODUCCIÓN C",
+        "requiredCourses": "IDENTIFICACIÓN DE RESINA - SUMINISTRO A MAQUINAS DE INYECCIÒN"
+    },
+    {
+        "position": "SUPERVISOR DE PRODUCCIÓN C",
+        "requiredCourses": "INDUCCIÓN A LA EMPRESA"
+    },
+    {
+        "position": "SUPERVISOR DE PRODUCCIÓN C",
+        "requiredCourses": "INSPECCIÓN VISUAL"
+    },
+    {
+        "position": "SUPERVISOR DE PRODUCCIÓN C",
+        "requiredCourses": "MANIPULACION DE ROBOTS WITTMAN"
+    },
+    {
+        "position": "SUPERVISOR DE PRODUCCIÓN C",
+        "requiredCourses": "MEDICION DE TIEMPOS Y MOVIMIENTOS"
+    },
+    {
+        "position": "SUPERVISOR DE PRODUCCIÓN C",
+        "requiredCourses": "MOLDEO CIENTIFICO"
+    },
+    {
+        "position": "SUPERVISOR DE PRODUCCIÓN C",
+        "requiredCourses": "NOM-005-STPS-1998"
+    },
+    {
+        "position": "SUPERVISOR DE PRODUCCIÓN C",
+        "requiredCourses": "NOM-026-STPS-2008"
+    },
+    {
+        "position": "SUPERVISOR DE PRODUCCIÓN C",
+        "requiredCourses": "NOM-030-STPS-2009"
+    },
+    {
+        "position": "SUPERVISOR DE PRODUCCIÓN C",
+        "requiredCourses": "NOM-035-STPS-2018"
+    },
+    {
+        "position": "SUPERVISOR DE PRODUCCIÓN C",
+        "requiredCourses": "NOM-036-1-STPS-2018"
+    },
+    {
+        "position": "SUPERVISOR DE PRODUCCIÓN C",
+        "requiredCourses": "PLANEACIÓN Y CONTROL DE LA PRODUCCIÓN"
+    },
+    {
+        "position": "SUPERVISOR DE PRODUCCIÓN C",
+        "requiredCourses": "PREVENCIÓN DE RIESGOS POR MAQUINARIA Y EQUIPO"
+    },
+    {
+        "position": "SUPERVISOR DE PRODUCCIÓN C",
+        "requiredCourses": "PROCESO DE INYECCIÓN DE PLÁSTICO"
+    },
+    {
+        "position": "SUPERVISOR DE PRODUCCIÓN C",
+        "requiredCourses": "R&R"
+    },
+    {
+        "position": "SUPERVISOR DE PRODUCCIÓN C",
+        "requiredCourses": "RPS"
+    },
+    {
+        "position": "SUPERVISOR DE PRODUCCIÓN C",
+        "requiredCourses": "SISTEMA DE GESTIÓN INTEGRAL"
+    },
+    {
+        "position": "SUPERVISOR DE PRODUCCIÓN C",
+        "requiredCourses": "SPC (2 EDICION) CONTROL DEL PROCESO ESTADISTICO"
+    },
+    {
+        "position": "SUPERVISOR DE PRODUCCIÓN C",
+        "requiredCourses": "TERMOREGULADORES"
+    },
+    {
+        "position": "SUPERVISOR DE PRODUCCIÓN C",
+        "requiredCourses": "TRAZABILIDAD DEL PRODUCTO"
+    },
+    {
+        "position": "SUPERVISOR DE PRODUCCIÓN C",
+        "requiredCourses": "VALIDACIÓN DE ARRANQUE"
+    },
+    {
+        "position": "SUPERVISOR DE PRODUCCIÓN C",
+        "requiredCourses": "VDA 6.5 AUDITORÍAS DE PRODUCTO"
+    },
+    {
+        "position": "SUPERVISOR DE PRODUCCIÓN D",
+        "requiredCourses": "8DS PARA LA SOLUCION DE PROBLEMAS"
+    },
+    {
+        "position": "SUPERVISOR DE PRODUCCIÓN D",
+        "requiredCourses": "AJUSTE INICIAL DE LAS CONDICIONES DE MOLDEO"
+    },
+    {
+        "position": "SUPERVISOR DE PRODUCCIÓN D",
+        "requiredCourses": "AUDITORÍAS DE PROCESO EN CAPAS"
+    },
+    {
+        "position": "SUPERVISOR DE PRODUCCIÓN D",
+        "requiredCourses": "COLADA CALIENTE"
+    },
+    {
+        "position": "SUPERVISOR DE PRODUCCIÓN D",
+        "requiredCourses": "COMPRENSIÓN DE LOS REQUISITOS ESPECIFICOS DEL CLIENTE"
+    },
+    {
+        "position": "SUPERVISOR DE PRODUCCIÓN D",
+        "requiredCourses": "CONOCIMIENTO DE MOLDES, MANTENIMIENTO PREVENTIVO Y CORRECTIVO"
+    },
+    {
+        "position": "SUPERVISOR DE PRODUCCIÓN D",
+        "requiredCourses": "FRIGEL"
+    },
+    {
+        "position": "SUPERVISOR DE PRODUCCIÓN D",
+        "requiredCourses": "GRÁFICAS DE CONTROL"
+    },
+    {
+        "position": "SUPERVISOR DE PRODUCCIÓN D",
+        "requiredCourses": "IDENTIFICACIÓN DE RESINA - SUMINISTRO A MAQUINAS DE INYECCIÒN"
+    },
+    {
+        "position": "SUPERVISOR DE PRODUCCIÓN D",
+        "requiredCourses": "INDUCCIÓN A LA EMPRESA"
+    },
+    {
+        "position": "SUPERVISOR DE PRODUCCIÓN D",
+        "requiredCourses": "INSPECCIÓN VISUAL"
+    },
+    {
+        "position": "SUPERVISOR DE PRODUCCIÓN D",
+        "requiredCourses": "MANIPULACION DE ROBOTS WITTMAN"
+    },
+    {
+        "position": "SUPERVISOR DE PRODUCCIÓN D",
+        "requiredCourses": "MEDICION DE TIEMPOS Y MOVIMIENTOS"
+    },
+    {
+        "position": "SUPERVISOR DE PRODUCCIÓN D",
+        "requiredCourses": "MOLDEO CIENTIFICO"
+    },
+    {
+        "position": "SUPERVISOR DE PRODUCCIÓN D",
+        "requiredCourses": "NOM-005-STPS-1998"
+    },
+    {
+        "position": "SUPERVISOR DE PRODUCCIÓN D",
+        "requiredCourses": "NOM-026-STPS-2008"
+    },
+    {
+        "position": "SUPERVISOR DE PRODUCCIÓN D",
+        "requiredCourses": "NOM-030-STPS-2009"
+    },
+    {
+        "position": "SUPERVISOR DE PRODUCCIÓN D",
+        "requiredCourses": "NOM-035-STPS-2018"
+    },
+    {
+        "position": "SUPERVISOR DE PRODUCCIÓN D",
+        "requiredCourses": "NOM-036-1-STPS-2018"
+    },
+    {
+        "position": "SUPERVISOR DE PRODUCCIÓN D",
+        "requiredCourses": "PLANEACIÓN Y CONTROL DE LA PRODUCCIÓN"
+    },
+    {
+        "position": "SUPERVISOR DE PRODUCCIÓN D",
+        "requiredCourses": "PREVENCIÓN DE RIESGOS POR MAQUINARIA Y EQUIPO"
+    },
+    {
+        "position": "SUPERVISOR DE PRODUCCIÓN D",
+        "requiredCourses": "PROCESO DE INYECCIÓN DE PLÁSTICO"
+    },
+    {
+        "position": "SUPERVISOR DE PRODUCCIÓN D",
+        "requiredCourses": "R&R"
+    },
+    {
+        "position": "SUPERVISOR DE PRODUCCIÓN D",
+        "requiredCourses": "RPS"
+    },
+    {
+        "position": "SUPERVISOR DE PRODUCCIÓN D",
+        "requiredCourses": "SISTEMA DE GESTIÓN INTEGRAL"
+    },
+    {
+        "position": "SUPERVISOR DE PRODUCCIÓN D",
+        "requiredCourses": "SPC (2 EDICION) CONTROL DEL PROCESO ESTADISTICO"
+    },
+    {
+        "position": "SUPERVISOR DE PRODUCCIÓN D",
+        "requiredCourses": "TERMOREGULADORES"
+    },
+    {
+        "position": "SUPERVISOR DE PRODUCCIÓN D",
+        "requiredCourses": "TRAZABILIDAD DEL PRODUCTO"
+    },
+    {
+        "position": "SUPERVISOR DE PRODUCCIÓN D",
+        "requiredCourses": "VALIDACIÓN DE ARRANQUE"
+    },
+    {
+        "position": "SUPERVISOR DE PRODUCCIÓN D",
+        "requiredCourses": "VDA 6.5 AUDITORÍAS DE PRODUCTO"
+    },
+    {
+        "position": "TEC. ESPECIALISTA DE MOLDES (JEFE)",
+        "requiredCourses": "8DS PARA LA SOLUCION DE PROBLEMAS"
+    },
+    {
+        "position": "TEC. ESPECIALISTA DE MOLDES (JEFE)",
+        "requiredCourses": "ASPECTOS E IMPACTOS AMBIENTALES"
+    },
+    {
+        "position": "TEC. ESPECIALISTA DE MOLDES (JEFE)",
+        "requiredCourses": "AUDITORÍAS DE PROCESO EN CAPAS"
+    },
+    {
+        "position": "TEC. ESPECIALISTA DE MOLDES (JEFE)",
+        "requiredCourses": "BUENAS PRACTICAS EN EL TALLER"
+    },
+    {
+        "position": "TEC. ESPECIALISTA DE MOLDES (JEFE)",
+        "requiredCourses": "COLADA CALIENTE"
+    },
+    {
+        "position": "TEC. ESPECIALISTA DE MOLDES (JEFE)",
+        "requiredCourses": "CONOCIMIENTO DE MOLDES, MANTENIMIENTO PREVENTIVO Y CORRECTIVO"
+    },
+    {
+        "position": "TEC. ESPECIALISTA DE MOLDES (JEFE)",
+        "requiredCourses": "DIAGRAMA DE TORTUGA"
+    },
+    {
+        "position": "TEC. ESPECIALISTA DE MOLDES (JEFE)",
+        "requiredCourses": "ELECTROEROSION"
+    },
+    {
+        "position": "TEC. ESPECIALISTA DE MOLDES (JEFE)",
+        "requiredCourses": "ESTRUCTURA DEL SGI Y DOCUMENTOS"
+    },
+    {
+        "position": "TEC. ESPECIALISTA DE MOLDES (JEFE)",
+        "requiredCourses": "INDUCCIÓN A LA EMPRESA"
+    },
+    {
+        "position": "TEC. ESPECIALISTA DE MOLDES (JEFE)",
+        "requiredCourses": "MI-GER-001"
+    },
+    {
+        "position": "TEC. ESPECIALISTA DE MOLDES (JEFE)",
+        "requiredCourses": "NOM-004-STPS-1999"
+    },
+    {
+        "position": "TEC. ESPECIALISTA DE MOLDES (JEFE)",
+        "requiredCourses": "NOM-005-STPS-1998"
+    },
+    {
+        "position": "TEC. ESPECIALISTA DE MOLDES (JEFE)",
+        "requiredCourses": "NOM-009-STPS-2011"
+    },
+    {
+        "position": "TEC. ESPECIALISTA DE MOLDES (JEFE)",
+        "requiredCourses": "NOM-010-STPS-2014"
+    },
+    {
+        "position": "TEC. ESPECIALISTA DE MOLDES (JEFE)",
+        "requiredCourses": "NOM-027-STPS-2008"
+    },
+    {
+        "position": "TEC. ESPECIALISTA DE MOLDES (JEFE)",
+        "requiredCourses": "NOM-030-STPS-2009"
+    },
+    {
+        "position": "TEC. ESPECIALISTA DE MOLDES (JEFE)",
+        "requiredCourses": "NOM-036-1-STPS-2018"
+    },
+    {
+        "position": "TEC. ESPECIALISTA DE MOLDES (JEFE)",
+        "requiredCourses": "PR-ASC-001"
+    },
+    {
+        "position": "TEC. ESPECIALISTA DE MOLDES (JEFE)",
+        "requiredCourses": "RPS"
+    },
+    {
+        "position": "TEC. ESPECIALISTA DE MOLDES (JEFE)",
+        "requiredCourses": "SEGURIDAD Y PREVENCIÓN DE ACCIDENTES"
+    },
+    {
+        "position": "TEC. ESPECIALISTA DE MOLDES (JEFE)",
+        "requiredCourses": "SISTEMA DE GESTIÓN INTEGRAL"
+    },
+    {
+        "position": "TÉCNICO DE MANTENIMIENTO A",
+        "requiredCourses": "INDUCCIÓN A LA EMPRESA"
+    },
+    {
+        "position": "TÉCNICO DE MANTENIMIENTO A",
+        "requiredCourses": "MANTENIMIENTO A ROBOTS WITTMAN"
+    },
+    {
+        "position": "TÉCNICO DE MANTENIMIENTO A",
+        "requiredCourses": "NOM-004-STPS-1999"
+    },
+    {
+        "position": "TÉCNICO DE MANTENIMIENTO A",
+        "requiredCourses": "NOM-005-STPS-1998"
+    },
+    {
+        "position": "TÉCNICO DE MANTENIMIENTO A",
+        "requiredCourses": "NOM-010-STPS-2014"
+    },
+    {
+        "position": "TÉCNICO DE MANTENIMIENTO A",
+        "requiredCourses": "NOM-020-STPS-2011"
+    },
+    {
+        "position": "TÉCNICO DE MANTENIMIENTO A",
+        "requiredCourses": "NOM-029-STPS-2011"
+    },
+    {
+        "position": "TÉCNICO DE MANTENIMIENTO A",
+        "requiredCourses": "NOM-036-1-STPS-2018"
+    },
+    {
+        "position": "TÉCNICO DE MANTENIMIENTO A",
+        "requiredCourses": "OPERACIÓN Y MANTENIMIENTO DE TERMOREGULADORES, DESHUMIFICADORES Y CARGADORES"
+    },
+    {
+        "position": "TÉCNICO DE MANTENIMIENTO A",
+        "requiredCourses": "OPERACIÓN, MANTENIMIENTO EN INTERPRETACIÓN MAQUINA SYSTEC E INTELEC"
+    },
+    {
+        "position": "TÉCNICO DE MANTENIMIENTO A",
+        "requiredCourses": "PLAN DE CONTINGENCIA DE DERRAMES"
+    },
+    {
+        "position": "TÉCNICO DE MANTENIMIENTO A",
+        "requiredCourses": "PROGRAMACIÓN BÁSICA DE ROBOT SEPRO"
+    },
+    {
+        "position": "TÉCNICO DE MANTENIMIENTO A",
+        "requiredCourses": "PROGRAMACIÓN BÁSICA DE ROBOT WITTMAN"
+    },
+    {
+        "position": "TÉCNICO DE MANTENIMIENTO A",
+        "requiredCourses": "SISTEMA DE GESTIÓN INTEGRAL"
+    },
+    {
+        "position": "TÉCNICO DE MANTENIMIENTO B",
+        "requiredCourses": "INDUCCIÓN A LA EMPRESA"
+    },
+    {
+        "position": "TÉCNICO DE MANTENIMIENTO B",
+        "requiredCourses": "MANTENIMIENTO A ROBOTS WITTMAN"
+    },
+    {
+        "position": "TÉCNICO DE MANTENIMIENTO B",
+        "requiredCourses": "NOM-004-STPS-1999"
+    },
+    {
+        "position": "TÉCNICO DE MANTENIMIENTO B",
+        "requiredCourses": "NOM-005-STPS-1998"
+    },
+    {
+        "position": "TÉCNICO DE MANTENIMIENTO B",
+        "requiredCourses": "NOM-010-STPS-2014"
+    },
+    {
+        "position": "TÉCNICO DE MANTENIMIENTO B",
+        "requiredCourses": "NOM-020-STPS-2011"
+    },
+    {
+        "position": "TÉCNICO DE MANTENIMIENTO B",
+        "requiredCourses": "NOM-029-STPS-2011"
+    },
+    {
+        "position": "TÉCNICO DE MANTENIMIENTO B",
+        "requiredCourses": "NOM-036-1-STPS-2018"
+    },
+    {
+        "position": "TÉCNICO DE MANTENIMIENTO B",
+        "requiredCourses": "OPERACIÓN Y MANTENIMIENTO DE TERMOREGULADORES, DESHUMIFICADORES Y CARGADORES"
+    },
+    {
+        "position": "TÉCNICO DE MANTENIMIENTO B",
+        "requiredCourses": "PLAN DE CONTINGENCIA DE DERRAMES"
+    },
+    {
+        "position": "TÉCNICO DE MANTENIMIENTO B",
+        "requiredCourses": "PROGRAMACIÓN BÁSICA DE ROBOT SEPRO"
+    },
+    {
+        "position": "TÉCNICO DE MANTENIMIENTO B",
+        "requiredCourses": "PROGRAMACIÓN BÁSICA DE ROBOT WITTMAN"
+    },
+    {
+        "position": "TÉCNICO DE MANTENIMIENTO B",
+        "requiredCourses": "SISTEMA DE GESTIÓN INTEGRAL"
+    },
+    {
+        "position": "TÉCNICO DE MANTENIMIENTO C",
+        "requiredCourses": "INDUCCIÓN A LA EMPRESA"
+    },
+    {
+        "position": "TÉCNICO DE MANTENIMIENTO C",
+        "requiredCourses": "NOM-004-STPS-1999"
+    },
+    {
+        "position": "TÉCNICO DE MANTENIMIENTO C",
+        "requiredCourses": "NOM-005-STPS-1998"
+    },
+    {
+        "position": "TÉCNICO DE MANTENIMIENTO C",
+        "requiredCourses": "NOM-010-STPS-2014"
+    },
+    {
+        "position": "TÉCNICO DE MANTENIMIENTO C",
+        "requiredCourses": "NOM-020-STPS-2011"
+    },
+    {
+        "position": "TÉCNICO DE MANTENIMIENTO C",
+        "requiredCourses": "NOM-029-STPS-2011"
+    },
+    {
+        "position": "TÉCNICO DE MANTENIMIENTO C",
+        "requiredCourses": "NOM-036-1-STPS-2018"
+    },
+    {
+        "position": "TÉCNICO DE MANTENIMIENTO C",
+        "requiredCourses": "OPERACIÓN Y MANTENIMIENTO DE TERMOREGULADORES, DESHUMIFICADORES Y CARGADORES"
+    },
+    {
+        "position": "TÉCNICO DE MANTENIMIENTO C",
+        "requiredCourses": "PLAN DE CONTINGENCIA DE DERRAMES"
+    },
+    {
+        "position": "TÉCNICO DE MANTENIMIENTO C",
+        "requiredCourses": "SISTEMA DE GESTIÓN INTEGRAL"
+    },
+    {
+        "position": "TÉCNICO DE MANTENIMIENTO D",
+        "requiredCourses": "INDUCCIÓN A LA EMPRESA"
+    },
+    {
+        "position": "TÉCNICO DE MANTENIMIENTO D",
+        "requiredCourses": "NOM-004-STPS-1999"
+    },
+    {
+        "position": "TÉCNICO DE MANTENIMIENTO D",
+        "requiredCourses": "NOM-005-STPS-1998"
+    },
+    {
+        "position": "TÉCNICO DE MANTENIMIENTO D",
+        "requiredCourses": "NOM-010-STPS-2014"
+    },
+    {
+        "position": "TÉCNICO DE MANTENIMIENTO D",
+        "requiredCourses": "NOM-020-STPS-2011"
+    },
+    {
+        "position": "TÉCNICO DE MANTENIMIENTO D",
+        "requiredCourses": "NOM-029-STPS-2011"
+    },
+    {
+        "position": "TÉCNICO DE MANTENIMIENTO D",
+        "requiredCourses": "NOM-036-1-STPS-2018"
+    },
+    {
+        "position": "TÉCNICO DE MANTENIMIENTO D",
+        "requiredCourses": "PLAN DE CONTINGENCIA DE DERRAMES"
+    },
+    {
+        "position": "TÉCNICO DE MANTENIMIENTO D",
+        "requiredCourses": "SISTEMA DE GESTIÓN INTEGRAL"
+    },
+    {
+        "position": "TÉCNICO DE MANTENIMIENTO DE EDIFICIOS A",
+        "requiredCourses": "INDUCCIÓN A LA EMPRESA"
+    },
+    {
+        "position": "TÉCNICO DE MANTENIMIENTO DE EDIFICIOS A",
+        "requiredCourses": "NOM-004-STPS-1999"
+    },
+    {
+        "position": "TÉCNICO DE MANTENIMIENTO DE EDIFICIOS A",
+        "requiredCourses": "NOM-005-STPS-1998"
+    },
+    {
+        "position": "TÉCNICO DE MANTENIMIENTO DE EDIFICIOS A",
+        "requiredCourses": "NOM-009-STPS-2011"
+    },
+    {
+        "position": "TÉCNICO DE MANTENIMIENTO DE EDIFICIOS A",
+        "requiredCourses": "NOM-010-STPS-2014"
+    },
+    {
+        "position": "TÉCNICO DE MANTENIMIENTO DE EDIFICIOS A",
+        "requiredCourses": "NOM-020-STPS-2011"
+    },
+    {
+        "position": "TÉCNICO DE MANTENIMIENTO DE EDIFICIOS A",
+        "requiredCourses": "NOM-027-STPS-2008"
+    },
+    {
+        "position": "TÉCNICO DE MANTENIMIENTO DE EDIFICIOS A",
+        "requiredCourses": "NOM-029-STPS-2011"
+    },
+    {
+        "position": "TÉCNICO DE MANTENIMIENTO DE EDIFICIOS A",
+        "requiredCourses": "NOM-036-1-STPS-2018"
+    },
+    {
+        "position": "TÉCNICO DE MANTENIMIENTO DE EDIFICIOS A",
+        "requiredCourses": "PLAN DE CONTINGENCIA DE DERRAMES"
+    },
+    {
+        "position": "TÉCNICO DE MANTENIMIENTO DE EDIFICIOS A",
+        "requiredCourses": "SISTEMA DE GESTIÓN INTEGRAL"
+    },
+    {
+        "position": "TÉCNICO DE MANTENIMIENTO DE EDIFICIOS B",
+        "requiredCourses": "INDUCCIÓN A LA EMPRESA"
+    },
+    {
+        "position": "TÉCNICO DE MANTENIMIENTO DE EDIFICIOS B",
+        "requiredCourses": "NOM-004-STPS-1999"
+    },
+    {
+        "position": "TÉCNICO DE MANTENIMIENTO DE EDIFICIOS B",
+        "requiredCourses": "NOM-005-STPS-1998"
+    },
+    {
+        "position": "TÉCNICO DE MANTENIMIENTO DE EDIFICIOS B",
+        "requiredCourses": "NOM-009-STPS-2011"
+    },
+    {
+        "position": "TÉCNICO DE MANTENIMIENTO DE EDIFICIOS B",
+        "requiredCourses": "NOM-010-STPS-2014"
+    },
+    {
+        "position": "TÉCNICO DE MANTENIMIENTO DE EDIFICIOS B",
+        "requiredCourses": "NOM-020-STPS-2011"
+    },
+    {
+        "position": "TÉCNICO DE MANTENIMIENTO DE EDIFICIOS B",
+        "requiredCourses": "NOM-027-STPS-2008"
+    },
+    {
+        "position": "TÉCNICO DE MANTENIMIENTO DE EDIFICIOS B",
+        "requiredCourses": "NOM-029-STPS-2011"
+    },
+    {
+        "position": "TÉCNICO DE MANTENIMIENTO DE EDIFICIOS B",
+        "requiredCourses": "NOM-036-1-STPS-2018"
+    },
+    {
+        "position": "TÉCNICO DE MANTENIMIENTO DE EDIFICIOS B",
+        "requiredCourses": "PLAN DE CONTINGENCIA DE DERRAMES"
+    },
+    {
+        "position": "TÉCNICO DE MANTENIMIENTO DE EDIFICIOS B",
+        "requiredCourses": "SISTEMA DE GESTIÓN INTEGRAL"
+    },
+    {
+        "position": "TÉCNICO DE MANTENIMIENTO DE EDIFICIOS C",
+        "requiredCourses": "INDUCCIÓN A LA EMPRESA"
+    },
+    {
+        "position": "TÉCNICO DE MANTENIMIENTO DE EDIFICIOS C",
+        "requiredCourses": "NOM-004-STPS-1999"
+    },
+    {
+        "position": "TÉCNICO DE MANTENIMIENTO DE EDIFICIOS C",
+        "requiredCourses": "NOM-005-STPS-1998"
+    },
+    {
+        "position": "TÉCNICO DE MANTENIMIENTO DE EDIFICIOS C",
+        "requiredCourses": "NOM-009-STPS-2011"
+    },
+    {
+        "position": "TÉCNICO DE MANTENIMIENTO DE EDIFICIOS C",
+        "requiredCourses": "NOM-010-STPS-2014"
+    },
+    {
+        "position": "TÉCNICO DE MANTENIMIENTO DE EDIFICIOS C",
+        "requiredCourses": "NOM-020-STPS-2011"
+    },
+    {
+        "position": "TÉCNICO DE MANTENIMIENTO DE EDIFICIOS C",
+        "requiredCourses": "NOM-027-STPS-2008"
+    },
+    {
+        "position": "TÉCNICO DE MANTENIMIENTO DE EDIFICIOS C",
+        "requiredCourses": "NOM-029-STPS-2011"
+    },
+    {
+        "position": "TÉCNICO DE MANTENIMIENTO DE EDIFICIOS C",
+        "requiredCourses": "NOM-036-1-STPS-2018"
+    },
+    {
+        "position": "TÉCNICO DE MANTENIMIENTO DE EDIFICIOS C",
+        "requiredCourses": "PLAN DE CONTINGENCIA DE DERRAMES"
+    },
+    {
+        "position": "TÉCNICO DE MANTENIMIENTO DE EDIFICIOS C",
+        "requiredCourses": "SISTEMA DE GESTIÓN INTEGRAL"
+    },
+    {
+        "position": "TÉCNICO DE MANTENIMIENTO E",
+        "requiredCourses": "INDUCCIÓN A LA EMPRESA"
+    },
+    {
+        "position": "TÉCNICO DE MANTENIMIENTO E",
+        "requiredCourses": "NOM-004-STPS-1999"
+    },
+    {
+        "position": "TÉCNICO DE MANTENIMIENTO E",
+        "requiredCourses": "NOM-005-STPS-1998"
+    },
+    {
+        "position": "TÉCNICO DE MANTENIMIENTO E",
+        "requiredCourses": "NOM-010-STPS-2014"
+    },
+    {
+        "position": "TÉCNICO DE MANTENIMIENTO E",
+        "requiredCourses": "NOM-020-STPS-2011"
+    },
+    {
+        "position": "TÉCNICO DE MANTENIMIENTO E",
+        "requiredCourses": "NOM-029-STPS-2011"
+    },
+    {
+        "position": "TÉCNICO DE MANTENIMIENTO E",
+        "requiredCourses": "NOM-036-1-STPS-2018"
+    },
+    {
+        "position": "TÉCNICO DE MANTENIMIENTO E",
+        "requiredCourses": "PLAN DE CONTINGENCIA DE DERRAMES"
+    },
+    {
+        "position": "TÉCNICO DE MANTENIMIENTO E",
+        "requiredCourses": "SISTEMA DE GESTIÓN INTEGRAL"
+    },
+    {
+        "position": "TÉCNICO DE MOLDES A",
+        "requiredCourses": "ASPECTOS E IMPACTOS AMBIENTALES"
+    },
+    {
+        "position": "TÉCNICO DE MOLDES A",
+        "requiredCourses": "BUENAS PRACTICAS EN EL TALLER"
+    },
+    {
+        "position": "TÉCNICO DE MOLDES A",
+        "requiredCourses": "COLADA CALIENTE"
+    },
+    {
+        "position": "TÉCNICO DE MOLDES A",
+        "requiredCourses": "CONOCIMIENTO DE MOLDES, MANTENIMIENTO PREVENTIVO Y CORRECTIVO"
+    },
+    {
+        "position": "TÉCNICO DE MOLDES A",
+        "requiredCourses": "ELECTROEROSION"
+    },
+    {
+        "position": "TÉCNICO DE MOLDES A",
+        "requiredCourses": "INDUCCIÓN A LA EMPRESA"
+    },
+    {
+        "position": "TÉCNICO DE MOLDES A",
+        "requiredCourses": "NOM-004-STPS-1999"
+    },
+    {
+        "position": "TÉCNICO DE MOLDES A",
+        "requiredCourses": "NOM-005-STPS-1998"
+    },
+    {
+        "position": "TÉCNICO DE MOLDES A",
+        "requiredCourses": "NOM-009-STPS-2011"
+    },
+    {
+        "position": "TÉCNICO DE MOLDES A",
+        "requiredCourses": "NOM-010-STPS-2014"
+    },
+    {
+        "position": "TÉCNICO DE MOLDES A",
+        "requiredCourses": "NOM-027-STPS-2008"
+    },
+    {
+        "position": "TÉCNICO DE MOLDES A",
+        "requiredCourses": "NOM-030-STPS-2009"
+    },
+    {
+        "position": "TÉCNICO DE MOLDES A",
+        "requiredCourses": "NOM-036-1-STPS-2018"
+    },
+    {
+        "position": "TÉCNICO DE MOLDES A",
+        "requiredCourses": "RPS"
+    },
+    {
+        "position": "TÉCNICO DE MOLDES A",
+        "requiredCourses": "SEGURIDAD Y PREVENCIÓN DE ACCIDENTES"
+    },
+    {
+        "position": "TÉCNICO DE MOLDES A",
+        "requiredCourses": "SISTEMA DE GESTIÓN INTEGRAL"
+    },
+    {
+        "position": "TÉCNICO DE MOLDES B",
+        "requiredCourses": "ASPECTOS E IMPACTOS AMBIENTALES"
+    },
+    {
+        "position": "TÉCNICO DE MOLDES B",
+        "requiredCourses": "BUENAS PRACTICAS EN EL TALLER"
+    },
+    {
+        "position": "TÉCNICO DE MOLDES B",
+        "requiredCourses": "COLADA CALIENTE"
+    },
+    {
+        "position": "TÉCNICO DE MOLDES B",
+        "requiredCourses": "CONOCIMIENTO DE MOLDES, MANTENIMIENTO PREVENTIVO Y CORRECTIVO"
+    },
+    {
+        "position": "TÉCNICO DE MOLDES B",
+        "requiredCourses": "ELECTROEROSION"
+    },
+    {
+        "position": "TÉCNICO DE MOLDES B",
+        "requiredCourses": "INDUCCIÓN A LA EMPRESA"
+    },
+    {
+        "position": "TÉCNICO DE MOLDES B",
+        "requiredCourses": "NOM-004-STPS-1999"
+    },
+    {
+        "position": "TÉCNICO DE MOLDES B",
+        "requiredCourses": "NOM-005-STPS-1998"
+    },
+    {
+        "position": "TÉCNICO DE MOLDES B",
+        "requiredCourses": "NOM-009-STPS-2011"
+    },
+    {
+        "position": "TÉCNICO DE MOLDES B",
+        "requiredCourses": "NOM-010-STPS-2014"
+    },
+    {
+        "position": "TÉCNICO DE MOLDES B",
+        "requiredCourses": "NOM-027-STPS-2008"
+    },
+    {
+        "position": "TÉCNICO DE MOLDES B",
+        "requiredCourses": "NOM-030-STPS-2009"
+    },
+    {
+        "position": "TÉCNICO DE MOLDES B",
+        "requiredCourses": "NOM-036-1-STPS-2018"
+    },
+    {
+        "position": "TÉCNICO DE MOLDES B",
+        "requiredCourses": "RPS"
+    },
+    {
+        "position": "TÉCNICO DE MOLDES B",
+        "requiredCourses": "SEGURIDAD Y PREVENCIÓN DE ACCIDENTES"
+    },
+    {
+        "position": "TÉCNICO DE MOLDES B",
+        "requiredCourses": "SISTEMA DE GESTIÓN INTEGRAL"
+    },
+    {
+        "position": "TÉCNICO DE MOLDES C",
+        "requiredCourses": "ASPECTOS E IMPACTOS AMBIENTALES"
+    },
+    {
+        "position": "TÉCNICO DE MOLDES C",
+        "requiredCourses": "BUENAS PRACTICAS EN EL TALLER"
+    },
+    {
+        "position": "TÉCNICO DE MOLDES C",
+        "requiredCourses": "COLADA CALIENTE"
+    },
+    {
+        "position": "TÉCNICO DE MOLDES C",
+        "requiredCourses": "CONOCIMIENTO DE MOLDES, MANTENIMIENTO PREVENTIVO Y CORRECTIVO"
+    },
+    {
+        "position": "TÉCNICO DE MOLDES C",
+        "requiredCourses": "ELECTROEROSION"
+    },
+    {
+        "position": "TÉCNICO DE MOLDES C",
+        "requiredCourses": "INDUCCIÓN A LA EMPRESA"
+    },
+    {
+        "position": "TÉCNICO DE MOLDES C",
+        "requiredCourses": "NOM-004-STPS-1999"
+    },
+    {
+        "position": "TÉCNICO DE MOLDES C",
+        "requiredCourses": "NOM-005-STPS-1998"
+    },
+    {
+        "position": "TÉCNICO DE MOLDES C",
+        "requiredCourses": "NOM-009-STPS-2011"
+    },
+    {
+        "position": "TÉCNICO DE MOLDES C",
+        "requiredCourses": "NOM-010-STPS-2014"
+    },
+    {
+        "position": "TÉCNICO DE MOLDES C",
+        "requiredCourses": "NOM-027-STPS-2008"
+    },
+    {
+        "position": "TÉCNICO DE MOLDES C",
+        "requiredCourses": "NOM-030-STPS-2009"
+    },
+    {
+        "position": "TÉCNICO DE MOLDES C",
+        "requiredCourses": "NOM-036-1-STPS-2018"
+    },
+    {
+        "position": "TÉCNICO DE MOLDES C",
+        "requiredCourses": "RPS"
+    },
+    {
+        "position": "TÉCNICO DE MOLDES C",
+        "requiredCourses": "SEGURIDAD Y PREVENCIÓN DE ACCIDENTES"
+    },
+    {
+        "position": "TÉCNICO DE MOLDES C",
+        "requiredCourses": "SISTEMA DE GESTIÓN INTEGRAL"
+    },
+    {
+        "position": "TÉCNICO DE MOLDES D",
+        "requiredCourses": "ASPECTOS E IMPACTOS AMBIENTALES"
+    },
+    {
+        "position": "TÉCNICO DE MOLDES D",
+        "requiredCourses": "BUENAS PRACTICAS EN EL TALLER"
+    },
+    {
+        "position": "TÉCNICO DE MOLDES D",
+        "requiredCourses": "COLADA CALIENTE"
+    },
+    {
+        "position": "TÉCNICO DE MOLDES D",
+        "requiredCourses": "CONOCIMIENTO DE MOLDES, MANTENIMIENTO PREVENTIVO Y CORRECTIVO"
+    },
+    {
+        "position": "TÉCNICO DE MOLDES D",
+        "requiredCourses": "ELECTROEROSION"
+    },
+    {
+        "position": "TÉCNICO DE MOLDES D",
+        "requiredCourses": "INDUCCIÓN A LA EMPRESA"
+    },
+    {
+        "position": "TÉCNICO DE MOLDES D",
+        "requiredCourses": "NOM-004-STPS-1999"
+    },
+    {
+        "position": "TÉCNICO DE MOLDES D",
+        "requiredCourses": "NOM-005-STPS-1998"
+    },
+    {
+        "position": "TÉCNICO DE MOLDES D",
+        "requiredCourses": "NOM-009-STPS-2011"
+    },
+    {
+        "position": "TÉCNICO DE MOLDES D",
+        "requiredCourses": "NOM-010-STPS-2014"
+    },
+    {
+        "position": "TÉCNICO DE MOLDES D",
+        "requiredCourses": "NOM-027-STPS-2008"
+    },
+    {
+        "position": "TÉCNICO DE MOLDES D",
+        "requiredCourses": "NOM-030-STPS-2009"
+    },
+    {
+        "position": "TÉCNICO DE MOLDES D",
+        "requiredCourses": "NOM-036-1-STPS-2018"
+    },
+    {
+        "position": "TÉCNICO DE MOLDES D",
+        "requiredCourses": "RPS"
+    },
+    {
+        "position": "TÉCNICO DE MOLDES D",
+        "requiredCourses": "SEGURIDAD Y PREVENCIÓN DE ACCIDENTES"
+    },
+    {
+        "position": "TÉCNICO DE MOLDES D",
+        "requiredCourses": "SISTEMA DE GESTIÓN INTEGRAL"
+    },
+    {
+        "position": "TÉCNICO DE MOLDES E",
+        "requiredCourses": "ASPECTOS E IMPACTOS AMBIENTALES"
+    },
+    {
+        "position": "TÉCNICO DE MOLDES E",
+        "requiredCourses": "BUENAS PRACTICAS EN EL TALLER"
+    },
+    {
+        "position": "TÉCNICO DE MOLDES E",
+        "requiredCourses": "COLADA CALIENTE"
+    },
+    {
+        "position": "TÉCNICO DE MOLDES E",
+        "requiredCourses": "CONOCIMIENTO DE MOLDES, MANTENIMIENTO PREVENTIVO Y CORRECTIVO"
+    },
+    {
+        "position": "TÉCNICO DE MOLDES E",
+        "requiredCourses": "ELECTROEROSION"
+    },
+    {
+        "position": "TÉCNICO DE MOLDES E",
+        "requiredCourses": "INDUCCIÓN A LA EMPRESA"
+    },
+    {
+        "position": "TÉCNICO DE MOLDES E",
+        "requiredCourses": "NOM-004-STPS-1999"
+    },
+    {
+        "position": "TÉCNICO DE MOLDES E",
+        "requiredCourses": "NOM-005-STPS-1998"
+    },
+    {
+        "position": "TÉCNICO DE MOLDES E",
+        "requiredCourses": "NOM-009-STPS-2011"
+    },
+    {
+        "position": "TÉCNICO DE MOLDES E",
+        "requiredCourses": "NOM-010-STPS-2014"
+    },
+    {
+        "position": "TÉCNICO DE MOLDES E",
+        "requiredCourses": "NOM-027-STPS-2008"
+    },
+    {
+        "position": "TÉCNICO DE MOLDES E",
+        "requiredCourses": "NOM-030-STPS-2009"
+    },
+    {
+        "position": "TÉCNICO DE MOLDES E",
+        "requiredCourses": "NOM-036-1-STPS-2018"
+    },
+    {
+        "position": "TÉCNICO DE MOLDES E",
+        "requiredCourses": "RPS"
+    },
+    {
+        "position": "TÉCNICO DE MOLDES E",
+        "requiredCourses": "SEGURIDAD Y PREVENCIÓN DE ACCIDENTES"
+    },
+    {
+        "position": "TÉCNICO DE MOLDES E",
+        "requiredCourses": "SISTEMA DE GESTIÓN INTEGRAL"
+    },
+    {
+        "position": "TÉCNICO ESPECIALISTA DE MANTENIMIENTO A",
+        "requiredCourses": "INDUCCIÓN A LA EMPRESA"
+    },
+    {
+        "position": "TÉCNICO ESPECIALISTA DE MANTENIMIENTO A",
+        "requiredCourses": "NOM-004-STPS-1999"
+    },
+    {
+        "position": "TÉCNICO ESPECIALISTA DE MANTENIMIENTO A",
+        "requiredCourses": "NOM-005-STPS-1998"
+    },
+    {
+        "position": "TÉCNICO ESPECIALISTA DE MANTENIMIENTO A",
+        "requiredCourses": "NOM-010-STPS-2014"
+    },
+    {
+        "position": "TÉCNICO ESPECIALISTA DE MANTENIMIENTO A",
+        "requiredCourses": "NOM-020-STPS-2011"
+    },
+    {
+        "position": "TÉCNICO ESPECIALISTA DE MANTENIMIENTO A",
+        "requiredCourses": "NOM-029-STPS-2011"
+    },
+    {
+        "position": "TÉCNICO ESPECIALISTA DE MANTENIMIENTO A",
+        "requiredCourses": "NOM-036-1-STPS-2018"
+    },
+    {
+        "position": "TÉCNICO ESPECIALISTA DE MANTENIMIENTO A",
+        "requiredCourses": "OPERACIÓN Y MANTENIMIENTO DE TERMOREGULADORES, DESHUMIFICADORES Y CARGADORES"
+    },
+    {
+        "position": "TÉCNICO ESPECIALISTA DE MANTENIMIENTO A",
+        "requiredCourses": "PLAN DE CONTINGENCIA DE DERRAMES"
+    },
+    {
+        "position": "TÉCNICO ESPECIALISTA DE MANTENIMIENTO A",
+        "requiredCourses": "SISTEMA DE GESTIÓN INTEGRAL"
+    },
+    {
+        "position": "TÉCNICO ESPECIALISTA DE MANTENIMIENTO B",
+        "requiredCourses": "INDUCCIÓN A LA EMPRESA"
+    },
+    {
+        "position": "TÉCNICO ESPECIALISTA DE MANTENIMIENTO B",
+        "requiredCourses": "NOM-004-STPS-1999"
+    },
+    {
+        "position": "TÉCNICO ESPECIALISTA DE MANTENIMIENTO B",
+        "requiredCourses": "NOM-005-STPS-1998"
+    },
+    {
+        "position": "TÉCNICO ESPECIALISTA DE MANTENIMIENTO B",
+        "requiredCourses": "NOM-010-STPS-2014"
+    },
+    {
+        "position": "TÉCNICO ESPECIALISTA DE MANTENIMIENTO B",
+        "requiredCourses": "NOM-020-STPS-2011"
+    },
+    {
+        "position": "TÉCNICO ESPECIALISTA DE MANTENIMIENTO B",
+        "requiredCourses": "NOM-029-STPS-2011"
+    },
+    {
+        "position": "TÉCNICO ESPECIALISTA DE MANTENIMIENTO B",
+        "requiredCourses": "NOM-036-1-STPS-2018"
+    },
+    {
+        "position": "TÉCNICO ESPECIALISTA DE MANTENIMIENTO B",
+        "requiredCourses": "OPERACIÓN Y MANTENIMIENTO DE TERMOREGULADORES, DESHUMIFICADORES Y CARGADORES"
+    },
+    {
+        "position": "TÉCNICO ESPECIALISTA DE MANTENIMIENTO B",
+        "requiredCourses": "PLAN DE CONTINGENCIA DE DERRAMES"
+    },
+    {
+        "position": "TÉCNICO ESPECIALISTA DE MANTENIMIENTO B",
+        "requiredCourses": "SISTEMA DE GESTIÓN INTEGRAL"
+    }
+]

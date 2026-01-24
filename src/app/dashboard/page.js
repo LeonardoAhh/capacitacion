@@ -13,6 +13,7 @@ import { Button } from '@/components/ui/Button/Button';
 import { Skeleton } from '@/components/ui/Skeleton/Skeleton';
 import { Progress, CircularProgress } from '@/components/ui/Progress/Progress';
 import { Dialog, DialogHeader, DialogTitle, DialogBody, DialogClose } from '@/components/ui/Dialog/Dialog';
+import WelcomeModal from '@/components/WelcomeModal/WelcomeModal';
 import styles from './page.module.css';
 
 export default function DashboardPage() {
@@ -31,6 +32,7 @@ export default function DashboardPage() {
     });
     const [expiringEmployees, setExpiringEmployees] = useState([]);
     const [showExpiringModal, setShowExpiringModal] = useState(false);
+    const [showWelcomeModal, setShowWelcomeModal] = useState(false);
 
     useEffect(() => {
         if (!authLoading && !user) {
@@ -42,6 +44,12 @@ export default function DashboardPage() {
         if (user) {
             loadStats();
             loadUserData();
+
+            // Check for Welcome Flag (Just Logged In)
+            if (sessionStorage.getItem('showWelcome')) {
+                setShowWelcomeModal(true);
+                sessionStorage.removeItem('showWelcome');
+            }
         }
     }, [user]);
 
@@ -360,23 +368,7 @@ export default function DashboardPage() {
                     <div className={styles.quickActions}>
                         <h2>Acciones Rápidas</h2>
                         <div className={styles.actionsGrid}>
-                            <Link href="/employees" className={styles.actionCard}>
-                                <div className={styles.actionIcon}>
-                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                        <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
-                                        <circle cx="8.5" cy="7" r="4" />
-                                        <line x1="20" y1="8" x2="20" y2="14" />
-                                        <line x1="23" y1="11" x2="17" y2="11" />
-                                    </svg>
-                                </div>
-                                <div className={styles.actionContent}>
-                                    <h3>Agregar Empleado</h3>
-                                    <p>Registrar un nuevo empleado en el sistema</p>
-                                </div>
-                                <svg className={styles.actionArrow} width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                    <polyline points="9 18 15 12 9 6" />
-                                </svg>
-                            </Link>
+
 
                             <Link href="/employees" className={styles.actionCard}>
                                 <div className={styles.actionIcon}>
@@ -408,6 +400,22 @@ export default function DashboardPage() {
                                 <div className={styles.actionContent}>
                                     <h3>Reportes de Formación</h3>
                                     <p>Ver cumplimiento del Plan de Formación</p>
+                                </div>
+                                <svg className={styles.actionArrow} width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                    <polyline points="9 18 15 12 9 6" />
+                                </svg>
+                            </Link>
+
+                            <Link href="/capacitacion" className={styles.actionCard}>
+                                <div className={styles.actionIcon}>
+                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                        <path d="M22 10v6M2 10l10-5 10 5-10 5z" />
+                                        <path d="M6 12v5c3 3 9 3 12 0v-5" />
+                                    </svg>
+                                </div>
+                                <div className={styles.actionContent}>
+                                    <h3>Capacitación</h3>
+                                    <p>Gestionar programas y cursos</p>
                                 </div>
                                 <svg className={styles.actionArrow} width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                                     <polyline points="9 18 15 12 9 6" />
@@ -470,6 +478,11 @@ export default function DashboardPage() {
                     </div>
                 </DialogBody>
             </Dialog>
+
+            <WelcomeModal
+                open={showWelcomeModal}
+                onOpenChange={setShowWelcomeModal}
+            />
         </>
     );
 }

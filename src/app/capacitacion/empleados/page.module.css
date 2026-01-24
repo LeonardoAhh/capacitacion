@@ -1,0 +1,253 @@
+.main {
+    padding: 2rem 1rem;
+    max-width: 1200px;
+    margin: 0 auto;
+    min-height: calc(100vh - 80px);
+}
+
+.header {
+    margin-bottom: 2rem;
+}
+
+.backBtn {
+    color: #666;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.5rem;
+    text-decoration: none;
+    font-size: 0.9rem;
+}
+
+.filterCard {
+    margin-bottom: 2rem;
+    background-color: white;
+}
+
+.filterContent {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+    align-items: flex-end;
+    padding: 1.5rem !important;
+}
+
+.filterGroup {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    flex: 1;
+    min-width: 200px;
+}
+
+.filterGroup label {
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: #6b7280;
+}
+
+.select {
+    width: 100%;
+    padding: 0.6rem;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    background-color: white;
+}
+
+.searchInput {
+    flex: 1;
+    min-width: 200px;
+}
+
+/* Table Enhancements */
+.subText {
+    font-size: 0.75rem;
+    color: #9ca3af;
+    font-weight: 400;
+}
+
+.badge {
+    padding: 2px 8px;
+    border-radius: 999px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    display: inline-block;
+    border: 1px solid transparent;
+}
+
+.actionButtons {
+    display: flex;
+    justify-content: center;
+    gap: 0.5rem;
+}
+
+/* Pagination */
+.paginationControls {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 1rem;
+    padding: 0.5rem;
+    background-color: white;
+    border-top: 1px solid #e5e7eb;
+}
+
+.pageInfo {
+    font-size: 0.9rem;
+    color: #6b7280;
+}
+
+.pageButtons {
+    display: flex;
+    gap: 0.5rem;
+}
+
+/* Modal Details */
+.subtitle {
+    font-size: 0.9rem;
+    color: #6b7280;
+    margin-top: -0.5rem;
+    margin-bottom: 1rem;
+}
+
+.detailStats {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.statBox {
+    background: #f9fafb;
+    padding: 1rem;
+    border-radius: 8px;
+    text-align: center;
+}
+
+.statLabel {
+    font-size: 0.8rem;
+    color: #6b7280;
+    margin-bottom: 0.25rem;
+}
+
+.statValue {
+    font-size: 1.25rem;
+    font-weight: 700;
+}
+
+.sectionTitle {
+    font-size: 1rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    border-bottom: 1px solid #e5e7eb;
+    padding-bottom: 0.25rem;
+}
+
+.historyList {
+    background: #f9fafb;
+    border-radius: 8px;
+    padding: 0.5rem;
+}
+
+.historyItem {
+    padding: 0.5rem;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.historyItem:last-child {
+    border-bottom: none;
+}
+
+.historyName {
+    font-weight: 500;
+    font-size: 0.9rem;
+}
+
+.historyMeta {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.8rem;
+    color: #6b7280;
+    margin-top: 2px;
+}
+
+
+.tableWrapper {
+    overflow-x: auto;
+}
+
+.table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.table th,
+.table td {
+    padding: 1rem;
+    text-align: left;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.table th {
+    background-color: #f9fafb;
+    font-weight: 600;
+    color: #374151;
+}
+
+.fwBold {
+    font-weight: 600;
+    color: #111827;
+}
+
+.deptBadge {
+    display: inline-block;
+    padding: 2px 8px;
+    background-color: #eff6ff;
+    color: #1e40af;
+    border: 1px solid #dbeafe;
+    border-radius: 4px;
+    font-size: 0.85rem;
+}
+
+.missingBadge {
+    display: inline-block;
+    padding: 2px 8px;
+    background-color: #fef2f2;
+    color: #991b1b;
+    border: 1px solid #fee2e2;
+    border-radius: 4px;
+    font-size: 0.85rem;
+    font-weight: 500;
+}
+
+/* Modal Form */
+.formGroup {
+    margin-bottom: 1.5rem;
+}
+
+.formGroup label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+    color: #374151;
+}
+
+.formGroup input {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    font-size: 1rem;
+}
+
+.formGroup input:focus {
+    outline: none;
+    border-color: #2563eb;
+    box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.1);
+}
+
+.helpText {
+    font-size: 0.8rem;
+    color: #6b7280;
+    margin-top: 0.4rem;
+}

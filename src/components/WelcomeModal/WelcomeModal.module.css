@@ -1,0 +1,72 @@
+.intro {
+    margin-bottom: 1.5rem;
+    color: #4b5563;
+    font-size: 0.95rem;
+    line-height: 1.5;
+}
+
+.grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.25rem;
+    margin-bottom: 1.5rem;
+}
+
+.feature {
+    background: #f9fafb;
+    padding: 1rem;
+    border-radius: 8px;
+    border: 1px solid #e5e7eb;
+}
+
+.icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 0.75rem;
+}
+
+.iconPurple {
+    background: #f3e8ff;
+    color: #7e22ce;
+}
+
+.iconBlue {
+    background: #dbeafe;
+    color: #2563eb;
+}
+
+.iconGreen {
+    background: #dcfce7;
+    color: #16a34a;
+}
+
+.iconOrange {
+    background: #ffedd5;
+    color: #c2410c;
+}
+
+.feature h3 {
+    font-size: 0.9rem;
+    font-weight: 600;
+    margin-bottom: 0.4rem;
+    color: #111827;
+}
+
+.feature p {
+    font-size: 0.8rem;
+    color: #6b7280;
+    line-height: 1.4;
+}
+
+.tip {
+    background-color: #eff6ff;
+    padding: 0.75rem;
+    border-radius: 6px;
+    font-size: 0.85rem;
+    color: #1e40af;
+    border: 1px solid #dbeafe;
+}

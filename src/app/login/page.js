@@ -30,6 +30,7 @@ export default function LoginPage() {
         const result = await signIn(email, password);
 
         if (result.success) {
+            sessionStorage.setItem('showWelcome', 'true');
             router.push('/dashboard');
         } else {
             setError('Credenciales incorrectas. Por favor, intenta de nuevo.');

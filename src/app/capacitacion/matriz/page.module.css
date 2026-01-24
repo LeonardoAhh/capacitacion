@@ -1,0 +1,503 @@
+.main {
+    min-height: calc(100vh - 80px);
+    padding: var(--spacing-2xl) 0;
+    background-color: var(--bg-primary);
+}
+
+.container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 var(--spacing-lg);
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--spacing-xl);
+}
+
+.headerLeft {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-sm);
+}
+
+.backBtn {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+    text-decoration: none;
+    transition: color var(--transition-fast);
+}
+
+.backBtn:hover {
+    color: var(--color-primary);
+}
+
+.header h1 {
+    font-size: 2rem;
+    color: var(--text-primary);
+}
+
+.controlsBar {
+    display: flex;
+    gap: var(--spacing-md);
+    margin-bottom: var(--spacing-xl);
+    flex-wrap: wrap;
+    align-items: center;
+}
+
+.searchBar {
+    position: relative;
+    flex: 1;
+    min-width: 300px;
+}
+
+.searchBar svg {
+    position: absolute;
+    left: var(--spacing-md);
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--text-tertiary);
+}
+
+.searchBar input {
+    width: 100%;
+    padding: var(--spacing-md) var(--spacing-md) var(--spacing-md) calc(var(--spacing-md) * 2 + 10px);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-lg);
+    background-color: var(--bg-secondary);
+    color: var(--text-primary);
+    font-size: 1rem;
+    transition: all var(--transition-base);
+}
+
+.searchBar input:focus {
+    outline: none;
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+}
+
+.deptFilter {
+    padding: var(--spacing-md);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-lg);
+    background-color: var(--bg-secondary);
+    color: var(--text-primary);
+    font-size: 1rem;
+    min-width: 200px;
+}
+
+.viewToggles {
+    display: flex;
+    background-color: var(--bg-secondary);
+    padding: 4px;
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--border-color);
+}
+
+.toggleBtn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: var(--spacing-sm);
+    border: none;
+    background: transparent;
+    color: var(--text-secondary);
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+}
+
+.toggleBtn:hover {
+    color: var(--text-primary);
+    background-color: var(--bg-tertiary);
+}
+
+.toggleBtn.active {
+    background-color: var(--bg-primary);
+    color: var(--color-primary);
+    box-shadow: var(--shadow-sm);
+}
+
+/* Grid View */
+.grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: var(--spacing-lg);
+}
+
+/* Table View */
+.tableWrapper {
+    overflow-x: auto;
+    background-color: var(--bg-secondary);
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--border-color);
+    box-shadow: var(--shadow-sm);
+}
+
+.table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 800px;
+}
+
+.table th,
+.table td {
+    padding: var(--spacing-md) var(--spacing-lg);
+    text-align: left;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.table th {
+    background-color: var(--bg-tertiary);
+    font-weight: 600;
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+}
+
+.table tr:last-child td {
+    border-bottom: none;
+}
+
+.table tr:hover {
+    background-color: var(--bg-primary);
+}
+
+.selectedRow {
+    background-color: rgba(59, 130, 246, 0.05);
+}
+
+.fwBold {
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.deptBadge {
+    display: inline-block;
+    padding: 2px 8px;
+    background-color: rgba(59, 130, 246, 0.1);
+    color: var(--color-primary);
+    border-radius: var(--radius-sm);
+    font-size: 0.8rem;
+    font-weight: 500;
+}
+
+.coursesTooltip {
+    font-size: 0.75rem;
+    color: var(--text-tertiary);
+    margin-top: 4px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 300px;
+}
+
+.card {
+    height: 100%;
+    transition: transform var(--transition-base);
+}
+
+.card:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-md);
+}
+
+.cardTitleRow {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: var(--spacing-sm);
+}
+
+.department {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-top: var(--spacing-xs);
+    display: block;
+}
+
+.courseCount {
+    font-size: 0.9rem;
+    color: var(--text-primary);
+    margin-bottom: var(--spacing-md);
+}
+
+.previewCourses {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--spacing-xs);
+}
+
+.badge {
+    background-color: var(--bg-tertiary);
+    color: var(--text-secondary);
+    padding: 2px 8px;
+    border-radius: var(--radius-sm);
+    font-size: 0.75rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100%;
+}
+
+.moreBadge {
+    color: var(--color-primary);
+    font-size: 0.75rem;
+    font-weight: 500;
+    padding: 2px 4px;
+}
+
+.bulkActionBar {
+    position: fixed;
+    bottom: var(--spacing-xl);
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: var(--text-primary);
+    color: white;
+    padding: var(--spacing-md) var(--spacing-xl);
+    border-radius: var(--radius-full);
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-xl);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+    z-index: 100;
+    min-width: 400px;
+    justify-content: space-between;
+    animation: slideUp 0.3s ease-out;
+}
+
+@keyframes slideUp {
+    from {
+        transform: translate(-50%, 100%);
+        opacity: 0;
+    }
+
+    to {
+        transform: translate(-50%, 0);
+        opacity: 1;
+    }
+}
+
+.bulkActions {
+    display: flex;
+    gap: var(--spacing-md);
+}
+
+.selectedCard {
+    border: 2px solid var(--color-primary);
+    background-color: rgba(59, 130, 246, 0.02);
+}
+
+.selectedBadge {
+    position: absolute;
+    top: var(--spacing-md);
+    right: var(--spacing-md);
+    background-color: var(--color-primary);
+    color: white;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.8rem;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+/* Edit Modal Tabs */
+.tabsHeader {
+    display: flex;
+    gap: var(--spacing-lg);
+    border-bottom: 1px solid var(--border-color);
+    margin-top: var(--spacing-sm);
+}
+
+.tabBtn {
+    background: none;
+    border: none;
+    padding: var(--spacing-sm) 0;
+    color: var(--text-secondary);
+    font-size: 0.95rem;
+    cursor: pointer;
+    position: relative;
+}
+
+.tabBtn.activeTab {
+    color: var(--color-primary);
+    font-weight: 600;
+}
+
+.tabBtn.activeTab::after {
+    content: '';
+    position: absolute;
+    bottom: -1px;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background-color: var(--color-primary);
+}
+
+/* Employee List */
+.employeesList {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-md);
+}
+
+.employeeRow {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-md);
+    padding: var(--spacing-sm);
+    border-bottom: 1px solid var(--border-color);
+}
+
+.empAvatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background-color: var(--bg-tertiary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    color: var(--text-secondary);
+}
+
+.empInfo {
+    flex: 1;
+}
+
+.empName {
+    font-weight: 500;
+    color: var(--text-primary);
+}
+
+.empEmail {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+}
+
+.complianceBadge {
+    padding: 4px 8px;
+    background-color: #f3f4f6;
+    color: #6b7280;
+    border-radius: var(--radius-sm);
+    font-size: 0.8rem;
+}
+
+.noData {
+    text-align: center;
+    color: var(--text-tertiary);
+    padding: var(--spacing-xl);
+}
+
+/* Edit Modal base styles */
+.editContainer {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-xl);
+    max-height: 60vh;
+    overflow-y: auto;
+    padding-top: var(--spacing-md);
+}
+
+.assignedSection h3,
+.addSection h3 {
+    font-size: 1rem;
+    color: var(--text-primary);
+    margin-bottom: var(--spacing-md);
+    font-weight: 600;
+}
+
+.chipGrid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--spacing-sm);
+}
+
+.chip {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--spacing-xs);
+    background-color: rgba(59, 130, 246, 0.1);
+    color: var(--color-primary);
+    padding: var(--spacing-xs) var(--spacing-sm);
+    border-radius: var(--radius-full);
+    font-size: 0.85rem;
+    border: 1px solid rgba(59, 130, 246, 0.2);
+}
+
+.chip button {
+    background: none;
+    border: none;
+    color: var(--color-primary);
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 1rem;
+    padding: 0 2px;
+    line-height: 1;
+}
+
+.chip button:hover {
+    color: var(--color-accent);
+}
+
+.autocomplete {
+    position: relative;
+}
+
+.searchInput {
+    width: 100%;
+    padding: var(--spacing-sm) var(--spacing-md);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    background-color: var(--bg-tertiary);
+    color: var(--text-primary);
+}
+
+.suggestions {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 100%;
+    background-color: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    border-bottom-left-radius: var(--radius-md);
+    border-bottom-right-radius: var(--radius-md);
+    max-height: 200px;
+    overflow-y: auto;
+    z-index: 10;
+    box-shadow: var(--shadow-lg);
+}
+
+.suggestionItem {
+    padding: var(--spacing-sm) var(--spacing-md);
+    cursor: pointer;
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+}
+
+.suggestionItem:hover {
+    background-color: var(--bg-tertiary);
+    color: var(--text-primary);
+}
+
+.noResults {
+    padding: var(--spacing-md);
+    color: var(--text-tertiary);
+    font-size: 0.9rem;
+    text-align: center;
+}
+
+.emptyState {
+    text-align: center;
+    padding: var(--spacing-3xl);
+    color: var(--text-secondary);
+}
