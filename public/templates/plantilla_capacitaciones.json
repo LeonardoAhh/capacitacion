@@ -1,0 +1,20 @@
+[
+    {
+        "employeeId": "EMP001",
+        "courseName": "INDUCCIÓN A LA EMPRESA",
+        "date": "2024-01-15",
+        "score": 100
+    },
+    {
+        "employeeId": "EMP002",
+        "courseName": "SEGURIDAD Y PREVENCIÓN DE ACCIDENTES",
+        "date": "2024-01-20",
+        "score": 85
+    },
+    {
+        "employeeId": "EMP003",
+        "courseName": "USO DE EQUIPO DE PROTECCIÓN PERSONAL",
+        "date": "2024-02-10",
+        "score": 92
+    }
+]
