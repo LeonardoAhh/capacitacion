@@ -9,6 +9,7 @@ import { useToast } from '@/components/ui/Toast/Toast';
 import { db } from '@/lib/firebase';
 import { collection, getDocs, query, orderBy, doc, updateDoc, arrayUnion, addDoc } from 'firebase/firestore';
 import styles from './page.module.css';
+import multiStyles from './multi-styles.module.css';
 
 export default function RegistroPage() {
     const { toast } = useToast();
@@ -16,142 +17,185 @@ export default function RegistroPage() {
     const [submitting, setSubmitting] = useState(false);
 
     // Data Sources
-    const [employees, setEmployees] = useState([]);
-    const [courses, setCourses] = useState([]);
+    const [employees, setEmployees] = useState([]); // {id, name}
+    const [courses, setCourses] = useState([]); // names array
 
-    // Form State
-    const [selectedEmp, setSelectedEmp] = useState(null); // {id, name}
+    // Selection State
+    const [selectedEmps, setSelectedEmps] = useState([]); // Array of IDs
+    const [selectedCourses, setSelectedCourses] = useState([]); // Array of Course Names
+
+    // Filters
     const [empSearch, setEmpSearch] = useState('');
-    const [filteredEmps, setFilteredEmps] = useState([]);
+    const [courseSearch, setCourseSearch] = useState('');
 
-    const [selectedCourse, setSelectedCourse] = useState('');
+    // New Course
     const [isNewCourse, setIsNewCourse] = useState(false);
     const [newCourseName, setNewCourseName] = useState('');
 
+    // Common Data
     const [qualification, setQualification] = useState('');
     const [date, setDate] = useState(new Date().toISOString().split('T')[0]);
 
     useEffect(() => {
         loadData();
-        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
-
-    useEffect(() => {
-        if (!empSearch) {
-            setFilteredEmps([]);
-            return;
-        }
-        if (selectedEmp && empSearch === selectedEmp.name) {
-            setFilteredEmps([]); // Don't show dropdown if selected
-            return;
-        }
-
-        const term = empSearch.toLowerCase();
-        const matches = employees
-            .filter(e => e.name.toLowerCase().includes(term))
-            .slice(0, 5); // Limit suggestions
-        setFilteredEmps(matches);
-    }, [empSearch, employees, selectedEmp]);
 
     const loadData = async () => {
         setLoading(true);
         try {
-            // Load Employees
             const empSnap = await getDocs(query(collection(db, 'training_records'), orderBy('name')));
-            setEmployees(empSnap.docs.map(d => ({ id: d.id, name: d.data().name })));
+            setEmployees(empSnap.docs.map(d => ({
+                id: d.id,
+                name: d.data().name,
+                employeeId: d.data().employeeId || d.id // Handle cases where employeeId might be missing
+            })));
 
-            // Load Courses
             const courseSnap = await getDocs(query(collection(db, 'courses'), orderBy('name')));
             setCourses(courseSnap.docs.map(d => d.data().name));
         } catch (error) {
-            console.error("Error loading data:", error);
-            toast.error("Error", "No se pudieron cargar los catálogos.");
+            console.error(error);
+            toast.error("Error", "No se pudieron cargar los datos.");
         } finally {
             setLoading(false);
         }
     };
 
-    const handleSelectEmp = (emp) => {
-        setSelectedEmp(emp);
-        setEmpSearch(emp.name);
-        setFilteredEmps([]);
+    const toggleEmp = (id) => {
+        setSelectedEmps(prev =>
+            prev.includes(id) ? prev.filter(x => x !== id) : [...prev, id]
+        );
+    };
+
+    const toggleCourse = (name) => {
+        setSelectedCourses(prev =>
+            prev.includes(name) ? prev.filter(x => x !== name) : [...prev, name]
+        );
+    };
+
+    const selectAllFilteredEmps = () => {
+        const filteredIds = filteredEmployees.map(e => e.id);
+
+        // Add only ones not already selected
+        const newSelection = [...new Set([...selectedEmps, ...filteredIds])];
+        setSelectedEmps(newSelection);
+    };
+
+    const selectAllFilteredCourses = () => {
+        const filteredNames = filteredCourses;
+        const newSelection = [...new Set([...selectedCourses, ...filteredNames])];
+        setSelectedCourses(newSelection);
+    };
+
+    const clearCourseSelection = () => {
+        setSelectedCourses([]);
+    };
+
+    const clearSelection = () => {
+        setSelectedEmps([]);
     };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        if (!selectedEmp) {
-            toast.error("Error", "Selecciona un empleado válido.");
+
+        // Validation
+        if (selectedEmps.length === 0) {
+            toast.error("Atención", "Selecciona al menos un empleado.");
             return;
         }
-        if (!isNewCourse && !selectedCourse) {
-            toast.error("Error", "Selecciona un curso.");
+
+        let finalCourses = [...selectedCourses];
+
+        // Handle New Course
+        if (isNewCourse) {
+            if (!newCourseName.trim()) {
+                toast.error("Error", "Ingresa el nombre del nuevo curso.");
+                return;
+            }
+            finalCourses = [newCourseName.trim().toUpperCase()];
+        } else if (finalCourses.length === 0) {
+            toast.error("Atención", "Selecciona al menos un curso.");
             return;
         }
-        if (isNewCourse && !newCourseName.trim()) {
-            toast.error("Error", "Escribe el nombre del nuevo curso.");
-            return;
-        }
+
         if (!qualification || !date) {
-            toast.error("Error", "Completa calificación y fecha.");
+            toast.error("Atención", "Faltan datos de calificación o fecha.");
             return;
         }
 
         setSubmitting(true);
         try {
-            const courseName = isNewCourse ? newCourseName.trim().toUpperCase() : selectedCourse;
-
-            // 1. If new course, add to catalog
+            // 1. Create New Course if needed
             if (isNewCourse) {
-                // Check if exists first to avoid dupes? 
-                // Simple logic for now
-                if (!courses.includes(courseName)) {
+                const cName = finalCourses[0];
+                if (!courses.includes(cName)) {
                     await addDoc(collection(db, 'courses'), {
-                        name: courseName,
-                        category: 'GENERAL', // Default
+                        name: cName,
+                        category: 'GENERAL',
                         createdAt: new Date()
                     });
-                    setCourses(prev => [...prev, courseName].sort());
+                    setCourses(prev => [...prev, cName].sort());
                 }
             }
 
-            // 2. Add to Employee History
-            const recordRef = doc(db, 'training_records', selectedEmp.id);
+            // 2. Batch Update
             const score = parseFloat(qualification);
             const status = score >= 70 ? 'approved' : 'failed';
-
-            // Format Date as DD/MM/YYYY for consistency with JSON if needed, or stick to ISO?
-            // Existing data uses DD/MM/YYYY. Let's try to match or use ISO.
-            // Component uses YYYY-MM-DD. Let's convert to DD/MM/YYYY for consistency.
             const [y, m, d] = date.split('-');
-            const formattedDate = `${d}/${m}/${y}`;
+            const formattedDate = `${d}/${m}/${y}`; // DD/MM/YYYY
 
-            await updateDoc(recordRef, {
-                history: arrayUnion({
-                    courseName: courseName,
-                    date: formattedDate,
-                    score: score,
-                    status: status
-                }),
-                updatedAt: new Date().toISOString()
-            });
+            const promises = [];
 
-            toast.success("Registrado", `Curso "${courseName}" agregado a ${selectedEmp.name}.`);
+            for (const empId of selectedEmps) {
+                const empRef = doc(db, 'training_records', empId);
 
-            // Reset Form (keep date?)
-            setSelectedCourse('');
-            setIsNewCourse(false);
-            setNewCourseName('');
+                // For each course
+                for (const cName of finalCourses) {
+                    const updatePromise = updateDoc(empRef, {
+                        history: arrayUnion({
+                            courseName: cName,
+                            date: formattedDate,
+                            score: score,
+                            status: status
+                        }),
+                        updatedAt: new Date().toISOString()
+                    });
+                    promises.push(updatePromise);
+                }
+            }
+
+            await Promise.all(promises);
+
+            const totalRecs = selectedEmps.length * finalCourses.length;
+            toast.success("Éxito", `Se registraron ${totalRecs} capacitaciones.`);
+
+            // Reset partial
+            setSelectedEmps([]);
+            if (isNewCourse) {
+                setIsNewCourse(false);
+                setNewCourseName('');
+                setSelectedCourses([]); // Clear selection as we used new course
+            } else {
+                setSelectedCourses([]);
+            }
             setQualification('');
-            // Optional: clear employee or keep? Usually nicer to keep if bulk entry.
-            // Let's keep employee.
 
         } catch (error) {
-            console.error("Error saving record:", error);
-            toast.error("Error", "Falló el guardado.");
+            console.error(error);
+            toast.error("Error", "Falló la carga masiva.");
         } finally {
             setSubmitting(false);
         }
     };
+
+    const filteredEmployees = employees.filter(e => {
+        const term = empSearch.toLowerCase();
+        return e.name.toLowerCase().includes(term) ||
+            (e.employeeId && e.employeeId.toLowerCase().includes(term));
+    });
+
+    const filteredCourses = courses.filter(c =>
+        c.toLowerCase().includes(courseSearch.toLowerCase())
+    );
 
     return (
         <>
@@ -160,80 +204,110 @@ export default function RegistroPage() {
                 <div className={styles.container}>
                     <div className={styles.header}>
                         <Link href="/capacitacion" className={styles.backBtn}>← Volver</Link>
-                        <h1>Registro Individual de Capacitación</h1>
+                        <h1>Carga Masiva de Capacitación</h1>
+                        <p>Registra uno o varios cursos para múltiples empleados simultáneamente.</p>
                     </div>
 
                     <Card>
                         <CardContent>
-                            {loading ? (
-                                <div className="spinner"></div>
-                            ) : (
+                            {loading ? <div className="spinner"></div> : (
                                 <form onSubmit={handleSubmit} className={styles.form}>
-                                    {/* 1. Employee Selection */}
-                                    <div className={styles.formGroup}>
-                                        <label>Empleado</label>
-                                        <div className={styles.autocompleteWrapper}>
-                                            <input
-                                                type="text"
-                                                placeholder="Buscar por nombre..."
-                                                value={empSearch}
-                                                onChange={(e) => {
-                                                    setEmpSearch(e.target.value);
-                                                    if (selectedEmp && e.target.value !== selectedEmp.name) {
-                                                        setSelectedEmp(null); // Clear selection if user types
-                                                    }
-                                                }}
-                                                className={styles.input}
-                                            />
-                                            {filteredEmps.length > 0 && (
-                                                <ul className={styles.suggestions}>
-                                                    {filteredEmps.map(emp => (
-                                                        <li key={emp.id} onClick={() => handleSelectEmp(emp)}>
-                                                            {emp.name}
-                                                        </li>
-                                                    ))}
-                                                </ul>
-                                            )}
-                                        </div>
-                                    </div>
 
-                                    {/* 2. Course Selection */}
-                                    <div className={styles.formGroup}>
-                                        <label>Curso</label>
-                                        <div className={styles.courseRow}>
-                                            {!isNewCourse ? (
-                                                <select
-                                                    value={selectedCourse}
-                                                    onChange={(e) => setSelectedCourse(e.target.value)}
-                                                    className={styles.select}
-                                                >
-                                                    <option value="">-- Seleccionar Curso --</option>
-                                                    {courses.map((c, i) => (
-                                                        <option key={i} value={c}>{c}</option>
+                                    <div className={styles.gridTwoCols}>
+                                        {/* Col 1: Empleados */}
+                                        <div className={styles.formGroup}>
+                                            <label>1. Seleccionar Empleados ({selectedEmps.length})</label>
+                                            <div className={multiStyles.multiSelectContainer}>
+                                                <div className={multiStyles.searchHeader}>
+                                                    <input
+                                                        type="text"
+                                                        placeholder="Buscar por Nombre o ID..."
+                                                        className={multiStyles.searchInput}
+                                                        value={empSearch}
+                                                        onChange={(e) => setEmpSearch(e.target.value)}
+                                                    />
+                                                </div>
+                                                <div className={multiStyles.listBody}>
+                                                    {filteredEmployees.map(emp => (
+                                                        <label key={emp.id} className={multiStyles.checkboxItem}>
+                                                            <input
+                                                                type="checkbox"
+                                                                checked={selectedEmps.includes(emp.id)}
+                                                                onChange={() => toggleEmp(emp.id)}
+                                                            />
+                                                            <div style={{ display: 'flex', flexDirection: 'column', lineHeight: '1.2' }}>
+                                                                <span>{emp.name}</span>
+                                                                <small style={{ opacity: 0.7, fontSize: '0.75em' }}>{emp.employeeId}</small>
+                                                            </div>
+                                                        </label>
                                                     ))}
-                                                </select>
-                                            ) : (
+                                                    {filteredEmployees.length === 0 && <p className="text-muted p-2">Sin resultados.</p>}
+                                                </div>
+                                                <div className={multiStyles.selectionSummary}>
+                                                    <span>{selectedEmps.length} seleccionados</span>
+                                                    <div style={{ display: 'flex', gap: '10px' }}>
+                                                        <button type="button" onClick={selectAllFilteredEmps} className={multiStyles.selectAllBtn}>Todo Visible</button>
+                                                        <button type="button" onClick={clearSelection} className={multiStyles.selectAllBtn}>Limpiar</button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        {/* Col 2: Cursos */}
+                                        <div className={styles.formGroup}>
+                                            <label>2. Seleccionar Cursos ({isNewCourse ? '1 Nuevo' : selectedCourses.length})</label>
+
+                                            <div style={{ marginBottom: '0.5rem' }}>
+                                                <button type="button" className={styles.toggleBtn} onClick={() => setIsNewCourse(!isNewCourse)}>
+                                                    {isNewCourse ? '← Volver a Lista' : '+ Crear Nuevo Curso'}
+                                                </button>
+                                            </div>
+
+                                            {isNewCourse ? (
                                                 <input
                                                     type="text"
                                                     placeholder="Nombre del Nuevo Curso"
-                                                    value={newCourseName}
-                                                    onChange={(e) => setNewCourseName(e.target.value)}
                                                     className={styles.input}
-                                                    autoFocus
+                                                    value={newCourseName}
+                                                    onChange={e => setNewCourseName(e.target.value)}
                                                 />
+                                            ) : (
+                                                <div className={multiStyles.multiSelectContainer}>
+                                                    <div className={multiStyles.searchHeader}>
+                                                        <input
+                                                            type="text"
+                                                            placeholder="Buscar curso..."
+                                                            className={multiStyles.searchInput}
+                                                            value={courseSearch}
+                                                            onChange={(e) => setCourseSearch(e.target.value)}
+                                                        />
+                                                    </div>
+                                                    <div className={multiStyles.listBody}>
+                                                        {filteredCourses.map(c => (
+                                                            <label key={c} className={multiStyles.checkboxItem}>
+                                                                <input
+                                                                    type="checkbox"
+                                                                    checked={selectedCourses.includes(c)}
+                                                                    onChange={() => toggleCourse(c)}
+                                                                />
+                                                                {c}
+                                                            </label>
+                                                        ))}
+                                                        {filteredCourses.length === 0 && <p className="text-muted p-2">Sin resultados.</p>}
+                                                    </div>
+                                                    <div className={multiStyles.selectionSummary}>
+                                                        <span>{selectedCourses.length} seleccionados</span>
+                                                        <div style={{ display: 'flex', gap: '10px' }}>
+                                                            <button type="button" onClick={selectAllFilteredCourses} className={multiStyles.selectAllBtn}>Todo Visible</button>
+                                                            <button type="button" onClick={clearCourseSelection} className={multiStyles.selectAllBtn}>Limpiar</button>
+                                                        </div>
+                                                    </div>
+                                                </div>
                                             )}
-
-                                            <button
-                                                type="button"
-                                                onClick={() => setIsNewCourse(!isNewCourse)}
-                                                className={styles.toggleBtn}
-                                            >
-                                                {isNewCourse ? 'Seleccionar existente' : 'Crear nuevo'}
-                                            </button>
                                         </div>
                                     </div>
 
-                                    {/* 3. Qualification & Date */}
+                                    {/* 3. Datos Comunes */}
                                     <div className={styles.row}>
                                         <div className={styles.formGroup}>
                                             <label>Calificación (0-100)</label>
@@ -243,6 +317,7 @@ export default function RegistroPage() {
                                                 value={qualification}
                                                 onChange={(e) => setQualification(e.target.value)}
                                                 className={styles.input}
+                                                required
                                             />
                                         </div>
                                         <div className={styles.formGroup}>
@@ -252,15 +327,21 @@ export default function RegistroPage() {
                                                 value={date}
                                                 onChange={(e) => setDate(e.target.value)}
                                                 className={styles.input}
+                                                required
                                             />
                                         </div>
                                     </div>
 
+                                    <div className={styles.infoBox}>
+                                        <p>Se crearán <strong>{selectedEmps.length * (isNewCourse ? 1 : selectedCourses.length)}</strong> registros en total.</p>
+                                    </div>
+
                                     <div className={styles.actions}>
-                                        <Button type="submit" disabled={submitting}>
-                                            {submitting ? 'Guardando...' : 'Registrar Capacitación'}
+                                        <Button type="submit" disabled={submitting || selectedEmps.length === 0}>
+                                            {submitting ? 'Procesando...' : 'Confirmar Carga Masiva'}
                                         </Button>
                                     </div>
+
                                 </form>
                             )}
                         </CardContent>

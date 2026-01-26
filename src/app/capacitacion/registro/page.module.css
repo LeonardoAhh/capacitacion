@@ -1,68 +1,106 @@
 .main {
     padding: 2rem 1rem;
-    max-width: 800px;
+    max-width: 1200px;
     margin: 0 auto;
     min-height: calc(100vh - 80px);
+    animation: fadeIn 0.5s ease;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.container {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
 }
 
 .header {
-    margin-bottom: 2rem;
+    margin-bottom: 1rem;
+}
+
+.header h1 {
+    font-size: 2rem;
+    font-weight: 700;
+    background: linear-gradient(90deg, var(--color-primary), var(--color-accent));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 0.5rem;
+}
+
+.header p {
+    color: var(--text-secondary);
+    font-size: 1.1rem;
 }
 
 .backBtn {
-    color: var(--text-secondary);
+    color: var(--text-tertiary);
     margin-bottom: 1rem;
-    display: inline-block;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
     text-decoration: none;
+    font-size: 0.9rem;
+    font-weight: 500;
+    transition: color 0.2s;
+}
+
+.backBtn:hover {
+    color: var(--color-primary);
 }
 
 .form {
     display: flex;
     flex-direction: column;
-    gap: 1.5rem;
-    padding: 1rem;
+    gap: 2rem;
+}
+
+.gridTwoCols {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
 }
 
 .formGroup {
     display: flex;
     flex-direction: column;
-    gap: 0.5rem;
-    position: relative;
+    gap: 0.75rem;
 }
 
 .formGroup label {
-    font-weight: 500;
+    font-weight: 600;
+    font-size: 0.95rem;
     color: var(--text-primary);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }
 
-.input,
-.select {
-    padding: 0.75rem;
+.input {
+    padding: 0.75rem 1rem;
     border: 1px solid var(--border-color);
-    border-radius: 6px;
+    border-radius: var(--radius-md);
     font-size: 1rem;
-    background-color: var(--bg-primary);
+    background-color: var(--bg-tertiary);
     color: var(--text-primary);
     width: 100%;
+    transition: all 0.2s;
 }
 
-.input:focus,
-.select:focus {
+.input:focus {
     outline: none;
     border-color: var(--color-primary);
-    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.1);
-}
-
-.row {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 1rem;
-}
-
-.courseRow {
-    display: flex;
-    gap: 1rem;
-    align-items: center;
+    background-color: var(--bg-primary);
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
 }
 
 .toggleBtn {
@@ -70,45 +108,51 @@
     border: none;
     color: var(--color-primary);
     cursor: pointer;
-    font-size: 0.9rem;
-    white-space: nowrap;
-    text-decoration: underline;
+    font-size: 0.85rem;
+    font-weight: 600;
+    padding: 0.2rem 0.5rem;
+    border-radius: 4px;
 }
 
-.autocompleteWrapper {
-    position: relative;
+.toggleBtn:hover {
+    background: rgba(99, 102, 241, 0.1);
 }
 
-.suggestions {
-    position: absolute;
-    top: 100%;
-    left: 0;
-    right: 0;
-    background: var(--bg-secondary);
-    border: 1px solid var(--border-color);
-    border-radius: 0 0 6px 6px;
-    box-shadow: var(--shadow-md);
-    z-index: 10;
-    max-height: 200px;
-    overflow-y: auto;
-    list-style: none;
-    padding: 0;
-    margin: 0;
-}
-
-.suggestions li {
-    padding: 0.75rem;
-    cursor: pointer;
-    border-bottom: 1px solid var(--border-color);
-    color: var(--text-primary);
-}
-
-.suggestions li:hover {
-    background-color: var(--bg-tertiary);
+.row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
 }
 
 .actions {
     margin-top: 1rem;
     display: flex;
     justify-content: flex-end;
+}
+
+.infoBox {
+    background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(99, 102, 241, 0.1));
+    border: 1px solid rgba(99, 102, 241, 0.2);
+    padding: 1.5rem;
+    border-radius: var(--radius-lg);
+    text-align: center;
+    color: var(--text-primary);
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+}
+
+.infoBox strong {
+    color: var(--color-primary);
+    font-size: 1.2rem;
+}
+
+@media (max-width: 768px) {
+
+    .gridTwoCols,
+    .row {
+        grid-template-columns: 1fr;
+    }
 }

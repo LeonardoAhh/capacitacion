@@ -18,6 +18,7 @@ export default function WelcomeModal({ open, onOpenChange }) {
                 </div>
 
                 <div className={styles.grid}>
+                    {/* Features Originales */}
                     <div className={styles.feature}>
                         <div className={`${styles.icon} ${styles.iconPurple}`}>
                             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -28,7 +29,7 @@ export default function WelcomeModal({ open, onOpenChange }) {
                             </svg>
                         </div>
                         <h3>Gestión de Empleados</h3>
-                        <p>Administra el directorio, consulta historiales y edita perfiles de personal.</p>
+                        <p>Directorio, historiales y perfiles.</p>
                     </div>
 
                     <div className={styles.feature}>
@@ -39,7 +40,7 @@ export default function WelcomeModal({ open, onOpenChange }) {
                             </svg>
                         </div>
                         <h3>Módulo de Capacitación</h3>
-                        <p>Controla cursos, registra calificaciones y detecta brechas de habilidades por puesto.</p>
+                        <p>Cursos, calificaciones y brechas.</p>
                     </div>
 
                     <div className={styles.feature}>
@@ -50,7 +51,7 @@ export default function WelcomeModal({ open, onOpenChange }) {
                             </svg>
                         </div>
                         <h3>Análisis y KPIs</h3>
-                        <p>Visualiza el cumplimiento global, por departamento y las necesidades de formación.</p>
+                        <p>Cumplimiento y necesidades.</p>
                     </div>
 
                     <div className={styles.feature}>
@@ -61,7 +62,31 @@ export default function WelcomeModal({ open, onOpenChange }) {
                             </svg>
                         </div>
                         <h3>Alertas Inteligentes</h3>
-                        <p>Recibe notificaciones sobre contratos próximos a vencer y evaluaciones pendientes.</p>
+                        <p>Vencimientos y evaluaciones.</p>
+                    </div>
+
+                    {/* Nuevas Features */}
+                    <div className={styles.feature}>
+                        <div className={`${styles.icon} ${styles.iconBlue}`}>
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"></path>
+                                <polyline points="10 17 15 12 10 7"></polyline>
+                                <line x1="15" y1="12" x2="3" y2="12"></line>
+                            </svg>
+                        </div>
+                        <h3>Modo Demo</h3>
+                        <p>Acceso público de lectura.</p>
+                    </div>
+
+                    <div className={styles.feature}>
+                        <div className={`${styles.icon} ${styles.iconOrange}`}>
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                <polyline points="3 6 5 6 21 6"></polyline>
+                                <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                            </svg>
+                        </div>
+                        <h3>Gestión Total</h3>
+                        <p>Eliminar/Editar (Admin).</p>
                     </div>
                 </div>
 
