@@ -9,7 +9,7 @@ import { Card, CardContent } from '@/components/ui/Card/Card';
 import { Button } from '@/components/ui/Button/Button';
 import { useToast } from '@/components/ui/Toast/Toast';
 import { db } from '@/lib/firebase';
-import { collection, getDocs, query, orderBy, doc, updateDoc, setDoc, getDoc, deleteDoc } from 'firebase/firestore';
+import { collection, getDocs, query, orderBy, doc, updateDoc, setDoc, getDoc, deleteDoc, where, limit } from 'firebase/firestore';
 import { Dialog, DialogHeader, DialogTitle, DialogBody, DialogFooter, DialogClose } from '@/components/ui/Dialog/Dialog';
 import styles from './page.module.css';
 
@@ -96,7 +96,7 @@ export default function EmpleadosPage() {
     };
 
     const handleCreate = () => {
-        setFormData({ id: '', name: '', position: '', department: '' });
+        setFormData({ id: '', name: '', position: '', department: '', curp: '', occupation: '' });
         setIsCreating(true);
     };
 
@@ -148,13 +148,71 @@ export default function EmpleadosPage() {
             const ref = doc(db, 'training_records', empId);
 
             const payload = {
-                name: formData.name.trim().toUpperCase(),
-                position: formData.position.trim().toUpperCase(),
-                department: formData.department.trim().toUpperCase(),
-                curp: formData.curp.trim().toUpperCase(),
-                occupation: formData.occupation ? formData.occupation.trim().toUpperCase() : formData.position.trim().toUpperCase(),
+                name: (formData.name || '').trim().toUpperCase(),
+                position: (formData.position || '').trim().toUpperCase(),
+                department: (formData.department || '').trim().toUpperCase(),
+                curp: (formData.curp || '').trim().toUpperCase(),
+                occupation: formData.occupation ? formData.occupation.trim().toUpperCase() : (formData.position || '').trim().toUpperCase(),
                 updatedAt: new Date().toISOString()
             };
+
+            // Calculate Matrix Requirements
+            let matrixData = { requiredCount: 0, completedCount: 0, compliancePercentage: 0, requiredCourses: [] };
+            try {
+                // Robust Matrix Lookup
+                const posName = payload.position;
+                const posColl = collection(db, 'positions');
+                let matrixDoc = null;
+
+                // 1. Exact Match
+                let q = query(posColl, where('name', '==', posName), limit(1));
+                let snap = await getDocs(q);
+
+                if (!snap.empty) {
+                    matrixDoc = snap.docs[0].data();
+                } else {
+                    // 2. Normalized Match (No Accents)
+                    // Note: Firestore doesn't support regex/normalization update in query easily, so we fallback to client-side scan if needed
+                    // or try known variations. Let's try scanning all positions (assuming < 100 positions)
+                    const allPosSnap = await getDocs(query(posColl));
+                    const targetNorm = posName.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toUpperCase().trim();
+
+                    const found = allPosSnap.docs.find(d => {
+                        const dName = d.data().name.toUpperCase().trim();
+                        const dNorm = dName.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+                        return dName === posName || dNorm === targetNorm;
+                    });
+
+                    if (found) {
+                        matrixDoc = found.data();
+                        console.log("Matrix found via fuzzy match:", found.id);
+                    }
+                }
+
+                if (matrixDoc) {
+                    const requiredCourses = matrixDoc.requiredCourses || [];
+
+                    // Check completion against history
+                    const history = isCreating ? [] : (editingEmp.history || []);
+                    const completed = requiredCourses.filter(reqCourse =>
+                        history.some(h => h.courseName === reqCourse && h.status === 'approved')
+                    );
+
+                    matrixData = {
+                        requiredCount: requiredCourses.length,
+                        completedCount: completed.length,
+                        compliancePercentage: requiredCourses.length > 0
+                            ? Math.round((completed.length / requiredCourses.length) * 100)
+                            : 0,
+                        requiredCourses: requiredCourses
+                    };
+                } else {
+                    console.warn(`No matrix definition found for position: ${posName}`);
+                    toast.warning("Matriz No Encontrada", `No se encontró definición de cursos para el puesto: ${posName}. Verifica que el puesto exista en la Matriz de Capacitación.`);
+                }
+            } catch (err) {
+                console.error("Error fetching matrix:", err);
+            }
 
             if (isCreating) {
                 // Check if exists
@@ -168,18 +226,24 @@ export default function EmpleadosPage() {
                     ...payload,
                     employeeId: empId,
                     history: [],
-                    matrix: {}
+                    ...payload,
+                    employeeId: empId,
+                    history: [],
+                    matrix: matrixData
                 });
                 toast.success("Creado", "Empleado registrado correctamente.");
 
                 // Add to local list
                 setEmployees(prev => [...prev, { id: empId, ...payload, history: [], matrix: {} }].sort((a, b) => a.name.localeCompare(b.name)));
             } else {
-                await updateDoc(ref, payload);
+                await updateDoc(ref, {
+                    ...payload,
+                    matrix: matrixData // Start tracking matrix on edit too if position changes
+                });
                 toast.success("Actualizado", "Datos guardados.");
 
                 // Update local list
-                setEmployees(prev => prev.map(e => e.id === empId ? { ...e, ...payload } : e));
+                setEmployees(prev => prev.map(e => e.id === empId ? { ...e, ...payload, matrix: matrixData } : e));
             }
 
             setIsCreating(false);

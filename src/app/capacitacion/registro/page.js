@@ -7,7 +7,7 @@ import { Card, CardContent } from '@/components/ui/Card/Card';
 import { Button } from '@/components/ui/Button/Button';
 import { useToast } from '@/components/ui/Toast/Toast';
 import { db } from '@/lib/firebase';
-import { collection, getDocs, query, orderBy, doc, updateDoc, arrayUnion, addDoc } from 'firebase/firestore';
+import { collection, getDocs, query, orderBy, doc, updateDoc, arrayUnion, addDoc, getDoc, where, limit } from 'firebase/firestore';
 import styles from './page.module.css';
 import multiStyles from './multi-styles.module.css';
 
@@ -122,6 +122,13 @@ export default function RegistroPage() {
             return;
         }
 
+        // Validación de calificación
+        const score = parseFloat(qualification);
+        if (isNaN(score) || score < 0 || score > 100) {
+            toast.error("Error", "La calificación debe ser un número entre 0 y 100.");
+            return;
+        }
+
         setSubmitting(true);
         try {
             // 1. Create New Course if needed
@@ -137,33 +144,111 @@ export default function RegistroPage() {
                 }
             }
 
-            // 2. Batch Update
-            const score = parseFloat(qualification);
+            // 2. Prepare common data
             const status = score >= 70 ? 'approved' : 'failed';
             const [y, m, d] = date.split('-');
             const formattedDate = `${d}/${m}/${y}`; // DD/MM/YYYY
 
-            const promises = [];
-
-            for (const empId of selectedEmps) {
+            // 3. Process employees in parallel
+            const processEmployee = async (empId) => {
                 const empRef = doc(db, 'training_records', empId);
+                const empSnap = await getDoc(empRef);
+                if (!empSnap.exists()) return null;
 
-                // For each course
+                const empData = empSnap.data();
+                let currentMatrix = empData.matrix || { requiredCount: 0, completedCount: 0, requiredCourses: [] };
+                let currentHistory = [...(empData.history || [])]; // Clone for modification
+
+                // Self-Healing: If matrix is empty, try to fetch it
+                if ((!currentMatrix.requiredCourses || currentMatrix.requiredCourses.length === 0) && empData.position) {
+                    try {
+                        const posName = empData.position;
+                        const posColl = collection(db, 'positions');
+                        let matrixDoc = null;
+
+                        // 1. Exact Match
+                        let q = query(posColl, where('name', '==', posName), limit(1));
+                        let snap = await getDocs(q);
+
+                        if (!snap.empty) {
+                            matrixDoc = snap.docs[0].data();
+                        } else {
+                            // 2. Normalized Match (No Accents) & Client Scan
+                            const allPosSnap = await getDocs(query(posColl));
+                            const targetNorm = posName.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toUpperCase().trim();
+
+                            const found = allPosSnap.docs.find(d => {
+                                const dName = d.data().name.toUpperCase().trim();
+                                const dNorm = dName.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+                                return dName === posName.toUpperCase().trim() || dNorm === targetNorm;
+                            });
+
+                            if (found) {
+                                matrixDoc = found.data();
+                            }
+                        }
+
+                        if (matrixDoc) {
+                            currentMatrix.requiredCourses = matrixDoc.requiredCourses || [];
+                            currentMatrix.requiredCount = currentMatrix.requiredCourses.length;
+                        }
+                    } catch (err) {
+                        console.error("Error healing matrix:", err);
+                    }
+                }
+
+                // Updates container
+                let updates = {};
+
+                // For each course selected
                 for (const cName of finalCourses) {
-                    const updatePromise = updateDoc(empRef, {
-                        history: arrayUnion({
+                    // Check if course already exists in history
+                    const existingIndex = currentHistory.findIndex(h => h.courseName === cName);
+
+                    if (existingIndex >= 0) {
+                        // UPDATE existing entry (only date and score)
+                        currentHistory[existingIndex] = {
+                            ...currentHistory[existingIndex],
+                            date: formattedDate,
+                            score: score,
+                            status: status
+                        };
+                    } else {
+                        // ADD new entry
+                        currentHistory.push({
                             courseName: cName,
                             date: formattedDate,
                             score: score,
                             status: status
-                        }),
-                        updatedAt: new Date().toISOString()
-                    });
-                    promises.push(updatePromise);
+                        });
+                    }
                 }
-            }
 
-            await Promise.all(promises);
+                // Set entire history array
+                updates.history = currentHistory;
+
+                // Recalculate matrix if we have required courses
+                if (currentMatrix.requiredCount > 0) {
+                    const completed = currentMatrix.requiredCourses.filter(req =>
+                        currentHistory.some(h => h.courseName === req && h.status === 'approved')
+                    );
+
+                    updates.matrix = {
+                        requiredCount: currentMatrix.requiredCount,
+                        requiredCourses: currentMatrix.requiredCourses,
+                        completedCount: completed.length,
+                        compliancePercentage: currentMatrix.requiredCount > 0
+                            ? Math.round((completed.length / currentMatrix.requiredCount) * 100)
+                            : 0
+                    };
+                }
+
+                updates.updatedAt = new Date().toISOString();
+                return updateDoc(empRef, updates);
+            };
+
+            // Execute all updates in parallel
+            await Promise.all(selectedEmps.map(processEmployee));
 
             const totalRecs = selectedEmps.length * finalCourses.length;
             toast.success("Éxito", `Se registraron ${totalRecs} capacitaciones.`);
