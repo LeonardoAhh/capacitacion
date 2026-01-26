@@ -153,8 +153,12 @@ export default function AnalisisPage() {
 
     // Advanced Filter Logic
     const filteredRecords = records.filter(r => {
-        const matchesName = r.name.toLowerCase().includes(filterName.toLowerCase()) ||
-            r.position.toLowerCase().includes(filterName.toLowerCase());
+        const searchTerm = filterName.toLowerCase().trim();
+        const matchesSearch =
+            r.name?.toLowerCase().includes(searchTerm) ||
+            r.position?.toLowerCase().includes(searchTerm) ||
+            r.employeeId?.toLowerCase().includes(searchTerm) ||
+            r.id?.toLowerCase().includes(searchTerm);
 
         const matchesDept = filterDept === 'Todos' || r.department === filterDept;
 
@@ -165,7 +169,7 @@ export default function AnalisisPage() {
         else if (filterStatus === 'Regular') statusMatch = score >= 70 && score < 90;
         else if (filterStatus === 'Excelente') statusMatch = score >= 90;
 
-        return matchesName && matchesDept && statusMatch;
+        return matchesSearch && matchesDept && statusMatch;
     });
 
     const getComplianceColor = (pct) => {
@@ -269,7 +273,7 @@ export default function AnalisisPage() {
                         <div className={styles.searchBar}>
                             <input
                                 type="text"
-                                placeholder="Buscar empleado..."
+                                placeholder="Buscar por ID, nombre o puesto..."
                                 value={filterName}
                                 onChange={(e) => setFilterName(e.target.value)}
                             />
