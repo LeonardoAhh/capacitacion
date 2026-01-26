@@ -49,6 +49,22 @@
     min-width: 250px;
 }
 
+.searchBar input {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
+    font-size: 1rem;
+}
+
+.searchBar input:focus {
+    outline: none;
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.1);
+}
+
 .filters {
     display: flex;
     gap: var(--spacing-md);
@@ -85,15 +101,15 @@
 }
 
 .scoreGreen {
-    color: #10b981;
+    color: var(--color-success);
 }
 
 .scoreYellow {
-    color: #f59e0b;
+    color: var(--color-warning);
 }
 
 .scoreRed {
-    color: #ef4444;
+    color: var(--color-danger);
 }
 
 .metaLabel {
@@ -253,8 +269,8 @@
 }
 
 .missingList {
-    background-color: #fff1f2;
-    border: 1px solid #fecdd3;
+    background-color: rgba(239, 68, 68, 0.1);
+    border: 1px solid rgba(239, 68, 68, 0.2);
     border-radius: var(--radius-md);
     padding: var(--spacing-sm);
     max-height: 150px;
@@ -263,7 +279,7 @@
 
 .missingItem {
     padding: 4px 8px;
-    color: #9f1239;
+    color: var(--color-danger);
     font-size: 0.9rem;
 }
 
@@ -295,12 +311,12 @@
 }
 
 .tagSuccess {
-    color: #16a34a;
+    color: var(--color-success);
     font-weight: 600;
 }
 
 .tagFail {
-    color: #dc2626;
+    color: var(--color-danger);
     font-weight: 600;
 }
 
@@ -318,4 +334,34 @@
     text-align: center;
     padding: var(--spacing-3xl);
     color: var(--text-secondary);
+}
+
+.complianceHigh {
+    background-color: rgba(34, 197, 94, 0.1);
+    color: var(--color-success);
+    padding: 2px 8px;
+    border-radius: 999px;
+    font-weight: 600;
+    font-size: 0.85rem;
+    border: 1px solid rgba(34, 197, 94, 0.2);
+}
+
+.complianceMedium {
+    background-color: rgba(245, 158, 11, 0.1);
+    color: var(--color-warning);
+    padding: 2px 8px;
+    border-radius: 999px;
+    font-weight: 600;
+    font-size: 0.85rem;
+    border: 1px solid rgba(245, 158, 11, 0.2);
+}
+
+.complianceLow {
+    background-color: rgba(239, 68, 68, 0.1);
+    color: var(--color-danger);
+    padding: 2px 8px;
+    border-radius: 999px;
+    font-weight: 600;
+    font-size: 0.85rem;
+    border: 1px solid rgba(239, 68, 68, 0.2);
 }

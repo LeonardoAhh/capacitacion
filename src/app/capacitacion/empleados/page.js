@@ -1,17 +1,20 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+
 import Navbar from '@/components/Navbar/Navbar';
+import { useAuth } from '@/contexts/AuthContext';
 import Link from 'next/link';
 import { Card, CardContent } from '@/components/ui/Card/Card';
 import { Button } from '@/components/ui/Button/Button';
 import { useToast } from '@/components/ui/Toast/Toast';
 import { db } from '@/lib/firebase';
-import { collection, getDocs, query, orderBy, doc, updateDoc, setDoc, getDoc } from 'firebase/firestore';
+import { collection, getDocs, query, orderBy, doc, updateDoc, setDoc, getDoc, deleteDoc } from 'firebase/firestore';
 import { Dialog, DialogHeader, DialogTitle, DialogBody, DialogFooter, DialogClose } from '@/components/ui/Dialog/Dialog';
 import styles from './page.module.css';
 
 export default function EmpleadosPage() {
+    const { user } = useAuth();
     const { toast } = useToast();
     const [employees, setEmployees] = useState([]);
     const [filteredEmployees, setFilteredEmployees] = useState([]);
@@ -33,7 +36,7 @@ export default function EmpleadosPage() {
     const [viewingEmp, setViewingEmp] = useState(null); // Detail Mode
     const [isCreating, setIsCreating] = useState(false); // Create Mode
 
-    const [formData, setFormData] = useState({ id: '', name: '', position: '', department: '' });
+    const [formData, setFormData] = useState({ id: '', name: '', position: '', department: '', curp: '', occupation: '' });
     const [saving, setSaving] = useState(false);
 
     useEffect(() => {
@@ -102,12 +105,38 @@ export default function EmpleadosPage() {
             id: emp.id,
             name: emp.name || '',
             position: emp.position || '',
-            department: emp.department || ''
+            department: emp.department || '',
+            curp: emp.curp || '',
+            occupation: emp.occupation || ''
         });
         setEditingEmp(emp);
     };
 
+    const handleDelete = async (emp) => {
+        if (user?.rol !== 'super_admin') {
+            toast.error("Acceso Denegado", "Solo Super Admin puede eliminar.");
+            return;
+        }
+
+        if (!window.confirm(`¿Estás seguro de eliminar a ${emp.name}? Esta acción es irreversible.`)) return;
+
+        try {
+            await deleteDoc(doc(db, 'training_records', emp.id));
+            setEmployees(prev => prev.filter(e => e.id !== emp.id));
+            setFilteredEmployees(prev => prev.filter(e => e.id !== emp.id));
+            toast.success("Eliminado", "Empleado eliminado.");
+        } catch (e) {
+            console.error("Error deleting", e);
+            toast.error("Error", "No se pudo eliminar.");
+        }
+    };
+
     const handleSave = async () => {
+        if (user?.rol !== 'super_admin') {
+            toast.error("Acceso Denegado", "Tu rol actual (Lectura) no permite modificar datos.");
+            return;
+        }
+
         if (!formData.name.trim()) {
             toast.error("Error", "El nombre es obligatorio.");
             return;
@@ -122,6 +151,8 @@ export default function EmpleadosPage() {
                 name: formData.name.trim().toUpperCase(),
                 position: formData.position.trim().toUpperCase(),
                 department: formData.department.trim().toUpperCase(),
+                curp: formData.curp.trim().toUpperCase(),
+                occupation: formData.occupation ? formData.occupation.trim().toUpperCase() : formData.position.trim().toUpperCase(),
                 updatedAt: new Date().toISOString()
             };
 
@@ -153,7 +184,9 @@ export default function EmpleadosPage() {
 
             setIsCreating(false);
             setEditingEmp(null);
-            setFormData({ id: '', name: '', position: '', department: '' });
+            setIsCreating(false);
+            setEditingEmp(null);
+            setFormData({ id: '', name: '', position: '', department: '', curp: '', occupation: '' });
 
         } catch (error) {
             console.error("Error saving employee:", error);
@@ -164,9 +197,9 @@ export default function EmpleadosPage() {
     };
 
     const getComplianceColor = (score) => {
-        if (score >= 95) return 'bg-green-100 text-green-800 border-green-200';
-        if (score >= 80) return 'bg-yellow-100 text-yellow-800 border-yellow-200';
-        return 'bg-red-100 text-red-800 border-red-200';
+        if (score >= 95) return styles.complianceHigh;
+        if (score >= 80) return styles.complianceMedium;
+        return styles.complianceLow;
     };
 
     return (
@@ -177,7 +210,7 @@ export default function EmpleadosPage() {
                     <div>
                         <Link href="/capacitacion" className={styles.backBtn}>← Volver</Link>
                         <h1>Gestión de Empleados</h1>
-                        <p style={{ color: '#666' }}>Administración de personal y datos maestros.</p>
+                        <p>Administración de personal y datos maestros.</p>
                     </div>
                     <Button onClick={handleCreate}>+ Nuevo Empleado</Button>
                 </div>
@@ -267,13 +300,16 @@ export default function EmpleadosPage() {
                                                             <Button variant="ghost" size="sm" onClick={() => handleEdit(emp)}>
                                                                 ✏️ Editar
                                                             </Button>
+                                                            <Button variant="ghost" size="sm" onClick={() => handleDelete(emp)} style={{ color: 'var(--color-danger)' }}>
+                                                                🗑️
+                                                            </Button>
                                                         </div>
                                                     </td>
                                                 </tr>
                                             ))}
                                             {filteredEmployees.length === 0 && (
                                                 <tr>
-                                                    <td colSpan={5} style={{ textAlign: 'center', padding: '2rem', color: '#666' }}>
+                                                    <td colSpan={5} className={styles.emptyState}>
                                                         No se encontraron resultados.
                                                     </td>
                                                 </tr>
@@ -339,7 +375,17 @@ export default function EmpleadosPage() {
                         />
                     </div>
                     <div className={styles.formGroup}>
-                        <label>Puesto</label>
+                        <label>CURP</label>
+                        <input
+                            type="text"
+                            value={formData.curp}
+                            onChange={(e) => setFormData({ ...formData, curp: e.target.value })}
+                            placeholder="Importante para DC-3"
+                            maxLength={18}
+                        />
+                    </div>
+                    <div className={styles.formGroup}>
+                        <label>Puesto (Categoría)</label>
                         <input
                             type="text"
                             value={formData.position}
@@ -349,6 +395,15 @@ export default function EmpleadosPage() {
                         <datalist id="positionsList">
                             {positions.map(p => <option key={p} value={p} />)}
                         </datalist>
+                    </div>
+                    <div className={styles.formGroup}>
+                        <label>Ocupación Específica (DC-3)</label>
+                        <input
+                            type="text"
+                            value={formData.occupation}
+                            onChange={(e) => setFormData({ ...formData, occupation: e.target.value })}
+                            placeholder="Si difiere del puesto"
+                        />
                     </div>
                     <div className={styles.formGroup}>
                         <label>Departamento</label>
@@ -399,7 +454,7 @@ export default function EmpleadosPage() {
                                 <div className={styles.historyName}>{h.courseName}</div>
                                 <div className={styles.historyMeta}>
                                     <span>{h.date}</span>
-                                    <span style={{ color: h.status === 'approved' ? 'green' : 'red' }}>
+                                    <span className={h.status === 'approved' ? styles.statusApproved : styles.statusRejected}>
                                         {h.status === 'approved' ? 'Aprobado' : 'Reprobado'} ({h.score})
                                     </span>
                                 </div>
@@ -408,7 +463,7 @@ export default function EmpleadosPage() {
                     </div>
 
                     <div style={{ marginTop: '1rem', textAlign: 'right' }}>
-                        <Link href={`/capacitacion/analisis`} onClick={() => setViewingEmp(null)} style={{ color: '#2563eb', fontSize: '0.9rem' }}>
+                        <Link href={`/capacitacion/analisis`} onClick={() => setViewingEmp(null)} className={styles.viewAnalysisLink}>
                             Ver análisis completo →
                         </Link>
                     </div>

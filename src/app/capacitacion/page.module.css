@@ -1,7 +1,7 @@
 .main {
     min-height: calc(100vh - 80px);
     padding: var(--spacing-2xl) 0;
-    background: linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-secondary) 100%);
+    background-color: var(--bg-primary);
 }
 
 .container {
@@ -12,126 +12,164 @@
 
 .header {
     margin-bottom: var(--spacing-3xl);
+    text-align: center;
+    /* Center header for minimal look */
 }
 
 .headerLeft {
     display: flex;
     flex-direction: column;
     gap: var(--spacing-md);
+    align-items: center;
+    /* Center items */
     margin-bottom: var(--spacing-md);
 }
 
 .header h1 {
     font-size: 2.5rem;
     color: var(--text-primary);
+    font-weight: 700;
+    letter-spacing: -1px;
 }
 
 .subtitle {
     font-size: 1.1rem;
     color: var(--text-secondary);
     max-width: 600px;
+    margin: 0 auto;
 }
 
 .backBtn {
     display: inline-flex;
     align-items: center;
     gap: var(--spacing-sm);
-    color: var(--text-secondary);
+    color: var(--text-tertiary);
+    /* Subtler back button */
     font-weight: 500;
     font-size: 0.9rem;
     transition: color var(--transition-fast);
+    text-decoration: none;
 }
 
 .backBtn:hover {
-    color: var(--color-primary);
+    color: var(--text-primary);
 }
 
 .modulesGrid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: var(--spacing-xl);
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    /* Smaller min-width for tiles */
+    gap: 1.5rem;
 }
 
 .moduleCard {
     text-decoration: none;
-    transition: transform var(--transition-base);
+    transition: all 0.3s ease;
 }
 
 .moduleCard:hover {
-    transform: translateY(-5px);
+    transform: translateY(-4px);
 }
 
 .cardInner {
     height: 100%;
+    min-height: 200px;
+    /* Square-ish aspect */
     cursor: pointer;
     background-color: var(--bg-secondary);
     border: 1px solid var(--border-color);
+    border-radius: var(--radius-xl);
+    display: flex;
+    /* Flex box for centering */
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
 }
 
 .moduleCard:hover .cardInner {
     border-color: var(--color-primary);
-    box-shadow: var(--shadow-xl);
+    background-color: rgba(59, 130, 246, 0.03);
+    /* Subtle tint on hover */
+    box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.3);
 }
 
 .iconWrapper {
     width: 64px;
     height: 64px;
-    border-radius: var(--radius-xl);
+    border-radius: 20px;
+    /* Modern squircle */
     display: flex;
     align-items: center;
     justify-content: center;
-    margin-bottom: var(--spacing-lg);
+    margin: 0 auto 1.5rem auto;
+    /* Centered with bottom margin */
     transition: transform var(--transition-base);
+    background: var(--bg-tertiary);
+    /* Default subtle bg */
 }
 
 .moduleCard:hover .iconWrapper {
-    transform: scale(1.1);
+    transform: scale(1.1) rotate(3deg);
+    /* Playful micro-interaction */
 }
 
+/* Specific Icon Colors - Minimalist: Use text color for icon, subtle bg */
 .iconPurple {
-    background: linear-gradient(135deg, rgba(139, 92, 246, 0.1), rgba(139, 92, 246, 0.2));
-    color: #8b5cf6;
+    color: #a78bfa;
+    background: rgba(139, 92, 246, 0.1);
 }
 
 .iconBlue {
-    background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(59, 130, 246, 0.2));
-    color: #3b82f6;
+    color: #60a5fa;
+    background: rgba(59, 130, 246, 0.1);
 }
 
 .iconGreen {
-    background: linear-gradient(135deg, rgba(34, 197, 94, 0.1), rgba(34, 197, 94, 0.2));
-    color: #22c55e;
+    color: #4ade80;
+    background: rgba(34, 197, 94, 0.1);
+}
+
+.iconOrange {
+    color: #fb923c;
+    background: rgba(249, 115, 22, 0.1);
+}
+
+.iconRed {
+    color: #f87171;
+    background: rgba(239, 68, 68, 0.1);
+}
+
+.content {
+    text-align: center;
+    padding: 0 1rem;
 }
 
 .content h2 {
-    font-size: 1.5rem;
-    margin-bottom: var(--spacing-sm);
+    font-size: 1.1rem;
+    /* Smaller, cleaner title */
+    font-weight: 600;
     color: var(--text-primary);
+    margin: 0;
 }
 
-.content p {
-    color: var(--text-secondary);
-    font-size: 1rem;
-    margin-bottom: var(--spacing-xl);
-}
-
+/* Hide arrow, description is removed in HTML */
 .arrow {
-    display: flex;
-    justify-content: flex-end;
-    color: var(--text-tertiary);
-    transition: all var(--transition-base);
-}
-
-.moduleCard:hover .arrow {
-    color: var(--color-primary);
-    transform: translateX(5px);
+    display: none;
 }
 
 @media (max-width: 768px) {
     .header h1 {
         font-size: 2rem;
     }
-    
+
+    .modulesGrid {
+        grid-template-columns: repeat(2, 1fr);
+        /* 2 columns on mobile if possible */
+    }
+}
+
+@media (max-width: 480px) {
     .modulesGrid {
         grid-template-columns: 1fr;
     }

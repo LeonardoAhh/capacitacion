@@ -13,7 +13,8 @@ export default function LoginPage() {
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
-    const { signIn, user } = useAuth();
+
+    const { signIn, signInAnon, user } = useAuth();
     const router = useRouter();
 
     useEffect(() => {
@@ -34,6 +35,18 @@ export default function LoginPage() {
             router.push('/dashboard');
         } else {
             setError('Credenciales incorrectas. Por favor, intenta de nuevo.');
+            setLoading(false);
+        }
+    };
+
+    const handleDemo = async () => {
+        setError('');
+        setLoading(true);
+        const result = await signInAnon();
+        if (result.success) {
+            router.push('/dashboard');
+        } else {
+            setError('Error al iniciar demo: ' + result.error);
             setLoading(false);
         }
     };
@@ -124,6 +137,22 @@ export default function LoginPage() {
                         icon={!loading ? LoginIcon : undefined}
                     >
                         {loading ? 'Iniciando sesión...' : 'Iniciar Sesión'}
+                    </Button>
+
+                    <div className={styles.divider}>
+                        <span>o entrar como invitado</span>
+                    </div>
+
+                    <Button
+                        type="button"
+                        variant="ghost"
+                        size="lg"
+                        fullWidth
+                        onClick={handleDemo}
+                        disabled={loading}
+                        style={{ color: 'var(--text-secondary)', border: '1px solid rgba(255,255,255,0.1)' }}
+                    >
+                        Acceso Demo
                     </Button>
                 </form>
 

@@ -1,0 +1,107 @@
+/* 3D Icon Container */
+.scene {
+    width: 32px;
+    height: 32px;
+    perspective: 600px;
+    margin-right: 0.5rem;
+}
+
+.cube {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    transform-style: preserve-3d;
+    transform: rotateX(-20deg) rotateY(45deg);
+    animation: rotate 8s infinite linear;
+}
+
+.cubeHide {
+    display: none;
+}
+
+@keyframes rotate {
+    0% {
+        transform: rotateX(-20deg) rotateY(0deg);
+    }
+
+    100% {
+        transform: rotateX(-20deg) rotateY(360deg);
+    }
+}
+
+.cubeFace {
+    position: absolute;
+    width: 20px;
+    /* Smaller than container to float */
+    height: 20px;
+    top: 6px;
+    left: 6px;
+    border-radius: 4px;
+    opacity: 0.9;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.faceFront {
+    transform: rotateY(0deg) translateZ(10px);
+    background: linear-gradient(135deg, #6366f1, #a855f7);
+}
+
+/* Indigo-Purple */
+.faceBack {
+    transform: rotateY(180deg) translateZ(10px);
+    background: linear-gradient(135deg, #a855f7, #6366f1);
+}
+
+.faceRight {
+    transform: rotateY(90deg) translateZ(10px);
+    background: linear-gradient(135deg, #3b82f6, #6366f1);
+}
+
+.faceLeft {
+    transform: rotateY(-90deg) translateZ(10px);
+    background: linear-gradient(135deg, #6366f1, #3b82f6);
+}
+
+.faceTop {
+    transform: rotateX(90deg) translateZ(10px);
+    background: #3b82f6;
+}
+
+.faceBottom {
+    transform: rotateX(-90deg) translateZ(10px);
+    background: #a855f7;
+}
+
+/* Role Text */
+.roleBadge {
+    display: flex;
+    align-items: center;
+    background: rgba(255, 255, 255, 0.05);
+    padding: 6px 14px 6px 8px;
+    /* Extra left pad for icon gap if handled by margin */
+    border-radius: 20px;
+    margin-right: 1rem;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    transition: all 0.3s ease;
+}
+
+.roleBadge:hover {
+    background: rgba(255, 255, 255, 0.08);
+    border-color: rgba(255, 255, 255, 0.1);
+}
+
+.roleText {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    text-transform: capitalize;
+    letter-spacing: 0.5px;
+}
+
+.roleLabel {
+    font-size: 0.65rem;
+    color: var(--text-tertiary);
+    margin-right: 0.4rem;
+    text-transform: uppercase;
+    font-weight: 700;
+}

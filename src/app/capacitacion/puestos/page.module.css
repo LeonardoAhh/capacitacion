@@ -13,7 +13,7 @@
 }
 
 .backBtn {
-    color: #666;
+    color: var(--text-secondary);
     display: flex;
     align-items: center;
     gap: 0.5rem;
@@ -23,13 +23,13 @@
 }
 
 .backBtn:hover {
-    color: #000;
+    color: var(--text-primary);
 }
 
 .tableWrapper {
     overflow-x: auto;
     border-radius: 8px;
-    border: 1px solid #e5e7eb;
+    border: 1px solid var(--border-color);
 }
 
 .table {
@@ -39,21 +39,21 @@
 }
 
 .table thead {
-    background-color: #f9fafb;
-    border-bottom: 1px solid #e5e7eb;
+    background-color: var(--bg-tertiary);
+    border-bottom: 1px solid var(--border-color);
 }
 
 .table th {
     padding: 1rem;
     text-align: left;
     font-weight: 600;
-    color: #374151;
+    color: var(--text-secondary);
 }
 
 .table td {
     padding: 1rem;
-    border-bottom: 1px solid #f3f4f6;
-    color: #1f2937;
+    border-bottom: 1px solid var(--border-color);
+    color: var(--text-primary);
 }
 
 .posName {
@@ -62,22 +62,22 @@
 
 .posDept {
     font-size: 0.8rem;
-    color: #6b7280;
+    color: var(--text-secondary);
     font-weight: 400;
 }
 
 .scoreGreen {
-    color: #16a34a;
+    color: var(--color-success);
     font-weight: 600;
 }
 
 .scoreYellow {
-    color: #d97706;
+    color: var(--color-warning);
     font-weight: 600;
 }
 
 .scoreRed {
-    color: #dc2626;
+    color: var(--color-danger);
     font-weight: 600;
 }
 
@@ -85,18 +85,18 @@
     background: none;
     border: none;
     cursor: pointer;
-    color: #2563eb;
+    color: var(--color-primary);
     font-weight: 500;
     padding: 4px 8px;
     border-radius: 4px;
 }
 
 .expandBtn:hover {
-    background-color: #eff6ff;
+    background-color: var(--bg-tertiary);
 }
 
 .expandedRow {
-    background-color: #f8fafc;
+    background-color: var(--bg-tertiary);
 }
 
 .employeeGrid {
@@ -107,11 +107,11 @@
 }
 
 .employeeCard {
-    background: white;
+    background: var(--bg-secondary);
     padding: 0.75rem;
     border-radius: 8px;
-    border: 1px solid #e2e8f0;
-    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+    border: 1px solid var(--border-color);
+    box-shadow: var(--shadow-sm);
 }
 
 .empName {
@@ -132,13 +132,13 @@
     align-items: center;
     margin-top: 1rem;
     padding: 0.5rem;
-    background-color: white;
-    border-top: 1px solid #e5e7eb;
+    background-color: var(--bg-secondary);
+    border-top: 1px solid var(--border-color);
 }
 
 .pageInfo {
     font-size: 0.9rem;
-    color: #6b7280;
+    color: var(--text-secondary);
 }
 
 .pageButtons {

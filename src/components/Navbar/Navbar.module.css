@@ -1,21 +1,25 @@
 .navbar {
     background-color: var(--bg-secondary);
     border-bottom: 1px solid var(--border-color);
-    padding: var(--spacing-md) 0;
+    padding: var(--spacing-sm) 0;
+    /* Reduced padding for minimalist feel */
     position: sticky;
     top: 0;
     z-index: 100;
     backdrop-filter: blur(10px);
     background-color: rgba(var(--bg-secondary-rgb, 248, 250, 252), 0.8);
-    box-shadow: var(--shadow-sm);
+    box-shadow: none;
+    /* Removed shadow for cleaner look */
 }
 
 [data-theme="dark"] .navbar {
     background-color: rgba(30, 41, 59, 0.8);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    /* Softer border */
 }
 
 .container {
-    max-width: 1200px;
+    max-width: 1400px;
     margin: 0 auto;
     padding: 0 var(--spacing-lg);
     display: flex;
@@ -26,31 +30,57 @@
 .logo {
     display: flex;
     align-items: center;
-    gap: var(--spacing-md);
-    font-size: 1.25rem;
+    gap: var(--spacing-sm);
+    font-size: 1.1rem;
     font-weight: 600;
     color: var(--text-primary);
 }
 
 .logo svg {
     color: var(--color-primary);
+    width: 24px;
+    height: 24px;
 }
 
 .sparklesText {
-    font-size: 1.5rem;
+    font-size: 1.25rem;
     line-height: 1;
+    font-weight: 700;
+    letter-spacing: -0.5px;
 }
 
 .actions {
     display: flex;
     align-items: center;
-    gap: var(--spacing-md);
+    gap: 0.5rem;
+    /* Tighter controls */
 }
 
 .userEmail {
     color: var(--text-secondary);
-    font-size: 0.9rem;
+    font-size: 0.85rem;
     display: none;
+    margin-right: 1rem;
+}
+
+.iconBtn {
+    background: transparent;
+    border: none;
+    color: var(--text-secondary);
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+}
+
+.iconBtn:hover {
+    background-color: var(--bg-tertiary);
+    color: var(--error-color, #ef4444);
+    /* Red on hover for logout */
 }
 
 @media (min-width: 768px) {

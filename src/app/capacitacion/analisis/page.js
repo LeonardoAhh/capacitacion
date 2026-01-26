@@ -10,6 +10,7 @@ import { db } from '@/lib/firebase';
 import { collection, getDocs, query, orderBy, where } from 'firebase/firestore';
 import { seedHistoryData } from '@/lib/seedHistorial';
 import styles from './page.module.css';
+import { generateDC3 } from '@/utils/dc3Generator';
 import { Dialog, DialogHeader, DialogTitle, DialogBody, DialogFooter, DialogClose } from '@/components/ui/Dialog/Dialog';
 
 export default function AnalisisPage() {
@@ -26,6 +27,7 @@ export default function AnalisisPage() {
     // Pagination State
     const [currentPage, setCurrentPage] = useState(1);
     const itemsPerPage = 50;
+    const [coursesMap, setCoursesMap] = useState({}); // name -> data
 
     // KPI State
     const [kpiData, setKpiData] = useState({
@@ -66,6 +68,14 @@ export default function AnalisisPage() {
             // Extract Unique Departments
             const infoDepts = new Set(data.map(r => r.department || 'Sin Asignar'));
             setDepartments(['Todos', ...Array.from(infoDepts).sort()]);
+
+            // Fetch Courses for Metadata (Validity, Duration, Instructor)
+            const courseSnap = await getDocs(collection(db, 'courses'));
+            const cMap = {};
+            courseSnap.forEach(doc => {
+                cMap[doc.data().name] = doc.data();
+            });
+            setCoursesMap(cMap);
 
             calculateKPIs(data);
 
@@ -159,9 +169,9 @@ export default function AnalisisPage() {
     });
 
     const getComplianceColor = (pct) => {
-        if (pct >= 90) return 'text-green-600 bg-green-50';
-        if (pct >= 70) return 'text-yellow-600 bg-yellow-50';
-        return 'text-red-600 bg-red-50';
+        if (pct >= 90) return styles.complianceHigh;
+        if (pct >= 70) return styles.complianceMedium;
+        return styles.complianceLow;
     };
 
     const getScoreColorClass = (score) => {
@@ -191,9 +201,7 @@ export default function AnalisisPage() {
                             </Link>
                             <h1>Análisis de Cumplimiento</h1>
                         </div>
-                        <Button onClick={handleSeed} disabled={seeding}>
-                            {seeding ? 'Procesando (puede tardar)...' : '↻ Cargar Historial y Recalcular'}
-                        </Button>
+
                     </div>
 
                     {/* KPI Dashboard - Only Show if Data Exists */}
@@ -313,7 +321,7 @@ export default function AnalisisPage() {
                                                 <td><span className={styles.deptBadge}>{rec.department || 'N/A'}</span></td>
                                                 <td className={styles.textSm}>{rec.position}</td>
                                                 <td className="text-center">
-                                                    <span className={`${styles.badge} ${getComplianceColor(rec.matrix?.compliancePercentage || 0)}`}>
+                                                    <span className={getComplianceColor(rec.matrix?.compliancePercentage || 0)}>
                                                         {rec.matrix?.compliancePercentage || 0}%
                                                     </span>
                                                 </td>
@@ -415,6 +423,16 @@ export default function AnalisisPage() {
                                             <span className={h.status === 'approved' ? styles.tagSuccess : styles.tagFail}>
                                                 {h.score} ({h.status === 'approved' ? 'Aprobado' : 'Reprobado'})
                                             </span>
+                                            {h.status === 'approved' && (
+                                                <Button
+                                                    size="xs"
+                                                    variant="ghost"
+                                                    onClick={() => generateDC3(selectedEmployee, coursesMap[h.courseName] || { name: h.courseName }, { date: h.date })}
+                                                    title="Descargar DC-3"
+                                                >
+                                                    📄
+                                                </Button>
+                                            )}
                                         </div>
                                     </div>
                                 ))}

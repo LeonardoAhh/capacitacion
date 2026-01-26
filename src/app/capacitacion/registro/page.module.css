@@ -10,7 +10,7 @@
 }
 
 .backBtn {
-    color: #666;
+    color: var(--text-secondary);
     margin-bottom: 1rem;
     display: inline-block;
     text-decoration: none;
@@ -32,23 +32,25 @@
 
 .formGroup label {
     font-weight: 500;
-    color: #374151;
+    color: var(--text-primary);
 }
 
 .input,
 .select {
     padding: 0.75rem;
-    border: 1px solid #d1d5db;
+    border: 1px solid var(--border-color);
     border-radius: 6px;
     font-size: 1rem;
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
     width: 100%;
 }
 
 .input:focus,
 .select:focus {
     outline: none;
-    border-color: #2563eb;
-    box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.1);
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.1);
 }
 
 .row {
@@ -66,7 +68,7 @@
 .toggleBtn {
     background: none;
     border: none;
-    color: #2563eb;
+    color: var(--color-primary);
     cursor: pointer;
     font-size: 0.9rem;
     white-space: nowrap;
@@ -82,10 +84,10 @@
     top: 100%;
     left: 0;
     right: 0;
-    background: white;
-    border: 1px solid #e5e7eb;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
     border-radius: 0 0 6px 6px;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    box-shadow: var(--shadow-md);
     z-index: 10;
     max-height: 200px;
     overflow-y: auto;
@@ -97,11 +99,12 @@
 .suggestions li {
     padding: 0.75rem;
     cursor: pointer;
-    border-bottom: 1px solid #f3f4f6;
+    border-bottom: 1px solid var(--border-color);
+    color: var(--text-primary);
 }
 
 .suggestions li:hover {
-    background-color: #eff6ff;
+    background-color: var(--bg-tertiary);
 }
 
 .actions {

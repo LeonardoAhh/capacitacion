@@ -1,0 +1,28 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // Función para obtener datos del usuario
+    function getUserData() {
+      return get(/databases/$(database)/documents/users/$(request.auth.uid)).data;
+    }
+    
+    // Función para verificar rol
+    function hasRole(role) {
+       return request.auth != null && getUserData().rol == role;
+    }
+
+    // Regla base: 
+    // - Lectura permitida para cualquier usuario autenticado (super_admin, admin, demo/anónimo)
+    // - Escritura solo para super_admin
+
+    match /{document=**} {
+      allow read: if request.auth != null;
+      allow write: if hasRole('super_admin');
+    }
+    
+    // Regla específica para la colección users (si es necesario que cada usuario pueda leer su propio doc)
+    // Pero la regla global arriba ya cubre lectura.
+    // Escritura en users: Solo super_admin puede crear/editar usuarios.
+  }
+}

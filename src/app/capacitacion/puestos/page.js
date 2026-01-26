@@ -112,9 +112,9 @@ export default function PuestosPage() {
     };
 
     const getScoreColorClass = (score) => {
-        if (score >= 90) return 'text-green-600';
-        if (score >= 70) return 'text-yellow-600';
-        return 'text-red-600';
+        if (score >= 90) return styles.scoreGreen;
+        if (score >= 70) return styles.scoreYellow;
+        return styles.scoreRed;
     };
 
     return (
@@ -127,7 +127,7 @@ export default function PuestosPage() {
                             ← Volver
                         </Link>
                         <h1>Gestión de Puestos</h1>
-                        <p style={{ color: '#666' }}>Desempeño y brechas de capacitación por perfil de puesto.</p>
+                        <p>Desempeño y brechas de capacitación por perfil de puesto.</p>
                     </div>
                 </div>
 
@@ -143,9 +143,9 @@ export default function PuestosPage() {
                                             <th>Puesto</th>
                                             <th style={{ textAlign: 'center' }}>Personal</th>
                                             <th style={{ textAlign: 'center' }}>% Cumplimiento</th>
-                                            <th style={{ textAlign: 'center', color: '#16a34a' }}>Aprobados</th>
-                                            <th style={{ textAlign: 'center', color: '#dc2626' }}>Reprobados</th>
-                                            <th style={{ textAlign: 'center', color: '#f59e0b' }}>Pendientes</th>
+                                            <th style={{ textAlign: 'center' }} className={styles.scoreGreen}>Aprobados</th>
+                                            <th style={{ textAlign: 'center' }} className={styles.scoreRed}>Reprobados</th>
+                                            <th style={{ textAlign: 'center' }} className={styles.scoreYellow}>Pendientes</th>
                                             <th style={{ textAlign: 'center' }}>Detalle</th>
                                         </tr>
                                     </thead>

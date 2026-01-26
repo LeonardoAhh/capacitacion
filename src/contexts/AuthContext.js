@@ -5,9 +5,12 @@ import {
     onAuthStateChanged,
     signInWithEmailAndPassword,
     signOut as firebaseSignOut,
-    createUserWithEmailAndPassword
+
+    createUserWithEmailAndPassword,
+    signInAnonymously
 } from 'firebase/auth';
-import { auth } from '@/lib/firebase';
+import { auth, db } from '@/lib/firebase';
+import { doc, getDoc } from 'firebase/firestore';
 
 const AuthContext = createContext({});
 
@@ -18,8 +21,28 @@ export function AuthProvider({ children }) {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        const unsubscribe = onAuthStateChanged(auth, (user) => {
-            setUser(user);
+        const unsubscribe = onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                if (user.isAnonymous) {
+                    setUser({ ...user, rol: 'demo' });
+                } else {
+                    // Fetch User Details from Firestore
+                    try {
+                        const userDoc = await getDoc(doc(db, 'users', user.uid));
+                        if (userDoc.exists()) {
+                            const userData = userDoc.data();
+                            setUser({ ...user, ...userData });
+                        } else {
+                            setUser(user);
+                        }
+                    } catch (e) {
+                        console.error("Error fetching user role", e);
+                        setUser(user);
+                    }
+                }
+            } else {
+                setUser(null);
+            }
             setLoading(false);
         });
 
@@ -53,10 +76,20 @@ export function AuthProvider({ children }) {
         }
     };
 
+    const signInAnon = async () => {
+        try {
+            const result = await signInAnonymously(auth);
+            return { success: true, user: result.user };
+        } catch (error) {
+            return { success: false, error: error.message };
+        }
+    };
+
     const value = {
         user,
         loading,
         signIn,
+        signInAnon,
         signUp,
         signOut
     };

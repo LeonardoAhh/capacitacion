@@ -1,0 +1,184 @@
+.main {
+    padding: var(--spacing-2xl) 0;
+    min-height: calc(100vh - 80px);
+    background-color: var(--bg-primary);
+}
+
+.container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 var(--spacing-lg);
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--spacing-2xl);
+}
+
+.titleGroup h1 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin: 0;
+    letter-spacing: -0.5px;
+}
+
+.controls {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+    background: var(--bg-secondary);
+    padding: 4px;
+    border-radius: var(--radius-full);
+    border: 1px solid var(--border-color);
+}
+
+.navBtn {
+    background: transparent;
+    border: none;
+    color: var(--text-secondary);
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+}
+
+.navBtn:hover {
+    background: var(--bg-tertiary);
+    color: var(--text-primary);
+}
+
+.monthTitle {
+    font-size: 0.9rem;
+    font-weight: 600;
+    padding: 0 1rem;
+    min-width: 140px;
+    text-align: center;
+    color: var(--text-primary);
+}
+
+/* Grid */
+.grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    border-top: 1px solid var(--border-color);
+    border-left: 1px solid var(--border-color);
+}
+
+.dayHeader {
+    padding: 1rem;
+    text-align: center;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--text-tertiary);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    border-right: 1px solid var(--border-color);
+    border-bottom: 1px solid var(--border-color);
+    background: var(--bg-primary);
+}
+
+.dayCell {
+    background-color: var(--bg-primary);
+    min-height: 140px;
+    padding: 0.75rem;
+    border-right: 1px solid var(--border-color);
+    border-bottom: 1px solid var(--border-color);
+    transition: background-color 0.2s;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.dayCell:hover {
+    background-color: rgba(255, 255, 255, 0.02);
+}
+
+.dayNumber {
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: var(--text-secondary);
+    margin-bottom: 0.5rem;
+}
+
+.today {
+    background-color: rgba(59, 130, 246, 0.05);
+}
+
+.today .dayNumber {
+    color: var(--color-primary);
+    font-weight: 700;
+}
+
+/* Events - Minimalist */
+.eventGroup {
+    font-size: 0.75rem;
+    padding: 3px 6px;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-bottom: 2px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: opacity 0.2s;
+}
+
+.eventGroup:hover {
+    opacity: 0.8;
+}
+
+/* Done: Clean green text, subtle dot */
+.typeDone {
+    color: var(--color-success);
+}
+
+.dotDone {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background-color: var(--color-success);
+}
+
+/* Expired: Red text */
+.typeExpired {
+    color: var(--color-danger);
+}
+
+.dotExpired {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background-color: var(--color-danger);
+}
+
+/* Planned: Blue text */
+.typePlanned {
+    color: var(--color-primary);
+}
+
+.dotPlanned {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background-color: var(--color-primary);
+}
+
+.countBadge {
+    background: rgba(255, 255, 255, 0.1);
+    padding: 1px 5px;
+    border-radius: 4px;
+    font-size: 0.7rem;
+    margin-left: auto;
+}
+
+.emptyCell {
+    background: var(--bg-primary);
+    border-right: 1px solid var(--border-color);
+    border-bottom: 1px solid var(--border-color);
+    background-image: repeating-linear-gradient(45deg, transparent, transparent 10px, rgba(255, 255, 255, 0.01) 10px, rgba(255, 255, 255, 0.01) 20px);
+}
