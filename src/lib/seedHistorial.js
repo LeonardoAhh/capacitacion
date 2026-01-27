@@ -4,6 +4,12 @@ import historyData from '@/data/historial.json';
 
 // Normalize string helpers
 const normalize = (str) => str?.trim().toUpperCase() || '';
+const normalizeForMatch = (str) =>
+    normalize(str)
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "") // Remove accents
+        .replace(/\s+/g, ' ') // Normalize spaces
+        .trim();
 
 export const seedHistoryData = async () => {
     try {
@@ -14,11 +20,16 @@ export const seedHistoryData = async () => {
         const validCourses = new Set(coursesSnap.docs.map(d => normalize(d.data().name)));
 
         const positionsSnap = await getDocs(collection(db, 'positions'));
-        // Only need requirements from Positions collection now
+        // Store both exact and normalized versions for matching
         const requirementsMap = new Map();
+        const requirementsMapNormalized = new Map();
         positionsSnap.docs.forEach(d => {
             const data = d.data();
-            requirementsMap.set(normalize(data.name), data.requiredCourses.map(normalize));
+            const exactKey = normalize(data.name);
+            const normalizedKey = normalizeForMatch(data.name);
+            const courses = (data.requiredCourses || []).map(normalize);
+            requirementsMap.set(exactKey, courses);
+            requirementsMapNormalized.set(normalizedKey, courses);
         });
 
         // 2. Process History Data
@@ -72,7 +83,12 @@ export const seedHistoryData = async () => {
         const positionStats = {};
 
         for (const [empId, data] of employeeRecords) {
-            const positionReqs = requirementsMap.get(data.position) || [];
+            // Try exact match first, then fallback to normalized match
+            let positionReqs = requirementsMap.get(data.position);
+            if (!positionReqs || positionReqs.length === 0) {
+                const normalizedPosition = normalizeForMatch(data.position);
+                positionReqs = requirementsMapNormalized.get(normalizedPosition) || [];
+            }
 
             // Enhanced: normalize approved courses for matching
             const approvedCoursesSet = new Set(
@@ -200,6 +216,128 @@ export const seedHistoryData = async () => {
 
     } catch (error) {
         console.error('History Seed Error:', error);
+        return { success: false, error: error.message };
+    }
+};
+
+// NEW: Recalculate compliance from existing Firestore data ONLY (no JSON)
+export const recalculateComplianceFromFirestore = async () => {
+    try {
+        console.log('Starting Compliance Recalculation from Firestore...');
+
+        // 1. Fetch positions (required courses)
+        const positionsSnap = await getDocs(collection(db, 'positions'));
+        const requirementsMap = new Map();
+        const requirementsMapNormalized = new Map();
+        positionsSnap.docs.forEach(d => {
+            const data = d.data();
+            const exactKey = normalize(data.name);
+            const normalizedKey = normalizeForMatch(data.name);
+            const courses = (data.requiredCourses || []).map(normalize);
+            requirementsMap.set(exactKey, courses);
+            requirementsMapNormalized.set(normalizedKey, courses);
+        });
+
+        // 2. Fetch existing training_records from Firestore
+        const recordsSnap = await getDocs(collection(db, 'training_records'));
+
+        const batchSize = 450;
+        let batch = writeBatch(db);
+        let opCount = 0;
+        let processed = 0;
+
+        for (const recordDoc of recordsSnap.docs) {
+            const data = recordDoc.data();
+            const empPosition = normalize(data.position || '');
+
+            // Get required courses for this position
+            let positionReqs = requirementsMap.get(empPosition);
+            if (!positionReqs || positionReqs.length === 0) {
+                const normalizedPosition = normalizeForMatch(empPosition);
+                positionReqs = requirementsMapNormalized.get(normalizedPosition) || [];
+            }
+
+            // Get approved courses from existing history
+            const history = data.history || [];
+            const approvedCoursesSet = new Set(
+                history
+                    .filter(h => h.status === 'approved')
+                    .map(h => normalize(h.courseName))
+            );
+
+            // Fuzzy match set for approved courses
+            const approvedNormalized = new Set(
+                history
+                    .filter(h => h.status === 'approved')
+                    .map(h => normalizeForMatch(h.courseName))
+            );
+
+            // Calculate missing courses
+            const missing = positionReqs.filter(req => {
+                if (approvedCoursesSet.has(req)) return false;
+                const reqNormalized = normalizeForMatch(req);
+                if (approvedNormalized.has(reqNormalized)) return false;
+                return true;
+            });
+
+            const complianceScore = positionReqs.length > 0
+                ? ((positionReqs.length - missing.length) / positionReqs.length) * 100
+                : 100;
+
+            // Separate failed vs pending
+            const historyNames = new Set(history.map(h => normalize(h.courseName)));
+            const historyNamesNormalized = new Set(history.map(h => normalizeForMatch(h.courseName)));
+
+            const failedCourses = [];
+            const pendingCourses = [];
+
+            missing.forEach(req => {
+                const reqNormalized = normalizeForMatch(req);
+                if (historyNames.has(req) || historyNamesNormalized.has(reqNormalized)) {
+                    failedCourses.push(req);
+                } else {
+                    pendingCourses.push(req);
+                }
+            });
+
+            // Update ONLY the matrix field, preserving all other data
+            const docRef = doc(db, 'training_records', recordDoc.id);
+            batch.update(docRef, {
+                matrix: {
+                    requiredCount: positionReqs.length,
+                    completedCount: positionReqs.length - missing.length,
+                    missingCourses: missing,
+                    failedCourses: failedCourses,
+                    pendingCourses: pendingCourses,
+                    compliancePercentage: parseFloat(complianceScore.toFixed(2))
+                },
+                updatedAt: new Date().toISOString()
+            });
+
+            opCount++;
+            processed++;
+
+            if (opCount >= batchSize) {
+                await batch.commit();
+                batch = writeBatch(db);
+                opCount = 0;
+            }
+        }
+
+        // Commit remaining
+        if (opCount > 0) {
+            await batch.commit();
+        }
+
+        console.log(`Recalculated compliance for ${processed} employees`);
+
+        return {
+            success: true,
+            processed: processed
+        };
+
+    } catch (error) {
+        console.error('Compliance Recalculation Error:', error);
         return { success: false, error: error.message };
     }
 };

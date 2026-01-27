@@ -526,6 +526,31 @@ export default function EmpleadosPage() {
                         ))}
                     </div>
 
+                    {/* Missing Courses Section */}
+                    {(viewingEmp?.matrix?.pendingCourses?.length > 0 || viewingEmp?.matrix?.failedCourses?.length > 0) && (
+                        <>
+                            <h4 className={styles.sectionTitle} style={{ marginTop: '1rem' }}>Cursos Pendientes</h4>
+                            <div className={styles.historyList}>
+                                {viewingEmp?.matrix?.failedCourses?.map((c, i) => (
+                                    <div key={`f-${i}`} className={styles.historyItem} style={{ borderLeft: '3px solid #ef4444' }}>
+                                        <div className={styles.historyName}>{c}</div>
+                                        <div className={styles.historyMeta}>
+                                            <span className={styles.statusRejected}>Reprobado - Requiere recursar</span>
+                                        </div>
+                                    </div>
+                                ))}
+                                {viewingEmp?.matrix?.pendingCourses?.map((c, i) => (
+                                    <div key={`p-${i}`} className={styles.historyItem} style={{ borderLeft: '3px solid #f59e0b' }}>
+                                        <div className={styles.historyName}>{c}</div>
+                                        <div className={styles.historyMeta}>
+                                            <span style={{ color: '#f59e0b' }}>Pendiente - Nunca tomado</span>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        </>
+                    )}
+
                     <div style={{ marginTop: '1rem', textAlign: 'right' }}>
                         <Link href={`/capacitacion/analisis`} onClick={() => setViewingEmp(null)} className={styles.viewAnalysisLink}>
                             Ver análisis completo →

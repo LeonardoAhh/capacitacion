@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/Button/Button';
 import { useToast } from '@/components/ui/Toast/Toast';
 import { db } from '@/lib/firebase';
 import { collection, getDocs, query, orderBy, where } from 'firebase/firestore';
-import { seedHistoryData } from '@/lib/seedHistorial';
+import { recalculateComplianceFromFirestore } from '@/lib/seedHistorial';
 import styles from './page.module.css';
 import { generateDC3 } from '@/utils/dc3Generator';
 import { exportToExcel, exportPDFCompliance } from '@/utils/exportUtils';
@@ -134,13 +134,9 @@ export default function AnalisisPage() {
     const handleSeed = async () => {
         setSeeding(true);
         try {
-            const result = await seedHistoryData();
+            const result = await recalculateComplianceFromFirestore();
             if (result.success) {
-                toast.success('Éxito', `Procesados ${result.processed} empleados.`);
-                if (result.inconsistencies?.length > 0) {
-                    setInconsistencies(result.inconsistencies);
-                    setShowInconsistencyModal(true);
-                }
+                toast.success('Éxito', `Recalculado cumplimiento de ${result.processed} empleados.`);
                 loadData();
             } else {
                 toast.error('Error', result.error);
@@ -207,6 +203,18 @@ export default function AnalisisPage() {
                             <h1>Análisis de Cumplimiento</h1>
                         </div>
                         <div className={styles.headerRight}>
+                            <Button
+                                variant="outline"
+                                size="sm"
+                                onClick={handleSeed}
+                                disabled={seeding}
+                            >
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                    <path d="M21 12a9 9 0 1 1-9-9" />
+                                    <polyline points="21 3 21 9 15 9" />
+                                </svg>
+                                {seeding ? 'Procesando...' : 'Reprocesar'}
+                            </Button>
                             <Button
                                 variant="outline"
                                 size="sm"
