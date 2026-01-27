@@ -323,6 +323,7 @@ export default function PromocionesPage() {
 
                 if (statusFilter === 'eligible') return criteria.overall.eligible;
                 if (statusFilter === 'blocked') return !criteria.overall.eligible;
+                if (statusFilter === 'scheduledExam') return emp.promotionData?.scheduledExam;
                 if (statusFilter === 'nearEligible') {
                     // Near eligible: 3 out of 4 criteria met
                     return !criteria.overall.eligible && criteria.overall.metCount >= 3;
@@ -473,6 +474,38 @@ export default function PromocionesPage() {
         }
     };
 
+    const handleToggleScheduledExam = async (emp) => {
+        try {
+            const ref = doc(db, 'training_records', emp.id);
+            const currentStatus = emp.promotionData?.scheduledExam || false;
+            const newStatus = !currentStatus;
+
+            const updatedPromoData = {
+                ...emp.promotionData,
+                scheduledExam: newStatus
+            };
+
+            await updateDoc(ref, {
+                promotionData: updatedPromoData
+            });
+
+            // Update local state
+            setEmployees(prev => prev.map(e =>
+                e.id === emp.id
+                    ? { ...e, promotionData: updatedPromoData }
+                    : e
+            ));
+
+            toast.success(
+                newStatus ? 'Marcado para Examen' : 'Desmarcado',
+                newStatus ? `Examen programado para ${emp.name}` : 'Examen cancelado'
+            );
+        } catch (error) {
+            console.error('Error toggling exam status:', error);
+            toast.error('Error', 'No se pudo actualizar el estado');
+        }
+    };
+
     // Rule CRUD handlers
     const handleEditRule = (rule) => {
         setRuleForm({
@@ -602,6 +635,7 @@ export default function PromocionesPage() {
                                 <option value="eligible">✅ Aptos</option>
                                 <option value="nearEligible">🔶 Próximos (3/4)</option>
                                 <option value="blocked">❌ No Aptos</option>
+                                <option value="scheduledExam">📝 Por Aplicar Examen</option>
                             </select>
                         </div>
                         <div className={styles.filterGroup}>
@@ -691,10 +725,13 @@ export default function PromocionesPage() {
                                                     const progressPercent = (criteria.overall.metCount / 4) * 100;
 
                                                     return (
-                                                        <tr key={emp.id} onClick={() => toggleExpand(emp.id)} className={styles.tableRow}>
+                                                        <tr key={emp.id} onClick={() => toggleExpand(emp.id)} className={`${styles.tableRow} ${emp.promotionData?.scheduledExam ? styles.rowScheduled : ''}`}>
                                                             <td>
                                                                 <div className={styles.empNameCell}>
-                                                                    <strong>ID {emp.employeeId} {emp.name}</strong>
+                                                                    <strong>
+                                                                        ID {emp.employeeId} {emp.name}
+                                                                        {emp.promotionData?.scheduledExam && <span style={{ fontSize: '0.8em', marginLeft: '5px' }}>📝</span>}
+                                                                    </strong>
                                                                 </div>
                                                             </td>
                                                             <td>{emp.position}</td>
@@ -754,7 +791,7 @@ export default function PromocionesPage() {
                                         return (
                                             <Card
                                                 key={emp.id}
-                                                className={`${styles.employeeCard} ${isExpanded ? styles.expanded : ''}`}
+                                                className={`${styles.employeeCard} ${isExpanded ? styles.expanded : ''} ${emp.promotionData?.scheduledExam ? styles.cardScheduled : ''}`}
                                             >
                                                 {/* Collapsed View */}
                                                 <div
@@ -768,6 +805,9 @@ export default function PromocionesPage() {
                                                         <div className={styles.empName}>ID {emp.employeeId} {emp.name}</div>
                                                         <div className={styles.empPosition}>
                                                             {emp.position} → {rule.promotionTo}
+                                                            {emp.promotionData?.scheduledExam && (
+                                                                <span className={styles.scheduledBadge}>📝 Examen</span>
+                                                            )}
                                                         </div>
                                                         {/* Progress Bar */}
                                                         <div className={styles.progressBarSmall}>
@@ -898,14 +938,27 @@ export default function PromocionesPage() {
                                                                         </div>
                                                                     )}
                                                                 </div>
-                                                                <Button
-                                                                    variant="ghost"
-                                                                    size="sm"
-                                                                    onClick={() => handleOpenExamModal(emp)}
-                                                                    disabled={!examEligibility.canTakeExam}
-                                                                >
-                                                                    + Registrar
-                                                                </Button>
+                                                                <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
+                                                                    <Button
+                                                                        variant="ghost"
+                                                                        size="sm"
+                                                                        onClick={() => handleOpenExamModal(emp)}
+                                                                        disabled={!examEligibility.canTakeExam}
+                                                                    >
+                                                                        + Registrar
+                                                                    </Button>
+                                                                    <Button
+                                                                        variant="outline"
+                                                                        size="sm"
+                                                                        onClick={(e) => {
+                                                                            e.stopPropagation();
+                                                                            handleToggleScheduledExam(emp);
+                                                                        }}
+                                                                        style={emp.promotionData?.scheduledExam ? { borderColor: '#ef4444', color: '#ef4444' } : { borderColor: '#3b82f6', color: '#3b82f6' }}
+                                                                    >
+                                                                        {emp.promotionData?.scheduledExam ? 'Cancelar Cita' : '📅 Citar'}
+                                                                    </Button>
+                                                                </div>
                                                             </div>
                                                         </div>
 
