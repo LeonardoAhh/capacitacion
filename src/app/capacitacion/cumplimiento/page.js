@@ -24,6 +24,7 @@ export default function CumplimientoPage() {
     const [currentPage, setCurrentPage] = useState(1);
     const itemsPerPage = 25;
 
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     useEffect(() => {
         loadData();
     }, []);

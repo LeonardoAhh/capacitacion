@@ -44,6 +44,7 @@ export default function RegistroPage() {
     const [importing, setImporting] = useState(false);
     const fileInputRef = useRef(null);
 
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     useEffect(() => {
         loadData();
     }, []);

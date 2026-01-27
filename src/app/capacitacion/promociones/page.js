@@ -72,10 +72,12 @@ export default function PromocionesPage() {
         performanceMinScore: 80
     });
 
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     useEffect(() => {
         loadData();
     }, []);
 
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     useEffect(() => {
         filterEmployees();
     }, [searchTerm, statusFilter, deptFilter, employees, promotionRules, sortBy, sortOrder]);

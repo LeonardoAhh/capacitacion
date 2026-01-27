@@ -35,6 +35,7 @@ export default function CatalogPage() {
 
     const categories = ['GENERAL', 'SEGURIDAD', 'CALIDAD', 'TÉCNICO', 'NORMATIVO', 'STPS'];
 
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     useEffect(() => {
         loadCourses();
     }, []);
