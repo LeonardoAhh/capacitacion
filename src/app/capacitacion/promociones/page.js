@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import Navbar from '@/components/Navbar/Navbar';
 import Link from 'next/link';
 import { Card, CardContent } from '@/components/ui/Card/Card';
@@ -75,17 +75,39 @@ export default function PromocionesPage() {
         performanceMinScore: 80
     });
 
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    useEffect(() => {
-        loadData();
-    }, []);
+    // seedPromotionRules is defined before loadData so it can be used inside
+    const seedPromotionRulesRef = useCallback(async (forceReload = false) => {
+        try {
+            // If force reload, delete all existing rules first
+            if (forceReload) {
+                const existingRules = await getDocs(collection(db, 'promotion_rules'));
+                for (const ruleDoc of existingRules.docs) {
+                    await deleteDoc(doc(db, 'promotion_rules', ruleDoc.id));
+                }
+            }
 
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    useEffect(() => {
-        filterEmployees();
-    }, [searchTerm, statusFilter, deptFilter, shiftFilter, employees, promotionRules, sortBy, sortOrder]);
+            const rawRules = await import('@/data/promociones.json');
+            const rules = rawRules.default || rawRules;
 
-    const loadData = async () => {
+            const normalized = rules.map((r, i) => ({
+                ...normalizePromotionRule(r),
+                id: `rule_${i}`
+            }));
+
+            // Save to Firebase
+            for (const rule of normalized) {
+                await setDoc(doc(db, 'promotion_rules', rule.id), rule);
+            }
+
+            setPromotionRules(normalized);
+            toast.success('Reglas Cargadas', `Se cargaron ${normalized.length} reglas de promoción`);
+        } catch (err) {
+            console.error('Error seeding rules:', err);
+            toast.error('Error', 'No se pudieron cargar las reglas');
+        }
+    }, [toast]);
+
+    const loadData = useCallback(async () => {
         setLoading(true);
         try {
             // Load employees
@@ -101,7 +123,7 @@ export default function PromocionesPage() {
             const rulesSnap = await getDocs(collection(db, 'promotion_rules'));
             if (rulesSnap.empty) {
                 // Seed from JSON if empty
-                await seedPromotionRules();
+                await seedPromotionRulesRef();
             } else {
                 setPromotionRules(rulesSnap.docs.map(d => ({ id: d.id, ...d.data() })));
             }
@@ -111,7 +133,11 @@ export default function PromocionesPage() {
         } finally {
             setLoading(false);
         }
-    };
+    }, [toast, seedPromotionRulesRef]);
+
+    useEffect(() => {
+        loadData();
+    }, [loadData]);
 
     const seedPromotionRules = async (forceReload = false) => {
         try {
@@ -328,7 +354,7 @@ export default function PromocionesPage() {
         }
     };
 
-    const filterEmployees = () => {
+    const filterEmployees = useCallback(() => {
         let result = employees.filter(emp => {
             // Only include employees that have a matching promotion rule
             const rule = promotionRules.find(r =>
@@ -417,7 +443,11 @@ export default function PromocionesPage() {
 
         setFilteredEmployees(result);
         setCurrentPage(1); // Reset to first page when filters change
-    };
+    }, [searchTerm, statusFilter, deptFilter, shiftFilter, employees, promotionRules, sortBy, sortOrder]);
+
+    useEffect(() => {
+        filterEmployees();
+    }, [filterEmployees]);
 
     const toggleExpand = (id) => {
         setExpandedId(expandedId === id ? null : id);

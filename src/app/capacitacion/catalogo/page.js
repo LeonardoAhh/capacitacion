@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import Navbar from '@/components/Navbar/Navbar';
 import Link from 'next/link';
 import { Button } from '@/components/ui/Button/Button';
@@ -35,12 +35,7 @@ export default function CatalogPage() {
 
     const categories = ['GENERAL', 'SEGURIDAD', 'CALIDAD', 'TÉCNICO', 'NORMATIVO', 'STPS'];
 
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    useEffect(() => {
-        loadCourses();
-    }, []);
-
-    const loadCourses = async () => {
+    const loadCourses = useCallback(async () => {
         setLoading(true);
         try {
             const coursesRef = collection(db, 'courses');
@@ -54,7 +49,11 @@ export default function CatalogPage() {
         } finally {
             setLoading(false);
         }
-    };
+    }, [toast]);
+
+    useEffect(() => {
+        loadCourses();
+    }, [loadCourses]);
 
     const openCreateModal = () => {
         setFormData({ name: '', duration: '', instructor: '', validityYears: 0, category: 'GENERAL' });

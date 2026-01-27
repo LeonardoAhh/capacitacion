@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import Navbar from '@/components/Navbar/Navbar';
 import Link from 'next/link';
 import { Card, CardContent } from '@/components/ui/Card/Card';
@@ -46,12 +46,7 @@ export default function RegistroPage() {
     const [importing, setImporting] = useState(false);
     const fileInputRef = useRef(null);
 
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    useEffect(() => {
-        loadData();
-    }, []);
-
-    const loadData = async () => {
+    const loadData = useCallback(async () => {
         setLoading(true);
         try {
             const empSnap = await getDocs(query(collection(db, 'training_records'), orderBy('name')));
@@ -69,7 +64,11 @@ export default function RegistroPage() {
         } finally {
             setLoading(false);
         }
-    };
+    }, [toast]);
+
+    useEffect(() => {
+        loadData();
+    }, [loadData]);
 
     const toggleEmp = (id) => {
         setSelectedEmps(prev =>

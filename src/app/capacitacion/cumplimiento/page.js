@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useCallback } from 'react';
 import Navbar from '@/components/Navbar/Navbar';
 import Link from 'next/link';
 import { Card, CardContent } from '@/components/ui/Card/Card';
@@ -24,12 +24,7 @@ export default function CumplimientoPage() {
     const [currentPage, setCurrentPage] = useState(1);
     const itemsPerPage = 25;
 
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    useEffect(() => {
-        loadData();
-    }, []);
-
-    const loadData = async () => {
+    const loadData = useCallback(async () => {
         setLoading(true);
         try {
             // Load courses
@@ -57,7 +52,11 @@ export default function CumplimientoPage() {
         } finally {
             setLoading(false);
         }
-    };
+    }, [toast]);
+
+    useEffect(() => {
+        loadData();
+    }, [loadData]);
 
     // Calculate statistics and filtered employees for selected course
     const { stats, courseEmployees } = useMemo(() => {

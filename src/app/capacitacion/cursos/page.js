@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import Navbar from '@/components/Navbar/Navbar';
 import Link from 'next/link';
 import { Button } from '@/components/ui/Button/Button';
@@ -39,12 +39,7 @@ export default function CursosPage() {
 
     const categories = ['GENERAL', 'SEGURIDAD', 'CALIDAD', 'TÉCNICO', 'NORMATIVO', 'STPS'];
 
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    useEffect(() => {
-        loadCourses();
-    }, []);
-
-    const loadCourses = async () => {
+    const loadCourses = useCallback(async () => {
         setLoading(true);
         try {
             const coursesRef = collection(db, 'courses');
@@ -58,7 +53,11 @@ export default function CursosPage() {
         } finally {
             setLoading(false);
         }
-    };
+    }, [toast]);
+
+    useEffect(() => {
+        loadCourses();
+    }, [loadCourses]);
 
     const openCreateModal = () => {
         setFormData({ name: '', duration: '', instructor: '', validityYears: 0, category: 'GENERAL' });
@@ -209,17 +208,6 @@ export default function CursosPage() {
                             <h1>Catálogo de Cursos</h1>
                         </div>
                         <div className={styles.headerRight}>
-                            <Button
-                                variant="outline"
-                                onClick={handleUpdateValidity}
-                                disabled={updatingValidity}
-                            >
-                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                    <path d="M21 12a9 9 0 1 1-9-9c2.52 0 4.93 1 6.74 2.74L21 8" />
-                                    <path d="M21 3v5h-5" />
-                                </svg>
-                                {updatingValidity ? 'Actualizando...' : 'Actualizar Vigencias'}
-                            </Button>
                             {canWrite() && (
                                 <Button onClick={openCreateModal}>
                                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
