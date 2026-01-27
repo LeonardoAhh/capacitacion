@@ -1,11 +1,34 @@
 'use client';
 
+import { useState } from 'react';
 import Navbar from '@/components/Navbar/Navbar';
 import Link from 'next/link';
 import { Card, CardContent } from '@/components/ui/Card/Card';
+import { Button } from '@/components/ui/Button/Button';
+import { useToast } from '@/components/ui/Toast/Toast';
+import { recalculateComplianceFromFirestore } from '@/lib/seedHistorial';
 import styles from './page.module.css';
 
 export default function CapacitacionPage() {
+    const [isRecalculating, setIsRecalculating] = useState(false);
+    const { toast } = useToast();
+
+    const handleRecalculateCompliance = async () => {
+        setIsRecalculating(true);
+        try {
+            const result = await recalculateComplianceFromFirestore();
+            if (result.success) {
+                toast.success('Cumplimiento Recalculado', `Se procesaron ${result.processed} empleados`);
+            } else {
+                toast.error('Error', result.error);
+            }
+        } catch (error) {
+            toast.error('Error', error.message);
+        } finally {
+            setIsRecalculating(false);
+        }
+    };
+
     return (
         <>
             <Navbar />
@@ -22,7 +45,19 @@ export default function CapacitacionPage() {
                             </Link>
                             <h1>Módulo de Capacitación</h1>
                         </div>
+                        {/* Botón oculto - descomentar si se necesita reprocesar
+                        <div className={styles.headerRight}>
+                            <Button
+                                onClick={handleRecalculateCompliance}
+                                disabled={isRecalculating}
+                                variant="secondary"
+                            >
+                                {isRecalculating ? '⏳ Procesando...' : '🔄 Reprocesar Cumplimiento'}
+                            </Button>
+                        </div>
+                        */}
                     </div>
+
 
                     <div className={styles.modulesGrid}>
                         {/* Puestos */}

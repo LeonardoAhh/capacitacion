@@ -332,7 +332,6 @@ export default function EmpleadosPage() {
                                                 <th>Nombre</th>
                                                 <th>Puesto</th>
                                                 <th>Departamento</th>
-                                                <th className="text-center">Cumplimiento</th>
                                                 <th style={{ textAlign: 'center' }}>Acciones</th>
                                             </tr>
                                         </thead>
@@ -351,16 +350,8 @@ export default function EmpleadosPage() {
                                                             <span className={styles.missingBadge}>Sin Asignar ⚠️</span>
                                                         )}
                                                     </td>
-                                                    <td className="text-center">
-                                                        <span className={`${styles.badge} ${getComplianceColor(emp.matrix?.compliancePercentage || 0)}`}>
-                                                            {emp.matrix?.compliancePercentage || 0}%
-                                                        </span>
-                                                    </td>
                                                     <td style={{ textAlign: 'center' }}>
                                                         <div className={styles.actionButtons}>
-                                                            <Button variant="ghost" size="sm" onClick={() => setViewingEmp(emp)}>
-                                                                👁️ Ver
-                                                            </Button>
                                                             <Button variant="ghost" size="sm" onClick={() => handleEdit(emp)}>
                                                                 ✏️ Editar
                                                             </Button>
@@ -373,7 +364,7 @@ export default function EmpleadosPage() {
                                             ))}
                                             {filteredEmployees.length === 0 && (
                                                 <tr>
-                                                    <td colSpan={5} className={styles.emptyState}>
+                                                    <td colSpan={4} className={styles.emptyState}>
                                                         No se encontraron resultados.
                                                     </td>
                                                 </tr>

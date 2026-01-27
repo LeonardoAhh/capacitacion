@@ -229,14 +229,18 @@ export const recalculateComplianceFromFirestore = async () => {
         const positionsSnap = await getDocs(collection(db, 'positions'));
         const requirementsMap = new Map();
         const requirementsMapNormalized = new Map();
+
         positionsSnap.docs.forEach(d => {
             const data = d.data();
             const exactKey = normalize(data.name);
             const normalizedKey = normalizeForMatch(data.name);
-            const courses = (data.requiredCourses || []).map(normalize);
+            // Store courses as-is (normalized for display)
+            const courses = (data.requiredCourses || []).map(c => normalize(c));
             requirementsMap.set(exactKey, courses);
             requirementsMapNormalized.set(normalizedKey, courses);
         });
+
+        console.log(`Loaded ${requirementsMap.size} positions from Firestore`);
 
         // 2. Fetch existing training_records from Firestore
         const recordsSnap = await getDocs(collection(db, 'training_records'));
@@ -259,41 +263,33 @@ export const recalculateComplianceFromFirestore = async () => {
 
             // Get approved courses from existing history
             const history = data.history || [];
-            const approvedCoursesSet = new Set(
-                history
-                    .filter(h => h.status === 'approved')
-                    .map(h => normalize(h.courseName))
-            );
 
-            // Fuzzy match set for approved courses
+            // Create SET of approved courses using normalizeForMatch for comparison
             const approvedNormalized = new Set(
                 history
                     .filter(h => h.status === 'approved')
                     .map(h => normalizeForMatch(h.courseName))
             );
 
-            // Calculate missing courses
+            // Calculate missing courses - compare using normalizeForMatch
             const missing = positionReqs.filter(req => {
-                if (approvedCoursesSet.has(req)) return false;
                 const reqNormalized = normalizeForMatch(req);
-                if (approvedNormalized.has(reqNormalized)) return false;
-                return true;
+                return !approvedNormalized.has(reqNormalized);
             });
 
             const complianceScore = positionReqs.length > 0
                 ? ((positionReqs.length - missing.length) / positionReqs.length) * 100
                 : 100;
 
-            // Separate failed vs pending
-            const historyNames = new Set(history.map(h => normalize(h.courseName)));
-            const historyNamesNormalized = new Set(history.map(h => normalizeForMatch(h.courseName)));
+            // Separate failed vs pending using normalizeForMatch
+            const historyNormalized = new Set(history.map(h => normalizeForMatch(h.courseName)));
 
             const failedCourses = [];
             const pendingCourses = [];
 
             missing.forEach(req => {
                 const reqNormalized = normalizeForMatch(req);
-                if (historyNames.has(req) || historyNamesNormalized.has(reqNormalized)) {
+                if (historyNormalized.has(reqNormalized)) {
                     failedCourses.push(req);
                 } else {
                     pendingCourses.push(req);
