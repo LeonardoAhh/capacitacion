@@ -1359,20 +1359,6 @@ export default function PromocionesPage() {
                     <div className={styles.rulesList}>
                         <div className={styles.rulesListHeader}>
                             <h4>Reglas Existentes ({promotionRules.length})</h4>
-                            <Button variant="ghost" size="sm" onClick={reloadRulesFromJSON}>
-                                🔄 Recargar desde JSON
-                            </Button>
-                        </div>
-                        <div className={styles.importActions} style={{ marginBottom: '1rem', display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
-                            <Button variant="outline" size="sm" onClick={importPromotionData}>
-                                📥 Importar Eval. Desempeño
-                            </Button>
-                            <Button variant="outline" size="sm" onClick={importExamData}>
-                                📥 Importar Exámenes
-                            </Button>
-                            <Button variant="outline" size="sm" onClick={importShiftData}>
-                                📥 Importar Turnos
-                            </Button>
                         </div>
                         <div className={styles.rulesTable}>
                             {promotionRules.slice(0, 20).map(rule => (
