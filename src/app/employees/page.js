@@ -32,7 +32,7 @@ const getAreasForDepartment = (dept) => {
 };
 
 export default function EmployeesPage() {
-    const { user, loading: authLoading } = useAuth();
+    const { user, loading: authLoading, canWrite } = useAuth();
     const router = useRouter();
     const { toast } = useToast();
 
@@ -156,19 +156,21 @@ export default function EmployeesPage() {
                             </Link>
                             <h1>Gestión de Empleados</h1>
                         </div>
-                        <button
-                            onClick={() => {
-                                setShowForm(!showForm);
-                                setEditingEmployee(null);
-                            }}
-                            className="btn btn-primary"
-                        >
-                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                <line x1="12" y1="5" x2="12" y2="19" />
-                                <line x1="5" y1="12" x2="19" y2="12" />
-                            </svg>
-                            {showForm ? 'Cancelar' : 'Nuevo Empleado'}
-                        </button>
+                        {canWrite() && (
+                            <button
+                                onClick={() => {
+                                    setShowForm(!showForm);
+                                    setEditingEmployee(null);
+                                }}
+                                className="btn btn-primary"
+                            >
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                    <line x1="12" y1="5" x2="12" y2="19" />
+                                    <line x1="5" y1="12" x2="19" y2="12" />
+                                </svg>
+                                {showForm ? 'Cancelar' : 'Nuevo Empleado'}
+                            </button>
+                        )}
                     </div>
 
                     {showForm && (
@@ -210,8 +212,8 @@ export default function EmployeesPage() {
                         <>
                             <EmployeeTable
                                 employees={employees}
-                                onEdit={handleEdit}
-                                onDelete={handleDelete}
+                                onEdit={canWrite() ? handleEdit : null}
+                                onDelete={canWrite() ? handleDelete : null}
                             />
 
                             {/* Pagination Controls */}

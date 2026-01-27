@@ -85,13 +85,19 @@ export function AuthProvider({ children }) {
         }
     };
 
+    // Check if user has write permissions (only super_admin can write)
+    const canWrite = () => {
+        return user?.rol === 'super_admin';
+    };
+
     const value = {
         user,
         loading,
         signIn,
         signInAnon,
         signUp,
-        signOut
+        signOut,
+        canWrite
     };
 
     return (

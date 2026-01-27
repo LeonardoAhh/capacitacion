@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { Card, CardContent } from '@/components/ui/Card/Card';
 import { Button } from '@/components/ui/Button/Button';
 import { useToast } from '@/components/ui/Toast/Toast';
+import { useAuth } from '@/contexts/AuthContext';
 import { Dialog, DialogHeader, DialogTitle, DialogBody, DialogFooter, DialogClose } from '@/components/ui/Dialog/Dialog';
 import { db } from '@/lib/firebase';
 import { collection, getDocs, query, orderBy, doc, updateDoc, setDoc, deleteDoc } from 'firebase/firestore';
@@ -21,6 +22,7 @@ import { seedHistoryData } from '@/lib/seedHistorial';
 import styles from './page.module.css';
 
 export default function PromocionesPage() {
+    const { canWrite } = useAuth();
     const { toast } = useToast();
     const [loading, setLoading] = useState(true);
     const [employees, setEmployees] = useState([]);
@@ -1004,9 +1006,11 @@ export default function PromocionesPage() {
                                                                         <strong>≥{criteria.performance.required}%</strong>
                                                                     </div>
                                                                 </div>
-                                                                <Button variant="ghost" size="sm" onClick={() => handleEditEmployee(emp)}>
-                                                                    ✏️ Editar
-                                                                </Button>
+                                                                {canWrite() && (
+                                                                    <Button variant="ghost" size="sm" onClick={() => handleEditEmployee(emp)}>
+                                                                        ✏️ Editar
+                                                                    </Button>
+                                                                )}
                                                             </div>
 
                                                             {/* 2. Temporality */}
@@ -1075,27 +1079,29 @@ export default function PromocionesPage() {
                                                                         </div>
                                                                     )}
                                                                 </div>
-                                                                <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
-                                                                    <Button
-                                                                        variant="ghost"
-                                                                        size="sm"
-                                                                        onClick={() => handleOpenExamModal(emp)}
-                                                                        disabled={!examEligibility.canTakeExam}
-                                                                    >
-                                                                        + Registrar
-                                                                    </Button>
-                                                                    <Button
-                                                                        variant="outline"
-                                                                        size="sm"
-                                                                        onClick={(e) => {
-                                                                            e.stopPropagation();
-                                                                            handleToggleScheduledExam(emp);
-                                                                        }}
-                                                                        style={emp.promotionData?.scheduledExam ? { borderColor: '#ef4444', color: '#ef4444' } : { borderColor: '#3b82f6', color: '#3b82f6' }}
-                                                                    >
-                                                                        {emp.promotionData?.scheduledExam ? 'Cancelar Cita' : '📅 Citar'}
-                                                                    </Button>
-                                                                </div>
+                                                                {canWrite() && (
+                                                                    <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
+                                                                        <Button
+                                                                            variant="ghost"
+                                                                            size="sm"
+                                                                            onClick={() => handleOpenExamModal(emp)}
+                                                                            disabled={!examEligibility.canTakeExam}
+                                                                        >
+                                                                            + Registrar
+                                                                        </Button>
+                                                                        <Button
+                                                                            variant="outline"
+                                                                            size="sm"
+                                                                            onClick={(e) => {
+                                                                                e.stopPropagation();
+                                                                                handleToggleScheduledExam(emp);
+                                                                            }}
+                                                                            style={emp.promotionData?.scheduledExam ? { borderColor: '#ef4444', color: '#ef4444' } : { borderColor: '#3b82f6', color: '#3b82f6' }}
+                                                                        >
+                                                                            {emp.promotionData?.scheduledExam ? 'Cancelar Cita' : '📅 Citar'}
+                                                                        </Button>
+                                                                    </div>
+                                                                )}
                                                             </div>
                                                         </div>
 
@@ -1349,14 +1355,16 @@ export default function PromocionesPage() {
                                             Matriz {rule.matrixMinCoverage}% | Eval {rule.performanceMinScore}%
                                         </small>
                                     </div>
-                                    <div className={styles.ruleActions}>
-                                        <Button variant="ghost" size="sm" onClick={() => handleEditRule(rule)}>
-                                            ✏️
-                                        </Button>
-                                        <Button variant="ghost" size="sm" onClick={() => handleDeleteRule(rule.id)}>
-                                            🗑️
-                                        </Button>
-                                    </div>
+                                    {canWrite() && (
+                                        <div className={styles.ruleActions}>
+                                            <Button variant="ghost" size="sm" onClick={() => handleEditRule(rule)}>
+                                                ✏️
+                                            </Button>
+                                            <Button variant="ghost" size="sm" onClick={() => handleDeleteRule(rule.id)}>
+                                                🗑️
+                                            </Button>
+                                        </div>
+                                    )}
                                 </div>
                             ))}
                             {promotionRules.length > 20 && (

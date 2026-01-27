@@ -13,7 +13,7 @@ import styles from './page.module.css';
 
 
 export default function CalendarPage() {
-    const { user } = useAuth();
+    const { user, canWrite } = useAuth();
     const { toast } = useToast();
     const [date, setDate] = useState(new Date()); // Viewed Month
     const [events, setEvents] = useState([]);
@@ -191,7 +191,7 @@ export default function CalendarPage() {
                                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M9 18l6-6-6-6" /></svg>
                             </button>
                         </div>
-                        <Button onClick={() => setCreateModalOpen(true)}>+ Agendar</Button>
+                        {canWrite() && <Button onClick={() => setCreateModalOpen(true)}>+ Agendar</Button>}
                     </div>
 
                     <div className={styles.legend}>

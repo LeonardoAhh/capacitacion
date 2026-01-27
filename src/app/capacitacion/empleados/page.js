@@ -14,7 +14,7 @@ import { Dialog, DialogHeader, DialogTitle, DialogBody, DialogFooter, DialogClos
 import styles from './page.module.css';
 
 export default function EmpleadosPage() {
-    const { user } = useAuth();
+    const { user, canWrite } = useAuth();
     const { toast } = useToast();
     const [employees, setEmployees] = useState([]);
     const [filteredEmployees, setFilteredEmployees] = useState([]);
@@ -276,7 +276,7 @@ export default function EmpleadosPage() {
                         <h1>Gestión de Empleados</h1>
                         <p>Administración de personal y datos maestros.</p>
                     </div>
-                    <Button onClick={handleCreate}>+ Nuevo Empleado</Button>
+                    {canWrite() && <Button onClick={handleCreate}>+ Nuevo Empleado</Button>}
                 </div>
 
                 <Card className={styles.filterCard}>
@@ -352,12 +352,16 @@ export default function EmpleadosPage() {
                                                     </td>
                                                     <td style={{ textAlign: 'center' }}>
                                                         <div className={styles.actionButtons}>
-                                                            <Button variant="ghost" size="sm" onClick={() => handleEdit(emp)}>
-                                                                ✏️ Editar
-                                                            </Button>
-                                                            <Button variant="ghost" size="sm" onClick={() => handleDelete(emp)} style={{ color: 'var(--color-danger)' }}>
-                                                                🗑️
-                                                            </Button>
+                                                            {canWrite() && (
+                                                                <>
+                                                                    <Button variant="ghost" size="sm" onClick={() => handleEdit(emp)}>
+                                                                        ✏️ Editar
+                                                                    </Button>
+                                                                    <Button variant="ghost" size="sm" onClick={() => handleDelete(emp)} style={{ color: 'var(--color-danger)' }}>
+                                                                        🗑️
+                                                                    </Button>
+                                                                </>
+                                                            )}
                                                         </div>
                                                     </td>
                                                 </tr>

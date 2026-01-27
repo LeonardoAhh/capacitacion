@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { Card, CardContent } from '@/components/ui/Card/Card';
 import { Button } from '@/components/ui/Button/Button';
 import { useToast } from '@/components/ui/Toast/Toast';
+import { useAuth } from '@/contexts/AuthContext';
 import { db } from '@/lib/firebase';
 import { collection, getDocs, query, orderBy, doc, updateDoc, arrayUnion, addDoc, getDoc, where, limit } from 'firebase/firestore';
 import { parseImportFile, validateImportRecords, generateExcelTemplate } from '@/utils/importUtils';
@@ -13,6 +14,7 @@ import styles from './page.module.css';
 import multiStyles from './multi-styles.module.css';
 
 export default function RegistroPage() {
+    const { canWrite } = useAuth();
     const { toast } = useToast();
     const [loading, setLoading] = useState(true);
     const [submitting, setSubmitting] = useState(false);
@@ -760,9 +762,15 @@ export default function RegistroPage() {
                                     </div>
 
                                     <div className={styles.actions}>
-                                        <Button type="submit" disabled={submitting || selectedEmps.length === 0}>
-                                            {submitting ? 'Procesando...' : 'Confirmar Carga Masiva'}
-                                        </Button>
+                                        {canWrite() ? (
+                                            <Button type="submit" disabled={submitting || selectedEmps.length === 0}>
+                                                {submitting ? 'Procesando...' : 'Confirmar Carga Masiva'}
+                                            </Button>
+                                        ) : (
+                                            <p style={{ color: 'var(--text-muted)', fontStyle: 'italic' }}>
+                                                Solo lectura - No tienes permisos para registrar capacitaciones
+                                            </p>
+                                        )}
                                     </div>
 
                                 </form>

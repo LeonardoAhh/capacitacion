@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card/Card';
 import { Button } from '@/components/ui/Button/Button';
 import { useToast } from '@/components/ui/Toast/Toast';
+import { useAuth } from '@/contexts/AuthContext';
 import { db } from '@/lib/firebase';
 import { collection, getDocs, doc, updateDoc, query, orderBy, where, writeBatch } from 'firebase/firestore';
 import { seedCapacitacionDataRobust } from '@/lib/seedCapacitacion';
@@ -13,6 +14,7 @@ import styles from './page.module.css';
 import { Dialog, DialogHeader, DialogTitle, DialogBody, DialogFooter, DialogClose } from '@/components/ui/Dialog/Dialog';
 
 export default function MatrizPage() {
+    const { canWrite } = useAuth();
     const { toast } = useToast();
     const [positions, setPositions] = useState([]);
     const [courses, setCourses] = useState([]); // All available courses for autocomplete
@@ -322,14 +324,16 @@ export default function MatrizPage() {
                                             <CardHeader>
                                                 <div className={styles.cardTitleRow}>
                                                     <CardTitle>{pos.name}</CardTitle>
-                                                    <div onClick={(e) => e.stopPropagation()}>
-                                                        <Button variant="ghost" size="sm" onClick={() => openEdit(pos)}>
-                                                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                                                <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
-                                                                <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
-                                                            </svg>
-                                                        </Button>
-                                                    </div>
+                                                    {canWrite() && (
+                                                        <div onClick={(e) => e.stopPropagation()}>
+                                                            <Button variant="ghost" size="sm" onClick={() => openEdit(pos)}>
+                                                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                                                    <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
+                                                                    <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
+                                                                </svg>
+                                                            </Button>
+                                                        </div>
+                                                    )}
                                                 </div>
                                                 <span className={styles.department}>{pos.department}</span>
                                             </CardHeader>
@@ -392,9 +396,11 @@ export default function MatrizPage() {
                                                         </div>
                                                     </td>
                                                     <td>
-                                                        <Button variant="ghost" size="sm" onClick={() => openEdit(pos)}>
-                                                            Editar
-                                                        </Button>
+                                                        {canWrite() && (
+                                                            <Button variant="ghost" size="sm" onClick={() => openEdit(pos)}>
+                                                                Editar
+                                                            </Button>
+                                                        )}
                                                     </td>
                                                 </tr>
                                             ))}

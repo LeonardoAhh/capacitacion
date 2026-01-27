@@ -157,6 +157,52 @@ export default function DashboardPage() {
         return `${day}/${month}/${year}`;
     };
 
+    // Gender-based greeting detection
+    const getGreeting = (name) => {
+        if (!name) return 'Bienvenido';
+
+        const firstName = name.trim().split(' ')[0].toLowerCase();
+
+        // Common female names in Spanish
+        const femaleNames = [
+            'maria', 'ana', 'carmen', 'rosa', 'patricia', 'laura', 'claudia', 'andrea',
+            'lucia', 'sofia', 'elena', 'marta', 'isabel', 'paula', 'sara', 'noemi',
+            'noemí', 'alejandra', 'gabriela', 'diana', 'beatriz', 'monica', 'monica',
+            'silvia', 'veronica', 'adriana', 'alicia', 'susana', 'raquel', 'natalia',
+            'julia', 'teresa', 'eva', 'cristina', 'mariana', 'fernanda', 'valeria',
+            'daniela', 'victoria', 'karla', 'carla', 'paola', 'lorena', 'jessica',
+            'jessica', 'brenda', 'elizabeth', 'guadalupe', 'leticia', 'marisol',
+            'rocio', 'araceli', 'norma', 'josefina', 'esther', 'yolanda', 'irma',
+            'lizbeth', 'maribel', 'perla', 'dulce', 'ivonne', 'yvonne', 'edith',
+            'miriam', 'rebeca', 'vanessa', 'fabiola', 'angelica', 'marlene', 'erika',
+            'erica', 'karyna', 'karina', 'carolina', 'esmeralda', 'jazmin', 'jazmín'
+        ];
+
+        // Check if it's a known female name
+        if (femaleNames.includes(firstName)) {
+            return 'Bienvenida';
+        }
+
+        // Common female name endings in Spanish
+        const femaleEndings = ['a', 'ia', 'na', 'la', 'ra', 'da', 'sa', 'ía'];
+        const masculineExceptions = ['carlos', 'nicolas', 'matias', 'elias', 'jonas',
+            'isaias', 'jeremias', 'josefa', 'garcia', 'peña', 'mejia', 'mejía'];
+
+        // Don't apply ending rule to known masculine names
+        if (masculineExceptions.includes(firstName)) {
+            return 'Bienvenido';
+        }
+
+        // Check endings (less reliable but helpful)
+        for (const ending of femaleEndings) {
+            if (firstName.endsWith(ending) && firstName.length > 3) {
+                return 'Bienvenida';
+            }
+        }
+
+        return 'Bienvenido';
+    };
+
     if (authLoading || !user) {
         return (
             <div className={styles.loadingContainer}>
@@ -176,7 +222,7 @@ export default function DashboardPage() {
                 <div className={styles.container}>
                     <div className={styles.header}>
                         <div>
-                            <h1 className="fade-in">Bienvenido{userName ? `, ${userName}` : ''}</h1>
+                            <h1 className="fade-in">{getGreeting(userName)}{userName ? `, ${userName}` : ''}</h1>
                             <p className="slide-in">Panel de control del sistema</p>
                         </div>
                         <Link href="/employees">
