@@ -46,6 +46,7 @@ export default function CapacitacionPage() {
                             <h1>Módulo de Capacitación</h1>
                         </div>
                         {/* Botón oculto - descomentar si se necesita reprocesar
+                        {/* Botón oculto - descomentar si se necesita reprocesar
                         <div className={styles.headerRight}>
                             <Button
                                 onClick={handleRecalculateCompliance}
@@ -56,6 +57,7 @@ export default function CapacitacionPage() {
                             </Button>
                         </div>
                         */}
+
                     </div>
 
 

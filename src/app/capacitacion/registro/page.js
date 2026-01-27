@@ -238,17 +238,54 @@ export default function RegistroPage() {
 
                 // Recalculate matrix if we have required courses
                 if (currentMatrix.requiredCount > 0) {
-                    const completed = currentMatrix.requiredCourses.filter(req =>
-                        currentHistory.some(h => h.courseName === req && h.status === 'approved')
+                    // Normalize function for comparison
+                    const normalizeForMatch = (str) => (str || '')
+                        .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+                        .toUpperCase().trim();
+
+                    // Get approved courses using normalized comparison
+                    const approvedNormalized = new Set(
+                        currentHistory
+                            .filter(h => h.status === 'approved')
+                            .map(h => normalizeForMatch(h.courseName))
                     );
+
+                    // Calculate missing courses
+                    const missing = currentMatrix.requiredCourses.filter(req => {
+                        const reqNormalized = normalizeForMatch(req);
+                        return !approvedNormalized.has(reqNormalized);
+                    });
+
+                    // Separate failed vs pending
+                    const historyNormalized = new Set(
+                        currentHistory.map(h => normalizeForMatch(h.courseName))
+                    );
+
+                    const failedCourses = [];
+                    const pendingCourses = [];
+
+                    missing.forEach(req => {
+                        const reqNormalized = normalizeForMatch(req);
+                        if (historyNormalized.has(reqNormalized)) {
+                            failedCourses.push(req);
+                        } else {
+                            pendingCourses.push(req);
+                        }
+                    });
+
+                    const completedCount = currentMatrix.requiredCourses.length - missing.length;
+                    const compliancePercentage = currentMatrix.requiredCount > 0
+                        ? Math.round((completedCount / currentMatrix.requiredCount) * 100)
+                        : 0;
 
                     updates.matrix = {
                         requiredCount: currentMatrix.requiredCount,
                         requiredCourses: currentMatrix.requiredCourses,
-                        completedCount: completed.length,
-                        compliancePercentage: currentMatrix.requiredCount > 0
-                            ? Math.round((completed.length / currentMatrix.requiredCount) * 100)
-                            : 0
+                        completedCount: completedCount,
+                        missingCourses: missing,
+                        failedCourses: failedCourses,
+                        pendingCourses: pendingCourses,
+                        compliancePercentage: compliancePercentage
                     };
                 }
 
@@ -347,14 +384,53 @@ export default function RegistroPage() {
                     let updates = { history: currentHistory, updatedAt: new Date().toISOString() };
 
                     if (currentMatrix.requiredCount > 0) {
-                        const completed = currentMatrix.requiredCourses?.filter(req =>
-                            currentHistory.some(h => h.courseName === req && h.status === 'approved')
-                        ) || [];
+                        // Normalize function for comparison
+                        const normalizeForMatch = (str) => (str || '')
+                            .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+                            .toUpperCase().trim();
+
+                        // Get approved courses using normalized comparison
+                        const approvedNormalized = new Set(
+                            currentHistory
+                                .filter(h => h.status === 'approved')
+                                .map(h => normalizeForMatch(h.courseName))
+                        );
+
+                        // Calculate missing courses
+                        const missing = (currentMatrix.requiredCourses || []).filter(req => {
+                            const reqNormalized = normalizeForMatch(req);
+                            return !approvedNormalized.has(reqNormalized);
+                        });
+
+                        // Separate failed vs pending
+                        const historyNormalized = new Set(
+                            currentHistory.map(h => normalizeForMatch(h.courseName))
+                        );
+
+                        const failedCourses = [];
+                        const pendingCourses = [];
+
+                        missing.forEach(req => {
+                            const reqNormalized = normalizeForMatch(req);
+                            if (historyNormalized.has(reqNormalized)) {
+                                failedCourses.push(req);
+                            } else {
+                                pendingCourses.push(req);
+                            }
+                        });
+
+                        const completedCount = (currentMatrix.requiredCourses || []).length - missing.length;
+                        const compliancePercentage = currentMatrix.requiredCount > 0
+                            ? Math.round((completedCount / currentMatrix.requiredCount) * 100)
+                            : 0;
 
                         updates.matrix = {
                             ...currentMatrix,
-                            completedCount: completed.length,
-                            compliancePercentage: Math.round((completed.length / currentMatrix.requiredCount) * 100)
+                            completedCount: completedCount,
+                            missingCourses: missing,
+                            failedCourses: failedCourses,
+                            pendingCourses: pendingCourses,
+                            compliancePercentage: compliancePercentage
                         };
                     }
 
