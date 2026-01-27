@@ -1,0 +1,627 @@
+[
+    {
+        "employeeId": "1112",
+        "calificación evaluación de desempeño": "99",
+        "temporalidad en el puesto": "2025-02-05"
+    },
+    {
+        "employeeId": "1473",
+        "calificación evaluación de desempeño": "92",
+        "temporalidad en el puesto": "2026-01-07"
+    },
+    {
+        "employeeId": "1528",
+        "calificación evaluación de desempeño": "92",
+        "temporalidad en el puesto": "2025-03-12"
+    },
+    {
+        "employeeId": "1635",
+        "calificación evaluación de desempeño": "92",
+        "temporalidad en el puesto": "2025-02-05"
+    },
+    {
+        "employeeId": "1719",
+        "calificación evaluación de desempeño": "94",
+        "temporalidad en el puesto": "2025-03-12"
+    },
+    {
+        "employeeId": "1731",
+        "calificación evaluación de desempeño": "100",
+        "temporalidad en el puesto": "2025-01-22"
+    },
+    {
+        "employeeId": "1793",
+        "calificación evaluación de desempeño": "94",
+        "temporalidad en el puesto": "2025-03-12"
+    },
+    {
+        "employeeId": "1877",
+        "calificación evaluación de desempeño": "88",
+        "temporalidad en el puesto": "2025-11-05"
+    },
+    {
+        "employeeId": "1878",
+        "calificación evaluación de desempeño": "91",
+        "temporalidad en el puesto": "2021-12-28"
+    },
+    {
+        "employeeId": "1997",
+        "calificación evaluación de desempeño": "88",
+        "temporalidad en el puesto": "2025-11-05"
+    },
+    {
+        "employeeId": "1998",
+        "calificación evaluación de desempeño": "99",
+        "temporalidad en el puesto": "2025-11-05"
+    },
+    {
+        "employeeId": "2025",
+        "calificación evaluación de desempeño": "97",
+        "temporalidad en el puesto": "2025-03-12"
+    },
+    {
+        "employeeId": "2028",
+        "calificación evaluación de desempeño": "100",
+        "temporalidad en el puesto": "2025-03-12"
+    },
+    {
+        "employeeId": "2034",
+        "calificación evaluación de desempeño": "96",
+        "temporalidad en el puesto": "2025-11-05"
+    },
+    {
+        "employeeId": "2035",
+        "calificación evaluación de desempeño": "100",
+        "temporalidad en el puesto": "2025-03-12"
+    },
+    {
+        "employeeId": "2038",
+        "calificación evaluación de desempeño": "99",
+        "temporalidad en el puesto": "2024-10-16"
+    },
+    {
+        "employeeId": "2076",
+        "calificación evaluación de desempeño": "96",
+        "temporalidad en el puesto": "2024-06-12"
+    },
+    {
+        "employeeId": "2088",
+        "calificación evaluación de desempeño": "98",
+        "temporalidad en el puesto": "2024-11-07"
+    },
+    {
+        "employeeId": "2172",
+        "calificación evaluación de desempeño": "95",
+        "temporalidad en el puesto": "2025-11-05"
+    },
+    {
+        "employeeId": "2201",
+        "calificación evaluación de desempeño": "93",
+        "temporalidad en el puesto": "2025-11-05"
+    },
+    {
+        "employeeId": "2215",
+        "calificación evaluación de desempeño": "100",
+        "temporalidad en el puesto": "2025-01-22"
+    },
+    {
+        "employeeId": "2227",
+        "calificación evaluación de desempeño": "96",
+        "temporalidad en el puesto": "2024-07-03"
+    },
+    {
+        "employeeId": "2247",
+        "calificación evaluación de desempeño": "96",
+        "temporalidad en el puesto": "2025-11-05"
+    },
+    {
+        "employeeId": "2249",
+        "calificación evaluación de desempeño": "97",
+        "temporalidad en el puesto": "2024-11-20"
+    },
+    {
+        "employeeId": "2254",
+        "calificación evaluación de desempeño": "100",
+        "temporalidad en el puesto": "2025-11-05"
+    },
+    {
+        "employeeId": "2277",
+        "calificación evaluación de desempeño": "96",
+        "temporalidad en el puesto": "2025-06-05"
+    },
+    {
+        "employeeId": "2286",
+        "calificación evaluación de desempeño": "97",
+        "temporalidad en el puesto": "2025-03-12"
+    },
+    {
+        "employeeId": "2305",
+        "calificación evaluación de desempeño": "97",
+        "temporalidad en el puesto": "2024-10-16"
+    },
+    {
+        "employeeId": "2317",
+        "calificación evaluación de desempeño": "100",
+        "temporalidad en el puesto": "2025-03-12"
+    },
+    {
+        "employeeId": "2324",
+        "calificación evaluación de desempeño": "97",
+        "temporalidad en el puesto": "2025-11-05"
+    },
+    {
+        "employeeId": "2333",
+        "calificación evaluación de desempeño": "94",
+        "temporalidad en el puesto": "2024-06-28"
+    },
+    {
+        "employeeId": "2342",
+        "calificación evaluación de desempeño": "96",
+        "temporalidad en el puesto": "2025-11-05"
+    },
+    {
+        "employeeId": "2391",
+        "calificación evaluación de desempeño": "88",
+        "temporalidad en el puesto": "2025-11-05"
+    },
+    {
+        "employeeId": "2393",
+        "calificación evaluación de desempeño": "89",
+        "temporalidad en el puesto": "2025-11-05"
+    },
+    {
+        "employeeId": "2420",
+        "calificación evaluación de desempeño": "94",
+        "temporalidad en el puesto": "2025-11-05"
+    },
+    {
+        "employeeId": "2442",
+        "calificación evaluación de desempeño": "97",
+        "temporalidad en el puesto": "2024-11-20"
+    },
+    {
+        "employeeId": "2479",
+        "calificación evaluación de desempeño": "96",
+        "temporalidad en el puesto": "2025-11-05"
+    },
+    {
+        "employeeId": "2550",
+        "calificación evaluación de desempeño": "100",
+        "temporalidad en el puesto": "2024-07-03"
+    },
+    {
+        "employeeId": "2572",
+        "calificación evaluación de desempeño": "100",
+        "temporalidad en el puesto": "2025-03-12"
+    },
+    {
+        "employeeId": "2617",
+        "calificación evaluación de desempeño": "89",
+        "temporalidad en el puesto": "2025-11-05"
+    },
+    {
+        "employeeId": "2645",
+        "calificación evaluación de desempeño": "100",
+        "temporalidad en el puesto": "2025-03-20"
+    },
+    {
+        "employeeId": "2672",
+        "calificación evaluación de desempeño": "100",
+        "temporalidad en el puesto": "2025-11-05"
+    },
+    {
+        "employeeId": "2698",
+        "calificación evaluación de desempeño": "100",
+        "temporalidad en el puesto": "2025-01-14"
+    },
+    {
+        "employeeId": "2710",
+        "calificación evaluación de desempeño": "97",
+        "temporalidad en el puesto": "2026-01-07"
+    },
+    {
+        "employeeId": "2714",
+        "calificación evaluación de desempeño": "100",
+        "temporalidad en el puesto": "2026-01-07"
+    },
+    {
+        "employeeId": "2727",
+        "calificación evaluación de desempeño": "100",
+        "temporalidad en el puesto": "2025-03-12"
+    },
+    {
+        "employeeId": "2777",
+        "calificación evaluación de desempeño": "89",
+        "temporalidad en el puesto": "2025-11-05"
+    },
+    {
+        "employeeId": "2863",
+        "calificación evaluación de desempeño": "87",
+        "temporalidad en el puesto": "2026-01-07"
+    },
+    {
+        "employeeId": "2874",
+        "calificación evaluación de desempeño": "99",
+        "temporalidad en el puesto": "2025-11-05"
+    },
+    {
+        "employeeId": "2895",
+        "calificación evaluación de desempeño": "90",
+        "temporalidad en el puesto": "2025-11-05"
+    },
+    {
+        "employeeId": "2916",
+        "calificación evaluación de desempeño": "93",
+        "temporalidad en el puesto": "2025-11-05"
+    },
+    {
+        "employeeId": "2932",
+        "calificación evaluación de desempeño": "100",
+        "temporalidad en el puesto": "2025-11-05"
+    },
+    {
+        "employeeId": "2934",
+        "calificación evaluación de desempeño": "88",
+        "temporalidad en el puesto": "2025-11-05"
+    },
+    {
+        "employeeId": "2942",
+        "calificación evaluación de desempeño": "88",
+        "temporalidad en el puesto": "2025-11-05"
+    },
+    {
+        "employeeId": "2946",
+        "calificación evaluación de desempeño": "97",
+        "temporalidad en el puesto": "2026-01-07"
+    },
+    {
+        "employeeId": "2949",
+        "calificación evaluación de desempeño": "100",
+        "temporalidad en el puesto": "2025-11-05"
+    },
+    {
+        "employeeId": "2950",
+        "calificación evaluación de desempeño": "94",
+        "temporalidad en el puesto": "2026-01-07"
+    },
+    {
+        "employeeId": "2951",
+        "calificación evaluación de desempeño": "91",
+        "temporalidad en el puesto": "2026-01-07"
+    },
+    {
+        "employeeId": "2974",
+        "calificación evaluación de desempeño": "92",
+        "temporalidad en el puesto": "2025-11-05"
+    },
+    {
+        "employeeId": "2981",
+        "calificación evaluación de desempeño": "100",
+        "temporalidad en el puesto": "2025-11-05"
+    },
+    {
+        "employeeId": "2994",
+        "calificación evaluación de desempeño": "89",
+        "temporalidad en el puesto": "2025-11-05"
+    },
+    {
+        "employeeId": "2996",
+        "calificación evaluación de desempeño": "97",
+        "temporalidad en el puesto": "2025-11-05"
+    },
+    {
+        "employeeId": "3079",
+        "calificación evaluación de desempeño": "95",
+        "temporalidad en el puesto": "2025-11-05"
+    },
+    {
+        "employeeId": "3093",
+        "calificación evaluación de desempeño": "88",
+        "temporalidad en el puesto": "2025-11-05"
+    },
+    {
+        "employeeId": "3105",
+        "calificación evaluación de desempeño": "85",
+        "temporalidad en el puesto": "2025-11-05"
+    },
+    {
+        "employeeId": "3144",
+        "calificación evaluación de desempeño": "100",
+        "temporalidad en el puesto": "2025-11-05"
+    },
+    {
+        "employeeId": "3166",
+        "calificación evaluación de desempeño": "100",
+        "temporalidad en el puesto": "2025-11-05"
+    },
+    {
+        "employeeId": "3168",
+        "calificación evaluación de desempeño": "91",
+        "temporalidad en el puesto": "2025-11-05"
+    },
+    {
+        "employeeId": "3187",
+        "calificación evaluación de desempeño": "90",
+        "temporalidad en el puesto": "2025-03-06"
+    },
+    {
+        "employeeId": "3188",
+        "calificación evaluación de desempeño": "89",
+        "temporalidad en el puesto": "2026-01-07"
+    },
+    {
+        "employeeId": "3190",
+        "calificación evaluación de desempeño": "94",
+        "temporalidad en el puesto": "2025-11-05"
+    },
+    {
+        "employeeId": "3198",
+        "calificación evaluación de desempeño": "100",
+        "temporalidad en el puesto": "2025-03-12"
+    },
+    {
+        "employeeId": "3226",
+        "calificación evaluación de desempeño": "100",
+        "temporalidad en el puesto": "2025-03-12"
+    },
+    {
+        "employeeId": "3257",
+        "calificación evaluación de desempeño": "99",
+        "temporalidad en el puesto": "2025-08-20"
+    },
+    {
+        "employeeId": "3263",
+        "calificación evaluación de desempeño": "98",
+        "temporalidad en el puesto": "2025-03-12"
+    },
+    {
+        "employeeId": "3266",
+        "calificación evaluación de desempeño": "90",
+        "temporalidad en el puesto": "2026-01-07"
+    },
+    {
+        "employeeId": "3276",
+        "calificación evaluación de desempeño": "98",
+        "temporalidad en el puesto": "2025-11-05"
+    },
+    {
+        "employeeId": "3306",
+        "calificación evaluación de desempeño": "80",
+        "temporalidad en el puesto": "2025-09-24"
+    },
+    {
+        "employeeId": "3316",
+        "calificación evaluación de desempeño": "83",
+        "temporalidad en el puesto": "2026-01-07"
+    },
+    {
+        "employeeId": "3324",
+        "calificación evaluación de desempeño": "80",
+        "temporalidad en el puesto": "2025-11-05"
+    },
+    {
+        "employeeId": "3366",
+        "calificación evaluación de desempeño": "94",
+        "temporalidad en el puesto": "2025-11-05"
+    },
+    {
+        "employeeId": "3381",
+        "calificación evaluación de desempeño": "94",
+        "temporalidad en el puesto": "2025-11-05"
+    },
+    {
+        "employeeId": "3389",
+        "calificación evaluación de desempeño": "98",
+        "temporalidad en el puesto": "2025-11-05"
+    },
+    {
+        "employeeId": "3398",
+        "calificación evaluación de desempeño": "100",
+        "temporalidad en el puesto": "2025-11-05"
+    },
+    {
+        "employeeId": "3403",
+        "calificación evaluación de desempeño": "95",
+        "temporalidad en el puesto": "2025-11-05"
+    },
+    {
+        "employeeId": "3409",
+        "calificación evaluación de desempeño": "100",
+        "temporalidad en el puesto": "2026-01-07"
+    },
+    {
+        "employeeId": "3419",
+        "calificación evaluación de desempeño": "84",
+        "temporalidad en el puesto": "2026-01-07"
+    },
+    {
+        "employeeId": "3432",
+        "calificación evaluación de desempeño": "100",
+        "temporalidad en el puesto": "2025-03-12"
+    },
+    {
+        "employeeId": "3471",
+        "calificación evaluación de desempeño": "81",
+        "temporalidad en el puesto": "2025-11-05"
+    },
+    {
+        "employeeId": "3473",
+        "calificación evaluación de desempeño": "100",
+        "temporalidad en el puesto": "2025-11-05"
+    },
+    {
+        "employeeId": "3524",
+        "calificación evaluación de desempeño": "91",
+        "temporalidad en el puesto": "2026-01-07"
+    },
+    {
+        "employeeId": "3531",
+        "calificación evaluación de desempeño": "94",
+        "temporalidad en el puesto": "2026-01-07"
+    },
+    {
+        "employeeId": "3535",
+        "calificación evaluación de desempeño": "91",
+        "temporalidad en el puesto": "2025-11-05"
+    },
+    {
+        "employeeId": "3538",
+        "calificación evaluación de desempeño": "93",
+        "temporalidad en el puesto": "2025-11-05"
+    },
+    {
+        "employeeId": "3548",
+        "calificación evaluación de desempeño": "87",
+        "temporalidad en el puesto": "2025-11-05"
+    },
+    {
+        "employeeId": "3551",
+        "calificación evaluación de desempeño": "95",
+        "temporalidad en el puesto": "2025-11-05"
+    },
+    {
+        "employeeId": "3563",
+        "calificación evaluación de desempeño": "81",
+        "temporalidad en el puesto": "2025-11-05"
+    },
+    {
+        "employeeId": "3582",
+        "calificación evaluación de desempeño": "80",
+        "temporalidad en el puesto": "2025-11-05"
+    },
+    {
+        "employeeId": "3588",
+        "calificación evaluación de desempeño": "92",
+        "temporalidad en el puesto": "2025-11-05"
+    },
+    {
+        "employeeId": "3593",
+        "calificación evaluación de desempeño": "93",
+        "temporalidad en el puesto": "2025-11-05"
+    },
+    {
+        "employeeId": "3600",
+        "calificación evaluación de desempeño": "85",
+        "temporalidad en el puesto": "2025-11-05"
+    },
+    {
+        "employeeId": "3610",
+        "calificación evaluación de desempeño": "87",
+        "temporalidad en el puesto": "2025-11-05"
+    },
+    {
+        "employeeId": "3624",
+        "calificación evaluación de desempeño": "80",
+        "temporalidad en el puesto": "2025-11-05"
+    },
+    {
+        "employeeId": "3632",
+        "calificación evaluación de desempeño": "89",
+        "temporalidad en el puesto": "2025-11-05"
+    },
+    {
+        "employeeId": "3650",
+        "calificación evaluación de desempeño": "96",
+        "temporalidad en el puesto": "2026-01-07"
+    },
+    {
+        "employeeId": "3669",
+        "calificación evaluación de desempeño": "85",
+        "temporalidad en el puesto": "2025-11-05"
+    },
+    {
+        "employeeId": "3671",
+        "calificación evaluación de desempeño": "93",
+        "temporalidad en el puesto": "2025-11-05"
+    },
+    {
+        "employeeId": "3680",
+        "calificación evaluación de desempeño": "98",
+        "temporalidad en el puesto": "2025-11-05"
+    },
+    {
+        "employeeId": "3698",
+        "calificación evaluación de desempeño": "87",
+        "temporalidad en el puesto": "2025-11-05"
+    },
+    {
+        "employeeId": "3734",
+        "calificación evaluación de desempeño": "92",
+        "temporalidad en el puesto": "2025-11-05"
+    },
+    {
+        "employeeId": "3737",
+        "calificación evaluación de desempeño": "88",
+        "temporalidad en el puesto": "2025-11-05"
+    },
+    {
+        "employeeId": "3754",
+        "calificación evaluación de desempeño": "82",
+        "temporalidad en el puesto": "2025-11-05"
+    },
+    {
+        "employeeId": "3773",
+        "calificación evaluación de desempeño": "80",
+        "temporalidad en el puesto": "2026-01-07"
+    },
+    {
+        "employeeId": "3776",
+        "calificación evaluación de desempeño": "80",
+        "temporalidad en el puesto": "2025-11-05"
+    },
+    {
+        "employeeId": "3780",
+        "calificación evaluación de desempeño": "86",
+        "temporalidad en el puesto": "2025-11-05"
+    },
+    {
+        "employeeId": "3785",
+        "calificación evaluación de desempeño": "85",
+        "temporalidad en el puesto": "2025-11-05"
+    },
+    {
+        "employeeId": "3788",
+        "calificación evaluación de desempeño": "93",
+        "temporalidad en el puesto": "2025-11-05"
+    },
+    {
+        "employeeId": "3790",
+        "calificación evaluación de desempeño": "84",
+        "temporalidad en el puesto": "2025-11-05"
+    },
+    {
+        "employeeId": "3803",
+        "calificación evaluación de desempeño": "92",
+        "temporalidad en el puesto": "2026-01-07"
+    },
+    {
+        "employeeId": "3836",
+        "calificación evaluación de desempeño": "94",
+        "temporalidad en el puesto": "2026-01-07"
+    },
+    {
+        "employeeId": "3843",
+        "calificación evaluación de desempeño": "93",
+        "temporalidad en el puesto": "2026-01-07"
+    },
+    {
+        "employeeId": "3846",
+        "calificación evaluación de desempeño": "100",
+        "temporalidad en el puesto": "2026-01-07"
+    },
+    {
+        "employeeId": "3889",
+        "calificación evaluación de desempeño": "87",
+        "temporalidad en el puesto": "2026-01-07"
+    },
+    {
+        "employeeId": "3932",
+        "calificación evaluación de desempeño": "98",
+        "temporalidad en el puesto": "2026-01-07"
+    },
+    {
+        "employeeId": "54",
+        "calificación evaluación de desempeño": "82",
+        "temporalidad en el puesto": "2025-01-22"
+    }
+]

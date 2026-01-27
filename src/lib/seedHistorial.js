@@ -74,14 +74,30 @@ export const seedHistoryData = async () => {
         for (const [empId, data] of employeeRecords) {
             const positionReqs = requirementsMap.get(data.position) || [];
 
-            const approvedCourses = new Set(
+            // Enhanced: normalize approved courses for matching
+            const approvedCoursesSet = new Set(
                 data.history
                     .filter(h => h.status === 'approved')
                     .map(h => h.courseName)
             );
 
-            // Compliance Logic
-            const missing = positionReqs.filter(req => !approvedCourses.has(req));
+            // Also create a fuzzy-match set (remove accents, spaces variations)
+            const approvedNormalized = new Set(
+                data.history
+                    .filter(h => h.status === 'approved')
+                    .map(h => h.courseName.normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/\s+/g, ' ').trim())
+            );
+
+            // Compliance Logic with fuzzy matching
+            const missing = positionReqs.filter(req => {
+                // Try exact match first
+                if (approvedCoursesSet.has(req)) return false;
+                // Try normalized match
+                const reqNormalized = req.normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/\s+/g, ' ').trim();
+                if (approvedNormalized.has(reqNormalized)) return false;
+                return true; // Not found
+            });
+
             const complianceScore = positionReqs.length > 0
                 ? ((positionReqs.length - missing.length) / positionReqs.length) * 100
                 : 100;

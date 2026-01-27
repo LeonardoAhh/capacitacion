@@ -1,0 +1,802 @@
+[
+    {
+        "employeeId": "1106",
+        "fecha ultimo exámen": "2025-11-05",
+        "calificación obtenida": "100"
+    },
+    {
+        "employeeId": "1185",
+        "fecha ultimo exámen": "2025-10-22",
+        "calificación obtenida": "83"
+    },
+    {
+        "employeeId": "1369",
+        "fecha ultimo exámen": "2025-02-14",
+        "calificación obtenida": "61"
+    },
+    {
+        "employeeId": "1369",
+        "fecha ultimo exámen": "2025-12-03",
+        "calificación obtenida": "64"
+    },
+    {
+        "employeeId": "1467",
+        "fecha ultimo exámen": "2025-10-22",
+        "calificación obtenida": "100"
+    },
+    {
+        "employeeId": "1473",
+        "fecha ultimo exámen": "2025-12-03",
+        "calificación obtenida": "76"
+    },
+    {
+        "employeeId": "1671",
+        "fecha ultimo exámen": "0205-10-21",
+        "calificación obtenida": "95"
+    },
+    {
+        "employeeId": "1715",
+        "fecha ultimo exámen": "2025-10-22",
+        "calificación obtenida": "97"
+    },
+    {
+        "employeeId": "1719",
+        "fecha ultimo exámen": "2025-12-03",
+        "calificación obtenida": "72"
+    },
+    {
+        "employeeId": "1877",
+        "fecha ultimo exámen": "2025-10-20",
+        "calificación obtenida": "88"
+    },
+    {
+        "employeeId": "1997",
+        "fecha ultimo exámen": "2025-10-20",
+        "calificación obtenida": "75"
+    },
+    {
+        "employeeId": "1997",
+        "fecha ultimo exámen": "2025-03-25",
+        "calificación obtenida": "61"
+    },
+    {
+        "employeeId": "1998",
+        "fecha ultimo exámen": "2025-03-10",
+        "calificación obtenida": "51"
+    },
+    {
+        "employeeId": "2034",
+        "fecha ultimo exámen": "2025-10-21",
+        "calificación obtenida": "79"
+    },
+    {
+        "employeeId": "2091",
+        "fecha ultimo exámen": "2025-03-12",
+        "calificación obtenida": "70"
+    },
+    {
+        "employeeId": "2095",
+        "fecha ultimo exámen": "2025-10-21",
+        "calificación obtenida": "70"
+    },
+    {
+        "employeeId": "2095",
+        "fecha ultimo exámen": "2025-03-24",
+        "calificación obtenida": "66"
+    },
+    {
+        "employeeId": "2106",
+        "fecha ultimo exámen": "2025-10-31",
+        "calificación obtenida": "100"
+    },
+    {
+        "employeeId": "2201",
+        "fecha ultimo exámen": "2025-10-21",
+        "calificación obtenida": "73"
+    },
+    {
+        "employeeId": "2247",
+        "fecha ultimo exámen": "2025-10-31",
+        "calificación obtenida": "100"
+    },
+    {
+        "employeeId": "2249",
+        "fecha ultimo exámen": "2025-12-03",
+        "calificación obtenida": "68"
+    },
+    {
+        "employeeId": "2254",
+        "fecha ultimo exámen": "2025-10-21",
+        "calificación obtenida": "85"
+    },
+    {
+        "employeeId": "2277",
+        "fecha ultimo exámen": "2025-03-24",
+        "calificación obtenida": "71"
+    },
+    {
+        "employeeId": "2286",
+        "fecha ultimo exámen": "2025-12-03",
+        "calificación obtenida": "82"
+    },
+    {
+        "employeeId": "2305",
+        "fecha ultimo exámen": "2025-12-03",
+        "calificación obtenida": "64"
+    },
+    {
+        "employeeId": "2315",
+        "fecha ultimo exámen": "2025-10-21",
+        "calificación obtenida": "73"
+    },
+    {
+        "employeeId": "2324",
+        "fecha ultimo exámen": "2025-10-22",
+        "calificación obtenida": "76"
+    },
+    {
+        "employeeId": "2338",
+        "fecha ultimo exámen": "2025-10-21",
+        "calificación obtenida": "90"
+    },
+    {
+        "employeeId": "2342",
+        "fecha ultimo exámen": "2025-10-28",
+        "calificación obtenida": "90"
+    },
+    {
+        "employeeId": "2348",
+        "fecha ultimo exámen": "2025-09-24",
+        "calificación obtenida": "80"
+    },
+    {
+        "employeeId": "2391",
+        "fecha ultimo exámen": "2025-03-25",
+        "calificación obtenida": "59"
+    },
+    {
+        "employeeId": "2391",
+        "fecha ultimo exámen": "2025-10-21",
+        "calificación obtenida": "75"
+    },
+    {
+        "employeeId": "2393",
+        "fecha ultimo exámen": "2025-10-31",
+        "calificación obtenida": "100"
+    },
+    {
+        "employeeId": "2400",
+        "fecha ultimo exámen": "2025-10-31",
+        "calificación obtenida": "100"
+    },
+    {
+        "employeeId": "2420",
+        "fecha ultimo exámen": "2025-10-25",
+        "calificación obtenida": "84"
+    },
+    {
+        "employeeId": "2442",
+        "fecha ultimo exámen": "2025-12-09",
+        "calificación obtenida": "90"
+    },
+    {
+        "employeeId": "2442",
+        "fecha ultimo exámen": "2025-03-12",
+        "calificación obtenida": "100"
+    },
+    {
+        "employeeId": "2479",
+        "fecha ultimo exámen": "2025-10-28",
+        "calificación obtenida": "90"
+    },
+    {
+        "employeeId": "2494",
+        "fecha ultimo exámen": "2025-11-03",
+        "calificación obtenida": "44"
+    },
+    {
+        "employeeId": "2571",
+        "fecha ultimo exámen": "2025-08-06",
+        "calificación obtenida": "80"
+    },
+    {
+        "employeeId": "2576",
+        "fecha ultimo exámen": "2025-03-12",
+        "calificación obtenida": "100"
+    },
+    {
+        "employeeId": "2617",
+        "fecha ultimo exámen": "2025-10-21",
+        "calificación obtenida": "91"
+    },
+    {
+        "employeeId": "2618",
+        "fecha ultimo exámen": "2025-10-21",
+        "calificación obtenida": "82"
+    },
+    {
+        "employeeId": "2635",
+        "fecha ultimo exámen": "2025-10-29",
+        "calificación obtenida": "95"
+    },
+    {
+        "employeeId": "2645",
+        "fecha ultimo exámen": "2025-12-31",
+        "calificación obtenida": "84"
+    },
+    {
+        "employeeId": "2672",
+        "fecha ultimo exámen": "2025-10-31",
+        "calificación obtenida": "90"
+    },
+    {
+        "employeeId": "2676",
+        "fecha ultimo exámen": "2025-10-27",
+        "calificación obtenida": "80"
+    },
+    {
+        "employeeId": "2710",
+        "fecha ultimo exámen": "2025-12-03",
+        "calificación obtenida": "80"
+    },
+    {
+        "employeeId": "2714",
+        "fecha ultimo exámen": "2025-12-10",
+        "calificación obtenida": "83"
+    },
+    {
+        "employeeId": "2725",
+        "fecha ultimo exámen": "2025-10-30",
+        "calificación obtenida": "91"
+    },
+    {
+        "employeeId": "2727",
+        "fecha ultimo exámen": "2025-12-03",
+        "calificación obtenida": "60"
+    },
+    {
+        "employeeId": "2727",
+        "fecha ultimo exámen": "2025-10-31",
+        "calificación obtenida": "69"
+    },
+    {
+        "employeeId": "2777",
+        "fecha ultimo exámen": "2025-10-29",
+        "calificación obtenida": "96"
+    },
+    {
+        "employeeId": "2863",
+        "fecha ultimo exámen": "2025-12-03",
+        "calificación obtenida": "84"
+    },
+    {
+        "employeeId": "2874",
+        "fecha ultimo exámen": "2025-10-29",
+        "calificación obtenida": "90"
+    },
+    {
+        "employeeId": "2895",
+        "fecha ultimo exámen": "2025-10-30",
+        "calificación obtenida": "93"
+    },
+    {
+        "employeeId": "2912",
+        "fecha ultimo exámen": "2025-03-26",
+        "calificación obtenida": "65"
+    },
+    {
+        "employeeId": "2916",
+        "fecha ultimo exámen": "2025-10-27",
+        "calificación obtenida": "95"
+    },
+    {
+        "employeeId": "2932",
+        "fecha ultimo exámen": "2025-10-31",
+        "calificación obtenida": "100"
+    },
+    {
+        "employeeId": "2934",
+        "fecha ultimo exámen": "2025-03-20",
+        "calificación obtenida": "59"
+    },
+    {
+        "employeeId": "2934",
+        "fecha ultimo exámen": "2025-10-21",
+        "calificación obtenida": "72"
+    },
+    {
+        "employeeId": "2942",
+        "fecha ultimo exámen": "2025-10-21",
+        "calificación obtenida": "75"
+    },
+    {
+        "employeeId": "2942",
+        "fecha ultimo exámen": "2025-03-26",
+        "calificación obtenida": "77"
+    },
+    {
+        "employeeId": "2943",
+        "fecha ultimo exámen": "2025-02-07",
+        "calificación obtenida": "77"
+    },
+    {
+        "employeeId": "2946",
+        "fecha ultimo exámen": "2025-12-03",
+        "calificación obtenida": "91"
+    },
+    {
+        "employeeId": "2949",
+        "fecha ultimo exámen": "2025-10-21",
+        "calificación obtenida": "95"
+    },
+    {
+        "employeeId": "2950",
+        "fecha ultimo exámen": "2025-12-03",
+        "calificación obtenida": "72"
+    },
+    {
+        "employeeId": "2951",
+        "fecha ultimo exámen": "2025-12-03",
+        "calificación obtenida": "80"
+    },
+    {
+        "employeeId": "2974",
+        "fecha ultimo exámen": "2025-10-30",
+        "calificación obtenida": "90"
+    },
+    {
+        "employeeId": "2981",
+        "fecha ultimo exámen": "2025-10-21",
+        "calificación obtenida": "96"
+    },
+    {
+        "employeeId": "2994",
+        "fecha ultimo exámen": "2025-10-28",
+        "calificación obtenida": "90"
+    },
+    {
+        "employeeId": "2996",
+        "fecha ultimo exámen": "2025-10-31",
+        "calificación obtenida": "100"
+    },
+    {
+        "employeeId": "3079",
+        "fecha ultimo exámen": "2025-10-21",
+        "calificación obtenida": "88"
+    },
+    {
+        "employeeId": "3079",
+        "fecha ultimo exámen": "2025-06-02",
+        "calificación obtenida": "65"
+    },
+    {
+        "employeeId": "3093",
+        "fecha ultimo exámen": "2025-03-25",
+        "calificación obtenida": "75"
+    },
+    {
+        "employeeId": "3093",
+        "fecha ultimo exámen": "2025-10-21",
+        "calificación obtenida": "84"
+    },
+    {
+        "employeeId": "3105",
+        "fecha ultimo exámen": "2025-10-31",
+        "calificación obtenida": "90"
+    },
+    {
+        "employeeId": "3143",
+        "fecha ultimo exámen": "2025-10-31",
+        "calificación obtenida": "86"
+    },
+    {
+        "employeeId": "3144",
+        "fecha ultimo exámen": "2025-10-21",
+        "calificación obtenida": "100"
+    },
+    {
+        "employeeId": "3163",
+        "fecha ultimo exámen": "2025-10-31",
+        "calificación obtenida": "93"
+    },
+    {
+        "employeeId": "3166",
+        "fecha ultimo exámen": "2025-10-21",
+        "calificación obtenida": "83"
+    },
+    {
+        "employeeId": "3166",
+        "fecha ultimo exámen": "2025-02-14",
+        "calificación obtenida": "69"
+    },
+    {
+        "employeeId": "3168",
+        "fecha ultimo exámen": "2025-10-31",
+        "calificación obtenida": "100"
+    },
+    {
+        "employeeId": "3187",
+        "fecha ultimo exámen": "2025-12-03",
+        "calificación obtenida": "92"
+    },
+    {
+        "employeeId": "3188",
+        "fecha ultimo exámen": "2025-12-03",
+        "calificación obtenida": "88"
+    },
+    {
+        "employeeId": "3190",
+        "fecha ultimo exámen": "2025-10-29",
+        "calificación obtenida": "93"
+    },
+    {
+        "employeeId": "3202",
+        "fecha ultimo exámen": "2025-12-03",
+        "calificación obtenida": "60"
+    },
+    {
+        "employeeId": "3232",
+        "fecha ultimo exámen": "2025-10-30",
+        "calificación obtenida": "83"
+    },
+    {
+        "employeeId": "3256",
+        "fecha ultimo exámen": "2025-12-03",
+        "calificación obtenida": "64"
+    },
+    {
+        "employeeId": "3257",
+        "fecha ultimo exámen": "2025-03-20",
+        "calificación obtenida": "59"
+    },
+    {
+        "employeeId": "3263",
+        "fecha ultimo exámen": "2025-12-03",
+        "calificación obtenida": "65"
+    },
+    {
+        "employeeId": "3266",
+        "fecha ultimo exámen": "2025-12-10",
+        "calificación obtenida": "100"
+    },
+    {
+        "employeeId": "3266",
+        "fecha ultimo exámen": "2025-03-24",
+        "calificación obtenida": "79"
+    },
+    {
+        "employeeId": "3266",
+        "fecha ultimo exámen": "2025-10-21",
+        "calificación obtenida": "90"
+    },
+    {
+        "employeeId": "3276",
+        "fecha ultimo exámen": "2025-10-22",
+        "calificación obtenida": "80"
+    },
+    {
+        "employeeId": "3316",
+        "fecha ultimo exámen": "2025-02-06",
+        "calificación obtenida": "67"
+    },
+    {
+        "employeeId": "3324",
+        "fecha ultimo exámen": "2025-10-21",
+        "calificación obtenida": "70"
+    },
+    {
+        "employeeId": "3366",
+        "fecha ultimo exámen": "2025-02-16",
+        "calificación obtenida": "77"
+    },
+    {
+        "employeeId": "3366",
+        "fecha ultimo exámen": "2025-10-30",
+        "calificación obtenida": "73"
+    },
+    {
+        "employeeId": "3375",
+        "fecha ultimo exámen": "2025-02-16",
+        "calificación obtenida": "71"
+    },
+    {
+        "employeeId": "3375",
+        "fecha ultimo exámen": "2025-12-03",
+        "calificación obtenida": "53"
+    },
+    {
+        "employeeId": "3381",
+        "fecha ultimo exámen": "2025-10-27",
+        "calificación obtenida": "76"
+    },
+    {
+        "employeeId": "3389",
+        "fecha ultimo exámen": "2025-10-22",
+        "calificación obtenida": "80"
+    },
+    {
+        "employeeId": "3396",
+        "fecha ultimo exámen": "2025-12-08",
+        "calificación obtenida": "56"
+    },
+    {
+        "employeeId": "3398",
+        "fecha ultimo exámen": "2025-10-27",
+        "calificación obtenida": "93"
+    },
+    {
+        "employeeId": "3403",
+        "fecha ultimo exámen": "2025-10-27",
+        "calificación obtenida": "80"
+    },
+    {
+        "employeeId": "3409",
+        "fecha ultimo exámen": "2025-02-06",
+        "calificación obtenida": "61"
+    },
+    {
+        "employeeId": "3409",
+        "fecha ultimo exámen": "2025-12-03",
+        "calificación obtenida": "84"
+    },
+    {
+        "employeeId": "3414",
+        "fecha ultimo exámen": "2025-12-03",
+        "calificación obtenida": "91"
+    },
+    {
+        "employeeId": "3419",
+        "fecha ultimo exámen": "2025-12-05",
+        "calificación obtenida": "76"
+    },
+    {
+        "employeeId": "3432",
+        "fecha ultimo exámen": "2025-12-03",
+        "calificación obtenida": "64"
+    },
+    {
+        "employeeId": "3450",
+        "fecha ultimo exámen": "2025-03-12",
+        "calificación obtenida": "100"
+    },
+    {
+        "employeeId": "3471",
+        "fecha ultimo exámen": "2025-10-31",
+        "calificación obtenida": "78"
+    },
+    {
+        "employeeId": "3471",
+        "fecha ultimo exámen": "2025-02-16",
+        "calificación obtenida": "75"
+    },
+    {
+        "employeeId": "3473",
+        "fecha ultimo exámen": "2025-10-31",
+        "calificación obtenida": "100"
+    },
+    {
+        "employeeId": "3511",
+        "fecha ultimo exámen": "2025-12-03",
+        "calificación obtenida": "51"
+    },
+    {
+        "employeeId": "3524",
+        "fecha ultimo exámen": "2025-12-05",
+        "calificación obtenida": "86"
+    },
+    {
+        "employeeId": "3531",
+        "fecha ultimo exámen": "2025-12-03",
+        "calificación obtenida": "80"
+    },
+    {
+        "employeeId": "3535",
+        "fecha ultimo exámen": "2025-10-21",
+        "calificación obtenida": "78"
+    },
+    {
+        "employeeId": "3536",
+        "fecha ultimo exámen": "2025-10-31",
+        "calificación obtenida": "89"
+    },
+    {
+        "employeeId": "3537",
+        "fecha ultimo exámen": "2025-10-31",
+        "calificación obtenida": "100"
+    },
+    {
+        "employeeId": "3538",
+        "fecha ultimo exámen": "2025-10-21",
+        "calificación obtenida": "72"
+    },
+    {
+        "employeeId": "3548",
+        "fecha ultimo exámen": "2025-10-28",
+        "calificación obtenida": "90"
+    },
+    {
+        "employeeId": "3551",
+        "fecha ultimo exámen": "2025-10-20",
+        "calificación obtenida": "96"
+    },
+    {
+        "employeeId": "3563",
+        "fecha ultimo exámen": "2025-10-21",
+        "calificación obtenida": "78"
+    },
+    {
+        "employeeId": "3576",
+        "fecha ultimo exámen": "2025-12-03",
+        "calificación obtenida": "73"
+    },
+    {
+        "employeeId": "3582",
+        "fecha ultimo exámen": "2025-11-01",
+        "calificación obtenida": "94"
+    },
+    {
+        "employeeId": "3588",
+        "fecha ultimo exámen": "2025-10-21",
+        "calificación obtenida": "70"
+    },
+    {
+        "employeeId": "3593",
+        "fecha ultimo exámen": "2025-10-21",
+        "calificación obtenida": "85"
+    },
+    {
+        "employeeId": "3600",
+        "fecha ultimo exámen": "2025-10-21",
+        "calificación obtenida": "73"
+    },
+    {
+        "employeeId": "3610",
+        "fecha ultimo exámen": "2025-10-31",
+        "calificación obtenida": "94"
+    },
+    {
+        "employeeId": "3611",
+        "fecha ultimo exámen": "2025-10-21",
+        "calificación obtenida": "94"
+    },
+    {
+        "employeeId": "3624",
+        "fecha ultimo exámen": "2025-10-20",
+        "calificación obtenida": "85"
+    },
+    {
+        "employeeId": "3632",
+        "fecha ultimo exámen": "2025-10-22",
+        "calificación obtenida": "84"
+    },
+    {
+        "employeeId": "3650",
+        "fecha ultimo exámen": "2025-12-04",
+        "calificación obtenida": "89"
+    },
+    {
+        "employeeId": "3663",
+        "fecha ultimo exámen": "2025-10-21",
+        "calificación obtenida": "90"
+    },
+    {
+        "employeeId": "3669",
+        "fecha ultimo exámen": "2025-10-21",
+        "calificación obtenida": "73"
+    },
+    {
+        "employeeId": "3671",
+        "fecha ultimo exámen": "2025-10-29",
+        "calificación obtenida": "90"
+    },
+    {
+        "employeeId": "3672",
+        "fecha ultimo exámen": "2025-12-03",
+        "calificación obtenida": "53"
+    },
+    {
+        "employeeId": "3680",
+        "fecha ultimo exámen": "2025-10-22",
+        "calificación obtenida": "75"
+    },
+    {
+        "employeeId": "3698",
+        "fecha ultimo exámen": "2025-10-21",
+        "calificación obtenida": "84"
+    },
+    {
+        "employeeId": "3734",
+        "fecha ultimo exámen": "2025-10-27",
+        "calificación obtenida": "70"
+    },
+    {
+        "employeeId": "3737",
+        "fecha ultimo exámen": "2025-10-31",
+        "calificación obtenida": "100"
+    },
+    {
+        "employeeId": "3738",
+        "fecha ultimo exámen": "2025-10-31",
+        "calificación obtenida": "93"
+    },
+    {
+        "employeeId": "3754",
+        "fecha ultimo exámen": "2025-10-30",
+        "calificación obtenida": "79"
+    },
+    {
+        "employeeId": "3773",
+        "fecha ultimo exámen": "2025-12-08",
+        "calificación obtenida": "86"
+    },
+    {
+        "employeeId": "3776",
+        "fecha ultimo exámen": "2025-10-31",
+        "calificación obtenida": "90"
+    },
+    {
+        "employeeId": "3780",
+        "fecha ultimo exámen": "2025-10-30",
+        "calificación obtenida": "73"
+    },
+    {
+        "employeeId": "3785",
+        "fecha ultimo exámen": "2025-10-27",
+        "calificación obtenida": "90"
+    },
+    {
+        "employeeId": "3788",
+        "fecha ultimo exámen": "2025-10-28",
+        "calificación obtenida": "91"
+    },
+    {
+        "employeeId": "3790",
+        "fecha ultimo exámen": "2025-10-25",
+        "calificación obtenida": "85"
+    },
+    {
+        "employeeId": "3796",
+        "fecha ultimo exámen": "2025-12-03",
+        "calificación obtenida": "86"
+    },
+    {
+        "employeeId": "3803",
+        "fecha ultimo exámen": "2025-12-03",
+        "calificación obtenida": "75"
+    },
+    {
+        "employeeId": "3836",
+        "fecha ultimo exámen": "2025-12-03",
+        "calificación obtenida": "80"
+    },
+    {
+        "employeeId": "3843",
+        "fecha ultimo exámen": "2025-12-03",
+        "calificación obtenida": "93"
+    },
+    {
+        "employeeId": "3846",
+        "fecha ultimo exámen": "2025-12-03",
+        "calificación obtenida": "97"
+    },
+    {
+        "employeeId": "3889",
+        "fecha ultimo exámen": "2025-12-03",
+        "calificación obtenida": "93"
+    },
+    {
+        "employeeId": "3909",
+        "fecha ultimo exámen": "2025-12-31",
+        "calificación obtenida": "60"
+    },
+    {
+        "employeeId": "3932",
+        "fecha ultimo exámen": "2025-12-03",
+        "calificación obtenida": "80"
+    },
+    {
+        "employeeId": "3942",
+        "fecha ultimo exámen": "2025-12-03",
+        "calificación obtenida": "46"
+    }
+]

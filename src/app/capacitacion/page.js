@@ -168,6 +168,22 @@ export default function CapacitacionPage() {
                                 </CardContent>
                             </Card>
                         </Link>
+
+                        {/* Promociones (New) */}
+                        <Link href="/capacitacion/promociones" className={styles.moduleCard}>
+                            <Card hover={false} className={styles.cardInner}>
+                                <CardContent>
+                                    <div className={`${styles.iconWrapper} ${styles.iconGreen}`}>
+                                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                            <path d="M12 2L15 8L22 9L17 14L18 21L12 18L6 21L7 14L2 9L9 8L12 2Z" />
+                                        </svg>
+                                    </div>
+                                    <div className={styles.content}>
+                                        <h2>Control de Promociones</h2>
+                                    </div>
+                                </CardContent>
+                            </Card>
+                        </Link>
                     </div>
                 </div>
             </main>
