@@ -39,7 +39,7 @@ export const useEmployees = () => {
             let q;
 
             // Basic query constraints
-            const baseConstraints = [orderBy('createdAt', 'desc')];
+            const baseConstraints = [orderBy('employeeId', 'asc')];
 
             if (searchTerm) {
                 // NOTE: Firestore doesn't support simple full-text search. 

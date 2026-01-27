@@ -32,6 +32,7 @@ export default function PromocionesPage() {
     const [statusFilter, setStatusFilter] = useState('all'); // all, eligible, blocked, nearEligible
     const [deptFilter, setDeptFilter] = useState('Todos');
     const [departments, setDepartments] = useState([]);
+    const [shiftFilter, setShiftFilter] = useState('Todos');
 
     // View mode and sorting
     const [viewMode, setViewMode] = useState('cards'); // cards, table
@@ -80,7 +81,7 @@ export default function PromocionesPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
     useEffect(() => {
         filterEmployees();
-    }, [searchTerm, statusFilter, deptFilter, employees, promotionRules, sortBy, sortOrder]);
+    }, [searchTerm, statusFilter, deptFilter, shiftFilter, employees, promotionRules, sortBy, sortOrder]);
 
     const loadData = async () => {
         setLoading(true);
@@ -287,6 +288,44 @@ export default function PromocionesPage() {
         }
     };
 
+    // Import shift data from JSON
+    const importShiftData = async () => {
+        if (!confirm('¿Importar datos de turnos desde turnos.json? Esto actualizará los empleados existentes.')) return;
+
+        setLoading(true);
+        try {
+            const rawData = await import('@/data/turnos.json');
+            const shiftDataArray = rawData.default || rawData;
+
+            let updated = 0;
+            let notFound = 0;
+
+            for (const data of shiftDataArray) {
+                // Find employee by employeeId
+                const employee = employees.find(e => e.employeeId === data.employeeId);
+
+                if (employee && employee.id) {
+                    // Update employee's shift in Firebase
+                    const empRef = doc(db, 'training_records', employee.id);
+                    await updateDoc(empRef, {
+                        shift: data.turno
+                    });
+                    updated++;
+                } else {
+                    notFound++;
+                }
+            }
+
+            toast.success('Turnos Importados', `Se actualizaron ${updated} empleados. ${notFound > 0 ? `${notFound} no encontrados.` : ''}`);
+            await loadData();
+        } catch (err) {
+            console.error('Error importing shift data:', err);
+            toast.error('Error', 'No se pudieron importar los turnos');
+        } finally {
+            setLoading(false);
+        }
+    };
+
     const filterEmployees = () => {
         let result = employees.filter(emp => {
             // Only include employees that have a matching promotion rule
@@ -309,6 +348,11 @@ export default function PromocionesPage() {
         // Department filter
         if (deptFilter !== 'Todos') {
             result = result.filter(e => e.department === deptFilter);
+        }
+
+        // Shift filter
+        if (shiftFilter !== 'Todos') {
+            result = result.filter(e => e.shift === shiftFilter);
         }
 
         // Status filter
@@ -585,6 +629,73 @@ export default function PromocionesPage() {
         </span>
     );
 
+    // Export to Excel
+    const handleExportExcel = async () => {
+        try {
+            const XLSX = await import('xlsx');
+
+            // Prepare all employees with promotion rules (unfiltered)
+            const allEmployeesWithRules = employees.filter(emp => {
+                const rule = promotionRules.find(r =>
+                    r.currentPosition === emp.position?.toUpperCase()?.trim()
+                );
+                return rule !== undefined;
+            });
+
+            // Build rows
+            const headers = [
+                'ID Empleado',
+                'Nombre',
+                'Puesto Actual',
+                'Promoción a',
+                'Departamento',
+                'Turno',
+                'Desempeño (%)',
+                'Temporalidad (meses)',
+                'Matriz (%)',
+                'Examen (%)',
+                'Criterios Cumplidos',
+                'Estado',
+                'Citado para Examen'
+            ];
+
+            const rows = allEmployeesWithRules.map(emp => {
+                const rule = promotionRules.find(r =>
+                    r.currentPosition === emp.position?.toUpperCase()?.trim()
+                );
+                const criteria = checkPromotionCriteria(emp, rule);
+
+                return [
+                    emp.employeeId || '',
+                    emp.name || '',
+                    emp.position || '',
+                    rule?.promotionTo || '',
+                    emp.department || '',
+                    emp.shift || '',
+                    criteria.performance.current,
+                    criteria.temporality.current,
+                    criteria.matrix.current,
+                    criteria.exam.current !== null ? criteria.exam.current : '',
+                    `${criteria.overall.metCount}/4`,
+                    criteria.overall.eligible ? 'APTO' : 'NO APTO',
+                    emp.promotionData?.scheduledExam ? 'Sí' : 'No'
+                ];
+            });
+
+            const ws = XLSX.utils.aoa_to_sheet([headers, ...rows]);
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, 'Promociones');
+
+            const timestamp = new Date().toISOString().split('T')[0];
+            XLSX.writeFile(wb, `reporte_promociones_${timestamp}.xlsx`);
+
+            toast.success('Exportado', `Se exportaron ${rows.length} empleados`);
+        } catch (err) {
+            console.error('Error exporting:', err);
+            toast.error('Error', 'No se pudo exportar el reporte');
+        }
+    };
+
     return (
         <>
             <Navbar />
@@ -595,9 +706,14 @@ export default function PromocionesPage() {
                         <h1>Control de Promociones</h1>
                         <p>Monitoreo de elegibilidad para cambio de categoría</p>
                     </div>
-                    <Button variant="outline" onClick={() => setRulesModal(true)}>
-                        ⚙️ Reglas ({promotionRules.length})
-                    </Button>
+                    <div style={{ display: 'flex', gap: '0.5rem' }}>
+                        <Button variant="outline" onClick={handleExportExcel}>
+                            📤 Exportar Excel
+                        </Button>
+                        <Button variant="outline" onClick={() => setRulesModal(true)}>
+                            ⚙️ Reglas ({promotionRules.length})
+                        </Button>
+                    </div>
                 </div>
 
                 {/* Filters */}
@@ -636,6 +752,22 @@ export default function PromocionesPage() {
                                 <option value="nearEligible">🔶 Próximos (3/4)</option>
                                 <option value="blocked">❌ No Aptos</option>
                                 <option value="scheduledExam">📝 Por Aplicar Examen</option>
+                            </select>
+                        </div>
+                        <div className={styles.filterGroup}>
+                            <label>Turno</label>
+                            <select
+                                value={shiftFilter}
+                                onChange={(e) => setShiftFilter(e.target.value)}
+                                className={styles.select}
+                                style={{ minWidth: '100px' }}
+                            >
+                                <option value="Todos">Todos</option>
+                                <option value="1">1</option>
+                                <option value="2">2</option>
+                                <option value="3">3</option>
+                                <option value="4">4</option>
+                                <option value="5">5</option>
                             </select>
                         </div>
                         <div className={styles.filterGroup}>
@@ -735,7 +867,11 @@ export default function PromocionesPage() {
                                                                 </div>
                                                             </td>
                                                             <td>{emp.position}</td>
-                                                            <td>{emp.department}</td>
+
+                                                            <td>
+                                                                {emp.department}
+                                                                {emp.shift && <div style={{ fontSize: '0.75rem', color: 'var(--text-tertiary)' }}>Turno: {emp.shift}</div>}
+                                                            </td>
                                                             <td>
                                                                 <div className={styles.progressMini}>
                                                                     <div
@@ -805,6 +941,7 @@ export default function PromocionesPage() {
                                                         <div className={styles.empName}>ID {emp.employeeId} {emp.name}</div>
                                                         <div className={styles.empPosition}>
                                                             {emp.position} → {rule.promotionTo}
+                                                            {emp.shift && <span style={{ marginLeft: '0.5rem', fontSize: '0.8em', color: 'var(--text-secondary)' }}>• T{emp.shift}</span>}
                                                             {emp.promotionData?.scheduledExam && (
                                                                 <span className={styles.scheduledBadge}>📝 Examen</span>
                                                             )}
@@ -1188,6 +1325,17 @@ export default function PromocionesPage() {
                             <h4>Reglas Existentes ({promotionRules.length})</h4>
                             <Button variant="ghost" size="sm" onClick={reloadRulesFromJSON}>
                                 🔄 Recargar desde JSON
+                            </Button>
+                        </div>
+                        <div className={styles.importActions} style={{ marginBottom: '1rem', display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
+                            <Button variant="outline" size="sm" onClick={importPromotionData}>
+                                📥 Importar Eval. Desempeño
+                            </Button>
+                            <Button variant="outline" size="sm" onClick={importExamData}>
+                                📥 Importar Exámenes
+                            </Button>
+                            <Button variant="outline" size="sm" onClick={importShiftData}>
+                                📥 Importar Turnos
                             </Button>
                         </div>
                         <div className={styles.rulesTable}>
