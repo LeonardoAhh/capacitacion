@@ -8,6 +8,7 @@ import { useToast } from '@/components/ui/Toast/Toast';
 import { Dialog, DialogHeader, DialogTitle, DialogBody, DialogFooter, DialogClose } from '@/components/ui/Dialog/Dialog';
 import { db } from '@/lib/firebase';
 import { collection, getDocs, addDoc, updateDoc, deleteDoc, doc, query, where } from 'firebase/firestore';
+import { updateCourseValidity } from '@/lib/updateCourseValidity';
 import styles from './page.module.css';
 
 export default function CursosPage() {
@@ -22,6 +23,7 @@ export default function CursosPage() {
     const [editingCourse, setEditingCourse] = useState(null);
     const [showDeleteModal, setShowDeleteModal] = useState(false);
     const [deletingCourse, setDeletingCourse] = useState(null);
+    const [updatingValidity, setUpdatingValidity] = useState(false);
     const [deleteWarning, setDeleteWarning] = useState('');
 
     // Form fields
@@ -166,6 +168,27 @@ export default function CursosPage() {
         return colors[cat] || colors['GENERAL'];
     };
 
+    const handleUpdateValidity = async () => {
+        setUpdatingValidity(true);
+        try {
+            const result = await updateCourseValidity();
+            if (result.success) {
+                toast.success("Éxito", result.message);
+                if (result.notFound.length > 0) {
+                    toast.info("Info", `${result.notFound.length} cursos no tienen información de vigencia en el archivo.`);
+                }
+                loadCourses(); // Reload to show updated data
+            } else {
+                toast.error("Error", result.message);
+            }
+        } catch (error) {
+            console.error("Error updating validity:", error);
+            toast.error("Error", "No se pudo actualizar la vigencia de los cursos");
+        } finally {
+            setUpdatingValidity(false);
+        }
+    };
+
     return (
         <>
             <Navbar />
@@ -183,6 +206,17 @@ export default function CursosPage() {
                             <h1>Catálogo de Cursos</h1>
                         </div>
                         <div className={styles.headerRight}>
+                            <Button
+                                variant="outline"
+                                onClick={handleUpdateValidity}
+                                disabled={updatingValidity}
+                            >
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                    <path d="M21 12a9 9 0 1 1-9-9c2.52 0 4.93 1 6.74 2.74L21 8" />
+                                    <path d="M21 3v5h-5" />
+                                </svg>
+                                {updatingValidity ? 'Actualizando...' : 'Actualizar Vigencias'}
+                            </Button>
                             <Button onClick={openCreateModal}>
                                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                                     <line x1="12" y1="5" x2="12" y2="19" />
@@ -273,15 +307,17 @@ export default function CursosPage() {
                                                 {course.instructor}
                                             </div>
                                         )}
-                                        {course.validityYears > 0 && (
-                                            <div className={styles.metaItem}>
+                                        {(course.validityYears > 0 || course.renewalPeriod) && (
+                                            <div className={styles.metaItem} style={{ color: course.validityYears > 0 ? '#f59e0b' : '#10b981' }}>
                                                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                                                     <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
                                                     <line x1="16" y1="2" x2="16" y2="6" />
                                                     <line x1="8" y1="2" x2="8" y2="6" />
                                                     <line x1="3" y1="10" x2="21" y2="10" />
                                                 </svg>
-                                                Vigencia: {course.validityYears} año(s)
+                                                {course.validityYears > 0
+                                                    ? `Renovar cada ${course.validityYears} año(s)`
+                                                    : 'Curso de 1 sola vez'}
                                             </div>
                                         )}
                                     </div>

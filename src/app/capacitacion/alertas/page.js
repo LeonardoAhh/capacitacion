@@ -24,8 +24,9 @@ export default function AlertsPage() {
             const courseValidityMap = {};
             coursesSnap.forEach(doc => {
                 const data = doc.data();
-                if (data.validityMonths) {
-                    courseValidityMap[data.name] = data.validityMonths;
+                // Use validityYears and convert to months (validityYears * 12)
+                if (data.validityYears && data.validityYears > 0) {
+                    courseValidityMap[data.name] = data.validityYears * 12;
                 }
             });
 

@@ -116,7 +116,7 @@ export default function CapacitacionPage() {
                         </Link>
 
                         {/* Catálogo (New) */}
-                        <Link href="/capacitacion/catalogo" className={styles.moduleCard}>
+                        <Link href="/capacitacion/cursos" className={styles.moduleCard}>
                             <Card hover={false} className={styles.cardInner}>
                                 <CardContent>
                                     <div className={`${styles.iconWrapper} ${styles.iconOrange}`}>
@@ -126,7 +126,7 @@ export default function CapacitacionPage() {
                                         </svg>
                                     </div>
                                     <div className={styles.content}>
-                                        <h2>Catálogo de Cursos</h2>
+                                        <h2>Vigencia de Cursos</h2>
                                     </div>
                                 </CardContent>
                             </Card>
@@ -163,7 +163,7 @@ export default function CapacitacionPage() {
                                         </svg>
                                     </div>
                                     <div className={styles.content}>
-                                        <h2>Plan Anual</h2>
+                                        <h2>Calendario de Capacitación</h2>
                                     </div>
                                 </CardContent>
                             </Card>
@@ -179,7 +179,24 @@ export default function CapacitacionPage() {
                                         </svg>
                                     </div>
                                     <div className={styles.content}>
-                                        <h2>Control de Promociones</h2>
+                                        <h2>Cambios de categorías</h2>
+                                    </div>
+                                </CardContent>
+                            </Card>
+                        </Link>
+
+                        {/* Cumplimiento por Curso */}
+                        <Link href="/capacitacion/cumplimiento" className={styles.moduleCard}>
+                            <Card hover={false} className={styles.cardInner}>
+                                <CardContent>
+                                    <div className={`${styles.iconWrapper} ${styles.iconBlue}`}>
+                                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
+                                            <polyline points="22 4 12 14.01 9 11.01" />
+                                        </svg>
+                                    </div>
+                                    <div className={styles.content}>
+                                        <h2>Cumplimiento por Curso</h2>
                                     </div>
                                 </CardContent>
                             </Card>
