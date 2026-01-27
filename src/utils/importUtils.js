@@ -108,10 +108,46 @@ const parseExcelDate = (dateValue) => {
  * Normalize record to standard format
  */
 const normalizeRecord = (record) => {
+    // Normalize date - handle DD/MM/YYYY or YYYY-MM-DD
+    let normalizedDate = null;
+
+    if (record.date && typeof record.date === 'string') {
+        const dateStr = record.date.trim();
+
+        // Check if date is already in DD/MM/YYYY format
+        if (dateStr.includes('/')) {
+            const parts = dateStr.split('/');
+            // Validate it has exactly 3 parts (DD/MM/YYYY)
+            if (parts.length === 3 && parts[0] && parts[1] && parts[2]) {
+                // Already in correct format, keep as is
+                normalizedDate = dateStr;
+            }
+        }
+        // Check if date is in YYYY-MM-DD format (from date input)
+        else if (dateStr.includes('-')) {
+            const parts = dateStr.split('-');
+            // Must have exactly 3 parts: year, month, day
+            if (parts.length === 3 && parts[0] && parts[1] && parts[2]) {
+                const [year, month, day] = parts;
+                // Convert to DD/MM/YYYY
+                normalizedDate = `${day}/${month}/${year}`;
+            }
+        }
+    }
+
+    // If we couldn't parse the date, use today's date
+    if (!normalizedDate) {
+        const today = new Date();
+        const day = String(today.getDate()).padStart(2, '0');
+        const month = String(today.getMonth() + 1).padStart(2, '0');
+        const year = today.getFullYear();
+        normalizedDate = `${day}/${month}/${year}`;
+    }
+
     return {
         employeeId: String(record.employeeId || '').trim().toUpperCase(),
         courseName: String(record.courseName || '').trim().toUpperCase(),
-        date: record.date || new Date().toISOString().split('T')[0],
+        date: normalizedDate,
         score: Math.min(100, Math.max(0, parseFloat(record.score) || 0))
     };
 };

@@ -319,9 +319,8 @@ export default function RegistroPage() {
                     const currentHistory = currentData.history || [];
                     const currentMatrix = currentData.matrix || {};
 
-                    // Format date
-                    const [y, m, d] = record.date.split('-');
-                    const formattedDate = `${d}/${m}/${y}`;
+                    // Date is already in DD/MM/YYYY format from normalizeRecord
+                    const formattedDate = record.date;
                     const status = record.score >= 70 ? 'approved' : 'failed';
 
                     // Check if course already in history
