@@ -403,7 +403,7 @@ export default function PerfilPage() {
                                                         <div className={styles.criteriaInfo}>
                                                             <span className={styles.criteriaName}>Matriz de Capacitación</span>
                                                             <span className={styles.criteriaDetail}>
-                                                                {employee.compliance || 0}% / {promotionRule.matrixMinCoverage || 90}%
+                                                                {employee.matrix?.compliancePercentage ?? 0}% / {promotionRule.matrixMinCoverage || 60}%
                                                             </span>
                                                         </div>
                                                     </div>
