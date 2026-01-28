@@ -117,6 +117,23 @@ export default function CapacitacionPage() {
                             </Card>
                         </Link>
 
+                        {/* Perfil de Empleado */}
+                        <Link href="/capacitacion/perfil" className={styles.moduleCard}>
+                            <Card hover={false} className={styles.cardInner}>
+                                <CardContent>
+                                    <div className={`${styles.iconWrapper} ${styles.iconBlue}`}>
+                                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                                            <circle cx="12" cy="7" r="4" />
+                                        </svg>
+                                    </div>
+                                    <div className={styles.content}>
+                                        <h2>Perfil de Empleado</h2>
+                                    </div>
+                                </CardContent>
+                            </Card>
+                        </Link>
+
                         {/* Análisis */}
                         <Link href="/capacitacion/analisis" className={styles.moduleCard}>
                             <Card hover={false} className={styles.cardInner}>

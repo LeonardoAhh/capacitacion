@@ -36,7 +36,21 @@ export default function EmpleadosPage() {
     const [viewingEmp, setViewingEmp] = useState(null); // Detail Mode
     const [isCreating, setIsCreating] = useState(false); // Create Mode
 
-    const [formData, setFormData] = useState({ id: '', name: '', position: '', department: '', curp: '', occupation: '' });
+    const [formData, setFormData] = useState({
+        id: '',
+        name: '',
+        position: '',
+        department: '',
+        curp: '',
+        occupation: '',
+        area: '',
+        education: '',
+        startDate: '',
+        shift: '',
+        performanceScore: '',
+        performancePeriod: '',
+        positionStartDate: ''
+    });
     const [saving, setSaving] = useState(false);
 
     useEffect(() => {
@@ -96,7 +110,21 @@ export default function EmpleadosPage() {
     };
 
     const handleCreate = () => {
-        setFormData({ id: '', name: '', position: '', department: '', curp: '', occupation: '' });
+        setFormData({
+            id: '',
+            name: '',
+            position: '',
+            department: '',
+            curp: '',
+            occupation: '',
+            area: '',
+            education: '',
+            startDate: '',
+            shift: '',
+            performanceScore: '',
+            performancePeriod: '',
+            positionStartDate: ''
+        });
         setIsCreating(true);
     };
 
@@ -107,7 +135,14 @@ export default function EmpleadosPage() {
             position: emp.position || '',
             department: emp.department || '',
             curp: emp.curp || '',
-            occupation: emp.occupation || ''
+            occupation: emp.occupation || '',
+            area: emp.area || '',
+            education: emp.education || '',
+            startDate: emp.startDate || '',
+            shift: emp.shift || '',
+            performanceScore: emp.promotionData?.performanceScore || '',
+            performancePeriod: emp.promotionData?.performancePeriod || '',
+            positionStartDate: emp.promotionData?.positionStartDate || ''
         });
         setEditingEmp(emp);
     };
@@ -153,6 +188,16 @@ export default function EmpleadosPage() {
                 department: (formData.department || '').trim().toUpperCase(),
                 curp: (formData.curp || '').trim().toUpperCase(),
                 occupation: formData.occupation ? formData.occupation.trim().toUpperCase() : (formData.position || '').trim().toUpperCase(),
+                area: (formData.area || '').trim().toUpperCase(),
+                education: (formData.education || '').trim(),
+                startDate: formData.startDate || '',
+                shift: (formData.shift || '').trim().toUpperCase(),
+                promotionData: {
+                    ...(editingEmp?.promotionData || {}),
+                    performanceScore: formData.performanceScore ? parseFloat(formData.performanceScore) : null,
+                    performancePeriod: formData.performancePeriod || '',
+                    positionStartDate: formData.positionStartDate || ''
+                },
                 updatedAt: new Date().toISOString()
             };
 
@@ -475,6 +520,91 @@ export default function EmpleadosPage() {
                         <datalist id="deptList">
                             {departments.map(d => <option key={d} value={d} />)}
                         </datalist>
+                    </div>
+                    <div className={styles.formGroup}>
+                        <label>Área</label>
+                        <input
+                            type="text"
+                            value={formData.area}
+                            onChange={(e) => setFormData({ ...formData, area: e.target.value })}
+                            placeholder="Ej: Inyección, Pintura, Ensamble"
+                        />
+                    </div>
+                    <div className={styles.formGroup}>
+                        <label>Escolaridad</label>
+                        <select
+                            value={formData.education}
+                            onChange={(e) => setFormData({ ...formData, education: e.target.value })}
+                            className={styles.select}
+                        >
+                            <option value="">-- Seleccionar --</option>
+                            <option value="Primaria">Primaria</option>
+                            <option value="Secundaria">Secundaria</option>
+                            <option value="Preparatoria">Preparatoria</option>
+                            <option value="Técnico">Técnico</option>
+                            <option value="Licenciatura">Licenciatura</option>
+                            <option value="Ingeniería">Ingeniería</option>
+                            <option value="Maestría">Maestría</option>
+                            <option value="Doctorado">Doctorado</option>
+                        </select>
+                    </div>
+                    <div className={styles.formGroup}>
+                        <label>Fecha de Ingreso</label>
+                        <input
+                            type="date"
+                            value={formData.startDate}
+                            onChange={(e) => setFormData({ ...formData, startDate: e.target.value })}
+                        />
+                    </div>
+                    <div className={styles.formGroup}>
+                        <label>Calificación Eval. Desempeño (%)</label>
+                        <input
+                            type="number"
+                            min="0"
+                            max="100"
+                            value={formData.performanceScore}
+                            onChange={(e) => setFormData({ ...formData, performanceScore: e.target.value })}
+                            placeholder="0-100"
+                        />
+                    </div>
+                    <div className={styles.formGroup}>
+                        <label>Período de Evaluación</label>
+                        <select
+                            value={formData.performancePeriod}
+                            onChange={(e) => setFormData({ ...formData, performancePeriod: e.target.value })}
+                            className={styles.select}
+                        >
+                            <option value="">-- Seleccionar --</option>
+                            <option value="2024-1">2024 - 1er Semestre</option>
+                            <option value="2024-2">2024 - 2do Semestre</option>
+                            <option value="2025-1">2025 - 1er Semestre</option>
+                            <option value="2025-2">2025 - 2do Semestre</option>
+                            <option value="2026-1">2026 - 1er Semestre</option>
+                            <option value="2026-2">2026 - 2do Semestre</option>
+                        </select>
+                    </div>
+                    <div className={styles.formGroup}>
+                        <label>Turno</label>
+                        <select
+                            value={formData.shift}
+                            onChange={(e) => setFormData({ ...formData, shift: e.target.value })}
+                            className={styles.select}
+                        >
+                            <option value="">-- Seleccionar --</option>
+                            <option value="1">Turno 1</option>
+                            <option value="2">Turno 2</option>
+                            <option value="3">Turno 3</option>
+                            <option value="MIXTO">Mixto</option>
+                            <option value="ADMINISTRATIVO">Administrativo</option>
+                        </select>
+                    </div>
+                    <div className={styles.formGroup}>
+                        <label>Fecha Último Cambio de Puesto (Temporalidad)</label>
+                        <input
+                            type="date"
+                            value={formData.positionStartDate}
+                            onChange={(e) => setFormData({ ...formData, positionStartDate: e.target.value })}
+                        />
                     </div>
                 </DialogBody>
                 <DialogFooter>
