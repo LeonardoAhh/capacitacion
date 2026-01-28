@@ -1,0 +1,408 @@
+.main {
+    min-height: 100vh;
+    background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+    padding: 1.5rem;
+    padding-top: 3.5rem;
+}
+
+.container {
+    max-width: 100%;
+    margin: 0 auto;
+}
+
+.header {
+    margin-bottom: 2rem;
+}
+
+.backBtn {
+    color: #94a3b8;
+    text-decoration: none;
+    font-size: 0.875rem;
+    display: inline-block;
+    margin-bottom: 1rem;
+    transition: color 0.2s;
+}
+
+.backBtn:hover {
+    color: #e2e8f0;
+}
+
+.title {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #f8fafc;
+    margin-bottom: 0.5rem;
+}
+
+.subtitle {
+    color: #94a3b8;
+    font-size: 1rem;
+}
+
+/* Selector Section */
+.selectorSection {
+    margin-bottom: 2rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+.selectorLabel {
+    color: #e2e8f0;
+    font-weight: 500;
+}
+
+.selector {
+    padding: 0.75rem 1rem;
+    border-radius: 8px;
+    border: 1px solid #334155;
+    background: #1e293b;
+    color: #f8fafc;
+    font-size: 1rem;
+    min-width: 280px;
+    cursor: pointer;
+    transition: border-color 0.2s;
+}
+
+.selector:hover,
+.selector:focus {
+    border-color: #3b82f6;
+    outline: none;
+}
+
+/* Matrix Card */
+.matrixCard {
+    background: #1e293b !important;
+    border: 1px solid #334155;
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+.matrixContent {
+    padding: 0 !important;
+}
+
+.matrixHeader {
+    background: #0066b3;
+    color: white;
+    padding: 1rem 1.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.matrixHeader h2 {
+    font-size: 1.25rem;
+    font-weight: 700;
+    margin: 0;
+}
+
+.stats {
+    font-size: 0.875rem;
+    opacity: 0.9;
+}
+
+/* Table Wrapper for horizontal scroll */
+.tableWrapper {
+    overflow-x: auto;
+    max-height: 70vh;
+    overflow-y: auto;
+}
+
+.tableWrapper::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+}
+
+.tableWrapper::-webkit-scrollbar-track {
+    background: #1e293b;
+    border-radius: 5px;
+}
+
+.tableWrapper::-webkit-scrollbar-thumb {
+    background: #3b82f6;
+    border-radius: 5px;
+}
+
+.tableWrapper::-webkit-scrollbar-thumb:hover {
+    background: #2563eb;
+}
+
+.tableWrapper::-webkit-scrollbar-corner {
+    background: #1e293b;
+}
+
+/* Matrix Table */
+.matrixTable {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.75rem;
+}
+
+.matrixTable th,
+.matrixTable td {
+    border: 1px solid #334155;
+    text-align: center;
+    vertical-align: middle;
+}
+
+.courseHeader {
+    background: #1e3a5f;
+    color: #f8fafc;
+    padding: 0.75rem 0.5rem;
+    font-weight: 600;
+    position: sticky;
+    top: 0;
+    left: 0;
+    z-index: 3;
+    min-width: 250px;
+    text-align: left !important;
+}
+
+.positionHeader {
+    background: #1e3a5f;
+    color: #f8fafc;
+    padding: 0.5rem;
+    font-weight: 600;
+    position: sticky;
+    top: 0;
+    z-index: 2;
+    min-width: 100px;
+    max-width: 150px;
+}
+
+.positionName {
+    writing-mode: horizontal-tb;
+    font-size: 0.65rem;
+    line-height: 1.2;
+    text-transform: uppercase;
+}
+
+.courseName {
+    background: #0f172a;
+    color: #e2e8f0;
+    padding: 0.5rem 0.75rem;
+    font-weight: 500;
+    text-align: left !important;
+    position: sticky;
+    left: 0;
+    z-index: 1;
+    min-width: 250px;
+    max-width: 300px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.cell {
+    width: 100px;
+    height: 32px;
+    transition: background 0.15s;
+}
+
+.required {
+    background: #007033 !important;
+}
+
+.notRequired {
+    background: #FEA0A0;
+}
+
+.checkmark {
+    color: white;
+    font-weight: bold;
+    font-size: 0.875rem;
+}
+
+/* Legend */
+.legend {
+    display: flex;
+    gap: 2rem;
+    padding: 1rem 1.5rem;
+    background: #0f172a;
+    border-top: 1px solid #334155;
+}
+
+.legendItem {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: #94a3b8;
+    font-size: 0.875rem;
+}
+
+.legendBox {
+    width: 20px;
+    height: 20px;
+    border-radius: 4px;
+    border: 1px solid #334155;
+}
+
+.legendBox.required {
+    background: #007033;
+}
+
+.legendBox.notRequired {
+    background: #FEA0A0;
+}
+
+/* Empty States */
+.empty {
+    padding: 3rem;
+    text-align: center;
+    color: #94a3b8;
+}
+
+.emptyState {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 4rem 2rem;
+    background: rgba(30, 41, 59, 0.5);
+    border-radius: 12px;
+    border: 1px dashed #334155;
+}
+
+.emptyIcon {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+}
+
+.emptyState p {
+    color: #94a3b8;
+    font-size: 1rem;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .main {
+        padding: 1rem;
+        padding-top: 4rem;
+    }
+
+    .title {
+        font-size: 1.5rem;
+    }
+
+    .selectorSection {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .selector {
+        width: 100%;
+    }
+
+    .matrixHeader {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .legend {
+        flex-direction: column;
+        gap: 0.75rem;
+    }
+}
+
+/* Light Theme */
+:global([data-theme="light"]) .main {
+    background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
+}
+
+:global([data-theme="light"]) .backBtn {
+    color: #475569;
+}
+
+:global([data-theme="light"]) .backBtn:hover {
+    color: #1e293b;
+}
+
+:global([data-theme="light"]) .title {
+    color: #0f172a;
+}
+
+:global([data-theme="light"]) .subtitle {
+    color: #64748b;
+}
+
+:global([data-theme="light"]) .selectorLabel {
+    color: #334155;
+}
+
+:global([data-theme="light"]) .selector {
+    background: #ffffff;
+    border-color: #cbd5e1;
+    color: #1e293b;
+}
+
+:global([data-theme="light"]) .matrixCard {
+    background: #ffffff !important;
+    border-color: #e2e8f0;
+}
+
+:global([data-theme="light"]) .matrixTable th,
+:global([data-theme="light"]) .matrixTable td {
+    border-color: #e2e8f0;
+}
+
+:global([data-theme="light"]) .courseHeader,
+:global([data-theme="light"]) .positionHeader {
+    background: #1e3a5f;
+    color: #f8fafc;
+}
+
+:global([data-theme="light"]) .courseName {
+    background: #f8fafc;
+    color: #1e293b;
+}
+
+:global([data-theme="light"]) .notRequired {
+    background: #FEA0A0;
+}
+
+:global([data-theme="light"]) .legend {
+    background: #f8fafc;
+    border-color: #e2e8f0;
+}
+
+:global([data-theme="light"]) .legendItem {
+    color: #475569;
+}
+
+:global([data-theme="light"]) .legendBox {
+    border-color: #cbd5e1;
+}
+
+:global([data-theme="light"]) .legendBox.notRequired {
+    background: #FEA0A0;
+}
+
+:global([data-theme="light"]) .empty,
+:global([data-theme="light"]) .emptyState p {
+    color: #64748b;
+}
+
+:global([data-theme="light"]) .emptyState {
+    background: rgba(241, 245, 249, 0.8);
+    border-color: #cbd5e1;
+}
+
+:global([data-theme="light"]) .tableWrapper::-webkit-scrollbar-track {
+    background: #e2e8f0;
+}
+
+:global([data-theme="light"]) .tableWrapper::-webkit-scrollbar-thumb {
+    background: #3b82f6;
+}
+
+:global([data-theme="light"]) .tableWrapper::-webkit-scrollbar-thumb:hover {
+    background: #2563eb;
+}
+
+:global([data-theme="light"]) .tableWrapper::-webkit-scrollbar-corner {
+    background: #e2e8f0;
+}

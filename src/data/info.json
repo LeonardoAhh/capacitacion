@@ -1,0 +1,490 @@
+[
+    {
+        "position": "ALMACENISTA DE MATERIA PRIMA",
+        "department": "ALMACÉN"
+    },
+    {
+        "position": "ANALISTA DE CAPACITACIÓN",
+        "department": "RECURSOS HUMANOS"
+    },
+    {
+        "position": "ANALISTA DE RECLUTAMIENTO Y SELECCIÓN A",
+        "department": "RECURSOS HUMANOS"
+    },
+    {
+        "position": "ANALISTA DE RECLUTAMIENTO Y SELECCIÓN B",
+        "department": "RECURSOS HUMANOS"
+    },
+    {
+        "position": "ANALISTA DE RECURSOS HUMANOS",
+        "department": "RECURSOS HUMANOS"
+    },
+    {
+        "position": "ANALISTA DE SEGURIDAD E HIGIENE",
+        "department": "RECURSOS HUMANOS"
+    },
+    {
+        "position": "ASISTENTE DE PRODUCCIÓN A",
+        "department": "PRODUCCIÓN ADMTVO"
+    },
+    {
+        "position": "ASISTENTE DE PRODUCCIÓN B",
+        "department": "PRODUCCIÓN ADMTVO"
+    },
+    {
+        "position": "ASISTENTE DE RECURSOS HUMANOS",
+        "department": "RECURSOS HUMANOS"
+    },
+    {
+        "position": "AUXILIAR ADMINISTRATIVO DE ALMACÉN A",
+        "department": "ALMACÉN"
+    },
+    {
+        "position": "AUXILIAR ADMINISTRATIVO DE ALMACÉN B",
+        "department": "ALMACÉN"
+    },
+    {
+        "position": "AUXILIAR ADMINISTRATIVO DE MANTENIMIENTO",
+        "department": "MANTENIMIENTO"
+    },
+    {
+        "position": "AUXILIAR ADMINISTRATIVO DE TALLER DE MOLDES",
+        "department": "TALLER DE MOLDES"
+    },
+    {
+        "position": "AUXILIAR DE ALMACÉN A",
+        "department": "ALMACÉN"
+    },
+    {
+        "position": "AUXILIAR DE ALMACÉN B",
+        "department": "ALMACÉN"
+    },
+    {
+        "position": "AUXILIAR DE ALMACÉN C",
+        "department": "ALMACÉN"
+    },
+    {
+        "position": "AUXILIAR DE ALMACÉN D",
+        "department": "ALMACÉN"
+    },
+    {
+        "position": "AUXILIAR DE BÁSCULA A",
+        "department": "PRODUCCIÓN"
+    },
+    {
+        "position": "AUXILIAR DE BÁSCULA B",
+        "department": "PRODUCCIÓN"
+    },
+    {
+        "position": "AUXILIAR DE CALIDAD",
+        "department": "CALIDAD ADMTVO"
+    },
+    {
+        "position": "AUXILIAR DE LIMPIEZA A",
+        "department": "RECURSOS HUMANOS"
+    },
+    {
+        "position": "AUXILIAR DE LIMPIEZA B",
+        "department": "RECURSOS HUMANOS"
+    },
+    {
+        "position": "AUXILIAR DE MANTENIMIENTO A",
+        "department": "MANTENIMIENTO"
+    },
+    {
+        "position": "AUXILIAR DE MANTENIMIENTO B",
+        "department": "MANTENIMIENTO"
+    },
+    {
+        "position": "AUXILIAR DE MANTENIMIENTO C",
+        "department": "MANTENIMIENTO"
+    },
+    {
+        "position": "AUXILIAR DE METROLOGÍA",
+        "department": "METROLOGÍA"
+    },
+    {
+        "position": "AUXILIAR DE PROYECTOS",
+        "department": "PROYECTOS"
+    },
+    {
+        "position": "AUXILIAR DE SCRAP A",
+        "department": "PRODUCCIÓN"
+    },
+    {
+        "position": "AUXILIAR DE SCRAP B",
+        "department": "PRODUCCIÓN"
+    },
+    {
+        "position": "AUXILIAR DE SUPERVISOR A",
+        "department": "PRODUCCIÓN"
+    },
+    {
+        "position": "AUXILIAR DE SUPERVISOR B",
+        "department": "PRODUCCIÓN"
+    },
+    {
+        "position": "AUXILIAR DEL SGI B",
+        "department": "SGI"
+    },
+    {
+        "position": "AUXILIAR DEL SGI C",
+        "department": "SGI"
+    },
+    {
+        "position": "AUXILIAR PROGRAMADOR",
+        "department": "SISTEMAS"
+    },
+    {
+        "position": "CAPTURISTA RPS A",
+        "department": "PRODUCCIÓN"
+    },
+    {
+        "position": "CAPTURISTA RPS B",
+        "department": "PRODUCCIÓN"
+    },
+    {
+        "position": "CHECK LIST A",
+        "department": "PRODUCCIÓN"
+    },
+    {
+        "position": "CHECK LIST B",
+        "department": "PRODUCCIÓN"
+    },
+    {
+        "position": "CHOFER A",
+        "department": "ALMACÉN"
+    },
+    {
+        "position": "CHOFER B",
+        "department": "ALMACÉN"
+    },
+    {
+        "position": "COORDINADOR DE RECLUTAMIENTO Y SELECCIÓN",
+        "department": "RECURSOS HUMANOS"
+    },
+    {
+        "position": "COORDINADOR DE RPS",
+        "department": "SISTEMAS"
+    },
+    {
+        "position": "COORDINADOR DEL SGC",
+        "department": "SGI"
+    },
+    {
+        "position": "GERENTE DE CALIDAD",
+        "department": "CALIDAD ADMTVO"
+    },
+    {
+        "position": "GERENTE DE PLANTA",
+        "department": "GERENCIA"
+    },
+    {
+        "position": "GERENTE DE PRODUCCIÓN",
+        "department": "PRODUCCIÓN ADMTVO"
+    },
+    {
+        "position": "GERENTE DE PROYECTOS",
+        "department": "PROYECTOS"
+    },
+    {
+        "position": "INGENIERO DE CALIDAD A",
+        "department": "CALIDAD ADMTVO"
+    },
+    {
+        "position": "INGENIERO DE CALIDAD B",
+        "department": "CALIDAD ADMTVO"
+    },
+    {
+        "position": "INGENIERO DE CALIDAD C",
+        "department": "CALIDAD ADMTVO"
+    },
+    {
+        "position": "INGENIERO DE PROCESO A",
+        "department": "PRODUCCIÓN ADMTVO"
+    },
+    {
+        "position": "INGENIERO DE PROCESO B",
+        "department": "PRODUCCIÓN ADMTVO"
+    },
+    {
+        "position": "INGENIERO DE PROCESO C",
+        "department": "PRODUCCIÓN ADMTVO"
+    },
+    {
+        "position": "INGENIERO DE PROCESO D",
+        "department": "PRODUCCIÓN ADMTVO"
+    },
+    {
+        "position": "INGENIERO DE PROYECTOS A",
+        "department": "PROYECTOS"
+    },
+    {
+        "position": "INGENIERO DE PROYECTOS B",
+        "department": "PROYECTOS"
+    },
+    {
+        "position": "INGENIERO DE PROYECTOS C",
+        "department": "PROYECTOS"
+    },
+    {
+        "position": "INGENIERO DE PROYECTOS D",
+        "department": "PROYECTOS"
+    },
+    {
+        "position": "INSPECTOR DE CALIDAD A",
+        "department": "CALIDAD ADMTVO"
+    },
+    {
+        "position": "INSPECTOR DE CALIDAD B",
+        "department": "CALIDAD ADMTVO"
+    },
+    {
+        "position": "INSPECTOR DE CALIDAD C",
+        "department": "CALIDAD ADMTVO"
+    },
+    {
+        "position": "INSPECTOR DE CALIDAD D",
+        "department": "CALIDAD ADMTVO"
+    },
+    {
+        "position": "INSPECTOR RECIBO",
+        "department": "CALIDAD ADMTVO"
+    },
+    {
+        "position": "JEFE DE ALMACÉN",
+        "department": "ALMACÉN"
+    },
+    {
+        "position": "JEFE DE LOGÍSTICA",
+        "department": "LOGÍSTICA"
+    },
+    {
+        "position": "JEFE DE MANTENIMIENTO",
+        "department": "MANTENIMIENTO"
+    },
+    {
+        "position": "JEFE DE METROLOGÍA",
+        "department": "METROLOGÍA"
+    },
+    {
+        "position": "JEFE DE PROCESO",
+        "department": "PRODUCCIÓN ADMTVO"
+    },
+    {
+        "position": "JEFE DE PRODUCCIÓN",
+        "department": "PRODUCCIÓN ADMTVO"
+    },
+    {
+        "position": "JEFE DE RECURSOS HUMANOS",
+        "department": "RECURSOS HUMANOS"
+    },
+    {
+        "position": "LÍDER DE COTIZACIONES",
+        "department": "PROYECTOS"
+    },
+    {
+        "position": "LÍDER DE PROYECTOS A",
+        "department": "PROYECTOS"
+    },
+    {
+        "position": "LÍDER DE PROYECTOS B",
+        "department": "PROYECTOS"
+    },
+    {
+        "position": "LÍDER DE PROYECTOS C",
+        "department": "PROYECTOS"
+    },
+    {
+        "position": "MATERIALISTA A",
+        "department": "PRODUCCIÓN"
+    },
+    {
+        "position": "MATERIALISTA B",
+        "department": "PRODUCCIÓN"
+    },
+    {
+        "position": "METRÓLOGO A",
+        "department": "METROLOGÍA"
+    },
+    {
+        "position": "METRÓLOGO B",
+        "department": "METROLOGÍA"
+    },
+    {
+        "position": "METRÓLOGO C",
+        "department": "METROLOGÍA"
+    },
+    {
+        "position": "MONTADOR DE MOLDES A",
+        "department": "PRODUCCIÓN MONTAJE"
+    },
+    {
+        "position": "MONTADOR DE MOLDES B",
+        "department": "PRODUCCIÓN MONTAJE"
+    },
+    {
+        "position": "MONTADOR DE MOLDES C",
+        "department": "PRODUCCIÓN MONTAJE"
+    },
+    {
+        "position": "OPERADOR DE ACABADOS - GP12 A",
+        "department": "CALIDAD"
+    },
+    {
+        "position": "OPERADOR DE ACABADOS - GP12 B",
+        "department": "CALIDAD"
+    },
+    {
+        "position": "OPERADOR DE ACABADOS - GP12 C",
+        "department": "CALIDAD"
+    },
+    {
+        "position": "OPERADOR DE ACABADOS - GP12 D",
+        "department": "CALIDAD"
+    },
+    {
+        "position": "OPERADOR DE MÁQUINA A",
+        "department": "PRODUCCIÓN"
+    },
+    {
+        "position": "OPERADOR DE MÁQUINA B",
+        "department": "PRODUCCIÓN"
+    },
+    {
+        "position": "OPERADOR DE MÁQUINA C",
+        "department": "PRODUCCIÓN"
+    },
+    {
+        "position": "OPERADOR DE MÁQUINA D",
+        "department": "PRODUCCIÓN"
+    },
+    {
+        "position": "PLANEADOR DE PRODUCCIÓN",
+        "department": "PRODUCCIÓN ADMTVO"
+    },
+    {
+        "position": "PREPARADOR A",
+        "department": "PRODUCCIÓN"
+    },
+    {
+        "position": "PREPARADOR B",
+        "department": "PRODUCCIÓN"
+    },
+    {
+        "position": "RESIDENTE DE CALIDAD A",
+        "department": "CALIDAD ADMTVO"
+    },
+    {
+        "position": "RESIDENTE DE CALIDAD B",
+        "department": "CALIDAD ADMTVO"
+    },
+    {
+        "position": "RESIDENTE DE CALIDAD C",
+        "department": "CALIDAD ADMTVO"
+    },
+    {
+        "position": "SUPERVISOR DE ACABADOS - GP12 A",
+        "department": "CALIDAD ADMTVO"
+    },
+    {
+        "position": "SUPERVISOR DE ACABADOS - GP12 B",
+        "department": "CALIDAD ADMTVO"
+    },
+    {
+        "position": "SUPERVISOR DE ACABADOS - GP12 C",
+        "department": "CALIDAD ADMTVO"
+    },
+    {
+        "position": "SUPERVISOR DE LOGÍSTICA",
+        "department": "LOGÍSTICA"
+    },
+    {
+        "position": "SUPERVISOR DE METROLOGÍA",
+        "department": "METROLOGÍA"
+    },
+    {
+        "position": "SUPERVISOR DE MONTAJE",
+        "department": "PRODUCCIÓN MONTAJE"
+    },
+    {
+        "position": "SUPERVISOR DE PRODUCCIÓN A",
+        "department": "PRODUCCIÓN ADMTVO"
+    },
+    {
+        "position": "SUPERVISOR DE PRODUCCIÓN B",
+        "department": "PRODUCCIÓN ADMTVO"
+    },
+    {
+        "position": "SUPERVISOR DE PRODUCCIÓN C",
+        "department": "PRODUCCIÓN ADMTVO"
+    },
+    {
+        "position": "SUPERVISOR DE PRODUCCIÓN D",
+        "department": "PRODUCCIÓN ADMTVO"
+    },
+    {
+        "position": "TEC. ESPECIALISTA DE MOLDES (JEFE)",
+        "department": "TALLER DE MOLDES"
+    },
+    {
+        "position": "TÉCNICO DE MANTENIMIENTO A",
+        "department": "MANTENIMIENTO"
+    },
+    {
+        "position": "TÉCNICO DE MANTENIMIENTO B",
+        "department": "MANTENIMIENTO"
+    },
+    {
+        "position": "TÉCNICO DE MANTENIMIENTO C",
+        "department": "MANTENIMIENTO"
+    },
+    {
+        "position": "TÉCNICO DE MANTENIMIENTO D",
+        "department": "MANTENIMIENTO"
+    },
+    {
+        "position": "TÉCNICO DE MANTENIMIENTO DE EDIFICIOS A",
+        "department": "MANTENIMIENTO"
+    },
+    {
+        "position": "TÉCNICO DE MANTENIMIENTO DE EDIFICIOS B",
+        "department": "MANTENIMIENTO"
+    },
+    {
+        "position": "TÉCNICO DE MANTENIMIENTO DE EDIFICIOS C",
+        "department": "MANTENIMIENTO"
+    },
+    {
+        "position": "TÉCNICO DE MANTENIMIENTO E",
+        "department": "MANTENIMIENTO"
+    },
+    {
+        "position": "TÉCNICO DE MOLDES A",
+        "department": "TALLER DE MOLDES"
+    },
+    {
+        "position": "TÉCNICO DE MOLDES B",
+        "department": "TALLER DE MOLDES"
+    },
+    {
+        "position": "TÉCNICO DE MOLDES C",
+        "department": "TALLER DE MOLDES"
+    },
+    {
+        "position": "TÉCNICO DE MOLDES D",
+        "department": "TALLER DE MOLDES"
+    },
+    {
+        "position": "TÉCNICO DE MOLDES E",
+        "department": "TALLER DE MOLDES"
+    },
+    {
+        "position": "TÉCNICO ESPECIALISTA DE MANTENIMIENTO A",
+        "department": "MANTENIMIENTO"
+    },
+    {
+        "position": "TÉCNICO ESPECIALISTA DE MANTENIMIENTO B",
+        "department": "MANTENIMIENTO"
+    }
+]
