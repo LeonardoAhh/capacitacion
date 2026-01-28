@@ -523,12 +523,33 @@ export default function EmpleadosPage() {
                     </div>
                     <div className={styles.formGroup}>
                         <label>Área</label>
-                        <input
-                            type="text"
+                        <select
                             value={formData.area}
                             onChange={(e) => setFormData({ ...formData, area: e.target.value })}
-                            placeholder="Ej: Inyección, Pintura, Ensamble"
-                        />
+                            className={styles.select}
+                        >
+                            <option value="">-- Seleccionar --</option>
+                            <option value="A. CALIDAD 1ER TURNO">A. CALIDAD 1ER TURNO</option>
+                            <option value="A. CALIDAD 2DO TURNO">A. CALIDAD 2DO TURNO</option>
+                            <option value="ALMACÉN">ALMACÉN</option>
+                            <option value="CALIDAD ADMTVO">CALIDAD ADMTVO</option>
+                            <option value="GERENCIA">GERENCIA</option>
+                            <option value="LOGÍSTICA">LOGÍSTICA</option>
+                            <option value="MANTENIMIENTO">MANTENIMIENTO</option>
+                            <option value="METROLOGÍA">METROLOGÍA</option>
+                            <option value="MOLDES">MOLDES</option>
+                            <option value="PRODUCCIÓN 1ER TURNO">PRODUCCIÓN 1ER TURNO</option>
+                            <option value="PRODUCCIÓN 2DO TURNO">PRODUCCIÓN 2DO TURNO</option>
+                            <option value="PRODUCCIÓN 3ER TURNO">PRODUCCIÓN 3ER TURNO</option>
+                            <option value="PRODUCCIÓN 4TO TURNO">PRODUCCIÓN 4TO TURNO</option>
+                            <option value="PRODUCCIÓN ADMTVO">PRODUCCIÓN ADMTVO</option>
+                            <option value="PRODUCCIÓN MONTAJE">PRODUCCIÓN MONTAJE</option>
+                            <option value="PROYECTOS">PROYECTOS</option>
+                            <option value="RECURSOS HUMANOS">RECURSOS HUMANOS</option>
+                            <option value="RESIDENTES DE CALIDAD">RESIDENTES DE CALIDAD</option>
+                            <option value="SGI">SGI</option>
+                            <option value="SISTEMAS">SISTEMAS</option>
+                        </select>
                     </div>
                     <div className={styles.formGroup}>
                         <label>Escolaridad</label>
@@ -538,14 +559,17 @@ export default function EmpleadosPage() {
                             className={styles.select}
                         >
                             <option value="">-- Seleccionar --</option>
-                            <option value="Primaria">Primaria</option>
-                            <option value="Secundaria">Secundaria</option>
-                            <option value="Preparatoria">Preparatoria</option>
-                            <option value="Técnico">Técnico</option>
-                            <option value="Licenciatura">Licenciatura</option>
-                            <option value="Ingeniería">Ingeniería</option>
-                            <option value="Maestría">Maestría</option>
-                            <option value="Doctorado">Doctorado</option>
+                            <option value="BACHILLERATO">BACHILLERATO</option>
+                            <option value="CARRERA TECNICA">CARRERA TECNICA</option>
+                            <option value="INGENIERIA">INGENIERIA</option>
+                            <option value="LICENCIATURA">LICENCIATURA</option>
+                            <option value="MAESTRIA">MAESTRIA</option>
+                            <option value="PASANTE INGENIERIA">PASANTE INGENIERIA</option>
+                            <option value="POSGRADO">POSGRADO</option>
+                            <option value="PREPARATORIA">PREPARATORIA</option>
+                            <option value="PRIMARIA">PRIMARIA</option>
+                            <option value="SECUNDARIA">SECUNDARIA</option>
+                            <option value="TSU">TSU</option>
                         </select>
                     </div>
                     <div className={styles.formGroup}>
@@ -575,12 +599,11 @@ export default function EmpleadosPage() {
                             className={styles.select}
                         >
                             <option value="">-- Seleccionar --</option>
-                            <option value="2024-1">2024 - 1er Semestre</option>
-                            <option value="2024-2">2024 - 2do Semestre</option>
-                            <option value="2025-1">2025 - 1er Semestre</option>
-                            <option value="2025-2">2025 - 2do Semestre</option>
-                            <option value="2026-1">2026 - 1er Semestre</option>
-                            <option value="2026-2">2026 - 2do Semestre</option>
+                            <option value="JULIO - DICIEMBRE 2025">JULIO - DICIEMBRE 2025</option>
+                            <option value="ENERO - JUNIO 2026">ENERO - JUNIO 2026</option>
+                            <option value="JULIO - DICIEMBRE 2026">JULIO - DICIEMBRE 2026</option>
+                            <option value="ENERO - JUNIO 2027">ENERO - JUNIO 2027</option>
+                            <option value="JULIO - DICIEMBRE 2027">JULIO - DICIEMBRE 2027</option>
                         </select>
                     </div>
                     <div className={styles.formGroup}>
@@ -591,11 +614,11 @@ export default function EmpleadosPage() {
                             className={styles.select}
                         >
                             <option value="">-- Seleccionar --</option>
-                            <option value="1">Turno 1</option>
-                            <option value="2">Turno 2</option>
-                            <option value="3">Turno 3</option>
-                            <option value="MIXTO">Mixto</option>
-                            <option value="ADMINISTRATIVO">Administrativo</option>
+                            <option value="1">1</option>
+                            <option value="2">2</option>
+                            <option value="3">3</option>
+                            <option value="4">4</option>
+                            <option value="5">5</option>
                         </select>
                     </div>
                     <div className={styles.formGroup}>

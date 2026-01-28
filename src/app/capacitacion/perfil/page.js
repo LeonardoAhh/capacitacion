@@ -291,6 +291,10 @@ export default function PerfilPage() {
                                                 <span>{employee.education || 'N/A'}</span>
                                             </div>
                                             <div className={styles.dataItem}>
+                                                <label>Especialidad</label>
+                                                <span>{employee.specialty || 'N/A'}</span>
+                                            </div>
+                                            <div className={styles.dataItem}>
                                                 <label>Fecha Ingreso</label>
                                                 <span>{formatDate(employee.startDate) || 'N/A'}</span>
                                             </div>
