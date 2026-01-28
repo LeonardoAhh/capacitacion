@@ -236,14 +236,14 @@ export default function PerfilPage() {
                                 </div>
                                 <div className={styles.metricCard}>
                                     <span className={styles.metricIcon}>📊</span>
-                                    <span className={styles.metricValue}>{employee.compliance || 0}%</span>
+                                    <span className={styles.metricValue}>{employee.matrix?.compliancePercentage ?? 0}%</span>
                                     <span className={styles.metricLabel}>Matriz</span>
                                 </div>
                                 <div className={styles.metricCard}>
                                     <span className={styles.metricIcon}>⭐</span>
                                     <span className={styles.metricValue}>
-                                        {employee.promotionData?.performanceScore || 'N/A'}
-                                        {employee.promotionData?.performanceScore ? '%' : ''}
+                                        {employee.performanceScore ?? employee.promotionData?.performanceScore ?? 'N/A'}
+                                        {(employee.performanceScore || employee.promotionData?.performanceScore) ? '%' : ''}
                                     </span>
                                     <span className={styles.metricLabel}>Desempeño</span>
                                 </div>
