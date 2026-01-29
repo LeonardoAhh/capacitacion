@@ -25,13 +25,15 @@ export default function IluoManagerPage() {
     // UI States
     const [newSkill, setNewSkill] = useState({ name: '', category: 'Técnica', description: '' });
 
-    // Permisos
-    if (user?.rol !== 'super_admin') {
-        return <AccessDenied />;
-    }
-
-    // 1. Cargar Puestos (Scanner)
+    // 1. Cargar Puestos (Scanner) - HOOK INCONDICIONAL (Correcto)
     useEffect(() => {
+        // Validación interna para no ejecutar lógica si no es admin, 
+        // pero el hook SIEMPRE se llama.
+        if (user?.rol !== 'super_admin') {
+            setLoading(false);
+            return;
+        }
+
         const fetchPositions = async () => {
             try {
                 // Leemos la colección maestra de 'positions'
@@ -56,7 +58,7 @@ export default function IluoManagerPage() {
             }
         };
         fetchPositions();
-    }, []);
+    }, [user, toast]); // Modificado para incluir dependencias correctas
 
     // 2. Manejar Selección de Puesto
     const handleSelectPosition = (pos) => {
@@ -119,6 +121,12 @@ export default function IluoManagerPage() {
             toast.error("Error al eliminar");
         }
     };
+
+    // Validación de Acceso (Ahora sí podemos hacer return)
+    if (user?.rol !== 'super_admin') {
+        if (!user) return null; // Cargando auth...
+        return <AccessDenied />;
+    }
 
     // Filtrado
     const filteredPositions = positionsList.filter(p => {
@@ -286,9 +294,10 @@ export default function IluoManagerPage() {
 
 function AccessDenied() {
     return (
-        <div style={{ height: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column', color: 'var(--text-primary)' }}>
+        <div style={{ height: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column', color: '#fff', background: '#000' }}>
             <h1>🚫 Acceso Denegado</h1>
-            <Link href="/modulos"><button style={{ marginTop: '20px', padding: '10px 20px', borderRadius: '8px', border: '1px solid #ccc', cursor: 'pointer' }}>Volver</button></Link>
+            <p style={{ color: '#999', marginBottom: '20px' }}>No tienes permisos para configurar el catálogo.</p>
+            <Link href="/modulos"><button style={{ padding: '10px 20px', borderRadius: '8px', border: '1px solid #333', cursor: 'pointer', background: 'transparent', color: '#fff' }}>Volver</button></Link>
         </div>
     );
 }
