@@ -15,12 +15,9 @@ export function middleware(request) {
     // lo mejor que podemos hacer ac sera chequear tokens personalizados si los estuvieramos enviando.
     // Sin embargo, dado el setup actual "Client-Side Auth", el middleware tiene visibilidad limitada.
 
-    // ESTRATEGIA: Como no tenemos session cookie configurada, vamos a confiar en el AuthProvider del cliente
-    // pero redirigiremos la raiz '/' al login si no hay indicio de sesión, o al dashboard.
-
-    if (path === '/') {
-        return NextResponse.redirect(new URL('/login', request.url));
-    }
+    // ESTRATEGIA: La landing page se muestra en '/' y el AuthProvider del cliente 
+    // redirige a dashboard si el usuario ya está logueado.
+    // Las rutas protegidas se manejan client-side en cada página.
 
     return NextResponse.next();
 }

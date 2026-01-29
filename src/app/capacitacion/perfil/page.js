@@ -3,7 +3,6 @@
 import { useState, useCallback } from 'react';
 import Navbar from '@/components/Navbar/Navbar';
 import Link from 'next/link';
-import { Card, CardContent } from '@/components/ui/Card/Card';
 import { Button } from '@/components/ui/Button/Button';
 import { useToast } from '@/components/ui/Toast/Toast';
 import { db } from '@/lib/firebase';
@@ -21,7 +20,6 @@ export default function PerfilPage() {
     const [notFound, setNotFound] = useState(false);
     const [activeTab, setActiveTab] = useState('personal');
 
-    // Calculate seniority from startDate
     const calculateSeniority = (startDate) => {
         if (!startDate) return { text: 'N/A', years: 0, months: 0 };
         const start = new Date(startDate);
@@ -29,14 +27,12 @@ export default function PerfilPage() {
         const diffMs = now - start;
         const years = Math.floor(diffMs / (365.25 * 24 * 60 * 60 * 1000));
         const months = Math.floor((diffMs % (365.25 * 24 * 60 * 60 * 1000)) / (30.44 * 24 * 60 * 60 * 1000));
-
         if (years > 0) {
             return { text: `${years}a ${months}m`, years, months };
         }
         return { text: `${months} meses`, years: 0, months };
     };
 
-    // Get initials for avatar
     const getInitials = (name) => {
         if (!name) return '??';
         const parts = name.split(' ').filter(Boolean);
@@ -46,7 +42,6 @@ export default function PerfilPage() {
         return name.substring(0, 2).toUpperCase();
     };
 
-    // Search employee by ID
     const handleSearch = useCallback(async () => {
         if (!searchId.trim()) {
             toast.warning('Atención', 'Ingresa un ID de empleado');
@@ -114,7 +109,6 @@ export default function PerfilPage() {
         }
     }, [searchId, toast]);
 
-    // Analyze training history
     const analyzeTraining = () => {
         if (!employee) return { approved: [], failed: [], pending: [], all: [] };
 
@@ -165,42 +159,50 @@ export default function PerfilPage() {
             <Navbar />
             <main className={styles.main}>
                 <div className={styles.container}>
-                    {/* Minimal Header */}
+                    {/* Header */}
                     <div className={styles.header}>
+                        <div>
+                            <h1 className={styles.title}>Perfil de Empleado</h1>
+                            <p className={styles.subtitle}>Buscar y consultar información detallada</p>
+                        </div>
                         <Link href="/capacitacion" className={styles.backBtn}>
-                            ← Capacitación
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                <path d="M19 12H5" />
+                                <polyline points="12 19 5 12 12 5" />
+                            </svg>
+                            Capacitación
                         </Link>
                     </div>
 
-                    {/* Search Section - Centered */}
-                    <div className={styles.searchSection}>
-                        <h1 className={styles.title}>Perfil de Empleado</h1>
-                        <p className={styles.subtitle}>Ingresa el ID para consultar información</p>
-                        <div className={styles.searchBox}>
-                            <div className={styles.searchInputWrapper}>
-                                <svg className={styles.searchIcon} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                    <circle cx="11" cy="11" r="8" />
-                                    <path d="M21 21l-4.35-4.35" />
-                                </svg>
-                                <input
-                                    type="text"
-                                    placeholder="ID Empleado..."
-                                    value={searchId}
-                                    onChange={(e) => setSearchId(e.target.value)}
-                                    onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
-                                    className={styles.searchInput}
-                                />
-                            </div>
-                            <Button onClick={handleSearch} disabled={loading} className={styles.searchBtn}>
-                                {loading ? '...' : 'Buscar'}
-                            </Button>
+                    {/* Search */}
+                    <div className={styles.searchCard}>
+                        <div className={styles.searchInputWrapper}>
+                            <svg className={styles.searchIcon} width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                <circle cx="11" cy="11" r="8" />
+                                <path d="M21 21l-4.35-4.35" />
+                            </svg>
+                            <input
+                                type="text"
+                                placeholder="Ingresa ID de empleado..."
+                                value={searchId}
+                                onChange={(e) => setSearchId(e.target.value)}
+                                onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
+                                className={styles.searchInput}
+                            />
                         </div>
+                        <Button onClick={handleSearch} disabled={loading}>
+                            {loading ? 'Buscando...' : 'Buscar'}
+                        </Button>
                     </div>
 
                     {/* Not Found */}
                     {notFound && (
                         <div className={styles.notFound}>
-                            <span className={styles.notFoundIcon}>🔍</span>
+                            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+                                <circle cx="11" cy="11" r="8" />
+                                <path d="M21 21l-4.35-4.35" />
+                                <path d="M8 8l6 6M14 8l-6 6" />
+                            </svg>
                             <p>No se encontró empleado con ID: <strong>{searchId}</strong></p>
                         </div>
                     )}
@@ -208,21 +210,31 @@ export default function PerfilPage() {
                     {/* Profile Content */}
                     {employee && (
                         <div className={styles.profileContent}>
-                            {/* Profile Header Card */}
+                            {/* Profile Header */}
                             <div className={styles.profileHeader}>
-                                <div className={styles.avatar}>
-                                    {getInitials(employee.name)}
-                                </div>
-                                <div className={styles.profileInfo}>
-                                    <h2 className={styles.employeeName}>{employee.name}</h2>
-                                    <p className={styles.employeeId}>ID: {employee.employeeId || employee.id}</p>
-                                    <div className={styles.positionBadge}>
-                                        {employee.position || 'Sin Puesto'}
+                                <div className={styles.profileLeft}>
+                                    <div className={styles.avatar}>
+                                        {getInitials(employee.name)}
+                                    </div>
+                                    <div className={styles.profileInfo}>
+                                        <h2>{employee.name}</h2>
+                                        <p className={styles.employeeId}>ID: {employee.employeeId || employee.id}</p>
+                                        <span className={styles.positionBadge}>{employee.position || 'Sin Puesto'}</span>
                                     </div>
                                 </div>
                                 {promotionInfo && (
                                     <div className={`${styles.eligibilityBadge} ${promotionInfo.overall?.eligible ? styles.eligible : styles.notEligible}`}>
-                                        {promotionInfo.overall?.eligible ? '✨ Elegible' : `${promotionInfo.overall?.metCount}/4`}
+                                        {promotionInfo.overall?.eligible ? (
+                                            <>
+                                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                                    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
+                                                    <polyline points="22 4 12 14.01 9 11.01" />
+                                                </svg>
+                                                Elegible
+                                            </>
+                                        ) : (
+                                            `${promotionInfo.overall?.metCount}/4 criterios`
+                                        )}
                                     </div>
                                 )}
                             </div>
@@ -230,27 +242,56 @@ export default function PerfilPage() {
                             {/* Quick Metrics */}
                             <div className={styles.metricsGrid}>
                                 <div className={styles.metricCard}>
-                                    <span className={styles.metricIcon}>📅</span>
-                                    <span className={styles.metricValue}>{seniority?.text || 'N/A'}</span>
-                                    <span className={styles.metricLabel}>Antigüedad</span>
+                                    <div className={`${styles.metricIcon} ${styles.iconBlue}`}>
+                                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                            <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
+                                            <line x1="16" y1="2" x2="16" y2="6" />
+                                            <line x1="8" y1="2" x2="8" y2="6" />
+                                            <line x1="3" y1="10" x2="21" y2="10" />
+                                        </svg>
+                                    </div>
+                                    <div className={styles.metricContent}>
+                                        <span className={styles.metricValue}>{seniority?.text || 'N/A'}</span>
+                                        <span className={styles.metricLabel}>Antigüedad</span>
+                                    </div>
                                 </div>
                                 <div className={styles.metricCard}>
-                                    <span className={styles.metricIcon}>📊</span>
-                                    <span className={styles.metricValue}>{employee.matrix?.compliancePercentage ?? 0}%</span>
-                                    <span className={styles.metricLabel}>Matriz</span>
+                                    <div className={`${styles.metricIcon} ${styles.iconPurple}`}>
+                                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                            <path d="M21.21 15.89A10 10 0 1 1 8 2.83" />
+                                            <path d="M22 12A10 10 0 0 0 12 2v10z" />
+                                        </svg>
+                                    </div>
+                                    <div className={styles.metricContent}>
+                                        <span className={styles.metricValue}>{employee.matrix?.compliancePercentage ?? 0}%</span>
+                                        <span className={styles.metricLabel}>Matriz</span>
+                                    </div>
                                 </div>
                                 <div className={styles.metricCard}>
-                                    <span className={styles.metricIcon}>⭐</span>
-                                    <span className={styles.metricValue}>
-                                        {employee.performanceScore ?? employee.promotionData?.performanceScore ?? 'N/A'}
-                                        {(employee.performanceScore || employee.promotionData?.performanceScore) ? '%' : ''}
-                                    </span>
-                                    <span className={styles.metricLabel}>Desempeño</span>
+                                    <div className={`${styles.metricIcon} ${styles.iconGreen}`}>
+                                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                            <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+                                        </svg>
+                                    </div>
+                                    <div className={styles.metricContent}>
+                                        <span className={styles.metricValue}>
+                                            {employee.performanceScore ?? employee.promotionData?.performanceScore ?? 'N/A'}
+                                            {(employee.performanceScore || employee.promotionData?.performanceScore) ? '%' : ''}
+                                        </span>
+                                        <span className={styles.metricLabel}>Desempeño</span>
+                                    </div>
                                 </div>
                                 <div className={styles.metricCard}>
-                                    <span className={styles.metricIcon}>⏱️</span>
-                                    <span className={styles.metricValue}>{monthsInPosition}</span>
-                                    <span className={styles.metricLabel}>Meses en Puesto</span>
+                                    <div className={`${styles.metricIcon} ${styles.iconOrange}`}>
+                                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                            <circle cx="12" cy="12" r="10" />
+                                            <polyline points="12 6 12 12 16 14" />
+                                        </svg>
+                                    </div>
+                                    <div className={styles.metricContent}>
+                                        <span className={styles.metricValue}>{monthsInPosition}</span>
+                                        <span className={styles.metricLabel}>Meses en Puesto</span>
+                                    </div>
                                 </div>
                             </div>
 
@@ -260,19 +301,30 @@ export default function PerfilPage() {
                                     className={`${styles.tab} ${activeTab === 'personal' ? styles.tabActive : ''}`}
                                     onClick={() => setActiveTab('personal')}
                                 >
-                                    👤 Datos
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                                        <circle cx="12" cy="7" r="4" />
+                                    </svg>
+                                    Datos
                                 </button>
                                 <button
                                     className={`${styles.tab} ${activeTab === 'training' ? styles.tabActive : ''}`}
                                     onClick={() => setActiveTab('training')}
                                 >
-                                    📚 Capacitación
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                        <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
+                                        <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" />
+                                    </svg>
+                                    Capacitación
                                 </button>
                                 <button
                                     className={`${styles.tab} ${activeTab === 'promotion' ? styles.tabActive : ''}`}
                                     onClick={() => setActiveTab('promotion')}
                                 >
-                                    🎯 Promoción
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                        <path d="M12 2L15 8L22 9L17 14L18 21L12 18L6 21L7 14L2 9L9 8L12 2Z" />
+                                    </svg>
+                                    Promoción
                                 </button>
                             </div>
 
@@ -280,36 +332,34 @@ export default function PerfilPage() {
                             <div className={styles.tabContent}>
                                 {/* Personal Data Tab */}
                                 {activeTab === 'personal' && (
-                                    <div className={styles.dataSection}>
-                                        <div className={styles.dataGrid}>
-                                            <div className={styles.dataItem}>
-                                                <label>CURP</label>
-                                                <span>{employee.curp || 'N/A'}</span>
-                                            </div>
-                                            <div className={styles.dataItem}>
-                                                <label>Escolaridad</label>
-                                                <span>{employee.education || 'N/A'}</span>
-                                            </div>
-                                            <div className={styles.dataItem}>
-                                                <label>Especialidad</label>
-                                                <span>{employee.specialty || 'N/A'}</span>
-                                            </div>
-                                            <div className={styles.dataItem}>
-                                                <label>Fecha Ingreso</label>
-                                                <span>{formatDate(employee.startDate) || 'N/A'}</span>
-                                            </div>
-                                            <div className={styles.dataItem}>
-                                                <label>Departamento</label>
-                                                <span>{employee.department || 'N/A'}</span>
-                                            </div>
-                                            <div className={styles.dataItem}>
-                                                <label>Área</label>
-                                                <span>{employee.area || 'N/A'}</span>
-                                            </div>
-                                            <div className={styles.dataItem}>
-                                                <label>Turno</label>
-                                                <span>{employee.shift || 'N/A'}</span>
-                                            </div>
+                                    <div className={styles.dataGrid}>
+                                        <div className={styles.dataItem}>
+                                            <label>CURP</label>
+                                            <span>{employee.curp || 'N/A'}</span>
+                                        </div>
+                                        <div className={styles.dataItem}>
+                                            <label>Escolaridad</label>
+                                            <span>{employee.education || 'N/A'}</span>
+                                        </div>
+                                        <div className={styles.dataItem}>
+                                            <label>Especialidad</label>
+                                            <span>{employee.specialty || 'N/A'}</span>
+                                        </div>
+                                        <div className={styles.dataItem}>
+                                            <label>Fecha Ingreso</label>
+                                            <span>{formatDate(employee.startDate) || 'N/A'}</span>
+                                        </div>
+                                        <div className={styles.dataItem}>
+                                            <label>Departamento</label>
+                                            <span>{employee.department || 'N/A'}</span>
+                                        </div>
+                                        <div className={styles.dataItem}>
+                                            <label>Área</label>
+                                            <span>{employee.area || 'N/A'}</span>
+                                        </div>
+                                        <div className={styles.dataItem}>
+                                            <label>Turno</label>
+                                            <span>{employee.shift || 'N/A'}</span>
                                         </div>
                                     </div>
                                 )}
@@ -317,56 +367,60 @@ export default function PerfilPage() {
                                 {/* Training Tab */}
                                 {activeTab === 'training' && (
                                     <div className={styles.trainingSection}>
-                                        {/* Stats */}
                                         <div className={styles.trainingStats}>
                                             <div className={`${styles.trainingStat} ${styles.statGreen}`}>
-                                                <span>{training.approved.length}</span>
-                                                <label>Aprobados</label>
+                                                <span className={styles.statValue}>{training.approved.length}</span>
+                                                <span className={styles.statLabel}>Aprobados</span>
                                             </div>
                                             <div className={`${styles.trainingStat} ${styles.statRed}`}>
-                                                <span>{training.failed.length}</span>
-                                                <label>Reprobados</label>
+                                                <span className={styles.statValue}>{training.failed.length}</span>
+                                                <span className={styles.statLabel}>Reprobados</span>
                                             </div>
                                             <div className={`${styles.trainingStat} ${styles.statYellow}`}>
-                                                <span>{training.pending.length}</span>
-                                                <label>Pendientes</label>
+                                                <span className={styles.statValue}>{training.pending.length}</span>
+                                                <span className={styles.statLabel}>Pendientes</span>
                                             </div>
                                         </div>
 
-                                        {/* Course Lists */}
                                         {training.approved.length > 0 && (
                                             <div className={styles.courseGroup}>
-                                                <h4>✓ Aprobados</h4>
-                                                {training.approved.map((c, i) => (
-                                                    <div key={i} className={`${styles.courseRow} ${styles.courseApproved}`}>
-                                                        <span className={styles.courseName}>{c.name}</span>
-                                                        <span className={styles.courseScore}>{c.score}%</span>
-                                                    </div>
-                                                ))}
+                                                <h4>Aprobados</h4>
+                                                <div className={styles.courseList}>
+                                                    {training.approved.map((c, i) => (
+                                                        <div key={i} className={`${styles.courseRow} ${styles.courseApproved}`}>
+                                                            <span className={styles.courseName}>{c.name}</span>
+                                                            <span className={styles.courseScore}>{c.score}%</span>
+                                                        </div>
+                                                    ))}
+                                                </div>
                                             </div>
                                         )}
 
                                         {training.failed.length > 0 && (
                                             <div className={styles.courseGroup}>
-                                                <h4>✗ Reprobados</h4>
-                                                {training.failed.map((c, i) => (
-                                                    <div key={i} className={`${styles.courseRow} ${styles.courseFailed}`}>
-                                                        <span className={styles.courseName}>{c.name}</span>
-                                                        <span className={styles.courseScore}>{c.score}%</span>
-                                                    </div>
-                                                ))}
+                                                <h4>Reprobados</h4>
+                                                <div className={styles.courseList}>
+                                                    {training.failed.map((c, i) => (
+                                                        <div key={i} className={`${styles.courseRow} ${styles.courseFailed}`}>
+                                                            <span className={styles.courseName}>{c.name}</span>
+                                                            <span className={styles.courseScore}>{c.score}%</span>
+                                                        </div>
+                                                    ))}
+                                                </div>
                                             </div>
                                         )}
 
                                         {training.pending.length > 0 && (
                                             <div className={styles.courseGroup}>
-                                                <h4>⏳ Pendientes</h4>
-                                                {training.pending.map((c, i) => (
-                                                    <div key={i} className={`${styles.courseRow} ${styles.coursePending}`}>
-                                                        <span className={styles.courseName}>{c}</span>
-                                                        <span className={styles.courseStatus}>Pendiente</span>
-                                                    </div>
-                                                ))}
+                                                <h4>Pendientes</h4>
+                                                <div className={styles.courseList}>
+                                                    {training.pending.map((c, i) => (
+                                                        <div key={i} className={`${styles.courseRow} ${styles.coursePending}`}>
+                                                            <span className={styles.courseName}>{c}</span>
+                                                            <span className={styles.courseStatus}>Pendiente</span>
+                                                        </div>
+                                                    ))}
+                                                </div>
                                             </div>
                                         )}
                                     </div>
@@ -379,15 +433,17 @@ export default function PerfilPage() {
                                             <>
                                                 <div className={styles.promotionPath}>
                                                     <span className={styles.currentPos}>{employee.position}</span>
-                                                    <span className={styles.arrow}>→</span>
+                                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                                        <path d="M5 12h14M12 5l7 7-7 7" />
+                                                    </svg>
                                                     <span className={styles.nextPos}>{promotionRule.promotionTo}</span>
                                                 </div>
 
                                                 <div className={styles.criteriaList}>
                                                     <div className={`${styles.criteriaItem} ${promotionInfo?.temporality?.met ? styles.met : styles.notMet}`}>
-                                                        <span className={styles.criteriaCheck}>
+                                                        <div className={styles.criteriaCheck}>
                                                             {promotionInfo?.temporality?.met ? '✓' : '✗'}
-                                                        </span>
+                                                        </div>
                                                         <div className={styles.criteriaInfo}>
                                                             <span className={styles.criteriaName}>Temporalidad</span>
                                                             <span className={styles.criteriaDetail}>
@@ -397,9 +453,9 @@ export default function PerfilPage() {
                                                     </div>
 
                                                     <div className={`${styles.criteriaItem} ${promotionInfo?.matrix?.met ? styles.met : styles.notMet}`}>
-                                                        <span className={styles.criteriaCheck}>
+                                                        <div className={styles.criteriaCheck}>
                                                             {promotionInfo?.matrix?.met ? '✓' : '✗'}
-                                                        </span>
+                                                        </div>
                                                         <div className={styles.criteriaInfo}>
                                                             <span className={styles.criteriaName}>Matriz de Capacitación</span>
                                                             <span className={styles.criteriaDetail}>
@@ -409,9 +465,9 @@ export default function PerfilPage() {
                                                     </div>
 
                                                     <div className={`${styles.criteriaItem} ${promotionInfo?.performance?.met ? styles.met : styles.notMet}`}>
-                                                        <span className={styles.criteriaCheck}>
+                                                        <div className={styles.criteriaCheck}>
                                                             {promotionInfo?.performance?.met ? '✓' : '✗'}
-                                                        </span>
+                                                        </div>
                                                         <div className={styles.criteriaInfo}>
                                                             <span className={styles.criteriaName}>Evaluación Desempeño</span>
                                                             <span className={styles.criteriaDetail}>
@@ -421,9 +477,9 @@ export default function PerfilPage() {
                                                     </div>
 
                                                     <div className={`${styles.criteriaItem} ${promotionInfo?.exam?.met ? styles.met : styles.notMet}`}>
-                                                        <span className={styles.criteriaCheck}>
+                                                        <div className={styles.criteriaCheck}>
                                                             {promotionInfo?.exam?.met ? '✓' : '✗'}
-                                                        </span>
+                                                        </div>
                                                         <div className={styles.criteriaInfo}>
                                                             <span className={styles.criteriaName}>Examen de Promoción</span>
                                                             <span className={styles.criteriaDetail}>
@@ -437,7 +493,11 @@ export default function PerfilPage() {
                                             </>
                                         ) : (
                                             <div className={styles.noRules}>
-                                                <span className={styles.noRulesIcon}>ℹ️</span>
+                                                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+                                                    <circle cx="12" cy="12" r="10" />
+                                                    <line x1="12" y1="8" x2="12" y2="12" />
+                                                    <line x1="12" y1="16" x2="12.01" y2="16" />
+                                                </svg>
                                                 <p>Este puesto no tiene reglas de promoción configuradas</p>
                                             </div>
                                         )}

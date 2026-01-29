@@ -13,7 +13,7 @@ import { Button } from '@/components/ui/Button/Button';
 import { Skeleton } from '@/components/ui/Skeleton/Skeleton';
 import { Progress, CircularProgress } from '@/components/ui/Progress/Progress';
 import { Dialog, DialogHeader, DialogTitle, DialogBody, DialogClose } from '@/components/ui/Dialog/Dialog';
-import WelcomeModal from '@/components/WelcomeModal/WelcomeModal';
+import { RoleAvatar } from '@/components/RoleAvatar';
 import styles from './page.module.css';
 
 export default function DashboardPage() {
@@ -32,11 +32,11 @@ export default function DashboardPage() {
     });
     const [expiringEmployees, setExpiringEmployees] = useState([]);
     const [showExpiringModal, setShowExpiringModal] = useState(false);
-    const [showWelcomeModal, setShowWelcomeModal] = useState(false);
+    const [showWelcome, setShowWelcome] = useState(false);
 
     useEffect(() => {
         if (!authLoading && !user) {
-            router.push('/login');
+            router.push('/');
         }
     }, [user, authLoading, router]);
 
@@ -46,7 +46,7 @@ export default function DashboardPage() {
             loadUserData();
 
             if (sessionStorage.getItem('showWelcome')) {
-                setShowWelcomeModal(true);
+                setShowWelcome(true);
                 sessionStorage.removeItem('showWelcome');
             }
         }
@@ -221,8 +221,11 @@ export default function DashboardPage() {
             <main className={styles.main}>
                 <div className={styles.container}>
                     <div className={styles.header}>
-                        <div>
-                            <h1 className="fade-in">{getGreeting(userName)}{userName ? `, ${userName}` : ''}</h1>
+                        <div className={styles.headerInfo}>
+                            <div className={styles.headerTitle}>
+                                <h1 className="fade-in">{getGreeting(userName)}{userName ? `, ${userName}` : ''}</h1>
+                                {user?.rol && <RoleAvatar role={user.rol} size={45} />}
+                            </div>
                             <p className="slide-in">Panel de control del sistema</p>
                         </div>
                         <Link href="/employees">
@@ -241,6 +244,121 @@ export default function DashboardPage() {
                             </Button>
                         </Link>
                     </div>
+
+                    {/* Welcome Hero Section */}
+                    {showWelcome && (
+                        <section className={styles.welcomeSection}>
+                            {/* Background Effects */}
+                            <div className={styles.welcomeGlow1}></div>
+                            <div className={styles.welcomeGlow2}></div>
+
+                            <div className={styles.welcomeContent}>
+                                {/* Header */}
+                                <div className={styles.welcomeHeader}>
+                                    <div className={styles.welcomeLogo}>
+                                        <div className={styles.welcomeLogoIcon}>
+                                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                                                <path d="M13 10V3L4 14h7v7l9-11h-7z" />
+                                            </svg>
+                                        </div>
+                                        <span className={styles.welcomeVersion}>v2.0</span>
+                                    </div>
+                                    <button
+                                        className={styles.welcomeClose}
+                                        onClick={() => setShowWelcome(false)}
+                                        aria-label="Cerrar"
+                                    >
+                                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                            <line x1="18" y1="6" x2="6" y2="18" />
+                                            <line x1="6" y1="6" x2="18" y2="18" />
+                                        </svg>
+                                    </button>
+                                </div>
+
+                                {/* Title */}
+                                <h2 className={styles.welcomeTitle}>
+                                    Bienvenido a <span className={styles.welcomeTitleGradient}>Vertx</span>
+                                </h2>
+                                <p className={styles.welcomeSubtitle}>
+                                    Tu centro de comando para la gestión de talento y cumplimiento industrial.
+                                </p>
+
+                                {/* Modules Grid */}
+                                <div className={styles.modulesGrid}>
+                                    <Link href="/employees" className={styles.moduleCard}>
+                                        <div className={styles.moduleCardHeader}>
+                                            <div className={styles.moduleIcon}>
+                                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+                                                    <circle cx="9" cy="7" r="4" />
+                                                    <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
+                                                    <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+                                                </svg>
+                                            </div>
+                                            <h4>Gestión de Personal</h4>
+                                        </div>
+                                        <ul className={styles.moduleList}>
+                                            <li>Perfiles y expedientes</li>
+                                            <li>Evaluación de desempeño</li>
+                                            <li>Control de contratos</li>
+                                        </ul>
+                                    </Link>
+
+                                    <Link href="/capacitacion" className={styles.moduleCard}>
+                                        <div className={styles.moduleCardHeader}>
+                                            <div className={styles.moduleIcon}>
+                                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                                    <path d="M22 10v6M2 10l10-5 10 5-10 5z" />
+                                                    <path d="M6 12v5c3 3 9 3 12 0v-5" />
+                                                </svg>
+                                            </div>
+                                            <h4>Capacitación</h4>
+                                        </div>
+                                        <ul className={styles.moduleList}>
+                                            <li>Registros DC-3</li>
+                                            <li>Matriz de Habilidades</li>
+                                            <li>Planes de carrera</li>
+                                        </ul>
+                                    </Link>
+
+                                    <Link href="/capacitacion/promociones" className={styles.moduleCard}>
+                                        <div className={styles.moduleCardHeader}>
+                                            <div className={styles.moduleIcon}>
+                                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                                    <polyline points="23 6 13.5 15.5 8.5 10.5 1 18" />
+                                                    <polyline points="17 6 23 6 23 12" />
+                                                </svg>
+                                            </div>
+                                            <h4>Ascensos</h4>
+                                        </div>
+                                        <ul className={styles.moduleList}>
+                                            <li>Elegibilidad automática</li>
+                                            <li>Criterios objetivos</li>
+                                            <li>Reportes para auditoría</li>
+                                        </ul>
+                                    </Link>
+
+                                    <Link href="/reports" className={styles.moduleCard}>
+                                        <div className={styles.moduleCardHeader}>
+                                            <div className={styles.moduleIcon}>
+                                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                                    <line x1="18" y1="20" x2="18" y2="10" />
+                                                    <line x1="12" y1="20" x2="12" y2="4" />
+                                                    <line x1="6" y1="20" x2="6" y2="14" />
+                                                </svg>
+                                            </div>
+                                            <h4>Analytics</h4>
+                                        </div>
+                                        <ul className={styles.moduleList}>
+                                            <li>KPIs en tiempo real</li>
+                                            <li>Cumplimiento ISO</li>
+                                            <li>Alertas preventivas</li>
+                                        </ul>
+                                    </Link>
+                                </div>
+                            </div>
+                        </section>
+                    )}
 
                     {loading ? (
                         <div className={styles.statsGrid}>
@@ -524,11 +642,6 @@ export default function DashboardPage() {
                     </div>
                 </DialogBody>
             </Dialog>
-
-            <WelcomeModal
-                open={showWelcomeModal}
-                onOpenChange={setShowWelcomeModal}
-            />
         </>
     );
 }

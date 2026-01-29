@@ -1,0 +1,64 @@
+/* ==================== ROLE AVATAR ==================== */
+.avatar {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    border: 2px solid;
+    cursor: help;
+    transition: all var(--transition-base);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.avatar:hover {
+    transform: scale(1.1);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* Super Admin - Vibrant Purple/Violet */
+.superadmin {
+    background: linear-gradient(135deg, rgba(139, 92, 246, 0.2), rgba(168, 85, 247, 0.2));
+    border-color: #a855f7;
+    color: #a855f7;
+}
+
+.superadmin:hover {
+    background: linear-gradient(135deg, rgba(139, 92, 246, 0.3), rgba(168, 85, 247, 0.3));
+    border-color: #c084fc;
+}
+
+/* Admin - Vibrant Emerald */
+.admin {
+    background: linear-gradient(135deg, rgba(16, 185, 129, 0.2), rgba(5, 150, 105, 0.2));
+    border-color: #10b981;
+    color: #10b981;
+}
+
+.admin:hover {
+    background: linear-gradient(135deg, rgba(16, 185, 129, 0.3), rgba(5, 150, 105, 0.3));
+    border-color: #34d399;
+}
+
+/* Demo - Vibrant Orange */
+.demo {
+    background: linear-gradient(135deg, rgba(249, 115, 22, 0.2), rgba(251, 146, 60, 0.2));
+    border-color: #f97316;
+    color: #f97316;
+}
+
+.demo:hover {
+    background: linear-gradient(135deg, rgba(249, 115, 22, 0.3), rgba(251, 146, 60, 0.3));
+    border-color: #fb923c;
+}
+
+/* Default - Vibrant Blue */
+.default {
+    background: linear-gradient(135deg, rgba(59, 130, 246, 0.2), rgba(37, 99, 235, 0.2));
+    border-color: #3b82f6;
+    color: #3b82f6;
+}
+
+.default:hover {
+    background: linear-gradient(135deg, rgba(59, 130, 246, 0.3), rgba(37, 99, 235, 0.3));
+    border-color: #60a5fa;
+}

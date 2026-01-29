@@ -60,7 +60,7 @@ export default function EmployeesPage() {
     // Auth Protection
     useEffect(() => {
         if (!authLoading && !user) {
-            router.push('/login');
+            router.push('/');
         }
     }, [user, authLoading, router]);
 

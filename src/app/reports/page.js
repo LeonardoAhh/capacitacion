@@ -89,7 +89,7 @@ export default function ReportsPage() {
 
     useEffect(() => {
         if (!authLoading && !user) {
-            router.push('/login');
+            router.push('/');
         }
     }, [user, authLoading, router]);
 
