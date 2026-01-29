@@ -195,7 +195,7 @@ export default function InductionPage() {
             <div className={styles.header}>
                 <div className={styles.titleSection}>
                     <h1>Módulo de Inducción</h1>
-                    <p>Bienvenido al proceso de incorporación RH.</p>
+                    <p>Bienvenido al proceso de inducción en ViñoPlastic QRO.</p>
                 </div>
                 <div className={styles.headerActions}>
                     <ThemeToggle />
