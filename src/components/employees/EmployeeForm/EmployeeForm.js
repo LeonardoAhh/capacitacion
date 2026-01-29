@@ -33,6 +33,11 @@ export default function EmployeeForm({
         ...initialData
     });
 
+    const [photoFile, setPhotoFile] = useState(null);
+    const [photoPreview, setPhotoPreview] = useState(null);
+    const [docFiles, setDocFiles] = useState([]); // Archivos nuevos seleccionados
+    const [uploading, setUploading] = useState(false);
+
     // Cargar datos si estamos editando
     useEffect(() => {
         if (employee) {
@@ -47,21 +52,128 @@ export default function EmployeeForm({
                 eval1Score: employee.eval1Score || '',
                 eval2Score: employee.eval2Score || '',
                 eval3Score: employee.eval3Score || '',
-                trainingPlanDelivered: employee.trainingPlanDelivered || false
+                trainingPlanDelivered: employee.trainingPlanDelivered || false,
+                photoUrl: employee.photoUrl || '',
+                photoDriveId: employee.photoDriveId || '',
+                documents: employee.documents || [] // Cargar documentos existentes
             });
+            if (employee.photoUrl) setPhotoPreview(employee.photoUrl);
         }
     }, [employee]);
 
-    const handleSubmit = (e) => {
+    const handleFileChange = (e) => {
+        if (e.target.files[0]) {
+            const file = e.target.files[0];
+            setPhotoFile(file);
+            setPhotoPreview(URL.createObjectURL(file));
+        }
+    };
+
+    const handleDocChange = (e) => {
+        if (e.target.files && e.target.files.length > 0) {
+            const newDocs = Array.from(e.target.files);
+            setDocFiles(prev => [...prev, ...newDocs]);
+        }
+    };
+
+    const removeNewDoc = (index) => {
+        setDocFiles(prev => prev.filter((_, i) => i !== index));
+    };
+
+    const removeExistingDoc = (index) => {
+        const updatedDocs = [...(formData.documents || [])];
+        updatedDocs.splice(index, 1);
+        setFormData({ ...formData, documents: updatedDocs });
+    };
+
+    const handleUploadDocs = async (empId) => {
+        if (docFiles.length === 0) return [];
+        const uploadedDocs = [];
+
+        for (const file of docFiles) {
+            const uploadData = new FormData();
+            uploadData.append('file', file);
+            uploadData.append('employeeId', empId);
+            uploadData.append('docType', 'documents');
+
+            try {
+                const res = await fetch('/api/upload', { method: 'POST', body: uploadData });
+                if (res.ok) {
+                    const result = await res.json();
+                    uploadedDocs.push({
+                        name: file.name,
+                        url: result.data.viewLink,
+                        driveId: result.data.id,
+                        uploadDate: new Date().toISOString()
+                    });
+                }
+            } catch (error) {
+                console.error("Error subiendo documento:", file.name, error);
+            }
+        }
+        return uploadedDocs;
+    };
+
+    const handleUploadPhoto = async (empId, dept) => {
+        if (!photoFile) return null;
+
+        const uploadData = new FormData();
+        uploadData.append('file', photoFile);
+        uploadData.append('employeeId', empId); // ID del empleado como nombre de carpeta
+        uploadData.append('docType', 'profile'); // Tipo de doc para subcarpeta/prefijo
+
+        try {
+            const res = await fetch('/api/upload', {
+                method: 'POST',
+                body: uploadData,
+            });
+
+            if (!res.ok) throw new Error('Error subiendo foto');
+
+            const result = await res.json();
+            return {
+                photoUrl: result.data.viewLink,
+                photoDriveId: result.data.id
+            };
+        } catch (error) {
+            console.error(error);
+            return null;
+        }
+    };
+
+    const handleSubmit = async (e) => {
         e.preventDefault();
+        setUploading(true);
 
-        // Calcular fechas antes de enviar
-        const dates = calculateDates(formData.startDate);
+        try {
+            // Calcular fechas antes de enviar
+            const dates = calculateDates(formData.startDate);
 
-        onSubmit({
-            ...formData,
-            ...dates
-        });
+            // 1. Subir foto si existe nueva
+            let photoData = {};
+            if (photoFile) {
+                // Usar ID del empleado para organizar carpeta
+                const uploadResult = await handleUploadPhoto(formData.employeeId, formData.department);
+                if (uploadResult) {
+                    photoData = uploadResult;
+                }
+            }
+
+            // 2. Subir documentos
+            const newUploadedDocs = await handleUploadDocs(formData.employeeId);
+            const finalDocuments = [...(formData.documents || []), ...newUploadedDocs];
+
+            onSubmit({
+                ...formData,
+                ...dates,
+                ...photoData,
+                documents: finalDocuments
+            });
+        } catch (error) {
+            console.error("Error al guardar:", error);
+        } finally {
+            setUploading(false);
+        }
     };
 
     const getEvalStatus = (score) => {
@@ -75,6 +187,31 @@ export default function EmployeeForm({
             <h2>{title}</h2>
             <form onSubmit={handleSubmit} className={styles.form}>
                 <div className={styles.formGrid}>
+                    {/* Sección Foto de Perfil */}
+                    <div className={styles.inputGroup} style={{ gridColumn: '1 / -1', display: 'flex', flexDirection: 'column', alignItems: 'center', marginBottom: '20px' }}>
+                        <div style={{ width: '100px', height: '100px', borderRadius: '50%', overflow: 'hidden', background: '#f0f0f0', marginBottom: '10px', display: 'flex', alignItems: 'center', justifyContent: 'center', border: '2px solid #ddd' }}>
+                            {photoPreview ? (
+                                // eslint-disable-next-line @next/next/no-img-element
+                                <img src={photoPreview} alt="Vista previa" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                            ) : (
+                                <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#999" strokeWidth="2">
+                                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                                    <circle cx="12" cy="7" r="4" />
+                                </svg>
+                            )}
+                        </div>
+                        <label htmlFor="photo-upload" className="btn btn-secondary btn-sm" style={{ cursor: 'pointer' }}>
+                            {photoPreview ? 'Cambiar Foto' : 'Subir Foto'}
+                        </label>
+                        <input
+                            id="photo-upload"
+                            type="file"
+                            accept="image/*"
+                            onChange={handleFileChange}
+                            style={{ display: 'none' }}
+                        />
+                    </div>
+
                     <div className={styles.inputGroup}>
                         <label htmlFor="employeeId" className="label">ID de Empleado</label>
                         <input
@@ -319,6 +456,59 @@ export default function EmployeeForm({
                         </div>
                     </div>
                 )}
+
+                {/* Documentos */}
+                <h3 className={styles.sectionTitle} style={{ marginTop: 'var(--spacing-lg)' }}>Documentos y Certificados</h3>
+                <div className={styles.documentsCard} style={{ background: '#f8fafc', padding: '15px', borderRadius: '8px', border: '1px solid #e2e8f0' }}>
+
+                    {/* Lista de Documentos Existentes */}
+                    {formData.documents && formData.documents.length > 0 && (
+                        <ul style={{ listStyle: 'none', padding: 0, margin: '0 0 15px 0' }}>
+                            {formData.documents.map((doc, index) => (
+                                <li key={index} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '8px', background: 'white', marginBottom: '5px', borderRadius: '4px', border: '1px solid #edf2f7' }}>
+                                    <a href={doc.url} target="_blank" rel="noopener noreferrer" style={{ textDecoration: 'none', color: '#2563eb', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" /><polyline points="14 2 14 8 20 8" /></svg>
+                                        {doc.name}
+                                    </a>
+                                    <button type="button" onClick={() => removeExistingDoc(index)} style={{ border: 'none', background: 'transparent', color: '#ef4444', cursor: 'pointer' }}>
+                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                                    </button>
+                                </li>
+                            ))}
+                        </ul>
+                    )}
+
+                    {/* Lista de Documentos Nuevos por Subir */}
+                    {docFiles.length > 0 && (
+                        <div style={{ marginBottom: '15px' }}>
+                            <h4 style={{ fontSize: '12px', color: '#64748b', marginBottom: '5px' }}>Por subir:</h4>
+                            <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
+                                {docFiles.map((file, index) => (
+                                    <li key={index} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '8px', background: '#eff6ff', marginBottom: '5px', borderRadius: '4px', border: '1px dashed #bfdbfe' }}>
+                                        <span style={{ fontSize: '13px', color: '#1e40af' }}>{file.name}</span>
+                                        <button type="button" onClick={() => removeNewDoc(index)} style={{ border: 'none', background: 'transparent', color: '#64748b', cursor: 'pointer' }}>✕</button>
+                                    </li>
+                                ))}
+                            </ul>
+                        </div>
+                    )}
+
+                    <div style={{ marginTop: '10px' }}>
+                        <input
+                            type="file"
+                            id="doc-upload"
+                            multiple
+                            accept=".pdf,.doc,.docx,.jpg,.png"
+                            onChange={handleDocChange}
+                            style={{ display: 'none' }}
+                        />
+                        <label htmlFor="doc-upload" className="btn btn-secondary btn-sm" style={{ cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: '5px' }}>
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" /><polyline points="17 8 12 3 7 8" /><line x1="12" y1="3" x2="12" y2="15" /></svg>
+                            Adjuntar Documentos
+                        </label>
+                    </div>
+                </div>
+
 
                 <div className={styles.formActions}>
                     {onCancel && (

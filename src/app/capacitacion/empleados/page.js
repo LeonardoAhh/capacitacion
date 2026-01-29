@@ -11,6 +11,7 @@ import { useToast } from '@/components/ui/Toast/Toast';
 import { db } from '@/lib/firebase';
 import { collection, getDocs, query, orderBy, doc, updateDoc, setDoc, getDoc, deleteDoc, where, limit } from 'firebase/firestore';
 import { Dialog, DialogHeader, DialogTitle, DialogBody, DialogFooter, DialogClose } from '@/components/ui/Dialog/Dialog';
+import { Avatar } from '@/components/ui/Avatar/Avatar';
 import styles from './page.module.css';
 
 export default function EmpleadosPage() {
@@ -35,6 +36,7 @@ export default function EmpleadosPage() {
     const [editingEmp, setEditingEmp] = useState(null); // Edit Mode
     const [viewingEmp, setViewingEmp] = useState(null); // Detail Mode
     const [isCreating, setIsCreating] = useState(false); // Create Mode
+    const [previewImage, setPreviewImage] = useState(null); // Photo Lightbox Mode
 
     const [formData, setFormData] = useState({
         id: '',
@@ -52,6 +54,100 @@ export default function EmpleadosPage() {
         positionStartDate: ''
     });
     const [saving, setSaving] = useState(false);
+
+    // File Upload States
+    const [photoFile, setPhotoFile] = useState(null);
+    const [photoPreview, setPhotoPreview] = useState(null);
+    const [docFiles, setDocFiles] = useState([]);
+    const [uploading, setUploading] = useState(false);
+
+    // Reset files when closing
+    useEffect(() => {
+        if (!isCreating && !editingEmp) {
+            setPhotoFile(null);
+            setPhotoPreview(null);
+            setDocFiles([]);
+        }
+    }, [isCreating, editingEmp]);
+
+    const handleFileChange = (e) => {
+        if (e.target.files[0]) {
+            const file = e.target.files[0];
+            setPhotoFile(file);
+            setPhotoPreview(URL.createObjectURL(file));
+        }
+    };
+
+    const handleDocChange = (e) => {
+        if (e.target.files && e.target.files.length > 0) {
+            const newDocs = Array.from(e.target.files);
+            setDocFiles(prev => [...prev, ...newDocs]);
+        }
+    };
+
+    const removeNewDoc = (index) => {
+        setDocFiles(prev => prev.filter((_, i) => i !== index));
+    };
+
+    const removeExistingDoc = async (index, empId) => {
+        if (!editingEmp) return;
+        const updatedDocs = [...(editingEmp.documents || [])];
+        updatedDocs.splice(index, 1);
+
+        // Optimistic update local
+        setEditingEmp({ ...editingEmp, documents: updatedDocs });
+
+        // Update Firestore immediately (optional, or wait for save)
+        // For now, we'll let handleSave do the heavy lifting, 
+        // but we need to update formData or editingEmp to reflect changes?
+        // Actually, easiest is to just update state and let handleSave merge it.
+    };
+
+    const handleUploadPhoto = async (empId) => {
+        if (!photoFile) return null;
+        const uploadData = new FormData();
+        uploadData.append('file', photoFile);
+        uploadData.append('employeeId', empId);
+        uploadData.append('docType', 'profile');
+
+        try {
+            const res = await fetch('/api/upload', { method: 'POST', body: uploadData });
+            if (!res.ok) throw new Error('Error subiendo foto');
+            const result = await res.json();
+            return { photoUrl: result.data.viewLink, photoDriveId: result.data.id };
+        } catch (error) {
+            console.error(error);
+            return null;
+        }
+    };
+
+    const handleUploadDocs = async (empId) => {
+        if (docFiles.length === 0) return [];
+        const uploadedDocs = [];
+
+        for (const file of docFiles) {
+            const uploadData = new FormData();
+            uploadData.append('file', file);
+            uploadData.append('employeeId', empId);
+            uploadData.append('docType', 'documents');
+
+            try {
+                const res = await fetch('/api/upload', { method: 'POST', body: uploadData });
+                if (res.ok) {
+                    const result = await res.json();
+                    uploadedDocs.push({
+                        name: file.name,
+                        url: result.data.viewLink,
+                        driveId: result.data.id,
+                        uploadDate: new Date().toISOString()
+                    });
+                }
+            } catch (error) {
+                console.error("Error subiendo documento:", file.name, error);
+            }
+        }
+        return uploadedDocs;
+    };
 
     useEffect(() => {
         loadEmployees();
@@ -178,9 +274,22 @@ export default function EmpleadosPage() {
         }
 
         setSaving(true);
+        setUploading(true); // Mostrar estado de carga
         try {
             const empId = isCreating ? formData.id.trim() || formData.name.replace(/\s+/g, '-').toUpperCase() : editingEmp.id;
             const ref = doc(db, 'training_records', empId);
+
+            // 1. Subir archivos
+            let photoData = {};
+            if (photoFile) {
+                const res = await handleUploadPhoto(empId);
+                if (res) photoData = res;
+            }
+
+            const newDocs = await handleUploadDocs(empId);
+            // Combinar documentos existentes (que pudieron ser borrados en la UI) con los nuevos
+            const existingDocs = isCreating ? [] : (editingEmp?.documents || []);
+            const allDocs = [...existingDocs, ...newDocs];
 
             const payload = {
                 name: (formData.name || '').trim().toUpperCase(),
@@ -198,7 +307,9 @@ export default function EmpleadosPage() {
                     performancePeriod: formData.performancePeriod || '',
                     positionStartDate: formData.positionStartDate || ''
                 },
-                updatedAt: new Date().toISOString()
+                updatedAt: new Date().toISOString(),
+                ...photoData, // { photoUrl, photoDriveId }
+                documents: allDocs
             };
 
             // Calculate Matrix Requirements
@@ -217,8 +328,6 @@ export default function EmpleadosPage() {
                     matrixDoc = snap.docs[0].data();
                 } else {
                     // 2. Normalized Match (No Accents)
-                    // Note: Firestore doesn't support regex/normalization update in query easily, so we fallback to client-side scan if needed
-                    // or try known variations. Let's try scanning all positions (assuming < 100 positions)
                     const allPosSnap = await getDocs(query(posColl));
                     const targetNorm = posName.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toUpperCase().trim();
 
@@ -230,14 +339,11 @@ export default function EmpleadosPage() {
 
                     if (found) {
                         matrixDoc = found.data();
-                        console.log("Matrix found via fuzzy match:", found.id);
                     }
                 }
 
                 if (matrixDoc) {
                     const requiredCourses = matrixDoc.requiredCourses || [];
-
-                    // Check completion against history
                     const history = isCreating ? [] : (editingEmp.history || []);
                     const completed = requiredCourses.filter(reqCourse =>
                         history.some(h => h.courseName === reqCourse && h.status === 'approved')
@@ -251,9 +357,6 @@ export default function EmpleadosPage() {
                             : 0,
                         requiredCourses: requiredCourses
                     };
-                } else {
-                    console.warn(`No matrix definition found for position: ${posName}`);
-                    toast.warning("Matriz No Encontrada", `No se encontró definición de cursos para el puesto: ${posName}. Verifica que el puesto exista en la Matriz de Capacitación.`);
                 }
             } catch (err) {
                 console.error("Error fetching matrix:", err);
@@ -271,9 +374,6 @@ export default function EmpleadosPage() {
                     ...payload,
                     employeeId: empId,
                     history: [],
-                    ...payload,
-                    employeeId: empId,
-                    history: [],
                     matrix: matrixData
                 });
                 toast.success("Creado", "Empleado registrado correctamente.");
@@ -283,7 +383,7 @@ export default function EmpleadosPage() {
             } else {
                 await updateDoc(ref, {
                     ...payload,
-                    matrix: matrixData // Start tracking matrix on edit too if position changes
+                    matrix: matrixData
                 });
                 toast.success("Actualizado", "Datos guardados.");
 
@@ -293,8 +393,6 @@ export default function EmpleadosPage() {
 
             setIsCreating(false);
             setEditingEmp(null);
-            setIsCreating(false);
-            setEditingEmp(null);
             setFormData({ id: '', name: '', position: '', department: '', curp: '', occupation: '' });
 
         } catch (error) {
@@ -302,6 +400,7 @@ export default function EmpleadosPage() {
             toast.error("Error", "No se pudo guardar.");
         } finally {
             setSaving(false);
+            setUploading(false);
         }
     };
 
@@ -384,8 +483,25 @@ export default function EmpleadosPage() {
                                             {filteredEmployees.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage).map(emp => (
                                                 <tr key={emp.id}>
                                                     <td className={styles.fwBold}>
-                                                        {emp.name}
-                                                        <div className={styles.subText}>ID: {emp.employeeId || emp.id}</div>
+                                                        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                                                            <div
+                                                                onClick={() => emp.photoUrl && setPreviewImage({ url: emp.photoUrl, name: emp.name })}
+                                                                style={{ cursor: emp.photoUrl ? 'pointer' : 'default', transition: 'transform 0.1s' }}
+                                                                title={emp.photoUrl ? "Ver foto" : ""}
+                                                                onMouseOver={(e) => emp.photoUrl && (e.currentTarget.style.transform = 'scale(1.1)')}
+                                                                onMouseOut={(e) => e.currentTarget.style.transform = 'scale(1)'}
+                                                            >
+                                                                <Avatar name={emp.name} src={emp.photoUrl} size="md" />
+                                                            </div>
+                                                            <div
+                                                                onClick={() => setViewingEmp(emp)}
+                                                                style={{ cursor: 'pointer' }}
+                                                                className={styles.clickableName}
+                                                            >
+                                                                {emp.name}
+                                                                <div className={styles.subText}>ID: {emp.employeeId || emp.id}</div>
+                                                            </div>
+                                                        </div>
                                                     </td>
                                                     <td>{emp.position}</td>
                                                     <td>
@@ -459,6 +575,31 @@ export default function EmpleadosPage() {
                     <DialogClose onClose={() => { setIsCreating(false); setEditingEmp(null); }} />
                 </DialogHeader>
                 <DialogBody>
+                    {/* Foto de Perfil */}
+                    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginBottom: '20px' }}>
+                        <div style={{ width: '100px', height: '100px', borderRadius: '50%', overflow: 'hidden', background: '#f0f0f0', marginBottom: '10px', display: 'flex', alignItems: 'center', justifyContent: 'center', border: '2px solid #ddd' }}>
+                            {photoPreview || editingEmp?.photoUrl ? (
+                                // eslint-disable-next-line @next/next/no-img-element
+                                <img src={photoPreview || editingEmp?.photoUrl} alt="Vista previa" referrerPolicy="no-referrer" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                            ) : (
+                                <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#999" strokeWidth="2">
+                                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                                    <circle cx="12" cy="7" r="4" />
+                                </svg>
+                            )}
+                        </div>
+                        <label htmlFor="photo-upload-modal" className="btn btn-secondary btn-sm" style={{ cursor: 'pointer', padding: '5px 10px', fontSize: '0.8rem' }}>
+                            {photoPreview || editingEmp?.photoUrl ? 'Cambiar Foto' : 'Subir Foto'}
+                        </label>
+                        <input
+                            id="photo-upload-modal"
+                            type="file"
+                            accept="image/*"
+                            onChange={handleFileChange}
+                            style={{ display: 'none' }}
+                        />
+                    </div>
+
                     {isCreating && (
                         <div className={styles.formGroup}>
                             <label>ID Empleado (Opcional)</label>
@@ -629,6 +770,55 @@ export default function EmpleadosPage() {
                             onChange={(e) => setFormData({ ...formData, positionStartDate: e.target.value })}
                         />
                     </div>
+
+                    {/* Documentos */}
+                    <div className={styles.formGroup} style={{ marginTop: '20px', borderTop: '1px solid #eee', paddingTop: '15px' }}>
+                        <h4 style={{ margin: '0 0 10px 0', fontSize: '1rem' }}>Documentos y Certificados</h4>
+
+                        {/* Lista Existentes */}
+                        {editingEmp?.documents && editingEmp.documents.length > 0 && (
+                            <ul style={{ listStyle: 'none', padding: 0, margin: '0 0 15px 0' }}>
+                                {editingEmp.documents.map((doc, index) => (
+                                    <li key={index} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '8px', background: '#f8fafc', marginBottom: '5px', borderRadius: '4px', border: '1px solid #e2e8f0' }}>
+                                        <a href={doc.url} target="_blank" rel="noopener noreferrer" style={{ textDecoration: 'none', color: '#2563eb', display: 'flex', alignItems: 'center', gap: '8px', fontSize: '14px' }}>
+                                            📄 {doc.name}
+                                        </a>
+                                        <button type="button" onClick={() => removeExistingDoc(index, editingEmp.id)} style={{ border: 'none', background: 'transparent', color: '#ef4444', cursor: 'pointer' }}>
+                                            🗑️
+                                        </button>
+                                    </li>
+                                ))}
+                            </ul>
+                        )}
+
+                        {/* Lista Nuevos */}
+                        {docFiles.length > 0 && (
+                            <div style={{ marginBottom: '10px' }}>
+                                <div style={{ fontSize: '12px', color: '#64748b', marginBottom: '5px' }}>Por subir:</div>
+                                <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
+                                    {docFiles.map((file, index) => (
+                                        <li key={index} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '8px', background: '#eff6ff', marginBottom: '5px', borderRadius: '4px', border: '1px dashed #bfdbfe' }}>
+                                            <span style={{ fontSize: '13px', color: '#1e40af' }}>{file.name}</span>
+                                            <button type="button" onClick={() => removeNewDoc(index)} style={{ border: 'none', background: 'transparent', color: '#64748b', cursor: 'pointer' }}>✕</button>
+                                        </li>
+                                    ))}
+                                </ul>
+                            </div>
+                        )}
+
+                        <input
+                            type="file"
+                            id="doc-upload-modal"
+                            multiple
+                            accept=".pdf,.doc,.docx,.jpg,.png"
+                            onChange={handleDocChange}
+                            style={{ display: 'none' }}
+                        />
+                        <label htmlFor="doc-upload-modal" className="btn btn-secondary btn-sm" style={{ cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: '5px', padding: '6px 12px', fontSize: '13px', border: '1px solid #ccc', borderRadius: '4px' }}>
+                            📎 Adjuntar Documentos
+                        </label>
+                    </div>
+
                 </DialogBody>
                 <DialogFooter>
                     <Button variant="ghost" onClick={() => { setIsCreating(false); setEditingEmp(null); }}>Cancelar</Button>
@@ -674,6 +864,32 @@ export default function EmpleadosPage() {
                         ))}
                     </div>
 
+                    {/* Documentos y Certificados */}
+                    {viewingEmp?.documents && viewingEmp.documents.length > 0 && (
+                        <div style={{ marginTop: '20px', marginBottom: '20px' }}>
+                            <h4 className={styles.sectionTitle}>Documentos y Certificados</h4>
+                            <div className={styles.historyList}>
+                                {viewingEmp.documents.map((doc, index) => (
+                                    <div key={index} className={styles.historyItem} style={{ borderLeft: '3px solid #3b82f6', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                        <div style={{ display: 'flex', flexDirection: 'column' }}>
+                                            <span className={styles.historyName}>{doc.name}</span>
+                                            <span style={{ fontSize: '11px', color: '#64748b' }}>Subido: {new Date(doc.uploadDate).toLocaleDateString()}</span>
+                                        </div>
+                                        <a
+                                            href={doc.url}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            className="btn btn-sm btn-secondary"
+                                            style={{ textDecoration: 'none', padding: '4px 8px', fontSize: '12px' }}
+                                        >
+                                            Ver 📄
+                                        </a>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    )}
+
                     {/* Missing Courses Section */}
                     {(viewingEmp?.matrix?.pendingCourses?.length > 0 || viewingEmp?.matrix?.failedCourses?.length > 0) && (
                         <>
@@ -708,6 +924,29 @@ export default function EmpleadosPage() {
                 </DialogBody>
                 <DialogFooter>
                     <Button onClick={() => setViewingEmp(null)}>Cerrar</Button>
+                </DialogFooter>
+            </Dialog>
+            {/* Photo Preview Modal */}
+            <Dialog open={!!previewImage} onOpenChange={(open) => !open && setPreviewImage(null)}>
+                <DialogHeader>
+                    <DialogTitle>{previewImage?.name}</DialogTitle>
+                    <DialogClose onClose={() => setPreviewImage(null)} />
+                </DialogHeader>
+                <DialogBody>
+                    <div style={{ display: 'flex', justifyContent: 'center', background: '#f8fafc', padding: '10px', borderRadius: '8px' }}>
+                        {previewImage && (
+                            // eslint-disable-next-line @next/next/no-img-element
+                            <img
+                                src={previewImage.url}
+                                alt={previewImage.name}
+                                referrerPolicy="no-referrer"
+                                style={{ maxWidth: '100%', maxHeight: '70vh', borderRadius: '4px', objectFit: 'contain' }}
+                            />
+                        )}
+                    </div>
+                </DialogBody>
+                <DialogFooter>
+                    <Button onClick={() => setPreviewImage(null)}>Cerrar</Button>
                 </DialogFooter>
             </Dialog>
         </>

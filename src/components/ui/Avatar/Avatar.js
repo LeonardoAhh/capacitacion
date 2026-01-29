@@ -50,6 +50,7 @@ export function Avatar({
                     src={src}
                     alt={alt || name}
                     className={styles.image}
+                    referrerPolicy="no-referrer"
                     onError={(e) => {
                         e.target.style.display = 'none';
                         e.target.nextSibling.style.display = 'flex';

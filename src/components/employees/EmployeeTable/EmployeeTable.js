@@ -31,6 +31,7 @@ export default function EmployeeTable({ employees, onEdit, onDelete }) {
                         <th>Puesto</th>
                         <th>Área</th>
                         <th>Departamento</th>
+                        <th>Docs</th>
                         <th>Turno</th>
                         <th>Inicio</th>
                         <th>Fin Contrato</th>
@@ -42,12 +43,20 @@ export default function EmployeeTable({ employees, onEdit, onDelete }) {
                         <tr key={employee.id}>
                             <td>{employee.employeeId}</td>
                             <td className={styles.nameCell}>
-                                <Avatar name={employee.name} size="sm" />
+                                <Avatar name={employee.name} src={employee.photoUrl} size="sm" />
                                 {employee.name}
                             </td>
                             <td>{employee.position || '-'}</td>
                             <td>{employee.area}</td>
                             <td>{employee.department}</td>
+                            <td>
+                                {employee.documents && employee.documents.length > 0 && (
+                                    <div style={{ display: 'flex', alignItems: 'center', gap: '4px', color: '#64748b', fontSize: '12px' }}>
+                                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" /><polyline points="14 2 14 8 20 8" /></svg>
+                                        {employee.documents.length}
+                                    </div>
+                                )}
+                            </td>
                             <td>
                                 <Badge variant="white" size="sm">Turno {employee.shift}</Badge>
                             </td>
