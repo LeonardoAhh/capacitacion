@@ -17,7 +17,7 @@ export default function LoginPage() {
 
     useEffect(() => {
         if (user) {
-            router.push('/dashboard');
+            router.push('/modulos');
         }
     }, [user, router]);
 
@@ -30,7 +30,7 @@ export default function LoginPage() {
 
         if (result.success) {
             sessionStorage.setItem('showWelcome', 'true');
-            router.push('/dashboard');
+            router.push('/modulos');
         } else {
             setError('Acceso denegado. Verifica tus datos.');
             setLoading(false);
@@ -42,7 +42,7 @@ export default function LoginPage() {
         setLoading(true);
         const result = await signInAnon();
         if (result.success) {
-            router.push('/dashboard');
+            router.push('/modulos');
         } else {
             setError('Error al iniciar demo: ' + result.error);
             setLoading(false);

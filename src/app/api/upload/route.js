@@ -1,6 +1,8 @@
 import { NextResponse } from 'next/server';
 import { uploadFile, createFolder, findFolder } from '@/lib/drive';
 
+export const dynamic = 'force-dynamic';
+
 // ID de la carpeta raíz predefinida (opcional). 
 // Si no se define, buscará/creará una carpeta llamada "VERT_RH_FILES" en la raíz.
 const ROOT_FOLDER_NAME = 'VERT_RH_FILES';
@@ -9,8 +11,10 @@ export async function POST(request) {
     try {
         const formData = await request.formData();
         const file = formData.get('file');
-        const employeeId = formData.get('employeeId'); // Para organizar por empleado
-        const docType = formData.get('docType'); // 'profile', 'certificate', 'document'
+        const employeeId = formData.get('employeeId');
+        const docType = formData.get('docType');
+
+        console.log(`[API Upload] Start. File: ${file?.name}, Size: ${file?.size}, EmpID: ${employeeId}`);
 
         if (!file) {
             return NextResponse.json(
@@ -19,17 +23,18 @@ export async function POST(request) {
             );
         }
 
-        // 1. Validar carpeta raíz
-        const rootFolderId = process.env.GOOGLE_DRIVE_ROOT_ID;
+        // 1. Obtener o crear carpeta raíz
+        let rootFolderId = process.env.GOOGLE_DRIVE_ROOT_ID;
 
+        // Si no está en variables, buscarla dinámicamente
         if (!rootFolderId) {
-            return NextResponse.json(
-                {
-                    error: 'Configuración faltante',
-                    details: 'Falta la variable GOOGLE_DRIVE_ROOT_ID en .env.local. La Service Account necesita una carpeta compartida donde subir archivos.'
-                },
-                { status: 500 }
-            );
+            console.log('GOOGLE_DRIVE_ROOT_ID no definido, buscando carpeta default...');
+            rootFolderId = await findFolder(ROOT_FOLDER_NAME);
+
+            if (!rootFolderId) {
+                console.log('Carpeta default no encontrada, creando...');
+                rootFolderId = await createFolder(ROOT_FOLDER_NAME);
+            }
         }
 
         // 2. Determinar carpeta destino según employeeId

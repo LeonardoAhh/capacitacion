@@ -112,11 +112,18 @@ export default function EmpleadosPage() {
 
         try {
             const res = await fetch('/api/upload', { method: 'POST', body: uploadData });
-            if (!res.ok) throw new Error('Error subiendo foto');
+
+            if (!res.ok) {
+                const errorDetail = await res.json();
+                console.error("SERVER ERROR:", errorDetail);
+                throw new Error(errorDetail.details || 'Error del servidor al subir foto');
+            }
+
             const result = await res.json();
             return { photoUrl: result.data.viewLink, photoDriveId: result.data.id };
         } catch (error) {
-            console.error(error);
+            console.error("Upload Error:", error);
+            toast.error("Error de Subida", error.message);
             return null;
         }
     };
