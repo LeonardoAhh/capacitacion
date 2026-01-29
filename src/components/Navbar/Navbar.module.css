@@ -1,20 +1,17 @@
-/* ==================== NAVBAR BASE ==================== */
+/* ==================== iOS NAVBAR ==================== */
 .navbar {
     position: sticky;
     top: 0;
     z-index: 100;
-    background-color: var(--bg-secondary);
+    background-color: rgba(255, 255, 255, 0.72);
     border-bottom: 1px solid var(--border-color);
-    backdrop-filter: blur(12px);
+    backdrop-filter: saturate(180%) blur(20px);
+    -webkit-backdrop-filter: saturate(180%) blur(20px);
     transition: all var(--transition-base);
 }
 
 [data-theme="dark"] .navbar {
-    background-color: rgba(30, 41, 59, 0.9);
-}
-
-[data-theme="light"] .navbar {
-    background-color: rgba(255, 255, 255, 0.9);
+    background-color: rgba(0, 0, 0, 0.72);
 }
 
 .container {
@@ -26,7 +23,7 @@
     align-items: center;
 }
 
-/* ==================== LOGO ==================== */
+/* ==================== iOS LOGO ==================== */
 .logo {
     display: flex;
     align-items: center;
@@ -36,23 +33,22 @@
 .logoIcon {
     width: 36px;
     height: 36px;
-    background: linear-gradient(135deg, var(--color-primary), var(--color-secondary));
+    background: var(--color-primary);
     border-radius: var(--radius-md);
     display: flex;
     align-items: center;
     justify-content: center;
     color: white;
-    box-shadow: 0 2px 8px rgba(59, 130, 246, 0.3);
 }
 
 .logoText {
-    font-size: 1.25rem;
-    font-weight: 700;
+    font-size: 1.1rem;
+    font-weight: 600;
     color: var(--text-primary);
-    letter-spacing: -0.5px;
+    letter-spacing: -0.3px;
 }
 
-/* ==================== ACTIONS ==================== */
+/* ==================== iOS ACTIONS ==================== */
 .actions {
     display: flex;
     align-items: center;
@@ -64,16 +60,21 @@
     align-items: center;
     gap: var(--spacing-sm);
     padding: 6px var(--spacing-md) 6px 6px;
-    background-color: var(--bg-tertiary);
+    background-color: var(--bg-secondary);
     border-radius: var(--radius-full);
     border: 1px solid var(--border-color);
+    transition: all var(--transition-fast);
+}
+
+.userInfo:hover {
+    background-color: var(--bg-tertiary);
 }
 
 .userAvatar {
     width: 32px;
     height: 32px;
     border-radius: 50%;
-    background: linear-gradient(135deg, var(--color-primary), var(--color-accent));
+    background: var(--color-primary);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -89,7 +90,7 @@
 }
 
 .userName {
-    font-size: 0.8rem;
+    font-size: 0.85rem;
     font-weight: 600;
     color: var(--text-primary);
 }
@@ -100,10 +101,11 @@
     text-transform: capitalize;
 }
 
+/* iOS Icon Button */
 .iconBtn {
     width: 36px;
     height: 36px;
-    border-radius: var(--radius-md);
+    border-radius: var(--radius-full);
     background: transparent;
     border: none;
     color: var(--text-secondary);
@@ -111,12 +113,37 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: all var(--transition-base);
+    transition: all var(--transition-fast);
 }
 
 .iconBtn:hover {
-    background-color: rgba(239, 68, 68, 0.1);
-    color: #ef4444;
+    background-color: rgba(255, 59, 48, 0.12);
+    color: #FF3B30;
+}
+
+[data-theme="dark"] .iconBtn:hover {
+    background-color: rgba(255, 69, 58, 0.2);
+    color: #FF453A;
+}
+
+/* ==================== THEME TOGGLE iOS ==================== */
+.themeToggle {
+    width: 36px;
+    height: 36px;
+    border-radius: var(--radius-full);
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    color: var(--text-secondary);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all var(--transition-fast);
+}
+
+.themeToggle:hover {
+    background-color: var(--bg-tertiary);
+    color: var(--color-primary);
 }
 
 /* ==================== RESPONSIVE ==================== */

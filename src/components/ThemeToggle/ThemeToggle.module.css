@@ -1,25 +1,46 @@
 .toggle {
+    /* Layout y tamaño */
+    width: 44px;
+    height: 44px;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    /* Estética */
+    background-color: var(--bg-tertiary);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-full);
+    color: var(--text-primary);
+    cursor: pointer;
+
+    /* Animaciones */
+    transition: all var(--transition-base, 0.3s ease);
+    overflow: hidden;
+
+    /* Reset de botón */
+    padding: 0;
+    margin: 0;
+}
+
+/* Estado de carga (Placeholder) */
+.togglePlaceholder {
     width: 44px;
     height: 44px;
     border-radius: var(--radius-full);
     background-color: var(--bg-tertiary);
-    border: 1px solid var(--border-color);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: var(--text-primary);
-    transition: all var(--transition-base);
-    position: relative;
-    overflow: hidden;
+    opacity: 0.5;
 }
 
+/* Efecto de fondo (Glow) */
 .toggle::before {
     content: '';
     position: absolute;
     inset: 0;
     background: linear-gradient(135deg, var(--color-primary), var(--color-accent));
     opacity: 0;
-    transition: opacity var(--transition-base);
+    transition: opacity var(--transition-base, 0.3s ease);
+    z-index: 0;
 }
 
 .toggle:hover::before {
@@ -27,16 +48,42 @@
 }
 
 .toggle:hover {
-    transform: scale(1.05);
+    transform: translateY(-2px);
+    /* Pequeña elevación es mejor que scale global */
     border-color: var(--color-primary);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
-.toggle svg {
-    position: relative;
+.toggle:active {
+    transform: translateY(0);
+}
+
+/* Accesibilidad: Focus visible (teclado) */
+.toggle:focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 2px;
+}
+
+/* --- Gestión de Iconos --- */
+
+.iconWrapper {
+    position: absolute;
+    /* Para que estén uno encima del otro */
+    display: flex;
+    align-items: center;
+    justify-content: center;
     z-index: 1;
-    transition: transform var(--transition-base);
+    transition: transform 0.5s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.3s ease;
 }
 
-.toggle:active svg {
-    transform: rotate(20deg);
+/* Cuando el icono debe mostrarse */
+.show {
+    opacity: 1;
+    transform: rotate(0deg) scale(1);
+}
+
+/* Cuando el icono debe ocultarse (rota y se achica) */
+.hide {
+    opacity: 0;
+    transform: rotate(90deg) scale(0);
 }

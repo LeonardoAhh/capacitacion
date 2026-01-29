@@ -1,3 +1,4 @@
+/* ==================== LOADING ==================== */
 .loadingContainer {
     min-height: 100vh;
     display: flex;
@@ -5,10 +6,15 @@
     justify-content: center;
 }
 
+/* ==================== BASE LAYOUT ==================== */
 .main {
-    min-height: calc(100vh - 80px);
-    padding: var(--spacing-2xl) 0;
-    background: linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-secondary) 100%);
+    min-height: calc(100vh - 60px);
+    padding: var(--spacing-xl) 0;
+    background: var(--bg-primary);
+}
+
+[data-theme="dark"] .main {
+    background: #000000;
 }
 
 .container {
@@ -17,11 +23,12 @@
     padding: 0 var(--spacing-lg);
 }
 
+/* ==================== HEADER ==================== */
 .header {
     display: flex;
     justify-content: space-between;
     align-items: flex-start;
-    margin-bottom: var(--spacing-2xl);
+    margin-bottom: var(--spacing-xl);
     flex-wrap: wrap;
     gap: var(--spacing-lg);
 }
@@ -34,21 +41,34 @@
 
 .header h1 {
     font-size: 2rem;
+    font-weight: 700;
     color: var(--text-primary);
+    margin: 0;
 }
 
 .backBtn {
     display: inline-flex;
     align-items: center;
-    gap: var(--spacing-sm);
+    gap: 6px;
+    padding: var(--spacing-sm) var(--spacing-md);
+    font-size: 0.875rem;
+    font-weight: 500;
     color: var(--text-secondary);
     text-decoration: none;
-    font-size: 0.9rem;
-    transition: color var(--transition-base);
+    border-radius: var(--radius-md);
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    transition: all var(--transition-fast);
+}
+
+[data-theme="dark"] .backBtn {
+    background: #1C1C1E;
+    border-color: rgba(84, 84, 88, 0.4);
 }
 
 .backBtn:hover {
-    color: var(--color-primary);
+    color: var(--text-primary);
+    border-color: var(--color-primary);
 }
 
 .yearSelector {
@@ -60,34 +80,57 @@
 .yearSelector label {
     color: var(--text-secondary);
     font-weight: 500;
+    font-size: 0.9rem;
 }
 
 .yearSelector select {
     min-width: 120px;
+    padding: 10px 14px;
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    background: var(--bg-secondary);
+    color: var(--text-primary);
+    font-size: 0.9rem;
+    transition: all var(--transition-fast);
 }
 
-/* Summary Cards */
+[data-theme="dark"] .yearSelector select {
+    background: #1C1C1E;
+    border-color: rgba(84, 84, 88, 0.4);
+}
+
+.yearSelector select:focus {
+    outline: none;
+    border-color: var(--color-primary);
+}
+
+/* ==================== SUMMARY CARDS ==================== */
 .summaryCards {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
     gap: var(--spacing-lg);
-    margin-bottom: var(--spacing-3xl);
+    margin-bottom: var(--spacing-2xl);
 }
 
 .summaryCard {
-    background-color: var(--bg-secondary);
+    background: var(--bg-secondary);
     border: 1px solid var(--border-color);
     border-radius: var(--radius-xl);
     padding: var(--spacing-xl);
     display: flex;
     align-items: center;
     gap: var(--spacing-lg);
-    transition: all var(--transition-base);
+    transition: all var(--transition-fast);
+}
+
+[data-theme="dark"] .summaryCard {
+    background: #1C1C1E;
+    border-color: rgba(84, 84, 88, 0.4);
 }
 
 .summaryCard:hover {
-    transform: translateY(-3px);
-    box-shadow: var(--shadow-lg);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
 }
 
 .summaryIcon {
@@ -118,23 +161,24 @@
     color: var(--text-secondary);
 }
 
-/* Sections */
+/* ==================== SECTIONS ==================== */
 .section {
-    margin-bottom: var(--spacing-3xl);
+    margin-bottom: var(--spacing-2xl);
 }
 
 .section h2 {
-    font-size: 1.5rem;
+    font-size: 1.35rem;
+    font-weight: 600;
     color: var(--text-primary);
     margin-bottom: var(--spacing-xl);
 }
 
-/* Chart Section */
+/* ==================== CHARTS ==================== */
 .chartsGrid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     gap: var(--spacing-xl);
-    margin-bottom: var(--spacing-3xl);
+    margin-bottom: var(--spacing-2xl);
 }
 
 .chartCard {
@@ -142,13 +186,16 @@
     border: 1px solid var(--border-color);
     border-radius: var(--radius-xl);
     padding: var(--spacing-xl);
-    box-shadow: var(--shadow-md);
-    transition: all var(--transition-base);
+    transition: all var(--transition-fast);
+}
+
+[data-theme="dark"] .chartCard {
+    background: #1C1C1E;
+    border-color: rgba(84, 84, 88, 0.4);
 }
 
 .chartCard:hover {
-    box-shadow: var(--shadow-lg);
-    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
 }
 
 .chartCard.fullWidth {
@@ -172,7 +219,7 @@
 .chartSubtitle {
     font-size: 0.85rem;
     color: var(--text-secondary);
-    margin-top: 0.25rem;
+    margin-top: 4px;
 }
 
 .chartWrapper {
@@ -208,17 +255,7 @@
     flex-shrink: 0;
 }
 
-@media (max-width: 968px) {
-    .chartsGrid {
-        grid-template-columns: 1fr;
-    }
-
-    .chartCard.fullWidth {
-        grid-column: auto;
-    }
-}
-
-/* Month Grid */
+/* ==================== MONTH GRID ==================== */
 .monthGrid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
@@ -226,16 +263,20 @@
 }
 
 .monthCard {
-    background-color: var(--bg-secondary);
+    background: var(--bg-secondary);
     border: 1px solid var(--border-color);
     border-radius: var(--radius-lg);
     padding: var(--spacing-lg);
-    transition: all var(--transition-base);
+    transition: all var(--transition-fast);
+}
+
+[data-theme="dark"] .monthCard {
+    background: #1C1C1E;
+    border-color: rgba(84, 84, 88, 0.4);
 }
 
 .monthCard:hover {
     border-color: var(--color-primary);
-    box-shadow: var(--shadow-md);
 }
 
 .monthHeader {
@@ -258,17 +299,21 @@
 }
 
 .progressBar {
-    height: 8px;
-    background-color: var(--bg-tertiary);
-    border-radius: var(--radius-full);
+    height: 6px;
+    background: var(--bg-tertiary);
+    border-radius: 3px;
     overflow: hidden;
     margin-bottom: var(--spacing-sm);
 }
 
+[data-theme="dark"] .progressBar {
+    background: #2C2C2E;
+}
+
 .progressFill {
     height: 100%;
-    background: linear-gradient(90deg, var(--color-primary), var(--color-accent));
-    border-radius: var(--radius-full);
+    background: var(--color-primary);
+    border-radius: 3px;
     transition: width 0.5s ease-out;
 }
 
@@ -278,12 +323,17 @@
     color: var(--text-secondary);
 }
 
-/* Department Table */
+/* ==================== DEPARTMENT TABLE ==================== */
 .deptTable {
-    background-color: var(--bg-secondary);
+    background: var(--bg-secondary);
     border: 1px solid var(--border-color);
     border-radius: var(--radius-xl);
     overflow: hidden;
+}
+
+[data-theme="dark"] .deptTable {
+    background: #1C1C1E;
+    border-color: rgba(84, 84, 88, 0.4);
 }
 
 .tableHeader {
@@ -291,12 +341,16 @@
     grid-template-columns: 2fr 1fr 1fr 1fr 1.5fr;
     gap: var(--spacing-md);
     padding: var(--spacing-lg);
-    background-color: var(--bg-tertiary);
+    background: var(--bg-tertiary);
     font-weight: 600;
     color: var(--text-secondary);
-    font-size: 0.85rem;
+    font-size: 0.75rem;
     text-transform: uppercase;
     letter-spacing: 0.5px;
+}
+
+[data-theme="dark"] .tableHeader {
+    background: #2C2C2E;
 }
 
 .tableRow {
@@ -306,7 +360,11 @@
     padding: var(--spacing-lg);
     border-bottom: 1px solid var(--border-color);
     align-items: center;
-    transition: background-color var(--transition-base);
+    transition: background var(--transition-fast);
+}
+
+[data-theme="dark"] .tableRow {
+    border-color: rgba(84, 84, 88, 0.4);
 }
 
 .tableRow:last-child {
@@ -314,7 +372,11 @@
 }
 
 .tableRow:hover {
-    background-color: var(--bg-tertiary);
+    background: var(--bg-tertiary);
+}
+
+[data-theme="dark"] .tableRow:hover {
+    background: #2C2C2E;
 }
 
 .deptName {
@@ -336,15 +398,19 @@
 
 .miniProgressBar {
     flex: 1;
-    height: 8px;
-    background-color: var(--bg-tertiary);
-    border-radius: var(--radius-full);
+    height: 6px;
+    background: var(--bg-tertiary);
+    border-radius: 3px;
     overflow: hidden;
+}
+
+[data-theme="dark"] .miniProgressBar {
+    background: #3A3A3C;
 }
 
 .miniProgressFill {
     height: 100%;
-    border-radius: var(--radius-full);
+    border-radius: 3px;
     transition: width 0.5s ease-out;
 }
 
@@ -355,9 +421,9 @@
     color: var(--text-primary);
 }
 
-/* Empty State */
+/* ==================== EMPTY STATE ==================== */
 .emptyState {
-    background-color: var(--bg-secondary);
+    background: var(--bg-secondary);
     border: 1px solid var(--border-color);
     border-radius: var(--radius-xl);
     padding: var(--spacing-3xl);
@@ -365,13 +431,22 @@
     color: var(--text-secondary);
 }
 
-/* Clickable Row */
+[data-theme="dark"] .emptyState {
+    background: #1C1C1E;
+    border-color: rgba(84, 84, 88, 0.4);
+}
+
+/* ==================== CLICKABLE ROW ==================== */
 .clickable {
     cursor: pointer;
 }
 
 .clickable:hover {
-    background-color: var(--bg-tertiary);
+    background: var(--bg-tertiary);
+}
+
+[data-theme="dark"] .clickable:hover {
+    background: #2C2C2E;
 }
 
 .clickable .deptName {
@@ -382,7 +457,7 @@
 
 .clickable .deptName svg {
     color: var(--text-tertiary);
-    transition: all var(--transition-base);
+    transition: all var(--transition-fast);
 }
 
 .clickable:hover .deptName svg {
@@ -390,25 +465,25 @@
     transform: translateX(3px);
 }
 
-/* Modal */
+/* ==================== MODAL ==================== */
 .modalOverlay {
     position: fixed;
     top: 0;
     left: 0;
     right: 0;
     bottom: 0;
-    background-color: rgba(0, 0, 0, 0.7);
+    background: rgba(0, 0, 0, 0.6);
     display: flex;
     align-items: center;
     justify-content: center;
     z-index: 1000;
     animation: fadeIn 0.2s ease-out;
-    backdrop-filter: blur(4px);
+    backdrop-filter: blur(8px);
     padding: var(--spacing-lg);
 }
 
 .modal {
-    background-color: var(--bg-secondary);
+    background: var(--bg-secondary);
     border-radius: var(--radius-xl);
     width: 100%;
     max-width: 900px;
@@ -416,9 +491,14 @@
     overflow: hidden;
     display: flex;
     flex-direction: column;
-    box-shadow: var(--shadow-xl);
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.4);
     animation: slideIn 0.3s ease-out;
     border: 1px solid var(--border-color);
+}
+
+[data-theme="dark"] .modal {
+    background: #1C1C1E;
+    border-color: rgba(84, 84, 88, 0.4);
 }
 
 .modalHeader {
@@ -429,33 +509,47 @@
     border-bottom: 1px solid var(--border-color);
 }
 
+[data-theme="dark"] .modalHeader {
+    border-color: rgba(84, 84, 88, 0.4);
+}
+
 .modalHeader h2 {
-    font-size: 1.5rem;
+    font-size: 1.35rem;
+    font-weight: 600;
     color: var(--text-primary);
     margin: 0;
 }
 
 .closeBtn {
-    background: none;
+    background: transparent;
     border: none;
     color: var(--text-tertiary);
     cursor: pointer;
     padding: var(--spacing-sm);
     border-radius: var(--radius-md);
-    transition: all var(--transition-base);
+    transition: all var(--transition-fast);
 }
 
 .closeBtn:hover {
-    background-color: var(--bg-tertiary);
+    background: var(--bg-tertiary);
     color: var(--text-primary);
+}
+
+[data-theme="dark"] .closeBtn:hover {
+    background: #2C2C2E;
 }
 
 .modalStats {
     display: flex;
     gap: var(--spacing-xl);
-    padding: var(--spacing-lg) var(--spacing-xl);
-    background-color: var(--bg-primary);
+    padding: var(--spacing-md) var(--spacing-xl);
+    background: var(--bg-primary);
     border-bottom: 1px solid var(--border-color);
+}
+
+[data-theme="dark"] .modalStats {
+    background: #000000;
+    border-color: rgba(84, 84, 88, 0.4);
 }
 
 .modalStatItem {
@@ -466,6 +560,7 @@
 .modalStatItem strong {
     font-size: 1.1rem;
     margin-right: var(--spacing-xs);
+    color: var(--text-primary);
 }
 
 .employeeList {
@@ -478,13 +573,18 @@
     grid-template-columns: 100px 2fr 1fr 1fr 1.5fr;
     gap: var(--spacing-md);
     padding: var(--spacing-md) var(--spacing-lg);
-    background-color: var(--bg-tertiary);
+    background: var(--bg-tertiary);
     border-radius: var(--radius-md);
     font-weight: 600;
     color: var(--text-secondary);
-    font-size: 0.8rem;
+    font-size: 0.75rem;
     text-transform: uppercase;
+    letter-spacing: 0.5px;
     margin-bottom: var(--spacing-md);
+}
+
+[data-theme="dark"] .employeeHeader {
+    background: #2C2C2E;
 }
 
 .employeeRow {
@@ -494,6 +594,10 @@
     padding: var(--spacing-md) var(--spacing-lg);
     border-bottom: 1px solid var(--border-color);
     align-items: center;
+}
+
+[data-theme="dark"] .employeeRow {
+    border-color: rgba(84, 84, 88, 0.4);
 }
 
 .employeeRow:last-child {
@@ -522,13 +626,14 @@
 }
 
 .empStatus {
-    padding: var(--spacing-xs) var(--spacing-md);
+    padding: 6px 12px;
     border-radius: var(--radius-full);
     font-size: 0.8rem;
     font-weight: 600;
     text-align: center;
 }
 
+/* ==================== ANIMATIONS ==================== */
 @keyframes fadeIn {
     from {
         opacity: 0;
@@ -542,7 +647,7 @@
 @keyframes slideIn {
     from {
         opacity: 0;
-        transform: scale(0.9) translateY(-20px);
+        transform: scale(0.95) translateY(-10px);
     }
 
     to {
@@ -551,8 +656,22 @@
     }
 }
 
-/* Responsive */
+/* ==================== RESPONSIVE ==================== */
+@media (max-width: 968px) {
+    .chartsGrid {
+        grid-template-columns: 1fr;
+    }
+
+    .chartCard.fullWidth {
+        grid-column: auto;
+    }
+}
+
 @media (max-width: 768px) {
+    .main {
+        padding: var(--spacing-lg) 0;
+    }
+
     .header {
         flex-direction: column;
     }

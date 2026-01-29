@@ -5,6 +5,10 @@
     min-height: calc(100vh - 80px);
 }
 
+[data-theme="dark"] .main {
+    background: #000000;
+}
+
 .header {
     margin-bottom: 2rem;
     display: flex;

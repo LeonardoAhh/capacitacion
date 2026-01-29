@@ -468,6 +468,86 @@ export default function MatrizPage() {
                     <Button variant="primary" onClick={handleSave}>Guardar Cambios</Button>
                 </DialogFooter>
             </Dialog>
+
+            {/* Bulk Add Course Modal */}
+            <Dialog open={showBulkModal} onOpenChange={setShowBulkModal}>
+                <DialogHeader>
+                    <DialogTitle>Agregar Curso a {selectedPositions.size} Puestos</DialogTitle>
+                    <DialogClose onClose={() => setShowBulkModal(false)} />
+                </DialogHeader>
+                <DialogBody>
+                    <div className={styles.bulkModalContent}>
+                        <p className={styles.bulkModalDescription}>
+                            Selecciona un curso para agregarlo a todos los puestos seleccionados.
+                        </p>
+                        <div className={styles.autocomplete}>
+                            <input
+                                type="text"
+                                placeholder="Buscar curso..."
+                                value={bulkCourseSearch}
+                                onChange={(e) => setBulkCourseSearch(e.target.value)}
+                                className={styles.searchInput}
+                                autoFocus
+                            />
+                            {bulkCourseSearch && (
+                                <div className={styles.suggestions}>
+                                    {bulkAvailableCourses.length > 0 ? (
+                                        bulkAvailableCourses.map((c, idx) => (
+                                            <div
+                                                key={idx}
+                                                className={styles.suggestionItem}
+                                                onClick={() => {
+                                                    handleBulkAdd(c);
+                                                    setBulkCourseSearch('');
+                                                }}
+                                            >
+                                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                                    <line x1="12" y1="5" x2="12" y2="19" />
+                                                    <line x1="5" y1="12" x2="19" y2="12" />
+                                                </svg>
+                                                {c}
+                                            </div>
+                                        ))
+                                    ) : (
+                                        <div className={styles.noResults}>No se encontraron cursos</div>
+                                    )}
+                                </div>
+                            )}
+                        </div>
+
+                        {/* Show all courses if no search */}
+                        {!bulkCourseSearch && (
+                            <div className={styles.allCoursesList}>
+                                <h4>Cursos Disponibles</h4>
+                                <div className={styles.courseGrid}>
+                                    {courses.slice(0, 12).map((c, idx) => (
+                                        <button
+                                            key={idx}
+                                            className={styles.courseOption}
+                                            onClick={() => handleBulkAdd(c)}
+                                        >
+                                            {c}
+                                        </button>
+                                    ))}
+                                </div>
+                                {courses.length > 12 && (
+                                    <p className={styles.moreCoursesHint}>
+                                        Usa el buscador para ver más cursos...
+                                    </p>
+                                )}
+                            </div>
+                        )}
+                    </div>
+                </DialogBody>
+                <DialogFooter>
+                    <Button variant="secondary" onClick={() => {
+                        setShowBulkModal(false);
+                        setBulkCourseSearch('');
+                    }}>
+                        Cancelar
+                    </Button>
+                </DialogFooter>
+            </Dialog>
         </>
     );
 }

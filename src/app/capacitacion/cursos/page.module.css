@@ -5,6 +5,10 @@
     background: var(--bg-primary);
 }
 
+[data-theme="dark"] .main {
+    background: #000000;
+}
+
 .container {
     max-width: 1400px;
     margin: 0 auto;
@@ -99,7 +103,7 @@
 
 .searchBar:focus-within {
     border-color: var(--accent-primary);
-    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.1);
 }
 
 .searchBar svg {
@@ -140,7 +144,7 @@
 .card:hover {
     border-color: var(--accent-primary);
     transform: translateY(-2px);
-    box-shadow: var(--shadow-lg);
+    box-shadow: var(--shadow-md);
 }
 
 .cardHeader {
@@ -191,7 +195,7 @@
 }
 
 .iconBtn.danger:hover {
-    background: #ef4444;
+    background: #FF3B30;
 }
 
 .cardTitle {
@@ -261,7 +265,7 @@
 .formGroup select:focus {
     outline: none;
     border-color: var(--accent-primary);
-    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.1);
 }
 
 .formGroup input::placeholder {

@@ -8,7 +8,11 @@
 .main {
     min-height: calc(100vh - 80px);
     padding: var(--spacing-2xl) 0;
-    background: linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-secondary) 100%);
+    background: var(--bg-primary);
+}
+
+[data-theme="dark"] .main {
+    background: #000000;
 }
 
 .container {
@@ -17,10 +21,10 @@
     padding: 0 var(--spacing-lg);
 }
 
-/* ==================== WELCOME HERO SECTION ==================== */
+/* ==================== iOS WELCOME SECTION ==================== */
 .welcomeSection {
     position: relative;
-    background: var(--bg-secondary);
+    background: var(--bg-primary);
     border: 1px solid var(--border-color);
     border-radius: var(--radius-xl);
     padding: var(--spacing-xl);
@@ -30,41 +34,12 @@
 }
 
 .welcomeSection::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background-size: 40px 40px;
-    background-image:
-        linear-gradient(to right, var(--border-color) 1px, transparent 1px),
-        linear-gradient(to bottom, var(--border-color) 1px, transparent 1px);
-    opacity: 0.3;
-    mask-image: radial-gradient(circle at center, black 20%, transparent 70%);
-    pointer-events: none;
+    display: none;
 }
 
 .welcomeGlow1,
 .welcomeGlow2 {
-    position: absolute;
-    border-radius: 50%;
-    filter: blur(100px);
-    opacity: 0.15;
-    pointer-events: none;
-}
-
-.welcomeGlow1 {
-    width: 300px;
-    height: 300px;
-    background: var(--color-primary);
-    top: -100px;
-    left: -50px;
-}
-
-.welcomeGlow2 {
-    width: 200px;
-    height: 200px;
-    background: var(--color-secondary);
-    bottom: -50px;
-    right: -30px;
+    display: none;
 }
 
 .welcomeContent {
@@ -88,20 +63,19 @@
 .welcomeLogoIcon {
     width: 40px;
     height: 40px;
-    background: linear-gradient(135deg, var(--color-primary), var(--color-secondary));
+    background: var(--color-primary);
     border-radius: var(--radius-md);
     display: flex;
     align-items: center;
     justify-content: center;
     color: white;
-    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
 }
 
 .welcomeVersion {
     font-size: 0.75rem;
-    font-weight: 600;
+    font-weight: 500;
     color: var(--text-tertiary);
-    background: var(--bg-tertiary);
+    background: var(--bg-secondary);
     padding: 4px 10px;
     border-radius: var(--radius-full);
     border: 1px solid var(--border-color);
@@ -114,7 +88,37 @@
     padding: var(--spacing-sm);
     cursor: pointer;
     border-radius: 50%;
-    transition: all var(--transition-base);
+    transition: all var(--transition-fast);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.welcomeClose:hover {
+    background: var(--bg-secondary);
+    color: var(--text-primary);
+}
+
+.welcomeTitle {
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin: 0 0 var(--spacing-sm) 0;
+}
+
+.welcomeTitleGradient {
+    color: var(--color-primary);
+    -webkit-text-fill-color: var(--color-primary);
+}
+
+.welcomeClose {
+    background: transparent;
+    border: none;
+    color: var(--text-tertiary);
+    padding: var(--spacing-sm);
+    cursor: pointer;
+    border-radius: 50%;
+    transition: all var(--transition-fast);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -159,16 +163,16 @@
     border: 1px solid var(--border-color);
     border-radius: var(--radius-lg);
     padding: var(--spacing-lg);
-    transition: all var(--transition-base);
+    transition: all var(--transition-fast);
     cursor: pointer;
     text-decoration: none;
 }
 
 .moduleCard:hover {
-    background: var(--bg-primary);
+    background: var(--bg-secondary);
     border-color: var(--color-primary);
-    transform: translateY(-4px);
-    box-shadow: var(--shadow-lg);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
 }
 
 .moduleCardHeader {
@@ -182,18 +186,21 @@
     width: 36px;
     height: 36px;
     border-radius: var(--radius-md);
-    background: rgba(59, 130, 246, 0.1);
+    background: rgba(0, 122, 255, 0.1);
     color: var(--color-primary);
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: all var(--transition-base);
+    transition: all var(--transition-fast);
+}
+
+[data-theme="dark"] .moduleIcon {
+    background: rgba(10, 132, 255, 0.15);
 }
 
 .moduleCard:hover .moduleIcon {
     background: var(--color-primary);
     color: white;
-    transform: scale(1.1);
 }
 
 .moduleCard h4 {
@@ -292,62 +299,83 @@
     align-items: center;
     gap: var(--spacing-md);
     border: 1px solid var(--border-color);
-    transition: all var(--transition-base);
+    transition: all var(--transition-fast);
     position: relative;
     overflow: hidden;
     animation: fadeIn 0.5s ease-out;
 }
 
+[data-theme="dark"] .statCard {
+    background-color: #1C1C1E;
+    border-color: rgba(84, 84, 88, 0.4);
+}
+
 .statCard:hover {
-    transform: translateY(-4px);
+    transform: translateY(-2px);
     border-color: var(--color-primary);
-    box-shadow: var(--shadow-lg);
+    box-shadow: var(--shadow-md);
 }
 
 .statIcon {
     width: 52px;
     height: 52px;
-    border-radius: var(--radius-md);
+    border-radius: var(--radius-lg);
     display: flex;
     align-items: center;
     justify-content: center;
     flex-shrink: 0;
     position: relative;
     z-index: 1;
-    transition: all var(--transition-base);
+    transition: all var(--transition-fast);
 }
 
+/* iOS Colors for stat icons */
 .statCard1 .statIcon {
-    background: rgba(59, 130, 246, 0.1);
-    color: var(--color-primary);
+    background: rgba(0, 122, 255, 0.12);
+    color: #007AFF;
 }
 
 .statCard2 .statIcon {
-    background: rgba(34, 197, 94, 0.1);
-    color: var(--color-success);
+    background: rgba(52, 199, 89, 0.12);
+    color: #34C759;
 }
 
 .statCard3 .statIcon {
-    background: rgba(245, 158, 11, 0.1);
-    color: var(--color-warning);
+    background: rgba(255, 149, 0, 0.12);
+    color: #FF9500;
+}
+
+[data-theme="dark"] .statCard1 .statIcon {
+    background: rgba(10, 132, 255, 0.2);
+    color: #0A84FF;
+}
+
+[data-theme="dark"] .statCard2 .statIcon {
+    background: rgba(48, 209, 88, 0.2);
+    color: #30D158;
+}
+
+[data-theme="dark"] .statCard3 .statIcon {
+    background: rgba(255, 159, 10, 0.2);
+    color: #FF9F0A;
 }
 
 .statCard:hover .statIcon {
-    transform: scale(1.1);
+    transform: scale(1.05);
 }
 
 .statCard1:hover .statIcon {
-    background: var(--color-primary);
+    background: #007AFF;
     color: white;
 }
 
 .statCard2:hover .statIcon {
-    background: var(--color-success);
+    background: #34C759;
     color: white;
 }
 
 .statCard3:hover .statIcon {
-    background: var(--color-warning);
+    background: #FF9500;
     color: white;
 }
 
@@ -402,7 +430,7 @@
 }
 
 .evalCardOverdue {
-    border-left: 4px solid #ef4444;
+    border-left: 4px solid #FF3B30;
 }
 
 .evalHeaderRow {
@@ -435,7 +463,12 @@
     border-radius: var(--radius-lg);
     padding: var(--spacing-lg);
     animation: fadeIn 0.5s ease-out;
-    transition: all var(--transition-base);
+    transition: all var(--transition-fast);
+}
+
+[data-theme="dark"] .evalAlertCard {
+    background-color: #1C1C1E;
+    border-color: rgba(84, 84, 88, 0.4);
 }
 
 .evalAlertCard:hover {
@@ -444,7 +477,7 @@
 }
 
 .evalAlertOverdue {
-    border-left: 3px solid #ef4444;
+    border-left: 3px solid #FF3B30;
 }
 
 .evalAlertHeader {
@@ -466,7 +499,7 @@
     justify-content: center;
     color: var(--color-accent);
     flex-shrink: 0;
-    transition: all var(--transition-base);
+    transition: all var(--transition-fast);
 }
 
 .evalAlertCard:hover .evalAlertIconUpcoming {
@@ -482,13 +515,13 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    color: #ef4444;
+    color: #FF3B30;
     flex-shrink: 0;
-    transition: all var(--transition-base);
+    transition: all var(--transition-fast);
 }
 
 .evalAlertCard:hover .evalAlertIconOverdue {
-    background: #ef4444;
+    background: #FF3B30;
     color: white;
 }
 
@@ -517,11 +550,15 @@
     padding: var(--spacing-md);
     background-color: var(--bg-tertiary);
     border-radius: var(--radius-md);
-    transition: all var(--transition-base);
+    transition: all var(--transition-fast);
+}
+
+[data-theme="dark"] .evalAlertItem {
+    background-color: #2C2C2E;
 }
 
 .evalAlertItem:hover {
-    transform: translateX(5px);
+    transform: translateX(4px);
 }
 
 .evalAlertInfo {
@@ -560,7 +597,7 @@
 }
 
 .daysOverdue {
-    color: #ef4444;
+    color: #FF3B30;
     font-size: 0.8rem;
     font-weight: 600;
 }
@@ -591,34 +628,42 @@
     display: flex;
     align-items: center;
     gap: var(--spacing-md);
-    transition: all var(--transition-base);
+    transition: all var(--transition-fast);
     cursor: pointer;
     text-decoration: none;
 }
 
+[data-theme="dark"] .actionCard {
+    background-color: #1C1C1E;
+    border-color: rgba(84, 84, 88, 0.4);
+}
+
 .actionCard:hover {
-    transform: translateY(-4px);
+    transform: translateY(-2px);
     border-color: var(--color-primary);
-    box-shadow: var(--shadow-lg);
+    box-shadow: var(--shadow-md);
 }
 
 .actionIcon {
     width: 40px;
     height: 40px;
-    border-radius: var(--radius-md);
-    background: rgba(59, 130, 246, 0.1);
+    border-radius: var(--radius-lg);
+    background: rgba(0, 122, 255, 0.12);
     display: flex;
     align-items: center;
     justify-content: center;
     color: var(--color-primary);
     flex-shrink: 0;
-    transition: all var(--transition-base);
+    transition: all var(--transition-fast);
+}
+
+[data-theme="dark"] .actionIcon {
+    background: rgba(10, 132, 255, 0.2);
 }
 
 .actionCard:hover .actionIcon {
     background: var(--color-primary);
     color: white;
-    transform: scale(1.1);
 }
 
 .actionContent {
@@ -642,7 +687,7 @@
     flex-shrink: 0;
     position: relative;
     z-index: 1;
-    transition: all var(--transition-base);
+    transition: all var(--transition-fast);
 }
 
 .actionCard:hover .actionArrow {
@@ -703,7 +748,7 @@
 /* Clickable Card */
 .clickableCard {
     cursor: pointer;
-    transition: all var(--transition-base);
+    transition: all var(--transition-fast);
 }
 
 .clickableCard:hover {
@@ -712,7 +757,7 @@
 }
 
 .clickableCard:active {
-    transform: translateY(-4px) !important;
+    transform: translateY(-2px) !important;
 }
 
 /* Modal Styles */
@@ -739,7 +784,7 @@
     background-color: var(--bg-tertiary);
     border: 1px solid var(--border-color);
     border-radius: var(--radius-lg);
-    transition: all var(--transition-base);
+    transition: all var(--transition-fast);
     cursor: pointer;
     text-decoration: none;
     position: relative;
