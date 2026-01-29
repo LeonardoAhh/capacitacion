@@ -4,15 +4,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Guía de Implementación - Matriz ILUO</title>
+    <title>Propuesta de Implementación ILUO Digital | QRO</title>
     <style>
         :root {
-            --primary: #0066b3;
-            --secondary: #007033;
-            --accent: #f59e0b;
-            --danger: #dc2626;
-            --dark: #1e293b;
-            --light: #f8fafc;
+            --primary: #007AFF;
+            --primary-dark: #0056b3;
+            --accent: #AF52DE;
+            --bg-dark: #121212;
+            --card-dark: #1e1e1e;
+            --text-light: #f5f5f7;
+            --text-dim: #a1a1aa;
         }
 
         * {
@@ -22,816 +23,404 @@
         }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
             line-height: 1.6;
-            color: #334155;
-            background: #f1f5f9;
+            color: var(--text-light);
+            background: var(--bg-dark);
         }
 
         .container {
-            max-width: 1100px;
+            max-width: 1000px;
             margin: 0 auto;
-            padding: 2rem;
+            padding: 40px 20px;
         }
 
+        /* HEADER */
         header {
-            background: linear-gradient(135deg, var(--primary), #004080);
-            color: white;
-            padding: 3rem 2rem;
             text-align: center;
-            margin-bottom: 2rem;
+            margin-bottom: 60px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            padding-bottom: 40px;
         }
 
-        header h1 {
-            font-size: 2.5rem;
-            margin-bottom: 0.5rem;
+        h1 {
+            font-size: 3rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #fff 0%, #aaa 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 10px;
         }
 
-        header p {
-            opacity: 0.9;
-            font-size: 1.1rem;
+        .subtitle {
+            font-size: 1.2rem;
+            color: var(--primary);
+            font-weight: 500;
         }
 
+        /* CARDS */
         .card {
-            background: white;
-            border-radius: 12px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.07);
-            padding: 2rem;
-            margin-bottom: 2rem;
+            background: rgba(30, 30, 30, 0.6);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 24px;
+            padding: 40px;
+            margin-bottom: 40px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
         }
 
         h2 {
-            color: var(--primary);
-            border-bottom: 3px solid var(--primary);
-            padding-bottom: 0.5rem;
-            margin-bottom: 1.5rem;
+            font-size: 1.8rem;
+            margin-bottom: 20px;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            gap: 12px;
         }
 
-        h3 {
-            color: var(--dark);
-            margin: 1.5rem 0 1rem;
+        h2::before {
+            content: '';
+            display: block;
+            width: 6px;
+            height: 32px;
+            background: var(--primary);
+            border-radius: 4px;
         }
 
-        h4 {
-            color: #64748b;
-            margin: 1rem 0 0.5rem;
+        p {
+            color: var(--text-dim);
+            margin-bottom: 15px;
+            font-size: 1.05rem;
         }
 
-        .iluo-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin: 1rem 0;
+        /* TABLA ILUO */
+        .grid-iluo {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-top: 30px;
         }
 
-        .iluo-table th,
-        .iluo-table td {
-            border: 1px solid #e2e8f0;
-            padding: 12px 16px;
-            text-align: left;
-        }
-
-        .iluo-table th {
-            background: var(--dark);
-            color: white;
-        }
-
-        .iluo-table tr:nth-child(even) {
-            background: #f8fafc;
-        }
-
-        .level-I {
-            background: #fee2e2;
-            color: #991b1b;
-            font-weight: bold;
+        .iluo-item {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 16px;
+            padding: 20px;
             text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.05);
         }
 
-        .level-L {
-            background: #fef3c7;
-            color: #92400e;
-            font-weight: bold;
-            text-align: center;
+        .letter {
+            font-size: 3rem;
+            font-weight: 900;
+            margin-bottom: 10px;
+            display: block;
         }
 
-        .level-U {
-            background: #dcfce7;
-            color: #166534;
-            font-weight: bold;
-            text-align: center;
+        .desc {
+            font-size: 0.9rem;
+            color: var(--text-dim);
         }
 
-        .level-O {
-            background: #dbeafe;
-            color: #1e40af;
-            font-weight: bold;
-            text-align: center;
+        .i-color {
+            color: #ff3b30;
         }
 
-        .badge {
-            display: inline-block;
-            padding: 4px 12px;
+        .l-color {
+            color: #ffcc00;
+        }
+
+        .u-color {
+            color: #34c759;
+        }
+
+        .o-color {
+            color: #007aff;
+        }
+
+        /* LISTA CLIENTES */
+        .client-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .tag {
+            padding: 6px 14px;
+            background: rgba(175, 82, 222, 0.15);
+            border: 1px solid rgba(175, 82, 222, 0.4);
+            color: #d0aae0;
             border-radius: 20px;
             font-size: 0.85rem;
             font-weight: 600;
         }
 
-        .badge-production {
-            background: #7c3aed;
-            color: white;
+        /* ESTRATEGIA */
+        .strategy-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-top: 30px;
         }
 
-        .badge-quality {
-            background: #059669;
-            color: white;
+        .strategy-box {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 24px;
+            border-radius: 16px;
         }
 
-        .checklist {
-            list-style: none;
-            padding: 0;
-        }
-
-        .checklist li {
-            padding: 0.75rem 0;
-            padding-left: 2rem;
-            position: relative;
-            border-bottom: 1px solid #e2e8f0;
-        }
-
-        .checklist li::before {
-            content: "☐";
-            position: absolute;
-            left: 0;
+        .strategy-box h3 {
+            color: #fff;
+            margin-bottom: 10px;
             font-size: 1.2rem;
         }
 
-        .step-number {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            width: 32px;
-            height: 32px;
+        ul {
+            list-style-position: inside;
+            color: var(--text-dim);
+        }
+
+        li {
+            margin-bottom: 8px;
+        }
+
+        /* CTA */
+        .cta-box {
+            text-align: center;
+            padding: 40px;
+            background: linear-gradient(135deg, rgba(0, 122, 255, 0.2) 0%, rgba(0, 122, 255, 0.05) 100%);
+            border-radius: 24px;
+            border: 1px solid rgba(0, 122, 255, 0.3);
+        }
+
+        .btn {
+            display: inline-block;
             background: var(--primary);
             color: white;
-            border-radius: 50%;
+            padding: 12px 30px;
+            border-radius: 12px;
+            text-decoration: none;
             font-weight: bold;
-            margin-right: 0.75rem;
+            margin-top: 20px;
+            transition: transform 0.2s;
         }
 
-        .highlight-box {
-            background: linear-gradient(135deg, #eff6ff, #dbeafe);
-            border-left: 4px solid var(--primary);
-            padding: 1rem 1.5rem;
-            margin: 1rem 0;
-            border-radius: 0 8px 8px 0;
-        }
-
-        .warning-box {
-            background: #fef3c7;
-            border-left: 4px solid var(--accent);
-            padding: 1rem 1.5rem;
-            margin: 1rem 0;
-            border-radius: 0 8px 8px 0;
-        }
-
-        .success-box {
-            background: #dcfce7;
-            border-left: 4px solid var(--secondary);
-            padding: 1rem 1.5rem;
-            margin: 1rem 0;
-            border-radius: 0 8px 8px 0;
-        }
-
-        .matrix-example {
-            overflow-x: auto;
-        }
-
-        .matrix-visual {
-            min-width: 700px;
-        }
-
-        .matrix-visual th {
-            background: var(--primary);
-            color: white;
-            padding: 10px;
-            font-size: 0.75rem;
-            text-align: center;
-        }
-
-        .matrix-visual td {
-            padding: 8px;
-            text-align: center;
-            font-weight: bold;
-            font-size: 1.1rem;
-        }
-
-        .matrix-visual .employee-name {
-            background: #f1f5f9;
-            text-align: left;
-            font-weight: 600;
-            font-size: 0.85rem;
-        }
-
-        .timeline {
-            position: relative;
-            padding-left: 30px;
-        }
-
-        .timeline::before {
-            content: '';
-            position: absolute;
-            left: 10px;
-            top: 0;
-            bottom: 0;
-            width: 3px;
-            background: var(--primary);
-        }
-
-        .timeline-item {
-            position: relative;
-            padding-bottom: 1.5rem;
-        }
-
-        .timeline-item::before {
-            content: '';
-            position: absolute;
-            left: -24px;
-            top: 5px;
-            width: 12px;
-            height: 12px;
-            background: var(--primary);
-            border-radius: 50%;
-            border: 3px solid white;
-            box-shadow: 0 0 0 2px var(--primary);
-        }
-
-        .two-columns {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 2rem;
-        }
-
-        @media (max-width: 768px) {
-            .two-columns {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        footer {
-            text-align: center;
-            padding: 2rem;
-            color: #64748b;
-            font-size: 0.9rem;
-        }
-
-        @media print {
-            body {
-                background: white;
-            }
-
-            .card {
-                box-shadow: none;
-                border: 1px solid #e2e8f0;
-            }
-
-            header {
-                background: var(--primary);
-                -webkit-print-color-adjust: exact;
-            }
+        .btn:hover {
+            transform: scale(1.05);
+            background: var(--primary-dark);
         }
     </style>
 </head>
 
 <body>
-    <header>
-        <h1>📊 Guía de Implementación</h1>
-        <p>Matriz ILUO para Desarrollo de Competencias en Piso</p>
-        <p style="margin-top: 1rem; opacity: 0.8;">Vertx - Sistema de Gestión de Capacitación</p>
-    </header>
-
     <div class="container">
-        <!-- Introducción -->
+        <header>
+            <div style="font-size: 4rem; margin-bottom: 20px;">🚀</div>
+            <h1>Sistema Vertx</h1>
+        </header>
+
+        <!-- 1. EL PROPOSITO -->
         <div class="card">
-            <h2>1. ¿Qué es la Matriz ILUO?</h2>
-            <p>La Matriz ILUO es una herramienta de gestión visual que permite identificar, desarrollar y dar
-                seguimiento a las competencias del personal operativo. Cada letra representa un nivel de dominio:</p>
+            <h2>1. EL FUTURO DIGITAL</h2>
+            <p>
+                Se ha evolucionado la Matriz de Habilidades tradicional (Excel) a una<strong> Plataforma Digital
+                    (Vertx)</strong>.
+                El objetivo no es solo llenar cuadros, sino garantizar la <strong>Trazabilidad y Cumplimiento</strong>
+                ante auditorías (IATF 16949 / ISO 9001).
+            </p>
+            <p>
+                El sistema ahora permite evaluar competencias en 4 niveles claros, eliminando la subjetividad.
+            </p>
 
-            <table class="iluo-table" style="margin-top: 1.5rem;">
-                <thead>
-                    <tr>
-                        <th style="width: 80px;">Nivel</th>
-                        <th style="width: 120px;">Nombre</th>
-                        <th>Descripción</th>
-                        <th style="width: 200px;">Criterio de Evaluación</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td class="level-I">I</td>
-                        <td><strong>Aprendiz</strong></td>
-                        <td>En entrenamiento inicial. Requiere supervisión constante. Conoce la teoría pero aún no
-                            ejecuta solo.</td>
-                        <td>Capacitación teórica completada, observación de proceso</td>
-                    </tr>
-                    <tr>
-                        <td class="level-L">L</td>
-                        <td><strong>En Desarrollo</strong></td>
-                        <td>Puede realizar la tarea pero requiere supervisión ocasional. Comete errores menores.</td>
-                        <td>Ejecuta con apoyo, conoce puntos críticos</td>
-                    </tr>
-                    <tr>
-                        <td class="level-U">U</td>
-                        <td><strong>Competente</strong></td>
-                        <td>Trabaja de forma independiente cumpliendo estándares de calidad, seguridad y productividad.
-                        </td>
-                        <td>Trabajo autónomo, cero defectos, cumple tiempos</td>
-                    </tr>
-                    <tr>
-                        <td class="level-O">O</td>
-                        <td><strong>Experto/Trainer</strong></td>
-                        <td>Domina completamente la habilidad. Puede enseñar a otros y resolver problemas complejos.
-                        </td>
-                        <td>Certifica a otros, mejora procesos, troubleshooting</td>
-                    </tr>
-                </tbody>
-            </table>
-
-            <div class="highlight-box" style="margin-top: 1.5rem;">
-                <strong>💡 Beneficio Principal:</strong> Visualizar rápidamente la polivalencia del equipo, planear
-                rotaciones, identificar necesidades de capacitación y asegurar cobertura en todas las estaciones.
+            <div class="grid-iluo">
+                <div class="iluo-item" style="border-top: 4px solid #ff3b30;">
+                    <span class="letter i-color">I</span>
+                    <strong>Instructor Dependent</strong>
+                    <p class="desc">Aprendiz. Solo observa o ejecuta con supervisión total.</p>
+                </div>
+                <div class="iluo-item" style="border-top: 4px solid #ffcc00;">
+                    <span class="letter l-color">L</span>
+                    <strong>Limited Supervision</strong>
+                    <p class="desc">Ejecuta solo pero requiere validación. Conoce lo básico.</p>
+                </div>
+                <div class="iluo-item" style="border-top: 4px solid #34c759;">
+                    <span class="letter u-color">U</span>
+                    <strong>Unsupervised</strong>
+                    <p class="desc">Autónomo. Cumple calidad y tiempo. Cero defectos.</p>
+                </div>
+                <div class="iluo-item" style="border-top: 4px solid #007aff;">
+                    <span class="letter o-color">O</span>
+                    <strong>Owner / Trainer</strong>
+                    <p class="desc">Experto. Puede enseñar a otros y resolver problemas.</p>
+                </div>
             </div>
         </div>
 
-        <!-- Departamento de Producción -->
+        <!-- 2. CLIENTES Y GRUPOS -->
         <div class="card">
-            <h2>2. Matriz para Producción <span class="badge badge-production">OPERADOR DE MÁQUINA</span></h2>
+            <h2>2. GESTIÓN POR CLIENTE Y # DE PARTES</h2>
+            <p>
+                Para responder a los requerimientos específicos de cada cliente sin saturar la matriz general, hemos
+                implementado <strong>"Agrupadores de Competencia"</strong>.
+            </p>
+            <p>
+                Ahora podemos certificar a un operador como <strong>"Nivel U" en General</strong>, pero <strong>"Nivel
+                    L" en Requerimientos VW</strong>, permitiendo una asignación de personal más segura y estratégica.
+            </p>
 
-            <h3>2.1 Habilidades Sugeridas</h3>
-            <p>Estas son habilidades típicas para operadores de máquinas de inyección. <strong>Debes ajustarlas según tu
-                    operación:</strong></p>
-
-            <table class="iluo-table">
-                <thead>
-                    <tr>
-                        <th>Código</th>
-                        <th>Habilidad</th>
-                        <th>Descripción</th>
-                        <th>Nivel Mínimo Requerido</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>P-001</td>
-                        <td>Arranque de Máquina</td>
-                        <td>Encendido, precalentamiento, verificación de parámetros iniciales</td>
-                        <td class="level-U">U</td>
-                    </tr>
-                    <tr>
-                        <td>P-002</td>
-                        <td>Operación Ciclo Normal</td>
-                        <td>Manejo del ciclo de producción, alimentación de material, retiro de piezas</td>
-                        <td class="level-U">U</td>
-                    </tr>
-                    <tr>
-                        <td>P-003</td>
-                        <td>Ajuste de Parámetros Básicos</td>
-                        <td>Modificación de tiempos, temperaturas, presiones menores</td>
-                        <td class="level-L">L</td>
-                    </tr>
-                    <tr>
-                        <td>P-004</td>
-                        <td>Inspección Visual de Piezas</td>
-                        <td>Identificación de defectos: rebabas, rechupes, líneas de flujo</td>
-                        <td class="level-U">U</td>
-                    </tr>
-                    <tr>
-                        <td>P-005</td>
-                        <td>Cambio de Material/Color</td>
-                        <td>Purga, limpieza de tolva, cambio de resina o masterbatch</td>
-                        <td class="level-L">L</td>
-                    </tr>
-                    <tr>
-                        <td>P-006</td>
-                        <td>Llenado de Documentación</td>
-                        <td>Reportes de producción, hojas de verificación, RPS</td>
-                        <td class="level-U">U</td>
-                    </tr>
-                    <tr>
-                        <td>P-007</td>
-                        <td>Atención a Alarmas</td>
-                        <td>Identificación y respuesta inicial a alarmas de máquina</td>
-                        <td class="level-L">L</td>
-                    </tr>
-                    <tr>
-                        <td>P-008</td>
-                        <td>5S en Estación de Trabajo</td>
-                        <td>Orden, limpieza, identificación de materiales</td>
-                        <td class="level-U">U</td>
-                    </tr>
-                </tbody>
-            </table>
-
-            <div class="warning-box">
-                <strong>⚠️ Personalización Requerida:</strong>
-                <ul style="margin-top: 0.5rem; margin-left: 1.5rem;">
-                    <li>Agregar habilidades específicas de tus máquinas (marcas, modelos)</li>
-                    <li>Incluir productos/familias específicas que manejen</li>
-                    <li>Considerar habilidades de robots/periféricos si aplica</li>
-                    <li>Ajustar niveles mínimos según tu estándar de calidad</li>
-                </ul>
-            </div>
-
-            <h3>2.2 Ejemplo de Matriz Visual - Producción</h3>
-            <div class="matrix-example">
-                <table class="iluo-table matrix-visual">
-                    <thead>
-                        <tr>
-                            <th style="min-width: 150px;">Operador</th>
-                            <th>Arranque</th>
-                            <th>Ciclo Normal</th>
-                            <th>Ajuste Param.</th>
-                            <th>Inspección</th>
-                            <th>Cambio Mat.</th>
-                            <th>Documentación</th>
-                            <th>Alarmas</th>
-                            <th>5S</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td class="employee-name">Juan Pérez García</td>
-                            <td class="level-O">O</td>
-                            <td class="level-O">O</td>
-                            <td class="level-U">U</td>
-                            <td class="level-U">U</td>
-                            <td class="level-U">U</td>
-                            <td class="level-O">O</td>
-                            <td class="level-U">U</td>
-                            <td class="level-U">U</td>
-                        </tr>
-                        <tr>
-                            <td class="employee-name">María López Ruiz</td>
-                            <td class="level-U">U</td>
-                            <td class="level-U">U</td>
-                            <td class="level-L">L</td>
-                            <td class="level-U">U</td>
-                            <td class="level-L">L</td>
-                            <td class="level-U">U</td>
-                            <td class="level-L">L</td>
-                            <td class="level-U">U</td>
-                        </tr>
-                        <tr>
-                            <td class="employee-name">Carlos Mendoza H.</td>
-                            <td class="level-L">L</td>
-                            <td class="level-U">U</td>
-                            <td class="level-I">I</td>
-                            <td class="level-L">L</td>
-                            <td class="level-I">I</td>
-                            <td class="level-L">L</td>
-                            <td class="level-I">I</td>
-                            <td class="level-U">U</td>
-                        </tr>
-                        <tr>
-                            <td class="employee-name">Ana Torres Vega</td>
-                            <td class="level-I">I</td>
-                            <td class="level-L">L</td>
-                            <td class="level-I">I</td>
-                            <td class="level-I">I</td>
-                            <td class="level-I">I</td>
-                            <td class="level-I">I</td>
-                            <td class="level-I">I</td>
-                            <td class="level-L">L</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-        </div>
-
-        <!-- Departamento de Calidad -->
-        <div class="card">
-            <h2>3. Matriz para Calidad <span class="badge badge-quality">OPERADOR DE ACABADOS - GP12</span></h2>
-
-            <h3>3.1 Habilidades Sugeridas</h3>
-
-            <table class="iluo-table">
-                <thead>
-                    <tr>
-                        <th>Código</th>
-                        <th>Habilidad</th>
-                        <th>Descripción</th>
-                        <th>Nivel Mínimo Requerido</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>C-001</td>
-                        <td>Inspección Visual 100%</td>
-                        <td>Identificación de defectos estéticos, funcionales y dimensionales básicos</td>
-                        <td class="level-U">U</td>
-                    </tr>
-                    <tr>
-                        <td>C-002</td>
-                        <td>Uso de Calibradores/Gauges</td>
-                        <td>Medición con pasa/no pasa, calibradores, fixtures de inspección</td>
-                        <td class="level-U">U</td>
-                    </tr>
-                    <tr>
-                        <td>C-003</td>
-                        <td>Retrabajo de Piezas</td>
-                        <td>Eliminación de rebabas, pulido, corrección de defectos menores</td>
-                        <td class="level-U">U</td>
-                    </tr>
-                    <tr>
-                        <td>C-004</td>
-                        <td>Clasificación de Defectos</td>
-                        <td>Categorización según catálogo de fallas (crítico, mayor, menor)</td>
-                        <td class="level-U">U</td>
-                    </tr>
-                    <tr>
-                        <td>C-005</td>
-                        <td>Etiquetado y Trazabilidad</td>
-                        <td>Aplicación correcta de etiquetas, registro de lotes</td>
-                        <td class="level-U">U</td>
-                    </tr>
-                    <tr>
-                        <td>C-006</td>
-                        <td>Empaque según Especificación</td>
-                        <td>Acomodo en contenedor, protección, conteo correcto</td>
-                        <td class="level-U">U</td>
-                    </tr>
-                    <tr>
-                        <td>C-007</td>
-                        <td>Manejo de Material No Conforme</td>
-                        <td>Segregación, identificación roja, registro en sistema</td>
-                        <td class="level-L">L</td>
-                    </tr>
-                    <tr>
-                        <td>C-008</td>
-                        <td>Criterios de Aceptación por Cliente</td>
-                        <td>Conocimiento de requisitos específicos (GM, VW, Nissan, etc.)</td>
-                        <td class="level-L">L</td>
-                    </tr>
-                </tbody>
-            </table>
-
-            <div class="warning-box">
-                <strong>⚠️ Personalización Requerida:</strong>
-                <ul style="margin-top: 0.5rem; margin-left: 1.5rem;">
-                    <li>Agregar productos/familias específicas que inspeccionan</li>
-                    <li>Incluir equipos de inspección especiales (Keyence, CMM, etc.)</li>
-                    <li>Considerar habilidades por cliente si tienen requisitos distintos</li>
-                    <li>Añadir procesos de retrabajo específicos de tu operación</li>
-                </ul>
-            </div>
-
-            <h3>3.2 Ejemplo de Matriz Visual - Calidad</h3>
-            <div class="matrix-example">
-                <table class="iluo-table matrix-visual">
-                    <thead>
-                        <tr>
-                            <th style="min-width: 150px;">Operador</th>
-                            <th>Insp. Visual</th>
-                            <th>Calibradores</th>
-                            <th>Retrabajo</th>
-                            <th>Clasif. Defectos</th>
-                            <th>Etiquetado</th>
-                            <th>Empaque</th>
-                            <th>Mat. NC</th>
-                            <th>Req. Cliente</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td class="employee-name">Rosa Martínez S.</td>
-                            <td class="level-O">O</td>
-                            <td class="level-U">U</td>
-                            <td class="level-O">O</td>
-                            <td class="level-O">O</td>
-                            <td class="level-U">U</td>
-                            <td class="level-U">U</td>
-                            <td class="level-U">U</td>
-                            <td class="level-U">U</td>
-                        </tr>
-                        <tr>
-                            <td class="employee-name">Pedro Sánchez L.</td>
-                            <td class="level-U">U</td>
-                            <td class="level-L">L</td>
-                            <td class="level-U">U</td>
-                            <td class="level-U">U</td>
-                            <td class="level-U">U</td>
-                            <td class="level-U">U</td>
-                            <td class="level-L">L</td>
-                            <td class="level-L">L</td>
-                        </tr>
-                        <tr>
-                            <td class="employee-name">Laura Díaz Mora</td>
-                            <td class="level-L">L</td>
-                            <td class="level-I">I</td>
-                            <td class="level-L">L</td>
-                            <td class="level-L">L</td>
-                            <td class="level-U">U</td>
-                            <td class="level-U">U</td>
-                            <td class="level-I">I</td>
-                            <td class="level-I">I</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-        </div>
-
-        <!-- Plan de Implementación -->
-        <div class="card">
-            <h2>4. Plan de Implementación</h2>
-
-            <div class="timeline">
-                <div class="timeline-item">
-                    <h3><span class="step-number">1</span> Semana 1-2: Preparación</h3>
-                    <ul class="checklist">
-                        <li>Definir lista de habilidades por puesto con supervisores de área</li>
-                        <li>Establecer criterios claros para cada nivel (I, L, U, O)</li>
-                        <li>Diseñar formato de evaluación (checklist)</li>
-                        <li>Crear plantilla de matriz visual para piso</li>
+            <div class="strategy-grid">
+                <div class="strategy-box">
+                    <h3>🌐 Competencias Generales</h3>
+                    <ul>
+                        <li>Operación Estándar de Máquina</li>
+                        <li>Seguridad Industrial (LOTO)</li>
+                        <li>5's y Orden</li>
+                        <li>Manejo de Materiales</li>
                     </ul>
                 </div>
-
-                <div class="timeline-item">
-                    <h3><span class="step-number">2</span> Semana 3-4: Evaluación Inicial</h3>
-                    <ul class="checklist">
-                        <li>Evaluar a todo el personal existente en cada habilidad</li>
-                        <li>Documentar nivel actual de cada operador</li>
-                        <li>Identificar brechas y necesidades de capacitación</li>
-                        <li>Definir trainers (nivel O) para cada habilidad</li>
-                    </ul>
-                </div>
-
-                <div class="timeline-item">
-                    <h3><span class="step-number">3</span> Semana 5-6: Despliegue Visual</h3>
-                    <ul class="checklist">
-                        <li>Instalar tableros de matriz ILUO en cada área</li>
-                        <li>Capacitar a supervisores en el uso y actualización</li>
-                        <li>Comunicar al personal el sistema y sus beneficios</li>
-                        <li>Establecer meta de polivalencia por área</li>
-                    </ul>
-                </div>
-
-                <div class="timeline-item">
-                    <h3><span class="step-number">4</span> Mes 2+: Operación Continua</h3>
-                    <ul class="checklist">
-                        <li>Actualización mensual de niveles (después de evaluaciones)</li>
-                        <li>Rotación planificada para desarrollo de habilidades</li>
-                        <li>Seguimiento a planes de capacitación individuales</li>
-                        <li>Revisión trimestral de avances con gerencia</li>
+                <div class="strategy-box"
+                    style="border: 1px var(--accent) dashed; background: rgba(175, 82, 222, 0.05);">
+                    <h3>🎯 Competencias Específicas (Clientes)</h3>
+                    <ul>
+                        <li>Criterios de Calidad VW </li>
+                        <li>Empaque Especial Inalfa</li>
+                        <li>Piezas Críticas de Seguridad (D)</li>
+                        <li>Alertas de Calidad Activas</li>
                     </ul>
                 </div>
             </div>
+
+            <div style="margin-top: 30px;">
+                <p style="margin-bottom: 10px; font-weight: 600; color: #fff;">Clientes Oficiales Precargados en
+                    Sistema:</p>
+                <div class="client-tags">
+                    <span class="tag">INALFA</span>
+                    <span class="tag">VALEO</span>
+                    <span class="tag">HELLA</span>
+                    <span class="tag">VW</span>
+                    <span class="tag">ABC INOAC</span>
+                    <span class="tag">KAWASAKI</span>
+                    <span class="tag">BOS</span>
+                    <span class="tag">GRAMMER</span>
+                    <span class="tag">MAIER</span>
+                    <span class="tag">BCS</span>
+                    <span class="tag">BHTC</span>
+                    <span class="tag">STANT</span>
+                    <span class="tag">CONDUMEX</span>
+                    <span class="tag">STARLITE</span>
+                </div>
+            </div>
         </div>
 
-        <!-- Integración con Sistema -->
+        <!-- 3. PLAN DE ACCION -->
         <div class="card">
-            <h2>5. Integración con Sistema Vertx</h2>
+            <h2>3. PRÓXIMOS PASOS</h2>
+            <p>Para lograr el despliegue exitoso en piso:</p>
 
-            <p>Para integrar la matriz ILUO con tu sistema actual de capacitación, se necesitaría:</p>
+            <ul style="list-style: none; padding-left: 0;">
+                <li
+                    style="display: flex; gap: 15px; align-items: center; margin-bottom: 15px; background: rgba(255,255,255,0.05); padding: 15px; border-radius: 12px;">
+                    <span
+                        style="background: var(--primary); width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; border-radius: 50%; font-weight: bold;">1</span>
+                    <div>
+                        <strong style="color: #fff; display: block;">Carga de Catálogo (RRHH + Dueños de
+                            Proceso)</strong>
+                        <span style="font-size: 0.9rem;">Definir las habilidades críticas por puesto y cliente dentro
+                            de <code
+                                style="background: rgba(0,0,0,0.5); padding: 2px 6px; border-radius: 4px;">Vertx System</code>.</span>
+                    </div>
+                </li>
+                <li
+                    style="display: flex; gap: 15px; align-items: center; margin-bottom: 15px; background: rgba(255,255,255,0.05); padding: 15px; border-radius: 12px;">
+                    <span
+                        style="background: var(--primary); width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; border-radius: 50%; font-weight: bold;">2</span>
+                    <div>
+                        <strong style="color: #fff; display: block;">Evaluación Inicial</strong>
+                        <span style="font-size: 0.9rem;">Entrar al perfil de cada colaborador y asignar su nivel real
+                            actual (I, L, U, O).</span>
+                    </div>
+                </li>
+                <li
+                    style="display: flex; gap: 15px; align-items: center; margin-bottom: 15px; background: rgba(255,255,255,0.05); padding: 15px; border-radius: 12px;">
+                    <span
+                        style="background: var(--primary); width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; border-radius: 50%; font-weight: bold;">3</span>
+                    <div>
+                        <strong style="color: #fff; display: block;">Auditoría y Plan de Carrera</strong>
+                        <span style="font-size: 0.9rem;">Usar la data para cerrar brechas de capacitación y justificar
+                            promociones internas.</span>
+                    </div>
+                </li>
+            </ul>
+        </div>
 
-            <div class="two-columns" style="margin-top: 1.5rem;">
-                <div>
-                    <h3>📊 Datos a Agregar</h3>
-                    <table class="iluo-table">
-                        <tr>
-                            <td><strong>skills</strong></td>
-                            <td>Catálogo de habilidades por puesto</td>
-                        </tr>
-                        <tr>
-                            <td><strong>skill_levels</strong></td>
-                            <td>Nivel ILUO por empleado y habilidad</td>
-                        </tr>
-                        <tr>
-                            <td><strong>skill_evaluations</strong></td>
-                            <td>Historial de evaluaciones</td>
-                        </tr>
-                        <tr>
-                            <td><strong>trainers</strong></td>
-                            <td>Quién puede certificar cada habilidad</td>
-                        </tr>
-                    </table>
+        <!-- 4. VISION FUTURA -->
+        <div class="card"
+            style="border: 1px solid rgba(0, 122, 255, 0.3); background: linear-gradient(180deg, rgba(30, 30, 30, 0.8) 0%, rgba(0, 20, 50, 0.5) 100%);">
+            <h2>4. VISION FUTURA: ILUO DIGITAL</h2>
+            <p>La digitalización de la matriz ILUO es solo el cimiento. Al centralizar esta data, habilitamos
+                capacidades tecnológicas de vanguardia que transformarán la operación:</p>
+
+            <div
+                style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; margin-top: 30px;">
+
+                <!-- AI -->
+                <div
+                    style="background: rgba(255,255,255,0.03); padding: 25px; border-radius: 16px; border-left: 4px solid #AF52DE;">
+                    <h3 style="color: #fff; margin-bottom: 10px; font-size: 1.1rem;">🧠 Talento Predictivo (IA)</h3>
+                    <p style="font-size: 0.95rem; color: var(--text-dim);">
+                        El sistema analizará patrones de rotación y desempeño para <strong>predecir vacíos de
+                            habilidades</strong> semanas antes de que ocurran, sugiriendo planes de sucesión
+                        automáticos.
+                    </p>
                 </div>
-                <div>
-                    <h3>🖥️ Funcionalidades Nuevas</h3>
-                    <table class="iluo-table">
-                        <tr>
-                            <td>Página de matriz ILUO por área</td>
-                        </tr>
-                        <tr>
-                            <td>Registro de evaluaciones de habilidad</td>
-                        </tr>
-                        <tr>
-                            <td>Reporte de polivalencia (%)</td>
-                        </tr>
-                        <tr>
-                            <td>Alertas de brechas críticas</td>
-                        </tr>
-                    </table>
+
+                <!-- IoT -->
+                <div
+                    style="background: rgba(255,255,255,0.03); padding: 25px; border-radius: 16px; border-left: 4px solid #34c759;">
+                    <h3 style="color: #fff; margin-bottom: 10px; font-size: 1.1rem;">🔒 Candado Digital (IoT)</h3>
+                    <p style="font-size: 0.95rem; color: var(--text-dim);">
+                        Integración directa con maquinaria: <strong>La máquina no inicia ciclo</strong> si el operador
+                        logueado no tiene certificación vigente "Nivel U" en esa operación específica.
+                        <br><em style="color:#34c759; font-size:0.8rem;">(Cero Defectos por Mano de Obra)</em>
+                    </p>
+                </div>
+
+                <!-- Gamification -->
+                <div
+                    style="background: rgba(255,255,255,0.03); padding: 25px; border-radius: 16px; border-left: 4px solid #ffcc00;">
+                    <h3 style="color: #fff; margin-bottom: 10px; font-size: 1.1rem;">🏆 Cultura de Logros</h3>
+                    <p style="font-size: 0.95rem; color: var(--text-dim);">
+                        Transformar la capacitación en un sistema de progreso visible. Los empleados desbloquean
+                        <strong>"Insignias Digitales"</strong> y beneficios al completar clusters de clientes (ej.
+                        "Experto BMW"), aumentando la retención.
+                    </p>
+                </div>
+
+                <!-- Real Time Audit -->
+                <div
+                    style="background: rgba(255,255,255,0.03); padding: 25px; border-radius: 16px; border-left: 4px solid #007aff;">
+                    <h3 style="color: #fff; margin-bottom: 10px; font-size: 1.1rem;">📱 Auditoría Instantánea</h3>
+                    <p style="font-size: 0.95rem; color: var(--text-dim);">
+                        Adiós al papel en piso. Auditores externos (IATF) pueden escanear un gafete y visualizar en
+                        tiempo real la competencia del operador y su historial de entrenamiento en tablet.
+                    </p>
                 </div>
             </div>
 
-            <div class="success-box" style="margin-top: 1.5rem;">
-                <strong>✅ Vinculación con Datos Existentes:</strong>
-                <ul style="margin-top: 0.5rem; margin-left: 1.5rem;">
-                    <li>Los cursos completados pueden dar nivel automático (ej: curso aprobado = nivel I)</li>
-                    <li>La certificación práctica eleva el nivel (L → U → O)</li>
-                    <li>Se puede vincular al perfil del empleado como criterio adicional de promoción</li>
-                </ul>
+            <div
+                style="margin-top: 50px; text-align: center; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 30px;">
+                <p style="font-size: 1.3rem; color: #fff; font-weight: 300; font-style: italic;">
+                    "No solo estamos administrando cursos, estamos construyendo<br>
+                    una <strong style="color: var(--primary); font-weight: 600;">Ventaja Competitiva
+                        Operacional</strong>."
+                </p>
             </div>
         </div>
 
-        <!-- Acciones Inmediatas -->
-        <div class="card">
-            <h2>6. Acciones Inmediatas</h2>
-
-            <div class="highlight-box">
-                <h3 style="margin-top: 0;">🎯 Lo que se necesita hacer:</h3>
-            </div>
-
-            <table class="iluo-table">
-                <thead>
-                    <tr>
-                        <th style="width: 50px;">#</th>
-                        <th>Acción</th>
-                        <th>Responsable</th>
-                        <th>Entregable</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td><strong>1</strong></td>
-                        <td>Revisar y ajustar lista de habilidades de Producción</td>
-                        <td>Supervisor de Producción + Jefe de Proceso</td>
-                        <td>Lista final de habilidades con códigos</td>
-                    </tr>
-                    <tr>
-                        <td><strong>2</strong></td>
-                        <td>Revisar y ajustar lista de habilidades de Calidad/GP12</td>
-                        <td>Supervisor de Calidad + Ingeniero de Calidad</td>
-                        <td>Lista final de habilidades con códigos</td>
-                    </tr>
-                    <tr>
-                        <td><strong>3</strong></td>
-                        <td>Definir criterios de evaluación para cada nivel</td>
-                        <td>RH + Supervisores</td>
-                        <td>Rúbrica de evaluación por habilidad</td>
-                    </tr>
-                    <tr>
-                        <td><strong>4</strong></td>
-                        <td>Identificar quién será Trainer (nivel O) en cada habilidad</td>
-                        <td>Supervisores</td>
-                        <td>Lista de trainers certificados</td>
-                    </tr>
-                    <tr>
-                        <td><strong>5</strong></td>
-                        <td>Evaluar nivel actual de cada operador</td>
-                        <td>Supervisores + Trainers</td>
-                        <td>Matriz inicial completada</td>
-                    </tr>
-                    <tr>
-                        <td><strong>6</strong></td>
-                        <td>Imprimir y colocar matriz visual en piso</td>
-                        <td>RH + Supervisores</td>
-                        <td>Tablero instalado por área</td>
-                    </tr>
-                </tbody>
-            </table>
-
-        </div>
-
-        <!-- Métricas -->
-        <div class="card">
-            <h2>7. Métricas de Seguimiento</h2>
-
-            <div class="two-columns">
-                <div>
-                    <h3>📈 KPIs Recomendados</h3>
-                    <ul style="line-height: 2;">
-                        <li><strong>% Polivalencia:</strong> Operadores con 3+ habilidades en U</li>
-                        <li><strong>Cobertura Crítica:</strong> Habilidades con 2+ personas en U/O</li>
-                        <li><strong>Avance Mensual:</strong> # de promociones de nivel</li>
-                        <li><strong>Brechas:</strong> Habilidades sin trainer (nivel O)</li>
-                    </ul>
-                </div>
-                <div>
-                    <h3>🎯 Metas Sugeridas</h3>
-                    <ul style="line-height: 2;">
-                        <li>80% de operadores polivalentes (3+ skills en U)</li>
-                        <li>Cada habilidad crítica con mínimo 2 trainers</li>
-                        <li>Nuevo ingreso alcanza nivel U en 60 días</li>
-                        <li>Cero habilidades sin cobertura por turno</li>
-                    </ul>
-                </div>
-            </div>
-        </div>
+        <footer style="text-align: center; margin-top: 60px; color: var(--text-dim); font-size: 0.8rem;">
+            2026 © Vertx Plataforma de Capacitación - Documento Confidencial
+        </footer>
     </div>
-
-    <footer>
-        <p>Generado Enero de 2026 | Sistema de Gestión de Capacitación Vertx</p>
-        <p>© 2026 - Documento de referencia para implementación de Matriz ILUO</p>
-    </footer>
 </body>
 
 </html>

@@ -4,35 +4,38 @@ import { useState } from 'react';
 import Link from 'next/link';
 import styles from './page.module.css';
 
-// Roadmap data
+// Roadmap data updated 2026
 const roadmapItems = [
+    // --- COMPLETADO (LO QUE YA HICIMOS) ---
     {
-        id: 1,
-        category: 'Integración',
-        title: 'Conexión con SAP/ERP',
-        description: 'Sincronización automática de datos de empleados, puestos y departamentos desde sistemas empresariales.',
-        status: 'planned',
-        priority: 'high',
+        id: 101,
+        category: 'Core',
+        title: 'Sistema ILUO Digital',
+        description: 'Digitalización completa de la matriz de habilidades con evaluación de 4 niveles (I, L, U, O).',
+        status: 'completed',
+        priority: 'critical',
         effort: 'Alto',
-        impact: 'Alto',
-        icon: '🔗'
+        impact: 'Muy Alto',
+        icon: '🚀'
     },
     {
-        id: 2,
-        category: 'Automatización',
-        title: 'Notificaciones por Email/SMS',
-        description: 'Alertas automáticas de vencimientos, recordatorios de evaluaciones y notificaciones de promociones.',
-        status: 'planned',
+        id: 102,
+        category: 'Estrategia',
+        title: 'Gestión por Clientes (Clusters)',
+        description: 'Capacidad de agrupar competencias por Cliente (VW, Nissan) para cumplimiento específico de auditorías.',
+        status: 'completed',
         priority: 'high',
         effort: 'Medio',
         impact: 'Alto',
-        icon: '📧'
+        icon: '🌐'
     },
+
+    // --- EN PROCESO / CORTO PLAZO ---
     {
         id: 3,
         category: 'Reportes',
         title: 'Exportación a PDF Profesional',
-        description: 'Generación de reportes en PDF con diseño corporativo, gráficas y firma digital.',
+        description: 'Generación de reportes en PDF con diseño corporativo, gráficas de araña y firma digital.',
         status: 'in-progress',
         priority: 'medium',
         effort: 'Medio',
@@ -40,110 +43,80 @@ const roadmapItems = [
         icon: '📄'
     },
     {
-        id: 4,
-        category: 'Móvil',
-        title: 'Aplicación Móvil Nativa',
-        description: 'App para iOS y Android que permita consultar información, aprobar capacitaciones y recibir alertas.',
-        status: 'planned',
-        priority: 'medium',
-        effort: 'Alto',
-        impact: 'Alto',
-        icon: '📱'
-    },
-    {
-        id: 5,
-        category: 'IA',
-        title: 'Análisis Predictivo con IA',
-        description: 'Predicción de necesidades de capacitación, detección de brechas y recomendaciones automáticas.',
-        status: 'research',
-        priority: 'low',
-        effort: 'Alto',
-        impact: 'Muy Alto',
-        icon: '🤖'
-    },
-    {
-        id: 6,
-        category: 'E-Learning',
-        title: 'Plataforma de Cursos Online',
-        description: 'Módulo integrado para crear, asignar y dar seguimiento a cursos de capacitación en línea.',
-        status: 'planned',
-        priority: 'high',
-        effort: 'Alto',
-        impact: 'Muy Alto',
-        icon: '🎓'
-    },
-    {
         id: 7,
         category: 'Evaluaciones',
-        title: 'Exámenes en Línea',
-        description: 'Sistema de evaluación digital con banco de preguntas, tiempo límite y calificación automática.',
+        title: 'Exámenes con Banco de Preguntas',
+        description: 'Sistema de evaluación teórica con calificación automática y randomización de preguntas.',
         status: 'in-progress',
         priority: 'high',
         effort: 'Medio',
         impact: 'Alto',
-        icon: '✅'
+        icon: '📝'
     },
+
+    // --- FUTURO (HORIZONTE 2026) ---
     {
-        id: 8,
-        category: 'Seguridad',
-        title: 'Autenticación SSO/LDAP',
-        description: 'Inicio de sesión único integrado con Active Directory o proveedores de identidad corporativos.',
-        status: 'planned',
-        priority: 'medium',
-        effort: 'Medio',
-        impact: 'Medio',
-        icon: '🔐'
-    },
-    {
-        id: 9,
-        category: 'Gestión',
-        title: 'Gestión de Proveedores de Capacitación',
-        description: 'Registro de instructores externos, control de costos y evaluación de calidad de servicios.',
+        id: 5,
+        category: 'Inteligencia Artificial',
+        title: 'IA Predictiva de Talento',
+        description: 'Algoritmo que predice vacíos de habilidades 3 meses antes basándose en rotación y desempeño.',
         status: 'research',
         priority: 'low',
-        effort: 'Bajo',
-        impact: 'Medio',
-        icon: '👥'
-    },
-    {
-        id: 10,
-        category: 'Documentos',
-        title: 'Almacenamiento en la Nube',
-        description: 'Integración con OneDrive/Google Drive para guardar certificados, diplomas y evidencias.',
-        status: 'planned',
-        priority: 'medium',
-        effort: 'Medio',
-        impact: 'Alto',
-        icon: '☁️'
-    },
-    {
-        id: 11,
-        category: 'Reportes',
-        title: 'Dashboard Ejecutivo',
-        description: 'Panel de control para directivos con KPIs, comparativas entre plantas y tendencias.',
-        status: 'planned',
-        priority: 'high',
-        effort: 'Medio',
-        impact: 'Alto',
-        icon: '📊'
+        effort: 'Muy Alto',
+        impact: 'Muy Alto',
+        icon: '🧠'
     },
     {
         id: 12,
-        category: 'Compliance',
-        title: 'Auditoría y Trazabilidad',
-        description: 'Registro completo de cambios, versiones de documentos y evidencia para auditorías ISO/IATF.',
+        category: 'Industria 4.0',
+        title: 'Candado Digital IoT',
+        description: 'Bloqueo físico de maquinaria si el operador logueado no tiene certificación "Nivel U" vigente.',
         status: 'research',
+        priority: 'high',
+        effort: 'Extremo',
+        impact: 'Critico',
+        icon: '🔒'
+    },
+    {
+        id: 13,
+        category: 'Cultura',
+        title: 'Gamificación & Badges',
+        description: 'Sistema de insignias (ej. "Experto BMW") y leaderboards para incentivar la polivalencia.',
+        status: 'planned',
+        priority: 'medium',
+        effort: 'Medio',
+        impact: 'Alto',
+        icon: '🏆'
+    },
+    {
+        id: 14,
+        category: 'Compliance',
+        title: 'Auditoría IATF Instantánea',
+        description: 'Portal para auditores externos con acceso "solo lectura" a matrices y evidencias en tiempo real.',
+        status: 'planned',
         priority: 'high',
         effort: 'Alto',
         impact: 'Muy Alto',
-        icon: '📋'
+        icon: '📱'
+    },
+    {
+        id: 1,
+        category: 'Integración',
+        title: 'Conexión SAP/SuccessFactors',
+        description: 'Sincronización bidireccional de empleados y movimientos de puesto con el ERP corporativo.',
+        status: 'planned',
+        priority: 'high',
+        effort: 'Alto',
+        impact: 'Alto',
+        icon: '🔗'
     }
 ];
 
 const statusLabels = {
+    'completed': { label: 'Completado', color: '#32D74B' },
     'in-progress': { label: 'En Desarrollo', color: '#007AFF' },
     'planned': { label: 'Planeado', color: '#FF9F0A' },
-    'research': { label: 'Investigación', color: '#5856D6' }
+    'research': { label: 'Investigación 4.0', color: '#BF5AF2' }
 };
 
 export default function RoadmapPage() {
@@ -155,6 +128,7 @@ export default function RoadmapPage() {
 
     const stats = {
         total: roadmapItems.length,
+        completed: roadmapItems.filter(i => i.status === 'completed').length,
         inProgress: roadmapItems.filter(i => i.status === 'in-progress').length,
         planned: roadmapItems.filter(i => i.status === 'planned').length,
         research: roadmapItems.filter(i => i.status === 'research').length
@@ -200,15 +174,15 @@ export default function RoadmapPage() {
                             <span className={styles.badgePing}></span>
                             <span className={styles.badgeCore}></span>
                         </span>
-                        <span>Roadmap de Desarrollo</span>
+                        <span>Roadmap de Innovación 2026</span>
                     </div>
 
                     <h1 className={styles.headline}>
-                        Mejoras <span className={styles.gradient}>Futuras</span>
+                        El Futuro de la <span className={styles.gradient}>Capacitación</span>
                     </h1>
                     <p className={styles.subheadline}>
-                        Explora las funcionalidades que estamos desarrollando para hacer de Vertx
-                        la plataforma de capacitación más completa del mercado.
+                        De la gestión digital (ILUO 2.0) a la Inteligencia Artificial y IoT.
+                        Así estamos construyendo la Planta Inteligente.
                     </p>
                 </div>
             </header>
@@ -217,8 +191,8 @@ export default function RoadmapPage() {
             <section className={styles.statsSection}>
                 <div className={styles.statsGrid}>
                     <div className={styles.statCard}>
-                        <span className={styles.statNumber}>{stats.total}</span>
-                        <span className={styles.statLabel}>Mejoras Totales</span>
+                        <span className={styles.statNumber} style={{ color: '#32D74B' }}>{stats.completed}</span>
+                        <span className={styles.statLabel}>Entregados</span>
                     </div>
                     <div className={styles.statCard}>
                         <span className={styles.statNumber} style={{ color: '#007AFF' }}>{stats.inProgress}</span>
@@ -226,11 +200,11 @@ export default function RoadmapPage() {
                     </div>
                     <div className={styles.statCard}>
                         <span className={styles.statNumber} style={{ color: '#FF9F0A' }}>{stats.planned}</span>
-                        <span className={styles.statLabel}>Planeadas</span>
+                        <span className={styles.statLabel}>Planeados</span>
                     </div>
                     <div className={styles.statCard}>
-                        <span className={styles.statNumber} style={{ color: '#5856D6' }}>{stats.research}</span>
-                        <span className={styles.statLabel}>En Investigación</span>
+                        <span className={styles.statNumber} style={{ color: '#BF5AF2' }}>{stats.research}</span>
+                        <span className={styles.statLabel}>Visión 4.0</span>
                     </div>
                 </div>
             </section>
@@ -238,31 +212,31 @@ export default function RoadmapPage() {
             {/* Filters */}
             <section className={styles.filtersSection}>
                 <div className={styles.filterGroup}>
-                    <label>Filtrar por estado</label>
+                    <label>Fases del Proyecto</label>
                     <div className={styles.filterTabs}>
                         <button
                             className={`${styles.filterTab} ${selectedStatus === 'Todos' ? styles.active : ''}`}
                             onClick={() => setSelectedStatus('Todos')}
                         >
-                            Todos
+                            Todo
+                        </button>
+                        <button
+                            className={`${styles.filterTab} ${selectedStatus === 'completed' ? styles.active : ''}`}
+                            onClick={() => setSelectedStatus('completed')}
+                        >
+                            ✅ Hecho
                         </button>
                         <button
                             className={`${styles.filterTab} ${selectedStatus === 'in-progress' ? styles.active : ''}`}
                             onClick={() => setSelectedStatus('in-progress')}
                         >
-                            🔵 En Desarrollo
-                        </button>
-                        <button
-                            className={`${styles.filterTab} ${selectedStatus === 'planned' ? styles.active : ''}`}
-                            onClick={() => setSelectedStatus('planned')}
-                        >
-                            🟠 Planeado
+                            🔵 Desarrollo
                         </button>
                         <button
                             className={`${styles.filterTab} ${selectedStatus === 'research' ? styles.active : ''}`}
                             onClick={() => setSelectedStatus('research')}
                         >
-                            🟣 Investigación
+                            🟣 Futuro 4.0
                         </button>
                     </div>
                 </div>
@@ -275,7 +249,7 @@ export default function RoadmapPage() {
                         <div
                             key={item.id}
                             className={styles.roadmapCard}
-                            style={{ animationDelay: `${index * 0.05}s` }}
+                            style={{ animationDelay: `${index * 0.05}s`, borderColor: item.status === 'completed' ? 'rgba(50, 215, 75, 0.3)' : '' }}
                         >
                             <div className={styles.cardHeader}>
                                 <span className={styles.cardIcon}>{item.icon}</span>
@@ -283,13 +257,14 @@ export default function RoadmapPage() {
                                     className={styles.statusBadge}
                                     style={{
                                         background: `${statusLabels[item.status].color}15`,
-                                        color: statusLabels[item.status].color
+                                        color: statusLabels[item.status].color,
+                                        border: `1px solid ${statusLabels[item.status].color}30`
                                     }}
                                 >
                                     {statusLabels[item.status].label}
                                 </span>
                             </div>
-                            <span className={styles.cardCategory}>{item.category}</span>
+                            <span className={styles.cardCategory} style={{ color: statusLabels[item.status].color }}>{item.category}</span>
                             <h3 className={styles.cardTitle}>{item.title}</h3>
                             <p className={styles.cardDescription}>{item.description}</p>
                         </div>
@@ -299,15 +274,14 @@ export default function RoadmapPage() {
                 {filteredItems.length === 0 && (
                     <div className={styles.emptyState}>
                         <span className={styles.emptyIcon}>🔍</span>
-                        <h3>No hay mejoras con estos filtros</h3>
-                        <p>Intenta con otra combinación de categoría y estado.</p>
+                        <h3>No hay ítems en esta fase</h3>
                     </div>
                 )}
             </section>
 
             {/* Footer */}
             <footer className={styles.footer}>
-                <p>© 2026 Vertx. Plataforma Integral de Capacitación.</p>
+                <p>© 2026 Vertx. Evolucionando hacia la Excelencia Operacional.</p>
             </footer>
         </div>
     );

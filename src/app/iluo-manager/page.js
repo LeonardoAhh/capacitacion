@@ -8,8 +8,11 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/components/ui/Toast/Toast';
 import styles from './page.module.css';
 
+import { useRouter } from 'next/navigation';
+
 export default function IluoManagerPage() {
     const { user } = useAuth();
+    const router = useRouter(); // Hook de navegación
     const { toast } = useToast();
 
     // Data States
@@ -128,6 +131,11 @@ export default function IluoManagerPage() {
     }, {});
 
     // Validación de Acceso
+    if (user?.rol === 'demo' || user?.email?.includes('demo')) {
+        router.push('/induccion');
+        return null; // Evitar renderizado mientras redirige
+    }
+
     if (user?.rol !== 'super_admin') {
         if (!user) return null;
         return <AccessDenied />;

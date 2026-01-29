@@ -35,8 +35,17 @@ export default function DashboardPage() {
     const [showWelcome, setShowWelcome] = useState(false);
 
     useEffect(() => {
-        if (!authLoading && !user) {
-            router.push('/');
+        if (!authLoading) {
+            if (!user) {
+                router.push('/');
+                return;
+            }
+
+            // RESTRICTION FOR DEMO USERS
+            // If user is demo, force redirect to /induccion
+            if (user.rol === 'demo' || user.email?.includes('demo')) {
+                router.push('/induccion');
+            }
         }
     }, [user, authLoading, router]);
 

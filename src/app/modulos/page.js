@@ -18,6 +18,8 @@ export default function ModulesPage() {
         }
     };
 
+    const isDemo = user?.rol === 'demo' || user?.email?.includes('demo');
+
     return (
         <div className={styles.container}>
             {/* Background */}
@@ -33,30 +35,46 @@ export default function ModulesPage() {
                 </header>
 
                 <div className={styles.grid}>
-                    {/* Module 1: Dashboard / Capacitación */}
-                    <Link href="/dashboard" className={styles.moduleCard}>
-                        <div className={styles.iconWrapper}>
-                            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-                                <rect x="3" y="3" width="7" height="7" />
-                                <rect x="14" y="3" width="7" height="7" />
-                                <rect x="14" y="14" width="7" height="7" />
-                                <rect x="3" y="14" width="7" height="7" />
-                            </svg>
+                    {/* Module 1: Dashboard / Gestión de Talento - BLOQUEADO PARA DEMO */}
+                    {!isDemo ? (
+                        <Link href="/dashboard" className={styles.moduleCard}>
+                            <div className={styles.iconWrapper}>
+                                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+                                    <rect x="3" y="3" width="7" height="7" />
+                                    <rect x="14" y="3" width="7" height="7" />
+                                    <rect x="14" y="14" width="7" height="7" />
+                                    <rect x="3" y="14" width="7" height="7" />
+                                </svg>
+                            </div>
+                            <h2 className={styles.cardTitle}>Gestión de Talento</h2>
+                        </Link>
+                    ) : (
+                        <div className={styles.moduleCard} style={{ opacity: 0.5, cursor: 'not-allowed', filter: 'grayscale(1)', borderColor: 'rgba(255,255,255,0.1)' }}>
+                            <div className={styles.iconWrapper}>
+                                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+                                    <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+                                    <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+                                </svg>
+                            </div>
+                            <h2 className={styles.cardTitle}>Gestión de Talento</h2>
+                            <p className={styles.cardDescription} style={{ color: '#aaa', fontSize: '0.9rem', marginTop: '10px' }}>
+                                Acceso restringido en modo Demo. 🔒
+                            </p>
                         </div>
-                        <h2 className={styles.cardTitle}>Gestión de Talento</h2>
-                    </Link>
+                    )}
 
-                    {/* Module 2: Inducción */}
-                    <Link href="/induccion" className={styles.moduleCard}>
-                        <div className={styles.iconWrapper}>
+                    {/* Module 2: Inducción - SIEMPRE DISPONIBLE */}
+                    <Link href="/induccion" className={styles.moduleCard} style={isDemo ? { boxShadow: '0 0 30px rgba(0, 122, 255, 0.3)', borderColor: '#007AFF' } : {}}>
+                        <div className={styles.iconWrapper} style={isDemo ? { color: '#007AFF', background: 'rgba(0, 122, 255, 0.1)' } : {}}>
                             <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
                                 <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" />
                             </svg>
                         </div>
                         <h2 className={styles.cardTitle}>Inducción</h2>
+                        {isDemo && <p className={styles.cardDescription} style={{ color: '#007AFF', marginTop: '5px' }}>Módulo Habilitado ✨</p>}
                     </Link>
 
-                    {/* Module 3: Configuración ILUO (Solo Admin) */}
+                    {/* Module 3: Configuración ILUO (Solo Admin) - BLOQUEADO PARA DEMO */}
                     {user?.rol === 'super_admin' ? (
                         <Link href="/iluo-manager" className={styles.moduleCard} style={{ borderColor: '#AF52DE' }}>
                             <div className={styles.iconWrapper} style={{ color: '#AF52DE', background: 'rgba(175, 82, 222, 0.1)' }}>
@@ -67,7 +85,7 @@ export default function ModulesPage() {
                             <h2 className={styles.cardTitle}>ILUO</h2>
                         </Link>
                     ) : (
-                        <div className={styles.moduleCard} style={{ opacity: 0.5, cursor: 'not-allowed', filter: 'grayscale(1)' }}>
+                        <div className={styles.moduleCard} style={{ opacity: 0.5, cursor: 'not-allowed', filter: 'grayscale(1)', borderColor: 'rgba(255,255,255,0.1)' }}>
                             <div className={styles.iconWrapper}>
                                 <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
                                     <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
@@ -75,7 +93,7 @@ export default function ModulesPage() {
                                 </svg>
                             </div>
                             <h2 className={styles.cardTitle}>Configuración ILUO</h2>
-                            <p className={styles.cardDescription}>
+                            <p className={styles.cardDescription} style={{ color: '#aaa', fontSize: '0.9rem', marginTop: '10px' }}>
                                 Acceso restringido solo para administradores. 🔒
                             </p>
                         </div>
