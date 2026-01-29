@@ -638,87 +638,111 @@ export default function PerfilPage() {
                                                 </Link>
                                             </div>
                                         ) : (
-                                            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '20px' }}>
-                                                {positionData.iluoSkills.map((skill) => {
-                                                    const currentRating = employee.iluoRatings?.[skill.id] || null;
+                                            <div className="iluo-grouped-container">
+                                                {(() => {
+                                                    /* Agrupación ILUO v2 */
+                                                    const groups = {};
+                                                    positionData.iluoSkills.forEach(s => {
+                                                        const g = s.group || 'General';
+                                                        if (!groups[g]) groups[g] = [];
+                                                        groups[g].push(s);
+                                                    });
 
-                                                    // Map colors
-                                                    const colors = {
-                                                        I: { bg: '#fee2e2', text: '#ef4444', label: 'Aprendiz' },
-                                                        L: { bg: '#fef9c3', text: '#eab308', label: 'En Desarrollo' },
-                                                        U: { bg: '#dcfce7', text: '#22c55e', label: 'Autónomo' },
-                                                        O: { bg: '#dbeafe', text: '#3b82f6', label: 'Experto' }
-                                                    };
+                                                    const sortedKeys = Object.keys(groups).sort((a, b) =>
+                                                        a === 'General' ? -1 : b === 'General' ? 1 : a.localeCompare(b));
 
-                                                    return (
-                                                        <div key={skill.id} style={{
-                                                            background: 'var(--bg-secondary)',
-                                                            borderRadius: '16px',
-                                                            padding: '20px',
-                                                            border: '1px solid var(--border-color)',
-                                                            display: 'flex', flexDirection: 'column', gap: '15px'
-                                                        }}>
-                                                            <div>
-                                                                <span style={{ fontSize: '0.7rem', textTransform: 'uppercase', color: '#AF52DE', fontWeight: 'bold' }}>{skill.category}</span>
-                                                                <h4 style={{ margin: '5px 0 0 0', fontSize: '1.05rem' }}>{skill.name}</h4>
-                                                                {skill.description && <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', margin: '5px 0 0 0' }}>{skill.description}</p>}
+                                                    return sortedKeys.map(groupName => (
+                                                        <div key={groupName} style={{ marginBottom: '40px' }}>
+                                                            <div style={{ borderBottom: '1px solid var(--border-color)', paddingBottom: '10px', marginBottom: '20px', display: 'flex', alignItems: 'center', gap: '10px' }}>
+                                                                <span style={{ width: '4px', height: '20px', background: '#AF52DE', borderRadius: '2px' }}></span>
+                                                                <h3 style={{ margin: 0, fontSize: '1.1rem' }}>{groupName}</h3>
                                                             </div>
+                                                            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '20px' }}>
+                                                                {groups[groupName].map((skill) => {
+                                                                    /* Fin Agrupación - Contenido Original Modificado */
+                                                                    const currentRating = employee.iluoRatings?.[skill.id] || null;
 
-                                                            {/* Rating Buttons */}
-                                                            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr 1fr', gap: '5px', background: 'var(--bg-primary)', padding: '5px', borderRadius: '10px' }}>
-                                                                {['I', 'L', 'U', 'O'].map((level) => {
-                                                                    const isActive = currentRating === level;
-                                                                    const color = colors[level];
+                                                                    // Map colors
+                                                                    const colors = {
+                                                                        I: { bg: '#fee2e2', text: '#ef4444', label: 'Aprendiz' },
+                                                                        L: { bg: '#fef9c3', text: '#eab308', label: 'En Desarrollo' },
+                                                                        U: { bg: '#dcfce7', text: '#22c55e', label: 'Autónomo' },
+                                                                        O: { bg: '#dbeafe', text: '#3b82f6', label: 'Experto' }
+                                                                    };
+
                                                                     return (
-                                                                        <button
-                                                                            key={level}
-                                                                            onClick={async () => {
-                                                                                // 1. Optimistic Update
-                                                                                const newRatings = { ...employee.iluoRatings, [skill.id]: level };
-                                                                                setEmployee({ ...employee, iluoRatings: newRatings });
+                                                                        <div key={skill.id} style={{
+                                                                            background: 'var(--bg-secondary)',
+                                                                            borderRadius: '16px',
+                                                                            padding: '20px',
+                                                                            border: '1px solid var(--border-color)',
+                                                                            display: 'flex', flexDirection: 'column', gap: '15px'
+                                                                        }}>
+                                                                            <div>
+                                                                                <span style={{ fontSize: '0.7rem', textTransform: 'uppercase', color: '#AF52DE', fontWeight: 'bold' }}>{skill.category}</span>
+                                                                                <h4 style={{ margin: '5px 0 0 0', fontSize: '1.05rem' }}>{skill.name}</h4>
+                                                                                {skill.description && <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', margin: '5px 0 0 0' }}>{skill.description}</p>}
+                                                                            </div>
 
-                                                                                // 2. Save
-                                                                                try {
-                                                                                    const empRef = doc(db, 'training_records', employee.id);
-                                                                                    await updateDoc(empRef, {
-                                                                                        [`iluoRatings.${skill.id}`]: level
-                                                                                    });
-                                                                                    toast.success('Guardado');
-                                                                                } catch (e) {
-                                                                                    toast.error('Error');
-                                                                                    console.error(e);
-                                                                                }
-                                                                            }}
-                                                                            style={{
-                                                                                background: isActive ? color.bg : 'transparent',
-                                                                                color: isActive ? color.text : 'var(--text-secondary)',
-                                                                                border: 'none',
-                                                                                borderRadius: '6px',
-                                                                                padding: '8px 0',
-                                                                                cursor: 'pointer',
-                                                                                fontWeight: 'bold',
-                                                                                transition: 'all 0.2s'
-                                                                            }}
-                                                                        >
-                                                                            {level}
-                                                                        </button>
+                                                                            {/* Rating Buttons */}
+                                                                            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr 1fr', gap: '5px', background: 'var(--bg-primary)', padding: '5px', borderRadius: '10px' }}>
+                                                                                {['I', 'L', 'U', 'O'].map((level) => {
+                                                                                    const isActive = currentRating === level;
+                                                                                    const color = colors[level];
+                                                                                    return (
+                                                                                        <button
+                                                                                            key={level}
+                                                                                            onClick={async () => {
+                                                                                                // 1. Optimistic Update
+                                                                                                const newRatings = { ...employee.iluoRatings, [skill.id]: level };
+                                                                                                setEmployee({ ...employee, iluoRatings: newRatings });
+
+                                                                                                // 2. Save
+                                                                                                try {
+                                                                                                    const empRef = doc(db, 'training_records', employee.id);
+                                                                                                    await updateDoc(empRef, {
+                                                                                                        [`iluoRatings.${skill.id}`]: level
+                                                                                                    });
+                                                                                                    toast.success('Guardado');
+                                                                                                } catch (e) {
+                                                                                                    toast.error('Error');
+                                                                                                    console.error(e);
+                                                                                                }
+                                                                                            }}
+                                                                                            style={{
+                                                                                                background: isActive ? color.bg : 'transparent',
+                                                                                                color: isActive ? color.text : 'var(--text-secondary)',
+                                                                                                border: 'none',
+                                                                                                borderRadius: '6px',
+                                                                                                padding: '8px 0',
+                                                                                                cursor: 'pointer',
+                                                                                                fontWeight: 'bold',
+                                                                                                transition: 'all 0.2s'
+                                                                                            }}
+                                                                                        >
+                                                                                            {level}
+                                                                                        </button>
+                                                                                    );
+                                                                                })}
+                                                                            </div>
+
+                                                                            {/* Legend */}
+                                                                            <div style={{
+                                                                                textAlign: 'center',
+                                                                                fontSize: '0.8rem',
+                                                                                color: currentRating ? colors[currentRating].text : 'var(--text-tertiary)',
+                                                                                fontWeight: '500',
+                                                                                minHeight: '1.2em'
+                                                                            }}>
+                                                                                {currentRating ? colors[currentRating].label : '-- Sin Evaluar --'}
+                                                                            </div>
+                                                                        </div>
                                                                     );
                                                                 })}
                                                             </div>
-
-                                                            {/* Legend */}
-                                                            <div style={{
-                                                                textAlign: 'center',
-                                                                fontSize: '0.8rem',
-                                                                color: currentRating ? colors[currentRating].text : 'var(--text-tertiary)',
-                                                                fontWeight: '500',
-                                                                minHeight: '1.2em'
-                                                            }}>
-                                                                {currentRating ? colors[currentRating].label : '-- Sin Evaluar --'}
-                                                            </div>
                                                         </div>
-                                                    );
-                                                })}
+                                                    ));
+                                                })()}
                                             </div>
                                         )}
                                     </div>

@@ -23,12 +23,11 @@ export default function IluoManagerPage() {
     const [filterDept, setFilterDept] = useState('Todos');
 
     // UI States
-    const [newSkill, setNewSkill] = useState({ name: '', category: 'Técnica', description: '' });
+    // Agregamos 'group' al estado inicial
+    const [newSkill, setNewSkill] = useState({ name: '', category: 'Técnica', description: '', group: 'General' });
 
-    // 1. Cargar Puestos (Scanner) - HOOK INCONDICIONAL (Correcto)
+    // 1. Cargar Puestos (Scanner)
     useEffect(() => {
-        // Validación interna para no ejecutar lógica si no es admin, 
-        // pero el hook SIEMPRE se llama.
         if (user?.rol !== 'super_admin') {
             setLoading(false);
             return;
@@ -43,11 +42,9 @@ export default function IluoManagerPage() {
                 const loadedPositions = snapshot.docs.map(doc => ({
                     id: doc.id,
                     ...doc.data(),
-                    // Si no tiene departamento, poner 'General'
                     department: doc.data().department || 'General'
                 }));
 
-                // Ordenar alfabéticamente
                 loadedPositions.sort((a, b) => a.name.localeCompare(b.name));
                 setPositionsList(loadedPositions);
             } catch (error) {
@@ -58,12 +55,11 @@ export default function IluoManagerPage() {
             }
         };
         fetchPositions();
-    }, [user, toast]); // Modificado para incluir dependencias correctas
+    }, [user, toast]);
 
     // 2. Manejar Selección de Puesto
     const handleSelectPosition = (pos) => {
         setSelectedPosition(pos);
-        // Si el puesto ya tiene 'iluoSkills' guardados, cargarlos. Si no, array vacío.
         setSkills(pos.iluoSkills || []);
     };
 
@@ -72,10 +68,11 @@ export default function IluoManagerPage() {
         if (!newSkill.name.trim()) return toast.warning("Nombre requerido");
 
         const skillToAdd = {
-            id: Date.now().toString(), // ID simple temporal
+            id: Date.now().toString(),
             name: newSkill.name,
             category: newSkill.category,
             description: newSkill.description,
+            group: newSkill.group.trim() || 'General', // Default a General
             createdAt: new Date().toISOString()
         };
 
@@ -88,13 +85,13 @@ export default function IluoManagerPage() {
                 iluoSkills: arrayUnion(skillToAdd)
             });
 
-            // Actualizar también la lista local principal para reflejar cambios sin recargar
             setPositionsList(prev => prev.map(p =>
                 p.id === selectedPosition.id ? { ...p, iluoSkills: updatedSkills } : p
             ));
 
             toast.success("Habilidad Agregada");
-            setNewSkill({ name: '', category: 'Técnica', description: '' });
+            // Reset form pero mantenemos el último grupo usado por comodidad
+            setNewSkill({ ...newSkill, name: '', description: '' });
         } catch (error) {
             console.error(error);
             toast.error("Error al guardar");
@@ -122,29 +119,35 @@ export default function IluoManagerPage() {
         }
     };
 
-    // Validación de Acceso (Ahora sí podemos hacer return)
+    // Helper para agrupar skills por 'group'
+    const groupedSkills = skills.reduce((acc, skill) => {
+        const group = skill.group || 'General';
+        if (!acc[group]) acc[group] = [];
+        acc[group].push(skill);
+        return acc;
+    }, {});
+
+    // Validación de Acceso
     if (user?.rol !== 'super_admin') {
-        if (!user) return null; // Cargando auth...
+        if (!user) return null;
         return <AccessDenied />;
     }
 
-    // Filtrado
+    // Filtrado Sidebar
     const filteredPositions = positionsList.filter(p => {
         const matchesSearch = p.name.toLowerCase().includes(searchTerm.toLowerCase());
-        const matchesDept = filterDept === 'Todos' || p.department === filterDept;
-        return matchesSearch && matchesDept;
+        return matchesSearch;
     });
 
     return (
         <div className={styles.container}>
-            {/* Background Decorations */}
             <div className={styles.bgDecoration}>
                 <div className={`${styles.blob} ${styles.blob1}`}></div>
                 <div className={`${styles.blob} ${styles.blob2}`}></div>
                 <div className={`${styles.blob} ${styles.blob3}`}></div>
             </div>
 
-            {/* SIDEBAR: Lista de Puestos */}
+            {/* SIDEBAR */}
             <aside className={styles.sidebar}>
                 <header className={styles.sidebarHeader}>
                     <h2 className={styles.sidebarTitle}>Configuración ILUO</h2>
@@ -197,7 +200,7 @@ export default function IluoManagerPage() {
                 </div>
             </aside>
 
-            {/* MAIN CONTENT: Editor de Skills */}
+            {/* MAIN CONTENT */}
             <main className={styles.main}>
                 {!selectedPosition ? (
                     <div className={styles.emptyState}>
@@ -215,34 +218,97 @@ export default function IluoManagerPage() {
                                 </span>
                             </div>
                             <div style={{ textAlign: 'right', opacity: 0.7 }}>
-                                <p style={{ margin: 0, fontSize: '0.9rem' }}>Total Habilidades</p>
+                                <p style={{ margin: 0, fontSize: '0.9rem' }}>Competencias Totales</p>
                                 <strong style={{ fontSize: '1.5rem' }}>{skills.length}</strong>
                             </div>
                         </header>
 
-                        {/* LISTA DE SKILLS */}
-                        <div className={styles.grid}>
-                            {skills.map((skill, index) => (
-                                <div key={index} className={styles.card}>
-                                    <button
-                                        onClick={() => handleDeleteSkill(skill)}
-                                        className={styles.deleteBtn}
-                                        title="Eliminar habilidad"
-                                    >
-                                        ✕
-                                    </button>
-                                    <span className={styles.cardCategory}>{skill.category}</span>
-                                    <h4 className={styles.cardTitle}>{skill.name}</h4>
-                                    {skill.description && <p className={styles.cardDesc}>{skill.description}</p>}
+                        {/* LISTA DE SKILLS AGRUPADAS */}
+                        {Object.keys(groupedSkills).length === 0 ? (
+                            <div className={styles.emptyState} style={{ minHeight: '200px' }}>
+                                <p>Este puesto aún no tiene habilidades configuradas.</p>
+                            </div>
+                        ) : (
+                            Object.entries(groupedSkills).map(([groupName, groupSkills]) => (
+                                <div key={groupName} style={{ marginBottom: '40px' }}>
+                                    <h3 style={{
+                                        fontSize: '1.2rem',
+                                        fontWeight: '700',
+                                        color: '#fff',
+                                        marginBottom: '20px',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        gap: '10px'
+                                    }}>
+                                        <span style={{ width: '8px', height: '24px', background: '#007AFF', borderRadius: '4px', display: 'block' }}></span>
+                                        {groupName}
+                                        <span style={{ fontSize: '0.8rem', opacity: 0.5, fontWeight: 'normal' }}>({groupSkills.length})</span>
+                                    </h3>
+
+                                    <div className={styles.grid}>
+                                        {groupSkills.map((skill, index) => (
+                                            <div key={index} className={styles.card}>
+                                                <button
+                                                    onClick={() => handleDeleteSkill(skill)}
+                                                    className={styles.deleteBtn}
+                                                    title="Eliminar habilidad"
+                                                >
+                                                    ✕
+                                                </button>
+                                                <span className={styles.cardCategory}>{skill.category}</span>
+                                                <h4 className={styles.cardTitle}>{skill.name}</h4>
+                                                {skill.description && <p className={styles.cardDesc}>{skill.description}</p>}
+                                            </div>
+                                        ))}
+                                    </div>
                                 </div>
-                            ))}
-                        </div>
+                            ))
+                        )}
 
                         {/* FORMULARIO AGREGAR */}
                         <div className={styles.formCard}>
                             <div className={styles.formTitle}>
                                 <div style={{ background: '#007AFF', width: '30px', height: '30px', borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', marginRight: '10px' }}>+</div>
                                 <span>Nueva Competencia</span>
+                            </div>
+
+                            {/* Campo de Grupo (Nuevo) - Con Lista Maestra de Clientes */}
+                            <div className={styles.inputGroup}>
+                                <label className={styles.label}>Grupo / Cliente</label>
+                                <input
+                                    className={styles.input}
+                                    placeholder="Selecciona de la lista o escribe uno nuevo..."
+                                    value={newSkill.group}
+                                    onChange={e => setNewSkill({ ...newSkill, group: e.target.value })}
+                                    list="groups-list"
+                                    autoComplete="off"
+                                />
+                                <datalist id="groups-list">
+                                    <option value="GENERAL" />
+                                    {/* Clientes Principales */}
+                                    <option value="INALFA" />
+                                    <option value="ABC INOAC" />
+                                    <option value="KAWASAKI" />
+                                    <option value="VALEO" />
+                                    <option value="BOS" />
+                                    <option value="GRAMMER" />
+                                    <option value="MAIER" />
+                                    <option value="HELLA" />
+                                    <option value="BCS" />
+                                    <option value="BHTC" />
+                                    <option value="STANT" />
+                                    <option value="CONDUMEX" />
+                                    <option value="STARLITE" />
+                                    {/* Grupos Dinámicos (evitando duplicados) */}
+                                    {Object.keys(groupedSkills).filter(g =>
+                                        !['General', 'INALFA', 'ABC INOAC', 'KAWASAKI', 'VALEO', 'BOS', 'GRAMMER', 'MAIER', 'HELLA', 'BCS', 'BHTC', 'STANT', 'CONDUMEX', 'STARLITE'].includes(g)
+                                    ).map(g => (
+                                        <option key={g} value={g} />
+                                    ))}
+                                </datalist>
+                                <small style={{ color: 'rgba(255,255,255,0.4)', marginTop: '5px', display: 'block', fontSize: '0.75rem' }}>
+                                    Asigna esta competencia a un Cliente específico o déjala en 'General'. Si el cliente no está en la lista, escríbelo para crearlo.
+                                </small>
                             </div>
 
                             <div className={styles.formGrid}>
@@ -262,11 +328,10 @@ export default function IluoManagerPage() {
                                         value={newSkill.category}
                                         onChange={e => setNewSkill({ ...newSkill, category: e.target.value })}
                                     >
-                                        <option>Técnica</option>
-                                        <option>Seguridad</option>
-                                        <option>Calidad</option>
-                                        <option>Soft Skill</option>
-                                        <option>Liderazgo</option>
+                                        <option>TÉCNICA</option>
+                                        <option>SEGURIDAD</option>
+                                        <option>CALIDAD</option>
+                                        <option>LIDERAZGO</option>
                                     </select>
                                 </div>
                             </div>
