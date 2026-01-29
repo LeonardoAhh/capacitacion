@@ -5,9 +5,10 @@ import Navbar from '@/components/Navbar/Navbar';
 import Link from 'next/link';
 import { Button } from '@/components/ui/Button/Button';
 import { Avatar } from '@/components/ui/Avatar/Avatar';
+import { Badge } from '@/components/ui/Badge/Badge';
 import { useToast } from '@/components/ui/Toast/Toast';
 import { db } from '@/lib/firebase';
-import { collection, getDocs, query, where, doc, getDoc } from 'firebase/firestore';
+import { collection, getDocs, query, where, doc, getDoc, updateDoc } from 'firebase/firestore';
 import { checkPromotionCriteria, calculateMonthsInPosition, formatDate } from '@/lib/promotionUtils';
 import styles from './page.module.css';
 
@@ -326,6 +327,16 @@ export default function PerfilPage() {
                                     Promoción
                                 </button>
                                 <button
+                                    className={`${styles.tab} ${activeTab === 'iluo' ? styles.tabActive : ''}`}
+                                    onClick={() => setActiveTab('iluo')}
+                                    style={activeTab === 'iluo' ? { color: '#AF52DE', borderColor: '#AF52DE', background: 'rgba(175, 82, 222, 0.05)' } : {}}
+                                >
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                        <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z" />
+                                    </svg>
+                                    Habilidades
+                                </button>
+                                <button
                                     className={`${styles.tab} ${activeTab === 'documents' ? styles.tabActive : ''}`}
                                     onClick={() => setActiveTab('documents')}
                                 >
@@ -600,6 +611,114 @@ export default function PerfilPage() {
                                                     <path d="M14 2v6h6" />
                                                 </svg>
                                                 <p>No hay documentos cargados para este empleado.</p>
+                                            </div>
+                                        )}
+                                    </div>
+                                )}
+
+                                {/* ILUO Skills Tab Content */}
+                                {activeTab === 'iluo' && (
+                                    <div style={{ animation: 'fadeIn 0.3s ease' }}>
+                                        <div style={{ marginBottom: '20px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                            <h2 className={styles.cardTitle}>Matriz de Habilidades Prácticas</h2>
+                                            {positionData?.iluoSkills?.length > 0 && (
+                                                <Badge variant="purple">{positionData.iluoSkills.length} Habilidades</Badge>
+                                            )}
+                                        </div>
+
+                                        {!positionData?.iluoSkills || positionData.iluoSkills.length === 0 ? (
+                                            <div style={{ textAlign: 'center', padding: '40px', background: 'var(--bg-secondary)', borderRadius: '16px', border: '1px dashed var(--border-color)' }}>
+                                                <div style={{ fontSize: '3rem', marginBottom: '15px' }}>📋</div>
+                                                <h3 style={{ margin: '0 0 10px 0' }}>Matriz No Configurada</h3>
+                                                <p style={{ color: 'var(--text-secondary)', marginBottom: '20px' }}>
+                                                    El puesto <strong>{employee.position}</strong> aún no tiene habilidades ILUO definidas.
+                                                </p>
+                                                <Link href="/iluo-manager">
+                                                    <Button variant="secondary">Ir al Configurador</Button>
+                                                </Link>
+                                            </div>
+                                        ) : (
+                                            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '20px' }}>
+                                                {positionData.iluoSkills.map((skill) => {
+                                                    const currentRating = employee.iluoRatings?.[skill.id] || null;
+
+                                                    // Map colors
+                                                    const colors = {
+                                                        I: { bg: '#fee2e2', text: '#ef4444', label: 'Aprendiz' },
+                                                        L: { bg: '#fef9c3', text: '#eab308', label: 'En Desarrollo' },
+                                                        U: { bg: '#dcfce7', text: '#22c55e', label: 'Autónomo' },
+                                                        O: { bg: '#dbeafe', text: '#3b82f6', label: 'Experto' }
+                                                    };
+
+                                                    return (
+                                                        <div key={skill.id} style={{
+                                                            background: 'var(--bg-secondary)',
+                                                            borderRadius: '16px',
+                                                            padding: '20px',
+                                                            border: '1px solid var(--border-color)',
+                                                            display: 'flex', flexDirection: 'column', gap: '15px'
+                                                        }}>
+                                                            <div>
+                                                                <span style={{ fontSize: '0.7rem', textTransform: 'uppercase', color: '#AF52DE', fontWeight: 'bold' }}>{skill.category}</span>
+                                                                <h4 style={{ margin: '5px 0 0 0', fontSize: '1.05rem' }}>{skill.name}</h4>
+                                                                {skill.description && <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', margin: '5px 0 0 0' }}>{skill.description}</p>}
+                                                            </div>
+
+                                                            {/* Rating Buttons */}
+                                                            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr 1fr', gap: '5px', background: 'var(--bg-primary)', padding: '5px', borderRadius: '10px' }}>
+                                                                {['I', 'L', 'U', 'O'].map((level) => {
+                                                                    const isActive = currentRating === level;
+                                                                    const color = colors[level];
+                                                                    return (
+                                                                        <button
+                                                                            key={level}
+                                                                            onClick={async () => {
+                                                                                // 1. Optimistic Update
+                                                                                const newRatings = { ...employee.iluoRatings, [skill.id]: level };
+                                                                                setEmployee({ ...employee, iluoRatings: newRatings });
+
+                                                                                // 2. Save
+                                                                                try {
+                                                                                    const empRef = doc(db, 'training_records', employee.id);
+                                                                                    await updateDoc(empRef, {
+                                                                                        [`iluoRatings.${skill.id}`]: level
+                                                                                    });
+                                                                                    toast.success('Guardado');
+                                                                                } catch (e) {
+                                                                                    toast.error('Error');
+                                                                                    console.error(e);
+                                                                                }
+                                                                            }}
+                                                                            style={{
+                                                                                background: isActive ? color.bg : 'transparent',
+                                                                                color: isActive ? color.text : 'var(--text-secondary)',
+                                                                                border: 'none',
+                                                                                borderRadius: '6px',
+                                                                                padding: '8px 0',
+                                                                                cursor: 'pointer',
+                                                                                fontWeight: 'bold',
+                                                                                transition: 'all 0.2s'
+                                                                            }}
+                                                                        >
+                                                                            {level}
+                                                                        </button>
+                                                                    );
+                                                                })}
+                                                            </div>
+
+                                                            {/* Legend */}
+                                                            <div style={{
+                                                                textAlign: 'center',
+                                                                fontSize: '0.8rem',
+                                                                color: currentRating ? colors[currentRating].text : 'var(--text-tertiary)',
+                                                                fontWeight: '500',
+                                                                minHeight: '1.2em'
+                                                            }}>
+                                                                {currentRating ? colors[currentRating].label : '-- Sin Evaluar --'}
+                                                            </div>
+                                                        </div>
+                                                    );
+                                                })}
                                             </div>
                                         )}
                                     </div>

@@ -44,9 +44,6 @@ export default function ModulesPage() {
                             </svg>
                         </div>
                         <h2 className={styles.cardTitle}>Gestión de Talento</h2>
-                        <p className={styles.cardDescription}>
-                            Administración de empleados, matriz de habilidades, reportes y cumplimiento normativo.
-                        </p>
                     </Link>
 
                     {/* Module 2: Inducción */}
@@ -57,10 +54,32 @@ export default function ModulesPage() {
                             </svg>
                         </div>
                         <h2 className={styles.cardTitle}>Inducción</h2>
-                        <p className={styles.cardDescription}>
-                            Plataforma interactiva para la bienvenida y capacitación inicial de nuevos ingresos.
-                        </p>
                     </Link>
+
+                    {/* Module 3: Configuración ILUO (Solo Admin) */}
+                    {user?.rol === 'super_admin' ? (
+                        <Link href="/iluo-manager" className={styles.moduleCard} style={{ borderColor: '#AF52DE' }}>
+                            <div className={styles.iconWrapper} style={{ color: '#AF52DE', background: 'rgba(175, 82, 222, 0.1)' }}>
+                                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+                                    <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z" />
+                                </svg>
+                            </div>
+                            <h2 className={styles.cardTitle}>ILUO</h2>
+                        </Link>
+                    ) : (
+                        <div className={styles.moduleCard} style={{ opacity: 0.5, cursor: 'not-allowed', filter: 'grayscale(1)' }}>
+                            <div className={styles.iconWrapper}>
+                                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+                                    <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+                                    <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+                                </svg>
+                            </div>
+                            <h2 className={styles.cardTitle}>Configuración ILUO</h2>
+                            <p className={styles.cardDescription}>
+                                Acceso restringido solo para administradores. 🔒
+                            </p>
+                        </div>
+                    )}
                 </div>
 
                 <div style={{ marginTop: '3rem' }}>
