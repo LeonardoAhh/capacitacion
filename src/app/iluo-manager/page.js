@@ -284,7 +284,7 @@ export default function IluoManagerPage() {
                                     autoComplete="off"
                                 />
                                 <datalist id="groups-list">
-                                    <option value="GENERAL" />
+                                    <option value="General" />
                                     {/* Clientes Principales */}
                                     <option value="INALFA" />
                                     <option value="ABC INOAC" />
@@ -307,7 +307,7 @@ export default function IluoManagerPage() {
                                     ))}
                                 </datalist>
                                 <small style={{ color: 'rgba(255,255,255,0.4)', marginTop: '5px', display: 'block', fontSize: '0.75rem' }}>
-                                    Asigna esta competencia a un Cliente específico o déjala en 'General'. Si el cliente no está en la lista, escríbelo para crearlo.
+                                    Asigna esta competencia a un Cliente específico o déjala en General. Si el cliente no está en la lista, escríbelo para crearlo.
                                 </small>
                             </div>
 
