@@ -1,0 +1,146 @@
+{
+    "induccion_empresa": {
+        "informacion_general": {
+            "empresa": "Viñoplastic Inyección",
+            "presentador": {
+                "nombre": "Lic. Hernandez Herrera Leonardo A.",
+                "puesto": "Analista de Capacitación Planta Querétaro"
+            },
+            "objetivo": "Conocer cómo funciona Viñoplastic, derechos, responsabilidades y herramientas para trabajar con excelencia."
+        },
+        "perfil_corporativo": {
+            "servicios": "Maquila de inyección, decorado (tampografía), sub-ensambles, diseño y mantenimiento de moldes.",
+            "certificaciones": [
+                "IATF 16949:2016 (Automotriz)",
+                "ISO 14001:2015 (Ambiental)"
+            ],
+            "industrias": "Automotriz, Electrodomésticos, Electrónico, Juguetes y Enseres Domésticos.",
+            "identidad": {
+                "mision": "Satisfacer las necesidades de nuestros clientes con excelencia, proporcionando soluciones integrales e innovadoras, apegándose siempre a las normativas locales vigentes.",
+                "vision": "Ser reconocidos como líderes en la inyección de plásticos, representando la mejor alternativa del mercado para lograr un crecimiento constante junto a nuestros clientes.",
+                "valores": [
+                    "Puntualidad: Llegar a tiempo es respeto.",
+                    "Disciplina: Seguir reglas y orden.",
+                    "Honradez: Actuar siempre con la verdad.",
+                    "Respeto: Trato digno para todos.",
+                    "Compromiso: Cumplir tu trabajo al 100%.",
+                    "Humildad: Siempre podemos aprender."
+                ]
+            }
+        },
+        "codigo_conducta_etica": {
+            "respeto_universal": "Cero tolerancia a la discriminación por edad, género, religión o ideas.",
+            "acoso_prohibido": "Nadie debe hacer comentarios o acciones incómodas.",
+            "liderazgo_positivo": "Los jefes deben escuchar, respetar y no abusar de su autoridad.",
+            "confidencialidad": "Protegemos la información de nuestros clientes y procesos.",
+            "honestidad": "Lealtad y seriedad en cada tarea asignada."
+        },
+        "condiciones_laborales": {
+            "jornada": {
+                "duracion": "Máximo 48 horas semanales.",
+                "tiempo_extra": "Se paga conforme a la ley.",
+                "descanso": "Descanso semanal garantizado."
+            },
+            "salario_pagos": {
+                "periodo": "Jueves a Miércoles.",
+                "dia_pago": "Viernes (antes de las 6 PM).",
+                "recibo_nomina": "Llega al correo los Lunes."
+            }
+        },
+        "horarios_turnos": {
+            "produccion_calidad": [
+                {
+                    "turno": "1er Turno",
+                    "dias": "Lunes a Sábado",
+                    "horario": "06:00 A.M. - 02:00 P.M."
+                },
+                {
+                    "turno": "2do Turno",
+                    "dias": "Miércoles a Domingo",
+                    "horario": "02:00 P.M. - 10:00 P.M."
+                },
+                {
+                    "turno": "3er Turno",
+                    "dias": "Viernes a Martes",
+                    "horario": "10:00 P.M. - 06:00 A.M."
+                },
+                {
+                    "turno": "4to Turno",
+                    "detalle": "Domingo 6:00 A.M - 2:00 P.M; Lunes a Martes 02:00 P.M. - 10:00 P.M; Miércoles a Jueves 10:00 P.M. – 06:00 A.M."
+                }
+            ],
+            "recursos_humanos": [
+                "Lunes a Viernes: 08:00 A.M. - 06:00 P.M.",
+                "Sábado: 08:00 A.M. - 11:00 P.M.",
+                "Lunes a Viernes (Nocturno): 10:00 P.M. - 06:00 A.M."
+            ],
+            "comida": "Horarios de comida establecidos por turno, se deben cumplir."
+        },
+        "asistencia": {
+            "reloj_checador": "Vital para el pago semanal. Si no checas, afecta tu nómina.",
+            "proceso_marcaje": [
+                "1. Entrada al turno",
+                "2. Salida al comedor",
+                "3. Regreso a la operación",
+                "4. Finaliza tu jornada"
+            ],
+            "bono_asistencia_perfecta": "Se paga semanalmente si tienes 0 faltas y 0 retardos.",
+            "falta_injustificada": "Sanción de 1 día sin goce de sueldo."
+        },
+        "permisos": {
+            "proceso": [
+                "1. Solicita autorización verbal a tu jefe directo.",
+                "2. Acude a Recursos Humanos para llenar formato y recabar firmas.",
+                "3. Entregar formato firmado el mismo día."
+            ],
+            "permisos_especiales_con_goce": {
+                "fallecimiento_familiar": "2 días (Padres, Hermanos, Cónyuge, Hijos).",
+                "nacimiento_adopcion": "5 días (Aplica solo a varones).",
+                "requisito": "Requiere comprobante físico."
+            }
+        },
+        "transporte_seguridad": {
+            "transporte": {
+                "reglas": "Llegar 10 min antes, uso obligatorio de cinturón, prohibido apartar lugares, prohibido paradas no autorizadas."
+            },
+            "seguridad": {
+                "capacitacion": "Obligatoria para crecimiento y seguridad operativa.",
+                "riesgos_maquinaria": "Partes móviles pueden aplastar o causar lesiones graves/muerte. Material puede ser expulsado.",
+                "reglas_seguridad": [
+                    "Usar guardas de seguridad.",
+                    "Mantener manos y cuerpo alejados al operar.",
+                    "Sujetar ropa suelta y cabello largo.",
+                    "No usar joyería.",
+                    "Respetar señalizaciones y usar EPP."
+                ]
+            }
+        },
+        "prestaciones": {
+            "ley": [
+                "Afiliación al IMSS",
+                "Afiliación al INFONAVIT",
+                "Afiliación al FONACOT",
+                "Vacaciones",
+                "Prima Vacacional",
+                "Prima Dominical",
+                "Descansos Obligatorios",
+                "Utilidades",
+                "Aguinaldo"
+            ],
+            "adicionales": [
+                "Fondo de Ahorro: 4% Mensual",
+                "Vales de Despensa: 3% Mensual",
+                "Bono de Asistencia"
+            ]
+        },
+        "contacto_rh": {
+            "mensaje": "Cualquier duda sobre nómina, permisos, transporte o situación laboral.",
+            "telefonos": [
+                "55 1406 3167",
+                "442 509 5534",
+                "55 1525 4782",
+                "55 63 26 5881"
+            ]
+        }
+    }
+}

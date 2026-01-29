@@ -6,12 +6,12 @@ import { useAuth } from '@/contexts/AuthContext';
 import styles from './page.module.css';
 
 export default function ModulesPage() {
-    const { user, logout } = useAuth();
+    const { user, signOut } = useAuth();
     const router = useRouter();
 
     const handleLogout = async () => {
         try {
-            await logout();
+            await signOut();
             router.push('/login');
         } catch (error) {
             console.error('Error logging out:', error);
