@@ -4,10 +4,11 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { db } from '@/lib/firebase';
 import { collection, query, where, getDocs, addDoc, orderBy, onSnapshot, deleteDoc, doc } from 'firebase/firestore';
+import { useAuth } from '@/contexts/AuthContext'; // Importar AuthContext
 import { Avatar } from '@/components/ui/Avatar/Avatar';
 import { Button } from '@/components/ui/Button/Button';
 import { useToast } from '@/components/ui/Toast/Toast';
-import ThemeToggle from '@/components/ThemeToggle/ThemeToggle'; // Import Nuevo
+import ThemeToggle from '@/components/ThemeToggle/ThemeToggle';
 import styles from './page.module.css';
 
 // Configuración de Jerarquía
@@ -17,6 +18,7 @@ const ANALYST_IDS = ['3376', '3884']; // Reportan a Coord Reclutamiento
 const ALL_IDS = [BOSS_ID, COORD_REC_ID, ...ANALYST_IDS, '2099', '3204', '3818', '3853'];
 
 export default function InductionPage() {
+    const { user } = useAuth(); // Obtener usuario activo
     const { toast } = useToast();
     const [rhTeam, setRhTeam] = useState([]);
     const [loadingTeam, setLoadingTeam] = useState(true);
@@ -32,6 +34,8 @@ export default function InductionPage() {
     const [file, setFile] = useState(null);
     const [presentationLink, setPresentationLink] = useState('');
     const [uploading, setUploading] = useState(false);
+
+    const canEdit = user?.rol === 'super_admin'; // Permiso de edición
 
     // 1. Cargar Equipo RH
     useEffect(() => {
@@ -68,6 +72,7 @@ export default function InductionPage() {
 
     const handleDeleteCourse = async (e, courseId) => {
         e.stopPropagation();
+        if (!canEdit) return; // Seguridad
         if (window.confirm('¿Eliminar curso permanentemente?')) {
             try {
                 await deleteDoc(doc(db, 'induction_courses', courseId));
@@ -80,6 +85,8 @@ export default function InductionPage() {
 
     const handleCreateCourse = async (e) => {
         e.preventDefault();
+        if (!canEdit) return; // Seguridad
+
         if (!newCourseName.trim()) return toast.warning('Atención', 'Nombre requerido');
         if (!file && !presentationLink.trim()) return toast.warning('Atención', 'Material requerido');
 
@@ -185,12 +192,14 @@ export default function InductionPage() {
             <section>
                 <div className={styles.coursesHeader}>
                     <h2 className={styles.sectionTitle} style={{ margin: 0 }}>Cursos de Inducción</h2>
-                    <button className={styles.toggleBtn} onClick={() => setShowCreateForm(!showCreateForm)}>
-                        {showCreateForm ? 'Cancelar' : '+ Nuevo Curso'}
-                    </button>
+                    {canEdit && (
+                        <button className={styles.toggleBtn} onClick={() => setShowCreateForm(!showCreateForm)}>
+                            {showCreateForm ? 'Cancelar' : '+ Nuevo Curso'}
+                        </button>
+                    )}
                 </div>
 
-                {showCreateForm && (
+                {showCreateForm && canEdit && (
                     <div className={styles.createCourseContainer}>
                         <form onSubmit={handleCreateCourse} className={styles.createCourseForm}>
                             <div className={styles.inputGroup}>
@@ -212,7 +221,9 @@ export default function InductionPage() {
                     {courses.map(course => (
                         <div key={course.id} className={styles.courseCard} onClick={() => setPreviewCourse(course)}>
                             <div className={styles.cardTopColor} style={{ background: course.material?.type === 'link' ? '#FF9500' : '#FF3B30' }}></div>
-                            <button className={styles.deleteBtn} onClick={(e) => handleDeleteCourse(e, course.id)}>✕</button>
+                            {canEdit && (
+                                <button className={styles.deleteBtn} onClick={(e) => handleDeleteCourse(e, course.id)}>✕</button>
+                            )}
                             <div className={styles.cardContent}>
                                 <h3 className={styles.courseTitle}>{course.title}</h3>
                                 <span className={styles.courseTypeBadge}>
