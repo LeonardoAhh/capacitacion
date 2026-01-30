@@ -1,0 +1,80 @@
+[
+    {
+        "employeeId": "1130",
+        "reportsTo": null,
+        "titulo": "Ing.",
+        "level": 1
+    },
+    {
+        "employeeId": "1131",
+        "reportsTo": "1130",
+        "titulo": "Ing.",
+        "level": 2
+    },
+    {
+        "employeeId": "1694",
+        "reportsTo": "1130",
+        "titulo": "Ing.",
+        "level": 2
+    },
+    {
+        "employeeId": "2247",
+        "reportsTo": "1694",
+        "titulo": "",
+        "level": 3
+    },
+    {
+        "employeeId": "2698",
+        "reportsTo": "1694",
+        "titulo": "",
+        "level": 3
+    },
+    {
+        "employeeId": "2734",
+        "reportsTo": "1694",
+        "titulo": "",
+        "level": 3
+    },
+    {
+        "employeeId": "3105",
+        "reportsTo": "1694",
+        "titulo": "",
+        "level": 3
+    },
+    {
+        "employeeId": "3168",
+        "reportsTo": "1694",
+        "titulo": "",
+        "level": 3
+    },
+    {
+        "employeeId": "3232",
+        "reportsTo": "1694",
+        "titulo": "",
+        "level": 3
+    },
+    {
+        "employeeId": "3385",
+        "reportsTo": "1694",
+        "titulo": "",
+        "level": 3
+    },
+    {
+        "employeeId": "3582",
+        "reportsTo": "1694",
+        "titulo": "",
+        "level": 3
+    },
+    {
+        "employeeId": "3610",
+        "reportsTo": "1694",
+        "titulo": "",
+        "level": 3
+    },
+    {
+        "employeeId": "3809",
+        "reportsTo": "1694",
+        "titulo": "",
+        "level": 3
+    }
+]

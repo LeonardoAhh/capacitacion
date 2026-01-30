@@ -12,6 +12,7 @@ import ThemeToggle from '@/components/ThemeToggle/ThemeToggle';
 import TriviaGame from '@/components/TriviaGame/TriviaGame';
 import inductionData from '@/data/induction_data.json';
 import instructoresData from '@/data/instructores.json';
+import produccionOrgData from '@/data/produccion_org.json';
 import styles from './page.module.css';
 
 // --- CONFIGURACIÓN Y CONSTANTES ---
@@ -28,17 +29,53 @@ const instructorsMap = instructoresData.reduce((acc, item) => {
 }, {});
 const instructorIds = Object.keys(instructorsMap);
 
+// Procesamiento de Producción
+const produccionIds = produccionOrgData.map(p => p.employeeId);
+const produccionTitlesMap = produccionOrgData.reduce((acc, p) => {
+    if (p.titulo) acc[p.employeeId] = p.titulo;
+    return acc;
+}, {});
+
+// Mapa de Títulos Profesionales (Opción B - Estático)
+// Formato: 'employeeId': 'Título'
+const titlesMap = {
+    // --- RECURSOS HUMANOS ---
+    '3160': 'Lic.',    // Jefe RH
+    '3373': 'Lic.',    // Coordinador Reclutamiento
+    '3376': 'Lic.',    // Analista
+    '3884': 'Lic.',    // Analista
+    '2099': 'Lic.',    // Otro RH
+    '3818': 'Lic.',    // Otro RH
+
+    // --- INSTRUCTORES ---
+    '3204': 'Lic.',    // Líder Capacitación
+    '3853': 'Ing.',    // Instructor (5S, Seguridad, etc.)
+    '3536': 'Ing.',    // Instructor (Reportes, Instrucciones)
+    '3537': 'Ing.',    // Instructor (Reportes, Instrucciones)
+    '2571': 'Ing.',    // Instructor (SGI, Calidad)
+    '2172': 'Ing.',    // Instructor (Familias del Producto)
+    '2193': 'Ing.',    // Instructor (Familias del Producto)
+    // Agrega más IDs aquí según sea necesario
+};
+
 // --- COMPONENTES AUXILIARES ---
 
 // Extraído para evitar re-renderizados innecesarios
-const OrgCard = ({ member, roleClass, subjects = [], onClick }) => {
+const OrgCard = ({ member, roleClass, subjects = [], onClick, title }) => {
     if (!member) return null;
+
+    // Si no se pasa título explícito, buscar en ambos mapas
+    const displayTitle = title || titlesMap[member.employeeId] || produccionTitlesMap[member.employeeId] || '';
+
     return (
         <div className={`${styles.orgCard} ${styles[roleClass]}`} onClick={() => onClick(member)}>
             <div className={styles.orgAvatar}>
                 <Avatar name={member.name} src={member.photoUrl} size="xl" />
             </div>
-            <h4 className={styles.orgName}>{member.name}</h4>
+            <h4 className={styles.orgName}>
+                {displayTitle && <span style={{ color: '#007AFF', fontWeight: '600' }}>{displayTitle} </span>}
+                {member.name}
+            </h4>
             <span className={styles.orgRole}>{member.position || 'N/A'}</span>
             {member.shift && <span className={styles.orgShift}>{member.shift}</span>}
 
@@ -96,7 +133,7 @@ export default function InductionPage() {
         const fetchTeam = async () => {
             try {
                 // Unimos IDs y eliminamos duplicados
-                const allIdsToFetch = [...new Set([...RH_IDS, ...instructorIds])];
+                const allIdsToFetch = [...new Set([...RH_IDS, ...instructorIds, ...produccionIds])];
 
                 // Dividimos en lotes de 10 para evitar errores de límite de Firestore
                 const idChunks = chunkArray(allIdsToFetch, 10);
@@ -221,6 +258,12 @@ export default function InductionPage() {
                     >
                         Instructores Internos
                     </button>
+                    <button
+                        onClick={() => setActiveTab('produccion')}
+                        className={`${styles.tabBtn} ${activeTab === 'produccion' ? styles.activeTab : ''}`}
+                    >
+                        Producción
+                    </button>
                 </div>
 
                 {loadingTeam ? <p>Cargando equipo...</p> : (
@@ -292,6 +335,56 @@ export default function InductionPage() {
                                                     member={employeesMap[id]}
                                                     roleClass="cardInstructor"
                                                     subjects={instructorsMap[id]}
+                                                    onClick={setPreviewEmp}
+                                                />
+                                            ) : null)
+                                        }
+                                    </div>
+                                )}
+                            </div>
+                        )}
+
+                        {/* === PESTAÑA PRODUCCIÓN === */}
+                        {activeTab === 'produccion' && (
+                            <div className={styles.orgChart}>
+                                <h3 style={{ opacity: 0.6, fontSize: '0.9rem', marginBottom: '20px' }}>Área de Producción</h3>
+
+                                {/* Nivel 1: Gerente/Jefe (1130) */}
+                                {employeesMap['1130'] && (
+                                    <div className={styles.levelRow}>
+                                        <OrgCard
+                                            member={employeesMap['1130']}
+                                            roleClass="cardBoss"
+                                            onClick={setPreviewEmp}
+                                        />
+                                    </div>
+                                )}
+                                <div className={styles.levelSpacing}></div>
+
+                                {/* Nivel 2: Coordinadores (1131, 1694) */}
+                                <div className={styles.levelRow}>
+                                    {['1131', '1694'].map(id => employeesMap[id] && (
+                                        <OrgCard
+                                            key={id}
+                                            member={employeesMap[id]}
+                                            roleClass="cardCoord"
+                                            onClick={setPreviewEmp}
+                                        />
+                                    ))}
+                                </div>
+                                <div className={styles.levelSpacing}></div>
+
+                                {/* Nivel 3: Supervisores/Equipo (reportan a 1694) */}
+                                {produccionOrgData.filter(p => p.reportsTo === '1694').length > 0 && (
+                                    <div className={styles.instructorsGrid}>
+                                        <div className={styles.teamDivider}><span>Supervisores</span></div>
+                                        {produccionOrgData
+                                            .filter(p => p.reportsTo === '1694')
+                                            .map(p => employeesMap[p.employeeId] ? (
+                                                <OrgCard
+                                                    key={p.employeeId}
+                                                    member={employeesMap[p.employeeId]}
+                                                    roleClass="cardAnalyst"
                                                     onClick={setPreviewEmp}
                                                 />
                                             ) : null)
