@@ -18,6 +18,13 @@ export default function RootLayout({ children }) {
     return (
         <html lang="es" suppressHydrationWarning>
             <body className={inter.className}>
+                {/* Skip Link para accesibilidad - navegación por teclado (CSS-only) */}
+                <a
+                    href="#main-content"
+                    className="skip-link"
+                >
+                    Saltar al contenido principal
+                </a>
                 <ThemeProvider>
                     <AuthProvider>
                         <ToastProvider>

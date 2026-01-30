@@ -209,7 +209,7 @@ export default function IluoManagerPage() {
             </aside>
 
             {/* MAIN CONTENT */}
-            <main className={styles.main}>
+            <main className={styles.main} id="main-content">
                 {!selectedPosition ? (
                     <div className={styles.emptyState}>
                         <div className={styles.emptyIcon}>👈</div>

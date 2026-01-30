@@ -51,134 +51,106 @@ export default function LoginPage() {
 
     return (
         <div className={styles.container}>
+            {/* Background Effects */}
+            <div className={styles.bgDecoration}>
+                <div className={`${styles.blob} ${styles.blob1}`}></div>
+                <div className={`${styles.blob} ${styles.blob2}`}></div>
+            </div>
+
             {/* Theme Toggle */}
-            <div className={styles.themeToggle}>
+            <div className={styles.themeToggleWrapper}>
                 <ThemeToggle />
             </div>
 
-            {/* Main Card */}
-            <div className={styles.card}>
-                {/* Left Side - Brand */}
-                <div className={styles.brandSide}>
-                    {/* Pattern Overlay */}
-                    <div className={styles.patternOverlay}>
-                        <svg width="100%" height="100%">
-                            <pattern id="dots" x="0" y="0" width="20" height="20" patternUnits="userSpaceOnUse">
-                                <circle cx="2" cy="2" r="1" fill="currentColor" />
-                            </pattern>
-                            <rect width="100%" height="100%" fill="url(#dots)" />
+            <div className={styles.loginWrapper}>
+                {/* Logo Section */}
+                <div className={styles.headerSection}>
+                    <div className={styles.logoIcon}>
+                        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                            <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" />
                         </svg>
                     </div>
+                    <h1 className={styles.appTitle}>Vertx</h1>
+                    <p className={styles.appSubtitle}>Gestión de Talento</p>
+                </div>
 
-                    {/* Gradient Blob */}
-                    <div className={styles.gradientBlob}></div>
-
-                    {/* Content */}
-                    <div className={styles.brandContent}>
-                        <div className={styles.logoSection}>
-                            <div className={styles.logoIcon}>
-                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                                    <path d="M13 10V3L4 14h7v7l9-11h-7z" />
+                {/* Login Card */}
+                <div className={styles.card} id="main-content">
+                    <form onSubmit={handleSubmit} className={styles.form}>
+                        {error && (
+                            <div className={styles.errorBox} role="alert" aria-live="polite">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                    <circle cx="12" cy="12" r="10" />
+                                    <line x1="12" y1="8" x2="12" y2="12" />
+                                    <line x1="12" y1="16" x2="12.01" y2="16" />
                                 </svg>
+                                {error}
                             </div>
-                            <span className={styles.logoText}>Vertx</span>
+                        )}
+
+                        <div className={styles.inputGroup}>
+                            <input
+                                id="email"
+                                type="email"
+                                placeholder=" "
+                                value={email}
+                                onChange={(e) => setEmail(e.target.value)}
+                                required
+                                className={styles.input}
+                            />
+                            <label htmlFor="email" className={styles.label}>Correo Electrónico</label>
                         </div>
 
-                        <h2 className={styles.brandTitle}>
-                            Gestión de Talento Simplificada.
-                        </h2>
-                        <p className={styles.brandDescription}>
-                            Centraliza competencias, cumplimiento normativo y desarrollo en una sola plataforma segura.
-                        </p>
-                    </div>
+                        <div className={styles.inputGroup}>
+                            <input
+                                id="password"
+                                type="password"
+                                placeholder=" "
+                                value={password}
+                                onChange={(e) => setPassword(e.target.value)}
+                                required
+                                className={styles.input}
+                            />
+                            <label htmlFor="password" className={styles.label}>Contraseña</label>
+                        </div>
 
-                    {/* Features */}
-                    <div className={styles.featuresList}>
-                        <div className={styles.featureItem}>
-                            <span className={styles.featureCheck}>✓</span>
-                            <span>Matriz de Habilidades</span>
+                        <div className={styles.actions}>
+                            <button
+                                type="submit"
+                                className={styles.primaryBtn}
+                                disabled={loading}
+                            >
+                                {loading ? (
+                                    <div className="spinner-sm"></div>
+                                ) : (
+                                    <>
+                                        Iniciar Sesión
+                                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                            <path d="M5 12h14M12 5l7 7-7 7" />
+                                        </svg>
+                                    </>
+                                )}
+                            </button>
                         </div>
-                        <div className={styles.featureItem}>
-                            <span className={styles.featureCheck}>✓</span>
-                            <span>Auditorías ISO/IATF</span>
+
+                        <div className={styles.divider}>
+                            <span>o</span>
                         </div>
-                        <div className={styles.featureItem}>
-                            <span className={styles.featureCheck}>✓</span>
-                            <span>Reportes en Tiempo Real</span>
-                        </div>
-                    </div>
+
+                        <button
+                            type="button"
+                            className={styles.secondaryBtn}
+                            onClick={handleDemo}
+                            disabled={loading}
+                        >
+                            Acceder como Instructor
+                        </button>
+                    </form>
                 </div>
 
-                {/* Right Side - Form */}
-                <div className={styles.formSide}>
-                    <div className={styles.formContainer}>
-                        <div className={styles.formHeader}>
-                            <h3>Bienvenido de vuelta</h3>
-                            <p>Ingresa tus credenciales para acceder al sistema.</p>
-                        </div>
-
-                        <form onSubmit={handleSubmit} className={styles.form}>
-                            {error && (
-                                <div className={styles.errorBox}>
-                                    {error}
-                                </div>
-                            )}
-
-                            <div className={styles.inputGroup}>
-                                <label htmlFor="email">Correo Corporativo</label>
-                                <input
-                                    id="email"
-                                    type="email"
-                                    placeholder="••••••••••••"
-                                    value={email}
-                                    onChange={(e) => setEmail(e.target.value)}
-                                    required
-                                />
-                            </div>
-
-                            <div className={styles.inputGroup}>
-                                <label htmlFor="password">Contraseña</label>
-                                <input
-                                    id="password"
-                                    type="password"
-                                    placeholder="••••••••••••"
-                                    value={password}
-                                    onChange={(e) => setPassword(e.target.value)}
-                                    required
-                                />
-
-                            </div>
-
-                            <div className={styles.buttonGroup}>
-                                <button
-                                    type="submit"
-                                    className={styles.primaryBtn}
-                                    disabled={loading}
-                                >
-                                    {loading ? 'Procesando...' : 'Ingresar al Dashboard'}
-                                </button>
-
-                                <div className={styles.divider}>
-                                    <span>O</span>
-                                </div>
-
-                                <button
-                                    type="button"
-                                    className={styles.ghostBtn}
-                                    onClick={handleDemo}
-                                    disabled={loading}
-                                >
-                                    Modo Invitado
-                                </button>
-                            </div>
-                        </form>
-                    </div>
+                <div className={styles.footer}>
+                    <p>&copy; 2024 Vertx System v2.0</p>
                 </div>
-            </div>
-
-            {/* Footer */}
-            <div className={styles.footer}>
-                <p>Sistema Vertx v2.0</p>
             </div>
         </div>
     );

@@ -296,7 +296,7 @@ export default function ReportsPage() {
     return (
         <>
             <Navbar />
-            <main className={styles.main}>
+            <main className={styles.main} id="main-content">
                 <div className={styles.container}>
                     <div className={styles.header}>
                         <div className={styles.headerLeft}>

@@ -867,18 +867,79 @@
     }
 }
 
-/* ==================== RESPONSIVE ==================== */
-@media (max-width: 1024px) {
-    .tableContainer {
-        overflow-x: auto;
+/* ==================== RESPONSIVE DESIGN ==================== */
+
+/* Mobile Small (< 375px) */
+@media (max-width: 374px) {
+    .main {
+        padding: var(--spacing-md) 0;
     }
 
-    .table {
-        min-width: 800px;
+    .container {
+        padding: 0 var(--spacing-sm);
+    }
+
+    .header h1 {
+        font-size: 1.25rem;
+    }
+
+    .formCard {
+        padding: var(--spacing-md);
+        border-radius: var(--radius-md);
+    }
+
+    .searchBar {
+        max-width: 100%;
+    }
+
+    .filterGroup {
+        flex-direction: column;
     }
 }
 
-@media (max-width: 768px) {
+/* Mobile (375px - 480px) */
+@media (max-width: 480px) {
+    .main {
+        padding: var(--spacing-md) 0;
+    }
+
+    .container {
+        padding: 0 var(--spacing-md);
+    }
+
+    .header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: var(--spacing-md);
+    }
+
+    .header h1 {
+        font-size: 1.4rem;
+    }
+
+    .formCard {
+        padding: var(--spacing-md);
+    }
+
+    .formGrid {
+        grid-template-columns: 1fr;
+    }
+
+    .searchBar {
+        max-width: 100%;
+    }
+
+    .calculatedDates {
+        padding: var(--spacing-md);
+    }
+
+    .dateInfo {
+        font-size: 0.85rem;
+    }
+}
+
+/* Tablet (481px - 768px) */
+@media (min-width: 481px) and (max-width: 768px) {
     .main {
         padding: var(--spacing-lg) 0;
     }
@@ -897,24 +958,183 @@
     }
 
     .formGrid {
-        grid-template-columns: 1fr;
-    }
-
-    .searchBar {
-        max-width: 100%;
+        grid-template-columns: 1fr 1fr;
     }
 }
 
-@media (max-width: 480px) {
+/* Table responsive */
+@media (max-width: 1024px) {
+    .tableContainer {
+        overflow-x: auto;
+    }
+
+    .table {
+        min-width: 800px;
+    }
+}
+
+/* Desktop Small (769px - 1024px) */
+@media (min-width: 769px) and (max-width: 1024px) {
+    .formGrid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .header {
+        flex-wrap: wrap;
+    }
+}
+
+/* Desktop (1025px - 1440px) */
+@media (min-width: 1025px) and (max-width: 1440px) {
+    .container {
+        max-width: 1280px;
+    }
+
+    .formGrid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+/* Large Screens / Projectors (> 1440px) */
+@media (min-width: 1441px) {
+    .main {
+        padding: var(--spacing-2xl) 0;
+    }
+
+    .container {
+        max-width: 1600px;
+    }
+
+    .header h1 {
+        font-size: 2.25rem;
+    }
+
+    .header p {
+        font-size: 1.1rem;
+    }
+
+    .formCard {
+        padding: var(--spacing-xl);
+        border-radius: var(--radius-xl);
+    }
+
+    .formGrid {
+        grid-template-columns: repeat(4, 1fr);
+        gap: var(--spacing-lg);
+    }
+
+    .inputGroup label {
+        font-size: 0.9rem;
+    }
+
+    .inputGroup input,
+    .inputGroup select {
+        padding: var(--spacing-md);
+        font-size: 1rem;
+    }
+
+    .table th,
+    .table td {
+        padding: var(--spacing-md) var(--spacing-lg);
+        font-size: 0.95rem;
+    }
+
+    .employeeName {
+        font-size: 1rem;
+    }
+
+    .searchBar {
+        max-width: 400px;
+    }
+}
+
+/* Ultra-wide / 4K Displays (> 2000px) */
+@media (min-width: 2001px) {
+    .container {
+        max-width: 1920px;
+    }
+
+    .header h1 {
+        font-size: 2.5rem;
+    }
+
+    .formGrid {
+        grid-template-columns: repeat(5, 1fr);
+    }
+
+    .table th,
+    .table td {
+        padding: var(--spacing-lg);
+        font-size: 1rem;
+    }
+}
+
+/* Touch-friendly adjustments */
+@media (pointer: coarse) {
+
+    .inputGroup input,
+    .inputGroup select {
+        min-height: 48px;
+    }
+
+    .table td,
+    .table th {
+        padding: var(--spacing-md);
+    }
+
+    .actionBtn {
+        min-width: 44px;
+        min-height: 44px;
+    }
+
+    .backBtn {
+        min-height: 44px;
+        padding: var(--spacing-sm) var(--spacing-lg);
+    }
+}
+
+/* Landscape mobile */
+@media (max-height: 480px) and (orientation: landscape) {
+    .main {
+        padding: var(--spacing-sm) 0;
+    }
+
     .formCard {
         padding: var(--spacing-md);
     }
 
-    .calculatedDates {
-        padding: var(--spacing-md);
+    .header {
+        margin-bottom: var(--spacing-md);
+    }
+}
+
+/* Print styles */
+@media print {
+    .main {
+        background: white;
+        padding: 0;
     }
 
-    .dateInfo {
-        font-size: 0.85rem;
+    .formCard,
+    .tableContainer {
+        box-shadow: none;
+        border: 1px solid #ccc;
+    }
+
+    .header {
+        flex-direction: row;
+    }
+
+    .table {
+        min-width: 100%;
+    }
+
+    .table th,
+    .table td {
+        border: 1px solid #ccc;
+    }
+
+    .actionBtn {
+        display: none;
     }
 }

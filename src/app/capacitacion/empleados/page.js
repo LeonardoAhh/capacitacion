@@ -409,7 +409,7 @@ export default function EmpleadosPage() {
     return (
         <>
             <Navbar />
-            <main className={styles.main}>
+            <main className={styles.main} id="main-content">
                 <div className={styles.header}>
                     <div>
                         <Link href="/capacitacion" className={styles.backBtn}>← Volver</Link>
@@ -596,17 +596,18 @@ export default function EmpleadosPage() {
                         />
                     </div>
 
-                    {isCreating && (
-                        <div className={styles.formGroup}>
-                            <label>ID Empleado (Opcional)</label>
-                            <input
-                                type="text"
-                                value={formData.id}
-                                onChange={(e) => setFormData({ ...formData, id: e.target.value })}
-                                placeholder="Si se deja vacío, se generará uno."
-                            />
-                        </div>
-                    )}
+                    <div className={styles.formGroup}>
+                        <label>ID Empleado</label>
+                        <input
+                            type="text"
+                            value={formData.id}
+                            onChange={(e) => isCreating && setFormData({ ...formData, id: e.target.value })}
+                            placeholder={isCreating ? "Si se deja vacío, se generará uno." : ""}
+                            readOnly={!isCreating}
+                            disabled={!isCreating}
+                            style={!isCreating ? { opacity: 0.7, cursor: 'not-allowed', background: '#f5f5f5' } : {}}
+                        />
+                    </div>
                     <div className={styles.formGroup}>
                         <label>Nombre Completo</label>
                         <input

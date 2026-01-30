@@ -1,17 +1,79 @@
-/* Form Card */
+/* ==================== FORM CONTAINER ==================== */
 .formCard {
-    background-color: var(--bg-secondary);
+    background: var(--bg-secondary);
     border: 1px solid var(--border-color);
-    border-radius: var(--radius-xl);
-    padding: var(--spacing-2xl);
+    border-radius: var(--radius-2xl);
+    overflow: hidden;
     margin-bottom: var(--spacing-2xl);
-    box-shadow: var(--shadow-lg);
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.08);
 }
 
-.formCard h2 {
+[data-theme="dark"] .formCard {
+    background: #1C1C1E;
+    border-color: rgba(84, 84, 88, 0.4);
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+}
+
+/* ==================== FORM HEADER ==================== */
+.formHeader {
+    background: linear-gradient(135deg, var(--color-primary), var(--color-secondary));
+    padding: var(--spacing-xl) var(--spacing-2xl);
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-lg);
+}
+
+.headerIcon {
+    width: 56px;
+    height: 56px;
+    border-radius: var(--radius-xl);
+    background: rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(10px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+}
+
+.headerText {
+    flex: 1;
+}
+
+.headerText h2 {
+    color: white;
     font-size: 1.5rem;
-    margin-bottom: var(--spacing-xl);
-    color: var(--text-primary);
+    font-weight: 700;
+    margin: 0 0 4px 0;
+}
+
+.headerText p {
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 0.9rem;
+    margin: 0;
+}
+
+.closeBtn {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.15);
+    border: none;
+    color: white;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+}
+
+.closeBtn:hover {
+    background: rgba(255, 255, 255, 0.25);
+    transform: scale(1.05);
+}
+
+/* ==================== FORM BODY ==================== */
+.formBody {
+    padding: var(--spacing-2xl);
 }
 
 .form {
@@ -20,122 +82,296 @@
     gap: var(--spacing-xl);
 }
 
+/* ==================== PHOTO UPLOAD ==================== */
+.photoSection {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: var(--spacing-xl);
+    background: var(--bg-tertiary);
+    border-radius: var(--radius-xl);
+    border: 2px dashed var(--border-color);
+    transition: all 0.3s ease;
+}
+
+.photoSection:hover {
+    border-color: var(--color-primary);
+    background: rgba(0, 122, 255, 0.05);
+}
+
+[data-theme="dark"] .photoSection {
+    background: rgba(255, 255, 255, 0.03);
+}
+
+.photoPreview {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    overflow: hidden;
+    background: var(--bg-secondary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 4px solid var(--bg-secondary);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+    margin-bottom: var(--spacing-md);
+}
+
+.photoPreview img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.photoPreview svg {
+    color: var(--text-tertiary);
+}
+
+.photoLabel {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--spacing-xs);
+    padding: var(--spacing-sm) var(--spacing-lg);
+    background: var(--color-primary);
+    color: white;
+    border-radius: var(--radius-full);
+    font-size: 0.9rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.photoLabel:hover {
+    filter: brightness(1.1);
+    transform: translateY(-1px);
+}
+
+.photoHint {
+    margin-top: var(--spacing-sm);
+    font-size: 0.8rem;
+    color: var(--text-tertiary);
+}
+
+/* ==================== SECTION CARD ==================== */
+.sectionCard {
+    background: var(--bg-primary);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-xl);
+    overflow: hidden;
+}
+
+[data-theme="dark"] .sectionCard {
+    background: rgba(0, 0, 0, 0.3);
+    border-color: rgba(84, 84, 88, 0.4);
+}
+
+.sectionHeader {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-md);
+    padding: var(--spacing-lg);
+    background: var(--bg-tertiary);
+    border-bottom: 1px solid var(--border-color);
+}
+
+[data-theme="dark"] .sectionHeader {
+    background: rgba(255, 255, 255, 0.03);
+}
+
+.sectionIcon {
+    width: 40px;
+    height: 40px;
+    border-radius: var(--radius-md);
+    background: linear-gradient(135deg, var(--color-primary), var(--color-secondary));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+}
+
+.sectionTitle {
+    flex: 1;
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin: 0;
+}
+
+.sectionContent {
+    padding: var(--spacing-lg);
+}
+
+/* ==================== FORM GRID ==================== */
 .formGrid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    grid-template-columns: repeat(2, 1fr);
     gap: var(--spacing-lg);
 }
 
+.formGridThree {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--spacing-lg);
+}
+
+/* ==================== INPUT GROUP ==================== */
 .inputGroup {
     display: flex;
     flex-direction: column;
-    gap: var(--spacing-sm);
+    gap: var(--spacing-xs);
 }
 
-.calculatedDates {
-    background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(6, 182, 212, 0.1));
-    border: 1px solid var(--color-primary);
+.inputGroup label {
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--text-secondary);
+}
+
+.inputGroup input,
+.inputGroup select {
+    height: 48px;
+    padding: 0 var(--spacing-md);
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    font-size: 0.95rem;
+    color: var(--text-primary);
+    transition: all 0.2s ease;
+}
+
+[data-theme="dark"] .inputGroup input,
+[data-theme="dark"] .inputGroup select {
+    background: #2C2C2E;
+    border-color: rgba(84, 84, 88, 0.4);
+}
+
+.inputGroup input:focus,
+.inputGroup select:focus {
+    outline: none;
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.1);
+}
+
+.inputGroup input::placeholder {
+    color: var(--text-tertiary);
+}
+
+/* ==================== DATES INFO CARD ==================== */
+.datesInfoCard {
+    background: linear-gradient(135deg, rgba(0, 122, 255, 0.08), rgba(88, 86, 214, 0.08));
+    border: 1px solid rgba(0, 122, 255, 0.2);
     border-radius: var(--radius-lg);
     padding: var(--spacing-lg);
+}
+
+.datesGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: var(--spacing-lg);
+}
+
+.dateItem {
     display: flex;
-    flex-direction: column;
+    align-items: center;
     gap: var(--spacing-md);
+}
+
+.dateIcon {
+    width: 40px;
+    height: 40px;
+    border-radius: var(--radius-md);
+    background: var(--color-primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
 }
 
 .dateInfo {
     display: flex;
-    align-items: center;
-    gap: var(--spacing-md);
-    color: var(--text-primary);
-    font-size: 0.95rem;
+    flex-direction: column;
+    gap: 2px;
 }
 
-.dateInfo svg {
-    color: var(--color-primary);
-    flex-shrink: 0;
+.dateLabel {
+    font-size: 0.75rem;
+    color: var(--text-tertiary);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
 }
 
-.formActions {
-    display: flex;
-    gap: var(--spacing-md);
-    justify-content: flex-end;
-}
-
-/* Section Title */
-.sectionTitle {
-    font-size: 1.1rem;
-    color: var(--text-primary);
-    margin-bottom: var(--spacing-md);
+.dateValue {
+    font-size: 1rem;
     font-weight: 600;
+    color: var(--text-primary);
 }
 
-/* Dates Grid */
-.datesGrid {
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--spacing-md);
-}
-
-/* Evaluations Grid */
+/* ==================== EVALUATIONS ==================== */
 .evalsGrid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: var(--spacing-lg);
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--spacing-md);
 }
 
 .evalCard {
-    background-color: var(--bg-primary);
+    background: var(--bg-secondary);
     border: 2px solid var(--border-color);
     border-radius: var(--radius-lg);
     padding: var(--spacing-lg);
-    transition: all var(--transition-base);
+    transition: all 0.3s ease;
+}
+
+[data-theme="dark"] .evalCard {
+    background: #2C2C2E;
+    border-color: rgba(84, 84, 88, 0.4);
 }
 
 .evalCard:hover {
-    box-shadow: var(--shadow-md);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
 }
 
 .evalApproved {
-    border-color: #22c55e;
-    background: linear-gradient(135deg, rgba(34, 197, 94, 0.05), rgba(34, 197, 94, 0.1));
+    border-color: #34C759;
+    background: linear-gradient(135deg, rgba(52, 199, 89, 0.05), rgba(52, 199, 89, 0.1));
 }
 
 .evalFailed {
-    border-color: #ef4444;
-    background: linear-gradient(135deg, rgba(239, 68, 68, 0.05), rgba(239, 68, 68, 0.1));
+    border-color: #FF3B30;
+    background: linear-gradient(135deg, rgba(255, 59, 48, 0.05), rgba(255, 59, 48, 0.1));
 }
 
 .evalHeader {
     display: flex;
     align-items: center;
-    gap: var(--spacing-md);
+    gap: var(--spacing-sm);
     margin-bottom: var(--spacing-md);
 }
 
 .evalNumber {
-    width: 32px;
-    height: 32px;
-    border-radius: var(--radius-full);
-    background: linear-gradient(135deg, var(--color-primary), var(--color-accent));
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--color-primary), var(--color-secondary));
     color: white;
     display: flex;
     align-items: center;
     justify-content: center;
+    font-size: 0.8rem;
     font-weight: 700;
-    font-size: 0.9rem;
-    flex-shrink: 0;
 }
 
 .evalHeader strong {
-    display: block;
+    flex: 1;
+    font-size: 0.9rem;
     color: var(--text-primary);
-    font-size: 1rem;
 }
 
 .evalDate {
+    font-size: 0.75rem;
+    color: var(--text-tertiary);
     display: block;
-    color: var(--text-secondary);
-    font-size: 0.85rem;
     margin-top: 2px;
 }
 
@@ -146,60 +382,72 @@
 }
 
 .evalInput label {
-    font-size: 0.85rem;
+    font-size: 0.75rem;
     color: var(--text-secondary);
-    font-weight: 500;
 }
 
 .evalInput input {
-    max-width: 120px;
+    width: 100%;
+    height: 44px;
+    padding: 0 var(--spacing-md);
+    background: var(--bg-primary);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    font-size: 1rem;
+    font-weight: 600;
+    text-align: center;
+    color: var(--text-primary);
 }
 
 .evalStatus {
-    font-size: 0.85rem;
-    font-weight: 600;
-    padding: var(--spacing-xs) var(--spacing-sm);
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 4px 10px;
     border-radius: var(--radius-sm);
-    display: inline-block;
+    font-size: 0.75rem;
+    font-weight: 600;
     margin-top: var(--spacing-xs);
 }
 
 .evalStatus.approved {
-    color: #22c55e;
-    background-color: rgba(34, 197, 94, 0.1);
+    background: rgba(52, 199, 89, 0.15);
+    color: #34C759;
 }
 
 .evalStatus.failed {
-    color: #ef4444;
-    background-color: rgba(239, 68, 68, 0.1);
+    background: rgba(255, 59, 48, 0.15);
+    color: #FF3B30;
 }
 
 .evalLegend {
     display: flex;
-    flex-wrap: wrap;
-    gap: var(--spacing-lg);
-    margin-top: var(--spacing-lg);
-    padding-top: var(--spacing-md);
-    border-top: 1px solid var(--border-color);
-    font-size: 0.85rem;
+    gap: var(--spacing-xl);
+    padding: var(--spacing-md);
+    background: var(--bg-tertiary);
+    border-radius: var(--radius-md);
+    font-size: 0.8rem;
     color: var(--text-secondary);
+    margin-top: var(--spacing-md);
 }
 
-/* Training Plan */
+[data-theme="dark"] .evalLegend {
+    background: rgba(255, 255, 255, 0.03);
+}
+
+/* ==================== TRAINING PLAN ==================== */
 .trainingPlanCard {
-    background: linear-gradient(135deg, rgba(139, 92, 246, 0.1), rgba(59, 130, 246, 0.1));
-    border: 2px solid var(--color-secondary);
+    background: linear-gradient(135deg, rgba(88, 86, 214, 0.1), rgba(0, 122, 255, 0.1));
+    border: 1px solid var(--color-secondary);
     border-radius: var(--radius-lg);
     padding: var(--spacing-lg);
-    display: flex;
-    flex-direction: column;
-    gap: var(--spacing-lg);
 }
 
 .trainingPlanInfo {
     display: flex;
     align-items: center;
     gap: var(--spacing-lg);
+    margin-bottom: var(--spacing-lg);
 }
 
 .trainingPlanIcon {
@@ -210,36 +458,24 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    flex-shrink: 0;
-}
-
-.trainingPlanIcon svg {
     color: white;
 }
 
 .trainingPlanDetails {
-    display: flex;
-    flex-direction: column;
-    gap: var(--spacing-xs);
+    flex: 1;
 }
 
 .trainingPlanDetails strong {
-    color: var(--text-primary);
-    font-size: 0.9rem;
+    display: block;
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    margin-bottom: 4px;
 }
 
 .trainingDate {
+    font-size: 1.2rem;
+    font-weight: 700;
     color: var(--text-primary);
-    font-size: 1.1rem;
-    font-weight: 600;
-    display: flex;
-    flex-direction: column;
-}
-
-.trainingDays {
-    font-size: 0.85rem;
-    color: var(--text-secondary);
-    font-weight: 400;
 }
 
 .trainingPending {
@@ -258,7 +494,13 @@
     align-items: center;
     gap: var(--spacing-md);
     cursor: pointer;
-    user-select: none;
+    padding: var(--spacing-sm);
+    border-radius: var(--radius-md);
+    transition: background 0.2s ease;
+}
+
+.checkboxLabel:hover {
+    background: rgba(0, 0, 0, 0.03);
 }
 
 .checkbox {
@@ -273,13 +515,12 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: all var(--transition-base);
-    flex-shrink: 0;
+    transition: all 0.2s ease;
 }
 
 .checkbox:checked+.checkboxCustom {
-    background: linear-gradient(135deg, #22c55e, #16a34a);
-    border-color: #22c55e;
+    background: linear-gradient(135deg, #34C759, #30D158);
+    border-color: #34C759;
 }
 
 .checkbox:checked+.checkboxCustom::after {
@@ -290,36 +531,244 @@
 }
 
 .checkboxText {
-    color: var(--text-primary);
     font-weight: 500;
-    transition: color var(--transition-base);
+    color: var(--text-primary);
 }
 
 .checkbox:checked~.checkboxText {
-    color: #22c55e;
+    color: #34C759;
 }
 
-/* Responsive */
+/* ==================== DOCUMENTS ==================== */
+.documentsSection {
+    background: var(--bg-tertiary);
+    border-radius: var(--radius-lg);
+    padding: var(--spacing-lg);
+    border: 1px solid var(--border-color);
+}
+
+[data-theme="dark"] .documentsSection {
+    background: rgba(255, 255, 255, 0.03);
+    border-color: rgba(84, 84, 88, 0.4);
+}
+
+.documentsList {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 var(--spacing-md) 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-sm);
+}
+
+.documentItem {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: var(--spacing-sm) var(--spacing-md);
+    background: var(--bg-secondary);
+    border-radius: var(--radius-md);
+    border: 1px solid var(--border-color);
+}
+
+[data-theme="dark"] .documentItem {
+    background: #2C2C2E;
+}
+
+.documentLink {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    color: var(--color-primary);
+    text-decoration: none;
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+.documentLink:hover {
+    text-decoration: underline;
+}
+
+.documentRemove {
+    background: transparent;
+    border: none;
+    color: var(--text-tertiary);
+    cursor: pointer;
+    padding: var(--spacing-xs);
+    border-radius: var(--radius-sm);
+    transition: all 0.2s ease;
+}
+
+.documentRemove:hover {
+    background: rgba(255, 59, 48, 0.1);
+    color: #FF3B30;
+}
+
+.pendingDocs {
+    margin-bottom: var(--spacing-md);
+}
+
+.pendingTitle {
+    font-size: 0.75rem;
+    color: var(--text-tertiary);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: var(--spacing-sm);
+}
+
+.pendingList {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-xs);
+}
+
+.pendingItem {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: var(--spacing-sm) var(--spacing-md);
+    background: rgba(0, 122, 255, 0.08);
+    border: 1px dashed rgba(0, 122, 255, 0.3);
+    border-radius: var(--radius-md);
+    font-size: 0.85rem;
+    color: var(--color-primary);
+}
+
+.uploadLabel {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--spacing-xs);
+    padding: var(--spacing-sm) var(--spacing-lg);
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: var(--text-primary);
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.uploadLabel:hover {
+    border-color: var(--color-primary);
+    color: var(--color-primary);
+}
+
+/* ==================== FORM ACTIONS ==================== */
+.formActions {
+    display: flex;
+    gap: var(--spacing-md);
+    justify-content: flex-end;
+    padding-top: var(--spacing-lg);
+    border-top: 1px solid var(--border-color);
+}
+
+[data-theme="dark"] .formActions {
+    border-color: rgba(84, 84, 88, 0.4);
+}
+
+/* ==================== RESPONSIVE ==================== */
+
 @media (max-width: 768px) {
-    .formCard {
-        padding: var(--spacing-xl);
+    .formHeader {
+        padding: var(--spacing-lg);
     }
 
-    .formGrid {
+    .headerIcon {
+        width: 48px;
+        height: 48px;
+    }
+
+    .headerText h2 {
+        font-size: 1.25rem;
+    }
+
+    .formBody {
+        padding: var(--spacing-lg);
+    }
+
+    .formGrid,
+    .formGridThree {
         grid-template-columns: 1fr;
+    }
+
+    .evalsGrid {
+        grid-template-columns: 1fr;
+    }
+
+    .evalLegend {
+        flex-direction: column;
+        gap: var(--spacing-sm);
+    }
+
+    .datesGrid {
+        grid-template-columns: 1fr;
+    }
+
+    .trainingPlanInfo {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .formActions {
+        flex-direction: column;
+    }
+
+    .formActions button {
+        width: 100%;
     }
 }
 
 @media (max-width: 480px) {
     .formCard {
-        padding: var(--spacing-lg);
+        border-radius: var(--radius-lg);
     }
 
-    .calculatedDates {
+    .formHeader {
         padding: var(--spacing-md);
     }
 
-    .dateInfo {
-        font-size: 0.85rem;
+    .formBody {
+        padding: var(--spacing-md);
+    }
+
+    .photoPreview {
+        width: 100px;
+        height: 100px;
+    }
+
+    .sectionContent {
+        padding: var(--spacing-md);
+    }
+}
+
+@media (min-width: 1441px) {
+    .formCard {
+        max-width: 1200px;
+        margin: 0 auto var(--spacing-2xl);
+    }
+
+    .formHeader {
+        padding: var(--spacing-2xl) var(--spacing-3xl);
+    }
+
+    .headerText h2 {
+        font-size: 1.75rem;
+    }
+
+    .formBody {
+        padding: var(--spacing-3xl);
+    }
+
+    .photoPreview {
+        width: 140px;
+        height: 140px;
+    }
+
+    .formGrid {
+        grid-template-columns: repeat(3, 1fr);
     }
 }

@@ -52,7 +52,7 @@ export default function LandingPage() {
             </nav>
 
             {/* Hero Section */}
-            <main className={styles.hero}>
+            <main className={styles.hero} id="main-content">
                 {/* Background Elements */}
                 <div className={styles.bgMesh}></div>
                 <div className={styles.gridBg}></div>

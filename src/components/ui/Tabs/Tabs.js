@@ -56,11 +56,14 @@ export function TabsTrigger({
     isActive,
     onClick,
     className,
+    id,
+    'aria-controls': ariaControls,
     ...props
 }) {
     return (
         <button
             role="tab"
+            id={id}
             className={cn(
                 styles.tabsTrigger,
                 isActive && styles.active,
@@ -68,6 +71,8 @@ export function TabsTrigger({
             )}
             onClick={() => onClick?.(value)}
             aria-selected={isActive}
+            aria-controls={ariaControls}
+            tabIndex={isActive ? 0 : -1}
             {...props}
         >
             {children}

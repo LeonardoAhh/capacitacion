@@ -1,28 +1,29 @@
-/* ==================== MODULE SELECTION PAGE ==================== */
+/* ==================== MODULES PAGE MINIMALIST ==================== */
+
 .container {
     min-height: 100vh;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    padding: var(--spacing-xl);
     background: var(--bg-primary);
     position: relative;
     overflow: hidden;
+    color: var(--text-primary);
+    padding: var(--spacing-lg);
 }
 
 [data-theme="dark"] .container {
-    background: #09090b;
+    background: #000000;
 }
 
-/* Background Decoration */
+/* ==================== BACKGROUND EFFECTS ==================== */
 .bgDecoration {
     position: absolute;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    overflow: hidden;
     z-index: 0;
     pointer-events: none;
 }
@@ -31,146 +32,322 @@
     position: absolute;
     filter: blur(80px);
     opacity: 0.4;
-    z-index: 0;
+    animation: float 25s infinite alternate;
+}
+
+[data-theme="dark"] .blob {
+    opacity: 0.2;
 }
 
 .blob1 {
     top: -10%;
-    left: -10%;
-    width: 500px;
-    height: 500px;
-    background: var(--color-primary);
-    border-radius: 40% 60% 70% 30% / 40% 50% 60% 50%;
-    animation: blobFloat 20s infinite alternate;
+    left: 20%;
+    width: 700px;
+    height: 700px;
+    background: radial-gradient(circle, var(--color-primary) 0%, transparent 70%);
 }
 
 .blob2 {
     bottom: -10%;
-    right: -10%;
-    width: 400px;
-    height: 400px;
-    background: var(--color-secondary);
-    border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%;
-    animation: blobFloat 15s infinite alternate-reverse;
+    right: 10%;
+    width: 600px;
+    height: 600px;
+    background: radial-gradient(circle, var(--color-secondary) 0%, transparent 70%);
+    animation-delay: -8s;
 }
 
-@keyframes blobFloat {
-    0% { transform: translate(0, 0) rotate(0deg); }
-    100% { transform: translate(50px, 50px) rotate(20deg); }
+@keyframes float {
+    0% {
+        transform: translate(0, 0) rotate(0deg);
+    }
+
+    100% {
+        transform: translate(40px, 40px) rotate(5deg);
+    }
 }
 
-/* Content */
+/* ==================== CONTENT LAYOUT ==================== */
 .content {
     position: relative;
     z-index: 10;
     width: 100%;
-    max-width: 1000px;
-    text-align: center;
+    max-width: 900px;
+    display: flex;
+    flex-direction: column;
+    gap: 40px;
 }
 
+/* ==================== HEADER ==================== */
 .header {
-    margin-bottom: var(--spacing-3xl);
+    text-align: left;
+    margin-bottom: 20px;
     animation: fadeInDown 0.8s ease-out;
 }
 
 .title {
-    font-size: 3rem;
-    font-weight: 800;
-    color: var(--text-primary);
-    margin-bottom: var(--spacing-sm);
+    font-size: 2.5rem;
+    font-weight: 700;
     letter-spacing: -1px;
+    margin: 0;
+    color: var(--text-primary);
+    line-height: 1.2;
+}
+
+.userName {
+    background: linear-gradient(135deg, var(--color-primary), var(--color-secondary));
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
 }
 
 .subtitle {
     font-size: 1.2rem;
     color: var(--text-secondary);
-    max-width: 600px;
-    margin: 0 auto;
+    margin: 8px 0 0;
+    font-weight: 400;
 }
 
-/* Modules Grid */
+/* ==================== GRID ==================== */
 .grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-    gap: var(--spacing-2xl);
-    padding: 0 var(--spacing-lg);
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 20px;
+    width: 100%;
 }
 
+/* ==================== MODULE CARD (BENTO STYLE) ==================== */
 .moduleCard {
-    background: rgba(255, 255, 255, 0.7);
+    background: rgba(255, 255, 255, 0.6);
     backdrop-filter: blur(20px);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    border-radius: var(--radius-xl);
-    padding: var(--spacing-2xl);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    border-radius: 24px;
+    padding: 24px;
     display: flex;
     flex-direction: column;
-    align-items: center;
-    text-align: center;
-    cursor: pointer;
-    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    height: 200px;
+    text-decoration: none;
+    transition: all 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
     position: relative;
     overflow: hidden;
-    text-decoration: none;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.02);
+    animation: fadeInUp 0.8s ease-out backwards;
+}
+
+.moduleCard:nth-child(1) {
+    animation-delay: 0.1s;
+}
+
+.moduleCard:nth-child(2) {
+    animation-delay: 0.2s;
+}
+
+.moduleCard:nth-child(3) {
+    animation-delay: 0.3s;
 }
 
 [data-theme="dark"] .moduleCard {
     background: rgba(30, 30, 35, 0.6);
-    border-color: rgba(255, 255, 255, 0.05);
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    border-color: rgba(255, 255, 255, 0.08);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
 }
 
 .moduleCard:hover {
-    transform: translateY(-10px) scale(1.02);
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+    transform: translateY(-5px) scale(1.02);
+    background: rgba(255, 255, 255, 0.8);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08);
     border-color: var(--color-primary);
 }
 
 [data-theme="dark"] .moduleCard:hover {
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+    background: rgba(40, 40, 45, 0.8);
+    border-color: rgba(255, 255, 255, 0.2);
 }
 
+.moduleCard:active {
+    transform: scale(0.98);
+}
+
+/* Icon */
 .iconWrapper {
-    width: 100px;
-    height: 100px;
-    border-radius: 50%;
-    margin-bottom: var(--spacing-lg);
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    background: var(--bg-secondary);
+    color: var(--color-primary);
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 2.5rem;
+    margin-bottom: auto;
+    /* Pushes content down */
     transition: all 0.3s ease;
-    background: var(--bg-secondary);
-    color: var(--color-primary);
+}
+
+[data-theme="dark"] .iconWrapper {
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
 }
 
 .moduleCard:hover .iconWrapper {
-    transform: scale(1.1) rotate(5deg);
+    transform: scale(1.1);
     background: var(--color-primary);
     color: white;
 }
 
+/* Content */
+.cardContent {
+    z-index: 2;
+}
+
 .cardTitle {
-    font-size: 1.5rem;
+    font-size: 1.25rem;
     font-weight: 700;
+    margin: 0 0 6px 0;
     color: var(--text-primary);
-    margin-bottom: var(--spacing-sm);
 }
 
 .cardDescription {
-    font-size: 1rem;
+    font-size: 0.9rem;
     color: var(--text-secondary);
-    line-height: 1.5;
+    margin: 0;
+    line-height: 1.4;
 }
 
-/* Animations */
+/* Arrow */
+.cardArrow {
+    position: absolute;
+    top: 24px;
+    right: 24px;
+    font-size: 1.2rem;
+    color: var(--text-tertiary);
+    opacity: 0;
+    transform: translateX(-10px);
+    transition: all 0.3s ease;
+}
+
+.moduleCard:hover .cardArrow {
+    opacity: 1;
+    transform: translateX(0);
+    color: var(--color-primary);
+}
+
+/* Disabled State */
+.moduleCard.disabled {
+    cursor: not-allowed;
+    opacity: 0.7;
+    filter: grayscale(1);
+    background: rgba(200, 200, 200, 0.1);
+}
+
+.moduleCard.disabled:hover {
+    transform: none;
+    box-shadow: none;
+    border-color: rgba(255, 255, 255, 0.4);
+}
+
+.lockIcon {
+    position: absolute;
+    top: 24px;
+    right: 24px;
+    font-size: 1.2rem;
+    opacity: 0.5;
+}
+
+/* Highlight State (e.g., Inducción) */
+.moduleCard.highlight {
+    border-color: var(--color-primary);
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.7), rgba(0, 122, 255, 0.05));
+}
+
+[data-theme="dark"] .moduleCard.highlight {
+    background: linear-gradient(135deg, rgba(30, 30, 35, 0.7), rgba(0, 122, 255, 0.1));
+}
+
+/* ==================== FOOTER ==================== */
+.footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 20px;
+    border-top: 1px solid var(--border-color);
+    animation: fadeInUp 0.8s ease-out 0.5s backwards;
+}
+
+[data-theme="dark"] .footer {
+    border-color: rgba(255, 255, 255, 0.1);
+}
+
+.logoutBtn {
+    background: transparent;
+    border: none;
+    color: var(--text-secondary);
+    cursor: pointer;
+    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 16px;
+    border-radius: 50px;
+    transition: all 0.2s ease;
+}
+
+.logoutBtn:hover {
+    background: rgba(255, 59, 48, 0.1);
+    color: #FF3B30;
+}
+
+.copyright {
+    font-size: 0.85rem;
+    color: var(--text-tertiary);
+}
+
+/* ==================== ANIMATIONS ==================== */
 @keyframes fadeInDown {
     from {
         opacity: 0;
         transform: translateY(-20px);
     }
+
     to {
         opacity: 1;
         transform: translateY(0);
+    }
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* ==================== RESPONSIVE ==================== */
+@media (max-width: 768px) {
+    .content {
+        padding: 0;
+    }
+
+    .title {
+        font-size: 2rem;
+    }
+
+    .grid {
+        grid-template-columns: 1fr;
+    }
+
+    .moduleCard {
+        height: auto;
+        min-height: 160px;
+    }
+
+    .footer {
+        flex-direction: column;
+        gap: 16px;
+        text-align: center;
     }
 }

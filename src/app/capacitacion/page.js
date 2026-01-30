@@ -11,6 +11,7 @@ export default function CapacitacionPage() {
     const [isRecalculating, setIsRecalculating] = useState(false);
     const { toast } = useToast();
 
+    // Function preserved for potential future administrative use
     const handleRecalculateCompliance = async () => {
         setIsRecalculating(true);
         try {
@@ -182,48 +183,53 @@ export default function CapacitacionPage() {
     ];
 
     return (
-        <>
+        <div className={styles.main}>
             <Navbar />
-            <main className={styles.main}>
-                <div className={styles.container}>
-                    {/* Header */}
-                    <div className={styles.header}>
-                        <div>
-                            <h1 className={styles.title}>Módulo de Capacitación</h1>
-                            <p className={styles.subtitle}>Gestiona el desarrollo y formación de tu equipo</p>
-                        </div>
-                        <Link href="/dashboard" className={styles.backBtn}>
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                <path d="M19 12H5" />
-                                <polyline points="12 19 5 12 12 5" />
-                            </svg>
-                            Dashboard
-                        </Link>
-                    </div>
 
-                    {/* Modules Grid */}
-                    <div className={styles.modulesGrid}>
-                        {modules.map((module) => (
-                            <Link
-                                key={module.href}
-                                href={module.href}
-                                className={styles.moduleCard}
-                            >
-                                <div className={`${styles.moduleIcon} ${styles[`icon${module.color.charAt(0).toUpperCase() + module.color.slice(1)}`]}`}>
-                                    {module.icon}
-                                </div>
-                                <div className={styles.moduleContent}>
-                                    <h3>{module.title}</h3>
-                                    <p>{module.description}</p>
-                                </div>
-                                <svg className={styles.moduleArrow} width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                    <polyline points="9 18 15 12 9 6" />
-                                </svg>
-                            </Link>
-                        ))}
+            {/* Background Decorations */}
+            <div className={styles.bgDecoration}>
+                <div className={`${styles.blob} ${styles.blob1}`}></div>
+                <div className={`${styles.blob} ${styles.blob2}`}></div>
+            </div>
+
+            <div className={styles.container}>
+                {/* Header */}
+                <div className={styles.header}>
+                    <div>
+                        <h1 className={styles.title}>Capacitación</h1>
+                        <p className={styles.subtitle}>Gestiona el desarrollo y formación de tu equipo</p>
                     </div>
+                    <Link href="/dashboard" className={styles.backBtn}>
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                            <path d="M19 12H5" />
+                            <polyline points="12 19 5 12 12 5" />
+                        </svg>
+                        Dashboard
+                    </Link>
                 </div>
-            </main>
-        </>
+
+                {/* Modules Grid */}
+                <div className={styles.modulesGrid}>
+                    {modules.map((module) => (
+                        <Link
+                            key={module.href}
+                            href={module.href}
+                            className={styles.moduleCard}
+                        >
+                            <div className={`${styles.moduleIcon} ${styles[`icon${module.color.charAt(0).toUpperCase() + module.color.slice(1)}`]}`}>
+                                {module.icon}
+                            </div>
+                            <div className={styles.moduleContent}>
+                                <h3>{module.title}</h3>
+                                <p>{module.description}</p>
+                            </div>
+                            <svg className={styles.moduleArrow} width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                <polyline points="9 18 15 12 9 6" />
+                            </svg>
+                        </Link>
+                    ))}
+                </div>
+            </div>
+        </div>
     );
 }

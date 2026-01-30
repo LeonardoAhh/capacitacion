@@ -998,7 +998,119 @@
     color: var(--text-tertiary);
 }
 
-/* ==================== RESPONSIVE ==================== */
+/* ==================== RESPONSIVE DESIGN ==================== */
+
+/* Mobile Small (< 375px) */
+@media (max-width: 374px) {
+    .navContent {
+        padding: 0 var(--spacing-md);
+        height: 56px;
+    }
+
+    .logoIcon {
+        width: 30px;
+        height: 30px;
+    }
+
+    .logoText {
+        font-size: 1rem;
+    }
+
+    .hero {
+        padding-top: 5rem;
+        padding-bottom: 3rem;
+    }
+
+    .heroContent {
+        padding: 0 var(--spacing-md);
+    }
+
+    .headline {
+        font-size: 1.75rem;
+    }
+
+    .subheadline {
+        font-size: 0.95rem;
+    }
+
+    .ctaGroup {
+        flex-direction: column;
+        width: 100%;
+    }
+
+    .ctaPrimary,
+    .ctaSecondary {
+        width: 100%;
+        justify-content: center;
+        padding: 14px 20px;
+    }
+
+    .features li {
+        font-size: 0.85rem;
+    }
+}
+
+/* Mobile (375px - 480px) */
+@media (max-width: 480px) {
+    .navContent {
+        padding: 0 var(--spacing-md);
+    }
+
+    .demoBtn {
+        padding: 8px 12px;
+        font-size: 0.8rem;
+    }
+
+    .hero {
+        padding-top: 6rem;
+        padding-bottom: 4rem;
+    }
+
+    .heroContent {
+        padding: 0 var(--spacing-md);
+        gap: 2rem;
+    }
+
+    .badge {
+        font-size: 0.75rem;
+    }
+
+    .headline {
+        font-size: 2rem;
+    }
+
+    .ctaGroup {
+        flex-direction: column;
+        gap: var(--spacing-sm);
+    }
+
+    .ctaPrimary,
+    .ctaSecondary {
+        width: 100%;
+        justify-content: center;
+    }
+}
+
+/* Tablet (481px - 768px) */
+@media (min-width: 481px) and (max-width: 768px) {
+    .navContent {
+        padding: 0 var(--spacing-lg);
+    }
+
+    .heroContent {
+        padding: 0 var(--spacing-lg);
+    }
+
+    .headline {
+        font-size: 2.5rem;
+    }
+
+    .heroText {
+        max-width: 100%;
+    }
+}
+
+/* Show nav links and login on sm+ */
 @media (min-width: 640px) {
     .loginLink {
         display: block;
@@ -1015,6 +1127,7 @@
     }
 }
 
+/* Desktop (1024px+) */
 @media (min-width: 1024px) {
     .hero {
         padding-top: 10rem;
@@ -1032,5 +1145,172 @@
 
     .headline {
         font-size: 3.75rem;
+    }
+}
+
+/* Large Screens / Projectors (> 1440px) */
+@media (min-width: 1441px) {
+    .navContent {
+        max-width: 1600px;
+        height: 72px;
+    }
+
+    .logoIcon {
+        width: 42px;
+        height: 42px;
+    }
+
+    .logoText {
+        font-size: 1.4rem;
+    }
+
+    .navLinks {
+        gap: var(--spacing-2xl);
+        font-size: 1rem;
+    }
+
+    .loginLink {
+        padding: 12px 28px;
+        font-size: 1rem;
+    }
+
+    .hero {
+        padding-top: 12rem;
+        padding-bottom: 10rem;
+    }
+
+    .heroContent {
+        max-width: 1600px;
+        gap: 6rem;
+    }
+
+    .headline {
+        font-size: 4.5rem;
+    }
+
+    .subheadline {
+        font-size: 1.35rem;
+    }
+
+    .features li {
+        font-size: 1.1rem;
+    }
+
+    .checkIcon {
+        width: 28px;
+        height: 28px;
+    }
+
+    .ctaPrimary,
+    .ctaSecondary {
+        padding: 18px 36px;
+        font-size: 1.1rem;
+    }
+
+    .dashboardCard {
+        transform: perspective(1000px) rotateY(-3deg) rotateX(3deg);
+    }
+
+    .dashboardContent {
+        min-height: 500px;
+    }
+
+    .widgetsGrid {
+        gap: var(--spacing-lg);
+    }
+
+    .bigNumber {
+        font-size: 2rem;
+    }
+}
+
+/* Ultra-wide / 4K Displays (> 2000px) */
+@media (min-width: 2001px) {
+
+    .navContent,
+    .heroContent {
+        max-width: 1920px;
+    }
+
+    .headline {
+        font-size: 5rem;
+    }
+
+    .subheadline {
+        font-size: 1.5rem;
+    }
+
+    .hero {
+        padding-top: 14rem;
+        padding-bottom: 12rem;
+    }
+}
+
+/* Touch-friendly adjustments */
+@media (pointer: coarse) {
+
+    .loginLink,
+    .demoBtn {
+        min-height: 44px;
+        display: flex;
+        align-items: center;
+    }
+
+    .ctaPrimary,
+    .ctaSecondary {
+        min-height: 52px;
+    }
+
+    .navLinks a {
+        padding: 8px;
+    }
+}
+
+/* Landscape mobile */
+@media (max-height: 480px) and (orientation: landscape) {
+    .hero {
+        padding-top: 5rem;
+        padding-bottom: 3rem;
+    }
+
+    .heroContent {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .heroVisual {
+        display: block;
+    }
+
+    .dashboardCard {
+        transform: none;
+    }
+
+    .dashboardContent {
+        min-height: 280px;
+    }
+}
+
+/* Print styles */
+@media print {
+    .navbar {
+        position: static;
+        background: white;
+        border-bottom: 1px solid #ccc;
+    }
+
+    .hero {
+        padding: 2rem 0;
+    }
+
+    .bgMesh,
+    .gridBg,
+    .particlesContainer,
+    .heroVisual {
+        display: none;
+    }
+
+    .headline {
+        color: black;
+        -webkit-text-fill-color: black;
     }
 }

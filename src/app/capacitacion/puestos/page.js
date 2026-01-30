@@ -120,7 +120,7 @@ export default function PuestosPage() {
     return (
         <>
             <Navbar />
-            <main className={styles.main}>
+            <main className={styles.main} id="main-content">
                 <div className={styles.header}>
                     <div>
                         <Link href="/capacitacion" className={styles.backBtn}>

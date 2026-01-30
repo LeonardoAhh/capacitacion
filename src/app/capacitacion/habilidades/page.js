@@ -63,7 +63,7 @@ export default function HabilidadesPage() {
     return (
         <>
             <Navbar />
-            <main className={styles.main}>
+            <main className={styles.main} id="main-content">
                 <div className={styles.container}>
                     {/* Header */}
                     <div className={styles.header}>

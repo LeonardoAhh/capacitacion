@@ -42,13 +42,15 @@ export function Avatar({
             style={!src ? {
                 background: `linear-gradient(135deg, hsl(${hue}, 70%, 50%), hsl(${hue + 30}, 70%, 40%))`
             } : undefined}
+            role="img"
+            aria-label={alt || name || 'Avatar de usuario'}
             {...props}
         >
             {src ? (
                 // eslint-disable-next-line @next/next/no-img-element
                 <img
                     src={src}
-                    alt={alt || name}
+                    alt={alt || name || 'Foto de perfil'}
                     className={styles.image}
                     referrerPolicy="no-referrer"
                     onError={(e) => {
@@ -60,6 +62,7 @@ export function Avatar({
             <span
                 className={styles.fallback}
                 style={{ display: src ? 'none' : 'flex' }}
+                aria-hidden="true"
             >
                 {getInitials(name)}
             </span>

@@ -7,18 +7,17 @@ import { collection, getDocs, query, where } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import Navbar from '@/components/Navbar/Navbar';
 import Link from 'next/link';
-import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/Card/Card';
 import { Badge } from '@/components/ui/Badge/Badge';
-import { Button } from '@/components/ui/Button/Button';
-import { Skeleton } from '@/components/ui/Skeleton/Skeleton';
-import { Progress, CircularProgress } from '@/components/ui/Progress/Progress';
 import { Dialog, DialogHeader, DialogTitle, DialogBody, DialogClose } from '@/components/ui/Dialog/Dialog';
 import { RoleAvatar } from '@/components/RoleAvatar';
+import { useNotifications } from '@/hooks/useNotifications';
 import styles from './page.module.css';
 
 export default function DashboardPage() {
     const { user, loading: authLoading } = useAuth();
     const router = useRouter();
+
+    // Data States
     const [stats, setStats] = useState({
         totalEmployees: 0,
         activeContracts: 0,
@@ -31,8 +30,14 @@ export default function DashboardPage() {
         overdue: []
     });
     const [expiringEmployees, setExpiringEmployees] = useState([]);
+
+    // UI States
     const [showExpiringModal, setShowExpiringModal] = useState(false);
     const [showWelcome, setShowWelcome] = useState(false);
+
+    // Notifications
+    const { permission, requestPermission, sendNotification } = useNotifications();
+    const [showNotifBanner, setShowNotifBanner] = useState(false);
 
     useEffect(() => {
         if (!authLoading) {
@@ -40,9 +45,6 @@ export default function DashboardPage() {
                 router.push('/');
                 return;
             }
-
-            // RESTRICTION FOR DEMO USERS
-            // If user is demo, force redirect to /induccion
             if (user.rol === 'demo' || user.email?.includes('demo')) {
                 router.push('/induccion');
             }
@@ -53,7 +55,6 @@ export default function DashboardPage() {
         if (user) {
             loadStats();
             loadUserData();
-
             if (sessionStorage.getItem('showWelcome')) {
                 setShowWelcome(true);
                 sessionStorage.removeItem('showWelcome');
@@ -61,6 +62,43 @@ export default function DashboardPage() {
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [user]);
+
+    // Check notifications logic
+    useEffect(() => {
+        if (!loading && (stats.expiringContracts > 0 || evaluations.overdue.length > 0)) {
+            const today = new Date().toISOString().split('T')[0];
+            const lastNotif = localStorage.getItem('last_notification_date');
+
+            if (lastNotif !== today && permission === 'granted') {
+                if (stats.expiringContracts > 0) {
+                    sendNotification('⚠️ Contratos por Vencer', {
+                        body: `Tienes ${stats.expiringContracts} contrato(s) próximo(s) a vencer. Revisa el dashboard para más detalles.`
+                    });
+                }
+                if (evaluations.overdue.length > 0) {
+                    setTimeout(() => {
+                        sendNotification('🚨 Evaluaciones Vencidas', {
+                            body: `Hay ${evaluations.overdue.length} evaluación(es) con retraso.`,
+                            tag: 'overdue-evals'
+                        });
+                    }, 5000); // 5 sec delay between notifications
+                }
+                localStorage.setItem('last_notification_date', today);
+            } else if (permission === 'default' && lastNotif !== today) {
+                setShowNotifBanner(true);
+            }
+        }
+    }, [loading, stats, evaluations, permission, sendNotification]);
+
+    const handleEnableNotifications = async () => {
+        const granted = await requestPermission();
+        if (granted) {
+            setShowNotifBanner(false);
+            sendNotification('🔔 Notificaciones Activadas', {
+                body: 'Ahora recibirás alertas sobre contratos y evaluaciones.'
+            });
+        }
+    };
 
     const loadUserData = async () => {
         try {
@@ -166,49 +204,12 @@ export default function DashboardPage() {
         return `${day}/${month}/${year}`;
     };
 
-    // Gender-based greeting detection
     const getGreeting = (name) => {
         if (!name) return 'Bienvenido';
-
         const firstName = name.trim().split(' ')[0].toLowerCase();
-
-        // Common female names in Spanish
-        const femaleNames = [
-            'maria', 'ana', 'carmen', 'rosa', 'patricia', 'laura', 'claudia', 'andrea',
-            'lucia', 'sofia', 'elena', 'marta', 'isabel', 'paula', 'sara', 'noemi',
-            'noemí', 'alejandra', 'gabriela', 'diana', 'beatriz', 'monica', 'monica',
-            'silvia', 'veronica', 'adriana', 'alicia', 'susana', 'raquel', 'natalia',
-            'julia', 'teresa', 'eva', 'cristina', 'mariana', 'fernanda', 'valeria',
-            'daniela', 'victoria', 'karla', 'carla', 'paola', 'lorena', 'jessica',
-            'jessica', 'brenda', 'elizabeth', 'guadalupe', 'leticia', 'marisol',
-            'rocio', 'araceli', 'norma', 'josefina', 'esther', 'yolanda', 'irma',
-            'lizbeth', 'maribel', 'perla', 'dulce', 'ivonne', 'yvonne', 'edith',
-            'miriam', 'rebeca', 'vanessa', 'fabiola', 'angelica', 'marlene', 'erika',
-            'erica', 'karyna', 'karina', 'carolina', 'esmeralda', 'jazmin', 'jazmín'
-        ];
-
-        // Check if it's a known female name
-        if (femaleNames.includes(firstName)) {
+        if (firstName.endsWith('a') && !['nicolas', 'jonas', 'elias', 'matias'].includes(firstName)) {
             return 'Bienvenida';
         }
-
-        // Common female name endings in Spanish
-        const femaleEndings = ['a', 'ia', 'na', 'la', 'ra', 'da', 'sa', 'ía'];
-        const masculineExceptions = ['carlos', 'nicolas', 'matias', 'elias', 'jonas',
-            'isaias', 'jeremias', 'josefa', 'garcia', 'peña', 'mejia', 'mejía'];
-
-        // Don't apply ending rule to known masculine names
-        if (masculineExceptions.includes(firstName)) {
-            return 'Bienvenido';
-        }
-
-        // Check endings (less reliable but helpful)
-        for (const ending of femaleEndings) {
-            if (firstName.endsWith(ending) && firstName.length > 3) {
-                return 'Bienvenida';
-            }
-        }
-
         return 'Bienvenido';
     };
 
@@ -220,489 +221,256 @@ export default function DashboardPage() {
         );
     }
 
-    // Show access restricted screen for demo users
-    const isDemo = user?.rol === 'demo' || user?.email?.includes('demo');
-    if (isDemo) {
-        return (
-            <div style={{
-                height: '100vh',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                flexDirection: 'column',
-                background: 'var(--bg-primary)',
-                color: 'var(--text-primary)',
-                textAlign: 'center',
-                padding: '20px'
-            }}>
-                <div style={{
-                    width: '80px',
-                    height: '80px',
-                    borderRadius: '50%',
-                    background: 'rgba(255,255,255,0.05)',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    marginBottom: '20px'
-                }}>
-                    <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" style={{ opacity: 0.5 }}>
-                        <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
-                        <path d="M7 11V7a5 5 0 0 1 10 0v4" />
-                    </svg>
-                </div>
-                <h2 style={{ margin: '0 0 10px', fontSize: '1.5rem' }}>Acceso Restringido</h2>
-                <p style={{ color: 'var(--text-secondary)', margin: '0 0 20px' }}>
-                    Esta sección no está disponible en modo Demo.
-                </p>
-                <button
-                    onClick={() => router.push('/induccion')}
-                    style={{
-                        padding: '12px 30px',
-                        background: '#007AFF',
-                        color: 'white',
-                        border: 'none',
-                        borderRadius: '50px',
-                        cursor: 'pointer',
-                        fontWeight: '600'
-                    }}
-                >
-                    Ir a Inducción
-                </button>
-            </div>
-        );
-    }
-
-    const contractPercentage = stats.totalEmployees > 0
-        ? Math.round((stats.activeContracts / stats.totalEmployees) * 100)
-        : 0;
-
     return (
-        <>
+        <div className={styles.main}>
             <Navbar />
-            <main className={styles.main}>
-                <div className={styles.container}>
-                    <div className={styles.header}>
-                        <div className={styles.headerInfo}>
-                            <div className={styles.headerTitle}>
-                                <h1 className="fade-in">{getGreeting(userName)}{userName ? `, ${userName}` : ''}</h1>
-                                {user?.rol && <RoleAvatar role={user.rol} size={45} />}
+
+            <div className={styles.bgDecoration}>
+                <div className={`${styles.blob} ${styles.blob1}`}></div>
+                <div className={`${styles.blob} ${styles.blob2}`}></div>
+            </div>
+
+            <div className={styles.container}>
+                {/* Notification Banner */}
+                {showNotifBanner && (
+                    <div className={styles.sectionCard} style={{
+                        marginBottom: '20px',
+                        flexDirection: 'row',
+                        alignItems: 'center',
+                        justifyContent: 'space-between',
+                        padding: '16px 24px',
+                        background: 'rgba(0, 122, 255, 0.1)',
+                        borderColor: 'rgba(0, 122, 255, 0.2)'
+                    }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                            <span style={{ fontSize: '1.5rem' }}>🔔</span>
+                            <div>
+                                <h3 style={{ margin: 0, fontSize: '1rem', fontWeight: 600 }}>Activar Notificaciones</h3>
+                                <p style={{ margin: 0, fontSize: '0.85rem', color: 'var(--text-secondary)' }}>
+                                    Recibe alertas sobre contratos vencidos y evaluaciones pendientes.
+                                </p>
                             </div>
-                            <p className="slide-in">Panel de control del sistema</p>
                         </div>
-                        <Link href="/employees">
-                            <Button
-                                variant="primary"
-                                icon={
-                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
-                                        <circle cx="9" cy="7" r="4" />
-                                        <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
-                                        <path d="M16 3.13a4 4 0 0 1 0 7.75" />
-                                    </svg>
-                                }
-                            >
-                                Empleados
-                            </Button>
-                        </Link>
+                        <button
+                            onClick={handleEnableNotifications}
+                            style={{
+                                padding: '8px 16px',
+                                background: '#007AFF',
+                                color: 'white',
+                                border: 'none',
+                                borderRadius: '8px',
+                                fontWeight: 600,
+                                cursor: 'pointer'
+                            }}
+                        >
+                            Activar
+                        </button>
+                    </div>
+                )}
+
+                <header className={styles.header}>
+                    <div className={styles.headerTitle}>
+                        <h1>{getGreeting(userName)}{userName ? `, ${userName}` : ''}</h1>
+                        <p className={styles.headerSubtitle}>Resumen de actividad y pendientes</p>
+                    </div>
+                    {user?.rol && <RoleAvatar role={user.rol} size={48} />}
+                </header>
+
+                <div className={styles.statsGrid}>
+                    <div className={styles.statCard}>
+                        <div className={`${styles.statIcon} ${styles.primary}`}>
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+                                <circle cx="9" cy="7" r="4" />
+                                <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
+                                <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+                            </svg>
+                        </div>
+                        <div className={styles.statContent}>
+                            <div className={styles.statNumber}>{loading ? '-' : stats.totalEmployees}</div>
+                            <div className={styles.statLabel}>Total Empleados</div>
+                        </div>
                     </div>
 
-                    {/* Welcome Hero Section */}
-                    {showWelcome && (
-                        <section className={styles.welcomeSection}>
-                            {/* Background Effects */}
-                            <div className={styles.welcomeGlow1}></div>
-                            <div className={styles.welcomeGlow2}></div>
+                    <div className={styles.statCard}>
+                        <div className={`${styles.statIcon} ${styles.success}`}>
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                                <path d="M14 2v6h6" />
+                                <path d="M16 13H8" />
+                                <path d="M16 17H8" />
+                                <path d="M10 9H8" />
+                            </svg>
+                        </div>
+                        <div className={styles.statContent}>
+                            <div className={styles.statNumber}>{loading ? '-' : stats.activeContracts}</div>
+                            <div className={styles.statLabel}>Contratos Activos</div>
+                        </div>
+                    </div>
 
-                            <div className={styles.welcomeContent}>
-                                {/* Header */}
-                                <div className={styles.welcomeHeader}>
-                                    <div className={styles.welcomeLogo}>
-                                        <div className={styles.welcomeLogoIcon}>
-                                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                                                <path d="M13 10V3L4 14h7v7l9-11h-7z" />
-                                            </svg>
+                    <div
+                        className={`${styles.statCard} ${stats.expiringContracts > 0 ? styles.clickable : ''}`}
+                        onClick={() => stats.expiringContracts > 0 && setShowExpiringModal(true)}
+                    >
+                        <div className={`${styles.statIcon} ${stats.expiringContracts > 0 ? styles.warning : styles.success}`}>
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                <circle cx="12" cy="12" r="10" />
+                                <polyline points="12 6 12 12 16 14" />
+                            </svg>
+                        </div>
+                        <div className={styles.statContent}>
+                            <div className={styles.statNumber}>{loading ? '-' : stats.expiringContracts}</div>
+                            <div className={styles.statLabel}>Vencen pronto</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div className={styles.dashboardGrid}>
+                    <div className={styles.column}>
+                        {(evaluations.upcoming.length > 0 || evaluations.overdue.length > 0) ? (
+                            <section className={styles.sectionCard}>
+                                <div className={styles.sectionHeader}>
+                                    <h2 className={styles.sectionTitle}>Evaluaciones Pendientes</h2>
+                                </div>
+                                <div className={styles.alertList}>
+                                    {evaluations.overdue.slice(0, 3).map((item, idx) => (
+                                        <div key={`overdue-${idx}`} className={styles.alertItem} style={{ borderLeft: '4px solid #FF3B30' }}>
+                                            <div className={styles.alertIcon} style={{ background: 'rgba(255, 59, 48, 0.1)', color: '#FF3B30' }}>
+                                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                                    <circle cx="12" cy="12" r="10" />
+                                                    <line x1="12" y1="8" x2="12" y2="12" />
+                                                    <line x1="12" y1="16" x2="12.01" y2="16" />
+                                                </svg>
+                                            </div>
+                                            <div className={styles.alertInfo}>
+                                                <span className={styles.alertTitle}>{item.employeeName}</span>
+                                                <span className={styles.alertSubtitle}>Evaluación {item.evalNum} vencida</span>
+                                            </div>
+                                            <div className={styles.alertMeta}>
+                                                <Badge variant="danger" size="sm">Hace {item.daysOverdue} días</Badge>
+                                            </div>
                                         </div>
-                                        <span className={styles.welcomeVersion}>v2.0</span>
-                                    </div>
-                                    <button
-                                        className={styles.welcomeClose}
-                                        onClick={() => setShowWelcome(false)}
-                                        aria-label="Cerrar"
-                                    >
+                                    ))}
+                                    {evaluations.upcoming.slice(0, 5).map((item, idx) => (
+                                        <div key={`upcoming-${idx}`} className={styles.alertItem} style={{ borderLeft: '4px solid #FF9F0A' }}>
+                                            <div className={styles.alertIcon} style={{ background: 'rgba(255, 159, 10, 0.1)', color: '#FF9F0A' }}>
+                                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                                    <circle cx="12" cy="12" r="10" />
+                                                    <polyline points="12 6 12 12 16 14" />
+                                                </svg>
+                                            </div>
+                                            <div className={styles.alertInfo}>
+                                                <span className={styles.alertTitle}>{item.employeeName}</span>
+                                                <span className={styles.alertSubtitle}>Evaluación {item.evalNum} próxima</span>
+                                            </div>
+                                            <div className={styles.alertMeta}>
+                                                <Badge variant="warning" size="sm">En {item.daysUntil} días</Badge>
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            </section>
+                        ) : (
+                            <section className={styles.sectionCard}>
+                                <div className={styles.sectionHeader}>
+                                    <h2 className={styles.sectionTitle}>Todo al día</h2>
+                                </div>
+                                <div style={{ textAlign: 'center', padding: '40px', color: 'var(--text-secondary)' }}>
+                                    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1" style={{ marginBottom: '16px', opacity: 0.5 }}>
+                                        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
+                                        <polyline points="22 4 12 14.01 9 11.01" />
+                                    </svg>
+                                    <p>No hay evaluaciones pendientes ni atrasadas.</p>
+                                </div>
+                            </section>
+                        )}
+                    </div>
+
+                    <div className={styles.column}>
+                        <section className={styles.sectionCard}>
+                            <h2 className={styles.sectionTitle}>Accesos Directos</h2>
+                            <div className={styles.actionsGrid}>
+                                <Link href="/employees" className={styles.actionBtn}>
+                                    <div className={styles.actionIcon}>
                                         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                            <line x1="18" y1="6" x2="6" y2="18" />
-                                            <line x1="6" y1="6" x2="18" y2="18" />
+                                            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+                                            <circle cx="9" cy="7" r="4" />
+                                            <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
                                         </svg>
-                                    </button>
-                                </div>
+                                    </div>
+                                    <span className={styles.actionText}>Empleados</span>
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                        <polyline points="9 18 15 12 9 6" />
+                                    </svg>
+                                </Link>
 
-                                {/* Title */}
-                                <h2 className={styles.welcomeTitle}>
-                                    Bienvenido a <span className={styles.welcomeTitleGradient}>Vertx</span>
-                                </h2>
-                                <p className={styles.welcomeSubtitle}>
-                                    Tu centro de comando para la gestión de talento y cumplimiento industrial.
-                                </p>
+                                <Link href="/capacitacion" className={styles.actionBtn}>
+                                    <div className={styles.actionIcon}>
+                                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                            <path d="M22 10v6M2 10l10-5 10 5-10 5z" />
+                                            <path d="M6 12v5c3 3 9 3 12 0v-5" />
+                                        </svg>
+                                    </div>
+                                    <span className={styles.actionText}>Capacitación</span>
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                        <polyline points="9 18 15 12 9 6" />
+                                    </svg>
+                                </Link>
 
-                                {/* Modules Grid */}
-                                <div className={styles.modulesGrid}>
-                                    <Link href="/employees" className={styles.moduleCard}>
-                                        <div className={styles.moduleCardHeader}>
-                                            <div className={styles.moduleIcon}>
-                                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
-                                                    <circle cx="9" cy="7" r="4" />
-                                                    <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
-                                                    <path d="M16 3.13a4 4 0 0 1 0 7.75" />
-                                                </svg>
-                                            </div>
-                                            <h4>Gestión de Personal</h4>
-                                        </div>
-                                        <ul className={styles.moduleList}>
-                                            <li>Perfiles y expedientes</li>
-                                            <li>Evaluación de desempeño</li>
-                                            <li>Control de contratos</li>
-                                        </ul>
-                                    </Link>
-
-                                    <Link href="/capacitacion" className={styles.moduleCard}>
-                                        <div className={styles.moduleCardHeader}>
-                                            <div className={styles.moduleIcon}>
-                                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                                    <path d="M22 10v6M2 10l10-5 10 5-10 5z" />
-                                                    <path d="M6 12v5c3 3 9 3 12 0v-5" />
-                                                </svg>
-                                            </div>
-                                            <h4>Capacitación</h4>
-                                        </div>
-                                        <ul className={styles.moduleList}>
-                                            <li>Registros DC-3</li>
-                                            <li>Matriz de Habilidades</li>
-                                            <li>Planes de carrera</li>
-                                        </ul>
-                                    </Link>
-
-                                    <Link href="/capacitacion/promociones" className={styles.moduleCard}>
-                                        <div className={styles.moduleCardHeader}>
-                                            <div className={styles.moduleIcon}>
-                                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                                    <polyline points="23 6 13.5 15.5 8.5 10.5 1 18" />
-                                                    <polyline points="17 6 23 6 23 12" />
-                                                </svg>
-                                            </div>
-                                            <h4>Ascensos</h4>
-                                        </div>
-                                        <ul className={styles.moduleList}>
-                                            <li>Elegibilidad automática</li>
-                                            <li>Criterios objetivos</li>
-                                            <li>Reportes para auditoría</li>
-                                        </ul>
-                                    </Link>
-
-                                    <Link href="/reports" className={styles.moduleCard}>
-                                        <div className={styles.moduleCardHeader}>
-                                            <div className={styles.moduleIcon}>
-                                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                                    <line x1="18" y1="20" x2="18" y2="10" />
-                                                    <line x1="12" y1="20" x2="12" y2="4" />
-                                                    <line x1="6" y1="20" x2="6" y2="14" />
-                                                </svg>
-                                            </div>
-                                            <h4>Analytics</h4>
-                                        </div>
-                                        <ul className={styles.moduleList}>
-                                            <li>KPIs en tiempo real</li>
-                                            <li>Cumplimiento ISO</li>
-                                            <li>Alertas preventivas</li>
-                                        </ul>
-                                    </Link>
-                                </div>
+                                <Link href="/reports" className={styles.actionBtn}>
+                                    <div className={styles.actionIcon}>
+                                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                            <line x1="18" y1="20" x2="18" y2="10" />
+                                            <line x1="12" y1="20" x2="12" y2="4" />
+                                            <line x1="6" y1="20" x2="6" y2="14" />
+                                        </svg>
+                                    </div>
+                                    <span className={styles.actionText}>Reportes</span>
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                        <polyline points="9 18 15 12 9 6" />
+                                    </svg>
+                                </Link>
                             </div>
                         </section>
-                    )}
-
-                    {loading ? (
-                        <div className={styles.statsGrid}>
-                            {[1, 2, 3].map(i => (
-                                <Card key={i} hover={false}>
-                                    <CardContent>
-                                        <div className={styles.skeletonCard}>
-                                            <Skeleton variant="circular" width={56} height={56} />
-                                            <div className={styles.skeletonContent}>
-                                                <Skeleton width={60} height={32} />
-                                                <Skeleton width={100} height={16} />
-                                            </div>
-                                        </div>
-                                    </CardContent>
-                                </Card>
-                            ))}
-                        </div>
-                    ) : (
-                        <div className={styles.statsGrid}>
-                            <Card className={styles.statCard1}>
-                                <CardContent>
-                                    <div className={styles.statCardInner}>
-                                        <div className={styles.statIcon}>
-                                            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
-                                                <circle cx="9" cy="7" r="4" />
-                                                <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
-                                                <path d="M16 3.13a4 4 0 0 1 0 7.75" />
-                                            </svg>
-                                        </div>
-                                        <div className={styles.statContent}>
-                                            <div className={styles.statNumber}>{stats.totalEmployees}</div>
-                                            <div className={styles.statLabel}>Total Empleados</div>
-                                        </div>
-                                    </div>
-                                </CardContent>
-                            </Card>
-
-                            <Card className={styles.statCard2}>
-                                <CardContent>
-                                    <div className={styles.statCardInner}>
-                                        <CircularProgress
-                                            value={contractPercentage}
-                                            size={72}
-                                            strokeWidth={6}
-                                            variant="success"
-                                        />
-                                        <div className={styles.statContent}>
-                                            <div className={styles.statNumber}>{stats.activeContracts}</div>
-                                            <div className={styles.statLabel}>Contratos Activos</div>
-                                        </div>
-                                    </div>
-                                </CardContent>
-                            </Card>
-
-                            <Card
-                                className={`${styles.statCard3} ${stats.expiringContracts > 0 ? styles.clickableCard : ''}`}
-                                onClick={() => stats.expiringContracts > 0 && setShowExpiringModal(true)}
-                            >
-                                <CardContent>
-                                    <div className={styles.statCardInner}>
-                                        <div className={styles.statIcon + ' ' + styles.warningIcon}>
-                                            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                                <circle cx="12" cy="12" r="10" />
-                                                <polyline points="12 6 12 12 16 14" />
-                                            </svg>
-                                        </div>
-                                        <div className={styles.statContent}>
-                                            <div className={styles.statNumber}>{stats.expiringContracts}</div>
-                                            <div className={styles.statLabel}>Próximos a Vencer</div>
-                                            {stats.expiringContracts > 0 && (
-                                                <Badge variant="warning" size="sm">En 30 días</Badge>
-                                            )}
-                                        </div>
-                                    </div>
-                                </CardContent>
-                            </Card>
-                        </div>
-                    )}
-
-                    {/* Alertas de Evaluaciones */}
-                    {(evaluations.upcoming.length > 0 || evaluations.overdue.length > 0) && (
-                        <div className={styles.evaluationsSection}>
-                            <h2>Alertas de Evaluaciones</h2>
-
-                            <div className={styles.evaluationsGrid}>
-                                {/* Evaluaciones Próximas */}
-                                {evaluations.upcoming.length > 0 && (
-                                    <Card className={styles.evalCardUpcoming}>
-                                        <CardHeader>
-                                            <div className={styles.evalHeaderRow}>
-                                                <div className={styles.evalAlertIconUpcoming}>
-                                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                                        <circle cx="12" cy="12" r="10" />
-                                                        <polyline points="12 6 12 12 16 14" />
-                                                    </svg>
-                                                </div>
-                                                <div>
-                                                    <CardTitle>Próximas a Aplicar</CardTitle>
-                                                    <Badge variant="info" size="sm">{evaluations.upcoming.length} evaluación(es)</Badge>
-                                                </div>
-                                            </div>
-                                        </CardHeader>
-                                        <CardContent>
-                                            <div className={styles.evalAlertList}>
-                                                {evaluations.upcoming.slice(0, 5).map((evalItem, idx) => (
-                                                    <div key={idx} className={styles.evalAlertItem}>
-                                                        <div className={styles.evalAlertInfo}>
-                                                            <strong>{evalItem.employeeId} - {evalItem.employeeName}</strong>
-                                                            <span>Evaluación {evalItem.evalNum}</span>
-                                                        </div>
-                                                        <div className={styles.evalAlertDate}>
-                                                            <span className={styles.dateLabel}>{formatDate(evalItem.date)}</span>
-                                                            <Badge
-                                                                variant={evalItem.daysUntil === 0 ? 'danger' : 'warning'}
-                                                                size="sm"
-                                                                dot={evalItem.daysUntil === 0}
-                                                            >
-                                                                {evalItem.daysUntil === 0 ? '¡Hoy!' : `En ${evalItem.daysUntil} día(s)`}
-                                                            </Badge>
-                                                        </div>
-                                                    </div>
-                                                ))}
-                                            </div>
-                                        </CardContent>
-                                    </Card>
-                                )}
-
-                                {/* Evaluaciones Vencidas */}
-                                {evaluations.overdue.length > 0 && (
-                                    <Card className={styles.evalCardOverdue}>
-                                        <CardHeader>
-                                            <div className={styles.evalHeaderRow}>
-                                                <div className={styles.evalAlertIconOverdue}>
-                                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                                        <circle cx="12" cy="12" r="10" />
-                                                        <line x1="12" y1="8" x2="12" y2="12" />
-                                                        <line x1="12" y1="16" x2="12.01" y2="16" />
-                                                    </svg>
-                                                </div>
-                                                <div>
-                                                    <CardTitle>Vencidas</CardTitle>
-                                                    <Badge variant="danger" size="sm">{evaluations.overdue.length} evaluación(es)</Badge>
-                                                </div>
-                                            </div>
-                                        </CardHeader>
-                                        <CardContent>
-                                            <div className={styles.evalAlertList}>
-                                                {evaluations.overdue.slice(0, 5).map((evalItem, idx) => (
-                                                    <div key={idx} className={styles.evalAlertItem}>
-                                                        <div className={styles.evalAlertInfo}>
-                                                            <strong>{evalItem.employeeId} - {evalItem.employeeName}</strong>
-                                                            <span>Evaluación {evalItem.evalNum}</span>
-                                                        </div>
-                                                        <div className={styles.evalAlertDate}>
-                                                            <span className={styles.dateLabel}>{formatDate(evalItem.date)}</span>
-                                                            <Badge variant="danger" size="sm">
-                                                                Hace {evalItem.daysOverdue} día(s)
-                                                            </Badge>
-                                                        </div>
-                                                    </div>
-                                                ))}
-                                            </div>
-                                        </CardContent>
-                                    </Card>
-                                )}
-                            </div>
-                        </div>
-                    )}
-
-                    <div className={styles.quickActions}>
-                        <h2>Acciones Rápidas</h2>
-                        <div className={styles.actionsGrid}>
-
-
-                            <Link href="/employees" className={styles.actionCard}>
-                                <div className={styles.actionIcon}>
-                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
-                                        <polyline points="14 2 14 8 20 8" />
-                                        <line x1="16" y1="13" x2="8" y2="13" />
-                                        <line x1="16" y1="17" x2="8" y2="17" />
-                                        <polyline points="10 9 9 9 8 9" />
-                                    </svg>
-                                </div>
-                                <div className={styles.actionContent}>
-                                    <h3>Ver Lista Completa</h3>
-                                    <p>Consultar todos los empleados registrados</p>
-                                </div>
-                                <svg className={styles.actionArrow} width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                    <polyline points="9 18 15 12 9 6" />
-                                </svg>
-                            </Link>
-
-                            <Link href="/reports" className={styles.actionCard}>
-                                <div className={styles.actionIcon}>
-                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                        <line x1="18" y1="20" x2="18" y2="10" />
-                                        <line x1="12" y1="20" x2="12" y2="4" />
-                                        <line x1="6" y1="20" x2="6" y2="14" />
-                                    </svg>
-                                </div>
-                                <div className={styles.actionContent}>
-                                    <h3>Reportes de Formación</h3>
-                                    <p>Ver cumplimiento del Plan de Formación</p>
-                                </div>
-                                <svg className={styles.actionArrow} width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                    <polyline points="9 18 15 12 9 6" />
-                                </svg>
-                            </Link>
-
-                            <Link href="/capacitacion" className={styles.actionCard}>
-                                <div className={styles.actionIcon}>
-                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                        <path d="M22 10v6M2 10l10-5 10 5-10 5z" />
-                                        <path d="M6 12v5c3 3 9 3 12 0v-5" />
-                                    </svg>
-                                </div>
-                                <div className={styles.actionContent}>
-                                    <h3>Capacitación</h3>
-                                    <p>Gestionar programas y cursos</p>
-                                </div>
-                                <svg className={styles.actionArrow} width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                    <polyline points="9 18 15 12 9 6" />
-                                </svg>
-                            </Link>
-                        </div>
                     </div>
                 </div>
-            </main>
+            </div>
 
-            {/* Modal de Próximos a Vencer */}
             <Dialog open={showExpiringModal} onOpenChange={setShowExpiringModal}>
                 <DialogHeader>
                     <DialogClose onClose={() => setShowExpiringModal(false)} />
-                    <DialogTitle>Contratos Próximos a Vencer</DialogTitle>
-                    <p className={styles.modalDescription}>
-                        Empleados con contratos que vencen en los próximos 30 días
-                    </p>
+                    <DialogTitle>Vencimientos Próximos</DialogTitle>
                 </DialogHeader>
                 <DialogBody>
-                    <div className={styles.expiringList}>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
                         {expiringEmployees.map((emp, idx) => (
                             <Link
                                 key={emp.id || idx}
-                                href={`/employees/${emp.id}`}
-                                className={styles.expiringItem}
+                                href={`/employees?search=${emp.employeeId}`}
                                 onClick={() => setShowExpiringModal(false)}
+                                style={{
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'space-between',
+                                    padding: '12px',
+                                    background: 'var(--bg-secondary)',
+                                    borderRadius: '12px',
+                                    textDecoration: 'none',
+                                    color: 'var(--text-primary)'
+                                }}
                             >
-                                <div className={styles.expiringAvatar}>
-                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
-                                        <circle cx="12" cy="7" r="4" />
-                                    </svg>
+                                <div>
+                                    <div style={{ fontWeight: 600 }}>{emp.name}</div>
+                                    <div style={{ fontSize: '0.85rem', color: 'var(--text-secondary)' }}>{formatDate(emp.contractEndDate)}</div>
                                 </div>
-                                <div className={styles.expiringInfo}>
-                                    <div className={styles.expiringName}>
-                                        <span className={styles.employeeId}>{emp.employeeId}</span>
-                                        <span className={styles.employeeName}>{emp.name}</span>
-                                    </div>
-                                    <div className={styles.expiringDetails}>
-                                        <span className={styles.expiringPosition}>{emp.position || 'Sin puesto asignado'}</span>
-                                    </div>
-                                </div>
-                                <div className={styles.expiringDate}>
-                                    <span className={styles.dateValue}>{formatDate(emp.contractEndDate)}</span>
-                                    <Badge
-                                        variant={emp.daysUntilExpiry <= 7 ? 'danger' : 'warning'}
-                                        size="sm"
-                                    >
-                                        {emp.daysUntilExpiry === 0
-                                            ? '¡Hoy!'
-                                            : emp.daysUntilExpiry === 1
-                                                ? 'Mañana'
-                                                : `${emp.daysUntilExpiry} días`
-                                        }
-                                    </Badge>
-                                </div>
+                                <Badge variant={emp.daysUntilExpiry <= 7 ? 'danger' : 'warning'}>
+                                    {emp.daysUntilExpiry} días
+                                </Badge>
                             </Link>
                         ))}
                     </div>
                 </DialogBody>
             </Dialog>
-        </>
+        </div>
     );
 }

@@ -115,7 +115,7 @@ export default function AlertsPage() {
     return (
         <>
             <Navbar />
-            <main className={styles.main}>
+            <main className={styles.main} id="main-content">
                 <div className={styles.container}>
                     <div className={styles.header}>
                         <Link href="/capacitacion" className={styles.backBtn}>← Volver</Link>

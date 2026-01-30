@@ -1,0 +1,40 @@
+/* Screen reader only class */
+.srOnly {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}
+
+/* Data table styles when visible */
+.dataTable {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.875rem;
+    margin-top: 1rem;
+}
+
+.dataTable:not(.srOnly) th,
+.dataTable:not(.srOnly) td {
+    padding: 0.5rem 0.75rem;
+    text-align: left;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.dataTable:not(.srOnly) th {
+    font-weight: 600;
+    color: var(--text-secondary);
+    background: var(--bg-secondary);
+}
+
+.dataTable:not(.srOnly) caption {
+    font-weight: 600;
+    text-align: left;
+    padding: 0.5rem 0;
+    color: var(--text-primary);
+}

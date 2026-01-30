@@ -17,6 +17,7 @@ export const Button = forwardRef(function Button({
     iconPosition = 'left',
     className,
     disabled,
+    'aria-label': ariaLabel,
     ...props
 }, ref) {
     return (
@@ -31,17 +32,19 @@ export const Button = forwardRef(function Button({
                 className
             )}
             disabled={disabled || loading}
+            aria-busy={loading}
+            aria-label={ariaLabel}
             {...props}
         >
             {loading && (
-                <span className={styles.spinner} />
+                <span className={styles.spinner} aria-hidden="true" />
             )}
             {icon && iconPosition === 'left' && !loading && (
-                <span className={styles.icon}>{icon}</span>
+                <span className={styles.icon} aria-hidden="true">{icon}</span>
             )}
             <span className={styles.content}>{children}</span>
             {icon && iconPosition === 'right' && !loading && (
-                <span className={styles.icon}>{icon}</span>
+                <span className={styles.icon} aria-hidden="true">{icon}</span>
             )}
         </button>
     );
@@ -55,8 +58,13 @@ export const IconButton = forwardRef(function IconButton({
     variant = 'ghost',
     size = 'md',
     className,
+    'aria-label': ariaLabel,
+    title,
     ...props
 }, ref) {
+    // IconButton debe tener aria-label o title para accesibilidad
+    const accessibleLabel = ariaLabel || title;
+
     return (
         <button
             ref={ref}
@@ -66,9 +74,11 @@ export const IconButton = forwardRef(function IconButton({
                 styles[`icon${size.charAt(0).toUpperCase() + size.slice(1)}`],
                 className
             )}
+            aria-label={accessibleLabel}
+            title={title}
             {...props}
         >
-            {children}
+            <span aria-hidden="true">{children}</span>
         </button>
     );
 });

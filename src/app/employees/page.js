@@ -15,7 +15,7 @@ import { Button } from '@/components/ui/Button/Button';
 import { Dialog, DialogHeader, DialogTitle, DialogDescription, DialogFooter, DialogClose } from '@/components/ui/Dialog/Dialog';
 import { useToast } from '@/components/ui/Toast/Toast';
 import EmployeeForm from '@/components/employees/EmployeeForm/EmployeeForm';
-import EmployeeTable from '@/components/employees/EmployeeTable/EmployeeTable';
+import EmployeeCards from '@/components/employees/EmployeeCards/EmployeeCards';
 import EmployeeFilters from '@/components/employees/EmployeeFilters/EmployeeFilters';
 
 // Data
@@ -202,7 +202,7 @@ export default function EmployeesPage() {
     return (
         <>
             <Navbar />
-            <main className={styles.main}>
+            <main className={styles.main} id="main-content">
                 <div className={styles.container}>
                     <div className={styles.header}>
                         <div className={styles.headerLeft}>
@@ -269,7 +269,7 @@ export default function EmployeesPage() {
                         </div>
                     ) : (
                         <>
-                            <EmployeeTable
+                            <EmployeeCards
                                 employees={employees}
                                 onEdit={canWrite() ? handleEdit : null}
                                 onDelete={canWrite() ? handleDelete : null}

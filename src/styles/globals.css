@@ -278,3 +278,98 @@ a:hover {
     scroll-behavior: auto !important;
   }
 }
+
+/* --- Accessibility: Skip Link (CSS-only) --- */
+.skip-link {
+  position: absolute;
+  top: -100px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--color-primary, #007AFF);
+  color: white;
+  padding: 12px 24px;
+  border-radius: 0 0 8px 8px;
+  z-index: 10000;
+  font-weight: 600;
+  text-decoration: none;
+  transition: top 0.2s ease;
+}
+
+.skip-link:focus {
+  top: 0;
+  outline: 2px solid white;
+  outline-offset: 2px;
+}
+
+/* --- Accessibility: Screen Reader Only Utility --- */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* Make sr-only content visible when focused (for skip links) */
+.sr-only:focus {
+  position: static;
+  width: auto;
+  height: auto;
+  padding: 0.5rem 1rem;
+  margin: 0;
+  overflow: visible;
+  clip: auto;
+  white-space: normal;
+}
+
+/* --- Accessibility: High Contrast Mode Support --- */
+@media (prefers-contrast: high) {
+  :root {
+    --border-color: currentColor;
+  }
+
+  button,
+  a,
+  input,
+  select,
+  textarea {
+    border: 2px solid currentColor;
+  }
+}
+
+/* --- Accessibility: Color Indicators with Icons --- */
+/* Ensure status indicators have more than just color */
+.status-indicator::before {
+  content: '';
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  margin-right: 6px;
+}
+
+.status-success::before {
+  background-color: var(--color-success);
+}
+
+.status-warning::before {
+  background-color: var(--color-warning);
+}
+
+.status-danger::before {
+  background-color: var(--color-danger);
+}
+
+.status-info::before {
+  background-color: var(--color-info);
+}
+
+/* --- Accessibility: Better Link Contrast --- */
+a:focus {
+  text-decoration: underline;
+  text-decoration-thickness: 2px;
+}
