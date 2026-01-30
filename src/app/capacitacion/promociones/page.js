@@ -3,7 +3,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import Navbar from '@/components/Navbar/Navbar';
 import Link from 'next/link';
-import { Card, CardContent } from '@/components/ui/Card/Card';
 import { Button } from '@/components/ui/Button/Button';
 import { useToast } from '@/components/ui/Toast/Toast';
 import { useAuth } from '@/contexts/AuthContext';
@@ -732,136 +731,147 @@ export default function PromocionesPage() {
         <>
             <Navbar />
             <main className={styles.main} id="main-content">
-                <div className={styles.header}>
-                    <div>
-                        <Link href="/capacitacion" className={styles.backBtn}>← Volver</Link>
-                        <h1>Control de Promociones</h1>
-                        <p>Monitoreo de elegibilidad para cambio de categoría</p>
-                    </div>
-                    <div style={{ display: 'flex', gap: '0.5rem' }}>
-                        <Button variant="outline" onClick={handleExportExcel}>
-                            📤 Exportar Excel
-                        </Button>
-                        <Button variant="outline" onClick={() => setRulesModal(true)}>
-                            ⚙️ Reglas ({promotionRules.length})
-                        </Button>
-                    </div>
+                {/* Background Effects */}
+                <div className={styles.bgDecoration}>
+                    <div className={`${styles.blob} ${styles.blob1}`}></div>
+                    <div className={`${styles.blob} ${styles.blob2}`}></div>
+                    <div className={`${styles.blob} ${styles.blob3}`}></div>
                 </div>
 
-                {/* Filters */}
-                <Card className={styles.filterCard}>
-                    <CardContent className={styles.filterContent}>
-                        <div className={styles.filterGroup}>
-                            <label>Buscar</label>
-                            <input
-                                type="text"
-                                placeholder="Nombre, ID o puesto..."
-                                value={searchTerm}
-                                onChange={(e) => setSearchTerm(e.target.value)}
-                                className={styles.searchInput}
-                            />
+                <div className={styles.container}>
+                    <div className={styles.header}>
+                        <div>
+                            <Link href="/capacitacion" className={styles.backBtn}>
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                    <path d="M19 12H5" />
+                                    <polyline points="12 19 5 12 12 5" />
+                                </svg>
+                                Volver
+                            </Link>
+                            <h1>Control de Promociones</h1>
+                            <p>Monitoreo de elegibilidad para cambio de categoría</p>
                         </div>
-                        <div className={styles.filterGroup}>
-                            <label>Departamento</label>
-                            <select
-                                value={deptFilter}
-                                onChange={(e) => setDeptFilter(e.target.value)}
-                                className={styles.select}
-                            >
-                                <option value="Todos">Todos</option>
-                                {departments.map(d => <option key={d} value={d}>{d}</option>)}
-                            </select>
+                        <div style={{ display: 'flex', gap: '0.5rem' }}>
+                            <Button variant="outline" onClick={handleExportExcel}>
+                                📤 Exportar Excel
+                            </Button>
+                            <Button variant="outline" onClick={() => setRulesModal(true)}>
+                                ⚙️ Reglas ({promotionRules.length})
+                            </Button>
                         </div>
-                        <div className={styles.filterGroup}>
-                            <label>Estado</label>
-                            <select
-                                value={statusFilter}
-                                onChange={(e) => setStatusFilter(e.target.value)}
-                                className={styles.select}
-                            >
-                                <option value="all">Todos</option>
-                                <option value="eligible">✅ Aptos</option>
-                                <option value="nearEligible">🔶 Próximos (3/4)</option>
-                                <option value="blocked">❌ No Aptos</option>
-                                <option value="scheduledExam">📝 Por Aplicar Examen</option>
-                            </select>
-                        </div>
-                        <div className={styles.filterGroup}>
-                            <label>Turno</label>
-                            <select
-                                value={shiftFilter}
-                                onChange={(e) => setShiftFilter(e.target.value)}
-                                className={styles.select}
-                                style={{ minWidth: '100px' }}
-                            >
-                                <option value="Todos">Todos</option>
-                                <option value="1">1</option>
-                                <option value="2">2</option>
-                                <option value="3">3</option>
-                                <option value="4">4</option>
-                                <option value="5">5</option>
-                            </select>
-                        </div>
-                        <div className={styles.filterGroup}>
-                            <label>Ordenar por</label>
-                            <select
-                                value={sortBy}
-                                onChange={(e) => setSortBy(e.target.value)}
-                                className={styles.select}
-                            >
-                                <option value="name">Nombre</option>
-                                <option value="department">Departamento</option>
-                                <option value="criteria">% Criterios</option>
-                                <option value="startDate">Fecha Inicio</option>
-                            </select>
-                        </div>
-                        <button
-                            className={styles.sortToggle}
-                            onClick={() => setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc')}
-                            title={sortOrder === 'asc' ? 'Ascendente' : 'Descendente'}
-                        >
-                            {sortOrder === 'asc' ? '↑' : '↓'}
-                        </button>
-                        <div className={styles.filterGroup}>
-                            <label>Vista</label>
-                            <div className={styles.viewToggle}>
-                                <button
-                                    className={`${styles.viewBtn} ${viewMode === 'cards' ? styles.active : ''}`}
-                                    onClick={() => setViewMode('cards')}
-                                    title="Vista tarjetas"
+                    </div>
+
+                    {/* Filters */}
+                    <div className={styles.filterCard}>
+                        <div className={styles.filterContent}>
+                            <div className={styles.filterGroup}>
+                                <label>Buscar</label>
+                                <input
+                                    type="text"
+                                    placeholder="Nombre, ID o puesto..."
+                                    value={searchTerm}
+                                    onChange={(e) => setSearchTerm(e.target.value)}
+                                    className={styles.searchInput}
+                                />
+                            </div>
+                            <div className={styles.filterGroup}>
+                                <label>Departamento</label>
+                                <select
+                                    value={deptFilter}
+                                    onChange={(e) => setDeptFilter(e.target.value)}
+                                    className={styles.select}
                                 >
-                                    ▦
-                                </button>
-                                <button
-                                    className={`${styles.viewBtn} ${viewMode === 'table' ? styles.active : ''}`}
-                                    onClick={() => setViewMode('table')}
-                                    title="Vista tabla"
+                                    <option value="Todos">Todos</option>
+                                    {departments.map(d => <option key={d} value={d}>{d}</option>)}
+                                </select>
+                            </div>
+                            <div className={styles.filterGroup}>
+                                <label>Estado</label>
+                                <select
+                                    value={statusFilter}
+                                    onChange={(e) => setStatusFilter(e.target.value)}
+                                    className={styles.select}
                                 >
-                                    ≡
-                                </button>
+                                    <option value="all">Todos</option>
+                                    <option value="eligible">✅ Aptos</option>
+                                    <option value="nearEligible">🔶 Próximos (3/4)</option>
+                                    <option value="blocked">❌ No Aptos</option>
+                                    <option value="scheduledExam">📝 Por Aplicar Examen</option>
+                                </select>
+                            </div>
+                            <div className={styles.filterGroup}>
+                                <label>Turno</label>
+                                <select
+                                    value={shiftFilter}
+                                    onChange={(e) => setShiftFilter(e.target.value)}
+                                    className={styles.select}
+                                    style={{ minWidth: '100px' }}
+                                >
+                                    <option value="Todos">Todos</option>
+                                    <option value="1">1</option>
+                                    <option value="2">2</option>
+                                    <option value="3">3</option>
+                                    <option value="4">4</option>
+                                    <option value="5">5</option>
+                                </select>
+                            </div>
+                            <div className={styles.filterGroup}>
+                                <label>Ordenar por</label>
+                                <select
+                                    value={sortBy}
+                                    onChange={(e) => setSortBy(e.target.value)}
+                                    className={styles.select}
+                                >
+                                    <option value="name">Nombre</option>
+                                    <option value="department">Departamento</option>
+                                    <option value="criteria">% Criterios</option>
+                                    <option value="startDate">Fecha Inicio</option>
+                                </select>
+                            </div>
+                            <button
+                                className={styles.sortToggle}
+                                onClick={() => setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc')}
+                                title={sortOrder === 'asc' ? 'Ascendente' : 'Descendente'}
+                            >
+                                {sortOrder === 'asc' ? '↑' : '↓'}
+                            </button>
+                            <div className={styles.filterGroup}>
+                                <label>Vista</label>
+                                <div className={styles.viewToggle}>
+                                    <button
+                                        className={`${styles.viewBtn} ${viewMode === 'cards' ? styles.active : ''}`}
+                                        onClick={() => setViewMode('cards')}
+                                        title="Vista tarjetas"
+                                    >
+                                        ▦
+                                    </button>
+                                    <button
+                                        className={`${styles.viewBtn} ${viewMode === 'table' ? styles.active : ''}`}
+                                        onClick={() => setViewMode('table')}
+                                        title="Vista tabla"
+                                    >
+                                        ≡
+                                    </button>
+                                </div>
+                            </div>
+                            <div className={styles.countBadge}>
+                                {filteredEmployees.length} Empleados
                             </div>
                         </div>
-                        <div className={styles.countBadge}>
-                            {filteredEmployees.length} Empleados
-                        </div>
-                    </CardContent>
-                </Card>
+                    </div>
 
-                {/* Employee List */}
-                {loading ? (
-                    <div className="spinner"></div>
-                ) : filteredEmployees.length === 0 ? (
-                    <Card>
-                        <CardContent className={styles.emptyState}>
+                    {/* Employee List */}
+                    {loading ? (
+                        <div className="spinner"></div>
+                    ) : filteredEmployees.length === 0 ? (
+                        <div className={styles.emptyState}>
                             <p>No hay empleados con rutas de promoción definidas.</p>
                             <p className={styles.subText}>Configure las reglas de promoción para ver empleados elegibles.</p>
-                        </CardContent>
-                    </Card>
-                ) : (
-                    <>
-                        {/* Table View */}
-                        {viewMode === 'table' ? (
-                            <Card>
+                        </div>
+                    ) : (
+                        <>
+                            {/* Table View */}
+                            {viewMode === 'table' ? (
                                 <div className={styles.tableContainer}>
                                     <table className={styles.dataTable}>
                                         <thead>
@@ -935,258 +945,259 @@ export default function PromocionesPage() {
                                         </tbody>
                                     </table>
                                 </div>
-                            </Card>
-                        ) : (
-                            /* Cards View */
-                            <div className={styles.employeeList}>
-                                {filteredEmployees
-                                    .slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)
-                                    .map(emp => {
-                                        const rule = emp._rule || promotionRules.find(r =>
-                                            r.currentPosition === emp.position?.toUpperCase()?.trim()
-                                        );
-                                        if (!rule) return null;
+                            ) : (
+                                /* Cards View */
+                                <div className={styles.employeeList}>
+                                    {filteredEmployees
+                                        .slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)
+                                        .map(emp => {
+                                            const rule = emp._rule || promotionRules.find(r =>
+                                                r.currentPosition === emp.position?.toUpperCase()?.trim()
+                                            );
+                                            if (!rule) return null;
 
-                                        const criteria = emp._criteria || checkPromotionCriteria(emp, rule);
-                                        const examEligibility = getExamEligibility(
-                                            emp.promotionData?.examAttempts,
-                                            rule.temporalityMonths,
-                                            emp.promotionData?.positionStartDate
-                                        );
-                                        const isExpanded = expandedId === emp.id;
-                                        const progressPercent = (criteria.overall.metCount / 4) * 100;
+                                            const criteria = emp._criteria || checkPromotionCriteria(emp, rule);
+                                            const examEligibility = getExamEligibility(
+                                                emp.promotionData?.examAttempts,
+                                                rule.temporalityMonths,
+                                                emp.promotionData?.positionStartDate
+                                            );
+                                            const isExpanded = expandedId === emp.id;
+                                            const progressPercent = (criteria.overall.metCount / 4) * 100;
 
-                                        return (
-                                            <Card
-                                                key={emp.id}
-                                                className={`${styles.employeeCard} ${isExpanded ? styles.expanded : ''} ${emp.promotionData?.scheduledExam ? styles.cardScheduled : ''}`}
-                                            >
-                                                {/* Collapsed View */}
+                                            return (
                                                 <div
-                                                    className={styles.cardHeader}
-                                                    onClick={() => toggleExpand(emp.id)}
+                                                    key={emp.id}
+                                                    className={`${styles.employeeCard} ${isExpanded ? styles.expanded : ''} ${emp.promotionData?.scheduledExam ? styles.cardScheduled : ''}`}
                                                 >
-                                                    <div className={styles.expandIcon}>
-                                                        {isExpanded ? '▼' : '▶'}
-                                                    </div>
-                                                    <div className={styles.empInfo}>
-                                                        <div className={styles.empName}>ID {emp.employeeId} {emp.name}</div>
-                                                        <div className={styles.empPosition}>
-                                                            {emp.position} → {rule.promotionTo}
-                                                            {emp.shift && <span style={{ marginLeft: '0.5rem', fontSize: '0.8em', color: 'var(--text-secondary)' }}>• T{emp.shift}</span>}
-                                                            {emp.promotionData?.scheduledExam && (
-                                                                <span className={styles.scheduledBadge}>📝 Examen</span>
-                                                            )}
+                                                    {/* Collapsed View */}
+                                                    <div
+                                                        className={styles.cardHeader}
+                                                        onClick={() => toggleExpand(emp.id)}
+                                                    >
+                                                        <div className={styles.expandIcon}>
+                                                            {isExpanded ? '▼' : '▶'}
                                                         </div>
-                                                        {/* Progress Bar */}
-                                                        <div className={styles.progressBarSmall}>
-                                                            <div
-                                                                className={`${styles.progressFillSmall} ${criteria.overall.metCount >= 4 ? styles.progressGreen :
-                                                                    criteria.overall.metCount >= 2 ? styles.progressYellow :
-                                                                        styles.progressRed
-                                                                    }`}
-                                                                style={{ width: `${progressPercent}%` }}
-                                                            />
-                                                        </div>
-                                                    </div>
-                                                    <div className={styles.criteriaIcons}>
-                                                        <div className={styles.criteriaIcon} title="1. Evaluación de Desempeño">
-                                                            {getCriteriaIcon(criteria.performance.met)}
-                                                            <span>Eval</span>
-                                                        </div>
-                                                        <div className={styles.criteriaIcon} title="2. Temporalidad en Puesto">
-                                                            {getCriteriaIcon(criteria.temporality.met)}
-                                                            <span>Temp</span>
-                                                        </div>
-                                                        <div className={styles.criteriaIcon} title="3. Cobertura de Matriz">
-                                                            {getCriteriaIcon(criteria.matrix.met)}
-                                                            <span>Matr</span>
-                                                        </div>
-                                                        <div className={styles.criteriaIcon} title="4. Examen Teórico">
-                                                            {getCriteriaIcon(criteria.exam.met)}
-                                                            <span>Exam</span>
-                                                        </div>
-                                                    </div>
-                                                    <div className={styles.criteriaCount}>
-                                                        {criteria.overall.metCount}/4
-                                                    </div>
-                                                    {getStatusBadge(criteria)}
-                                                </div>
-
-                                                {/* Expanded View */}
-                                                {isExpanded && (
-                                                    <div className={styles.cardBody}>
-                                                        <div className={styles.detailGrid}>
-                                                            {/* 1. Performance */}
-                                                            <div className={styles.detailBox}>
-                                                                <div className={styles.detailHeader}>
-                                                                    <span className={styles.orderBadge}>1</span>
-                                                                    {getCriteriaIcon(criteria.performance.met)}
-                                                                    <span>⭐ EVAL. DESEMPEÑO</span>
-                                                                </div>
-                                                                <div className={styles.detailContent}>
-                                                                    <div className={styles.detailRow}>
-                                                                        <span>Calificación:</span>
-                                                                        <strong className={criteria.performance.met ? styles.valuePass : styles.valueFail}>
-                                                                            {criteria.performance.current}%
-                                                                        </strong>
-                                                                    </div>
-                                                                    <div className={styles.detailRow}>
-                                                                        <span>Requerido:</span>
-                                                                        <strong>≥{criteria.performance.required}%</strong>
-                                                                    </div>
-                                                                </div>
-                                                                {canWrite() && (
-                                                                    <Button variant="ghost" size="sm" onClick={() => handleEditEmployee(emp)}>
-                                                                        ✏️ Editar
-                                                                    </Button>
+                                                        <div className={styles.empInfo}>
+                                                            <div className={styles.empName}>ID {emp.employeeId} {emp.name}</div>
+                                                            <div className={styles.empPosition}>
+                                                                {emp.position} → {rule.promotionTo}
+                                                                {emp.shift && <span style={{ marginLeft: '0.5rem', fontSize: '0.8em', color: 'var(--text-secondary)' }}>• T{emp.shift}</span>}
+                                                                {emp.promotionData?.scheduledExam && (
+                                                                    <span className={styles.scheduledBadge}>📝 Examen</span>
                                                                 )}
                                                             </div>
-
-                                                            {/* 2. Temporality */}
-                                                            <div className={styles.detailBox}>
-                                                                <div className={styles.detailHeader}>
-                                                                    <span className={styles.orderBadge}>2</span>
-                                                                    {getCriteriaIcon(criteria.temporality.met)}
-                                                                    <span>📅 TEMPORALIDAD</span>
-                                                                </div>
-                                                                <div className={styles.detailContent}>
-                                                                    <div className={styles.detailRow}>
-                                                                        <span>Tiempo actual:</span>
-                                                                        <strong className={criteria.temporality.met ? styles.valuePass : styles.valueFail}>
-                                                                            {criteria.temporality.current} meses
-                                                                        </strong>
-                                                                    </div>
-                                                                    <div className={styles.detailRow}>
-                                                                        <span>Requerido:</span>
-                                                                        <strong>≥{criteria.temporality.required} meses</strong>
-                                                                    </div>
-                                                                </div>
+                                                            {/* Progress Bar */}
+                                                            <div className={styles.progressBarSmall}>
+                                                                <div
+                                                                    className={`${styles.progressFillSmall} ${criteria.overall.metCount >= 4 ? styles.progressGreen :
+                                                                        criteria.overall.metCount >= 2 ? styles.progressYellow :
+                                                                            styles.progressRed
+                                                                        }`}
+                                                                    style={{ width: `${progressPercent}%` }}
+                                                                />
                                                             </div>
-
-                                                            {/* 3. Matrix */}
-                                                            <div className={styles.detailBox}>
-                                                                <div className={styles.detailHeader}>
-                                                                    <span className={styles.orderBadge}>3</span>
-                                                                    {getCriteriaIcon(criteria.matrix.met)}
-                                                                    <span>📊 COBERTURA MATRIZ</span>
-                                                                </div>
-                                                                <div className={styles.detailContent}>
-                                                                    <div className={styles.detailRow}>
-                                                                        <span>Cobertura:</span>
-                                                                        <strong className={criteria.matrix.met ? styles.valuePass : styles.valueFail}>
-                                                                            {criteria.matrix.current}%
-                                                                        </strong>
-                                                                    </div>
-                                                                    <div className={styles.detailRow}>
-                                                                        <span>Requerido:</span>
-                                                                        <strong>≥{criteria.matrix.required}%</strong>
-                                                                    </div>
-                                                                </div>
+                                                        </div>
+                                                        <div className={styles.criteriaIcons}>
+                                                            <div className={styles.criteriaIcon} title="1. Evaluación de Desempeño">
+                                                                {getCriteriaIcon(criteria.performance.met)}
+                                                                <span>Eval</span>
                                                             </div>
+                                                            <div className={styles.criteriaIcon} title="2. Temporalidad en Puesto">
+                                                                {getCriteriaIcon(criteria.temporality.met)}
+                                                                <span>Temp</span>
+                                                            </div>
+                                                            <div className={styles.criteriaIcon} title="3. Cobertura de Matriz">
+                                                                {getCriteriaIcon(criteria.matrix.met)}
+                                                                <span>Matr</span>
+                                                            </div>
+                                                            <div className={styles.criteriaIcon} title="4. Examen Teórico">
+                                                                {getCriteriaIcon(criteria.exam.met)}
+                                                                <span>Exam</span>
+                                                            </div>
+                                                        </div>
+                                                        <div className={styles.criteriaCount}>
+                                                            {criteria.overall.metCount}/4
+                                                        </div>
+                                                        {getStatusBadge(criteria)}
+                                                    </div>
 
-                                                            {/* 4. Exam */}
-                                                            <div className={styles.detailBox}>
-                                                                <div className={styles.detailHeader}>
-                                                                    <span className={styles.orderBadge}>4</span>
-                                                                    {getCriteriaIcon(criteria.exam.met)}
-                                                                    <span>📝 EXAMEN TEÓRICO</span>
+                                                    {/* Expanded View */}
+                                                    {isExpanded && (
+                                                        <div className={styles.cardBody}>
+                                                            <div className={styles.detailGrid}>
+                                                                {/* 1. Performance */}
+                                                                <div className={styles.detailBox}>
+                                                                    <div className={styles.detailHeader}>
+                                                                        <span className={styles.orderBadge}>1</span>
+                                                                        {getCriteriaIcon(criteria.performance.met)}
+                                                                        <span>⭐ EVAL. DESEMPEÑO</span>
+                                                                    </div>
+                                                                    <div className={styles.detailContent}>
+                                                                        <div className={styles.detailRow}>
+                                                                            <span>Calificación:</span>
+                                                                            <strong className={criteria.performance.met ? styles.valuePass : styles.valueFail}>
+                                                                                {criteria.performance.current}%
+                                                                            </strong>
+                                                                        </div>
+                                                                        <div className={styles.detailRow}>
+                                                                            <span>Requerido:</span>
+                                                                            <strong>≥{criteria.performance.required}%</strong>
+                                                                        </div>
+                                                                    </div>
+                                                                    {canWrite() && (
+                                                                        <Button variant="ghost" size="sm" onClick={() => handleEditEmployee(emp)}>
+                                                                            ✏️ Editar
+                                                                        </Button>
+                                                                    )}
                                                                 </div>
-                                                                <div className={styles.detailContent}>
-                                                                    <div className={styles.detailRow}>
-                                                                        <span>Última calif:</span>
-                                                                        <strong className={criteria.exam.met ? styles.valuePass : styles.valueFail}>
-                                                                            {criteria.exam.current !== null ? `${criteria.exam.current}%` : 'Sin intentos'}
-                                                                        </strong>
+
+                                                                {/* 2. Temporality */}
+                                                                <div className={styles.detailBox}>
+                                                                    <div className={styles.detailHeader}>
+                                                                        <span className={styles.orderBadge}>2</span>
+                                                                        {getCriteriaIcon(criteria.temporality.met)}
+                                                                        <span>📅 TEMPORALIDAD</span>
                                                                     </div>
-                                                                    <div className={styles.detailRow}>
-                                                                        <span>Intentos:</span>
-                                                                        <strong>{criteria.exam.attempts}</strong>
+                                                                    <div className={styles.detailContent}>
+                                                                        <div className={styles.detailRow}>
+                                                                            <span>Tiempo actual:</span>
+                                                                            <strong className={criteria.temporality.met ? styles.valuePass : styles.valueFail}>
+                                                                                {criteria.temporality.current} meses
+                                                                            </strong>
+                                                                        </div>
+                                                                        <div className={styles.detailRow}>
+                                                                            <span>Requerido:</span>
+                                                                            <strong>≥{criteria.temporality.required} meses</strong>
+                                                                        </div>
                                                                     </div>
-                                                                    {!examEligibility.canTakeExam && (
-                                                                        <div className={styles.examWarning}>
-                                                                            ⚠️ {examEligibility.reason}
+                                                                </div>
+
+                                                                {/* 3. Matrix */}
+                                                                <div className={styles.detailBox}>
+                                                                    <div className={styles.detailHeader}>
+                                                                        <span className={styles.orderBadge}>3</span>
+                                                                        {getCriteriaIcon(criteria.matrix.met)}
+                                                                        <span>📊 COBERTURA MATRIZ</span>
+                                                                    </div>
+                                                                    <div className={styles.detailContent}>
+                                                                        <div className={styles.detailRow}>
+                                                                            <span>Cobertura:</span>
+                                                                            <strong className={criteria.matrix.met ? styles.valuePass : styles.valueFail}>
+                                                                                {criteria.matrix.current}%
+                                                                            </strong>
+                                                                        </div>
+                                                                        <div className={styles.detailRow}>
+                                                                            <span>Requerido:</span>
+                                                                            <strong>≥{criteria.matrix.required}%</strong>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+
+                                                                {/* 4. Exam */}
+                                                                <div className={styles.detailBox}>
+                                                                    <div className={styles.detailHeader}>
+                                                                        <span className={styles.orderBadge}>4</span>
+                                                                        {getCriteriaIcon(criteria.exam.met)}
+                                                                        <span>📝 EXAMEN TEÓRICO</span>
+                                                                    </div>
+                                                                    <div className={styles.detailContent}>
+                                                                        <div className={styles.detailRow}>
+                                                                            <span>Última calif:</span>
+                                                                            <strong className={criteria.exam.met ? styles.valuePass : styles.valueFail}>
+                                                                                {criteria.exam.current !== null ? `${criteria.exam.current}%` : 'Sin intentos'}
+                                                                            </strong>
+                                                                        </div>
+                                                                        <div className={styles.detailRow}>
+                                                                            <span>Intentos:</span>
+                                                                            <strong>{criteria.exam.attempts}</strong>
+                                                                        </div>
+                                                                        {!examEligibility.canTakeExam && (
+                                                                            <div className={styles.examWarning}>
+                                                                                ⚠️ {examEligibility.reason}
+                                                                            </div>
+                                                                        )}
+                                                                    </div>
+                                                                    {canWrite() && (
+                                                                        <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
+                                                                            <Button
+                                                                                variant="ghost"
+                                                                                size="sm"
+                                                                                onClick={() => handleOpenExamModal(emp)}
+                                                                                disabled={!examEligibility.canTakeExam}
+                                                                            >
+                                                                                + Registrar
+                                                                            </Button>
+                                                                            <Button
+                                                                                variant="outline"
+                                                                                size="sm"
+                                                                                onClick={(e) => {
+                                                                                    e.stopPropagation();
+                                                                                    handleToggleScheduledExam(emp);
+                                                                                }}
+                                                                                style={emp.promotionData?.scheduledExam ? { borderColor: '#ef4444', color: '#ef4444' } : { borderColor: '#3b82f6', color: '#3b82f6' }}
+                                                                            >
+                                                                                {emp.promotionData?.scheduledExam ? 'Cancelar Cita' : '📅 Citar'}
+                                                                            </Button>
                                                                         </div>
                                                                     )}
                                                                 </div>
-                                                                {canWrite() && (
-                                                                    <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
-                                                                        <Button
-                                                                            variant="ghost"
-                                                                            size="sm"
-                                                                            onClick={() => handleOpenExamModal(emp)}
-                                                                            disabled={!examEligibility.canTakeExam}
-                                                                        >
-                                                                            + Registrar
-                                                                        </Button>
-                                                                        <Button
-                                                                            variant="outline"
-                                                                            size="sm"
-                                                                            onClick={(e) => {
-                                                                                e.stopPropagation();
-                                                                                handleToggleScheduledExam(emp);
-                                                                            }}
-                                                                            style={emp.promotionData?.scheduledExam ? { borderColor: '#ef4444', color: '#ef4444' } : { borderColor: '#3b82f6', color: '#3b82f6' }}
-                                                                        >
-                                                                            {emp.promotionData?.scheduledExam ? 'Cancelar Cita' : '📅 Citar'}
-                                                                        </Button>
+                                                            </div>
+
+                                                            {/* Exam History */}
+                                                            {emp.promotionData?.examAttempts?.length > 0 && (
+                                                                <div className={styles.examHistory}>
+                                                                    <h4>📜 Historial de Exámenes</h4>
+                                                                    <div className={styles.historyList}>
+                                                                        {[...emp.promotionData.examAttempts].reverse().slice(0, 5).map((attempt, i) => (
+                                                                            <div key={i} className={styles.historyItem}>
+                                                                                <span>{formatDate(attempt.date)}</span>
+                                                                                <span className={attempt.passed ? styles.passed : styles.failed}>
+                                                                                    {attempt.score}% {attempt.passed ? '✓' : '✗'}
+                                                                                </span>
+                                                                            </div>
+                                                                        ))}
                                                                     </div>
-                                                                )}
-                                                            </div>
-                                                        </div>
-
-                                                        {/* Exam History */}
-                                                        {emp.promotionData?.examAttempts?.length > 0 && (
-                                                            <div className={styles.examHistory}>
-                                                                <h4>📜 Historial de Exámenes</h4>
-                                                                <div className={styles.historyList}>
-                                                                    {[...emp.promotionData.examAttempts].reverse().slice(0, 5).map((attempt, i) => (
-                                                                        <div key={i} className={styles.historyItem}>
-                                                                            <span>{formatDate(attempt.date)}</span>
-                                                                            <span className={attempt.passed ? styles.passed : styles.failed}>
-                                                                                {attempt.score}% {attempt.passed ? '✓' : '✗'}
-                                                                            </span>
-                                                                        </div>
-                                                                    ))}
                                                                 </div>
-                                                            </div>
-                                                        )}
-                                                    </div>
-                                                )}
-                                            </Card>
-                                        );
-                                    })}
-                            </div>
-                        )}
-
-                        {/* Pagination */}
-                        {filteredEmployees.length > itemsPerPage && (
-                            <div className={styles.pagination}>
-                                <button
-                                    className={styles.pageBtn}
-                                    onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
-                                    disabled={currentPage === 1}
-                                >
-                                    ← Anterior
-                                </button>
-                                <div className={styles.pageInfo}>
-                                    Página {currentPage} de {Math.ceil(filteredEmployees.length / itemsPerPage)}
+                                                            )}
+                                                        </div>
+                                                    )}
+                                                </div>
+                                            );
+                                        })}
                                 </div>
-                                <button
-                                    className={styles.pageBtn}
-                                    onClick={() => setCurrentPage(p => Math.min(Math.ceil(filteredEmployees.length / itemsPerPage), p + 1))}
-                                    disabled={currentPage >= Math.ceil(filteredEmployees.length / itemsPerPage)}
-                                >
-                                    Siguiente →
-                                </button>
-                            </div>
-                        )}
-                    </>
-                )}
-            </main>
+                            )}
+
+                            {/* Pagination */}
+                            {filteredEmployees.length > itemsPerPage && (
+                                <div className={styles.pagination}>
+                                    <button
+                                        className={styles.pageBtn}
+                                        onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+                                        disabled={currentPage === 1}
+                                    >
+                                        ← Anterior
+                                    </button>
+                                    <div className={styles.pageInfo}>
+                                        Página {currentPage} de {Math.ceil(filteredEmployees.length / itemsPerPage)}
+                                    </div>
+                                    <button
+                                        className={styles.pageBtn}
+                                        onClick={() => setCurrentPage(p => Math.min(Math.ceil(filteredEmployees.length / itemsPerPage), p + 1))}
+                                        disabled={currentPage >= Math.ceil(filteredEmployees.length / itemsPerPage)}
+                                    >
+                                        Siguiente →
+                                    </button>
+                                </div>
+                            )}
+                        </>
+                    )}
+                </div>
+            </main >
 
             {/* Edit Employee Modal */}
-            <Dialog open={!!editingEmployee} onOpenChange={(open) => !open && setEditingEmployee(null)}>
+            < Dialog open={!!editingEmployee
+            } onOpenChange={(open) => !open && setEditingEmployee(null)}>
                 <DialogHeader>
                     <DialogTitle>Editar Datos de Promoción</DialogTitle>
                     <DialogClose onClose={() => setEditingEmployee(null)} />
@@ -1228,10 +1239,10 @@ export default function PromocionesPage() {
                     <Button variant="ghost" onClick={() => setEditingEmployee(null)}>Cancelar</Button>
                     <Button onClick={handleSaveEmployee}>Guardar</Button>
                 </DialogFooter>
-            </Dialog>
+            </Dialog >
 
             {/* Exam Registration Modal */}
-            <Dialog open={!!examModal} onOpenChange={(open) => !open && setExamModal(null)}>
+            < Dialog open={!!examModal} onOpenChange={(open) => !open && setExamModal(null)}>
                 <DialogHeader>
                     <DialogTitle>Registrar Examen Teórico</DialogTitle>
                     <DialogClose onClose={() => setExamModal(null)} />
@@ -1262,10 +1273,10 @@ export default function PromocionesPage() {
                     <Button variant="ghost" onClick={() => setExamModal(null)}>Cancelar</Button>
                     <Button onClick={handleSaveExam}>Registrar</Button>
                 </DialogFooter>
-            </Dialog>
+            </Dialog >
 
             {/* Rules Management Modal */}
-            <Dialog open={rulesModal} onOpenChange={(open) => !open && setRulesModal(false)}>
+            < Dialog open={rulesModal} onOpenChange={(open) => !open && setRulesModal(false)}>
                 <DialogHeader>
                     <DialogTitle>Reglas de Promoción</DialogTitle>
                     <DialogClose onClose={() => setRulesModal(false)} />
@@ -1392,7 +1403,7 @@ export default function PromocionesPage() {
                 <DialogFooter>
                     <Button onClick={() => setRulesModal(false)}>Cerrar</Button>
                 </DialogFooter>
-            </Dialog>
+            </Dialog >
         </>
     );
 }

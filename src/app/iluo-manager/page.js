@@ -158,7 +158,7 @@ export default function IluoManagerPage() {
             {/* SIDEBAR */}
             <aside className={styles.sidebar}>
                 <header className={styles.sidebarHeader}>
-                    <h2 className={styles.sidebarTitle}>Configuración ILUO</h2>
+                    <h2 className={styles.sidebarTitle}>ILUO</h2>
                     <p className={styles.sidebarSubtitle}>Catálogo Maestro de Habilidades</p>
                 </header>
 
@@ -240,17 +240,17 @@ export default function IluoManagerPage() {
                             Object.entries(groupedSkills).map(([groupName, groupSkills]) => (
                                 <div key={groupName} style={{ marginBottom: '40px' }}>
                                     <h3 style={{
-                                        fontSize: '1.2rem',
+                                        fontSize: '1.1rem',
                                         fontWeight: '700',
-                                        color: '#fff',
-                                        marginBottom: '20px',
+                                        color: 'var(--text-primary)',
+                                        marginBottom: '16px',
                                         display: 'flex',
                                         alignItems: 'center',
                                         gap: '10px'
                                     }}>
-                                        <span style={{ width: '8px', height: '24px', background: '#007AFF', borderRadius: '4px', display: 'block' }}></span>
+                                        <span style={{ width: '6px', height: '22px', background: 'var(--color-primary)', borderRadius: '3px', display: 'block' }}></span>
                                         {groupName}
-                                        <span style={{ fontSize: '0.8rem', opacity: 0.5, fontWeight: 'normal' }}>({groupSkills.length})</span>
+                                        <span style={{ fontSize: '0.8rem', color: 'var(--text-tertiary)', fontWeight: 'normal' }}>({groupSkills.length})</span>
                                     </h3>
 
                                     <div className={styles.grid}>
@@ -276,13 +276,13 @@ export default function IluoManagerPage() {
                         {/* FORMULARIO AGREGAR */}
                         <div className={styles.formCard}>
                             <div className={styles.formTitle}>
-                                <div style={{ background: '#007AFF', width: '30px', height: '30px', borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', marginRight: '10px' }}>+</div>
+                                <div style={{ background: 'var(--color-primary)', width: '28px', height: '28px', borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', fontWeight: '700', fontSize: '1.2rem' }}>+</div>
                                 <span>Nueva Competencia</span>
                             </div>
 
                             {/* Campo de Grupo (Nuevo) - Con Lista Maestra de Clientes */}
                             <div className={styles.inputGroup}>
-                                <label className={styles.label}>Grupo / Cliente</label>
+                                <label className={styles.label}>Cliente</label>
                                 <input
                                     className={styles.input}
                                     placeholder="Selecciona de la lista o escribe uno nuevo..."
@@ -314,7 +314,7 @@ export default function IluoManagerPage() {
                                         <option key={g} value={g} />
                                     ))}
                                 </datalist>
-                                <small style={{ color: 'rgba(255,255,255,0.4)', marginTop: '5px', display: 'block', fontSize: '0.75rem' }}>
+                                <small style={{ color: 'var(--text-tertiary)', marginTop: '5px', display: 'block', fontSize: '0.75rem' }}>
                                     Asigna esta competencia a un Cliente específico o déjala en General. Si el cliente no está en la lista, escríbelo para crearlo.
                                 </small>
                             </div>
@@ -367,10 +367,34 @@ export default function IluoManagerPage() {
 
 function AccessDenied() {
     return (
-        <div style={{ height: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column', color: '#fff', background: '#000' }}>
-            <h1>🚫 Acceso Denegado</h1>
-            <p style={{ color: '#999', marginBottom: '20px' }}>No tienes permisos para configurar el catálogo.</p>
-            <Link href="/modulos"><button style={{ padding: '10px 20px', borderRadius: '8px', border: '1px solid #333', cursor: 'pointer', background: 'transparent', color: '#fff' }}>Volver</button></Link>
+        <div style={{
+            height: '100vh',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            flexDirection: 'column',
+            color: 'var(--text-primary)',
+            background: 'var(--bg-primary)',
+            textAlign: 'center',
+            padding: '20px'
+        }}>
+            <div style={{ fontSize: '4rem', marginBottom: '16px' }}>🚫</div>
+            <h1 style={{ margin: '0 0 8px 0', fontSize: '1.5rem' }}>Acceso Denegado</h1>
+            <p style={{ color: 'var(--text-secondary)', marginBottom: '24px' }}>No tienes permisos para configurar el catálogo.</p>
+            <Link href="/modulos">
+                <button style={{
+                    padding: '12px 24px',
+                    borderRadius: '12px',
+                    border: '1px solid var(--border-color)',
+                    cursor: 'pointer',
+                    background: 'var(--bg-secondary)',
+                    color: 'var(--text-primary)',
+                    fontWeight: '600',
+                    transition: 'all 0.2s'
+                }}>
+                    Volver a Módulos
+                </button>
+            </Link>
         </div>
     );
 }

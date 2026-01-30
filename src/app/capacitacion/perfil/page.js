@@ -160,6 +160,12 @@ export default function PerfilPage() {
         <>
             <Navbar />
             <main className={styles.main} id="main-content">
+                {/* Background Effects */}
+                <div className={styles.bgDecoration}>
+                    <div className={`${styles.blob} ${styles.blob1}`}></div>
+                    <div className={`${styles.blob} ${styles.blob2}`}></div>
+                </div>
+
                 <div className={styles.container}>
                     {/* Header */}
                     <div className={styles.header}>

@@ -341,10 +341,25 @@ export default function AnalisisPage() {
         setShowDetailModal(true);
     };
 
+    // State for expanded cards
+    const [expandedId, setExpandedId] = useState(null);
+    const toggleExpand = (id) => setExpandedId(expandedId === id ? null : id);
+
+    const getInitials = (name) => {
+        if (!name) return '?';
+        return name.split(' ').slice(0, 2).map(n => n[0]).join('').toUpperCase();
+    };
+
     return (
         <>
             <Navbar />
             <main className={styles.main} id="main-content">
+                {/* Background Effects */}
+                <div className={styles.bgDecoration}>
+                    <div className={`${styles.blob} ${styles.blob1}`}></div>
+                    <div className={`${styles.blob} ${styles.blob2}`}></div>
+                </div>
+
                 <div className={styles.container}>
                     <div className={styles.header}>
                         <div className={styles.headerLeft}>
@@ -691,7 +706,7 @@ export default function AnalisisPage() {
                                 onChange={(e) => setFilterStatus(e.target.value)}
                                 className={styles.selectFilter}
                             >
-                                <option value="Todos">Todos los Estados</option>
+                                <option value="Todos">Todos</option>
                                 <option value="Crítico">Crítico (&lt;70%)</option>
                                 <option value="Regular">Regular (70-90%)</option>
                                 <option value="Excelente">Excelente (&gt;90%)</option>
@@ -705,60 +720,99 @@ export default function AnalisisPage() {
                         <div className={styles.emptyState}>No hay registros de análisis.</div>
                     ) : (
                         <>
-                            <div className={styles.tableWrapper}>
-                                <table className={styles.table}>
-                                    <thead>
-                                        <tr>
-                                            <th>Empleado</th>
-                                            <th>Departamento</th>
-                                            <th>Puesto</th>
-                                            <th className={styles.textCenter}>Cumplimiento</th>
-                                            <th>Detalle</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        {filteredRecords.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage).map(rec => (
-                                            <tr key={rec.id}>
-                                                <td className={styles.fwBold}>{rec.name}</td>
-                                                <td><span className={styles.deptBadge}>{rec.department || 'N/A'}</span></td>
-                                                <td className={styles.textSm}>{rec.position}</td>
-                                                <td className={styles.textCenter}>
-                                                    <span className={getComplianceColor(rec.matrix?.compliancePercentage || 0)}>
-                                                        {rec.matrix?.compliancePercentage || 0}%
-                                                    </span>
-                                                </td>
-                                                <td>
-                                                    <Button variant="ghost" size="sm" onClick={() => openDetail(rec)}>Ver</Button>
-                                                </td>
-                                            </tr>
-                                        ))}
-                                    </tbody>
-                                </table>
+                            <div className={styles.employeesList}>
+                                {filteredRecords.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage).map(rec => (
+                                    <div key={rec.id} className={styles.employeeCard}>
+                                        <div className={styles.employeeRow} onClick={() => toggleExpand(rec.id)}>
+                                            <div className={styles.employeeInfo}>
+                                                <div className={styles.avatarWrapper}>
+                                                    {getInitials(rec.name)}
+                                                </div>
+                                                <div className={styles.employeeDetails}>
+                                                    <span className={styles.empName}>{rec.name}</span>
+                                                    <span className={styles.empMeta}>{rec.position} • {rec.department || 'N/A'}</span>
+                                                </div>
+                                            </div>
+                                            <div className={styles.employeeActions}>
+                                                <span className={getComplianceColor(rec.matrix?.compliancePercentage || 0)}>
+                                                    {rec.matrix?.compliancePercentage || 0}%
+                                                </span>
+                                                <button className={`${styles.expandBtn} ${expandedId === rec.id ? styles.expanded : ''}`}>
+                                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                                        <polyline points="6 9 12 15 18 9" />
+                                                    </svg>
+                                                </button>
+                                            </div>
+                                        </div>
+
+                                        {expandedId === rec.id && (
+                                            <div className={styles.expandedContent}>
+                                                <div className={styles.quickStats}>
+                                                    <div className={styles.quickStat}>
+                                                        <span>{rec.matrix?.completedCount || 0}</span>
+                                                        <span>Aprobados</span>
+                                                    </div>
+                                                    <div className={styles.quickStat}>
+                                                        <span>{rec.matrix?.requiredCount || 0}</span>
+                                                        <span>Requeridos</span>
+                                                    </div>
+                                                    <div className={styles.quickStat}>
+                                                        <span>{rec.matrix?.missingCourses?.length || 0}</span>
+                                                        <span>Pendientes</span>
+                                                    </div>
+                                                </div>
+
+                                                <div className={styles.detailsGrid}>
+                                                    <div className={styles.detailItem}>
+                                                        <span className={styles.detailLabel}>ID Empleado</span>
+                                                        <span className={styles.detailValue}>{rec.employeeId || rec.id}</span>
+                                                    </div>
+                                                    <div className={styles.detailItem}>
+                                                        <span className={styles.detailLabel}>Departamento</span>
+                                                        <span className={styles.detailValue}>{rec.department || 'N/A'}</span>
+                                                    </div>
+                                                    <div className={styles.detailItem}>
+                                                        <span className={styles.detailLabel}>Puesto</span>
+                                                        <span className={styles.detailValue}>{rec.position}</span>
+                                                    </div>
+                                                    <div className={styles.detailItem}>
+                                                        <span className={styles.detailLabel}>Cumplimiento</span>
+                                                        <span className={styles.detailValue}>{rec.matrix?.compliancePercentage || 0}%</span>
+                                                    </div>
+                                                </div>
+
+                                                <div className={styles.actionButtonsRow}>
+                                                    <button className={`${styles.actionBtn} ${styles.primary}`} onClick={() => openDetail(rec)}>
+                                                        👁️ Ver Detalle Completo
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        )}
+                                    </div>
+                                ))}
                             </div>
 
                             {/* Pagination Controls */}
                             <div className={styles.paginationControls}>
+                                <Button
+                                    variant="outline"
+                                    size="sm"
+                                    disabled={currentPage === 1}
+                                    onClick={() => setCurrentPage(prev => prev - 1)}
+                                >
+                                    ←
+                                </Button>
                                 <span className={styles.pageInfo}>
                                     Página {currentPage} de {Math.ceil(filteredRecords.length / itemsPerPage)} ({filteredRecords.length} registros)
                                 </span>
-                                <div className={styles.pageButtons}>
-                                    <Button
-                                        variant="outline"
-                                        size="sm"
-                                        disabled={currentPage === 1}
-                                        onClick={() => setCurrentPage(prev => prev - 1)}
-                                    >
-                                        Anterior
-                                    </Button>
-                                    <Button
-                                        variant="outline"
-                                        size="sm"
-                                        disabled={currentPage >= Math.ceil(filteredRecords.length / itemsPerPage)}
-                                        onClick={() => setCurrentPage(prev => prev + 1)}
-                                    >
-                                        Siguiente
-                                    </Button>
-                                </div>
+                                <Button
+                                    variant="outline"
+                                    size="sm"
+                                    disabled={currentPage >= Math.ceil(filteredRecords.length / itemsPerPage)}
+                                    onClick={() => setCurrentPage(prev => prev + 1)}
+                                >
+                                    →
+                                </Button>
                             </div>
                         </>
                     )}

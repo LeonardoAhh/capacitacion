@@ -406,162 +406,229 @@ export default function EmpleadosPage() {
         return styles.complianceLow;
     };
 
+    // State for expanded employee
+    const [expandedId, setExpandedId] = useState(null);
+    const toggleExpand = (id) => setExpandedId(expandedId === id ? null : id);
+
+    const getInitials = (name) => {
+        if (!name) return '?';
+        return name.split(' ').slice(0, 2).map(n => n[0]).join('').toUpperCase();
+    };
+
     return (
         <>
             <Navbar />
             <main className={styles.main} id="main-content">
-                <div className={styles.header}>
-                    <div>
-                        <Link href="/capacitacion" className={styles.backBtn}>← Volver</Link>
-                        <h1>Gestión de Empleados</h1>
-                        <p>Administración de personal y datos maestros.</p>
-                    </div>
-                    {canWrite() && <Button onClick={handleCreate}>+ Nuevo Empleado</Button>}
+                {/* Background Effects */}
+                <div className={styles.bgDecoration}>
+                    <div className={`${styles.blob} ${styles.blob1}`}></div>
+                    <div className={`${styles.blob} ${styles.blob2}`}></div>
                 </div>
 
-                <Card className={styles.filterCard}>
-                    <CardContent className={styles.filterContent}>
-                        <div className={styles.filterGroup}>
-                            <label>Buscar</label>
-                            <input
-                                type="text"
-                                placeholder="Nombre o ID..."
-                                value={searchTerm}
-                                onChange={(e) => setSearchTerm(e.target.value)}
-                                className={styles.searchInput}
-                            />
+                <div className={styles.container}>
+                    {/* Header */}
+                    <div className={styles.header}>
+                        <div className={styles.headerLeft}>
+                            <Link href="/capacitacion" className={styles.backBtn}>
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                    <path d="M19 12H5" /><path d="M12 19l-7-7 7-7" />
+                                </svg>
+                                Volver
+                            </Link>
+                            <div className={styles.headerContent}>
+                                <h1>Gestión de Empleados</h1>
+                                <p>Administración de personal y datos maestros</p>
+                            </div>
                         </div>
-                        <div className={styles.filterGroup}>
-                            <label>Departamento</label>
-                            <select
-                                value={deptFilter}
-                                onChange={(e) => setDeptFilter(e.target.value)}
-                                className={styles.select}
-                            >
-                                <option value="Todos">Todos</option>
-                                {departments.map(d => <option key={d} value={d}>{d}</option>)}
-                            </select>
-                        </div>
-                        <div className={styles.filterGroup}>
-                            <label>Puesto</label>
-                            <select
-                                value={posFilter}
-                                onChange={(e) => setPosFilter(e.target.value)}
-                                className={styles.select}
-                            >
-                                <option value="Todos">Todos</option>
-                                {positions.map(p => <option key={p} value={p}>{p}</option>)}
-                            </select>
-                        </div>
-                        <div className={styles.countBadge}>
-                            {filteredEmployees.length} Registros
-                        </div>
-                    </CardContent>
-                </Card>
+                        {canWrite() && <Button onClick={handleCreate}>+ Nuevo</Button>}
+                    </div>
 
-                {loading ? (
-                    <div className="spinner"></div>
-                ) : (
-                    <>
-                        <Card>
-                            <CardContent style={{ padding: 0 }}>
-                                <div className={styles.tableWrapper}>
-                                    <table className={styles.table}>
-                                        <thead>
-                                            <tr>
-                                                <th>Nombre</th>
-                                                <th>Puesto</th>
-                                                <th>Departamento</th>
-                                                <th style={{ textAlign: 'center' }}>Acciones</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            {filteredEmployees.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage).map(emp => (
-                                                <tr key={emp.id}>
-                                                    <td className={styles.fwBold}>
-                                                        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                                                            <div
-                                                                onClick={() => emp.photoUrl && setPreviewImage({ url: emp.photoUrl, name: emp.name })}
-                                                                style={{ cursor: emp.photoUrl ? 'pointer' : 'default', transition: 'transform 0.1s' }}
-                                                                title={emp.photoUrl ? "Ver foto" : ""}
-                                                                onMouseOver={(e) => emp.photoUrl && (e.currentTarget.style.transform = 'scale(1.1)')}
-                                                                onMouseOut={(e) => e.currentTarget.style.transform = 'scale(1)'}
-                                                            >
-                                                                <Avatar name={emp.name} src={emp.photoUrl} size="md" />
-                                                            </div>
-                                                            <div
-                                                                onClick={() => setViewingEmp(emp)}
-                                                                style={{ cursor: 'pointer' }}
-                                                                className={styles.clickableName}
-                                                            >
-                                                                {emp.name}
-                                                                <div className={styles.subText}>ID: {emp.employeeId || emp.id}</div>
-                                                            </div>
-                                                        </div>
-                                                    </td>
-                                                    <td>{emp.position}</td>
-                                                    <td>
-                                                        {emp.department ? (
-                                                            <span className={styles.deptBadge}>{emp.department}</span>
-                                                        ) : (
-                                                            <span className={styles.missingBadge}>Sin Asignar ⚠️</span>
-                                                        )}
-                                                    </td>
-                                                    <td style={{ textAlign: 'center' }}>
-                                                        <div className={styles.actionButtons}>
-                                                            {canWrite() && (
-                                                                <>
-                                                                    <Button variant="ghost" size="sm" onClick={() => handleEdit(emp)}>
-                                                                        ✏️ Editar
-                                                                    </Button>
-                                                                    <Button variant="ghost" size="sm" onClick={() => handleDelete(emp)} style={{ color: 'var(--color-danger)' }}>
-                                                                        🗑️
-                                                                    </Button>
-                                                                </>
-                                                            )}
-                                                        </div>
-                                                    </td>
-                                                </tr>
-                                            ))}
-                                            {filteredEmployees.length === 0 && (
-                                                <tr>
-                                                    <td colSpan={4} className={styles.emptyState}>
-                                                        No se encontraron resultados.
-                                                    </td>
-                                                </tr>
-                                            )}
-                                        </tbody>
-                                    </table>
-                                </div>
+                    {/* Stats Summary */}
+                    <div className={styles.topSection}>
+                        <div className={styles.statCard}>
+                            <div className={`${styles.statIcon} ${styles.statIconBlue}`}>👥</div>
+                            <div className={styles.statInfo}>
+                                <span className={styles.statValue}>{filteredEmployees.length}</span>
+                                <span className={styles.statLabel}>Empleados</span>
+                            </div>
+                        </div>
+                        <div className={styles.statCard}>
+                            <div className={`${styles.statIcon} ${styles.statIconGreen}`}>✓</div>
+                            <div className={styles.statInfo}>
+                                <span className={styles.statValue}>{filteredEmployees.filter(e => (e.matrix?.compliancePercentage || 0) >= 80).length}</span>
+                                <span className={styles.statLabel}>Cumplimiento ≥80%</span>
+                            </div>
+                        </div>
+                        <div className={styles.statCard}>
+                            <div className={`${styles.statIcon} ${styles.statIconOrange}`}>⚠</div>
+                            <div className={styles.statInfo}>
+                                <span className={styles.statValue}>{filteredEmployees.filter(e => (e.matrix?.compliancePercentage || 0) < 70).length}</span>
+                                <span className={styles.statLabel}>Requieren Atención</span>
+                            </div>
+                        </div>
+                    </div>
 
-                                {/* Pagination Controls */}
-                                <div className={styles.paginationControls}>
-                                    <span className={styles.pageInfo}>
-                                        Página {currentPage} de {Math.ceil(filteredEmployees.length / itemsPerPage)}
-                                    </span>
-                                    <div className={styles.pageButtons}>
-                                        <Button
-                                            variant="outline"
-                                            size="sm"
-                                            disabled={currentPage === 1}
-                                            onClick={() => setCurrentPage(prev => prev - 1)}
-                                        >
-                                            Anterior
-                                        </Button>
-                                        <Button
-                                            variant="outline"
-                                            size="sm"
-                                            disabled={currentPage >= Math.ceil(filteredEmployees.length / itemsPerPage)}
-                                            onClick={() => setCurrentPage(prev => prev + 1)}
-                                        >
-                                            Siguiente
-                                        </Button>
+                    {/* Filters */}
+                    <div className={styles.filterCard}>
+                        <div className={styles.filterContent}>
+                            <div className={styles.filterGroup}>
+                                <label>Buscar</label>
+                                <input
+                                    type="text"
+                                    placeholder="Nombre o ID..."
+                                    value={searchTerm}
+                                    onChange={(e) => setSearchTerm(e.target.value)}
+                                    className={styles.searchInput}
+                                />
+                            </div>
+                            <div className={styles.filterGroup}>
+                                <label>Departamento</label>
+                                <select value={deptFilter} onChange={(e) => setDeptFilter(e.target.value)} className={styles.select}>
+                                    <option value="Todos">Todos</option>
+                                    {departments.map(d => <option key={d} value={d}>{d}</option>)}
+                                </select>
+                            </div>
+                            <div className={styles.filterGroup}>
+                                <label>Puesto</label>
+                                <select value={posFilter} onChange={(e) => setPosFilter(e.target.value)} className={styles.select}>
+                                    <option value="Todos">Todos</option>
+                                    {positions.map(p => <option key={p} value={p}>{p}</option>)}
+                                </select>
+                            </div>
+                            <div className={styles.countBadge}>{filteredEmployees.length} Registros</div>
+                        </div>
+                    </div>
+
+                    {/* Employees List */}
+                    {loading ? (
+                        <div className={styles.loadingContainer}><div className="spinner"></div></div>
+                    ) : (
+                        <>
+                            <div className={styles.employeesList}>
+                                {filteredEmployees.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage).map(emp => (
+                                    <div key={emp.id} className={styles.employeeCard}>
+                                        <div className={styles.employeeRow} onClick={() => toggleExpand(emp.id)}>
+                                            <div className={styles.employeeInfo}>
+                                                <div
+                                                    className={styles.avatarWrapper}
+                                                    onClick={(e) => { e.stopPropagation(); emp.photoUrl && setPreviewImage({ url: emp.photoUrl, name: emp.name }); }}
+                                                    style={{ cursor: emp.photoUrl ? 'pointer' : 'default' }}
+                                                >
+                                                    {emp.photoUrl ? (
+                                                        // eslint-disable-next-line @next/next/no-img-element
+                                                        <img src={emp.photoUrl} alt={emp.name} referrerPolicy="no-referrer" />
+                                                    ) : getInitials(emp.name)}
+                                                </div>
+                                                <div className={styles.employeeDetails}>
+                                                    <span className={styles.empName}>{emp.name}</span>
+                                                    <span className={styles.empMeta}>{emp.position || 'Sin puesto'} • ID: {emp.employeeId || emp.id}</span>
+                                                </div>
+                                            </div>
+                                            <div className={styles.employeeActions}>
+                                                <span className={`${styles.complianceBadge} ${getComplianceColor(emp.matrix?.compliancePercentage || 0)}`}>
+                                                    {emp.matrix?.compliancePercentage || 0}%
+                                                </span>
+                                                <button className={`${styles.expandBtn} ${expandedId === emp.id ? styles.expanded : ''}`}>
+                                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                                        <polyline points="6 9 12 15 18 9" />
+                                                    </svg>
+                                                </button>
+                                            </div>
+                                        </div>
+
+                                        {expandedId === emp.id && (
+                                            <div className={styles.expandedContent}>
+                                                <div className={styles.quickStats}>
+                                                    <div className={styles.quickStat}>
+                                                        <span>{emp.matrix?.completedCount || 0}</span>
+                                                        <span>Aprobados</span>
+                                                    </div>
+                                                    <div className={styles.quickStat}>
+                                                        <span>{emp.matrix?.requiredCount || 0}</span>
+                                                        <span>Requeridos</span>
+                                                    </div>
+                                                    <div className={styles.quickStat}>
+                                                        <span>{emp.department || '—'}</span>
+                                                        <span>Departamento</span>
+                                                    </div>
+                                                </div>
+
+                                                <div className={styles.detailsGrid}>
+                                                    <div className={styles.detailItem}>
+                                                        <span className={styles.detailLabel}>Área</span>
+                                                        <span className={styles.detailValue}>{emp.area || '—'}</span>
+                                                    </div>
+                                                    <div className={styles.detailItem}>
+                                                        <span className={styles.detailLabel}>Turno</span>
+                                                        <span className={styles.detailValue}>{emp.shift || '—'}</span>
+                                                    </div>
+                                                    <div className={styles.detailItem}>
+                                                        <span className={styles.detailLabel}>CURP</span>
+                                                        <span className={styles.detailValue}>{emp.curp || '—'}</span>
+                                                    </div>
+                                                    <div className={styles.detailItem}>
+                                                        <span className={styles.detailLabel}>Fecha Ingreso</span>
+                                                        <span className={styles.detailValue}>{emp.startDate || '—'}</span>
+                                                    </div>
+                                                </div>
+
+                                                {emp.history && emp.history.length > 0 && (
+                                                    <div className={styles.trainingHistory}>
+                                                        <h4>Historial Reciente</h4>
+                                                        <div className={styles.historyList}>
+                                                            {emp.history.slice().reverse().slice(0, 3).map((h, i) => (
+                                                                <div key={i} className={styles.historyItem}>
+                                                                    <span className={styles.historyName}>{h.courseName}</span>
+                                                                    <div className={styles.historyMeta}>
+                                                                        <span>{h.date}</span>
+                                                                        <span className={h.status === 'approved' ? styles.statusApproved : styles.statusRejected}>
+                                                                            {h.status === 'approved' ? '✓' : '✗'} {h.score}
+                                                                        </span>
+                                                                    </div>
+                                                                </div>
+                                                            ))}
+                                                        </div>
+                                                    </div>
+                                                )}
+
+                                                <div className={styles.actionButtonsRow}>
+                                                    <button className={styles.actionBtn} onClick={(e) => { e.stopPropagation(); setViewingEmp(emp); }}>
+                                                        👁️ Ver Detalle
+                                                    </button>
+                                                    {canWrite() && (
+                                                        <>
+                                                            <button className={`${styles.actionBtn} ${styles.danger}`} onClick={(e) => { e.stopPropagation(); handleDelete(emp); }}>
+                                                                🗑️ Eliminar
+                                                            </button>
+                                                            <button className={`${styles.actionBtn} ${styles.primary}`} onClick={(e) => { e.stopPropagation(); handleEdit(emp); }}>
+                                                                ✏️ Editar
+                                                            </button>
+                                                        </>
+                                                    )}
+                                                </div>
+                                            </div>
+                                        )}
                                     </div>
+                                ))}
+
+                                {filteredEmployees.length === 0 && (
+                                    <div className={styles.emptyState}>No se encontraron resultados.</div>
+                                )}
+                            </div>
+
+                            {/* Pagination */}
+                            <div className={styles.paginationControls}>
+                                <span className={styles.pageInfo}>
+                                    Página {currentPage} de {Math.ceil(filteredEmployees.length / itemsPerPage) || 1}
+                                </span>
+                                <div className={styles.pageButtons}>
+                                    <Button variant="outline" size="sm" disabled={currentPage === 1} onClick={() => setCurrentPage(prev => prev - 1)}>←</Button>
+                                    <Button variant="outline" size="sm" disabled={currentPage >= Math.ceil(filteredEmployees.length / itemsPerPage)} onClick={() => setCurrentPage(prev => prev + 1)}>→</Button>
                                 </div>
-                            </CardContent>
-                        </Card>
-                    </>
-                )}
+                            </div>
+                        </>
+                    )}
+                </div>
             </main>
 
             {/* Create/Edit Modal */}

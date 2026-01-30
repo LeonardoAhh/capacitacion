@@ -1,3 +1,5 @@
+/* ==================== DIALOG - MODERN GLASSMORPHISM ==================== */
+
 .dialogRoot {
     position: fixed;
     inset: 0;
@@ -11,24 +13,33 @@
 .overlay {
     position: absolute;
     inset: 0;
-    background-color: rgba(0, 0, 0, 0.6);
-    backdrop-filter: blur(4px);
+    background-color: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
     animation: fadeIn 0.2s ease-out;
 }
 
 .content {
     position: relative;
-    background-color: var(--bg-secondary);
-    border: 1px solid var(--border-color);
-    border-radius: var(--radius-xl);
-    box-shadow: var(--shadow-xl);
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 20px;
+    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15);
     width: 100%;
     max-width: 750px;
     max-height: 85vh;
     overflow: hidden;
     display: flex;
     flex-direction: column;
-    animation: dialogSlideIn 0.3s ease-out;
+    animation: dialogSlideIn 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+[data-theme="dark"] .content {
+    background: rgba(30, 30, 35, 0.9);
+    border-color: rgba(255, 255, 255, 0.08);
+    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.4);
 }
 
 .header {
@@ -38,15 +49,16 @@
 }
 
 .title {
-    font-size: 1.25rem;
-    font-weight: 600;
+    font-size: 1.3rem;
+    font-weight: 700;
     color: var(--text-primary);
     margin: 0;
     padding-right: var(--spacing-2xl);
+    letter-spacing: -0.3px;
 }
 
 .description {
-    font-size: 0.875rem;
+    font-size: 0.9rem;
     color: var(--text-secondary);
     margin: var(--spacing-sm) 0 0 0;
     line-height: 1.5;
@@ -57,7 +69,6 @@
     padding-bottom: var(--spacing-xl);
     overflow-y: auto;
     flex: 1;
-    /* Custom Scrollbar */
     scrollbar-width: thin;
     scrollbar-color: var(--border-color) transparent;
 }
@@ -72,12 +83,12 @@
 
 .body::-webkit-scrollbar-thumb {
     background-color: var(--border-color);
-    border-radius: 4px;
+    border-radius: 10px;
 }
 
 .footer {
     padding: var(--spacing-lg) var(--spacing-xl);
-    background-color: var(--bg-tertiary);
+    background: rgba(0, 0, 0, 0.03);
     border-top: 1px solid var(--border-color);
     display: flex;
     align-items: center;
@@ -85,28 +96,34 @@
     gap: var(--spacing-md);
 }
 
+[data-theme="dark"] .footer {
+    background: rgba(0, 0, 0, 0.2);
+}
+
 .closeButton {
     position: absolute;
     top: var(--spacing-lg);
     right: var(--spacing-lg);
-    width: 32px;
-    height: 32px;
+    width: 34px;
+    height: 34px;
     display: flex;
     align-items: center;
     justify-content: center;
-    border-radius: var(--radius-md);
-    background: transparent;
+    border-radius: 50%;
+    background: var(--bg-tertiary);
     color: var(--text-tertiary);
     border: none;
     cursor: pointer;
-    transition: all var(--transition-fast);
+    transition: all 0.2s;
 }
 
 .closeButton:hover {
-    background-color: var(--bg-tertiary);
+    background: var(--bg-secondary);
     color: var(--text-primary);
+    transform: scale(1.05);
 }
 
+/* Animations */
 @keyframes fadeIn {
     from {
         opacity: 0;
@@ -120,7 +137,7 @@
 @keyframes dialogSlideIn {
     from {
         opacity: 0;
-        transform: scale(0.95) translateY(-10px);
+        transform: scale(0.92) translateY(-20px);
     }
 
     to {
@@ -129,17 +146,98 @@
     }
 }
 
-/* Responsive */
-@media (max-width: 640px) {
-    .content {
-        max-height: 90vh;
-        margin: var(--spacing-md);
+/* ==================== RESPONSIVE ==================== */
+
+/* Tablet */
+@media (max-width: 768px) {
+    .dialogRoot {
+        padding: var(--spacing-md);
     }
 
-    .header,
-    .body,
+    .content {
+        max-width: 100%;
+        max-height: 90vh;
+        border-radius: 16px;
+    }
+
+    .header {
+        padding: var(--spacing-lg);
+        padding-bottom: var(--spacing-sm);
+    }
+
+    .title {
+        font-size: 1.15rem;
+    }
+
+    .body {
+        padding: 0 var(--spacing-lg);
+        padding-bottom: var(--spacing-lg);
+    }
+
     .footer {
-        padding-left: var(--spacing-lg);
-        padding-right: var(--spacing-lg);
+        padding: var(--spacing-md) var(--spacing-lg);
+        flex-wrap: wrap;
+    }
+}
+
+/* Mobile */
+@media (max-width: 480px) {
+    .dialogRoot {
+        padding: 0;
+        align-items: flex-end;
+    }
+
+    .content {
+        max-height: 92vh;
+        border-radius: 20px 20px 0 0;
+        animation: dialogSlideUp 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+    }
+
+    .header {
+        padding: var(--spacing-lg) var(--spacing-md);
+        padding-top: var(--spacing-xl);
+    }
+
+    .title {
+        font-size: 1.1rem;
+        padding-right: 40px;
+    }
+
+    .description {
+        font-size: 0.85rem;
+    }
+
+    .body {
+        padding: 0 var(--spacing-md);
+        padding-bottom: var(--spacing-md);
+    }
+
+    .footer {
+        padding: var(--spacing-md);
+        gap: var(--spacing-sm);
+    }
+
+    .footer>* {
+        flex: 1;
+        min-width: 0;
+    }
+
+    .closeButton {
+        top: var(--spacing-md);
+        right: var(--spacing-md);
+        width: 32px;
+        height: 32px;
+    }
+}
+
+@keyframes dialogSlideUp {
+    from {
+        opacity: 0;
+        transform: translateY(100%);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
     }
 }

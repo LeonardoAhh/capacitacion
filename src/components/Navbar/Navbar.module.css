@@ -1,92 +1,147 @@
-/* ==================== iOS NAVBAR ==================== */
+/* ==================== FLOATING DOCK NAVBAR ==================== */
 .navbar {
     position: sticky;
-    top: 0;
-    z-index: 100;
-    background-color: rgba(255, 255, 255, 0.72);
-    border-bottom: 1px solid var(--border-color);
-    backdrop-filter: saturate(180%) blur(20px);
-    -webkit-backdrop-filter: saturate(180%) blur(20px);
-    transition: all var(--transition-base);
-}
-
-[data-theme="dark"] .navbar {
-    background-color: rgba(0, 0, 0, 0.72);
+    top: 20px;
+    z-index: 1000;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    padding: 0 20px;
+    pointer-events: none;
+    /* Allows clicks to pass through empty side areas */
+    margin-bottom: 20px;
+    /* Add spacing to content below */
 }
 
 .container {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: var(--spacing-sm) var(--spacing-lg);
+    pointer-events: auto;
+    /* Re-enable interactions on the dock itself */
     display: flex;
-    justify-content: space-between;
     align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+
+    /* Dynamic width based on content, but with sane limits */
+    width: 100%;
+    max-width: 900px;
+    min-height: 64px;
+
+    padding: 6px 8px 6px 24px;
+    /* Less padding right for round buttons */
+
+    /* Glass Effect Light */
+    background: rgba(255, 255, 255, 0.75);
+    backdrop-filter: saturate(180%) blur(20px);
+    -webkit-backdrop-filter: saturate(180%) blur(20px);
+
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    border-radius: 100px;
+    /* Full Capsule Shape */
+
+    box-shadow:
+        0 4px 20px -5px rgba(0, 0, 0, 0.1),
+        0 10px 40px -10px rgba(0, 0, 0, 0.05);
+
+    animation: floatIn 0.6s cubic-bezier(0.2, 0.8, 0.2, 1);
+    transition: all 0.3s ease;
 }
 
-/* ==================== iOS LOGO ==================== */
+[data-theme="dark"] .container {
+    /* Glass Effect Dark - Deep & Premium */
+    background: rgba(20, 20, 24, 0.75);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    box-shadow:
+        0 4px 20px -5px rgba(0, 0, 0, 0.3),
+        inset 0 1px 0 rgba(255, 255, 255, 0.05);
+}
+
+/* ==================== LOGO SECTION ==================== */
 .logo {
     display: flex;
     align-items: center;
-    gap: var(--spacing-sm);
+    gap: 12px;
+    text-decoration: none;
+    transition: opacity 0.2s;
+    padding-right: 12px;
+}
+
+.logo:hover {
+    opacity: 0.8;
 }
 
 .logoIcon {
-    width: 36px;
-    height: 36px;
-    background: var(--color-primary);
-    border-radius: var(--radius-md);
+    width: 38px;
+    height: 38px;
+    background: linear-gradient(135deg, var(--color-primary), #3b82f6);
+    border-radius: 12px;
     display: flex;
     align-items: center;
     justify-content: center;
     color: white;
+    box-shadow: 0 4px 10px rgba(59, 130, 246, 0.3);
 }
 
 .logoText {
-    font-size: 1.1rem;
-    font-weight: 600;
+    font-size: 1.2rem;
+    font-weight: 800;
     color: var(--text-primary);
-    letter-spacing: -0.3px;
+    letter-spacing: -0.5px;
 }
 
-/* ==================== iOS ACTIONS ==================== */
+/* ==================== CONTROLS SECTION ==================== */
 .actions {
     display: flex;
     align-items: center;
-    gap: var(--spacing-sm);
+    gap: 6px;
+    background: rgba(0, 0, 0, 0.04);
+    padding: 5px;
+    border-radius: 50px;
 }
 
+[data-theme="dark"] .actions {
+    background: rgba(255, 255, 255, 0.06);
+}
+
+/* User Pill */
 .userInfo {
     display: flex;
     align-items: center;
-    gap: var(--spacing-sm);
-    padding: 6px var(--spacing-md) 6px 6px;
-    background-color: var(--bg-secondary);
-    border-radius: var(--radius-full);
-    border: 1px solid var(--border-color);
-    transition: all var(--transition-fast);
+    gap: 10px;
+    padding: 4px 16px 4px 4px;
+    margin-right: 4px;
+    background: var(--bg-primary);
+    border-radius: 40px;
+    border: 1px solid rgba(0, 0, 0, 0.05);
+    transition: transform 0.2s;
+    cursor: default;
+}
+
+[data-theme="dark"] .userInfo {
+    border-color: rgba(255, 255, 255, 0.05);
 }
 
 .userInfo:hover {
-    background-color: var(--bg-tertiary);
+    transform: scale(1.02);
 }
 
 .userAvatar {
     width: 32px;
     height: 32px;
     border-radius: 50%;
-    background: var(--color-primary);
+    background: linear-gradient(135deg, #FF2D55, #FF9F0A);
     display: flex;
     align-items: center;
     justify-content: center;
     color: white;
-    font-size: 0.875rem;
-    font-weight: 600;
+    font-size: 0.85rem;
+    font-weight: 700;
 }
 
 .userDetails {
     display: flex;
     flex-direction: column;
-    line-height: 1.2;
+    line-height: 1.1;
+    padding-right: 4px;
 }
 
 .userName {
@@ -98,14 +153,16 @@
 .userRole {
     font-size: 0.7rem;
     color: var(--text-tertiary);
-    text-transform: capitalize;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    font-weight: 500;
 }
 
-/* iOS Icon Button */
+/* Buttons - Inline Styles */
 .iconBtn {
-    width: 36px;
-    height: 36px;
-    border-radius: var(--radius-full);
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
     background: transparent;
     border: none;
     color: var(--text-secondary);
@@ -113,45 +170,68 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: all var(--transition-fast);
+    transition: all 0.25s cubic-bezier(0.3, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
 }
 
 .iconBtn:hover {
-    background-color: rgba(255, 59, 48, 0.12);
-    color: #FF3B30;
+    color: #ef4444;
+    /* Red for logout */
+    background: rgba(239, 68, 68, 0.1);
 }
 
-[data-theme="dark"] .iconBtn:hover {
-    background-color: rgba(255, 69, 58, 0.2);
-    color: #FF453A;
-}
-
-/* ==================== THEME TOGGLE iOS ==================== */
 .themeToggle {
-    width: 36px;
-    height: 36px;
-    border-radius: var(--radius-full);
-    background: var(--bg-secondary);
-    border: 1px solid var(--border-color);
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    background: transparent;
+    border: none;
     color: var(--text-secondary);
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: all var(--transition-fast);
+    transition: all 0.25s cubic-bezier(0.3, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
 }
 
 .themeToggle:hover {
-    background-color: var(--bg-tertiary);
-    color: var(--color-primary);
+    color: #f59e0b;
+    background: rgba(245, 158, 11, 0.1);
+    transform: rotate(20deg);
+}
+
+/* ==================== ANIMATIONS ==================== */
+@keyframes floatIn {
+    from {
+        opacity: 0;
+        transform: translateY(-20px) scale(0.95);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
 }
 
 /* ==================== RESPONSIVE ==================== */
-@media (max-width: 640px) {
+@media (max-width: 768px) {
+    .navbar {
+        top: 10px;
+        padding: 0 10px;
+    }
+
+    .container {
+        padding: 6px 6px 6px 16px;
+        width: 100%;
+        max-width: 100%;
+    }
+
     .logoText {
-        display: block;
-        /* Show text on mobile for better branding */
-        font-size: 1rem;
+        display: none;
+        /* Hide text on small mobile to fit everything */
     }
 
     .userDetails {
@@ -160,20 +240,7 @@
 
     .userInfo {
         padding: 4px;
-        border-radius: 50%;
-    }
-
-    .container {
-        padding: 14px 20px;
-        /* More breathing room */
-        width: 100%;
-        box-sizing: border-box;
-        min-height: 60px;
-        /* Ensure minimum touch height */
-    }
-
-    .logoIcon {
-        width: 32px;
-        height: 32px;
+        border: none;
+        background: transparent;
     }
 }

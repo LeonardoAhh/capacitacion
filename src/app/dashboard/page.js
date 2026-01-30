@@ -248,6 +248,14 @@ export default function DashboardPage() {
             </div>
 
             <div className={styles.container}>
+                {/* Back Link */}
+                <Link href="/modulos" className={styles.backLink}>
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M19 12H5" />
+                        <path d="M12 19l-7-7 7-7" />
+                    </svg>
+                    Volver
+                </Link>
                 {/* Notification Controls */}
                 {permission === 'default' && (
                     <div className={styles.sectionCard} style={{
@@ -287,10 +295,12 @@ export default function DashboardPage() {
 
                 <header className={styles.header}>
                     <div className={styles.headerTitle}>
-                        <h1>{getGreeting(userName)}{userName ? `, ${userName}` : ''}</h1>
+                        <div className={styles.headerTitleRow}>
+                            <h1>{getGreeting(userName)}{userName ? `, ${userName}` : ''}</h1>
+                            {user?.rol && <RoleAvatar role={user.rol} size={40} />}
+                        </div>
                         <p className={styles.headerSubtitle}>Resumen de actividad y pendientes</p>
                     </div>
-                    {user?.rol && <RoleAvatar role={user.rol} size={48} />}
                 </header>
 
                 <div className={styles.statsGrid}>
@@ -415,7 +425,7 @@ export default function DashboardPage() {
                                             <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
                                         </svg>
                                     </div>
-                                    <span className={styles.actionText}>Empleados</span>
+                                    <span className={styles.actionText}>Contratos</span>
                                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                                         <polyline points="9 18 15 12 9 6" />
                                     </svg>

@@ -3,7 +3,6 @@
 import { useState, useEffect, useMemo, useCallback } from 'react';
 import Navbar from '@/components/Navbar/Navbar';
 import Link from 'next/link';
-import { Card, CardContent } from '@/components/ui/Card/Card';
 import { Button } from '@/components/ui/Button/Button';
 import { useToast } from '@/components/ui/Toast/Toast';
 import { db } from '@/lib/firebase';
@@ -22,7 +21,20 @@ export default function CumplimientoPage() {
     const [selectedCourse, setSelectedCourse] = useState('');
     const [searchTerm, setSearchTerm] = useState('');
     const [currentPage, setCurrentPage] = useState(1);
+    const [expandedRows, setExpandedRows] = useState(new Set());
     const itemsPerPage = 25;
+
+    const toggleRow = (empId) => {
+        setExpandedRows(prev => {
+            const newSet = new Set(prev);
+            if (newSet.has(empId)) {
+                newSet.delete(empId);
+            } else {
+                newSet.add(empId);
+            }
+            return newSet;
+        });
+    };
 
     const loadData = useCallback(async () => {
         setLoading(true);
@@ -201,11 +213,16 @@ export default function CumplimientoPage() {
         <>
             <Navbar />
             <main className={styles.main} id="main-content">
+                {/* Background Blobs */}
+                <div className={styles.blob + ' ' + styles.blob1}></div>
+                <div className={styles.blob + ' ' + styles.blob2}></div>
+                <div className={styles.blob + ' ' + styles.blob3}></div>
+
                 <div className={styles.container}>
                     <div className={styles.header}>
                         <div className={styles.headerLeft}>
                             <Link href="/capacitacion" className={styles.backBtn}>
-                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                                     <path d="M19 12H5" />
                                     <polyline points="12 19 5 12 12 5" />
                                 </svg>
@@ -221,42 +238,40 @@ export default function CumplimientoPage() {
                     ) : (
                         <>
                             {/* Course Selector */}
-                            <Card className={styles.selectorCard}>
-                                <CardContent>
-                                    <div className={styles.selectorRow}>
-                                        <div className={styles.formGroup}>
-                                            <label>Seleccionar Curso</label>
-                                            <select
-                                                value={selectedCourse}
-                                                onChange={(e) => {
-                                                    setSelectedCourse(e.target.value);
-                                                    setCurrentPage(1);
-                                                }}
-                                                className={styles.select}
-                                            >
-                                                <option value="">-- Selecciona un curso --</option>
-                                                {courses.map(c => (
-                                                    <option key={c.id} value={c.name}>{c.name}</option>
-                                                ))}
-                                            </select>
-                                        </div>
-                                        {selectedCourse && courseEmployees.length > 0 && (
-                                            <Button
-                                                variant="outline"
-                                                onClick={downloadReport}
-                                                style={{ marginTop: 'auto' }}
-                                            >
-                                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
-                                                    <polyline points="7 10 12 15 17 10" />
-                                                    <line x1="12" y1="15" x2="12" y2="3" />
-                                                </svg>
-                                                Xlxs
-                                            </Button>
-                                        )}
+                            <div className={styles.selectorCard}>
+                                <div className={styles.selectorRow}>
+                                    <div className={styles.formGroup}>
+                                        <label>Seleccionar Curso</label>
+                                        <select
+                                            value={selectedCourse}
+                                            onChange={(e) => {
+                                                setSelectedCourse(e.target.value);
+                                                setCurrentPage(1);
+                                            }}
+                                            className={styles.select}
+                                        >
+                                            <option value="">-- Selecciona un curso --</option>
+                                            {courses.map(c => (
+                                                <option key={c.id} value={c.name}>{c.name}</option>
+                                            ))}
+                                        </select>
                                     </div>
-                                </CardContent>
-                            </Card>
+                                    {selectedCourse && courseEmployees.length > 0 && (
+                                        <Button
+                                            variant="outline"
+                                            onClick={downloadReport}
+                                            style={{ marginTop: 'auto' }}
+                                        >
+                                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                                                <polyline points="7 10 12 15 17 10" />
+                                                <line x1="12" y1="15" x2="12" y2="3" />
+                                            </svg>
+                                            Xlxs
+                                        </Button>
+                                    )}
+                                </div>
+                            </div>
 
                             {selectedCourse && (
                                 <>
@@ -318,101 +333,120 @@ export default function CumplimientoPage() {
                                     </div>
 
                                     {/* Search and Table */}
-                                    <Card>
-                                        <CardContent>
-                                            <div className={styles.tableHeader}>
-                                                <h3>Listado de Personal</h3>
-                                                <div className={styles.searchBox}>
-                                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                                        <circle cx="11" cy="11" r="8" />
-                                                        <line x1="21" y1="21" x2="16.65" y2="16.65" />
-                                                    </svg>
-                                                    <input
-                                                        type="text"
-                                                        placeholder="Buscar por nombre, ID o departamento..."
-                                                        value={searchTerm}
-                                                        onChange={(e) => {
-                                                            setSearchTerm(e.target.value);
-                                                            setCurrentPage(1);
-                                                        }}
-                                                    />
-                                                </div>
+                                    <div className={styles.tableCard}>
+                                        <div className={styles.tableHeader}>
+                                            <h3>Listado de Personal</h3>
+                                            <div className={styles.searchBox}>
+                                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                                    <circle cx="11" cy="11" r="8" />
+                                                    <line x1="21" y1="21" x2="16.65" y2="16.65" />
+                                                </svg>
+                                                <input
+                                                    type="text"
+                                                    placeholder="Buscar por nombre, ID o departamento..."
+                                                    value={searchTerm}
+                                                    onChange={(e) => {
+                                                        setSearchTerm(e.target.value);
+                                                        setCurrentPage(1);
+                                                    }}
+                                                />
                                             </div>
+                                        </div>
 
-                                            <div className={styles.tableWrapper}>
-                                                <table className={styles.table}>
-                                                    <thead>
-                                                        <tr>
-                                                            <th>ID</th>
-                                                            <th>Nombre</th>
-                                                            <th>Departamento</th>
-                                                            <th>Puesto</th>
-                                                            <th>Fecha</th>
-                                                            <th className="text-center">Calificación</th>
-                                                            <th className="text-center">Estado</th>
-                                                        </tr>
-                                                    </thead>
-                                                    <tbody>
-                                                        {paginatedEmployees.length === 0 ? (
-                                                            <tr>
-                                                                <td colSpan={7} className={styles.emptyState}>
-                                                                    No se encontraron empleados para este curso.
-                                                                </td>
-                                                            </tr>
-                                                        ) : (
-                                                            paginatedEmployees.map(emp => (
-                                                                <tr key={emp.id}>
-                                                                    <td className={styles.idCell}>{emp.id}</td>
-                                                                    <td className={styles.nameCell}>{emp.name}</td>
-                                                                    <td>{emp.department}</td>
-                                                                    <td>{emp.position}</td>
-                                                                    <td>{emp.date}</td>
-                                                                    <td className="text-center">
+                                        <div className={styles.employeeList}>
+                                            {paginatedEmployees.length === 0 ? (
+                                                <div className={styles.emptyState}>
+                                                    No se encontraron empleados para este curso.
+                                                </div>
+                                            ) : (
+                                                paginatedEmployees.map(emp => (
+                                                    <div
+                                                        key={emp.id}
+                                                        className={`${styles.employeeRow} ${expandedRows.has(emp.id) ? styles.expanded : ''}`}
+                                                    >
+                                                        <div
+                                                            className={styles.employeeHeader}
+                                                            onClick={() => toggleRow(emp.id)}
+                                                        >
+                                                            <div className={styles.employeeMain}>
+                                                                <span className={styles.employeeId}>{emp.id}</span>
+                                                                <span className={styles.employeeName}>{emp.name}</span>
+                                                            </div>
+                                                            <div className={styles.employeeActions}>
+                                                                {getStatusBadge(emp.status)}
+                                                                <svg
+                                                                    className={styles.chevron}
+                                                                    width="20"
+                                                                    height="20"
+                                                                    viewBox="0 0 24 24"
+                                                                    fill="none"
+                                                                    stroke="currentColor"
+                                                                    strokeWidth="2"
+                                                                >
+                                                                    <polyline points="6 9 12 15 18 9" />
+                                                                </svg>
+                                                            </div>
+                                                        </div>
+
+                                                        <div className={styles.employeeDetails}>
+                                                            <div className={styles.detailGrid}>
+                                                                <div className={styles.detailItem}>
+                                                                    <span className={styles.detailLabel}>Departamento</span>
+                                                                    <span className={styles.detailValue}>{emp.department}</span>
+                                                                </div>
+                                                                <div className={styles.detailItem}>
+                                                                    <span className={styles.detailLabel}>Puesto</span>
+                                                                    <span className={styles.detailValue}>{emp.position}</span>
+                                                                </div>
+                                                                <div className={styles.detailItem}>
+                                                                    <span className={styles.detailLabel}>Fecha</span>
+                                                                    <span className={styles.detailValue}>{emp.date}</span>
+                                                                </div>
+                                                                <div className={styles.detailItem}>
+                                                                    <span className={styles.detailLabel}>Calificación</span>
+                                                                    <span className={styles.detailValue}>
                                                                         {emp.score !== '-' ? (
                                                                             <span className={`${styles.scoreBadge} ${emp.score >= 70 ? styles.scorePass : styles.scoreFail}`}>
                                                                                 {emp.score}
                                                                             </span>
                                                                         ) : '-'}
-                                                                    </td>
-                                                                    <td className="text-center">
-                                                                        {getStatusBadge(emp.status)}
-                                                                    </td>
-                                                                </tr>
-                                                            ))
-                                                        )}
-                                                    </tbody>
-                                                </table>
-                                            </div>
-
-                                            {/* Pagination */}
-                                            {totalPages > 1 && (
-                                                <div className={styles.pagination}>
-                                                    <span className={styles.pageInfo}>
-                                                        Mostrando {((currentPage - 1) * itemsPerPage) + 1} - {Math.min(currentPage * itemsPerPage, filteredEmployees.length)} de {filteredEmployees.length}
-                                                    </span>
-                                                    <div className={styles.pageButtons}>
-                                                        <Button
-                                                            variant="outline"
-                                                            size="sm"
-                                                            disabled={currentPage === 1}
-                                                            onClick={() => setCurrentPage(p => p - 1)}
-                                                        >
-                                                            Anterior
-                                                        </Button>
-                                                        <span className={styles.pageNum}>Página {currentPage} de {totalPages}</span>
-                                                        <Button
-                                                            variant="outline"
-                                                            size="sm"
-                                                            disabled={currentPage >= totalPages}
-                                                            onClick={() => setCurrentPage(p => p + 1)}
-                                                        >
-                                                            Siguiente
-                                                        </Button>
+                                                                    </span>
+                                                                </div>
+                                                            </div>
+                                                        </div>
                                                     </div>
-                                                </div>
+                                                ))
                                             )}
-                                        </CardContent>
-                                    </Card>
+                                        </div>
+
+                                        {/* Pagination */}
+                                        {totalPages > 1 && (
+                                            <div className={styles.pagination}>
+                                                <span className={styles.pageInfo}>
+                                                    Mostrando {((currentPage - 1) * itemsPerPage) + 1} - {Math.min(currentPage * itemsPerPage, filteredEmployees.length)} de {filteredEmployees.length}
+                                                </span>
+                                                <div className={styles.pageButtons}>
+                                                    <Button
+                                                        variant="outline"
+                                                        size="sm"
+                                                        disabled={currentPage === 1}
+                                                        onClick={() => setCurrentPage(p => p - 1)}
+                                                    >
+                                                        Anterior
+                                                    </Button>
+                                                    <span className={styles.pageNum}>Página {currentPage} de {totalPages}</span>
+                                                    <Button
+                                                        variant="outline"
+                                                        size="sm"
+                                                        disabled={currentPage >= totalPages}
+                                                        onClick={() => setCurrentPage(p => p + 1)}
+                                                    >
+                                                        Siguiente
+                                                    </Button>
+                                                </div>
+                                            </div>
+                                        )}
+                                    </div>
                                 </>
                             )}
                         </>
@@ -422,3 +456,4 @@ export default function CumplimientoPage() {
         </>
     );
 }
+

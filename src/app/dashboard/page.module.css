@@ -97,6 +97,12 @@
     font-weight: 400;
 }
 
+.headerTitleRow {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
 /* ==================== STATS GRID (BENTO TOP) ==================== */
 .statsGrid {
     display: grid;
@@ -376,6 +382,45 @@
         opacity: 1;
         transform: translateY(0);
     }
+}
+
+/* ==================== NAVIGATION ==================== */
+.backLink {
+    align-self: flex-start;
+    /* Crucial: Prevents stretching */
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 16px;
+    margin-bottom: 8px;
+    /* Reduced from 24px for tighter spacing */
+
+    /* Subtle Glass Style */
+    background: rgba(255, 255, 255, 0.4);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 50px;
+
+    color: var(--text-secondary);
+    text-decoration: none;
+    font-weight: 500;
+    /* Lighter weight */
+    font-size: 0.85rem;
+    /* Smaller text */
+
+    transition: all 0.2s cubic-bezier(0.2, 0.8, 0.2, 1);
+    backdrop-filter: blur(8px);
+}
+
+[data-theme="dark"] .backLink {
+    background: rgba(40, 40, 45, 0.4);
+    border-color: rgba(255, 255, 255, 0.05);
+}
+
+.backLink:hover {
+    background: var(--bg-secondary);
+    color: var(--text-primary);
+    transform: translateX(-4px);
+    border-color: var(--border-color);
 }
 
 /* ==================== RESPONSIVE ==================== */

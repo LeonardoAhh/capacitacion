@@ -68,6 +68,40 @@
     gap: 40px;
 }
 
+/* ==================== NAVIGATION ==================== */
+.backLink {
+    align-self: flex-start;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 16px;
+    margin-bottom: 8px;
+
+    background: rgba(255, 255, 255, 0.4);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 50px;
+
+    color: var(--text-secondary);
+    text-decoration: none;
+    font-weight: 500;
+    font-size: 0.85rem;
+
+    transition: all 0.2s cubic-bezier(0.2, 0.8, 0.2, 1);
+    backdrop-filter: blur(8px);
+}
+
+[data-theme="dark"] .backLink {
+    background: rgba(40, 40, 45, 0.4);
+    border-color: rgba(255, 255, 255, 0.05);
+}
+
+.backLink:hover {
+    background: var(--bg-secondary);
+    color: var(--text-primary);
+    transform: translateX(-4px);
+    border-color: var(--border-color);
+}
+
 /* ==================== HEADER ==================== */
 .header {
     display: flex;
