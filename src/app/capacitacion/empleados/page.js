@@ -10,7 +10,8 @@ import { Button } from '@/components/ui/Button/Button';
 import { useToast } from '@/components/ui/Toast/Toast';
 import { db } from '@/lib/firebase';
 import { uploadFile } from '@/lib/upload';
-import { collection, getDocs, query, orderBy, doc, updateDoc, setDoc, getDoc, deleteDoc, where, limit } from 'firebase/firestore';
+import { collection, getDocs, query, orderBy, doc, updateDoc, setDoc, getDoc, deleteDoc, where, limit, writeBatch } from 'firebase/firestore';
+
 import { Dialog, DialogHeader, DialogTitle, DialogBody, DialogFooter, DialogClose } from '@/components/ui/Dialog/Dialog';
 import { Avatar } from '@/components/ui/Avatar/Avatar';
 import styles from './page.module.css';
@@ -94,27 +95,17 @@ export default function EmpleadosPage() {
         if (!editingEmp) return;
         const updatedDocs = [...(editingEmp.documents || [])];
         updatedDocs.splice(index, 1);
-
-        // Optimistic update local
         setEditingEmp({ ...editingEmp, documents: updatedDocs });
-
-        // Update Firestore immediately (optional, or wait for save)
-        // For now, we'll let handleSave do the heavy lifting, 
-        // but we need to update formData or editingEmp to reflect changes?
-        // Actually, easiest is to just update state and let handleSave merge it.
     };
 
     const handleUploadPhoto = async (empId) => {
         if (!photoFile) return null;
-
         try {
             const result = await uploadFile(photoFile, { employeeId: empId, docType: 'profile' });
-
             if (!result.success) {
                 console.error("Upload Error:", result.error);
                 throw new Error(result.error || 'Error del servidor al subir foto');
             }
-
             return { photoUrl: result.data.viewLink, photoDriveId: result.data.id };
         } catch (error) {
             console.error("Upload Error:", error);
@@ -126,7 +117,6 @@ export default function EmpleadosPage() {
     const handleUploadDocs = async (empId) => {
         if (docFiles.length === 0) return [];
         const uploadedDocs = [];
-
         for (const file of docFiles) {
             try {
                 const result = await uploadFile(file, { employeeId: empId, docType: 'documents' });
@@ -152,8 +142,6 @@ export default function EmpleadosPage() {
 
     useEffect(() => {
         let result = employees;
-
-        // 1. Text Search
         if (searchTerm) {
             const term = searchTerm.toLowerCase();
             result = result.filter(e =>
@@ -161,19 +149,14 @@ export default function EmpleadosPage() {
                 (e.id && e.id.toLowerCase().includes(term))
             );
         }
-
-        // 2. Department Filter
         if (deptFilter !== 'Todos') {
             result = result.filter(e => e.department === deptFilter);
         }
-
-        // 3. Position Filter
         if (posFilter !== 'Todos') {
             result = result.filter(e => e.position === posFilter);
         }
-
         setFilteredEmployees(result);
-        setCurrentPage(1); // Reset to page 1 on filter change
+        setCurrentPage(1);
     }, [searchTerm, deptFilter, posFilter, employees]);
 
     const loadEmployees = async () => {
@@ -182,17 +165,12 @@ export default function EmpleadosPage() {
             const q = query(collection(db, 'training_records'), orderBy('name'));
             const snapshot = await getDocs(q);
             const data = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
-
             setEmployees(data);
             setFilteredEmployees(data);
-
-            // Extract Unique Filtes
             const depts = new Set(data.map(e => e.department).filter(Boolean));
             setDepartments(Array.from(depts).sort());
-
             const pos = new Set(data.map(e => e.position).filter(Boolean));
             setPositions(Array.from(pos).sort());
-
         } catch (error) {
             console.error("Error loading employees:", error);
             toast.error("Error", "No se pudieron cargar los empleados.");
@@ -203,19 +181,7 @@ export default function EmpleadosPage() {
 
     const handleCreate = () => {
         setFormData({
-            id: '',
-            name: '',
-            position: '',
-            department: '',
-            curp: '',
-            occupation: '',
-            area: '',
-            education: '',
-            startDate: '',
-            shift: '',
-            performanceScore: '',
-            performancePeriod: '',
-            positionStartDate: ''
+            id: '', name: '', position: '', department: '', curp: '', occupation: '', area: '', education: '', startDate: '', shift: '', performanceScore: '', performancePeriod: '', positionStartDate: ''
         });
         setIsCreating(true);
     };
@@ -245,16 +211,32 @@ export default function EmpleadosPage() {
             return;
         }
 
-        if (!window.confirm(`¿Estás seguro de eliminar a ${emp.name}? Esta acción es irreversible.`)) return;
+        if (!window.confirm(`¿Estás seguro de eliminar a ${emp.name}? Esta acción es irreversible y eliminará al empleado de todos los registros (Capacitación, Instructores, etc).`)) return;
 
         try {
-            await deleteDoc(doc(db, 'training_records', emp.id));
+            const batch = writeBatch(db);
+
+            // 1. Delete Main Record (training_records)
+            const empRef = doc(db, 'training_records', emp.id);
+            batch.delete(empRef);
+
+            // 2. Delete Instructor Record (instructors) if exists
+            // Try to delete using employeeId (which is the key in instructors collection)
+            if (emp.employeeId || emp.id) {
+                // In migration we used employeeId as key. If not present, fallback to doc ID.
+                const targetId = emp.employeeId || emp.id;
+                const instructorRef = doc(db, 'instructors', targetId);
+                batch.delete(instructorRef);
+            }
+
+            await batch.commit();
+
             setEmployees(prev => prev.filter(e => e.id !== emp.id));
             setFilteredEmployees(prev => prev.filter(e => e.id !== emp.id));
-            toast.success("Eliminado", "Empleado eliminado.");
+            toast.success("Eliminado", "Empleado y datos asociados eliminados.");
         } catch (e) {
             console.error("Error deleting", e);
-            toast.error("Error", "No se pudo eliminar.");
+            toast.error("Error", "No se pudo eliminar el registro completamente.");
         }
     };
 
