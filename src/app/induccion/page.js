@@ -13,24 +13,14 @@ import Navbar from '@/components/Navbar/Navbar';
 import TriviaGame from '@/components/TriviaGame/TriviaGame';
 import inductionData from '@/data/induction_data.json';
 import produccionOrgData from '@/data/produccion_org.json';
+import { migrateInstructorsToFirebase } from '@/lib/migrateInstructors';
 import styles from './page.module.css';
-
-// Instructores data removed from repo for privacy
-const instructoresData = [];
 
 // --- CONFIGURACIÓN Y CONSTANTES ---
 const BOSS_ID = '3160';
 const COORD_REC_ID = '3373';
 const ANALYST_IDS = ['3376', '3884'];
 const RH_IDS = [BOSS_ID, COORD_REC_ID, ...ANALYST_IDS, '2099', '3204', '3818', '3853'];
-
-// Procesamiento de Instructores (Estático)
-const instructorsMap = instructoresData.reduce((acc, item) => {
-    if (!acc[item.employeeId]) acc[item.employeeId] = [];
-    acc[item.employeeId].push(item['curso que imparte']);
-    return acc;
-}, {});
-const instructorIds = Object.keys(instructorsMap);
 
 // Procesamiento de Producción
 const produccionIds = produccionOrgData.map(p => p.employeeId);
@@ -84,7 +74,7 @@ const chunkArray = (array, size) => {
 
 // --- COMPONENTE PRINCIPAL ---
 export default function InductionPage() {
-    const { user } = useAuth();
+    const { user, canWrite } = useAuth(); // Added canWrite for admin check
     const { toast } = useToast();
 
     // UI States
@@ -93,10 +83,57 @@ export default function InductionPage() {
     const [loadingTeam, setLoadingTeam] = useState(true);
     const [courses, setCourses] = useState([]);
 
+    // Dynamic Instructors Data
+    const [instructorsMap, setInstructorsMap] = useState({});
+    const [instructorIds, setInstructorIds] = useState([]);
+
     // Interaction States
     const [showCreateForm, setShowCreateForm] = useState(false);
     const [previewCourse, setPreviewCourse] = useState(null);
     const [previewEmp, setPreviewEmp] = useState(null);
+
+    // Load instructors from Firebase
+    useEffect(() => {
+        const loadInstructors = async () => {
+            try {
+                const querySnapshot = await getDocs(collection(db, 'instructors'));
+                const newMap = {};
+                const newIds = [];
+
+                querySnapshot.forEach((doc) => {
+                    const data = doc.data();
+                    const empId = data.employeeId;
+                    newMap[empId] = data.courses || [];
+                    newIds.push(empId);
+                });
+
+                setInstructorsMap(newMap);
+                setInstructorIds(newIds);
+
+                // If empty and we have local file logic (we might want to trigger migration manually)
+                if (newIds.length === 0) {
+                    console.log("No instructors in Firebase.");
+                }
+
+            } catch (err) {
+                console.error("Error loading instructors:", err);
+            }
+        };
+
+        loadInstructors();
+    }, []);
+
+    const handleMigrate = async () => {
+        if (!confirm("¿Migrar instructores desde JSON local a Firebase?")) return;
+        const result = await migrateInstructorsToFirebase();
+        if (result.success) {
+            toast.success("Migración exitosa", `Se migraron ${result.count} instructores.`);
+            window.location.reload();
+        } else {
+            toast.error("Error", result.message || result.error);
+        }
+    };
+
 
     // Form States
     const [newCourseName, setNewCourseName] = useState('');
@@ -131,7 +168,7 @@ export default function InductionPage() {
             }
         };
         fetchTeam();
-    }, [toast]);
+    }, [toast, instructorIds]);
 
     // Fetch Courses
     useEffect(() => {
@@ -229,6 +266,11 @@ export default function InductionPage() {
                             <button onClick={() => setActiveTab('instructors')} className={`${styles.tabBtn} ${activeTab === 'instructors' ? styles.activeTab : ''}`}>Instructores</button>
                             <button onClick={() => setActiveTab('produccion')} className={`${styles.tabBtn} ${activeTab === 'produccion' ? styles.activeTab : ''}`}>Producción</button>
                         </div>
+                        {canWrite && instructorIds.length === 0 && (
+                            <button onClick={handleMigrate} className={styles.toggleBtn} style={{ marginLeft: 'auto', fontSize: '0.8rem', background: 'var(--color-warning)', color: '#fff', border: 'none' }}>
+                                ⚙️ Migrar JSON
+                            </button>
+                        )}
                     </div>
 
                     {loadingTeam ? (
