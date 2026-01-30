@@ -9,6 +9,7 @@ import { Card, CardContent } from '@/components/ui/Card/Card';
 import { Button } from '@/components/ui/Button/Button';
 import { useToast } from '@/components/ui/Toast/Toast';
 import { db } from '@/lib/firebase';
+import { uploadFile } from '@/lib/upload';
 import { collection, getDocs, query, orderBy, doc, updateDoc, setDoc, getDoc, deleteDoc, where, limit } from 'firebase/firestore';
 import { Dialog, DialogHeader, DialogTitle, DialogBody, DialogFooter, DialogClose } from '@/components/ui/Dialog/Dialog';
 import { Avatar } from '@/components/ui/Avatar/Avatar';
@@ -105,21 +106,15 @@ export default function EmpleadosPage() {
 
     const handleUploadPhoto = async (empId) => {
         if (!photoFile) return null;
-        const uploadData = new FormData();
-        uploadData.append('file', photoFile);
-        uploadData.append('employeeId', empId);
-        uploadData.append('docType', 'profile');
 
         try {
-            const res = await fetch('/api/upload', { method: 'POST', body: uploadData });
+            const result = await uploadFile(photoFile, { employeeId: empId, docType: 'profile' });
 
-            if (!res.ok) {
-                const errorDetail = await res.json();
-                console.error("SERVER ERROR:", errorDetail);
-                throw new Error(errorDetail.details || 'Error del servidor al subir foto');
+            if (!result.success) {
+                console.error("Upload Error:", result.error);
+                throw new Error(result.error || 'Error del servidor al subir foto');
             }
 
-            const result = await res.json();
             return { photoUrl: result.data.viewLink, photoDriveId: result.data.id };
         } catch (error) {
             console.error("Upload Error:", error);
@@ -133,15 +128,9 @@ export default function EmpleadosPage() {
         const uploadedDocs = [];
 
         for (const file of docFiles) {
-            const uploadData = new FormData();
-            uploadData.append('file', file);
-            uploadData.append('employeeId', empId);
-            uploadData.append('docType', 'documents');
-
             try {
-                const res = await fetch('/api/upload', { method: 'POST', body: uploadData });
-                if (res.ok) {
-                    const result = await res.json();
+                const result = await uploadFile(file, { employeeId: empId, docType: 'documents' });
+                if (result.success) {
                     uploadedDocs.push({
                         name: file.name,
                         url: result.data.viewLink,

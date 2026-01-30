@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Combobox } from '@/components/ui/Combobox/Combobox';
 import styles from './EmployeeForm.module.css';
+import { uploadFile } from '@/lib/upload';
 import { useEmployeeDates } from '@/hooks/useEmployeeDates';
 import { useToast } from '@/components/ui/Toast/Toast';
 
@@ -91,15 +92,9 @@ export default function EmployeeForm({
         const uploadedDocs = [];
 
         for (const file of docFiles) {
-            const uploadData = new FormData();
-            uploadData.append('file', file);
-            uploadData.append('employeeId', empId);
-            uploadData.append('docType', 'documents');
-
             try {
-                const res = await fetch('/api/upload', { method: 'POST', body: uploadData });
-                if (res.ok) {
-                    const result = await res.json();
+                const result = await uploadFile(file, { employeeId: empId, docType: 'documents' });
+                if (result.success) {
                     uploadedDocs.push({
                         name: file.name,
                         url: result.data.viewLink,
@@ -117,20 +112,11 @@ export default function EmployeeForm({
     const handleUploadPhoto = async (empId, dept) => {
         if (!photoFile) return null;
 
-        const uploadData = new FormData();
-        uploadData.append('file', photoFile);
-        uploadData.append('employeeId', empId); // ID del empleado como nombre de carpeta
-        uploadData.append('docType', 'profile'); // Tipo de doc para subcarpeta/prefijo
-
         try {
-            const res = await fetch('/api/upload', {
-                method: 'POST',
-                body: uploadData,
-            });
+            const result = await uploadFile(photoFile, { employeeId: empId, docType: 'profile' });
 
-            if (!res.ok) throw new Error('Error subiendo foto');
+            if (!result.success) throw new Error(result.error || 'Error subiendo foto');
 
-            const result = await res.json();
             return {
                 photoUrl: result.data.viewLink,
                 photoDriveId: result.data.id

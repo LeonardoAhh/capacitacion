@@ -3,6 +3,7 @@
 import { useState, useEffect, useMemo } from 'react';
 import Link from 'next/link';
 import { db } from '@/lib/firebase';
+import { uploadFile } from '@/lib/upload';
 import { collection, query, where, getDocs, addDoc, orderBy, onSnapshot, deleteDoc, doc, documentId } from 'firebase/firestore';
 import { useAuth } from '@/contexts/AuthContext';
 import { Avatar } from '@/components/ui/Avatar/Avatar';
@@ -192,13 +193,9 @@ export default function InductionPage() {
         try {
             let fileData = null;
             if (file) {
-                const formData = new FormData();
-                formData.append('file', file);
-                formData.append('docType', 'Induccion');
-                const res = await fetch('/api/upload', { method: 'POST', body: formData });
-                if (!res.ok) throw new Error('Error subiendo archivo');
-                const data = await res.json();
-                fileData = { type: 'file', name: file.name, url: data.data.viewLink, downloadUrl: data.data.downloadLink };
+                const uploadResult = await uploadFile(file, { docType: 'Induccion' });
+                if (!uploadResult.success) throw new Error(uploadResult.error || 'Error subiendo archivo');
+                fileData = { type: 'file', name: file.name, url: uploadResult.data.viewLink, downloadUrl: uploadResult.data.downloadLink };
             } else {
                 fileData = { type: 'link', name: 'Presentación', url: presentationLink };
             }

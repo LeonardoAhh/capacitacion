@@ -2,27 +2,109 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
     
-    // Función para obtener datos del usuario
+    // ===== FUNCIONES AUXILIARES =====
+    
+    // Obtener datos del usuario autenticado
     function getUserData() {
       return get(/databases/$(database)/documents/users/$(request.auth.uid)).data;
     }
     
-    // Función para verificar rol
+    // Verificar si el usuario tiene un rol específico
     function hasRole(role) {
        return request.auth != null && getUserData().rol == role;
     }
-
-    // Regla base: 
-    // - Lectura permitida para cualquier usuario autenticado (super_admin, admin, demo/anónimo)
-    // - Escritura solo para super_admin
-
-    match /{document=**} {
-      allow read: if request.auth != null;
+    
+    // Verificar si el usuario NO es anónimo
+    function isNotAnonymous() {
+      return request.auth != null && 
+             request.auth.token.firebase.sign_in_provider != 'anonymous';
+    }
+    
+    // Verificar si es un usuario autenticado (cualquier tipo)
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+    
+    // ===== REGLAS POR COLECCIÓN =====
+    
+    // USUARIOS: Solo el propio usuario puede leer su perfil, super_admin puede todo
+    match /users/{userId} {
+      allow read: if isAuthenticated() && 
+                     (request.auth.uid == userId || hasRole('super_admin'));
       allow write: if hasRole('super_admin');
     }
     
-    // Regla específica para la colección users (si es necesario que cada usuario pueda leer su propio doc)
-    // Pero la regla global arriba ya cubre lectura.
-    // Escritura en users: Solo super_admin puede crear/editar usuarios.
+    // EMPLEADOS: Solo usuarios NO anónimos pueden leer, super_admin puede escribir
+    match /employees/{docId} {
+      allow read: if isNotAnonymous();
+      allow write: if hasRole('super_admin');
+    }
+    
+    // TRAINING RECORDS: Lectura para todos los autenticados (incluyendo demo para inducción)
+    match /training_records/{docId} {
+      allow read: if isAuthenticated();
+      allow write: if hasRole('super_admin');
+    }
+    
+    // CURSOS DE INDUCCIÓN: Lectura para todos (demo puede ver cursos de inducción)
+    match /induction_courses/{docId} {
+      allow read: if isAuthenticated();
+      allow write: if hasRole('super_admin');
+    }
+    
+    // SKILLS ILUO: Solo usuarios no anónimos
+    match /skills/{docId} {
+      allow read: if isNotAnonymous();
+      allow write: if hasRole('super_admin');
+    }
+    
+    // POSICIONES/PUESTOS: Solo usuarios no anónimos
+    match /positions/{docId} {
+      allow read: if isNotAnonymous();
+      allow write: if hasRole('super_admin');
+    }
+    
+    // REGISTROS DE CAPACITACIÓN: Solo usuarios no anónimos
+    match /training_logs/{docId} {
+      allow read: if isNotAnonymous();
+      allow write: if hasRole('super_admin');
+    }
+    
+    // ALERTAS: Solo usuarios no anónimos
+    match /alerts/{docId} {
+      allow read: if isNotAnonymous();
+      allow write: if hasRole('super_admin');
+    }
+    
+    // CALENDARIO: Solo usuarios no anónimos
+    match /calendar_events/{docId} {
+      allow read: if isNotAnonymous();
+      allow write: if hasRole('super_admin');
+    }
+    
+    // PROMOCIONES: Solo usuarios no anónimos
+    match /promotions/{docId} {
+      allow read: if isNotAnonymous();
+      allow write: if hasRole('super_admin');
+    }
+    
+    // AUDITORÍAS/LOGS: Solo super_admin puede leer y escribir
+    match /audit_logs/{docId} {
+      allow read, write: if hasRole('super_admin');
+    }
+    
+    // CONFIGURACIÓN DEL SISTEMA: Solo super_admin
+    match /system_config/{docId} {
+      allow read, write: if hasRole('super_admin');
+    }
+    
+    // ===== REGLA POR DEFECTO (FALLBACK) =====
+    // Para cualquier otra colección no especificada
+    // Lectura: usuarios no anónimos
+    // Escritura: solo super_admin
+    match /{document=**} {
+      allow read: if isNotAnonymous();
+      allow write: if hasRole('super_admin');
+    }
   }
 }

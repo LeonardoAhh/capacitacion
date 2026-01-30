@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { uploadFile } from '@/lib/upload';
 
 export default function TestUploadPage() {
     const [file, setFile] = useState(null);
@@ -27,24 +28,17 @@ export default function TestUploadPage() {
         setResult(null);
 
         try {
-            const formData = new FormData();
-            formData.append('file', file);
-            formData.append('employeeId', 'TEST_USER_001'); // Crear carpeta de prueba
-            formData.append('docType', 'pruebas'); // Subcarpeta
-
-            const response = await fetch('/api/upload', {
-                method: 'POST',
-                body: formData,
+            const response = await uploadFile(file, {
+                employeeId: 'TEST_USER_001',
+                docType: 'pruebas'
             });
 
-            const data = await response.json();
-
-            if (!response.ok) {
-                setResult(data); // Guardar detalles del error
-                throw new Error(data.error || 'Error en la subida');
+            if (!response.success) {
+                setResult(response);
+                throw new Error(response.error || 'Error en la subida');
             }
 
-            setResult(data);
+            setResult(response);
         } catch (err) {
             console.error(err);
             setError(err.message);
