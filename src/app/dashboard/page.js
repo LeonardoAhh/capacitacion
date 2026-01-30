@@ -72,16 +72,32 @@ export default function DashboardPage() {
             if (lastNotif !== today && permission === 'granted') {
                 if (stats.expiringContracts > 0) {
                     sendNotification('⚠️ Contratos por Vencer', {
-                        body: `Tienes ${stats.expiringContracts} contrato(s) próximo(s) a vencer. Revisa el dashboard para más detalles.`
+                        body: `Tienes ${stats.expiringContracts} contrato(s) próximo(s) a vencer. Revisa el dashboard para más detalles.`,
+                        icon: '/icon.svg',
+                        image: '/img/notif_contract.png',
+                        tag: 'expiring-contracts',
+                        requireInteraction: true,
+                        actions: [
+                            { action: 'view_contracts', title: 'Ver Lista' },
+                            { action: 'close', title: 'Cerrar' }
+                        ]
                     });
                 }
+
                 if (evaluations.overdue.length > 0) {
                     setTimeout(() => {
                         sendNotification('🚨 Evaluaciones Vencidas', {
                             body: `Hay ${evaluations.overdue.length} evaluación(es) con retraso.`,
-                            tag: 'overdue-evals'
+                            icon: '/icon.svg',
+                            image: '/img/notif_evaluation.png',
+                            tag: 'overdue-evals',
+                            requireInteraction: true,
+                            actions: [
+                                { action: 'view_evals', title: 'Ver Reportes' },
+                                { action: 'close', title: 'Cerrar' }
+                            ]
                         });
-                    }, 5000); // 5 sec delay between notifications
+                    }, 5000);
                 }
                 localStorage.setItem('last_notification_date', today);
             } else if (permission === 'default' && lastNotif !== today) {
@@ -95,7 +111,8 @@ export default function DashboardPage() {
         if (granted) {
             setShowNotifBanner(false);
             sendNotification('🔔 Notificaciones Activadas', {
-                body: 'Ahora recibirás alertas sobre contratos y evaluaciones.'
+                body: 'Ahora recibirás alertas sobre contratos y evaluaciones.',
+                icon: '/icon.svg'
             });
         }
     };
@@ -231,8 +248,8 @@ export default function DashboardPage() {
             </div>
 
             <div className={styles.container}>
-                {/* Notification Banner */}
-                {showNotifBanner && (
+                {/* Notification Controls */}
+                {permission === 'default' && (
                     <div className={styles.sectionCard} style={{
                         marginBottom: '20px',
                         flexDirection: 'row',

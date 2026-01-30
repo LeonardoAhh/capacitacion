@@ -296,6 +296,13 @@ export default function ReportsPage() {
     return (
         <>
             <Navbar />
+
+            {/* Background Effects */}
+            <div className={styles.bgDecoration}>
+                <div className={`${styles.blob} ${styles.blob1}`}></div>
+                <div className={`${styles.blob} ${styles.blob2}`}></div>
+            </div>
+
             <main className={styles.main} id="main-content">
                 <div className={styles.container}>
                     <div className={styles.header}>
