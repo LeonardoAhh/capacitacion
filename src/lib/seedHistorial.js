@@ -1,6 +1,13 @@
 import { db } from '@/lib/firebase';
 import { collection, doc, writeBatch, getDocs } from 'firebase/firestore';
-import historyData from '@/data/historial.json';
+
+// Optional import - may not exist in production
+let historyData = [];
+try {
+    historyData = require('@/data/historial.json');
+} catch (e) {
+    console.log('historial.json not found - using Firebase data only');
+}
 
 // Normalize string helpers
 const normalize = (str) => str?.trim().toUpperCase() || '';

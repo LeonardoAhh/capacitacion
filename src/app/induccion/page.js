@@ -12,9 +12,16 @@ import { useToast } from '@/components/ui/Toast/Toast';
 import Navbar from '@/components/Navbar/Navbar';
 import TriviaGame from '@/components/TriviaGame/TriviaGame';
 import inductionData from '@/data/induction_data.json';
-import instructoresData from '@/data/instructores.json';
 import produccionOrgData from '@/data/produccion_org.json';
 import styles from './page.module.css';
+
+// Optional import - may not exist in production
+let instructoresData = [];
+try {
+    instructoresData = require('@/data/instructores.json');
+} catch (e) {
+    console.log('instructores.json not found');
+}
 
 // --- CONFIGURACIÓN Y CONSTANTES ---
 const BOSS_ID = '3160';
