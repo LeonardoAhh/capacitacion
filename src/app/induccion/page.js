@@ -15,13 +15,8 @@ import inductionData from '@/data/induction_data.json';
 import produccionOrgData from '@/data/produccion_org.json';
 import styles from './page.module.css';
 
-// Optional import - may not exist in production
-let instructoresData = [];
-try {
-    instructoresData = require('@/data/instructores.json');
-} catch (e) {
-    console.log('instructores.json not found');
-}
+// Instructores data removed from repo for privacy
+const instructoresData = [];
 
 // --- CONFIGURACIÓN Y CONSTANTES ---
 const BOSS_ID = '3160';
