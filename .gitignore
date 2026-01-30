@@ -43,3 +43,10 @@ next-env.d.ts
 
 # OS
 Thumbs.db
+
+# Sensitive employee data (personal information)
+src/data/general.json
+src/data/historial.json
+src/data/instructores.json
+src/data/promociones.json
+src/data/ultimosc.json
