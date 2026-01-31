@@ -621,19 +621,41 @@ export default function EmpleadosPage() {
                 </DialogHeader>
                 <DialogBody>
                     {/* Foto de Perfil */}
-                    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginBottom: '20px' }}>
-                        <div style={{ width: '100px', height: '100px', borderRadius: '50%', overflow: 'hidden', background: '#f0f0f0', marginBottom: '10px', display: 'flex', alignItems: 'center', justifyContent: 'center', border: '2px solid #ddd' }}>
+                    {/* Foto de Perfil */}
+                    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginBottom: '24px', paddingTop: '10px' }}>
+                        <div style={{
+                            width: '90px',
+                            height: '90px',
+                            borderRadius: '50%',
+                            overflow: 'hidden',
+                            background: 'var(--bg-tertiary, #f0f0f0)',
+                            marginBottom: '12px',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            border: '2px solid var(--border-color, #e2e8f0)',
+                            boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)'
+                        }}>
                             {photoPreview || editingEmp?.photoUrl ? (
                                 // eslint-disable-next-line @next/next/no-img-element
                                 <img src={photoPreview || editingEmp?.photoUrl} alt="Vista previa" referrerPolicy="no-referrer" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                             ) : (
-                                <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#999" strokeWidth="2">
+                                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" style={{ opacity: 0.4 }}>
                                     <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
                                     <circle cx="12" cy="7" r="4" />
                                 </svg>
                             )}
                         </div>
-                        <label htmlFor="photo-upload-modal" className="btn btn-secondary btn-sm" style={{ cursor: 'pointer', padding: '5px 10px', fontSize: '0.8rem' }}>
+                        <label htmlFor="photo-upload-modal" style={{
+                            cursor: 'pointer',
+                            padding: '6px 14px',
+                            fontSize: '0.8rem',
+                            fontWeight: '600',
+                            color: 'var(--color-primary, #2563eb)',
+                            background: 'rgba(37, 99, 235, 0.1)',
+                            borderRadius: '50px',
+                            transition: 'all 0.2s'
+                        }}>
                             {photoPreview || editingEmp?.photoUrl ? 'Cambiar Foto' : 'Subir Foto'}
                         </label>
                         <input
@@ -646,18 +668,6 @@ export default function EmpleadosPage() {
                     </div>
 
                     <div className={styles.formGroup}>
-                        <label>ID Empleado</label>
-                        <input
-                            type="text"
-                            value={formData.id}
-                            onChange={(e) => isCreating && setFormData({ ...formData, id: e.target.value })}
-                            placeholder={isCreating ? "Si se deja vacío, se generará uno." : ""}
-                            readOnly={!isCreating}
-                            disabled={!isCreating}
-                            style={!isCreating ? { opacity: 0.7, cursor: 'not-allowed', background: '#f5f5f5' } : {}}
-                        />
-                    </div>
-                    <div className={styles.formGroup}>
                         <label>Nombre Completo</label>
                         <input
                             type="text"
@@ -665,148 +675,167 @@ export default function EmpleadosPage() {
                             onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                         />
                     </div>
-                    <div className={styles.formGroup}>
-                        <label>CURP</label>
-                        <input
-                            type="text"
-                            value={formData.curp}
-                            onChange={(e) => setFormData({ ...formData, curp: e.target.value })}
-                            placeholder="Importante para DC-3"
-                            maxLength={18}
-                        />
+
+                    <div className={styles.formGrid}>
+                        <div className={styles.formGroup}>
+                            <label>ID Empleado</label>
+                            <input
+                                type="text"
+                                value={formData.id}
+                                onChange={(e) => isCreating && setFormData({ ...formData, id: e.target.value })}
+                                placeholder={isCreating ? "Auto-generado si vacío" : ""}
+                                readOnly={!isCreating}
+                                disabled={!isCreating}
+                                style={!isCreating ? { opacity: 0.7, cursor: 'not-allowed', background: '#f5f5f5' } : {}}
+                            />
+                        </div>
+                        <div className={styles.formGroup}>
+                            <label>CURP</label>
+                            <input
+                                type="text"
+                                value={formData.curp}
+                                onChange={(e) => setFormData({ ...formData, curp: e.target.value })}
+                                placeholder="Importante para DC-3"
+                                maxLength={18}
+                            />
+                        </div>
                     </div>
-                    <div className={styles.formGroup}>
-                        <label>Puesto (Categoría)</label>
-                        <input
-                            type="text"
-                            value={formData.position}
-                            onChange={(e) => setFormData({ ...formData, position: e.target.value })}
-                            list="positionsList"
-                        />
-                        <datalist id="positionsList">
-                            {positions.map(p => <option key={p} value={p} />)}
-                        </datalist>
+
+                    <div className={styles.formGrid}>
+                        <div className={styles.formGroup}>
+                            <label>Puesto (Categoría)</label>
+                            <input
+                                type="text"
+                                value={formData.position}
+                                onChange={(e) => setFormData({ ...formData, position: e.target.value })}
+                                list="positionsList"
+                            />
+                            <datalist id="positionsList">
+                                {positions.map(p => <option key={p} value={p} />)}
+                            </datalist>
+                        </div>
+                        <div className={styles.formGroup}>
+                            <label>Departamento</label>
+                            <input
+                                type="text"
+                                value={formData.department}
+                                onChange={(e) => setFormData({ ...formData, department: e.target.value })}
+                                list="deptList"
+                            />
+                            <datalist id="deptList">
+                                {departments.map(d => <option key={d} value={d} />)}
+                            </datalist>
+                        </div>
                     </div>
-                    <div className={styles.formGroup}>
-                        <label>Ocupación Específica (DC-3)</label>
-                        <input
-                            type="text"
-                            value={formData.occupation}
-                            onChange={(e) => setFormData({ ...formData, occupation: e.target.value })}
-                            placeholder="Si difiere del puesto"
-                        />
+
+                    <div className={styles.formGrid}>
+                        <div className={styles.formGroup}>
+                            <label>Área</label>
+                            <select
+                                value={formData.area}
+                                onChange={(e) => setFormData({ ...formData, area: e.target.value })}
+                                className={styles.select}
+                            >
+                                <option value="">-- Seleccionar --</option>
+                                <option value="A. CALIDAD 1ER TURNO">A. CALIDAD 1ER TURNO</option>
+                                <option value="A. CALIDAD 2DO TURNO">A. CALIDAD 2DO TURNO</option>
+                                <option value="ALMACÉN">ALMACÉN</option>
+                                <option value="CALIDAD ADMTVO">CALIDAD ADMTVO</option>
+                                <option value="GERENCIA">GERENCIA</option>
+                                <option value="LOGÍSTICA">LOGÍSTICA</option>
+                                <option value="MANTENIMIENTO">MANTENIMIENTO</option>
+                                <option value="METROLOGÍA">METROLOGÍA</option>
+                                <option value="MOLDES">MOLDES</option>
+                                <option value="PRODUCCIÓN 1ER TURNO">PRODUCCIÓN 1ER TURNO</option>
+                                <option value="PRODUCCIÓN 2DO TURNO">PRODUCCIÓN 2DO TURNO</option>
+                                <option value="PRODUCCIÓN 3ER TURNO">PRODUCCIÓN 3ER TURNO</option>
+                                <option value="PRODUCCIÓN 4TO TURNO">PRODUCCIÓN 4TO TURNO</option>
+                                <option value="PRODUCCIÓN ADMTVO">PRODUCCIÓN ADMTVO</option>
+                                <option value="PRODUCCIÓN MONTAJE">PRODUCCIÓN MONTAJE</option>
+                                <option value="PROYECTOS">PROYECTOS</option>
+                                <option value="RECURSOS HUMANOS">RECURSOS HUMANOS</option>
+                                <option value="RESIDENTES DE CALIDAD">RESIDENTES DE CALIDAD</option>
+                                <option value="SGI">SGI</option>
+                                <option value="SISTEMAS">SISTEMAS</option>
+                            </select>
+                        </div>
+                        <div className={styles.formGroup}>
+                            <label>Turno</label>
+                            <select
+                                value={formData.shift}
+                                onChange={(e) => setFormData({ ...formData, shift: e.target.value })}
+                                className={styles.select}
+                            >
+                                <option value="">-- Seleccionar --</option>
+                                <option value="1">1</option>
+                                <option value="2">2</option>
+                                <option value="3">3</option>
+                                <option value="4">4</option>
+                                <option value="5">5</option>
+                            </select>
+                        </div>
                     </div>
-                    <div className={styles.formGroup}>
-                        <label>Departamento</label>
-                        <input
-                            type="text"
-                            value={formData.department}
-                            onChange={(e) => setFormData({ ...formData, department: e.target.value })}
-                            list="deptList"
-                        />
-                        <datalist id="deptList">
-                            {departments.map(d => <option key={d} value={d} />)}
-                        </datalist>
+
+                    <div className={styles.formGrid}>
+                        <div className={styles.formGroup}>
+                            <label>Ocupación Específica</label>
+                            <input
+                                type="text"
+                                value={formData.occupation}
+                                onChange={(e) => setFormData({ ...formData, occupation: e.target.value })}
+                                placeholder="Para DC-3"
+                            />
+                        </div>
+                        <div className={styles.formGroup}>
+                            <label>Escolaridad</label>
+                            <select
+                                value={formData.education}
+                                onChange={(e) => setFormData({ ...formData, education: e.target.value })}
+                                className={styles.select}
+                            >
+                                <option value="">-- Seleccionar --</option>
+                                <option value="BACHILLERATO">BACHILLERATO</option>
+                                <option value="CARRERA TECNICA">CARRERA TECNICA</option>
+                                <option value="INGENIERIA">INGENIERIA</option>
+                                <option value="LICENCIATURA">LICENCIATURA</option>
+                                <option value="MAESTRIA">MAESTRIA</option>
+                                <option value="PASANTE INGENIERIA">PASANTE INGENIERIA</option>
+                                <option value="POSGRADO">POSGRADO</option>
+                                <option value="PREPARATORIA">PREPARATORIA</option>
+                                <option value="PRIMARIA">PRIMARIA</option>
+                                <option value="SECUNDARIA">SECUNDARIA</option>
+                                <option value="TSU">TSU</option>
+                            </select>
+                        </div>
                     </div>
-                    <div className={styles.formGroup}>
-                        <label>Área</label>
-                        <select
-                            value={formData.area}
-                            onChange={(e) => setFormData({ ...formData, area: e.target.value })}
-                            className={styles.select}
-                        >
-                            <option value="">-- Seleccionar --</option>
-                            <option value="A. CALIDAD 1ER TURNO">A. CALIDAD 1ER TURNO</option>
-                            <option value="A. CALIDAD 2DO TURNO">A. CALIDAD 2DO TURNO</option>
-                            <option value="ALMACÉN">ALMACÉN</option>
-                            <option value="CALIDAD ADMTVO">CALIDAD ADMTVO</option>
-                            <option value="GERENCIA">GERENCIA</option>
-                            <option value="LOGÍSTICA">LOGÍSTICA</option>
-                            <option value="MANTENIMIENTO">MANTENIMIENTO</option>
-                            <option value="METROLOGÍA">METROLOGÍA</option>
-                            <option value="MOLDES">MOLDES</option>
-                            <option value="PRODUCCIÓN 1ER TURNO">PRODUCCIÓN 1ER TURNO</option>
-                            <option value="PRODUCCIÓN 2DO TURNO">PRODUCCIÓN 2DO TURNO</option>
-                            <option value="PRODUCCIÓN 3ER TURNO">PRODUCCIÓN 3ER TURNO</option>
-                            <option value="PRODUCCIÓN 4TO TURNO">PRODUCCIÓN 4TO TURNO</option>
-                            <option value="PRODUCCIÓN ADMTVO">PRODUCCIÓN ADMTVO</option>
-                            <option value="PRODUCCIÓN MONTAJE">PRODUCCIÓN MONTAJE</option>
-                            <option value="PROYECTOS">PROYECTOS</option>
-                            <option value="RECURSOS HUMANOS">RECURSOS HUMANOS</option>
-                            <option value="RESIDENTES DE CALIDAD">RESIDENTES DE CALIDAD</option>
-                            <option value="SGI">SGI</option>
-                            <option value="SISTEMAS">SISTEMAS</option>
-                        </select>
-                    </div>
-                    <div className={styles.formGroup}>
-                        <label>Escolaridad</label>
-                        <select
-                            value={formData.education}
-                            onChange={(e) => setFormData({ ...formData, education: e.target.value })}
-                            className={styles.select}
-                        >
-                            <option value="">-- Seleccionar --</option>
-                            <option value="BACHILLERATO">BACHILLERATO</option>
-                            <option value="CARRERA TECNICA">CARRERA TECNICA</option>
-                            <option value="INGENIERIA">INGENIERIA</option>
-                            <option value="LICENCIATURA">LICENCIATURA</option>
-                            <option value="MAESTRIA">MAESTRIA</option>
-                            <option value="PASANTE INGENIERIA">PASANTE INGENIERIA</option>
-                            <option value="POSGRADO">POSGRADO</option>
-                            <option value="PREPARATORIA">PREPARATORIA</option>
-                            <option value="PRIMARIA">PRIMARIA</option>
-                            <option value="SECUNDARIA">SECUNDARIA</option>
-                            <option value="TSU">TSU</option>
-                        </select>
-                    </div>
-                    <div className={styles.formGroup}>
-                        <label>Fecha de Ingreso</label>
-                        <input
-                            type="date"
-                            value={formData.startDate}
-                            onChange={(e) => setFormData({ ...formData, startDate: e.target.value })}
-                        />
-                    </div>
-                    <div className={styles.formGroup}>
-                        <label>Calificación Eval. Desempeño (%)</label>
-                        <input
-                            type="number"
-                            min="0"
-                            max="100"
-                            value={formData.performanceScore}
-                            onChange={(e) => setFormData({ ...formData, performanceScore: e.target.value })}
-                            placeholder="0-100"
-                        />
-                    </div>
-                    <div className={styles.formGroup}>
-                        <label>Período de Evaluación</label>
-                        <select
-                            value={formData.performancePeriod}
-                            onChange={(e) => setFormData({ ...formData, performancePeriod: e.target.value })}
-                            className={styles.select}
-                        >
-                            <option value="">-- Seleccionar --</option>
-                            <option value="JULIO - DICIEMBRE 2025">JULIO - DICIEMBRE 2025</option>
-                            <option value="ENERO - JUNIO 2026">ENERO - JUNIO 2026</option>
-                            <option value="JULIO - DICIEMBRE 2026">JULIO - DICIEMBRE 2026</option>
-                            <option value="ENERO - JUNIO 2027">ENERO - JUNIO 2027</option>
-                            <option value="JULIO - DICIEMBRE 2027">JULIO - DICIEMBRE 2027</option>
-                        </select>
-                    </div>
-                    <div className={styles.formGroup}>
-                        <label>Turno</label>
-                        <select
-                            value={formData.shift}
-                            onChange={(e) => setFormData({ ...formData, shift: e.target.value })}
-                            className={styles.select}
-                        >
-                            <option value="">-- Seleccionar --</option>
-                            <option value="1">1</option>
-                            <option value="2">2</option>
-                            <option value="3">3</option>
-                            <option value="4">4</option>
-                            <option value="5">5</option>
-                        </select>
+
+                    <div className={styles.formGrid}>
+                        <div className={styles.formGroup}>
+                            <label>Período Evaluación</label>
+                            <select
+                                value={formData.performancePeriod}
+                                onChange={(e) => setFormData({ ...formData, performancePeriod: e.target.value })}
+                                className={styles.select}
+                            >
+                                <option value="">-- Seleccionar --</option>
+                                <option value="JULIO - DICIEMBRE 2025">JULIO - DICIEMBRE 2025</option>
+                                <option value="ENERO - JUNIO 2026">ENERO - JUNIO 2026</option>
+                                <option value="JULIO - DICIEMBRE 2026">JULIO - DICIEMBRE 2026</option>
+                                <option value="ENERO - JUNIO 2027">ENERO - JUNIO 2027</option>
+                                <option value="JULIO - DICIEMBRE 2027">JULIO - DICIEMBRE 2027</option>
+                            </select>
+                        </div>
+                        <div className={styles.formGroup}>
+                            <label>Calificación (%)</label>
+                            <input
+                                type="number"
+                                min="0"
+                                max="100"
+                                value={formData.performanceScore}
+                                onChange={(e) => setFormData({ ...formData, performanceScore: e.target.value })}
+                                placeholder="0-100"
+                            />
+                        </div>
                     </div>
                     <div className={styles.formGroup}>
                         <label>Fecha Último Cambio de Puesto (Temporalidad)</label>

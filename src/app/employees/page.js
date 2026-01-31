@@ -12,7 +12,7 @@ import { useEmployees } from '@/hooks/useEmployees';
 
 // Components
 import { Button } from '@/components/ui/Button/Button';
-import { Dialog, DialogHeader, DialogTitle, DialogDescription, DialogFooter, DialogClose } from '@/components/ui/Dialog/Dialog';
+import { Dialog, DialogHeader, DialogTitle, DialogDescription, DialogBody, DialogFooter, DialogClose } from '@/components/ui/Dialog/Dialog';
 import { useToast } from '@/components/ui/Toast/Toast';
 import EmployeeForm from '@/components/employees/EmployeeForm/EmployeeForm';
 
@@ -199,18 +199,33 @@ export default function EmployeesPage() {
                         )}
                     </div>
 
-                    {/* Form */}
-                    {showForm && (
-                        <EmployeeForm
-                            title={editingEmployee ? 'Editar Empleado' : 'Nuevo Empleado'}
-                            employee={editingEmployee}
-                            onSubmit={handleSubmit}
-                            onCancel={() => { setShowForm(false); setEditingEmployee(null); }}
-                            puestosOptions={PUESTOS_OPTIONS}
-                            departamentosOptions={DEPARTAMENTOS_OPTIONS}
-                            getAreasForDepartment={getAreasForDepartment}
-                        />
-                    )}
+                    {/* Form Modal */}
+                    <Dialog
+                        open={showForm}
+                        onOpenChange={(val) => {
+                            if (!val) {
+                                setShowForm(false);
+                                setEditingEmployee(null);
+                            }
+                        }}
+                    >
+                        <DialogHeader>
+                            <DialogTitle>{editingEmployee ? 'Editar Empleado' : 'Nuevo Empleado'}</DialogTitle>
+                            <DialogClose onClose={() => { setShowForm(false); setEditingEmployee(null); }} />
+                        </DialogHeader>
+                        <DialogBody>
+                            <EmployeeForm
+                                title={editingEmployee ? 'Editar Empleado' : 'Nuevo Empleado'}
+                                employee={editingEmployee}
+                                onSubmit={handleSubmit}
+                                onCancel={() => { setShowForm(false); setEditingEmployee(null); }}
+                                puestosOptions={PUESTOS_OPTIONS}
+                                departamentosOptions={DEPARTAMENTOS_OPTIONS}
+                                getAreasForDepartment={getAreasForDepartment}
+                                embedded={true}
+                            />
+                        </DialogBody>
+                    </Dialog>
 
                     {/* Stats Summary */}
                     <div className={styles.statsSummary}>

@@ -71,6 +71,11 @@
     transform: scale(1.05);
 }
 
+.closeBtn:focus-visible {
+    outline: 2px solid white;
+    outline-offset: 2px;
+}
+
 /* ==================== FORM BODY ==================== */
 .formBody {
     padding: var(--spacing-2xl);
@@ -94,9 +99,10 @@
     transition: all 0.3s ease;
 }
 
-.photoSection:hover {
+.photoSection:hover,
+.photoSection:focus-within {
     border-color: var(--color-primary);
-    background: rgba(0, 122, 255, 0.05);
+    background: color-mix(in srgb, var(--color-primary) 5%, transparent);
 }
 
 [data-theme="dark"] .photoSection {
@@ -146,6 +152,11 @@
     transform: translateY(-1px);
 }
 
+.photoLabel:focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 2px;
+}
+
 .photoHint {
     margin-top: var(--spacing-sm);
     font-size: 0.8rem;
@@ -157,7 +168,7 @@
     background: var(--bg-primary);
     border: 1px solid var(--border-color);
     border-radius: var(--radius-xl);
-    overflow: hidden;
+    overflow: visible;
 }
 
 [data-theme="dark"] .sectionCard {
@@ -251,7 +262,13 @@
 .inputGroup select:focus {
     outline: none;
     border-color: var(--color-primary);
-    box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.1);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-primary) 15%, transparent);
+}
+
+.inputGroup input:focus-visible,
+.inputGroup select:focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 2px;
 }
 
 .inputGroup input::placeholder {
@@ -504,7 +521,15 @@
 }
 
 .checkbox {
-    display: none;
+    position: absolute;
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.checkbox:focus-visible+.checkboxCustom {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 2px;
 }
 
 .checkboxCustom {
@@ -604,6 +629,11 @@
     color: #FF3B30;
 }
 
+.documentRemove:focus-visible {
+    outline: 2px solid #FF3B30;
+    outline-offset: 2px;
+}
+
 .pendingDocs {
     margin-bottom: var(--spacing-md);
 }
@@ -655,6 +685,11 @@
 .uploadLabel:hover {
     border-color: var(--color-primary);
     color: var(--color-primary);
+}
+
+.uploadLabel:focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 2px;
 }
 
 /* ==================== FORM ACTIONS ==================== */
