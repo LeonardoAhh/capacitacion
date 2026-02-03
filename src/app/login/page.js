@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
+import LogoVinoPlastic from '@/components/Logo/LogoVinoPlastic';
 import { useRouter } from 'next/navigation';
 import ThemeToggle from '@/components/ThemeToggle/ThemeToggle';
 import styles from './page.module.css';
@@ -65,13 +66,18 @@ export default function LoginPage() {
             <div className={styles.loginWrapper}>
                 {/* Logo Section */}
                 <div className={styles.headerSection}>
-                    <div className={styles.logoIcon}>
-                        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                            <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" />
-                        </svg>
+                    <div className={styles.logoContainer}>
+                        <LogoVinoPlastic
+                            style={{
+                                width: '100%',
+                                maxWidth: '80px',
+                                height: 'auto',
+                                color: 'var(--text-primary)' // Adapts to light/dark mode
+                            }}
+                        />
                     </div>
-                    <h1 className={styles.appTitle}>Vertx</h1>
-                    <p className={styles.appSubtitle}>Gestión de Talento</p>
+                    {/* El texto ya viene en el logo, pero mantenemos subtítulo */}
+                    <p className={styles.appSubtitle}>ViñoPlastic Inyección S.A. de C.V.</p>
                 </div>
 
                 {/* Login Card */}

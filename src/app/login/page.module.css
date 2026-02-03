@@ -92,31 +92,23 @@
     animation: fadeInDown 0.8s ease-out;
 }
 
-.logoIcon {
-    width: 64px;
-    height: 64px;
-    margin: 0 auto var(--spacing-md);
-    color: var(--color-primary);
-    background: var(--bg-secondary);
-    border-radius: 20px;
+/* .logoIcon removed */
+
+.logoContainer {
     display: flex;
-    align-items: center;
     justify-content: center;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+    margin-bottom: var(--spacing-xs);
 }
 
-[data-theme="dark"] .logoIcon {
-    background: rgba(255, 255, 255, 0.1);
-    color: white;
+.logoImage {
+    width: auto;
+    height: auto;
+    max-width: 250px;
+    object-fit: contain;
+    /* Efecto 3D mejorado con sombra */
+    filter: drop-shadow(0 8px 16px rgba(0, 0, 0, 0.1));
 }
 
-.appTitle {
-    font-size: 2rem;
-    font-weight: 600;
-    letter-spacing: -0.5px;
-    margin: 0;
-    color: var(--text-primary);
-}
 
 .appSubtitle {
     font-size: 1.1rem;

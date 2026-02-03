@@ -69,24 +69,25 @@
     opacity: 0.8;
 }
 
-.logoIcon {
-    width: 38px;
-    height: 38px;
-    background: linear-gradient(135deg, var(--color-primary), #3b82f6);
-    border-radius: 12px;
+/* .logoIcon and .logoText removed */
+
+.logoImageContainer {
     display: flex;
     align-items: center;
-    justify-content: center;
-    color: white;
-    box-shadow: 0 4px 10px rgba(59, 130, 246, 0.3);
 }
 
-.logoText {
-    font-size: 1.2rem;
-    font-weight: 800;
-    color: var(--text-primary);
-    letter-spacing: -0.5px;
+.logoImg {
+    width: auto;
+    height: 48px;
+    max-width: 140px;
+    object-fit: contain;
+    transition: transform 0.2s;
 }
+
+.logoImg:hover {
+    transform: scale(1.05);
+}
+
 
 /* ==================== CONTROLS SECTION ==================== */
 .actions {
