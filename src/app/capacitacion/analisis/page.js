@@ -734,7 +734,7 @@ export default function AnalisisPage() {
                                                 </div>
                                             </div>
                                             <div className={styles.employeeActions}>
-                                                <span className={getComplianceColor(rec.matrix?.compliancePercentage || 0)}>
+                                                <span className={`${styles.complianceBadge} ${getComplianceColor(rec.matrix?.compliancePercentage || 0)}`}>
                                                     {rec.matrix?.compliancePercentage || 0}%
                                                 </span>
                                                 <button className={`${styles.expandBtn} ${expandedId === rec.id ? styles.expanded : ''}`}>
@@ -819,13 +819,19 @@ export default function AnalisisPage() {
                 </div>
             </main>
 
-            {/* Detail Modal */}
-            <Dialog open={showDetailModal} onOpenChange={setShowDetailModal}>
-                <DialogHeader>
-                    <DialogTitle>{selectedEmployee?.name}</DialogTitle>
-                    <DialogClose onClose={() => setShowDetailModal(false)} />
-                </DialogHeader>
-                <DialogBody>
+            {/* Detail Slider Panel */}
+            <div className={`${styles.sliderOverlay} ${showDetailModal ? styles.active : ''}`} onClick={() => setShowDetailModal(false)} />
+            <div className={`${styles.sliderPanel} ${showDetailModal ? styles.active : ''}`}>
+                <div className={styles.sliderHeader}>
+                    <h2 className={styles.sliderTitle}>{selectedEmployee?.name}</h2>
+                    <button className={styles.sliderCloseBtn} onClick={() => setShowDetailModal(false)}>
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                            <line x1="18" y1="6" x2="6" y2="18" />
+                            <line x1="6" y1="6" x2="18" y2="18" />
+                        </svg>
+                    </button>
+                </div>
+                <div className={styles.sliderBody}>
                     {selectedEmployee && (
                         <div className={styles.detailContainer}>
                             {/* Stats Header */}
@@ -844,7 +850,6 @@ export default function AnalisisPage() {
 
                             {/* Missing/Pending Courses Section */}
                             {(() => {
-                                // Use existing missingCourses if available, otherwise calculate it
                                 const missingCourses = selectedEmployee.matrix.missingCourses || getMissingCourses(selectedEmployee);
                                 return missingCourses.length > 0 ? (
                                     <div className={styles.coursesSection}>
@@ -913,8 +918,8 @@ export default function AnalisisPage() {
                             </div>
                         </div>
                     )}
-                </DialogBody>
-            </Dialog>
+                </div>
+            </div>
 
             {/* Yearly Details Modal */}
             <Dialog open={showYearlyModal} onOpenChange={setShowYearlyModal}>

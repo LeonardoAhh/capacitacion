@@ -182,11 +182,35 @@
     gap: var(--spacing-md);
     padding: var(--spacing-lg);
     background: var(--bg-tertiary);
+    border: none;
     border-bottom: 1px solid var(--border-color);
+    width: 100%;
+    text-align: left;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.sectionHeader:hover {
+    background: var(--bg-secondary);
 }
 
 [data-theme="dark"] .sectionHeader {
     background: rgba(255, 255, 255, 0.03);
+}
+
+[data-theme="dark"] .sectionHeader:hover {
+    background: rgba(255, 255, 255, 0.06);
+}
+
+.chevron {
+    margin-left: auto;
+    color: var(--text-tertiary);
+    transition: transform 0.3s ease;
+    flex-shrink: 0;
+}
+
+.chevronUp {
+    transform: rotate(180deg);
 }
 
 .sectionIcon {
@@ -242,7 +266,7 @@
 
 .inputGroup input,
 .inputGroup select {
-    height: 48px;
+    height: 42px;
     padding: 0 var(--spacing-md);
     background: var(--bg-secondary);
     border: 1px solid var(--border-color);
@@ -327,8 +351,8 @@
 
 /* ==================== EVALUATIONS ==================== */
 .evalsGrid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    display: flex;
+    flex-direction: column;
     gap: var(--spacing-md);
 }
 

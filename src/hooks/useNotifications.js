@@ -42,10 +42,17 @@ export function useNotifications() {
             });
         } else {
             // Fallback to standard Notification API
-            new Notification(title, {
-                icon: '/icon.svg',
-                ...options
-            });
+            // Filter out options not supported by standard Notification API
+            const { actions, vibrate, badge, renotify, tag, ...safeOptions } = options;
+
+            try {
+                new Notification(title, {
+                    icon: '/icon.svg',
+                    ...safeOptions
+                });
+            } catch (error) {
+                console.warn('Notification fallback failed:', error);
+            }
         }
     };
 

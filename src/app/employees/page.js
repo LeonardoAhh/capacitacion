@@ -12,7 +12,7 @@ import { useEmployees } from '@/hooks/useEmployees';
 
 // Components
 import { Button } from '@/components/ui/Button/Button';
-import { Dialog, DialogHeader, DialogTitle, DialogDescription, DialogBody, DialogFooter, DialogClose } from '@/components/ui/Dialog/Dialog';
+import { Dialog, DialogHeader, DialogTitle, DialogDescription, DialogFooter, DialogClose } from '@/components/ui/Dialog/Dialog';
 import { useToast } from '@/components/ui/Toast/Toast';
 import EmployeeForm from '@/components/employees/EmployeeForm/EmployeeForm';
 
@@ -50,11 +50,13 @@ export default function EmployeesPage() {
     } = useEmployees();
 
     // Local State
-    const [showForm, setShowForm] = useState(false);
     const [editingEmployee, setEditingEmployee] = useState(null);
     const [searchTerm, setSearchTerm] = useState('');
     const [deleteModal, setDeleteModal] = useState({ show: false, employee: null });
-    const [expandedId, setExpandedId] = useState(null);
+
+    // iOS-style navigation state: 'list', 'detail', 'edit'
+    const [activeView, setActiveView] = useState('list');
+    const [selectedEmployee, setSelectedEmployee] = useState(null);
 
     // Auth Protection
     useEffect(() => {
@@ -97,16 +99,44 @@ export default function EmployeesPage() {
             if (result.success) toast.success('¡Guardado!', 'El empleado se registró correctamente.');
         }
         if (result.success) {
-            setShowForm(false);
+            // Update selected employee if editing
+            if (editingEmployee && selectedEmployee?.id === editingEmployee.id) {
+                setSelectedEmployee({ ...selectedEmployee, ...employeeData });
+            }
             setEditingEmployee(null);
+            // Go back to previous view
+            if (selectedEmployee) {
+                setActiveView('detail');
+            } else {
+                setActiveView('list');
+            }
         } else {
-            toast.error('Error', 'No se pudo guardar el empleado. Intenta de nuevo.');
+            if (result.error === 'ID_DUPLICADO') {
+                toast.error('ID Duplicado', result.message || 'Este ID de empleado ya existe.');
+            } else {
+                toast.error('Error', 'No se pudo guardar el empleado. Intenta de nuevo.');
+            }
         }
     };
 
     const handleEdit = (employee) => {
         setEditingEmployee(employee);
-        setShowForm(true);
+        setActiveView('edit');
+    };
+
+    const handleNewEmployee = () => {
+        setEditingEmployee(null);
+        setSelectedEmployee(null);
+        setActiveView('edit');
+    };
+
+    const handleCancelEdit = () => {
+        setEditingEmployee(null);
+        if (selectedEmployee) {
+            setActiveView('detail');
+        } else {
+            setActiveView('list');
+        }
     };
 
     const handleDelete = (employee) => {
@@ -119,6 +149,11 @@ export default function EmployeesPage() {
         if (result.success) {
             setDeleteModal({ show: false, employee: null });
             toast.success('Eliminado', 'El empleado fue eliminado correctamente.');
+            // Go back to list if we deleted the selected employee
+            if (selectedEmployee?.id === deleteModal.employee.id) {
+                setActiveView('list');
+                setSelectedEmployee(null);
+            }
         } else {
             toast.error('Error', 'No se pudo eliminar el empleado.');
         }
@@ -128,14 +163,27 @@ export default function EmployeesPage() {
         setDeleteModal({ show: false, employee: null });
     };
 
-    const toggleExpand = (id) => {
-        setExpandedId(expandedId === id ? null : id);
+    const selectEmployee = (emp) => {
+        setSelectedEmployee(emp);
+        setActiveView('detail');
+    };
+
+    const goBackToList = () => {
+        setActiveView('list');
+        setSelectedEmployee(null);
     };
 
     const getInitials = (name) => {
         if (!name) return '?';
         return name.split(' ').slice(0, 2).map(n => n[0]).join('').toUpperCase();
     };
+
+    // Chevron Icon
+    const ChevronRight = () => (
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+            <polyline points="9 18 15 12 9 6" />
+        </svg>
+    );
 
     if (authLoading || !user) {
         return (
@@ -170,6 +218,297 @@ export default function EmployeesPage() {
         );
     }
 
+    // Get slide class based on view hierarchy
+    const getSlideClass = (view) => {
+        if (view === activeView) return styles.active;
+
+        const viewOrder = ['list', 'detail', 'edit'];
+        const currentIndex = viewOrder.indexOf(activeView);
+        const viewIndex = viewOrder.indexOf(view);
+
+        if (viewIndex < currentIndex) return styles.slideOut;
+        return styles.slideIn;
+    };
+
+    // Edit View Component
+    const EditView = () => (
+        <div className={`${styles.slidePanel} ${getSlideClass('edit')}`}>
+            {/* Back button and title */}
+            <div className={styles.detailHeader}>
+                <button onClick={handleCancelEdit} className={styles.backButton}>
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                        <path d="M19 12H5" />
+                        <polyline points="12 19 5 12 12 5" />
+                    </svg>
+                    {editingEmployee ? 'Detalle' : 'Empleados'}
+                </button>
+            </div>
+
+            <div className={styles.formContainer}>
+                <h1 className={styles.formTitle}>
+                    {editingEmployee ? 'Editar Empleado' : 'Nuevo Empleado'}
+                </h1>
+                <div className={styles.formCard}>
+                    <EmployeeForm
+                        title={editingEmployee ? 'Editar Empleado' : 'Nuevo Empleado'}
+                        employee={editingEmployee}
+                        onSubmit={handleSubmit}
+                        onCancel={handleCancelEdit}
+                        puestosOptions={PUESTOS_OPTIONS}
+                        departamentosOptions={DEPARTAMENTOS_OPTIONS}
+                        getAreasForDepartment={getAreasForDepartment}
+                        embedded={true}
+                    />
+                </div>
+            </div>
+        </div>
+    );
+
+    // Detail View Component
+    const DetailView = () => (
+        <div className={`${styles.slidePanel} ${getSlideClass('detail')}`}>
+            {/* Back button and title */}
+            <div className={styles.detailHeader}>
+                <button onClick={goBackToList} className={styles.backButton}>
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                        <path d="M19 12H5" />
+                        <polyline points="12 19 5 12 12 5" />
+                    </svg>
+                    Empleados
+                </button>
+            </div>
+
+            {!selectedEmployee && (
+                <div className={styles.emptyDetail}>
+                    <div className={styles.emptyDetailIcon}>
+                        <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                            <circle cx="12" cy="7" r="4" />
+                        </svg>
+                    </div>
+                    <h3 className={styles.emptyDetailTitle}>Selecciona un empleado</h3>
+                    <p className={styles.emptyDetailText}>Elige un empleado de la lista para ver sus detalles</p>
+                </div>
+            )}
+
+            {selectedEmployee && (
+                <>
+                    {/* Profile Header */}
+                    <div className={styles.profileHeaderCard}>
+                        <div className={styles.avatarSection}>
+                            <div className={styles.avatarLarge}>
+                                {selectedEmployee.photoUrl ? (
+                                    // eslint-disable-next-line @next/next/no-img-element
+                                    <img src={selectedEmployee.photoUrl} alt={selectedEmployee.name} referrerPolicy="no-referrer" />
+                                ) : (
+                                    <span>{getInitials(selectedEmployee.name)}</span>
+                                )}
+                            </div>
+                            <h2 className={styles.employeeName}>{selectedEmployee.name}</h2>
+                            <p className={styles.employeeIdText}>ID: {selectedEmployee.employeeId || selectedEmployee.id}</p>
+                        </div>
+                    </div>
+
+                    {/* Personal Info Section */}
+                    <div className={styles.settingsGroup}>
+                        <h3 className={styles.settingsGroupTitle}>Información Personal</h3>
+                        <div className={styles.settingsCard}>
+                            <div className={styles.settingsItem}>
+                                <div className={`${styles.settingsIcon} ${styles.iconBlue}`}>📋</div>
+                                <span className={styles.settingsLabel}>CURP</span>
+                                <span className={styles.settingsValue}>{selectedEmployee.curp || '—'}</span>
+                            </div>
+                            <div className={styles.settingsItem}>
+                                <div className={`${styles.settingsIcon} ${styles.iconPurple}`}>🎓</div>
+                                <span className={styles.settingsLabel}>Escolaridad</span>
+                                <span className={styles.settingsValue}>{selectedEmployee.education || '—'}</span>
+                            </div>
+                            <div className={styles.settingsItem}>
+                                <div className={`${styles.settingsIcon} ${styles.iconGreen}`}>📅</div>
+                                <span className={styles.settingsLabel}>Fecha Ingreso</span>
+                                <span className={styles.settingsValue}>{selectedEmployee.startDate || '—'}</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Work Info Section */}
+                    <div className={styles.settingsGroup}>
+                        <h3 className={styles.settingsGroupTitle}>Información Laboral</h3>
+                        <div className={styles.settingsCard}>
+                            <div className={styles.settingsItem}>
+                                <div className={`${styles.settingsIcon} ${styles.iconOrange}`}>💼</div>
+                                <span className={styles.settingsLabel}>Puesto</span>
+                                <span className={styles.settingsValue}>{selectedEmployee.position || '—'}</span>
+                            </div>
+                            <div className={styles.settingsItem}>
+                                <div className={`${styles.settingsIcon} ${styles.iconTeal}`}>🏢</div>
+                                <span className={styles.settingsLabel}>Departamento</span>
+                                <span className={styles.settingsValue}>{selectedEmployee.department || '—'}</span>
+                            </div>
+                            <div className={styles.settingsItem}>
+                                <div className={`${styles.settingsIcon} ${styles.iconPink}`}>📍</div>
+                                <span className={styles.settingsLabel}>Área</span>
+                                <span className={styles.settingsValue}>{selectedEmployee.area || '—'}</span>
+                            </div>
+                            <div className={styles.settingsItem}>
+                                <div className={`${styles.settingsIcon} ${styles.iconGray}`}>⏰</div>
+                                <span className={styles.settingsLabel}>Turno</span>
+                                <span className={styles.settingsValue}>{selectedEmployee.shift || '—'}</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Performance Section */}
+                    {selectedEmployee.promotionData?.performanceScore && (
+                        <div className={styles.settingsGroup}>
+                            <h3 className={styles.settingsGroupTitle}>Desempeño</h3>
+                            <div className={styles.settingsCard}>
+                                <div className={styles.settingsItem}>
+                                    <div className={`${styles.settingsIcon} ${styles.iconGreen}`}>📊</div>
+                                    <span className={styles.settingsLabel}>Evaluación</span>
+                                    <span className={styles.settingsValue}>{selectedEmployee.promotionData.performanceScore}%</span>
+                                </div>
+                            </div>
+                        </div>
+                    )}
+
+                    {/* Actions Section */}
+                    {canWrite() && (
+                        <div className={styles.settingsGroup}>
+                            <h3 className={styles.settingsGroupTitle}>Acciones</h3>
+                            <div className={styles.settingsCard}>
+                                <button className={styles.settingsItem} onClick={() => handleEdit(selectedEmployee)}>
+                                    <div className={`${styles.settingsIcon} ${styles.iconBlue}`}>✏️</div>
+                                    <span className={styles.settingsLabel}>Editar Empleado</span>
+                                    <ChevronRight />
+                                </button>
+                                <button className={`${styles.settingsItem} ${styles.dangerItem}`} onClick={() => handleDelete(selectedEmployee)}>
+                                    <div className={`${styles.settingsIcon} ${styles.iconRed}`}>🗑️</div>
+                                    <span className={`${styles.settingsLabel} ${styles.dangerText}`}>Eliminar Empleado</span>
+                                    <ChevronRight />
+                                </button>
+                            </div>
+                        </div>
+                    )}
+                </>
+            )}
+        </div>
+    );
+
+    // List View Component
+    const ListView = () => (
+        <div className={`${styles.slidePanel} ${getSlideClass('list')}`}>
+            {/* Page Header */}
+            <div className={styles.pageHeader}>
+                <Link href="/dashboard" className={styles.headerBackLink}>
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                        <path d="M19 12H5" />
+                        <polyline points="12 19 5 12 12 5" />
+                    </svg>
+                    Dashboard
+                </Link>
+                <div className={styles.headerTitleRow}>
+                    <h1 className={styles.pageTitle}>Empleados</h1>
+                    {canWrite() && (
+                        <button className={styles.addButton} onClick={handleNewEmployee}>
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                <path d="M12 5v14" />
+                                <path d="M5 12h14" />
+                            </svg>
+                        </button>
+                    )}
+                </div>
+            </div>
+
+            {/* Search Card */}
+            <div className={styles.searchCard}>
+                <div className={styles.searchInputWrapper}>
+                    <svg className={styles.searchIcon} width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                        <circle cx="11" cy="11" r="8" />
+                        <path d="M21 21l-4.35-4.35" />
+                    </svg>
+                    <input
+                        type="text"
+                        placeholder="Buscar por nombre o ID..."
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                        className={styles.searchInput}
+                    />
+                </div>
+            </div>
+
+            {/* Stats Summary */}
+            <div className={styles.statsRow}>
+                <div className={`${styles.statCard} ${styles.statBlue}`}>
+                    <span className={styles.statNumber}>{employees.length}</span>
+                    <span className={styles.statLabel}>Empleados</span>
+                </div>
+                <div className={`${styles.statCard} ${styles.statGreen}`}>
+                    <span className={styles.statNumber}>{employees.filter(e => e.department).length}</span>
+                    <span className={styles.statLabel}>Con Depto</span>
+                </div>
+                <div className={`${styles.statCard} ${styles.statPurple}`}>
+                    <span className={styles.statNumber}>{new Set(employees.map(e => e.position).filter(Boolean)).size}</span>
+                    <span className={styles.statLabel}>Puestos</span>
+                </div>
+            </div>
+
+            {/* Employees List */}
+            {loading ? (
+                <div className={styles.loadingContainer}>
+                    <div className="spinner"></div>
+                </div>
+            ) : employees.length === 0 ? (
+                <div className={styles.emptyState}>
+                    <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+                        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+                        <circle cx="9" cy="7" r="4" />
+                        <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
+                        <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+                    </svg>
+                    <h3>No hay empleados</h3>
+                    <p>{searchTerm ? 'No hay resultados para tu búsqueda' : 'Comienza agregando un nuevo empleado'}</p>
+                </div>
+            ) : (
+                <>
+                    <div className={styles.settingsGroup}>
+                        <h3 className={styles.settingsGroupTitle}>Lista de Empleados</h3>
+                        <div className={styles.settingsCard}>
+                            {employees.map((emp) => (
+                                <button key={emp.id} className={styles.employeeItem} onClick={() => selectEmployee(emp)}>
+                                    <div className={styles.employeeAvatar}>
+                                        {emp.photoUrl ? (
+                                            // eslint-disable-next-line @next/next/no-img-element
+                                            <img src={emp.photoUrl} alt={emp.name} referrerPolicy="no-referrer" />
+                                        ) : (
+                                            <span>{getInitials(emp.name)}</span>
+                                        )}
+                                    </div>
+                                    <div className={styles.employeeInfo}>
+                                        <span className={styles.empName}>{emp.name}</span>
+                                        <span className={styles.empMeta}>{emp.position || 'Sin puesto'} • ID: {emp.employeeId || emp.id}</span>
+                                    </div>
+                                    <ChevronRight />
+                                </button>
+                            ))}
+                        </div>
+                    </div>
+
+                    {/* Pagination */}
+                    <div className={styles.pagination}>
+                        <button className={styles.paginationBtn} onClick={prevPage} disabled={page <= 1 || loading}>
+                            ← Anterior
+                        </button>
+                        <span className={styles.pageIndicator}>Página {page}</span>
+                        <button className={styles.paginationBtn} onClick={nextPage} disabled={!hasMore || loading}>
+                            Siguiente →
+                        </button>
+                    </div>
+                </>
+            )}
+        </div>
+    );
+
     return (
         <>
             <Navbar />
@@ -181,198 +520,15 @@ export default function EmployeesPage() {
                 </div>
 
                 <div className={styles.container}>
-                    {/* Header */}
-                    <div className={styles.header}>
-                        <div className={styles.headerLeft}>
-                            <Link href="/dashboard" className={styles.backBtn}>
-                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                    <path d="M19 12H5" /><path d="M12 19l-7-7 7-7" />
-                                </svg>
-                                Volver
-                            </Link>
-                            <h1>Gestión de Empleados</h1>
-                        </div>
-                        {canWrite() && (
-                            <Button onClick={() => { setShowForm(!showForm); setEditingEmployee(null); }}>
-                                {showForm ? 'Cancelar' : '+ Nuevo'}
-                            </Button>
-                        )}
+                    <div className={styles.slideContainer}>
+                        <ListView />
+                        <DetailView />
+                        <EditView />
                     </div>
-
-                    {/* Form Modal */}
-                    <Dialog
-                        open={showForm}
-                        onOpenChange={(val) => {
-                            if (!val) {
-                                setShowForm(false);
-                                setEditingEmployee(null);
-                            }
-                        }}
-                    >
-                        <DialogHeader>
-                            <DialogTitle>{editingEmployee ? 'Editar Empleado' : 'Nuevo Empleado'}</DialogTitle>
-                            <DialogClose onClose={() => { setShowForm(false); setEditingEmployee(null); }} />
-                        </DialogHeader>
-                        <DialogBody>
-                            <EmployeeForm
-                                title={editingEmployee ? 'Editar Empleado' : 'Nuevo Empleado'}
-                                employee={editingEmployee}
-                                onSubmit={handleSubmit}
-                                onCancel={() => { setShowForm(false); setEditingEmployee(null); }}
-                                puestosOptions={PUESTOS_OPTIONS}
-                                departamentosOptions={DEPARTAMENTOS_OPTIONS}
-                                getAreasForDepartment={getAreasForDepartment}
-                                embedded={true}
-                            />
-                        </DialogBody>
-                    </Dialog>
-
-                    {/* Stats Summary */}
-                    <div className={styles.statsSummary}>
-                        <div className={styles.statCard}>
-                            <div className={`${styles.statIcon} ${styles.statIconBlue}`}>👥</div>
-                            <div className={styles.statInfo}>
-                                <span className={styles.statValue}>{employees.length}</span>
-                                <span className={styles.statLabel}>Empleados</span>
-                            </div>
-                        </div>
-                        <div className={styles.statCard}>
-                            <div className={`${styles.statIcon} ${styles.statIconGreen}`}>✓</div>
-                            <div className={styles.statInfo}>
-                                <span className={styles.statValue}>{employees.filter(e => e.department).length}</span>
-                                <span className={styles.statLabel}>Con Depto.</span>
-                            </div>
-                        </div>
-                        <div className={styles.statCard}>
-                            <div className={`${styles.statIcon} ${styles.statIconPurple}`}>📋</div>
-                            <div className={styles.statInfo}>
-                                <span className={styles.statValue}>{new Set(employees.map(e => e.position).filter(Boolean)).size}</span>
-                                <span className={styles.statLabel}>Puestos</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    {/* Search Bar */}
-                    <div className={styles.searchBar}>
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                            <circle cx="11" cy="11" r="8" /><path d="M21 21l-4.35-4.35" />
-                        </svg>
-                        <input
-                            type="text"
-                            placeholder="Buscar por nombre o ID..."
-                            value={searchTerm}
-                            onChange={(e) => setSearchTerm(e.target.value)}
-                        />
-                    </div>
-
-                    {/* Employees List */}
-                    {loading ? (
-                        <div className={styles.loadingContainer}>
-                            <div className="spinner"></div>
-                        </div>
-                    ) : employees.length === 0 ? (
-                        <div className={styles.emptyState}>
-                            <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-                                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
-                                <circle cx="9" cy="7" r="4" />
-                                <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
-                                <path d="M16 3.13a4 4 0 0 1 0 7.75" />
-                            </svg>
-                            <h3>No hay empleados</h3>
-                            <p>{searchTerm ? 'No hay resultados para tu búsqueda' : 'Comienza agregando un nuevo empleado'}</p>
-                        </div>
-                    ) : (
-                        <>
-                            <div className={styles.employeesList}>
-                                {employees.map((emp) => (
-                                    <div key={emp.id} className={styles.employeeCard}>
-                                        <div className={styles.employeeRow} onClick={() => toggleExpand(emp.id)}>
-                                            <div className={styles.employeeInfo}>
-                                                <div className={styles.avatarWrapper}>
-                                                    {emp.photoUrl ? (
-                                                        // eslint-disable-next-line @next/next/no-img-element
-                                                        <img src={emp.photoUrl} alt={emp.name} referrerPolicy="no-referrer" />
-                                                    ) : (
-                                                        getInitials(emp.name)
-                                                    )}
-                                                </div>
-                                                <div className={styles.employeeDetails}>
-                                                    <span className={styles.empName}>{emp.name}</span>
-                                                    <span className={styles.empMeta}>{emp.position || 'Sin puesto'} • ID: {emp.employeeId || emp.id}</span>
-                                                </div>
-                                            </div>
-                                            <div className={styles.employeeActions}>
-                                                {emp.department && (
-                                                    <span className={styles.deptBadge}>{emp.department}</span>
-                                                )}
-                                                <button className={`${styles.expandBtn} ${expandedId === emp.id ? styles.expanded : ''}`}>
-                                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                                        <polyline points="6 9 12 15 18 9" />
-                                                    </svg>
-                                                </button>
-                                            </div>
-                                        </div>
-
-                                        {expandedId === emp.id && (
-                                            <div className={styles.expandedContent}>
-                                                <div className={styles.detailsGrid}>
-                                                    <div className={styles.detailItem}>
-                                                        <span className={styles.detailLabel}>Área</span>
-                                                        <span className={styles.detailValue}>{emp.area || '—'}</span>
-                                                    </div>
-                                                    <div className={styles.detailItem}>
-                                                        <span className={styles.detailLabel}>Turno</span>
-                                                        <span className={styles.detailValue}>{emp.shift || '—'}</span>
-                                                    </div>
-                                                    <div className={styles.detailItem}>
-                                                        <span className={styles.detailLabel}>Fecha Ingreso</span>
-                                                        <span className={styles.detailValue}>{emp.startDate || '—'}</span>
-                                                    </div>
-                                                    <div className={styles.detailItem}>
-                                                        <span className={styles.detailLabel}>Escolaridad</span>
-                                                        <span className={styles.detailValue}>{emp.education || '—'}</span>
-                                                    </div>
-                                                    <div className={styles.detailItem}>
-                                                        <span className={styles.detailLabel}>CURP</span>
-                                                        <span className={styles.detailValue}>{emp.curp || '—'}</span>
-                                                    </div>
-                                                    <div className={styles.detailItem}>
-                                                        <span className={styles.detailLabel}>Eval. Desempeño</span>
-                                                        <span className={styles.detailValue}>{emp.promotionData?.performanceScore ? `${emp.promotionData.performanceScore}%` : '—'}</span>
-                                                    </div>
-                                                </div>
-                                                {canWrite() && (
-                                                    <div className={styles.actionButtonsRow}>
-                                                        <button className={`${styles.actionBtn} ${styles.danger}`} onClick={() => handleDelete(emp)}>
-                                                            🗑️ Eliminar
-                                                        </button>
-                                                        <button className={`${styles.actionBtn} ${styles.primary}`} onClick={() => handleEdit(emp)}>
-                                                            ✏️ Editar
-                                                        </button>
-                                                    </div>
-                                                )}
-                                            </div>
-                                        )}
-                                    </div>
-                                ))}
-                            </div>
-
-                            {/* Pagination */}
-                            <div className={styles.pagination}>
-                                <Button variant="secondary" size="sm" onClick={prevPage} disabled={page <= 1 || loading}>
-                                    ← Anterior
-                                </Button>
-                                <span className={styles.pageIndicator}>Página {page}</span>
-                                <Button variant="secondary" size="sm" onClick={nextPage} disabled={!hasMore || loading}>
-                                    Siguiente →
-                                </Button>
-                            </div>
-                        </>
-                    )}
                 </div>
             </main>
 
-            {/* Delete Dialog */}
+            {/* Delete Dialog - Keep as modal for confirmation */}
             <Dialog open={deleteModal.show} onOpenChange={(open) => !open && cancelDelete()}>
                 <DialogHeader>
                     <DialogTitle>¿Eliminar Empleado?</DialogTitle>

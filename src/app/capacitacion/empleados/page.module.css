@@ -73,6 +73,118 @@
     padding: var(--spacing-xl);
 }
 
+/* === MASTER-DETAIL LAYOUT FOR LARGE SCREENS === */
+@media (min-width: 1024px) {
+    .container {
+        max-width: 1400px;
+        padding: 24px 40px;
+    }
+
+    /* Two column grid */
+    .mainContent {
+        display: grid;
+        grid-template-columns: 500px 1fr;
+        gap: 24px;
+        min-height: calc(100vh - 280px);
+    }
+
+    /* Left column - List */
+    .listColumn {
+        background: rgba(255, 255, 255, 0.6);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border-radius: 16px;
+        padding: 16px;
+        max-height: calc(100vh - 280px);
+        overflow-y: auto;
+    }
+
+    [data-theme="dark"] .listColumn {
+        background: rgba(28, 28, 30, 0.7);
+    }
+
+    /* Right column - Detail */
+    .detailColumn {
+        background: rgba(255, 255, 255, 0.6);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border-radius: 16px;
+        padding: 24px;
+        max-height: calc(100vh - 280px);
+        overflow-y: auto;
+    }
+
+    [data-theme="dark"] .detailColumn {
+        background: rgba(28, 28, 30, 0.7);
+    }
+
+    /* Custom scrollbar for light theme */
+    .listColumn::-webkit-scrollbar,
+    .detailColumn::-webkit-scrollbar {
+        width: 8px;
+    }
+
+    .listColumn::-webkit-scrollbar-track,
+    .detailColumn::-webkit-scrollbar-track {
+        background: rgba(0, 0, 0, 0.05);
+        border-radius: 4px;
+    }
+
+    .listColumn::-webkit-scrollbar-thumb,
+    .detailColumn::-webkit-scrollbar-thumb {
+        background: rgba(0, 0, 0, 0.2);
+        border-radius: 4px;
+    }
+
+    /* Custom scrollbar for dark theme */
+    [data-theme="dark"] .listColumn::-webkit-scrollbar-track,
+    [data-theme="dark"] .detailColumn::-webkit-scrollbar-track {
+        background: rgba(255, 255, 255, 0.05);
+    }
+
+    [data-theme="dark"] .listColumn::-webkit-scrollbar-thumb,
+    [data-theme="dark"] .detailColumn::-webkit-scrollbar-thumb {
+        background: rgba(255, 255, 255, 0.2);
+    }
+
+    /* Empty detail placeholder */
+    .emptyDetail {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        height: 100%;
+        min-height: 400px;
+        text-align: center;
+        padding: 40px;
+    }
+
+    .emptyDetailIcon {
+        width: 120px;
+        height: 120px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(59, 130, 246, 0.1));
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 24px;
+        color: var(--text-tertiary);
+    }
+
+    .emptyDetailTitle {
+        font-size: 20px;
+        font-weight: 600;
+        color: var(--text-primary);
+        margin: 0 0 8px 0;
+    }
+
+    .emptyDetailText {
+        font-size: 14px;
+        color: var(--text-tertiary);
+        margin: 0;
+    }
+}
+
 /* === HEADER === */
 .header {
     display: flex;

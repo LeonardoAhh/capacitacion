@@ -39,6 +39,14 @@ export default function EmpleadosPage() {
     const [viewingEmp, setViewingEmp] = useState(null); // Detail Mode
     const [isCreating, setIsCreating] = useState(false); // Create Mode
     const [previewImage, setPreviewImage] = useState(null); // Photo Lightbox Mode
+    const [isDesktop, setIsDesktop] = useState(false); // Responsive Mode
+
+    useEffect(() => {
+        const checkDesktop = () => setIsDesktop(window.innerWidth >= 1024);
+        checkDesktop();
+        window.addEventListener('resize', checkDesktop);
+        return () => window.removeEventListener('resize', checkDesktop);
+    }, []);
 
     const [formData, setFormData] = useState({
         id: '',
@@ -344,8 +352,9 @@ export default function EmpleadosPage() {
                 // Check if exists
                 const check = await getDoc(ref);
                 if (check.exists()) {
-                    toast.error("Error", "Ya existe un empleado con este ID.");
+                    toast.error("ID Duplicado", `El ID de empleado "${empId}" ya existe. Por favor usa un ID diferente.`);
                     setSaving(false);
+                    setUploading(false);
                     return;
                 }
                 await setDoc(ref, {
@@ -481,430 +490,593 @@ export default function EmpleadosPage() {
                         </div>
                     </div>
 
-                    {/* Employees List */}
+                    {/* Employees List with Two Column Layout */}
                     {loading ? (
                         <div className={styles.loadingContainer}><div className="spinner"></div></div>
                     ) : (
-                        <>
-                            <div className={styles.employeesList}>
-                                {filteredEmployees.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage).map(emp => (
-                                    <div key={emp.id} className={styles.employeeCard}>
-                                        <div className={styles.employeeRow} onClick={() => toggleExpand(emp.id)}>
-                                            <div className={styles.employeeInfo}>
-                                                <div
-                                                    className={styles.avatarWrapper}
-                                                    onClick={(e) => { e.stopPropagation(); emp.photoUrl && setPreviewImage({ url: emp.photoUrl, name: emp.name }); }}
-                                                    style={{ cursor: emp.photoUrl ? 'pointer' : 'default' }}
-                                                >
-                                                    {emp.photoUrl ? (
-                                                        // eslint-disable-next-line @next/next/no-img-element
-                                                        <img src={emp.photoUrl} alt={emp.name} referrerPolicy="no-referrer" />
-                                                    ) : getInitials(emp.name)}
+                        <div className={styles.mainContent}>
+                            {/* Left Column - Employee List */}
+                            <div className={styles.listColumn}>
+                                <div className={styles.employeesList}>
+                                    {filteredEmployees.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage).map(emp => (
+                                        <div key={emp.id} className={styles.employeeCard}>
+                                            <div className={styles.employeeRow} onClick={() => toggleExpand(emp.id)}>
+                                                <div className={styles.employeeInfo}>
+                                                    <div
+                                                        className={styles.avatarWrapper}
+                                                        onClick={(e) => { e.stopPropagation(); emp.photoUrl && setPreviewImage({ url: emp.photoUrl, name: emp.name }); }}
+                                                        style={{ cursor: emp.photoUrl ? 'pointer' : 'default' }}
+                                                    >
+                                                        {emp.photoUrl ? (
+                                                            // eslint-disable-next-line @next/next/no-img-element
+                                                            <img src={emp.photoUrl} alt={emp.name} referrerPolicy="no-referrer" />
+                                                        ) : getInitials(emp.name)}
+                                                    </div>
+                                                    <div className={styles.employeeDetails}>
+                                                        <span className={styles.empName}>{emp.name}</span>
+                                                        <span className={styles.empMeta}>{emp.position || 'Sin puesto'} • ID: {emp.employeeId || emp.id}</span>
+                                                    </div>
                                                 </div>
-                                                <div className={styles.employeeDetails}>
-                                                    <span className={styles.empName}>{emp.name}</span>
-                                                    <span className={styles.empMeta}>{emp.position || 'Sin puesto'} • ID: {emp.employeeId || emp.id}</span>
+                                                <div className={styles.employeeActions}>
+                                                    <span className={`${styles.complianceBadge} ${getComplianceColor(emp.matrix?.compliancePercentage || 0)}`}>
+                                                        {emp.matrix?.compliancePercentage || 0}%
+                                                    </span>
+                                                    <button className={`${styles.expandBtn} ${expandedId === emp.id ? styles.expanded : ''}`}>
+                                                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                                            <polyline points="6 9 12 15 18 9" />
+                                                        </svg>
+                                                    </button>
                                                 </div>
                                             </div>
-                                            <div className={styles.employeeActions}>
-                                                <span className={`${styles.complianceBadge} ${getComplianceColor(emp.matrix?.compliancePercentage || 0)}`}>
-                                                    {emp.matrix?.compliancePercentage || 0}%
-                                                </span>
-                                                <button className={`${styles.expandBtn} ${expandedId === emp.id ? styles.expanded : ''}`}>
-                                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                                        <polyline points="6 9 12 15 18 9" />
+
+                                            {expandedId === emp.id && (
+                                                <div className={styles.expandedContent}>
+                                                    <div className={styles.quickStats}>
+                                                        <div className={styles.quickStat}>
+                                                            <span>{emp.matrix?.completedCount || 0}</span>
+                                                            <span>Aprobados</span>
+                                                        </div>
+                                                        <div className={styles.quickStat}>
+                                                            <span>{emp.matrix?.requiredCount || 0}</span>
+                                                            <span>Requeridos</span>
+                                                        </div>
+                                                        <div className={styles.quickStat}>
+                                                            <span>{emp.department || '—'}</span>
+                                                            <span>Departamento</span>
+                                                        </div>
+                                                    </div>
+
+                                                    <div className={styles.detailsGrid}>
+                                                        <div className={styles.detailItem}>
+                                                            <span className={styles.detailLabel}>Área</span>
+                                                            <span className={styles.detailValue}>{emp.area || '—'}</span>
+                                                        </div>
+                                                        <div className={styles.detailItem}>
+                                                            <span className={styles.detailLabel}>Turno</span>
+                                                            <span className={styles.detailValue}>{emp.shift || '—'}</span>
+                                                        </div>
+                                                        <div className={styles.detailItem}>
+                                                            <span className={styles.detailLabel}>CURP</span>
+                                                            <span className={styles.detailValue}>{emp.curp || '—'}</span>
+                                                        </div>
+                                                        <div className={styles.detailItem}>
+                                                            <span className={styles.detailLabel}>Fecha Ingreso</span>
+                                                            <span className={styles.detailValue}>{emp.startDate || '—'}</span>
+                                                        </div>
+                                                    </div>
+
+                                                    {emp.history && emp.history.length > 0 && (
+                                                        <div className={styles.trainingHistory}>
+                                                            <h4>Historial Reciente</h4>
+                                                            <div className={styles.historyList}>
+                                                                {emp.history.slice().reverse().slice(0, 3).map((h, i) => (
+                                                                    <div key={i} className={styles.historyItem}>
+                                                                        <span className={styles.historyName}>{h.courseName}</span>
+                                                                        <div className={styles.historyMeta}>
+                                                                            <span>{h.date}</span>
+                                                                            <span className={h.status === 'approved' ? styles.statusApproved : styles.statusRejected}>
+                                                                                {h.status === 'approved' ? '✓' : '✗'} {h.score}
+                                                                            </span>
+                                                                        </div>
+                                                                    </div>
+                                                                ))}
+                                                            </div>
+                                                        </div>
+                                                    )}
+
+                                                    <div className={styles.actionButtonsRow}>
+                                                        {canWrite() && (
+                                                            <>
+                                                                <button className={`${styles.actionBtn} ${styles.danger}`} onClick={(e) => { e.stopPropagation(); handleDelete(emp); }}>
+                                                                    🗑️ Eliminar
+                                                                </button>
+                                                                <button className={`${styles.actionBtn} ${styles.primary}`} onClick={(e) => { e.stopPropagation(); handleEdit(emp); }}>
+                                                                    ✏️ Editar
+                                                                </button>
+                                                            </>
+                                                        )}
+                                                    </div>
+                                                </div>
+                                            )}
+                                        </div>
+                                    ))}
+
+                                    {filteredEmployees.length === 0 && (
+                                        <div className={styles.emptyState}>No se encontraron resultados.</div>
+                                    )}
+                                </div>
+
+                                {/* Pagination */}
+                                <div className={styles.paginationControls}>
+                                    <span className={styles.pageInfo}>
+                                        Página {currentPage} de {Math.ceil(filteredEmployees.length / itemsPerPage) || 1}
+                                    </span>
+                                    <div className={styles.pageButtons}>
+                                        <Button variant="outline" size="sm" disabled={currentPage === 1} onClick={() => setCurrentPage(prev => prev - 1)}>←</Button>
+                                        <Button variant="outline" size="sm" disabled={currentPage >= Math.ceil(filteredEmployees.length / itemsPerPage)} onClick={() => setCurrentPage(prev => prev + 1)}>→</Button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Right Column - Dynamic Content (Desktop only) */}
+                            <div className={styles.detailColumn}>
+                                {isCreating || editingEmp ? (
+                                    <div className={styles.detailContent} style={{ padding: '0 10px' }}>
+                                        <div className={styles.header} style={{ marginBottom: '16px', borderBottom: '1px solid var(--border-color)', paddingBottom: '10px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                            <h2 style={{ fontSize: '1.25rem', fontWeight: '600', margin: 0 }}>
+                                                {isCreating ? 'Nuevo Empleado' : 'Editar Empleado'}
+                                            </h2>
+                                            <Button variant="ghost" size="sm" onClick={() => { setIsCreating(false); setEditingEmp(null); }}>✕</Button>
+                                        </div>
+
+                                        {/* Foto de Perfil Form */}
+                                        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginBottom: '24px' }}>
+                                            <div style={{
+                                                width: '90px', height: '90px', borderRadius: '50%', overflow: 'hidden',
+                                                background: 'var(--bg-tertiary, #f0f0f0)', marginBottom: '12px',
+                                                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                                                border: '2px solid var(--border-color, #e2e8f0)', boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)'
+                                            }}>
+                                                {photoPreview || editingEmp?.photoUrl ? (
+                                                    // eslint-disable-next-line @next/next/no-img-element
+                                                    <img src={photoPreview || editingEmp?.photoUrl} alt="Vista previa" referrerPolicy="no-referrer" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                                                ) : (
+                                                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" style={{ opacity: 0.4 }}>
+                                                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                                                        <circle cx="12" cy="7" r="4" />
                                                     </svg>
-                                                </button>
+                                                )}
+                                            </div>
+                                            <label htmlFor="photo-upload-col" style={{
+                                                cursor: 'pointer', padding: '6px 14px', fontSize: '0.8rem', fontWeight: '600',
+                                                color: 'var(--color-primary, #2563eb)', background: 'rgba(37, 99, 235, 0.1)',
+                                                borderRadius: '50px', transition: 'all 0.2s'
+                                            }}>
+                                                {photoPreview || editingEmp?.photoUrl ? 'Cambiar Foto' : 'Subir Foto'}
+                                            </label>
+                                            <input id="photo-upload-col" type="file" accept="image/*" onChange={handleFileChange} style={{ display: 'none' }} />
+                                        </div>
+
+                                        <div className={styles.formGroup}>
+                                            <label>Nombre Completo</label>
+                                            <input type="text" value={formData.name} onChange={(e) => setFormData({ ...formData, name: e.target.value })} className={styles.input} />
+                                        </div>
+
+                                        <div className={styles.formGrid}>
+                                            <div className={styles.formGroup}>
+                                                <label>ID Empleado</label>
+                                                <input type="text" value={formData.id} onChange={(e) => isCreating && setFormData({ ...formData, id: e.target.value })}
+                                                    placeholder={isCreating ? "Auto" : ""} readOnly={!isCreating}
+                                                    className={styles.input} style={!isCreating ? { opacity: 0.7, background: 'var(--bg-tertiary)' } : {}} />
+                                            </div>
+                                            <div className={styles.formGroup}>
+                                                <label>CURP</label>
+                                                <input type="text" value={formData.curp} onChange={(e) => setFormData({ ...formData, curp: e.target.value })} maxLength={18} className={styles.input} />
                                             </div>
                                         </div>
 
-                                        {expandedId === emp.id && (
-                                            <div className={styles.expandedContent}>
-                                                <div className={styles.quickStats}>
-                                                    <div className={styles.quickStat}>
-                                                        <span>{emp.matrix?.completedCount || 0}</span>
-                                                        <span>Aprobados</span>
-                                                    </div>
-                                                    <div className={styles.quickStat}>
-                                                        <span>{emp.matrix?.requiredCount || 0}</span>
-                                                        <span>Requeridos</span>
-                                                    </div>
-                                                    <div className={styles.quickStat}>
-                                                        <span>{emp.department || '—'}</span>
-                                                        <span>Departamento</span>
-                                                    </div>
-                                                </div>
+                                        <div className={styles.formGrid}>
+                                            <div className={styles.formGroup}>
+                                                <label>Puesto</label>
+                                                <input type="text" value={formData.position} onChange={(e) => setFormData({ ...formData, position: e.target.value })} list="positionsListCol" className={styles.input} />
+                                                <datalist id="positionsListCol">{positions.map(p => <option key={p} value={p} />)}</datalist>
+                                            </div>
+                                            <div className={styles.formGroup}>
+                                                <label>Departamento</label>
+                                                <input type="text" value={formData.department} onChange={(e) => setFormData({ ...formData, department: e.target.value })} list="deptListCol" className={styles.input} />
+                                                <datalist id="deptListCol">{departments.map(d => <option key={d} value={d} />)}</datalist>
+                                            </div>
+                                        </div>
 
-                                                <div className={styles.detailsGrid}>
-                                                    <div className={styles.detailItem}>
-                                                        <span className={styles.detailLabel}>Área</span>
-                                                        <span className={styles.detailValue}>{emp.area || '—'}</span>
-                                                    </div>
-                                                    <div className={styles.detailItem}>
-                                                        <span className={styles.detailLabel}>Turno</span>
-                                                        <span className={styles.detailValue}>{emp.shift || '—'}</span>
-                                                    </div>
-                                                    <div className={styles.detailItem}>
-                                                        <span className={styles.detailLabel}>CURP</span>
-                                                        <span className={styles.detailValue}>{emp.curp || '—'}</span>
-                                                    </div>
-                                                    <div className={styles.detailItem}>
-                                                        <span className={styles.detailLabel}>Fecha Ingreso</span>
-                                                        <span className={styles.detailValue}>{emp.startDate || '—'}</span>
-                                                    </div>
-                                                </div>
+                                        <div className={styles.formGrid}>
+                                            <div className={styles.formGroup}>
+                                                <label>Área</label>
+                                                <select value={formData.area} onChange={(e) => setFormData({ ...formData, area: e.target.value })} className={styles.select}>
+                                                    <option value="">-- Seleccionar --</option>
+                                                    <option value="A. CALIDAD 1ER TURNO">A. CALIDAD 1ER TURNO</option>
+                                                    <option value="A. CALIDAD 2DO TURNO">A. CALIDAD 2DO TURNO</option>
+                                                    <option value="ALMACÉN">ALMACÉN</option>
+                                                    <option value="CALIDAD ADMTVO">CALIDAD ADMTVO</option>
+                                                    <option value="GERENCIA">GERENCIA</option>
+                                                    <option value="LOGÍSTICA">LOGÍSTICA</option>
+                                                    <option value="MANTENIMIENTO">MANTENIMIENTO</option>
+                                                    <option value="METROLOGÍA">METROLOGÍA</option>
+                                                    <option value="MOLDES">MOLDES</option>
+                                                    <option value="PRODUCCIÓN 1ER TURNO">PRODUCCIÓN 1ER TURNO</option>
+                                                    <option value="PRODUCCIÓN 2DO TURNO">PRODUCCIÓN 2DO TURNO</option>
+                                                    <option value="PRODUCCIÓN 3ER TURNO">PRODUCCIÓN 3ER TURNO</option>
+                                                    <option value="PRODUCCIÓN 4TO TURNO">PRODUCCIÓN 4TO TURNO</option>
+                                                    <option value="PRODUCCIÓN ADMTVO">PRODUCCIÓN ADMTVO</option>
+                                                    <option value="PRODUCCIÓN MONTAJE">PRODUCCIÓN MONTAJE</option>
+                                                    <option value="PROYECTOS">PROYECTOS</option>
+                                                    <option value="RECURSOS HUMANOS">RECURSOS HUMANOS</option>
+                                                    <option value="RESIDENTES DE CALIDAD">RESIDENTES DE CALIDAD</option>
+                                                    <option value="SGI">SGI</option>
+                                                    <option value="SISTEMAS">SISTEMAS</option>
+                                                </select>
+                                            </div>
+                                            <div className={styles.formGroup}>
+                                                <label>Turno</label>
+                                                <select value={formData.shift} onChange={(e) => setFormData({ ...formData, shift: e.target.value })} className={styles.select}>
+                                                    <option value="">-- Seleccionar --</option>
+                                                    <option value="1">1</option>
+                                                    <option value="2">2</option>
+                                                    <option value="3">3</option>
+                                                    <option value="4">4</option>
+                                                    <option value="5">5</option>
+                                                </select>
+                                            </div>
+                                        </div>
 
-                                                {emp.history && emp.history.length > 0 && (
-                                                    <div className={styles.trainingHistory}>
-                                                        <h4>Historial Reciente</h4>
-                                                        <div className={styles.historyList}>
-                                                            {emp.history.slice().reverse().slice(0, 3).map((h, i) => (
-                                                                <div key={i} className={styles.historyItem}>
-                                                                    <span className={styles.historyName}>{h.courseName}</span>
-                                                                    <div className={styles.historyMeta}>
-                                                                        <span>{h.date}</span>
-                                                                        <span className={h.status === 'approved' ? styles.statusApproved : styles.statusRejected}>
-                                                                            {h.status === 'approved' ? '✓' : '✗'} {h.score}
-                                                                        </span>
-                                                                    </div>
-                                                                </div>
-                                                            ))}
-                                                        </div>
-                                                    </div>
+                                        <div className={styles.formGrid}>
+                                            <div className={styles.formGroup}>
+                                                <label>Escolaridad</label>
+                                                <select value={formData.education} onChange={(e) => setFormData({ ...formData, education: e.target.value })} className={styles.select}>
+                                                    <option value="">-- Seleccionar --</option>
+                                                    <option value="BACHILLERATO">BACHILLERATO</option>
+                                                    <option value="CARRERA TECNICA">CARRERA TECNICA</option>
+                                                    <option value="INGENIERIA">INGENIERIA</option>
+                                                    <option value="LICENCIATURA">LICENCIATURA</option>
+                                                    <option value="MAESTRIA">MAESTRIA</option>
+                                                    <option value="PASANTE INGENIERIA">PASANTE INGENIERIA</option>
+                                                    <option value="POSGRADO">POSGRADO</option>
+                                                    <option value="PREPARATORIA">PREPARATORIA</option>
+                                                    <option value="PRIMARIA">PRIMARIA</option>
+                                                    <option value="SECUNDARIA">SECUNDARIA</option>
+                                                    <option value="TSU">TSU</option>
+                                                </select>
+                                            </div>
+                                            <div className={styles.formGroup}>
+                                                <label>Fecha Ingreso</label>
+                                                <input type="date" value={formData.startDate} onChange={(e) => setFormData({ ...formData, startDate: e.target.value })} className={styles.input} />
+                                            </div>
+                                        </div>
+
+                                        {/* Documentos Section */}
+                                        <div className={styles.formGroup} style={{ marginTop: '20px', borderTop: '1px solid var(--border-color)', paddingTop: '15px' }}>
+                                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
+                                                <h4 style={{ margin: 0, fontSize: '0.95rem' }}>Documentos</h4>
+                                                <label htmlFor="doc-upload-col" style={{ cursor: 'pointer', fontSize: '0.85rem', color: 'var(--color-primary)', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                                                    📎 Adjuntar
+                                                </label>
+                                                <input id="doc-upload-col" type="file" multiple accept=".pdf,.doc,.docx,.jpg,.png" onChange={handleDocChange} style={{ display: 'none' }} />
+                                            </div>
+
+                                            {/* Existing Docs */}
+                                            {editingEmp?.documents && editingEmp.documents.length > 0 && (
+                                                <ul style={{ listStyle: 'none', padding: 0, margin: '0 0 10px 0' }}>
+                                                    {editingEmp.documents.map((doc, index) => (
+                                                        <li key={index} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '6px 8px', background: 'var(--bg-tertiary)', marginBottom: '4px', borderRadius: '6px', fontSize: '0.85rem' }}>
+                                                            <a href={doc.url} target="_blank" rel="noopener noreferrer" style={{ textDecoration: 'none', color: 'var(--text-primary)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', maxWidth: '85%' }}>
+                                                                📄 {doc.name}
+                                                            </a>
+                                                            <button type="button" onClick={() => removeExistingDoc(index, editingEmp.id)} style={{ border: 'none', background: 'transparent', color: '#ef4444', cursor: 'pointer' }}>✕</button>
+                                                        </li>
+                                                    ))}
+                                                </ul>
+                                            )}
+
+                                            {/* New Docs */}
+                                            {docFiles.length > 0 && (
+                                                <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
+                                                    {docFiles.map((file, index) => (
+                                                        <li key={index} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '6px 8px', background: 'rgba(37, 99, 235, 0.05)', border: '1px dashed var(--color-primary)', marginBottom: '4px', borderRadius: '6px', fontSize: '0.85rem' }}>
+                                                            <span style={{ color: 'var(--color-primary)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', maxWidth: '85%' }}>{file.name}</span>
+                                                            <button type="button" onClick={() => removeNewDoc(index)} style={{ border: 'none', background: 'transparent', color: 'var(--text-secondary)', cursor: 'pointer' }}>✕</button>
+                                                        </li>
+                                                    ))}
+                                                </ul>
+                                            )}
+                                        </div>
+
+                                        <div style={{ display: 'flex', gap: '10px', marginTop: '24px', paddingTop: '16px', borderTop: '1px solid var(--border-color)' }}>
+                                            <Button variant="ghost" style={{ flex: 1 }} onClick={() => { setIsCreating(false); setEditingEmp(null); }}>Cancelar</Button>
+                                            <Button style={{ flex: 1 }} onClick={handleSave} disabled={saving}>
+                                                {saving ? 'Guardando...' : 'Guardar'}
+                                            </Button>
+                                        </div>
+                                    </div>
+                                ) : viewingEmp ? (
+                                    <div className={styles.detailContent}>
+                                        <div className={styles.detailHeader}>
+                                            <div className={styles.detailAvatar}>
+                                                {viewingEmp.photoUrl ? (
+                                                    // eslint-disable-next-line @next/next/no-img-element
+                                                    <img src={viewingEmp.photoUrl} alt={viewingEmp.name} referrerPolicy="no-referrer" />
+                                                ) : (
+                                                    <span>{viewingEmp.name?.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase()}</span>
                                                 )}
-
-                                                <div className={styles.actionButtonsRow}>
-                                                    <button className={styles.actionBtn} onClick={(e) => { e.stopPropagation(); setViewingEmp(emp); }}>
-                                                        👁️ Ver Detalle
-                                                    </button>
-                                                    {canWrite() && (
-                                                        <>
-                                                            <button className={`${styles.actionBtn} ${styles.danger}`} onClick={(e) => { e.stopPropagation(); handleDelete(emp); }}>
-                                                                🗑️ Eliminar
-                                                            </button>
-                                                            <button className={`${styles.actionBtn} ${styles.primary}`} onClick={(e) => { e.stopPropagation(); handleEdit(emp); }}>
-                                                                ✏️ Editar
-                                                            </button>
-                                                        </>
-                                                    )}
-                                                </div>
+                                            </div>
+                                            <h2>{viewingEmp.name}</h2>
+                                            <p>ID: {viewingEmp.employeeId || viewingEmp.id}</p>
+                                        </div>
+                                        <div className={styles.detailsGrid}>
+                                            <div className={styles.detailItem}>
+                                                <span className={styles.detailLabel}>Puesto</span>
+                                                <span className={styles.detailValue}>{viewingEmp.position || '—'}</span>
+                                            </div>
+                                            <div className={styles.detailItem}>
+                                                <span className={styles.detailLabel}>Departamento</span>
+                                                <span className={styles.detailValue}>{viewingEmp.department || '—'}</span>
+                                            </div>
+                                            <div className={styles.detailItem}>
+                                                <span className={styles.detailLabel}>Área</span>
+                                                <span className={styles.detailValue}>{viewingEmp.area || '—'}</span>
+                                            </div>
+                                            <div className={styles.detailItem}>
+                                                <span className={styles.detailLabel}>Turno</span>
+                                                <span className={styles.detailValue}>{viewingEmp.shift || '—'}</span>
+                                            </div>
+                                            <div className={styles.detailItem}>
+                                                <span className={styles.detailLabel}>CURP</span>
+                                                <span className={styles.detailValue}>{viewingEmp.curp || '—'}</span>
+                                            </div>
+                                            <div className={styles.detailItem}>
+                                                <span className={styles.detailLabel}>Fecha Ingreso</span>
+                                                <span className={styles.detailValue}>{viewingEmp.startDate || '—'}</span>
+                                            </div>
+                                            <div className={styles.detailItem}>
+                                                <span className={styles.detailLabel}>Cumplimiento</span>
+                                                <span className={styles.detailValue}>{viewingEmp.matrix?.compliancePercentage || 0}%</span>
+                                            </div>
+                                            <div className={styles.detailItem}>
+                                                <span className={styles.detailLabel}>Cursos Requeridos</span>
+                                                <span className={styles.detailValue}>{viewingEmp.matrix?.requiredCount || 0}</span>
+                                            </div>
+                                        </div>
+                                        {canWrite() && (
+                                            <div className={styles.detailActions}>
+                                                <Button onClick={() => handleEdit(viewingEmp)}>✏️ Editar</Button>
+                                                <Button variant="outline" onClick={() => handleDelete(viewingEmp)}>🗑️ Eliminar</Button>
                                             </div>
                                         )}
                                     </div>
-                                ))}
-
-                                {filteredEmployees.length === 0 && (
-                                    <div className={styles.emptyState}>No se encontraron resultados.</div>
+                                ) : (
+                                    <div className={styles.emptyDetail}>
+                                        <div className={styles.emptyDetailIcon}>
+                                            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+                                                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                                                <circle cx="12" cy="7" r="4" />
+                                            </svg>
+                                        </div>
+                                        <h3 className={styles.emptyDetailTitle}>Selecciona un empleado</h3>
+                                        <p className={styles.emptyDetailText}>Haz clic en su tarjeta para ver detalles o editar</p>
+                                    </div>
                                 )}
                             </div>
-
-                            {/* Pagination */}
-                            <div className={styles.paginationControls}>
-                                <span className={styles.pageInfo}>
-                                    Página {currentPage} de {Math.ceil(filteredEmployees.length / itemsPerPage) || 1}
-                                </span>
-                                <div className={styles.pageButtons}>
-                                    <Button variant="outline" size="sm" disabled={currentPage === 1} onClick={() => setCurrentPage(prev => prev - 1)}>←</Button>
-                                    <Button variant="outline" size="sm" disabled={currentPage >= Math.ceil(filteredEmployees.length / itemsPerPage)} onClick={() => setCurrentPage(prev => prev + 1)}>→</Button>
-                                </div>
-                            </div>
-                        </>
+                        </div>
                     )}
                 </div>
             </main>
 
-            {/* Create/Edit Modal */}
-            <Dialog open={isCreating || !!editingEmp} onOpenChange={(open) => !open && (setIsCreating(false), setEditingEmp(null))}>
-                <DialogHeader>
-                    <DialogTitle>{isCreating ? 'Nuevo Empleado' : 'Editar Empleado'}</DialogTitle>
-                    <DialogClose onClose={() => { setIsCreating(false); setEditingEmp(null); }} />
-                </DialogHeader>
-                <DialogBody>
-                    {/* Foto de Perfil */}
-                    {/* Foto de Perfil */}
-                    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginBottom: '24px', paddingTop: '10px' }}>
-                        <div style={{
-                            width: '90px',
-                            height: '90px',
-                            borderRadius: '50%',
-                            overflow: 'hidden',
-                            background: 'var(--bg-tertiary, #f0f0f0)',
-                            marginBottom: '12px',
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            border: '2px solid var(--border-color, #e2e8f0)',
-                            boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)'
-                        }}>
-                            {photoPreview || editingEmp?.photoUrl ? (
-                                // eslint-disable-next-line @next/next/no-img-element
-                                <img src={photoPreview || editingEmp?.photoUrl} alt="Vista previa" referrerPolicy="no-referrer" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                            ) : (
-                                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" style={{ opacity: 0.4 }}>
-                                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
-                                    <circle cx="12" cy="7" r="4" />
-                                </svg>
-                            )}
-                        </div>
-                        <label htmlFor="photo-upload-modal" style={{
-                            cursor: 'pointer',
-                            padding: '6px 14px',
-                            fontSize: '0.8rem',
-                            fontWeight: '600',
-                            color: 'var(--color-primary, #2563eb)',
-                            background: 'rgba(37, 99, 235, 0.1)',
-                            borderRadius: '50px',
-                            transition: 'all 0.2s'
-                        }}>
-                            {photoPreview || editingEmp?.photoUrl ? 'Cambiar Foto' : 'Subir Foto'}
-                        </label>
-                        <input
-                            id="photo-upload-modal"
-                            type="file"
-                            accept="image/*"
-                            onChange={handleFileChange}
-                            style={{ display: 'none' }}
-                        />
-                    </div>
-
-                    <div className={styles.formGroup}>
-                        <label>Nombre Completo</label>
-                        <input
-                            type="text"
-                            value={formData.name}
-                            onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                        />
-                    </div>
-
-                    <div className={styles.formGrid}>
-                        <div className={styles.formGroup}>
-                            <label>ID Empleado</label>
-                            <input
-                                type="text"
-                                value={formData.id}
-                                onChange={(e) => isCreating && setFormData({ ...formData, id: e.target.value })}
-                                placeholder={isCreating ? "Auto-generado si vacío" : ""}
-                                readOnly={!isCreating}
-                                disabled={!isCreating}
-                                style={!isCreating ? { opacity: 0.7, cursor: 'not-allowed', background: '#f5f5f5' } : {}}
-                            />
-                        </div>
-                        <div className={styles.formGroup}>
-                            <label>CURP</label>
-                            <input
-                                type="text"
-                                value={formData.curp}
-                                onChange={(e) => setFormData({ ...formData, curp: e.target.value })}
-                                placeholder="Importante para DC-3"
-                                maxLength={18}
-                            />
-                        </div>
-                    </div>
-
-                    <div className={styles.formGrid}>
-                        <div className={styles.formGroup}>
-                            <label>Puesto (Categoría)</label>
-                            <input
-                                type="text"
-                                value={formData.position}
-                                onChange={(e) => setFormData({ ...formData, position: e.target.value })}
-                                list="positionsList"
-                            />
-                            <datalist id="positionsList">
-                                {positions.map(p => <option key={p} value={p} />)}
-                            </datalist>
-                        </div>
-                        <div className={styles.formGroup}>
-                            <label>Departamento</label>
-                            <input
-                                type="text"
-                                value={formData.department}
-                                onChange={(e) => setFormData({ ...formData, department: e.target.value })}
-                                list="deptList"
-                            />
-                            <datalist id="deptList">
-                                {departments.map(d => <option key={d} value={d} />)}
-                            </datalist>
-                        </div>
-                    </div>
-
-                    <div className={styles.formGrid}>
-                        <div className={styles.formGroup}>
-                            <label>Área</label>
-                            <select
-                                value={formData.area}
-                                onChange={(e) => setFormData({ ...formData, area: e.target.value })}
-                                className={styles.select}
-                            >
-                                <option value="">-- Seleccionar --</option>
-                                <option value="A. CALIDAD 1ER TURNO">A. CALIDAD 1ER TURNO</option>
-                                <option value="A. CALIDAD 2DO TURNO">A. CALIDAD 2DO TURNO</option>
-                                <option value="ALMACÉN">ALMACÉN</option>
-                                <option value="CALIDAD ADMTVO">CALIDAD ADMTVO</option>
-                                <option value="GERENCIA">GERENCIA</option>
-                                <option value="LOGÍSTICA">LOGÍSTICA</option>
-                                <option value="MANTENIMIENTO">MANTENIMIENTO</option>
-                                <option value="METROLOGÍA">METROLOGÍA</option>
-                                <option value="MOLDES">MOLDES</option>
-                                <option value="PRODUCCIÓN 1ER TURNO">PRODUCCIÓN 1ER TURNO</option>
-                                <option value="PRODUCCIÓN 2DO TURNO">PRODUCCIÓN 2DO TURNO</option>
-                                <option value="PRODUCCIÓN 3ER TURNO">PRODUCCIÓN 3ER TURNO</option>
-                                <option value="PRODUCCIÓN 4TO TURNO">PRODUCCIÓN 4TO TURNO</option>
-                                <option value="PRODUCCIÓN ADMTVO">PRODUCCIÓN ADMTVO</option>
-                                <option value="PRODUCCIÓN MONTAJE">PRODUCCIÓN MONTAJE</option>
-                                <option value="PROYECTOS">PROYECTOS</option>
-                                <option value="RECURSOS HUMANOS">RECURSOS HUMANOS</option>
-                                <option value="RESIDENTES DE CALIDAD">RESIDENTES DE CALIDAD</option>
-                                <option value="SGI">SGI</option>
-                                <option value="SISTEMAS">SISTEMAS</option>
-                            </select>
-                        </div>
-                        <div className={styles.formGroup}>
-                            <label>Turno</label>
-                            <select
-                                value={formData.shift}
-                                onChange={(e) => setFormData({ ...formData, shift: e.target.value })}
-                                className={styles.select}
-                            >
-                                <option value="">-- Seleccionar --</option>
-                                <option value="1">1</option>
-                                <option value="2">2</option>
-                                <option value="3">3</option>
-                                <option value="4">4</option>
-                                <option value="5">5</option>
-                            </select>
-                        </div>
-                    </div>
-
-                    <div className={styles.formGrid}>
-                        <div className={styles.formGroup}>
-                            <label>Ocupación Específica</label>
-                            <input
-                                type="text"
-                                value={formData.occupation}
-                                onChange={(e) => setFormData({ ...formData, occupation: e.target.value })}
-                                placeholder="Para DC-3"
-                            />
-                        </div>
-                        <div className={styles.formGroup}>
-                            <label>Escolaridad</label>
-                            <select
-                                value={formData.education}
-                                onChange={(e) => setFormData({ ...formData, education: e.target.value })}
-                                className={styles.select}
-                            >
-                                <option value="">-- Seleccionar --</option>
-                                <option value="BACHILLERATO">BACHILLERATO</option>
-                                <option value="CARRERA TECNICA">CARRERA TECNICA</option>
-                                <option value="INGENIERIA">INGENIERIA</option>
-                                <option value="LICENCIATURA">LICENCIATURA</option>
-                                <option value="MAESTRIA">MAESTRIA</option>
-                                <option value="PASANTE INGENIERIA">PASANTE INGENIERIA</option>
-                                <option value="POSGRADO">POSGRADO</option>
-                                <option value="PREPARATORIA">PREPARATORIA</option>
-                                <option value="PRIMARIA">PRIMARIA</option>
-                                <option value="SECUNDARIA">SECUNDARIA</option>
-                                <option value="TSU">TSU</option>
-                            </select>
-                        </div>
-                    </div>
-
-                    <div className={styles.formGrid}>
-                        <div className={styles.formGroup}>
-                            <label>Período Evaluación</label>
-                            <select
-                                value={formData.performancePeriod}
-                                onChange={(e) => setFormData({ ...formData, performancePeriod: e.target.value })}
-                                className={styles.select}
-                            >
-                                <option value="">-- Seleccionar --</option>
-                                <option value="JULIO - DICIEMBRE 2025">JULIO - DICIEMBRE 2025</option>
-                                <option value="ENERO - JUNIO 2026">ENERO - JUNIO 2026</option>
-                                <option value="JULIO - DICIEMBRE 2026">JULIO - DICIEMBRE 2026</option>
-                                <option value="ENERO - JUNIO 2027">ENERO - JUNIO 2027</option>
-                                <option value="JULIO - DICIEMBRE 2027">JULIO - DICIEMBRE 2027</option>
-                            </select>
-                        </div>
-                        <div className={styles.formGroup}>
-                            <label>Calificación (%)</label>
-                            <input
-                                type="number"
-                                min="0"
-                                max="100"
-                                value={formData.performanceScore}
-                                onChange={(e) => setFormData({ ...formData, performanceScore: e.target.value })}
-                                placeholder="0-100"
-                            />
-                        </div>
-                    </div>
-                    <div className={styles.formGroup}>
-                        <label>Fecha Último Cambio de Puesto (Temporalidad)</label>
-                        <input
-                            type="date"
-                            value={formData.positionStartDate}
-                            onChange={(e) => setFormData({ ...formData, positionStartDate: e.target.value })}
-                        />
-                    </div>
-
-                    {/* Documentos */}
-                    <div className={styles.formGroup} style={{ marginTop: '20px', borderTop: '1px solid #eee', paddingTop: '15px' }}>
-                        <h4 style={{ margin: '0 0 10px 0', fontSize: '1rem' }}>Documentos y Certificados</h4>
-
-                        {/* Lista Existentes */}
-                        {editingEmp?.documents && editingEmp.documents.length > 0 && (
-                            <ul style={{ listStyle: 'none', padding: 0, margin: '0 0 15px 0' }}>
-                                {editingEmp.documents.map((doc, index) => (
-                                    <li key={index} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '8px', background: '#f8fafc', marginBottom: '5px', borderRadius: '4px', border: '1px solid #e2e8f0' }}>
-                                        <a href={doc.url} target="_blank" rel="noopener noreferrer" style={{ textDecoration: 'none', color: '#2563eb', display: 'flex', alignItems: 'center', gap: '8px', fontSize: '14px' }}>
-                                            📄 {doc.name}
-                                        </a>
-                                        <button type="button" onClick={() => removeExistingDoc(index, editingEmp.id)} style={{ border: 'none', background: 'transparent', color: '#ef4444', cursor: 'pointer' }}>
-                                            🗑️
-                                        </button>
-                                    </li>
-                                ))}
-                            </ul>
-                        )}
-
-                        {/* Lista Nuevos */}
-                        {docFiles.length > 0 && (
-                            <div style={{ marginBottom: '10px' }}>
-                                <div style={{ fontSize: '12px', color: '#64748b', marginBottom: '5px' }}>Por subir:</div>
-                                <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
-                                    {docFiles.map((file, index) => (
-                                        <li key={index} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '8px', background: '#eff6ff', marginBottom: '5px', borderRadius: '4px', border: '1px dashed #bfdbfe' }}>
-                                            <span style={{ fontSize: '13px', color: '#1e40af' }}>{file.name}</span>
-                                            <button type="button" onClick={() => removeNewDoc(index)} style={{ border: 'none', background: 'transparent', color: '#64748b', cursor: 'pointer' }}>✕</button>
-                                        </li>
-                                    ))}
-                                </ul>
+            {/* Create/Edit Modal - Mobile Only */}
+            {!isDesktop && (
+                <Dialog open={isCreating || !!editingEmp} onOpenChange={(open) => !open && (setIsCreating(false), setEditingEmp(null))}>
+                    <DialogHeader>
+                        <DialogTitle>{isCreating ? 'Nuevo Empleado' : 'Editar Empleado'}</DialogTitle>
+                        <DialogClose onClose={() => { setIsCreating(false); setEditingEmp(null); }} />
+                    </DialogHeader>
+                    <DialogBody>
+                        {/* Foto de Perfil */}
+                        {/* Foto de Perfil */}
+                        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginBottom: '24px', paddingTop: '10px' }}>
+                            <div style={{
+                                width: '90px',
+                                height: '90px',
+                                borderRadius: '50%',
+                                overflow: 'hidden',
+                                background: 'var(--bg-tertiary, #f0f0f0)',
+                                marginBottom: '12px',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                border: '2px solid var(--border-color, #e2e8f0)',
+                                boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)'
+                            }}>
+                                {photoPreview || editingEmp?.photoUrl ? (
+                                    // eslint-disable-next-line @next/next/no-img-element
+                                    <img src={photoPreview || editingEmp?.photoUrl} alt="Vista previa" referrerPolicy="no-referrer" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                                ) : (
+                                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" style={{ opacity: 0.4 }}>
+                                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                                        <circle cx="12" cy="7" r="4" />
+                                    </svg>
+                                )}
                             </div>
-                        )}
+                            <label htmlFor="photo-upload-modal" style={{
+                                cursor: 'pointer',
+                                padding: '6px 14px',
+                                fontSize: '0.8rem',
+                                fontWeight: '600',
+                                color: 'var(--color-primary, #2563eb)',
+                                background: 'rgba(37, 99, 235, 0.1)',
+                                borderRadius: '50px',
+                                transition: 'all 0.2s'
+                            }}>
+                                {photoPreview || editingEmp?.photoUrl ? 'Cambiar Foto' : 'Subir Foto'}
+                            </label>
+                            <input
+                                id="photo-upload-modal"
+                                type="file"
+                                accept="image/*"
+                                onChange={handleFileChange}
+                                style={{ display: 'none' }}
+                            />
+                        </div>
 
-                        <input
-                            type="file"
-                            id="doc-upload-modal"
-                            multiple
-                            accept=".pdf,.doc,.docx,.jpg,.png"
-                            onChange={handleDocChange}
-                            style={{ display: 'none' }}
-                        />
-                        <label htmlFor="doc-upload-modal" className="btn btn-secondary btn-sm" style={{ cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: '5px', padding: '6px 12px', fontSize: '13px', border: '1px solid #ccc', borderRadius: '4px' }}>
-                            📎 Adjuntar Documentos
-                        </label>
-                    </div>
+                        <div className={styles.formGroup}>
+                            <label>Nombre Completo</label>
+                            <input
+                                type="text"
+                                value={formData.name}
+                                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                            />
+                        </div>
 
-                </DialogBody>
-                <DialogFooter>
-                    <Button variant="ghost" onClick={() => { setIsCreating(false); setEditingEmp(null); }}>Cancelar</Button>
-                    <Button onClick={handleSave} disabled={saving}>
-                        {saving ? 'Guardando...' : 'Guardar'}
-                    </Button>
-                </DialogFooter>
-            </Dialog>
+                        <div className={styles.formGrid}>
+                            <div className={styles.formGroup}>
+                                <label>ID Empleado</label>
+                                <input
+                                    type="text"
+                                    value={formData.id}
+                                    onChange={(e) => isCreating && setFormData({ ...formData, id: e.target.value })}
+                                    placeholder={isCreating ? "Auto-generado si vacío" : ""}
+                                    readOnly={!isCreating}
+                                    disabled={!isCreating}
+                                    style={!isCreating ? { opacity: 0.7, cursor: 'not-allowed', background: '#f5f5f5' } : {}}
+                                />
+                            </div>
+                            <div className={styles.formGroup}>
+                                <label>CURP</label>
+                                <input
+                                    type="text"
+                                    value={formData.curp}
+                                    onChange={(e) => setFormData({ ...formData, curp: e.target.value })}
+                                    placeholder="Importante para DC-3"
+                                    maxLength={18}
+                                />
+                            </div>
+                        </div>
 
-            {/* View Detail Modal - Quick View of Compliance */}
-            <Dialog open={!!viewingEmp} onOpenChange={(open) => !open && setViewingEmp(null)}>
+                        <div className={styles.formGrid}>
+                            <div className={styles.formGroup}>
+                                <label>Puesto (Categoría)</label>
+                                <input
+                                    type="text"
+                                    value={formData.position}
+                                    onChange={(e) => setFormData({ ...formData, position: e.target.value })}
+                                    list="positionsList"
+                                />
+                                <datalist id="positionsList">
+                                    {positions.map(p => <option key={p} value={p} />)}
+                                </datalist>
+                            </div>
+                            <div className={styles.formGroup}>
+                                <label>Departamento</label>
+                                <input
+                                    type="text"
+                                    value={formData.department}
+                                    onChange={(e) => setFormData({ ...formData, department: e.target.value })}
+                                    list="deptList"
+                                />
+                                <datalist id="deptList">
+                                    {departments.map(d => <option key={d} value={d} />)}
+                                </datalist>
+                            </div>
+                        </div>
+
+                        <div className={styles.formGrid}>
+                            <div className={styles.formGroup}>
+                                <label>Área</label>
+                                <select
+                                    value={formData.area}
+                                    onChange={(e) => setFormData({ ...formData, area: e.target.value })}
+                                    className={styles.select}
+                                >
+                                    <option value="">-- Seleccionar --</option>
+                                    <option value="A. CALIDAD 1ER TURNO">A. CALIDAD 1ER TURNO</option>
+                                    <option value="A. CALIDAD 2DO TURNO">A. CALIDAD 2DO TURNO</option>
+                                    <option value="ALMACÉN">ALMACÉN</option>
+                                    <option value="CALIDAD ADMTVO">CALIDAD ADMTVO</option>
+                                    <option value="GERENCIA">GERENCIA</option>
+                                    <option value="LOGÍSTICA">LOGÍSTICA</option>
+                                    <option value="MANTENIMIENTO">MANTENIMIENTO</option>
+                                    <option value="METROLOGÍA">METROLOGÍA</option>
+                                    <option value="MOLDES">MOLDES</option>
+                                    <option value="PRODUCCIÓN 1ER TURNO">PRODUCCIÓN 1ER TURNO</option>
+                                    <option value="PRODUCCIÓN 2DO TURNO">PRODUCCIÓN 2DO TURNO</option>
+                                    <option value="PRODUCCIÓN 3ER TURNO">PRODUCCIÓN 3ER TURNO</option>
+                                    <option value="PRODUCCIÓN 4TO TURNO">PRODUCCIÓN 4TO TURNO</option>
+                                    <option value="PRODUCCIÓN ADMTVO">PRODUCCIÓN ADMTVO</option>
+                                    <option value="PRODUCCIÓN MONTAJE">PRODUCCIÓN MONTAJE</option>
+                                    <option value="PROYECTOS">PROYECTOS</option>
+                                    <option value="RECURSOS HUMANOS">RECURSOS HUMANOS</option>
+                                    <option value="RESIDENTES DE CALIDAD">RESIDENTES DE CALIDAD</option>
+                                    <option value="SGI">SGI</option>
+                                    <option value="SISTEMAS">SISTEMAS</option>
+                                </select>
+                            </div>
+                            <div className={styles.formGroup}>
+                                <label>Turno</label>
+                                <select
+                                    value={formData.shift}
+                                    onChange={(e) => setFormData({ ...formData, shift: e.target.value })}
+                                    className={styles.select}
+                                >
+                                    <option value="">-- Seleccionar --</option>
+                                    <option value="1">1</option>
+                                    <option value="2">2</option>
+                                    <option value="3">3</option>
+                                    <option value="4">4</option>
+                                    <option value="5">5</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div className={styles.formGrid}>
+                            <div className={styles.formGroup}>
+                                <label>Escolaridad</label>
+                                <select
+                                    value={formData.education}
+                                    onChange={(e) => setFormData({ ...formData, education: e.target.value })}
+                                    className={styles.select}
+                                >
+                                    <option value="">-- Seleccionar --</option>
+                                    <option value="BACHILLERATO">BACHILLERATO</option>
+                                    <option value="CARRERA TECNICA">CARRERA TECNICA</option>
+                                    <option value="INGENIERIA">INGENIERIA</option>
+                                    <option value="LICENCIATURA">LICENCIATURA</option>
+                                    <option value="MAESTRIA">MAESTRIA</option>
+                                    <option value="PASANTE INGENIERIA">PASANTE INGENIERIA</option>
+                                    <option value="POSGRADO">POSGRADO</option>
+                                    <option value="PREPARATORIA">PREPARATORIA</option>
+                                    <option value="PRIMARIA">PRIMARIA</option>
+                                    <option value="SECUNDARIA">SECUNDARIA</option>
+                                    <option value="TSU">TSU</option>
+                                </select>
+                            </div>
+                            <div className={styles.formGroup}>
+                                <label>Fecha Ingreso</label>
+                                <input
+                                    type="date"
+                                    value={formData.startDate}
+                                    onChange={(e) => setFormData({ ...formData, startDate: e.target.value })}
+                                />
+                            </div>
+                        </div>
+
+                    </DialogBody>
+                    <DialogFooter>
+                        <Button variant="ghost" onClick={() => { setIsCreating(false); setEditingEmp(null); }}>Cancelar</Button>
+                        <Button onClick={handleSave} disabled={saving}>
+                            {saving ? 'Guardando...' : 'Guardar'}
+                        </Button>
+                    </DialogFooter>
+                </Dialog>
+            )}
+
+            {/* View Detail Modal - Only on mobile devices */}
+            <Dialog open={!!viewingEmp && !isDesktop} onOpenChange={(open) => !open && setViewingEmp(null)}>
                 <DialogHeader>
                     <DialogTitle>{viewingEmp?.name}</DialogTitle>
                     <div className={styles.subtitle}>{viewingEmp?.position} - {viewingEmp?.department}</div>
@@ -939,68 +1111,17 @@ export default function EmpleadosPage() {
                         ))}
                     </div>
 
-                    {/* Documentos y Certificados */}
-                    {viewingEmp?.documents && viewingEmp.documents.length > 0 && (
-                        <div style={{ marginTop: '20px', marginBottom: '20px' }}>
-                            <h4 className={styles.sectionTitle}>Documentos y Certificados</h4>
-                            <div className={styles.historyList}>
-                                {viewingEmp.documents.map((doc, index) => (
-                                    <div key={index} className={styles.historyItem} style={{ borderLeft: '3px solid #3b82f6', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                                        <div style={{ display: 'flex', flexDirection: 'column' }}>
-                                            <span className={styles.historyName}>{doc.name}</span>
-                                            <span style={{ fontSize: '11px', color: '#64748b' }}>Subido: {new Date(doc.uploadDate).toLocaleDateString()}</span>
-                                        </div>
-                                        <a
-                                            href={doc.url}
-                                            target="_blank"
-                                            rel="noopener noreferrer"
-                                            className="btn btn-sm btn-secondary"
-                                            style={{ textDecoration: 'none', padding: '4px 8px', fontSize: '12px' }}
-                                        >
-                                            Ver 📄
-                                        </a>
-                                    </div>
-                                ))}
-                            </div>
-                        </div>
-                    )}
-
-                    {/* Missing Courses Section */}
-                    {(viewingEmp?.matrix?.pendingCourses?.length > 0 || viewingEmp?.matrix?.failedCourses?.length > 0) && (
-                        <>
-                            <h4 className={styles.sectionTitle} style={{ marginTop: '1rem' }}>Cursos Pendientes</h4>
-                            <div className={styles.historyList}>
-                                {viewingEmp?.matrix?.failedCourses?.map((c, i) => (
-                                    <div key={`f-${i}`} className={styles.historyItem} style={{ borderLeft: '3px solid #ef4444' }}>
-                                        <div className={styles.historyName}>{c}</div>
-                                        <div className={styles.historyMeta}>
-                                            <span className={styles.statusRejected}>Reprobado - Requiere recursar</span>
-                                        </div>
-                                    </div>
-                                ))}
-                                {viewingEmp?.matrix?.pendingCourses?.map((c, i) => (
-                                    <div key={`p-${i}`} className={styles.historyItem} style={{ borderLeft: '3px solid #f59e0b' }}>
-                                        <div className={styles.historyName}>{c}</div>
-                                        <div className={styles.historyMeta}>
-                                            <span style={{ color: '#f59e0b' }}>Pendiente - Nunca tomado</span>
-                                        </div>
-                                    </div>
-                                ))}
-                            </div>
-                        </>
-                    )}
-
                     <div style={{ marginTop: '1rem', textAlign: 'right' }}>
                         <Link href={`/capacitacion/analisis`} onClick={() => setViewingEmp(null)} className={styles.viewAnalysisLink}>
                             Ver análisis completo →
                         </Link>
                     </div>
-
                 </DialogBody>
                 <DialogFooter>
                     <Button onClick={() => setViewingEmp(null)}>Cerrar</Button>
                 </DialogFooter>
             </Dialog>
+
             {/* Photo Preview Modal */}
             <Dialog open={!!previewImage} onOpenChange={(open) => !open && setPreviewImage(null)}>
                 <DialogHeader>

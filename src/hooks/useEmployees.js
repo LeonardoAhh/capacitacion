@@ -42,21 +42,60 @@ export const useEmployees = () => {
             const baseConstraints = [orderBy('employeeId', 'asc')];
 
             if (searchTerm) {
-                // NOTE: Firestore doesn't support simple full-text search. 
-                // We implements a basic prefix search on 'name'.
-                // For production with thousands of records, use Algolia/Elasticsearch.
-                // Assuming 'name' is stored uppercase as in the form.
-                const searchUpper = searchTerm.toUpperCase();
-                q = query(
+                // Search strategy: Firestore doesn't support full-text search.
+                // We'll try two approaches:
+
+                const searchUpper = searchTerm.toUpperCase().trim();
+                const searchLower = searchTerm.toLowerCase().trim();
+
+                // 1. First try: exact or prefix match on employeeId
+                // 2. Second try: prefix match on name
+                // 3. Fallback: load all and filter locally (for partial matching)
+
+                // For small datasets, local filtering is acceptable
+                // For large datasets, consider Algolia/Elasticsearch
+
+                // Load more records and filter locally for flexibility
+                const allDocsQuery = query(
                     employeesRef,
-                    orderBy('name'),
-                    where('name', '>=', searchUpper),
-                    where('name', '<=', searchUpper + '\uf8ff'),
-                    limit(ITEMS_PER_PAGE)
+                    orderBy('employeeId', 'asc'),
+                    limit(200) // Load more for local filtering
                 );
-                // When searching, we keep it simple: no complex pagination for now or reset page
-                setPage(1);
-                cursorsStackRef.current = [];
+
+                const allSnapshot = await getDocs(allDocsQuery);
+
+                if (!allSnapshot.empty) {
+                    const allEmployees = allSnapshot.docs.map(d => ({
+                        id: d.id,
+                        ...d.data()
+                    }));
+
+                    // Filter locally - search in name, employeeId, position, department
+                    const filtered = allEmployees.filter(emp => {
+                        const name = (emp.name || '').toUpperCase();
+                        const empId = (emp.employeeId || '').toString().toUpperCase();
+                        const position = (emp.position || '').toUpperCase();
+                        const department = (emp.department || '').toUpperCase();
+
+                        return name.includes(searchUpper) ||
+                            empId.includes(searchUpper) ||
+                            position.includes(searchUpper) ||
+                            department.includes(searchUpper);
+                    });
+
+                    setEmployees(filtered.slice(0, ITEMS_PER_PAGE));
+                    setHasMore(filtered.length > ITEMS_PER_PAGE);
+                    setPage(1);
+                    cursorsStackRef.current = [];
+                    setLoading(false);
+                    return;
+                } else {
+                    setEmployees([]);
+                    setHasMore(false);
+                    setPage(1);
+                    setLoading(false);
+                    return;
+                }
             } else {
                 // Pagination Logic
                 if (direction === 'next' && lastVisibleRef.current) {
@@ -190,6 +229,25 @@ export const useEmployees = () => {
 
     const createEmployee = async (employeeData) => {
         try {
+            // Validate unique employeeId
+            if (employeeData.employeeId) {
+                const employeesRef = collection(db, 'employees');
+                const duplicateQuery = query(
+                    employeesRef,
+                    where('employeeId', '==', employeeData.employeeId),
+                    limit(1)
+                );
+                const duplicateSnapshot = await getDocs(duplicateQuery);
+
+                if (!duplicateSnapshot.empty) {
+                    return {
+                        success: false,
+                        error: 'ID_DUPLICADO',
+                        message: `El ID de empleado "${employeeData.employeeId}" ya existe. Por favor usa un ID diferente.`
+                    };
+                }
+            }
+
             const docRef = await addDoc(collection(db, 'employees'), {
                 ...employeeData,
                 createdAt: new Date().toISOString(),
