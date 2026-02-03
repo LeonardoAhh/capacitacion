@@ -44,7 +44,7 @@ const MotivationalWidget = () => {
         <div className={styles.widgetContainer}>
             <div className={styles.icon}>✨</div>
             <div className={styles.quoteText}>
-                "{quote}"
+                &quot;{quote}&quot;
             </div>
         </div>
     );
