@@ -65,7 +65,7 @@ export default function ModulesPage() {
                             </div>
                             <div className={styles.cardContent}>
                                 <h2 className={styles.cardTitle}>Gestión de Talento</h2>
-                                <p className={styles.cardDescription}>Bloqueado en modo Demo</p>
+                                <p className={styles.cardDescription}>Bloqueado en modo Instructor</p>
                             </div>
                             <div className={styles.lockIcon}>🔒</div>
                         </div>
@@ -96,7 +96,7 @@ export default function ModulesPage() {
                                 </svg>
                             </div>
                             <div className={styles.cardContent}>
-                                <h2 className={styles.cardTitle}>Configuración</h2>
+                                <h2 className={styles.cardTitle}>ILUO Manager</h2>
                                 <p className={styles.cardDescription}>Ajustes del sistema ILUO.</p>
                             </div>
                             <div className={styles.cardArrow}>→</div>
@@ -110,8 +110,8 @@ export default function ModulesPage() {
                                 </svg>
                             </div>
                             <div className={styles.cardContent}>
-                                <h2 className={styles.cardTitle}>Configuración</h2>
-                                <p className={styles.cardDescription}>Solo Administradores</p>
+                                <h2 className={styles.cardTitle}>ILUO Manager</h2>
+                                <p className={styles.cardDescription}>Solo disponible para 🔒 </p>
                             </div>
                             <div className={styles.lockIcon}>🔒</div>
                         </div>
