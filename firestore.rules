@@ -24,6 +24,15 @@ service cloud.firestore {
     function isAuthenticated() {
       return request.auth != null;
     }
+
+    // --- Validaciones de Datos ---
+    function isValidString(text) {
+      return text is string && text.size() > 0;
+    }
+
+    function isValidScore(score) {
+      return (score is number && score >= 0 && score <= 100) || score == null;
+    }
     
     // ===== REGLAS POR COLECCIÓN =====
     
@@ -37,13 +46,16 @@ service cloud.firestore {
     // EMPLEADOS: Solo usuarios NO anónimos pueden leer, super_admin puede escribir
     match /employees/{docId} {
       allow read: if isNotAnonymous();
-      allow write: if hasRole('super_admin');
+      allow write: if hasRole('super_admin'); 
+      // Nota: Podríamos agregar validación aquí como isValidString(request.resource.data.name)
     }
     
-    // TRAINING RECORDS: Lectura para todos los autenticados (incluyendo demo para inducción)
+    // TRAINING RECORDS: Lectura para todos, Escritura restringida + Validación
     match /training_records/{docId} {
       allow read: if isAuthenticated();
-      allow write: if hasRole('super_admin');
+      allow write: if hasRole('super_admin')
+                   && isValidString(request.resource.data.name) 
+                   && isValidString(request.resource.data.position);
     }
     
     // CURSOS DE INDUCCIÓN: Lectura para todos (demo puede ver cursos de inducción)
@@ -100,8 +112,6 @@ service cloud.firestore {
     
     // ===== REGLA POR DEFECTO (FALLBACK) =====
     // Para cualquier otra colección no especificada
-    // Lectura: usuarios no anónimos
-    // Escritura: solo super_admin
     match /{document=**} {
       allow read: if isNotAnonymous();
       allow write: if hasRole('super_admin');

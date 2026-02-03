@@ -5,7 +5,6 @@ import styles from './MotivationalWidget.module.css';
 
 const QUOTES = [
     "La excelencia no es un acto, sino un hábito.",
-    "Te amo con todo el corazón.",
     "El liderazgo es la capacidad de traducir la visión en realidad.",
     "Calidad es hacer lo correcto cuando nadie está mirando.",
     "Llegar juntos es el principio; mantenerse juntos es el progreso; trabajar juntos es el éxito.",
