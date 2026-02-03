@@ -106,7 +106,7 @@ export default function LoginPage() {
                     <HyperText
                         className={styles.appSubtitle}
                         startOnView={true}
-                        duration={4500}
+                        duration={2000}
                     >
                         ViñoPlastic Inyección S.A. de C.V.
                     </HyperText>

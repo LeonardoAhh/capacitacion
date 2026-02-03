@@ -266,11 +266,7 @@ export default function InductionPage() {
                             <button onClick={() => setActiveTab('instructors')} className={`${styles.tabBtn} ${activeTab === 'instructors' ? styles.activeTab : ''}`}>Instructores</button>
                             <button onClick={() => setActiveTab('produccion')} className={`${styles.tabBtn} ${activeTab === 'produccion' ? styles.activeTab : ''}`}>Producción</button>
                         </div>
-                        {canWrite && instructorIds.length === 0 && (
-                            <button onClick={handleMigrate} className={styles.toggleBtn} style={{ marginLeft: 'auto', fontSize: '0.8rem', background: 'var(--color-warning)', color: '#fff', border: 'none' }}>
-                                ⚙️ Migrar JSON
-                            </button>
-                        )}
+
                     </div>
 
                     {loadingTeam ? (
