@@ -1,17 +1,9 @@
 import { db } from '@/lib/firebase';
 import { collection, doc, writeBatch, getDocs } from 'firebase/firestore';
+import { normalize, normalizeForMatch, calculateEmployeeCompliance } from '@/lib/compliance';
 
 // History data removed from repo for privacy
 const historyData = [];
-
-// Normalize string helpers
-const normalize = (str) => str?.trim().toUpperCase() || '';
-const normalizeForMatch = (str) =>
-    normalize(str)
-        .normalize("NFD")
-        .replace(/[\u0300-\u036f]/g, "") // Remove accents
-        .replace(/\s+/g, ' ') // Normalize spaces
-        .trim();
 
 export const seedHistoryData = async () => {
     try {
@@ -92,46 +84,8 @@ export const seedHistoryData = async () => {
                 positionReqs = requirementsMapNormalized.get(normalizedPosition) || [];
             }
 
-            // Enhanced: normalize approved courses for matching
-            const approvedCoursesSet = new Set(
-                data.history
-                    .filter(h => h.status === 'approved')
-                    .map(h => h.courseName)
-            );
-
-            // Also create a fuzzy-match set (remove accents, spaces variations)
-            const approvedNormalized = new Set(
-                data.history
-                    .filter(h => h.status === 'approved')
-                    .map(h => h.courseName.normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/\s+/g, ' ').trim())
-            );
-
-            // Compliance Logic with fuzzy matching
-            const missing = positionReqs.filter(req => {
-                // Try exact match first
-                if (approvedCoursesSet.has(req)) return false;
-                // Try normalized match
-                const reqNormalized = req.normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/\s+/g, ' ').trim();
-                if (approvedNormalized.has(reqNormalized)) return false;
-                return true; // Not found
-            });
-
-            const complianceScore = positionReqs.length > 0
-                ? ((positionReqs.length - missing.length) / positionReqs.length) * 100
-                : 100;
-
-            // Separate Failed vs Pending
-            const historyNames = new Set(data.history.map(h => h.courseName));
-            const failedCourses = [];
-            const pendingCourses = [];
-
-            missing.forEach(req => {
-                if (historyNames.has(req)) {
-                    failedCourses.push(req);
-                } else {
-                    pendingCourses.push(req);
-                }
-            });
+            // Use Centralized Compliance Utility
+            const matrix = calculateEmployeeCompliance(data.history, positionReqs);
 
             // Aggregation for Stats
             const posName = data.position || 'Sin Puesto';
@@ -149,26 +103,19 @@ export const seedHistoryData = async () => {
 
             const stat = positionStats[posName];
             stat.headcount++;
-            stat.sumCompliance += complianceScore;
-            stat.approved += (positionReqs.length - missing.length);
-            stat.failed += failedCourses.length;
-            stat.pending += pendingCourses.length;
+            stat.sumCompliance += matrix.compliancePercentage;
+            stat.approved += matrix.completedCount;
+            stat.failed += matrix.failedCourses.length;
+            stat.pending += matrix.pendingCourses.length;
 
             // Construct Record Document
             const trainingDoc = {
                 employeeId: empId,
                 name: data.name,
                 position: data.position,
-                department: data.department, // FIX: Use data.department (from JSON) not posData
+                department: data.department,
                 history: data.history,
-                matrix: {
-                    requiredCount: positionReqs.length,
-                    completedCount: positionReqs.length - missing.length,
-                    missingCourses: missing,
-                    failedCourses: failedCourses,
-                    pendingCourses: pendingCourses,
-                    compliancePercentage: parseFloat(complianceScore.toFixed(2))
-                },
+                matrix: matrix, // Use calculated matrix object
                 updatedAt: new Date().toISOString()
             };
 
@@ -263,52 +210,13 @@ export const recalculateComplianceFromFirestore = async () => {
                 positionReqs = requirementsMapNormalized.get(normalizedPosition) || [];
             }
 
-            // Get approved courses from existing history
-            const history = data.history || [];
-
-            // Create SET of approved courses using normalizeForMatch for comparison
-            const approvedNormalized = new Set(
-                history
-                    .filter(h => h.status === 'approved')
-                    .map(h => normalizeForMatch(h.courseName))
-            );
-
-            // Calculate missing courses - compare using normalizeForMatch
-            const missing = positionReqs.filter(req => {
-                const reqNormalized = normalizeForMatch(req);
-                return !approvedNormalized.has(reqNormalized);
-            });
-
-            const complianceScore = positionReqs.length > 0
-                ? ((positionReqs.length - missing.length) / positionReqs.length) * 100
-                : 100;
-
-            // Separate failed vs pending using normalizeForMatch
-            const historyNormalized = new Set(history.map(h => normalizeForMatch(h.courseName)));
-
-            const failedCourses = [];
-            const pendingCourses = [];
-
-            missing.forEach(req => {
-                const reqNormalized = normalizeForMatch(req);
-                if (historyNormalized.has(reqNormalized)) {
-                    failedCourses.push(req);
-                } else {
-                    pendingCourses.push(req);
-                }
-            });
+            // Use Centralized Compliance Utility
+            const matrix = calculateEmployeeCompliance(data.history, positionReqs);
 
             // Update ONLY the matrix field, preserving all other data
             const docRef = doc(db, 'training_records', recordDoc.id);
             batch.update(docRef, {
-                matrix: {
-                    requiredCount: positionReqs.length,
-                    completedCount: positionReqs.length - missing.length,
-                    missingCourses: missing,
-                    failedCourses: failedCourses,
-                    pendingCourses: pendingCourses,
-                    compliancePercentage: parseFloat(complianceScore.toFixed(2))
-                },
+                matrix: matrix,
                 updatedAt: new Date().toISOString()
             });
 
