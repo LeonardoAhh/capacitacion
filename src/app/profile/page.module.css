@@ -1,0 +1,332 @@
+/* Container Layout */
+.container {
+    padding-bottom: 3rem;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding-left: 1rem;
+    padding-right: 1rem;
+}
+
+.backButton {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+    margin-top: 1.5rem;
+    margin-bottom: 0.5rem;
+    padding: 0;
+    transition: color 0.2s ease, transform 0.2s ease;
+}
+
+.backButton:hover {
+    color: var(--text-primary);
+    transform: translateX(-3px);
+}
+
+/* Profile Header Card */
+.headerCard {
+    background: var(--bg-secondary);
+    border-radius: var(--radius-lg);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    margin-top: 2rem;
+    margin-bottom: 2rem;
+    position: relative;
+    z-index: 10;
+    padding: 2rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.5rem;
+    border: 1px solid var(--border-color);
+}
+
+@media (min-width: 768px) {
+    .headerCard {
+        flex-direction: row;
+        align-items: flex-end;
+        padding: 2.5rem;
+        text-align: left;
+    }
+}
+
+/* Avatar */
+.avatarContainer {
+    position: relative;
+    flex-shrink: 0;
+}
+
+.avatar {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    background: var(--bg-tertiary);
+    border: 5px solid var(--bg-secondary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 3rem;
+    font-weight: bold;
+    color: var(--text-secondary);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.statusIndicator {
+    width: 20px;
+    height: 20px;
+    background-color: var(--color-success);
+    border: 3px solid var(--bg-secondary);
+    border-radius: 50%;
+    position: absolute;
+    bottom: 5px;
+    right: 5px;
+}
+
+.changeAvatarBtn {
+    position: absolute;
+    bottom: 0;
+    right: -10px;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: 50%;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    color: var(--text-secondary);
+    transition: all 0.2s;
+    z-index: 5;
+}
+
+.changeAvatarBtn:hover {
+    background: var(--color-primary);
+    color: white;
+    transform: scale(1.1);
+}
+
+/* User Info Text */
+.userInfo {
+    flex: 1;
+    text-align: center;
+}
+
+@media (min-width: 768px) {
+    .userInfo {
+        text-align: left;
+    }
+}
+
+.userName {
+    margin: 0;
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--text-primary);
+}
+
+.userEmail {
+    margin: 0.5rem 0 1rem;
+    color: var(--text-secondary);
+    font-size: 1rem;
+}
+
+.badgeContainer {
+    display: flex;
+    gap: 0.5rem;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+@media (min-width: 768px) {
+    .badgeContainer {
+        justify-content: flex-start;
+    }
+}
+
+.badge {
+    padding: 0.25rem 0.75rem;
+    border-radius: 999px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.badgePrimary {
+    background-color: rgba(0, 122, 255, 0.1);
+    /* blue-500 optimized opacity */
+    color: var(--blue-500);
+}
+
+.badgeSecondary {
+    background-color: rgba(88, 86, 214, 0.1);
+    /* purple-500 opacity */
+    color: var(--purple-500);
+}
+
+/* Content Grid */
+.grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 2rem;
+}
+
+@media (min-width: 1024px) {
+    .grid {
+        grid-template-columns: 1fr 2fr;
+    }
+}
+
+/* Common Card Styles */
+.card {
+    background: var(--bg-secondary);
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--border-color);
+    padding: 1.5rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+.cardTitle {
+    margin-top: 0;
+    margin-bottom: 1.5rem;
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.cardIcon {
+    width: 24px;
+    height: 24px;
+    color: var(--text-secondary);
+}
+
+/* Details List */
+.detailsList {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.detailsItem {
+    display: flex;
+    justify-content: space-between;
+    padding: 0.75rem 0;
+    border-bottom: 1px solid var(--border-color);
+    font-size: 0.95rem;
+}
+
+.detailsItem:last-child {
+    border-bottom: none;
+}
+
+.label {
+    color: var(--text-secondary);
+}
+
+.value {
+    color: var(--text-primary);
+    font-weight: 500;
+}
+
+/* Email Reveal Section */
+.emailSection {
+    margin: 0.5rem 0 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+@media (min-width: 768px) {
+    .emailSection {
+        justify-content: flex-start;
+    }
+}
+
+.emailWrapper {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    background-color: transparent;
+    padding: 0;
+    border: none;
+}
+
+.emailText {
+    font-family: monospace;
+    font-size: 1rem;
+    transition: filter 0.3s ease, color 0.3s ease;
+    color: var(--text-primary);
+}
+
+.blur {
+    filter: blur(5px);
+    user-select: none;
+    -webkit-user-select: none;
+    cursor: pointer;
+    opacity: 0.7;
+}
+
+.noBlur {
+    filter: blur(0);
+    user-select: none;
+    -webkit-user-select: none;
+}
+
+.revealIcon {
+    display: flex;
+    align-items: center;
+    color: var(--text-secondary);
+}
+
+.revealBtn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    color: var(--text-secondary);
+    padding: 0;
+    transition: color 0.2s;
+}
+
+.revealBtn:hover {
+    color: var(--text-primary);
+}
+
+.copyBtn {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    padding: 0.4rem 0.8rem;
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: var(--text-secondary);
+    transition: all 0.2s;
+}
+
+.copyBtn:hover {
+    background: var(--bg-tertiary);
+    color: var(--text-primary);
+}
+
+.copyBtn.copied {
+    border-color: var(--color-success);
+    color: var(--color-success);
+    background: rgba(52, 199, 89, 0.1);
+}

@@ -5,6 +5,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import LogoVinoPlastic from '@/components/Logo/LogoVinoPlastic';
 import { useRouter } from 'next/navigation';
 import ThemeToggle from '@/components/ThemeToggle/ThemeToggle';
+import { HyperText } from '@/components/ui/HyperText';
 import styles from './page.module.css';
 
 export default function LoginPage() {
@@ -13,14 +14,20 @@ export default function LoginPage() {
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
 
-    const { signIn, signInAnon, user } = useAuth();
+    // MFA States
+    const [mfaRequired, setMfaRequired] = useState(false);
+    const [verificationCode, setVerificationCode] = useState('');
+    const [mfaSecret, setMfaSecret] = useState(null);
+
+    const { signIn, signInAnon, verifyOtp, user } = useAuth();
     const router = useRouter();
 
     useEffect(() => {
-        if (user) {
+        // Only auto-redirect if user exists AND we are not currently asking for MFA
+        if (user && !mfaRequired) {
             router.push('/modulos');
         }
-    }, [user, router]);
+    }, [user, router, mfaRequired]);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -32,8 +39,27 @@ export default function LoginPage() {
         if (result.success) {
             sessionStorage.setItem('showWelcome', 'true');
             router.push('/modulos');
+        } else if (result.mfaRequired) {
+            setMfaRequired(true);
+            setMfaSecret(result.secret);
+            setLoading(false);
         } else {
-            setError('Acceso denegado. Verifica tus datos.');
+            setError(result.error);
+            setLoading(false);
+        }
+    };
+
+    const handleMfaSubmit = async (e) => {
+        e.preventDefault();
+        setError('');
+        setLoading(true);
+
+        const result = await verifyOtp(verificationCode, mfaSecret);
+        if (result.success) {
+            sessionStorage.setItem('showWelcome', 'true');
+            router.push('/modulos');
+        } else {
+            setError(result.error || 'Código incorrecto. Intenta de nuevo.');
             setLoading(false);
         }
     };
@@ -76,13 +102,19 @@ export default function LoginPage() {
                             }}
                         />
                     </div>
-                    {/* El texto ya viene en el logo, pero mantenemos subtítulo */}
-                    <p className={styles.appSubtitle}>ViñoPlastic Inyección S.A. de C.V.</p>
+                    {/* Hyper Text Animation */}
+                    <HyperText
+                        className={styles.appSubtitle}
+                        startOnView={true}
+                        duration={4500}
+                    >
+                        ViñoPlastic Inyección S.A. de C.V.
+                    </HyperText>
                 </div>
 
                 {/* Login Card */}
                 <div className={styles.card} id="main-content">
-                    <form onSubmit={handleSubmit} className={styles.form}>
+                    <form onSubmit={mfaRequired ? handleMfaSubmit : handleSubmit} className={styles.form}>
                         {error && (
                             <div className={styles.errorBox} role="alert" aria-live="polite">
                                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -94,31 +126,49 @@ export default function LoginPage() {
                             </div>
                         )}
 
-                        <div className={styles.inputGroup}>
-                            <input
-                                id="email"
-                                type="email"
-                                placeholder=" "
-                                value={email}
-                                onChange={(e) => setEmail(e.target.value)}
-                                required
-                                className={styles.input}
-                            />
-                            <label htmlFor="email" className={styles.label}>Correo Electrónico</label>
-                        </div>
+                        {!mfaRequired ? (
+                            <>
+                                <div className={styles.inputGroup}>
+                                    <input
+                                        id="email"
+                                        type="email"
+                                        placeholder=" "
+                                        value={email}
+                                        onChange={(e) => setEmail(e.target.value)}
+                                        required
+                                        className={styles.input}
+                                    />
+                                    <label htmlFor="email" className={styles.label}>Correo Electrónico</label>
+                                </div>
 
-                        <div className={styles.inputGroup}>
-                            <input
-                                id="password"
-                                type="password"
-                                placeholder=" "
-                                value={password}
-                                onChange={(e) => setPassword(e.target.value)}
-                                required
-                                className={styles.input}
-                            />
-                            <label htmlFor="password" className={styles.label}>Contraseña</label>
-                        </div>
+                                <div className={styles.inputGroup}>
+                                    <input
+                                        id="password"
+                                        type="password"
+                                        placeholder=" "
+                                        value={password}
+                                        onChange={(e) => setPassword(e.target.value)}
+                                        required
+                                        className={styles.input}
+                                    />
+                                    <label htmlFor="password" className={styles.label}>Contraseña</label>
+                                </div>
+                            </>
+                        ) : (
+                            <div className={styles.inputGroup}>
+                                <input
+                                    id="mfaCode"
+                                    type="text"
+                                    placeholder=" "
+                                    value={verificationCode}
+                                    onChange={(e) => setVerificationCode(e.target.value.replace(/[^0-9]/g, ''))}
+                                    required
+                                    className={`${styles.input} text-center tracking-widest text-lg`}
+                                    maxLength={6}
+                                />
+                                <label htmlFor="mfaCode" className={styles.label}>Código de Google Authenticator</label>
+                            </div>
+                        )}
 
                         <div className={styles.actions}>
                             <button
@@ -130,7 +180,7 @@ export default function LoginPage() {
                                     <div className="spinner-sm"></div>
                                 ) : (
                                     <>
-                                        Iniciar Sesión
+                                        {mfaRequired ? 'Verificar Código' : 'Iniciar Sesión'}
                                         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                                             <path d="M5 12h14M12 5l7 7-7 7" />
                                         </svg>
