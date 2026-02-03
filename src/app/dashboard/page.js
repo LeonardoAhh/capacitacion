@@ -18,13 +18,15 @@ export default function DashboardPage() {
     const router = useRouter();
 
     // Data States
+    // Data States
+    const [userName, setUserName] = useState('');
+    const [userGender, setUserGender] = useState(null); // Nuevo estado para género
     const [stats, setStats] = useState({
         totalEmployees: 0,
         activeContracts: 0,
         expiringContracts: 0
     });
     const [loading, setLoading] = useState(true);
-    const [userName, setUserName] = useState('');
     const [evaluations, setEvaluations] = useState({
         upcoming: [],
         overdue: []
@@ -126,6 +128,8 @@ export default function DashboardPage() {
             if (!snapshot.empty) {
                 const userData = snapshot.docs[0].data();
                 setUserName(userData.nombre || '');
+                // Intentamos leer gender o genero
+                setUserGender(userData.gender || userData.genero || null);
             }
         } catch (error) {
             console.error('Error loading user data:', error);
@@ -222,9 +226,20 @@ export default function DashboardPage() {
     };
 
     const getGreeting = (name) => {
+        // 1. Prioridad: Campo de Base de Datos
+        if (userGender) {
+            const g = String(userGender).toLowerCase().trim();
+            if (['mujer', 'femenino', 'f', 'woman', 'female'].includes(g)) return 'Bienvenida';
+            if (['hombre', 'masculino', 'm', 'man', 'male'].includes(g)) return 'Bienvenido';
+        }
+
+        // 2. Fallback: Detección por terminación de nombre 'a'
         if (!name) return 'Bienvenido';
         const firstName = name.trim().split(' ')[0].toLowerCase();
-        if (firstName.endsWith('a') && !['nicolas', 'jonas', 'elias', 'matias'].includes(firstName)) {
+        // Excepciones comunes de nombres terminados en 'a' que son masculinos
+        const exceptions = ['nicolas', 'jonas', 'elias', 'matias', 'lukas', 'abba', 'luca'];
+
+        if (firstName.endsWith('a') && !exceptions.includes(firstName)) {
             return 'Bienvenida';
         }
         return 'Bienvenido';

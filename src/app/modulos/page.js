@@ -31,7 +31,7 @@ export default function ModulesPage() {
             <div className={styles.content}>
                 <header className={styles.header}>
                     <h1 className={styles.title}>
-                        Hola, <span className={styles.userName}>{user?.displayName?.split(' ')[0] || 'Usuario'}</span>
+                        Hola, <span className={styles.userName}>{(user?.nombre || user?.name || user?.displayName || 'Usuario').split(' ')[0]}</span>
                     </h1>
                     <p className={styles.subtitle}>Selecciona un módulo</p>
                 </header>

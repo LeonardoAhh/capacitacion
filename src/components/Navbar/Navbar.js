@@ -4,6 +4,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useRouter } from 'next/navigation';
 import LogoVinoPlastic from '@/components/Logo/LogoVinoPlastic';
 import ThemeToggle from '@/components/ThemeToggle/ThemeToggle';
+import MotivationalWidget from './MotivationalWidget';
 import styles from './Navbar.module.css';
 
 export default function Navbar() {
@@ -33,6 +34,9 @@ export default function Navbar() {
                         />
                     </div>
                 </div>
+
+                {/* Motivational Widget for Admins */}
+                <MotivationalWidget />
 
                 {/* Actions */}
                 <div className={styles.actions}>
