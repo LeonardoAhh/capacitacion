@@ -9,145 +9,143 @@ service cloud.firestore {
       return get(/databases/$(database)/documents/users/$(request.auth.uid)).data;
     }
     
+    // Verificar si el usuario tiene un rol específico
+    function hasRole(role) {
+       return request.auth != null && getUserData().rol == role;
+    }
+    
+    // Verificar múltiples roles permitidos
+    function hasAnyRole(roles) {
+      return request.auth != null && getUserData().rol in roles;
+    }
+    
     // Verificar si el usuario NO es anónimo
     function isNotAnonymous() {
       return request.auth != null && 
              request.auth.token.firebase.sign_in_provider != 'anonymous';
     }
-
-    // Verificar si el usuario tiene un rol específico
-    function hasRole(role) {
-       return isNotAnonymous() && getUserData().rol == role;
-    }
-
-    // Verificar si el usuario tiene permiso granular para un módulo y una acción
-    function hasPermission(module, action) {
-      return isNotAnonymous() && (
-        getUserData().rol == 'super_admin' || 
-        (getUserData().permissions.get(module, {}).get(action, false) == true)
-      );
-    }
     
-    // Verificar si es un usuario autenticado (cualquier tipo)
+    // Verificar si es un usuario autenticado (cualquier tipo, incluyendo anónimos)
     function isAuthenticated() {
       return request.auth != null;
+    }
+    // --- Validaciones de Datos ---
+    function isValidString(text) {
+      return text is string && text.size() > 0;
+    }
+    function isValidScore(score) {
+      return (score is number && score >= 0 && score <= 100) || score == null;
+    }
+    function isValidEmail(email) {
+      return email is string && email.matches('.*@.*\\..*');
     }
     
     // ===== REGLAS POR COLECCIÓN =====
     
-    // USUARIOS: Super admin gestiona todo. Usuarios leen su propio perfil.
+    // USUARIOS: Solo el propio usuario puede leer su perfil, super_admin/rh pueden escribir
     match /users/{userId} {
       allow read: if isAuthenticated() && 
-                     (request.auth.uid == userId || hasPermission('config', 'read'));
-      allow create: if hasPermission('config', 'create'); // Solo admins con permiso de config pueden crear
-      allow update: if hasPermission('config', 'update') || request.auth.uid == userId; // Propio usuario puede editarse (limitado por frontend) o admin
-      allow delete: if hasPermission('config', 'delete');
+                     (request.auth.uid == userId || hasAnyRole(['super_admin', 'rh']));
+      allow create: if hasRole('super_admin');
+      allow update: if hasAnyRole(['super_admin', 'rh']) || request.auth.uid == userId;
+      allow delete: if hasRole('super_admin');
     }
     
-    // EMPLEADOS: Módulo 'employees'
+    // EMPLEADOS: Lectura para autenticados, escritura restringida
+    // Permite acceso de candidatos (autenticados anónimamente) para login
     match /employees/{docId} {
-      allow read: if isAuthenticated(); // Permitir lectura a candidatos (anónimos) para login
-      allow create: if hasPermission('employees', 'create');
-      allow update: if hasPermission('employees', 'update');
-      allow delete: if hasPermission('employees', 'delete');
+      // Lectura: Todos los usuarios autenticados (incluye anónimos para portal de candidatos)
+      allow read: if isAuthenticated();
+      
+      // Escritura: Solo super_admin y rh pueden crear/eliminar
+      allow create: if hasAnyRole(['super_admin', 'rh'])
+                    && isValidString(request.resource.data.name)
+                    && isValidString(request.resource.data.employeeId);
+      
+      // Actualización: Permitir a usuarios autenticados actualizar SOLO campos específicos
+      // (para tracking de login de candidatos: accessCodeUses, lastLoginCandidate)
+      // ADAPTACIÓN: Se agregan 'cursosCompletados' y 'coursesProgress' para permitir el avance del candidato
+      allow update: if hasAnyRole(['super_admin', 'rh']) ||
+                       (isAuthenticated() && 
+                        request.resource.data.diff(resource.data).affectedKeys()
+                          .hasOnly(['accessCodeUses', 'lastLoginCandidate', 'cursosCompletados', 'coursesProgress']));
+                          
+      allow delete: if hasRole('super_admin');
     }
     
-    // TRAINING RECORDS: Módulo 'capacitacion'
-    match /training_records/{docId} {
-      allow read: if isNotAnonymous() && hasPermission('capacitacion', 'read');
-      allow create: if hasPermission('capacitacion', 'create');
-      allow update: if hasPermission('capacitacion', 'update');
-      allow delete: if hasPermission('capacitacion', 'delete');
-    }
-    
-    // CURSOS DE INDUCCIÓN (NUEVO): Módulo 'capacitacion'
+    // CURSOS DE INDUCCIÓN (Nuevo formato)
     match /induction_courses/{docId} {
-      allow read: if isAuthenticated(); // Lectura abierta para candidatos
-      allow create: if hasPermission('capacitacion', 'create');
-      allow update: if hasPermission('capacitacion', 'update');
-      allow delete: if hasPermission('capacitacion', 'delete');
+      // Lectura: Todos los usuarios autenticados (incluye demo y candidatos anónimos)
+      allow read: if isAuthenticated();
+      
+      // Escritura: Solo super_admin y rh
+      allow write: if hasAnyRole(['super_admin', 'rh'])
+                   && isValidString(request.resource.data.title);
     }
-
-    // CURSOS DE INDUCCIÓN (LEGACY): Módulo 'capacitacion'
-    // Necesario porque el sistema busca aquí si no encuentra en induction_courses
+    
+    // CURSOS DE INDUCCIÓN (Legacy - cursos_induccion)
     match /cursos_induccion/{docId} {
       allow read: if isAuthenticated();
-      allow create: if hasPermission('capacitacion', 'create');
-      allow update: if hasPermission('capacitacion', 'update');
-      allow delete: if hasPermission('capacitacion', 'delete');
+      allow write: if hasAnyRole(['super_admin', 'rh']);
     }
     
-    // SKILLS ILUO: Módulo 'capacitacion' o 'dashboard'
+    // POSICIONES/PUESTOS: Candidatos necesitan leer para cargar sus cursos
+    match /positions/{docId} {
+      allow read: if isAuthenticated();
+      allow write: if hasAnyRole(['super_admin', 'rh'])
+                   && isValidString(request.resource.data.name);
+    }
+    
+    // TRAINING RECORDS (Legacy - si aún se usa)
+    match /training_records/{docId} {
+      allow read: if isNotAnonymous();
+      allow write: if hasAnyRole(['super_admin', 'rh'])
+                   && isValidString(request.resource.data.name) 
+                   && isValidString(request.resource.data.position);
+    }
+    
+    // SKILLS ILUO: Solo usuarios no anónimos
     match /skills/{docId} {
       allow read: if isNotAnonymous();
-      allow create: if hasPermission('capacitacion', 'create');
-      allow update: if hasPermission('capacitacion', 'update');
-      allow delete: if hasPermission('capacitacion', 'delete');
+      allow write: if hasAnyRole(['super_admin', 'rh']);
     }
     
-    // POSICIONES/PUESTOS: Módulo 'config'
-    match /positions/{docId} {
-      allow read: if isAuthenticated(); // Permitir lectura a candidatos para cargar cursos
-      allow create: if hasPermission('config', 'create');
-      allow update: if hasPermission('config', 'update');
-      allow delete: if hasPermission('config', 'delete');
-    }
-    
-    // REGISTROS DE CAPACITACIÓN (LOGS): Módulo 'capacitacion'
+    // REGISTROS DE CAPACITACIÓN
     match /training_logs/{docId} {
       allow read: if isNotAnonymous();
-      allow create: if hasPermission('capacitacion', 'create'); // Usualmente creado por sistema
-      allow update: if hasPermission('capacitacion', 'update');
-      allow delete: if hasPermission('capacitacion', 'delete');
+      allow write: if hasAnyRole(['super_admin', 'rh']);
     }
     
-    // ALERTAS: Módulo 'dashboard'
+    // ALERTAS
     match /alerts/{docId} {
       allow read: if isNotAnonymous();
-      allow create: if hasPermission('dashboard', 'create');
-      allow update: if hasPermission('dashboard', 'update');
-      allow delete: if hasPermission('dashboard', 'delete');
+      allow write: if hasAnyRole(['super_admin', 'rh']);
     }
     
-    // CALENDARIO: Módulo 'dashboard'
+    // CALENDARIO
     match /calendar_events/{docId} {
       allow read: if isNotAnonymous();
-      allow create: if hasPermission('dashboard', 'create');
-      allow update: if hasPermission('dashboard', 'update');
-      allow delete: if hasPermission('dashboard', 'delete');
+      allow write: if hasAnyRole(['super_admin', 'rh']);
     }
     
-    // REPORTES: Módulo 'reports'
+    // PROMOCIONES
     match /promotions/{docId} {
-      allow read: if hasPermission('reports', 'read');
-      allow create: if hasPermission('reports', 'create');
-      allow update: if hasPermission('reports', 'update');
-      allow delete: if hasPermission('reports', 'delete');
+      allow read: if isNotAnonymous();
+      allow write: if hasAnyRole(['super_admin', 'rh']);
     }
     
-    // CANDIDATOS: Módulo 'candidatos' (Asumiendo colección 'candidates' o 'candidatos')
-    match /candidatos/{docId} {
-      allow read: if hasPermission('candidatos', 'read');
-      allow create: if hasPermission('candidatos', 'create');
-      allow update: if hasPermission('candidatos', 'update');
-      allow delete: if hasPermission('candidatos', 'delete');
-    }
-
-    // AUDITORÍAS/LOGS: Solo super_admin y config
+    // AUDITORÍAS/LOGS: Solo super_admin
     match /audit_logs/{docId} {
-      allow read: if hasPermission('config', 'read');
-      allow write: if hasPermission('config', 'create'); // Logs generados por sistema
+      allow read, write: if hasRole('super_admin');
     }
     
-    // CONFIGURACIÓN DEL SISTEMA: Módulo 'config'
+    // CONFIGURACIÓN DEL SISTEMA: Solo super_admin
     match /system_config/{docId} {
-      allow read: if hasPermission('config', 'read');
-      allow create: if hasPermission('config', 'create');
-      allow update: if hasPermission('config', 'update');
-      allow delete: if hasPermission('config', 'delete');
+      allow read, write: if hasRole('super_admin');
     }
     
     // ===== REGLA POR DEFECTO (FALLBACK) =====
+    // Para cualquier otra colección no especificada
     match /{document=**} {
       allow read: if isNotAnonymous();
       allow write: if hasRole('super_admin');

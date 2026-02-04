@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { collection, query, where, getDocs } from 'firebase/firestore';
+import { collection, query, where, getDocs, doc, updateDoc, setDoc, getDoc, arrayUnion, arrayRemove } from 'firebase/firestore';
 import { db, auth } from '@/lib/firebase';
 import { signOut } from 'firebase/auth';
 import { BookOpen, FileText, LogOut, CheckCircle, Clock, Sparkles, ArrowRight, ChevronRight, User, ChevronLeft, Contrast, HelpCircle } from 'lucide-react';
@@ -31,8 +31,28 @@ export default function CandidatoDashboard() {
         const candidateData = JSON.parse(session);
         setCandidate(candidateData);
 
+        // Cargar datos frescos de Firestore (incluyendo progreso granular)
+        const fetchFreshData = async () => {
+            try {
+                const docRef = doc(db, 'employees', candidateData.id);
+                const docSnap = await getDoc(docRef);
+                if (docSnap.exists()) {
+                    const freshData = docSnap.data();
+                    setCandidate(prev => ({ ...prev, ...freshData }));
+                    if (freshData.coursesProgress) {
+                        setCourseProgress(freshData.coursesProgress);
+                    }
+                    // Update session storage to keep it overlapping
+                    const newSession = { ...candidateData, ...freshData };
+                    sessionStorage.setItem('candidate_session', JSON.stringify(newSession));
+                }
+            } catch (error) {
+                console.error("Error loading fresh data:", error);
+            }
+        };
+        fetchFreshData();
+
         // Cargar cursos
-        // Usar .position que es el campo normalizado en el login, o .puesto como fallback
         const positionToLoad = candidateData.position || candidateData.puesto;
         if (positionToLoad && positionToLoad !== 'N/A') {
             loadCourses(positionToLoad);
@@ -280,8 +300,68 @@ export default function CandidatoDashboard() {
 
 
 
+    // Manual Course Completion Toggle
+    const toggleCourseCompletion = async (courseId, shouldMarkComplete) => {
+        if (!candidate?.id) return;
+
+        // Optimistic UI Update
+        const currentCompleted = candidate.cursosCompletados || [];
+        const newCompleted = shouldMarkComplete
+            ? [...currentCompleted, courseId]
+            : currentCompleted.filter(id => id !== courseId);
+
+        setCandidate(prev => ({
+            ...prev,
+            cursosCompletados: newCompleted
+        }));
+
+        try {
+            const employeeRef = doc(db, 'employees', candidate.id);
+
+            // Prepare updates
+            // 1. Update list of completed IDs
+            const updates = {
+                cursosCompletados: shouldMarkComplete ? arrayUnion(courseId) : arrayRemove(courseId)
+            };
+
+            // 2. If marking complete, also backfill granular progress so Admin Dashboard stats align
+            // (Assumes if they mark it complete, they viewed/did everything)
+            if (shouldMarkComplete) {
+                updates.coursesProgress = {
+                    [courseId]: {
+                        presentationCompleted: true,
+                        examDownloaded: true,
+                        step1: true,
+                        step2: true,
+                        step1Completed: true,
+                        step2Completed: true,
+                        // Duplicates removed for clarity, but keeping the original intent
+                        // presentationCompleted: true, // Already present
+                        // examDownloaded: true // Already present
+                    }
+                };
+            }
+
+            await setDoc(employeeRef, updates, { merge: true });
+
+            // Also update session to persist across reloads without refetch if needed immediately
+            const session = JSON.parse(sessionStorage.getItem('candidate_session') || '{}');
+            session.cursosCompletados = newCompleted;
+            sessionStorage.setItem('candidate_session', JSON.stringify(session));
+
+        } catch (error) {
+            console.error("Error updating course completion:", error);
+            // Revert on error
+            setCandidate(prev => ({
+                ...prev,
+                cursosCompletados: currentCompleted
+            }));
+        }
+    };
+
     // Progress tracking functions
-    const markStepComplete = (courseId, step) => {
+    const markStepComplete = async (courseId, step) => {
+        // 1. Optimistic UI update
         setCourseProgress(prev => ({
             ...prev,
             [courseId]: {
@@ -289,6 +369,41 @@ export default function CandidatoDashboard() {
                 [step]: true
             }
         }));
+
+        // 2. Persist to Firestore
+        if (!candidate?.id) return;
+
+        try {
+            const employeeRef = doc(db, 'employees', candidate.id);
+
+            // Use setDoc with merge to ensure the 'coursesProgress' map is created if it doesn't exist
+            const updatePayload = {
+                coursesProgress: {
+                    [courseId]: {
+                        [step]: true
+                    }
+                }
+            };
+
+            await setDoc(employeeRef, updatePayload, { merge: true });
+
+            // Special handling for completion
+            if (step === 'examDownloaded') {
+                await updateDoc(employeeRef, {
+                    cursosCompletados: arrayUnion(courseId)
+                });
+
+                // Update local candidate state
+                setCandidate(prev => ({
+                    ...prev,
+                    cursosCompletados: [...(prev.cursosCompletados || []), courseId]
+                }));
+            }
+
+        } catch (error) {
+            console.error("Error saving progress:", error);
+            // Optionally revert UI state on error
+        }
     };
 
     const isStepUnlocked = (courseId, step) => {
@@ -511,9 +626,15 @@ export default function CandidatoDashboard() {
                                             )}
                                         </div>
                                         <div className={styles.courseActions}>
-                                            {isCompleted && (
-                                                <span className={styles.completedTag}>Completado</span>
-                                            )}
+                                            <button
+                                                className={isCompleted ? styles.btnCompleted : styles.btnMarkComplete}
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    toggleCourseCompletion(course.id, !isCompleted);
+                                                }}
+                                            >
+                                                {isCompleted ? 'Completado' : 'Marcar como Completado'}
+                                            </button>
                                             <ChevronRight size={20} className={styles.chevron} />
                                         </div>
                                     </div>

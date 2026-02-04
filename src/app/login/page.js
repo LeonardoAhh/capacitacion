@@ -307,6 +307,7 @@ export default function LoginPage() {
                                                 onChange={(e) => setEmail(e.target.value)}
                                                 required
                                                 className={styles.input}
+                                                data-has-value={!!email}
                                             />
                                             <label htmlFor="email" className={styles.label}>Correo Electrónico</label>
                                         </div>
@@ -321,6 +322,7 @@ export default function LoginPage() {
                                                 onChange={(e) => setPassword(e.target.value)}
                                                 required
                                                 className={styles.input}
+                                                data-has-value={!!password}
                                             />
                                             <label htmlFor="password" className={styles.label}>Contraseña</label>
                                         </div>
@@ -390,6 +392,7 @@ export default function LoginPage() {
                                         onChange={(e) => setEmployeeId(e.target.value.toUpperCase())}
                                         required
                                         className={styles.input}
+                                        data-has-value={!!employeeId}
                                     />
                                     <label htmlFor="employeeId" className={styles.label}>ID de Empleado</label>
                                 </div>
@@ -405,6 +408,7 @@ export default function LoginPage() {
                                         required
                                         maxLength={18}
                                         className={styles.input}
+                                        data-has-value={!!curp}
                                     />
                                     <label htmlFor="curp" className={styles.label}>CURP</label>
                                 </div>
@@ -419,6 +423,7 @@ export default function LoginPage() {
                                         onChange={(e) => setAccessCode(e.target.value)}
                                         required
                                         className={styles.input}
+                                        data-has-value={!!accessCode}
                                     />
                                     <label htmlFor="accessCode" className={styles.label}>Código de Acceso</label>
                                 </div>

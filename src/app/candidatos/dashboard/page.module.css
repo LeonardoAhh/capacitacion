@@ -314,8 +314,43 @@
 .courseActions {
     display: flex;
     align-items: center;
-    gap: 8px;
-    flex-shrink: 0;
+    gap: 12px;
+    color: var(--text-tertiary);
+}
+
+.btnMarkComplete {
+    padding: 8px 12px;
+    background: transparent;
+    border: 1px solid #007AFF;
+    color: #007AFF;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    white-space: nowrap;
+}
+
+.btnMarkComplete:hover {
+    background: rgba(0, 122, 255, 0.05);
+}
+
+.btnCompleted {
+    padding: 8px 12px;
+    background: rgba(52, 199, 89, 0.15);
+    color: #34C759;
+    border: 1px solid transparent;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    white-space: nowrap;
+}
+
+.btnCompleted:hover {
+    background: rgba(52, 199, 89, 0.25);
+    border-color: #34C759;
 }
 
 .completedTag {

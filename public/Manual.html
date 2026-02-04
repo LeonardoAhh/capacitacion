@@ -193,9 +193,95 @@
 
             .instruction-item {
                 justify-content: center;
-                /* Opcional, si quieres centrar todo */
                 text-align: left;
-                /* Mejor legibilidad */
+            }
+        }
+
+        /* Print Styles */
+        @media print {
+            @page {
+                size: letter;
+                margin: 0.8in;
+            }
+
+            body {
+                background-color: white;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+                font-size: 12pt;
+                color: black;
+            }
+
+            .navbar {
+                position: static;
+                border: none;
+                padding: 0;
+                margin-bottom: 20px;
+            }
+
+            .navbar a {
+                display: none;
+                /* Hide 'Ir al login' button */
+            }
+
+            .container {
+                max-width: 100%;
+                width: 100%;
+                padding: 0;
+                margin: 0;
+            }
+
+            .hero {
+                padding: 1rem 0;
+                text-align: left;
+            }
+
+            .hero h1 {
+                font-size: 24pt;
+                color: black;
+                background: none;
+                -webkit-text-fill-color: black;
+                margin-bottom: 0.5rem;
+            }
+
+            .hero p {
+                color: #444;
+                font-size: 11pt;
+                max-width: none;
+                text-align: left;
+            }
+
+            .step-card {
+                break-inside: avoid;
+                /* Prevent breaking inside cards */
+                page-break-inside: avoid;
+                box-shadow: none;
+                border: 1px solid #ddd;
+                margin-bottom: 1.5rem;
+                padding: 1.5rem;
+            }
+
+            .step-number {
+                border: 2px solid #007AFF;
+                color: #007AFF;
+                background: white !important;
+                /* Save ink */
+            }
+
+            .info-box {
+                break-inside: avoid;
+                border: 1px solid #ccc;
+            }
+
+            /* Ensure links are expansive if needed, but we already have explicit text links */
+            a {
+                text-decoration: none;
+                color: black;
+            }
+
+            /* Remove footer or simplify */
+            footer {
+                display: none;
             }
         }
     </style>
@@ -206,12 +292,9 @@
     <nav class="navbar">
         <div class="container nav-content">
             <div class="logo">
-                <div class="logo-icon">VP</div>
+                <div class="logo-icon">V</div>
                 Portal de Inducción
             </div>
-            <a href="https://vertxk.xyz/login"
-                style="color: var(--primary); text-decoration: none; font-weight: 500;">Ir al login
-                &rarr;</a>
         </div>
     </nav>
 
@@ -358,13 +441,6 @@
         </div>
 
     </div>
-
-    <footer style="margin-top: auto;">
-        <p>© 2024 ViñoPlastic Inyección. Todos los derechos reservados.</p>
-        <p style="margin-top: 5px; font-size: 0.8rem; color: #999;">Documento generado el:
-            <script>document.write(new Date().toLocaleDateString())</script>
-        </p>
-    </footer>
 
     <script>
         // Script para que al imprimir se vean los colores de fondo (si el usuario activa la opción)
