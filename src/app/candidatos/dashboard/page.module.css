@@ -892,3 +892,494 @@
         height: 36px;
     }
 }
+
+/* ==================== HELP ICON & TOOLTIP ==================== */
+.sectionHeaderContainer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 8px;
+}
+
+.helpIconContainer {
+    position: relative;
+    cursor: pointer;
+    padding: 4px;
+}
+
+.helpIcon {
+    color: #007aff;
+    transition: all 0.2s;
+}
+
+[data-theme="dark"] .helpIcon {
+    color: #0a84ff;
+}
+
+.helpIconContainer:hover .helpIcon {
+    transform: scale(1.1);
+}
+
+.helpTooltip {
+    position: absolute;
+    top: calc(100% + 8px);
+    right: 0;
+    background: rgba(28, 28, 30, 0.95);
+    color: white;
+    padding: 12px 16px;
+    border-radius: 12px;
+    font-size: 13px;
+    line-height: 1.5;
+    width: 280px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+    z-index: 1000;
+    animation: tooltipFadeIn 0.2s ease-out;
+}
+
+[data-theme="light"] .helpTooltip {
+    background: rgba(28, 28, 30, 0.95);
+}
+
+.helpTooltip strong {
+    display: block;
+    margin-bottom: 4px;
+}
+
+.helpTooltip ul {
+    list-style: none;
+    padding-left: 0;
+}
+
+.helpTooltip li {
+    position: relative;
+    padding-left: 16px;
+    margin-bottom: 6px;
+}
+
+.helpTooltip li:before {
+    content: '•';
+    position: absolute;
+    left: 0;
+    color: #007aff;
+    font-weight: bold;
+}
+
+@keyframes tooltipFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-8px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Arrow for tooltip */
+.helpTooltip::before {
+    content: '';
+    position: absolute;
+    top: -6px;
+    right: 12px;
+    width: 12px;
+    height: 12px;
+    background: rgba(28, 28, 30, 0.95);
+    transform: rotate(45deg);
+}
+
+/* ==================== PROGRESSIVE STEPS SYSTEM ==================== */
+
+/* Progress Bar */
+.progressBar {
+    padding: 20px 16px;
+    background: rgba(255, 255, 255, 0.5);
+    border-bottom: 1px solid rgba(60, 60, 67, 0.1);
+}
+
+[data-theme="dark"] .progressBar {
+    background: rgba(28, 28, 30, 0.5);
+    border-bottom-color: rgba(84, 84, 88, 0.5);
+}
+
+.progressSteps {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 12px;
+}
+
+.progressStep {
+    display: flex;
+    align-items: center;
+}
+
+.progressDot {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: rgba(142, 142, 147, 0.2);
+    border: 2px solid rgba(142, 142, 147, 0.3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    font-weight: 600;
+    color: #8e8e93;
+    transition: all 0.3s ease;
+}
+
+.progressDotActive {
+    background: #007aff;
+    border-color: #007aff;
+    color: white;
+    box-shadow: 0 4px 12px rgba(0, 122, 255, 0.4);
+    transform: scale(1.1);
+}
+
+[data-theme="dark"] .progressDotActive {
+    background: #0a84ff;
+    border-color: #0a84ff;
+}
+
+.progressDotCompleted {
+    background: #34c759;
+    border-color: #34c759;
+    color: white;
+}
+
+[data-theme="dark"] .progressDotCompleted {
+    background: #30d158;
+    border-color: #30d158;
+}
+
+.progressLine {
+    width: 40px;
+    height: 2px;
+    background: rgba(142, 142, 147, 0.3);
+    margin: 0 4px;
+    transition: all 0.3s ease;
+}
+
+.progressLineCompleted {
+    background: #34c759;
+}
+
+[data-theme="dark"] .progressLineCompleted {
+    background: #30d158;
+}
+
+.progressText {
+    text-align: center;
+    font-size: 13px;
+    font-weight: 500;
+    color: #8e8e93;
+}
+
+/* Steps Container */
+.stepsContainer {
+    flex: 1;
+    overflow-y: auto;
+    padding: 16px;
+    background: #f2f2f7;
+}
+
+[data-theme="dark"] .stepsContainer {
+    background: #000000;
+}
+
+/* Step Card */
+.stepCard {
+    background: white;
+    border-radius: 16px;
+    padding: 20px;
+    margin-bottom: 16px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+    transition: all 0.3s ease;
+    animation: stepFadeIn 0.4s ease-out backwards;
+}
+
+[data-theme="dark"] .stepCard {
+    background: #1c1c1e;
+}
+
+.stepCard:nth-child(1) {
+    animation-delay: 0.1s;
+}
+
+.stepCard:nth-child(2) {
+    animation-delay: 0.2s;
+}
+
+.stepCard:nth-child(3) {
+    animation-delay: 0.3s;
+}
+
+.stepCard:nth-child(4) {
+    animation-delay: 0.4s;
+}
+
+@keyframes stepFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.stepLocked {
+    opacity: 0.6;
+    pointer-events: none;
+}
+
+/* Step Header */
+.stepHeader {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 16px;
+}
+
+.stepNumber {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    background: linear-gradient(135deg, #007aff 0%, #5856d6 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 20px;
+    font-weight: 700;
+    flex-shrink: 0;
+    box-shadow: 0 4px 12px rgba(0, 122, 255, 0.3);
+}
+
+[data-theme="dark"] .stepNumber {
+    background: linear-gradient(135deg, #0a84ff 0%, #5e5ce6 100%);
+}
+
+.stepLocked .stepNumber {
+    background: rgba(142, 142, 147, 0.3);
+    box-shadow: none;
+}
+
+.stepCheckIcon {
+    color: white;
+}
+
+.stepTitle {
+    font-size: 18px;
+    font-weight: 600;
+    color: #1c1c1e;
+    margin: 0;
+}
+
+[data-theme="dark"] .stepTitle {
+    color: #ffffff;
+}
+
+/* Step Content */
+.stepContent {
+    padding-left: 60px;
+}
+
+.stepText {
+    font-size: 15px;
+    line-height: 1.6;
+    color: #3c3c43;
+    margin: 0 0 20px 0;
+}
+
+[data-theme="dark"] .stepText {
+    color: #ebebf5;
+}
+
+.stepText strong {
+    color: #007aff;
+    font-weight: 600;
+}
+
+[data-theme="dark"] .stepText strong {
+    color: #0a84ff;
+}
+
+.stepLockedText {
+    font-size: 14px;
+    color: #8e8e93;
+    margin: 0;
+    padding-left: 60px;
+    font-style: italic;
+}
+
+/* Step Buttons */
+.stepButton,
+.stepButtonPrimary {
+    width: 100%;
+    padding: 14px 20px;
+    border-radius: 12px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: all 0.2s ease;
+    border: none;
+}
+
+.stepButton {
+    background: rgba(0, 122, 255, 0.1);
+    color: #007aff;
+}
+
+[data-theme="dark"] .stepButton {
+    background: rgba(10, 132, 255, 0.15);
+    color: #0a84ff;
+}
+
+.stepButton:hover {
+    background: rgba(0, 122, 255, 0.15);
+    transform: translateY(-2px);
+}
+
+.stepButton:active {
+    transform: translateY(0);
+}
+
+.stepButtonPrimary {
+    background: linear-gradient(135deg, #007aff 0%, #5856d6 100%);
+    color: white;
+    box-shadow: 0 4px 12px rgba(0, 122, 255, 0.3);
+}
+
+.stepButtonPrimary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(0, 122, 255, 0.4);
+}
+
+.stepButtonPrimary:active {
+    transform: translateY(0);
+}
+
+.stepCompleted {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 16px;
+    background: rgba(52, 199, 89, 0.1);
+    border-radius: 12px;
+    color: #34c759;
+    font-size: 15px;
+    font-weight: 600;
+}
+
+[data-theme="dark"] .stepCompleted {
+    background: rgba(48, 209, 88, 0.15);
+    color: #30d158;
+}
+
+/* Viewer Container within steps */
+.stepContent .viewerContainer {
+    margin-bottom: 20px;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+}
+
+.stepContent .iframe {
+    height: 60vh;
+    min-height: 400px;
+}
+
+/* ==================== RESPONSIVE - STEPS ==================== */
+@media (max-width: 640px) {
+    .progressDot {
+        width: 32px;
+        height: 32px;
+        font-size: 12px;
+    }
+
+    .progressLine {
+        width: 24px;
+    }
+
+    .stepContent {
+        padding-left: 0;
+    }
+
+    .stepHeader {
+        margin-bottom: 12px;
+    }
+
+    .stepNumber {
+        width: 40px;
+        height: 40px;
+        font-size: 18px;
+    }
+
+    .stepTitle {
+        font-size: 16px;
+    }
+
+    .stepText {
+        font-size: 14px;
+    }
+
+    .stepLockedText {
+        padding-left: 0;
+        margin-top: 8px;
+    }
+
+    .stepContent .iframe {
+        height: 50vh;
+        min-height: 300px;
+    }
+
+    .helpTooltip {
+        width: 260px;
+        right: -16px;
+        font-size: 12px;
+    }
+}
+
+@media (min-width: 768px) {
+    .stepsContainer {
+        padding: 24px;
+        max-width: 900px;
+        margin: 0 auto;
+    }
+
+    .stepCard {
+        padding: 28px;
+        border-radius: 20px;
+    }
+
+    .stepNumber {
+        width: 56px;
+        height: 56px;
+        font-size: 24px;
+    }
+
+    .stepTitle {
+        font-size: 20px;
+    }
+
+    .stepContent {
+        padding-left: 68px;
+    }
+
+    .stepText {
+        font-size: 16px;
+    }
+
+    .stepContent .iframe {
+        height: 65vh;
+        min-height: 500px;
+    }
+}

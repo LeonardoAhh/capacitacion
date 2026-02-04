@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import { collection, query, where, getDocs } from 'firebase/firestore';
 import { db, auth } from '@/lib/firebase';
 import { signOut } from 'firebase/auth';
-import { BookOpen, FileText, LogOut, CheckCircle, Clock, Sparkles, ArrowRight, ChevronRight, User, ChevronLeft, Contrast } from 'lucide-react';
+import { BookOpen, FileText, LogOut, CheckCircle, Clock, Sparkles, ArrowRight, ChevronRight, User, ChevronLeft, Contrast, HelpCircle } from 'lucide-react';
 import { useTheme } from '@/contexts/ThemeContext';
 import styles from './page.module.css';
 
@@ -16,7 +16,9 @@ export default function CandidatoDashboard() {
     const [candidate, setCandidate] = useState(null);
     const [courses, setCourses] = useState([]);
     const [selectedCourse, setSelectedCourse] = useState(null);
-    const [showWelcome, setShowWelcome] = useState(true); // Mostrar bienvenida primero
+    const [showWelcome, setShowWelcome] = useState(true);
+    const [courseProgress, setCourseProgress] = useState({}); // Track progress per course
+    const [showHelpTooltip, setShowHelpTooltip] = useState(false);
 
     useEffect(() => {
         // Verificar sesión
@@ -241,13 +243,53 @@ export default function CandidatoDashboard() {
         // Si hay campo examenUrl (de cursos_induccion legacy)
         if (course.examenUrl) {
             window.open(course.examenUrl, '_blank');
+            // Mark exam as downloaded
+            markStepComplete(course.id, 'examDownloaded');
             return;
         }
 
         // Si hay material de tipo documento
         if (course.material?.type === 'document' && course.material?.url) {
             window.open(course.material.url, '_blank');
+            markStepComplete(course.id, 'examDownloaded');
         }
+    };
+
+    // Progress tracking functions
+    const markStepComplete = (courseId, step) => {
+        setCourseProgress(prev => ({
+            ...prev,
+            [courseId]: {
+                ...prev[courseId],
+                [step]: true
+            }
+        }));
+    };
+
+    const isStepUnlocked = (courseId, step) => {
+        const progress = courseProgress[courseId] || {};
+
+        switch (step) {
+            case 'step1':
+                return true; // Always unlocked
+            case 'presentation':
+                return progress.step1Completed;
+            case 'step2':
+                return progress.presentationCompleted;
+            case 'exam':
+                return progress.step2Completed;
+            default:
+                return false;
+        }
+    };
+
+    const getCurrentStepNumber = (courseId) => {
+        const progress = courseProgress[courseId] || {};
+        if (!progress.step1Completed) return 1;
+        if (!progress.presentationCompleted) return 2;
+        if (!progress.step2Completed) return 3;
+        if (!progress.examDownloaded) return 4;
+        return 4; // All complete
     };
 
     if (loading) {
@@ -387,7 +429,28 @@ export default function CandidatoDashboard() {
 
                 {/* Courses Section */}
                 <section className={styles.menuSection}>
-                    <h3 className={styles.sectionHeader}>Cursos de Inducción</h3>
+                    <div className={styles.sectionHeaderContainer}>
+                        <h3 className={styles.sectionHeader}>Cursos de Inducción</h3>
+                        <div
+                            className={styles.helpIconContainer}
+                            onMouseEnter={() => setShowHelpTooltip(true)}
+                            onMouseLeave={() => setShowHelpTooltip(false)}
+                            onClick={() => setShowHelpTooltip(!showHelpTooltip)}
+                        >
+                            <HelpCircle size={20} className={styles.helpIcon} />
+                            {showHelpTooltip && (
+                                <div className={styles.helpTooltip}>
+                                    <strong>Importante:</strong>
+                                    <ul style={{ margin: '8px 0', paddingLeft: '16px' }}>
+                                        <li>Solo tienes <strong>3 inicios de sesión</strong> disponibles</li>
+                                        <li>Puedes descargar el examen y contestarlo o solo anotar las respuestas</li>
+                                        <li>Presenta tus respuestas en tu primer día de trabajo</li>
+                                        <li>Si agotaste tus 3 intentos, contacta a Recursos Humanos para obtener un nuevo código</li>
+                                    </ul>
+                                </div>
+                            )}
+                        </div>
+                    </div>
 
                     {courses.length === 0 ? (
                         <div className={styles.emptyState}>
@@ -435,8 +498,8 @@ export default function CandidatoDashboard() {
                     )}
                 </section>
 
-                {/* Exams Section - Only show if courses have exams */}
-                {courses.some(c => c.examenUrl || (c.material?.type === 'document' && c.material?.url)) && (
+                {/* Exams Section - DESHABILITADA: Ahora los exámenes son parte del flujo de pasos progresivos */}
+                {/* {courses.some(c => c.examenUrl || (c.material?.type === 'document' && c.material?.url)) && (
                     <section className={styles.menuSection}>
                         <h3 className={styles.sectionHeader}>Exámenes</h3>
                         <div className={styles.menuGroup}>
@@ -462,7 +525,7 @@ export default function CandidatoDashboard() {
                             ))}
                         </div>
                     </section>
-                )}
+                )} */}
 
                 {/* Footer */}
                 <footer className={styles.footer}>
@@ -471,7 +534,7 @@ export default function CandidatoDashboard() {
                 </footer>
             </div>
 
-            {/* Course Viewer Modal */}
+            {/* Course Viewer Modal with Progressive Steps */}
             {selectedCourse && (
                 <div className={styles.modal} onClick={closeViewer}>
                     <div className={styles.modalContent} onClick={(e) => e.stopPropagation()}>
@@ -485,19 +548,221 @@ export default function CandidatoDashboard() {
                             </h3>
                         </div>
 
-                        <div className={styles.viewerContainer}>
-                            {selectedCourse.material || selectedCourse.contenidoUrl ? (
-                                <iframe
-                                    src={convertDriveUrl(selectedCourse) || selectedCourse.contenidoUrl}
-                                    className={styles.iframe}
-                                    title={selectedCourse.title || selectedCourse.nombre}
-                                    allow="autoplay"
-                                />
-                            ) : (
-                                <div className={styles.noContent}>
-                                    <p>No hay contenido disponible para este curso</p>
+                        {/* Progress Indicator */}
+                        <div className={styles.progressBar}>
+                            <div className={styles.progressSteps}>
+                                {[1, 2, 3, 4].map(step => {
+                                    const currentStep = getCurrentStepNumber(selectedCourse.id);
+                                    const isActive = step === currentStep;
+                                    const isCompleted = step < currentStep;
+
+                                    return (
+                                        <div key={step} className={styles.progressStep}>
+                                            <div className={`${styles.progressDot} ${isCompleted ? styles.progressDotCompleted : ''} ${isActive ? styles.progressDotActive : ''}`}>
+                                                {isCompleted ? <CheckCircle size={16} /> : step}
+                                            </div>
+                                            {step < 4 && <div className={`${styles.progressLine} ${isCompleted ? styles.progressLineCompleted : ''}`} />}
+                                        </div>
+                                    );
+                                })}
+                            </div>
+                            <div className={styles.progressText}>
+                                Paso {getCurrentStepNumber(selectedCourse.id)} de 4
+                            </div>
+                        </div>
+
+                        {/* Steps Container */}
+                        <div className={styles.stepsContainer}>
+                            {/* STEP 1: Bienvenida */}
+                            <div className={`${styles.stepCard} ${!isStepUnlocked(selectedCourse.id, 'step1') ? styles.stepLocked : ''}`}>
+                                <div className={styles.stepHeader}>
+                                    <div className={styles.stepNumber}>
+                                        {courseProgress[selectedCourse.id]?.step1Completed ? (
+                                            <CheckCircle size={24} className={styles.stepCheckIcon} />
+                                        ) : (
+                                            <span>1</span>
+                                        )}
+                                    </div>
+                                    <h4 className={styles.stepTitle}>Bienvenida</h4>
                                 </div>
-                            )}
+
+                                {isStepUnlocked(selectedCourse.id, 'step1') && (
+                                    <div className={styles.stepContent}>
+                                        <p className={styles.stepText}>
+                                            Hola <strong>{candidate?.name || candidate?.nombre || 'Candidato'}</strong>,
+                                            te damos la bienvenida al curso de <strong>{selectedCourse.title || selectedCourse.nombre}</strong>.
+                                            A continuación podrás encontrar información que será de utilidad en tu estancia en Viñoplastic.
+                                        </p>
+
+                                        {!courseProgress[selectedCourse.id]?.step1Completed && (
+                                            <button
+                                                className={styles.stepButton}
+                                                onClick={() => markStepComplete(selectedCourse.id, 'step1Completed')}
+                                            >
+                                                <CheckCircle size={18} />
+                                                Marcar como completado
+                                            </button>
+                                        )}
+
+                                        {courseProgress[selectedCourse.id]?.step1Completed && (
+                                            <div className={styles.stepCompleted}>
+                                                <CheckCircle size={18} />
+                                                Completado
+                                            </div>
+                                        )}
+                                    </div>
+                                )}
+                            </div>
+
+                            {/* STEP 2: Presentación */}
+                            <div className={`${styles.stepCard} ${!isStepUnlocked(selectedCourse.id, 'presentation') ? styles.stepLocked : ''}`}>
+                                <div className={styles.stepHeader}>
+                                    <div className={styles.stepNumber}>
+                                        {courseProgress[selectedCourse.id]?.presentationCompleted ? (
+                                            <CheckCircle size={24} className={styles.stepCheckIcon} />
+                                        ) : isStepUnlocked(selectedCourse.id, 'presentation') ? (
+                                            <BookOpen size={24} />
+                                        ) : (
+                                            <span>🔒</span>
+                                        )}
+                                    </div>
+                                    <h4 className={styles.stepTitle}>Presentación del Curso</h4>
+                                </div>
+
+                                {!isStepUnlocked(selectedCourse.id, 'presentation') && (
+                                    <p className={styles.stepLockedText}>Completa el paso anterior para desbloquear</p>
+                                )}
+
+                                {isStepUnlocked(selectedCourse.id, 'presentation') && (
+                                    <div className={styles.stepContent}>
+                                        <div className={styles.viewerContainer}>
+                                            {selectedCourse.material || selectedCourse.contenidoUrl ? (
+                                                <iframe
+                                                    src={convertDriveUrl(selectedCourse) || selectedCourse.contenidoUrl}
+                                                    className={styles.iframe}
+                                                    title={selectedCourse.title || selectedCourse.nombre}
+                                                    allow="autoplay"
+                                                />
+                                            ) : (
+                                                <div className={styles.noContent}>
+                                                    <p>No hay contenido disponible para este curso</p>
+                                                </div>
+                                            )}
+                                        </div>
+
+                                        {!courseProgress[selectedCourse.id]?.presentationCompleted && (
+                                            <button
+                                                className={styles.stepButton}
+                                                onClick={() => markStepComplete(selectedCourse.id, 'presentationCompleted')}
+                                            >
+                                                <CheckCircle size={18} />
+                                                Marcar como finalizado
+                                            </button>
+                                        )}
+
+                                        {courseProgress[selectedCourse.id]?.presentationCompleted && (
+                                            <div className={styles.stepCompleted}>
+                                                <CheckCircle size={18} />
+                                                Finalizado
+                                            </div>
+                                        )}
+                                    </div>
+                                )}
+                            </div>
+
+                            {/* STEP 3: Instrucciones de Examen */}
+                            <div className={`${styles.stepCard} ${!isStepUnlocked(selectedCourse.id, 'step2') ? styles.stepLocked : ''}`}>
+                                <div className={styles.stepHeader}>
+                                    <div className={styles.stepNumber}>
+                                        {courseProgress[selectedCourse.id]?.step2Completed ? (
+                                            <CheckCircle size={24} className={styles.stepCheckIcon} />
+                                        ) : isStepUnlocked(selectedCourse.id, 'step2') ? (
+                                            <span>2</span>
+                                        ) : (
+                                            <span>🔒</span>
+                                        )}
+                                    </div>
+                                    <h4 className={styles.stepTitle}>Instrucciones</h4>
+                                </div>
+
+                                {!isStepUnlocked(selectedCourse.id, 'step2') && (
+                                    <p className={styles.stepLockedText}>Completa el paso anterior para desbloquear</p>
+                                )}
+
+                                {isStepUnlocked(selectedCourse.id, 'step2') && (
+                                    <div className={styles.stepContent}>
+                                        <p className={styles.stepText}>
+                                            Descarga el examen y anota tus respuestas, que ocuparás el primer día de trabajo en planta.
+                                        </p>
+
+                                        {!courseProgress[selectedCourse.id]?.step2Completed && (
+                                            <button
+                                                className={styles.stepButton}
+                                                onClick={() => markStepComplete(selectedCourse.id, 'step2Completed')}
+                                            >
+                                                <CheckCircle size={18} />
+                                                Marcar como completado
+                                            </button>
+                                        )}
+
+                                        {courseProgress[selectedCourse.id]?.step2Completed && (
+                                            <div className={styles.stepCompleted}>
+                                                <CheckCircle size={18} />
+                                                Completado
+                                            </div>
+                                        )}
+                                    </div>
+                                )}
+                            </div>
+
+                            {/* STEP 4: Examen */}
+                            <div className={`${styles.stepCard} ${!isStepUnlocked(selectedCourse.id, 'exam') ? styles.stepLocked : ''}`}>
+                                <div className={styles.stepHeader}>
+                                    <div className={styles.stepNumber}>
+                                        {courseProgress[selectedCourse.id]?.examDownloaded ? (
+                                            <CheckCircle size={24} className={styles.stepCheckIcon} />
+                                        ) : isStepUnlocked(selectedCourse.id, 'exam') ? (
+                                            <FileText size={24} />
+                                        ) : (
+                                            <span>🔒</span>
+                                        )}
+                                    </div>
+                                    <h4 className={styles.stepTitle}>Examen</h4>
+                                </div>
+
+                                {!isStepUnlocked(selectedCourse.id, 'exam') && (
+                                    <p className={styles.stepLockedText}>Completa el paso anterior para desbloquear</p>
+                                )}
+
+                                {isStepUnlocked(selectedCourse.id, 'exam') && (selectedCourse.examenUrl || (selectedCourse.material?.type === 'document' && selectedCourse.material?.url)) && (
+                                    <div className={styles.stepContent}>
+                                        <p className={styles.stepText}>
+                                            Descarga el examen y respóndelo para completar el curso.
+                                        </p>
+
+                                        <button
+                                            className={styles.stepButtonPrimary}
+                                            onClick={() => downloadExam(selectedCourse)}
+                                        >
+                                            <FileText size={18} />
+                                            Descargar Examen
+                                        </button>
+
+                                        {courseProgress[selectedCourse.id]?.examDownloaded && (
+                                            <div className={styles.stepCompleted}>
+                                                <CheckCircle size={18} />
+                                                Examen descargado - Curso completado
+                                            </div>
+                                        )}
+                                    </div>
+                                )}
+
+                                {isStepUnlocked(selectedCourse.id, 'exam') && !selectedCourse.examenUrl && !(selectedCourse.material?.type === 'document' && selectedCourse.material?.url) && (
+                                    <div className={styles.stepContent}>
+                                        <p className={styles.stepText}>No hay examen disponible para este curso.</p>
+                                    </div>
+                                )}
+                            </div>
                         </div>
                     </div>
                 </div>
