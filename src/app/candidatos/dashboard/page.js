@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { collection, query, where, getDocs, doc, updateDoc, setDoc, getDoc, arrayUnion, arrayRemove } from 'firebase/firestore';
 import { db, auth } from '@/lib/firebase';
@@ -110,7 +110,7 @@ export default function CandidatoDashboard() {
             if (intervalId) clearInterval(intervalId);
             events.forEach(event => document.removeEventListener(event, resetTimer));
         };
-    }, [router]);
+    }, [router, handleLogout]);
 
     // Timer State and Helpers
     const [timeLeft, setTimeLeft] = useState(30 * 60 * 1000);
@@ -220,7 +220,7 @@ export default function CandidatoDashboard() {
         }
     };
 
-    const handleLogout = async () => {
+    const handleLogout = useCallback(async () => {
         try {
             // Cerrar sesión de Firebase Auth
             await signOut(auth);
@@ -234,7 +234,7 @@ export default function CandidatoDashboard() {
             sessionStorage.removeItem('candidate_session');
             router.push('/candidatos');
         }
-    };
+    }, [router]);
 
     const viewCourse = (course) => {
         setSelectedCourse(course);
