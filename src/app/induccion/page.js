@@ -97,6 +97,10 @@ export default function InductionPage() {
     const [previewCourse, setPreviewCourse] = useState(null);
     const [previewEmp, setPreviewEmp] = useState(null);
 
+    // Collapsible sections state
+    const [materialExpanded, setMaterialExpanded] = useState(true);
+    const [candidatosExpanded, setCandidatosExpanded] = useState(true);
+
     // Candidate Course Form States
     const [candidateFormData, setCandidateFormData] = useState({
         nombre: '',
@@ -510,7 +514,23 @@ export default function InductionPage() {
                 {/* Courses Section */}
                 <section>
                     <div className={styles.coursesHeader}>
-                        <h2 className={styles.sectionTitle} style={{ marginBottom: 0 }}>Material de Inducción</h2>
+                        <h2
+                            className={styles.sectionTitle}
+                            style={{ marginBottom: 0, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px' }}
+                            onClick={() => setMaterialExpanded(!materialExpanded)}
+                        >
+                            <svg
+                                width="20" height="20" viewBox="0 0 24 24" fill="none"
+                                stroke="currentColor" strokeWidth="2"
+                                style={{ transition: 'transform 0.2s', transform: materialExpanded ? 'rotate(90deg)' : 'rotate(0deg)' }}
+                            >
+                                <polyline points="9 18 15 12 9 6" />
+                            </svg>
+                            Material de Inducción
+                            <span style={{ fontSize: '0.8rem', fontWeight: '400', color: 'var(--text-tertiary)' }}>
+                                ({courses.length})
+                            </span>
+                        </h2>
                         {canEdit && (
                             <button className={styles.toggleBtn} onClick={() => setShowCreateForm(!showCreateForm)}>
                                 {showCreateForm ? 'Cancelar' : '+ Nuevo Curso'}
@@ -518,47 +538,51 @@ export default function InductionPage() {
                         )}
                     </div>
 
-                    {showCreateForm && canEdit && (
-                        <div className={styles.createCourseContainer}>
-                            <form onSubmit={handleCreateCourse} className={styles.createCourseForm}>
-                                <div className={styles.inputGroup}>
-                                    <label>Nombre del Material</label>
-                                    <input className={styles.input} value={newCourseName} onChange={e => setNewCourseName(e.target.value)} placeholder="Ej. Manual de Bienvenida..." />
+                    {materialExpanded && (
+                        <>
+                            {showCreateForm && canEdit && (
+                                <div className={styles.createCourseContainer}>
+                                    <form onSubmit={handleCreateCourse} className={styles.createCourseForm}>
+                                        <div className={styles.inputGroup}>
+                                            <label>Nombre del Material</label>
+                                            <input className={styles.input} value={newCourseName} onChange={e => setNewCourseName(e.target.value)} placeholder="Ej. Manual de Bienvenida..." />
+                                        </div>
+                                        <div className={styles.inputGroup} style={{ flexDirection: 'row', alignItems: 'center', gap: '15px' }}>
+                                            <input type="file" onChange={e => setFile(e.target.files[0])} style={{ display: 'none' }} id="fileUpload" />
+                                            <label htmlFor="fileUpload" className={styles.fileBtn}>{file ? 'Archivo Seleccionado' : '📎 Subir PDF'}</label>
+                                            <span style={{ color: 'var(--text-tertiary)' }}>o</span>
+                                            <input className={styles.input} placeholder="Pegar enlace externo..." value={presentationLink} onChange={e => setPresentationLink(e.target.value)} style={{ flex: 1 }} />
+                                        </div>
+                                        <Button type="submit" disabled={uploading} style={{ alignSelf: 'flex-start' }}>{uploading ? 'Subiendo...' : 'Publicar Material'}</Button>
+                                    </form>
                                 </div>
-                                <div className={styles.inputGroup} style={{ flexDirection: 'row', alignItems: 'center', gap: '15px' }}>
-                                    <input type="file" onChange={e => setFile(e.target.files[0])} style={{ display: 'none' }} id="fileUpload" />
-                                    <label htmlFor="fileUpload" className={styles.fileBtn}>{file ? 'Archivo Seleccionado' : '📎 Subir PDF'}</label>
-                                    <span style={{ color: 'var(--text-tertiary)' }}>o</span>
-                                    <input className={styles.input} placeholder="Pegar enlace externo..." value={presentationLink} onChange={e => setPresentationLink(e.target.value)} style={{ flex: 1 }} />
-                                </div>
-                                <Button type="submit" disabled={uploading} style={{ alignSelf: 'flex-start' }}>{uploading ? 'Subiendo...' : 'Publicar Material'}</Button>
-                            </form>
-                        </div>
-                    )}
+                            )}
 
-                    <div className={styles.coursesGrid}>
-                        {courses.map(course => (
-                            <div key={course.id} className={styles.courseCard} onClick={() => setPreviewCourse(course)}>
-                                <div className={styles.cardTopColor} style={{ background: course.material?.type === 'link' ? '#FF9500' : '#FF3B30' }}></div>
-                                {canEdit && <button className={styles.deleteBtn} onClick={(e) => handleDeleteCourse(e, course.id)}>✕</button>}
-                                <div className={styles.cardContent}>
-                                    <div>
-                                        <h3 className={styles.courseTitle}>{course.title}</h3>
-                                        <span className={styles.courseTypeBadge}>
-                                            {course.material?.type === 'link' ? 'Presentación' : 'Documento PDF'}
-                                        </span>
+                            <div className={styles.coursesGrid}>
+                                {courses.map(course => (
+                                    <div key={course.id} className={styles.courseCard} onClick={() => setPreviewCourse(course)}>
+                                        <div className={styles.cardTopColor} style={{ background: course.material?.type === 'link' ? '#FF9500' : '#FF3B30' }}></div>
+                                        {canEdit && <button className={styles.deleteBtn} onClick={(e) => handleDeleteCourse(e, course.id)}>✕</button>}
+                                        <div className={styles.cardContent}>
+                                            <div>
+                                                <h3 className={styles.courseTitle}>{course.title}</h3>
+                                                <span className={styles.courseTypeBadge}>
+                                                    {course.material?.type === 'link' ? 'Presentación' : 'Documento PDF'}
+                                                </span>
+                                            </div>
+                                            <div style={{ marginTop: '12px', display: 'flex', justifyContent: 'flex-end' }}>
+                                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--color-primary)" strokeWidth="2">
+                                                    <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
+                                                    <polyline points="15 3 21 3 21 9" />
+                                                    <line x1="10" y1="14" x2="21" y2="3" />
+                                                </svg>
+                                            </div>
+                                        </div>
                                     </div>
-                                    <div style={{ marginTop: '16px', display: 'flex', justifyContent: 'flex-end' }}>
-                                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--color-primary)" strokeWidth="2">
-                                            <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
-                                            <polyline points="15 3 21 3 21 9" />
-                                            <line x1="10" y1="14" x2="21" y2="3" />
-                                        </svg>
-                                    </div>
-                                </div>
+                                ))}
                             </div>
-                        ))}
-                    </div>
+                        </>
+                    )}
                 </section>
 
 
@@ -567,7 +591,23 @@ export default function InductionPage() {
                 {canEdit && (
                     <section style={{ marginBottom: '60px' }}>
                         <div className={styles.coursesHeader}>
-                            <h2 className={styles.sectionTitle} style={{ marginBottom: 0 }}>Cursos de Candidatos</h2>
+                            <h2
+                                className={styles.sectionTitle}
+                                style={{ marginBottom: 0, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px' }}
+                                onClick={() => setCandidatosExpanded(!candidatosExpanded)}
+                            >
+                                <svg
+                                    width="20" height="20" viewBox="0 0 24 24" fill="none"
+                                    stroke="currentColor" strokeWidth="2"
+                                    style={{ transition: 'transform 0.2s', transform: candidatosExpanded ? 'rotate(90deg)' : 'rotate(0deg)' }}
+                                >
+                                    <polyline points="9 18 15 12 9 6" />
+                                </svg>
+                                Cursos de Candidatos
+                                <span style={{ fontSize: '0.8rem', fontWeight: '400', color: 'var(--text-tertiary)' }}>
+                                    ({candidateCourses.length})
+                                </span>
+                            </h2>
                             <button
                                 className={styles.toggleBtn}
                                 onClick={() => {
@@ -583,184 +623,189 @@ export default function InductionPage() {
                             </button>
                         </div>
 
-                        {showCandidateForm && (
-                            <div className={styles.createCourseContainer}>
-                                <h3 style={{ marginBottom: '20px' }}>{editingCandidateCourse ? 'Editar Curso' : 'Nuevo Curso'}</h3>
-                                <form onSubmit={handleCreateCandidateCourse} className={styles.createCourseForm}>
-                                    <Combobox
-                                        label="Nombre del Curso *"
-                                        value={candidateFormData.nombre}
-                                        onChange={(value) => handleCandidateFormChange('nombre', value)}
-                                        options={availableCourseTitles}
-                                        placeholder="Seleccionar curso existente..."
-                                        searchPlaceholder="Buscar curso..."
-                                        required
-                                    />
+                        {candidatosExpanded && (
+                            <>
 
-                                    <div className={styles.inputGroup}>
-                                        <label>Descripción</label>
-                                        <textarea
-                                            className={styles.input}
-                                            value={candidateFormData.descripcion}
-                                            onChange={e => handleCandidateFormChange('descripcion', e.target.value)}
-                                            placeholder="Breve descripción del curso..."
-                                            rows={3}
-                                        />
-                                    </div>
-
-                                    <div className={styles.inputGroup}>
-                                        <label>URL de Presentación (Google Drive / OneDrive) *</label>
-                                        <input
-                                            className={styles.input}
-                                            value={candidateFormData.contenidoUrl}
-                                            onChange={e => handleCandidateFormChange('contenidoUrl', e.target.value)}
-                                            placeholder="Pegar link de 'Compartir' o 'Embed'..."
-                                        />
-                                        <small style={{ color: 'var(--text-tertiary)', fontSize: '0.85rem' }}>
-                                            Soporta Google Drive y OneDrive (Links de compartir o IFRAME)
-                                        </small>
-                                    </div>
-
-                                    <div className={styles.inputGroup}>
-                                        <label>URL de Examen (Google Drive)</label>
-                                        <input
-                                            className={styles.input}
-                                            value={candidateFormData.examenUrl}
-                                            onChange={e => handleCandidateFormChange('examenUrl', e.target.value)}
-                                            placeholder="https://drive.google.com/file/d/... (opcional)"
-                                        />
-                                    </div>
-
-                                    <div className={styles.inputGroup} style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '15px' }}>
-                                        <div>
-                                            <label>Duración (min)</label>
-                                            <input
-                                                type="number"
-                                                className={styles.input}
-                                                value={candidateFormData.duracionEstimada}
-                                                onChange={e => handleCandidateFormChange('duracionEstimada', parseInt(e.target.value) || 0)}
-                                                min="1"
+                                {showCandidateForm && (
+                                    <div className={styles.createCourseContainer}>
+                                        <h3 style={{ marginBottom: '20px' }}>{editingCandidateCourse ? 'Editar Curso' : 'Nuevo Curso'}</h3>
+                                        <form onSubmit={handleCreateCandidateCourse} className={styles.createCourseForm}>
+                                            <Combobox
+                                                label="Nombre del Curso *"
+                                                value={candidateFormData.nombre}
+                                                onChange={(value) => handleCandidateFormChange('nombre', value)}
+                                                options={availableCourseTitles}
+                                                placeholder="Seleccionar curso existente..."
+                                                searchPlaceholder="Buscar curso..."
+                                                required
                                             />
-                                        </div>
-                                        <div>
-                                            <label>Orden</label>
-                                            <input
-                                                type="number"
-                                                className={styles.input}
-                                                value={candidateFormData.orden}
-                                                onChange={e => handleCandidateFormChange('orden', parseInt(e.target.value) || 1)}
-                                                min="1"
-                                            />
-                                        </div>
-                                    </div>
 
-                                    <div className={styles.inputGroup}>
-                                        <label>Puestos Aplicables * ({candidateFormData.puestosAplicables.length} seleccionados)</label>
-                                        <div className={styles.puestosCheckboxContainer}>
-                                            {puestosData.map((p, idx) => (
-                                                <label
-                                                    key={idx}
+                                            <div className={styles.inputGroup}>
+                                                <label>Descripción</label>
+                                                <textarea
+                                                    className={styles.input}
+                                                    value={candidateFormData.descripcion}
+                                                    onChange={e => handleCandidateFormChange('descripcion', e.target.value)}
+                                                    placeholder="Breve descripción del curso..."
+                                                    rows={3}
+                                                />
+                                            </div>
+
+                                            <div className={styles.inputGroup}>
+                                                <label>URL de Presentación (Google Drive / OneDrive) *</label>
+                                                <input
+                                                    className={styles.input}
+                                                    value={candidateFormData.contenidoUrl}
+                                                    onChange={e => handleCandidateFormChange('contenidoUrl', e.target.value)}
+                                                    placeholder="Pegar link de 'Compartir' o 'Embed'..."
+                                                />
+                                                <small style={{ color: 'var(--text-tertiary)', fontSize: '0.85rem' }}>
+                                                    Soporta Google Drive y OneDrive (Links de compartir o IFRAME)
+                                                </small>
+                                            </div>
+
+                                            <div className={styles.inputGroup}>
+                                                <label>URL de Examen (Google Drive)</label>
+                                                <input
+                                                    className={styles.input}
+                                                    value={candidateFormData.examenUrl}
+                                                    onChange={e => handleCandidateFormChange('examenUrl', e.target.value)}
+                                                    placeholder="https://drive.google.com/file/d/... (opcional)"
+                                                />
+                                            </div>
+
+                                            <div className={styles.inputGroup} style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '15px' }}>
+                                                <div>
+                                                    <label>Duración (min)</label>
+                                                    <input
+                                                        type="number"
+                                                        className={styles.input}
+                                                        value={candidateFormData.duracionEstimada}
+                                                        onChange={e => handleCandidateFormChange('duracionEstimada', parseInt(e.target.value) || 0)}
+                                                        min="1"
+                                                    />
+                                                </div>
+                                                <div>
+                                                    <label>Orden</label>
+                                                    <input
+                                                        type="number"
+                                                        className={styles.input}
+                                                        value={candidateFormData.orden}
+                                                        onChange={e => handleCandidateFormChange('orden', parseInt(e.target.value) || 1)}
+                                                        min="1"
+                                                    />
+                                                </div>
+                                            </div>
+
+                                            <div className={styles.inputGroup}>
+                                                <label>Puestos Aplicables * ({candidateFormData.puestosAplicables.length} seleccionados)</label>
+                                                <div className={styles.puestosCheckboxContainer}>
+                                                    {puestosData.map((p, idx) => (
+                                                        <label
+                                                            key={idx}
+                                                            style={{
+                                                                display: 'flex',
+                                                                alignItems: 'center',
+                                                                gap: '8px',
+                                                                padding: '6px 0',
+                                                                cursor: 'pointer',
+                                                                fontSize: '0.9rem'
+                                                            }}
+                                                        >
+                                                            <input
+                                                                type="checkbox"
+                                                                checked={candidateFormData.puestosAplicables.includes(p.puesto)}
+                                                                onChange={() => handlePuestoToggle(p.puesto)}
+                                                            />
+                                                            <span>{p.puesto}</span>
+                                                        </label>
+                                                    ))}
+                                                </div>
+                                            </div>
+
+                                            <div style={{ display: 'flex', gap: '10px' }}>
+                                                <Button type="submit" disabled={uploading} style={{ alignSelf: 'flex-start' }}>
+                                                    {uploading ? 'Guardando...' : (editingCandidateCourse ? 'Actualizar Curso' : 'Crear Curso')}
+                                                </Button>
+                                                {editingCandidateCourse && (
+                                                    <button
+                                                        type="button"
+                                                        className={styles.toggleBtn}
+                                                        onClick={() => {
+                                                            setEditingCandidateCourse(null);
+                                                            setShowCandidateForm(false);
+                                                        }}
+                                                        style={{ background: 'var(--bg-secondary)', border: '1px solid var(--border-color)' }}
+                                                    >
+                                                        Cancelar Edición
+                                                    </button>
+                                                )}
+                                            </div>
+                                        </form>
+                                    </div>
+                                )}
+
+                                {/* Candidate Courses List */}
+                                <div className={styles.coursesGrid} style={{ marginTop: '20px' }}>
+                                    {candidateCourses.map(course => (
+                                        <div key={course.id} className={styles.courseCard}>
+                                            <div className={styles.cardTopColor} style={{ background: course.activo ? '#34C759' : '#8E8E93' }}></div>
+                                            <div style={{ position: 'absolute', top: '10px', right: '10px', display: 'flex', gap: '8px', zIndex: 10 }}>
+                                                <button
+                                                    className={styles.editBtn}
+                                                    onClick={(e) => handleEditCandidateCourse(e, course)}
+                                                    title="Editar"
                                                     style={{
-                                                        display: 'flex',
-                                                        alignItems: 'center',
-                                                        gap: '8px',
-                                                        padding: '6px 0',
-                                                        cursor: 'pointer',
-                                                        fontSize: '0.9rem'
+                                                        background: 'white', border: 'none', borderRadius: '50%', width: '28px', height: '28px',
+                                                        display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 2px 8px rgba(0,0,0,0.1)', cursor: 'pointer'
                                                     }}
                                                 >
-                                                    <input
-                                                        type="checkbox"
-                                                        checked={candidateFormData.puestosAplicables.includes(p.puesto)}
-                                                        onChange={() => handlePuestoToggle(p.puesto)}
-                                                    />
-                                                    <span>{p.puesto}</span>
-                                                </label>
-                                            ))}
-                                        </div>
-                                    </div>
+                                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                                        <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                                                        <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                                                    </svg>
+                                                </button>
+                                                <button className={styles.deleteBtn} onClick={(e) => handleDeleteCandidateCourse(e, course.id)} style={{ position: 'static' }}>✕</button>
+                                            </div>
 
-                                    <div style={{ display: 'flex', gap: '10px' }}>
-                                        <Button type="submit" disabled={uploading} style={{ alignSelf: 'flex-start' }}>
-                                            {uploading ? 'Guardando...' : (editingCandidateCourse ? 'Actualizar Curso' : 'Crear Curso')}
-                                        </Button>
-                                        {editingCandidateCourse && (
-                                            <button
-                                                type="button"
-                                                className={styles.toggleBtn}
-                                                onClick={() => {
-                                                    setEditingCandidateCourse(null);
-                                                    setShowCandidateForm(false);
-                                                }}
-                                                style={{ background: 'var(--bg-secondary)', border: '1px solid var(--border-color)' }}
-                                            >
-                                                Cancelar Edición
-                                            </button>
-                                        )}
-                                    </div>
-                                </form>
-                            </div>
-                        )}
-
-                        {/* Candidate Courses List */}
-                        <div className={styles.coursesGrid} style={{ marginTop: '20px' }}>
-                            {candidateCourses.map(course => (
-                                <div key={course.id} className={styles.courseCard}>
-                                    <div className={styles.cardTopColor} style={{ background: course.activo ? '#34C759' : '#8E8E93' }}></div>
-                                    <div style={{ position: 'absolute', top: '10px', right: '10px', display: 'flex', gap: '8px', zIndex: 10 }}>
-                                        <button
-                                            className={styles.editBtn}
-                                            onClick={(e) => handleEditCandidateCourse(e, course)}
-                                            title="Editar"
-                                            style={{
-                                                background: 'white', border: 'none', borderRadius: '50%', width: '28px', height: '28px',
-                                                display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 2px 8px rgba(0,0,0,0.1)', cursor: 'pointer'
-                                            }}
-                                        >
-                                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                                                <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
-                                                <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
-                                            </svg>
-                                        </button>
-                                        <button className={styles.deleteBtn} onClick={(e) => handleDeleteCandidateCourse(e, course.id)} style={{ position: 'static' }}>✕</button>
-                                    </div>
-
-                                    <div className={styles.cardContent}>
-                                        <div>
-                                            <h3 className={styles.courseTitle}>{course.nombre}</h3>
-                                            <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', margin: '4px 0' }}>
-                                                {course.descripcion || 'Sin descripción'}
-                                            </p>
-                                            <div style={{ display: 'flex', gap: '8px', marginTop: '8px', flexWrap: 'wrap' }}>
-                                                <span className={styles.courseTypeBadge}>
-                                                    {course.puestosAplicables?.length || 0} puestos
-                                                </span>
-                                                <span className={styles.courseTypeBadge}>
-                                                    {course.duracionEstimada} min
-                                                </span>
-                                                <span className={styles.courseTypeBadge}>
-                                                    Orden: {course.orden}
-                                                </span>
+                                            <div className={styles.cardContent}>
+                                                <div>
+                                                    <h3 className={styles.courseTitle}>{course.nombre}</h3>
+                                                    <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', margin: '4px 0' }}>
+                                                        {course.descripcion || 'Sin descripción'}
+                                                    </p>
+                                                    <div style={{ display: 'flex', gap: '8px', marginTop: '8px', flexWrap: 'wrap' }}>
+                                                        <span className={styles.courseTypeBadge}>
+                                                            {course.puestosAplicables?.length || 0} puestos
+                                                        </span>
+                                                        <span className={styles.courseTypeBadge}>
+                                                            {course.duracionEstimada} min
+                                                        </span>
+                                                        <span className={styles.courseTypeBadge}>
+                                                            Orden: {course.orden}
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                                <div style={{ marginTop: '16px', display: 'flex', gap: '8px' }}>
+                                                    <button
+                                                        className={styles.toggleBtn}
+                                                        onClick={() => handleToggleCourseActive(course.id, course.activo)}
+                                                        style={{ fontSize: '0.85rem', padding: '6px 12px' }}
+                                                    >
+                                                        {course.activo ? 'Desactivar' : 'Activar'}
+                                                    </button>
+                                                </div>
                                             </div>
                                         </div>
-                                        <div style={{ marginTop: '16px', display: 'flex', gap: '8px' }}>
-                                            <button
-                                                className={styles.toggleBtn}
-                                                onClick={() => handleToggleCourseActive(course.id, course.activo)}
-                                                style={{ fontSize: '0.85rem', padding: '6px 12px' }}
-                                            >
-                                                {course.activo ? 'Desactivar' : 'Activar'}
-                                            </button>
+                                    ))}
+                                    {candidateCourses.length === 0 && (
+                                        <div style={{ textAlign: 'center', padding: '40px', color: 'var(--text-tertiary)' }}>
+                                            <p>No hay cursos de candidatos. Crea uno usando el botón &quot;+ Nuevo Curso&quot;</p>
                                         </div>
-                                    </div>
+                                    )}
                                 </div>
-                            ))}
-                            {candidateCourses.length === 0 && (
-                                <div style={{ textAlign: 'center', padding: '40px', color: 'var(--text-tertiary)' }}>
-                                    <p>No hay cursos de candidatos. Crea uno usando el botón &quot;+ Nuevo Curso&quot;</p>
-                                </div>
-                            )}
-                        </div>
+                            </>
+                        )}
                     </section>
                 )}
             </div>
