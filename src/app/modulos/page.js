@@ -97,10 +97,7 @@ export default function ModulesPage() {
                         <div className={styles.cardArrow}>→</div>
                     </Link>
 
-                    {/* Module: Portal Candidatos */}
-                    {(user?.rol === 'super_admin' || user?.rol === 'rh') && (
-                        <CandidatoCard />
-                    )}
+
 
                     {/* Module: ILUO Manager */}
                     {user?.rol === 'super_admin' ? (
