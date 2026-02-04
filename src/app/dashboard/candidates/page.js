@@ -266,6 +266,58 @@ export default function CandidateMonitoringPage() {
                         </tbody>
                     </table>
                 </div>
+
+                {/* Mobile Cards - Hidden on desktop, shown on mobile */}
+                <div className={styles.mobileCards}>
+                    {filteredCandidates.length > 0 ? (
+                        filteredCandidates.map((candidate) => (
+                            <div key={candidate.id} className={styles.mobileCard}>
+                                <div className={styles.mobileCardHeader}>
+                                    <div className={styles.avatar}>
+                                        {candidate.name.charAt(0)}
+                                    </div>
+                                    <div className={styles.userInfo}>
+                                        <span className={styles.userName}>{candidate.name}</span>
+                                        <span className={styles.userEmail}>{candidate.position}</span>
+                                    </div>
+                                </div>
+                                <div className={styles.mobileCardContent}>
+                                    <div>
+                                        <span className={styles.mobileCardLabel}>ID Empleado</span>
+                                        <div className={styles.mobileCardValue}>{candidate.employeeId || 'N/A'}</div>
+                                    </div>
+                                    <div>
+                                        <span className={styles.mobileCardLabel}>Último Acceso</span>
+                                        <div className={styles.mobileCardValue}>{candidate.lastLogin}</div>
+                                    </div>
+                                    <div>
+                                        <span className={styles.mobileCardLabel}>Vistas</span>
+                                        <div className={styles.mobileCardValue}>{candidate.presentationsViewed}</div>
+                                    </div>
+                                    <div>
+                                        <span className={styles.mobileCardLabel}>Descargas</span>
+                                        <div className={styles.mobileCardValue}>{candidate.examsDownloaded}</div>
+                                    </div>
+                                </div>
+                                <div className={styles.mobileProgressSection}>
+                                    <div className={styles.progressContainer}>
+                                        <div
+                                            className={`${styles.progressBar} ${candidate.progress >= 100 ? 'complete' : ''}`}
+                                            style={{ width: `${candidate.progress}%` }}
+                                        ></div>
+                                    </div>
+                                    <span className={styles.progressText}>
+                                        {candidate.completedCount}/{candidate.requiredCount} cursos ({candidate.progress}%)
+                                    </span>
+                                </div>
+                            </div>
+                        ))
+                    ) : (
+                        <div className={styles.emptyState}>
+                            No se encontraron candidatos.
+                        </div>
+                    )}
+                </div>
             </div>
         </div>
     );
