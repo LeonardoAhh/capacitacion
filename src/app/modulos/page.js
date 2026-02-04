@@ -23,7 +23,7 @@ export default function ModulesPage() {
     const handleLogout = async () => {
         try {
             await signOut();
-            router.push('/login');
+            router.push('/');
         } catch (error) {
             console.error('Error logging out:', error);
         }

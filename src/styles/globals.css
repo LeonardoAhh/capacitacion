@@ -373,3 +373,26 @@ a:focus {
   text-decoration: underline;
   text-decoration-thickness: 2px;
 }
+
+/* --- Dark Mode Variables --- */
+[data-theme='dark'] {
+  /* iOS System Colors (Dark Mode updates) */
+  --bg-primary: #000000;
+  --bg-secondary: #1C1C1E;
+  --bg-tertiary: #2C2C2E;
+
+  /* iOS Text Colors (Dark Mode) */
+  --text-primary: #FFFFFF;
+  --text-secondary: #EBEBF5;
+  /* Apple's label secondary */
+  --text-tertiary: #EBEBF5;
+  /* Apple's label tertiary approx */
+
+  /* iOS Separator (Dark) */
+  --border-color: rgba(255, 255, 255, 0.15);
+
+  /* Shadows for Dark Mode (lighter/subtle) */
+  --shadow-sm: 0 1px 3px rgba(255, 255, 255, 0.1);
+  --shadow-md: 0 2px 8px rgba(255, 255, 255, 0.12);
+  --shadow-lg: 0 4px 16px rgba(255, 255, 255, 0.15);
+}

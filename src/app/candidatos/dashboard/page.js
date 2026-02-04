@@ -25,11 +25,11 @@ export default function CandidatoDashboard() {
         try {
             await signOut(auth);
             sessionStorage.removeItem('candidate_session');
-            router.push('/candidatos');
+            router.push('/');
         } catch (error) {
             console.error('Error al cerrar sesión:', error);
             sessionStorage.removeItem('candidate_session');
-            router.push('/candidatos');
+            router.push('/');
         }
     }, [router]);
 
