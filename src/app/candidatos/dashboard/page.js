@@ -333,6 +333,21 @@ export default function CandidatoDashboard() {
                         </p>
                     </div>
 
+
+
+                    {/* Help Section */}
+                    <div className={styles.welcomeHelp}>
+                        <div className={styles.welcomeHelpContent}>
+                            <h3 className={styles.welcomeHelpTitle}>Información Importante</h3>
+                            <ul className={styles.welcomeHelpList}>
+                                <li>Solo tienes <strong>3 inicios de sesión</strong> disponibles</li>
+                                <li>Puedes descargar el examen y contestarlo o solo anotar las respuestas</li>
+                                <li>Presenta tus respuestas en tu primer día de trabajo</li>
+                                <li>Si agotaste tus 3 intentos, contacta a Recursos Humanos para obtener un nuevo código</li>
+                            </ul>
+                        </div>
+                    </div>
+
                     <div className={styles.welcomeInfo}>
                         <div className={styles.infoItem}>
                             <span className={styles.infoLabel}>Tu puesto:</span>
@@ -431,25 +446,7 @@ export default function CandidatoDashboard() {
                 <section className={styles.menuSection}>
                     <div className={styles.sectionHeaderContainer}>
                         <h3 className={styles.sectionHeader}>Cursos de Inducción</h3>
-                        <div
-                            className={styles.helpIconContainer}
-                            onMouseEnter={() => setShowHelpTooltip(true)}
-                            onMouseLeave={() => setShowHelpTooltip(false)}
-                            onClick={() => setShowHelpTooltip(!showHelpTooltip)}
-                        >
-                            <HelpCircle size={20} className={styles.helpIcon} />
-                            {showHelpTooltip && (
-                                <div className={styles.helpTooltip}>
-                                    <strong>Importante:</strong>
-                                    <ul style={{ margin: '8px 0', paddingLeft: '16px' }}>
-                                        <li>Solo tienes <strong>3 inicios de sesión</strong> disponibles</li>
-                                        <li>Puedes descargar el examen y contestarlo o solo anotar las respuestas</li>
-                                        <li>Presenta tus respuestas en tu primer día de trabajo</li>
-                                        <li>Si agotaste tus 3 intentos, contacta a Recursos Humanos para obtener un nuevo código</li>
-                                    </ul>
-                                </div>
-                            )}
-                        </div>
+
                     </div>
 
                     {courses.length === 0 ? (

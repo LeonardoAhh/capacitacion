@@ -227,10 +227,7 @@
     font-size: 16px;
     color: #8e8e93;
     text-align: right;
-    max-width: 60%;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
+    word-break: break-word;
 }
 
 /* === COURSE ITEMS === */
@@ -538,7 +535,7 @@
     }
 
     .navbar {
-        padding: 16px 24px;
+        padding: 18px 32px;
         background: rgba(229, 229, 234, 0.8);
     }
 
@@ -546,57 +543,122 @@
         background: rgba(28, 28, 30, 0.8);
     }
 
+    .navTitle {
+        font-size: 19px;
+    }
+
+    .navTimer {
+        font-size: 15px;
+        padding: 8px 14px;
+    }
+
     .scrollContent {
-        max-width: 700px;
+        width: 100%;
+        max-width: none !important;
         margin: 0 auto;
-        padding: 0 24px;
+        padding: 0 48px;
     }
 
     .profileSection {
-        padding: 40px 24px 48px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 48px 32px 56px;
+        width: 100%;
     }
 
     .avatar {
-        width: 120px;
-        height: 120px;
+        width: 140px;
+        height: 140px;
     }
 
     .avatar svg {
-        width: 56px;
-        height: 56px;
+        width: 64px;
+        height: 64px;
     }
 
     .profileName {
-        font-size: 28px;
+        font-size: 32px;
+        text-align: center !important;
+        margin-top: 16px;
+        width: 100%;
     }
 
     .profilePosition {
-        font-size: 17px;
+        font-size: 19px;
+        text-align: center !important;
+        width: 100%;
     }
 
     .menuSection {
         padding: 0;
-        margin-bottom: 32px;
+        margin-bottom: 40px;
+    }
+
+    .sectionHeader {
+        font-size: 15px;
+        margin-bottom: 12px;
     }
 
     .menuGroup {
-        border-radius: 16px;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+        border-radius: 18px;
+        box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
     }
 
     .menuItem {
-        padding: 14px 20px;
+        padding: 16px 24px;
+    }
+
+    .menuLabel,
+    .menuValue {
+        font-size: 18px;
     }
 
     .courseItem {
-        padding: 14px 20px;
+        padding: 16px 24px;
     }
 
     .courseIcon,
     .examIcon {
+        width: 56px;
+        height: 56px;
+        border-radius: 14px;
+    }
+
+    .courseTitle {
+        font-size: 18px;
+    }
+
+    .courseDuration {
+        font-size: 16px;
+    }
+
+    .emptyState {
+        padding: 64px 32px;
+    }
+
+    .emptyState svg {
         width: 48px;
         height: 48px;
-        border-radius: 12px;
+    }
+
+    .emptyState p {
+        font-size: 17px;
+    }
+
+    .footer {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 48px 32px;
+        width: 100%;
+        text-align: center !important;
+    }
+
+    .footer p {
+        font-size: 15px;
     }
 
     .modal {
@@ -605,18 +667,23 @@
     }
 
     .modalContent {
-        max-width: 900px;
-        max-height: 85vh;
-        border-radius: 16px;
+        max-width: 1000px;
+        max-height: 90vh;
+        border-radius: 20px;
     }
 
     .modalHeader {
-        border-radius: 16px 16px 0 0;
+        border-radius: 20px 20px 0 0;
+        padding: 16px 24px;
+    }
+
+    .modalTitle {
+        font-size: 19px;
     }
 
     .iframe {
         height: 70vh;
-        border-radius: 0 0 16px 16px;
+        border-radius: 0 0 20px 20px;
     }
 }
 
@@ -759,14 +826,15 @@
 }
 
 .welcomeSubtitle {
-    font-size: 20px;
-    font-weight: 600;
-    color: #007aff;
-    margin: 0 0 28px 0;
+    font-size: 24px;
+    font-weight: 500;
+    color: #8e8e93;
+    margin: 8px 0 32px 0;
+    letter-spacing: -0.5px;
 }
 
 [data-theme="dark"] .welcomeSubtitle {
-    color: #0a84ff;
+    color: #98989d;
 }
 
 .welcomeMessage {
@@ -800,15 +868,17 @@
 
 .welcomeInfo {
     display: flex;
-    gap: 16px;
+    gap: 32px;
     margin-bottom: 32px;
-    padding: 16px;
-    background: rgba(0, 122, 255, 0.06);
-    border-radius: 16px;
+    padding: 24px 0;
+    border-top: 1px solid rgba(60, 60, 67, 0.1);
+    border-bottom: 1px solid rgba(60, 60, 67, 0.1);
+    background: transparent;
 }
 
 [data-theme="dark"] .welcomeInfo {
-    background: rgba(10, 132, 255, 0.1);
+    border-color: rgba(84, 84, 88, 0.5);
+    background: transparent;
 }
 
 .infoItem {
@@ -863,6 +933,100 @@
     transform: translateY(0);
 }
 
+/* Welcome Help Section */
+/* Welcome Help Section - Minimalist */
+.welcomeHelp {
+    background: #ffffff;
+    border: 1px solid rgba(0, 0, 0, 0.05);
+    border-radius: 16px;
+    padding: 24px;
+    margin-bottom: 32px;
+    display: flex;
+    gap: 20px;
+    align-items: flex-start;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+}
+
+[data-theme="dark"] .welcomeHelp {
+    background: #1c1c1e;
+    border-color: rgba(255, 255, 255, 0.1);
+}
+
+.welcomeHelpIcon {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    background: rgba(0, 122, 255, 0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #007aff;
+    flex-shrink: 0;
+    box-shadow: none;
+}
+
+
+
+.welcomeHelpContent {
+    flex: 1;
+}
+
+.welcomeHelpTitle {
+    font-size: 16px;
+    font-weight: 700;
+    color: #007aff;
+    margin: 0 0 12px 0;
+}
+
+[data-theme="dark"] .welcomeHelpTitle {
+    color: #0a84ff;
+}
+
+.welcomeHelpList {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.welcomeHelpList li {
+    position: relative;
+    padding-left: 20px;
+    margin-bottom: 8px;
+    font-size: 14px;
+    line-height: 1.6;
+    color: #3c3c43;
+}
+
+[data-theme="dark"] .welcomeHelpList li {
+    color: #ebebf5;
+}
+
+.welcomeHelpList li:last-child {
+    margin-bottom: 0;
+}
+
+.welcomeHelpList li:before {
+    content: '•';
+    position: absolute;
+    left: 0;
+    color: #007aff;
+    font-weight: bold;
+    font-size: 18px;
+}
+
+[data-theme="dark"] .welcomeHelpList li:before {
+    color: #0a84ff;
+}
+
+.welcomeHelpList strong {
+    font-weight: 600;
+    color: #007aff;
+}
+
+[data-theme="dark"] .welcomeHelpList strong {
+    color: #0a84ff;
+}
+
 /* Responsive Welcome Screen */
 @media (max-width: 480px) {
     .welcomeCard {
@@ -890,6 +1054,29 @@
     .welcomeIcon svg {
         width: 36px;
         height: 36px;
+    }
+
+    .welcomeHelp {
+        padding: 16px;
+        gap: 12px;
+    }
+
+    .welcomeHelpIcon {
+        width: 40px;
+        height: 40px;
+    }
+
+    .welcomeHelpIcon svg {
+        width: 20px;
+        height: 20px;
+    }
+
+    .welcomeHelpTitle {
+        font-size: 14px;
+    }
+
+    .welcomeHelpList li {
+        font-size: 13px;
     }
 }
 
