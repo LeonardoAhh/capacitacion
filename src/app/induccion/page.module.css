@@ -676,35 +676,217 @@
 }
 
 /* ==================== RESPONSIVE ==================== */
-@media (max-width: 768px) {
+
+/* Tablet (max-width: 1024px) */
+@media (max-width: 1024px) {
     .container {
         padding: var(--spacing-lg);
+        gap: 32px;
+    }
+
+    .titleSection h1 {
+        font-size: 2rem;
+    }
+
+    .instructorsGrid {
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        gap: 16px;
+    }
+
+    .orgCard {
+        width: 220px;
+        padding: 16px;
+    }
+
+    .coursesGrid {
+        grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+        gap: 10px;
+        max-height: 350px;
+    }
+}
+
+/* Mobile (max-width: 768px) */
+@media (max-width: 768px) {
+    .container {
+        padding: var(--spacing-md);
+        gap: 24px;
     }
 
     .header,
     .coursesHeader {
         flex-direction: column;
         align-items: flex-start;
-        gap: 16px;
+        gap: 12px;
+    }
+
+    .titleSection h1 {
+        font-size: 1.75rem;
+    }
+
+    .titleSection p {
+        font-size: 0.95rem;
     }
 
     .tabsContainer {
         width: 100%;
         overflow-x: auto;
-        /* Hide scrollbar for cleaner look */
         -ms-overflow-style: none;
-        /* IE and Edge */
         scrollbar-width: none;
-        /* Firefox */
         white-space: nowrap;
         justify-content: flex-start;
+        padding: 4px;
     }
 
     .tabsContainer::-webkit-scrollbar {
         display: none;
     }
 
+    .tabBtn {
+        padding: 8px 14px;
+        font-size: 0.85rem;
+    }
+
+    /* Org Chart Mobile */
+    .orgChart {
+        gap: 24px;
+    }
+
+    .levelRow {
+        flex-direction: column;
+        align-items: center;
+        gap: 12px;
+    }
+
     .orgCard {
         width: 100%;
+        max-width: 300px;
+        padding: 14px;
+    }
+
+    .orgAvatar {
+        margin-bottom: 8px;
+    }
+
+    .orgName {
+        font-size: 0.9rem;
+    }
+
+    .orgRole {
+        font-size: 0.8rem;
+    }
+
+    .instructorsGrid {
+        grid-template-columns: 1fr;
+        gap: 12px;
+    }
+
+    /* Courses Mobile */
+    .sectionTitle {
+        font-size: 1.2rem;
+    }
+
+    .coursesGrid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 8px;
+        max-height: 300px;
+    }
+
+    .courseCard {
+        border-radius: 10px;
+    }
+
+    .cardContent {
+        padding: 10px;
+    }
+
+    .courseTitle {
+        font-size: 0.8rem;
+        margin-bottom: 4px;
+    }
+
+    .courseTypeBadge {
+        font-size: 0.65rem;
+        padding: 2px 6px;
+    }
+
+    /* Form Mobile */
+    .createCourseContainer {
+        padding: 16px;
+        border-radius: 16px;
+    }
+
+    .createCourseForm {
+        gap: 12px;
+    }
+
+    .input {
+        padding: 10px;
+        font-size: 0.9rem;
+    }
+
+    .toggleBtn {
+        padding: 6px 12px;
+        font-size: 0.85rem;
+    }
+
+    /* Modal Mobile */
+    .modalContent {
+        padding: 20px;
+        border-radius: 20px;
+        max-width: 95%;
+    }
+
+    .modalImage {
+        width: 80px;
+        height: 80px;
+    }
+}
+
+/* Small Mobile (max-width: 480px) */
+@media (max-width: 480px) {
+    .container {
+        padding: var(--spacing-sm);
+        gap: 20px;
+    }
+
+    .titleSection h1 {
+        font-size: 1.5rem;
+    }
+
+    .tabBtn {
+        padding: 6px 10px;
+        font-size: 0.8rem;
+    }
+
+    .orgCard {
+        max-width: 100%;
+        padding: 12px;
+    }
+
+    .orgName {
+        font-size: 0.85rem;
+    }
+
+    .coursesGrid {
+        grid-template-columns: 1fr;
+        max-height: 280px;
+    }
+
+    .courseTitle {
+        font-size: 0.75rem;
+    }
+
+    .sectionTitle {
+        font-size: 1.1rem;
+    }
+
+    .puestosCheckboxContainer {
+        max-height: 150px;
+    }
+
+    .deleteBtn {
+        width: 24px;
+        height: 24px;
+        font-size: 0.8rem;
     }
 }
