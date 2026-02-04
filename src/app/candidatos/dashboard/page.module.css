@@ -688,7 +688,7 @@
 }
 
 /* ==================== WELCOME SCREEN ==================== */
-.welcomeScreen {
+.welcomeOverlay {
     min-height: 100vh;
     display: flex;
     align-items: center;
@@ -699,12 +699,12 @@
     overflow: hidden;
 }
 
-[data-theme="dark"] .welcomeScreen {
+[data-theme="dark"] .welcomeOverlay {
     background: linear-gradient(135deg, #000000 0%, #1c1c1e 100%);
 }
 
-.welcomeScreen::before,
-.welcomeScreen::after {
+.welcomeOverlay::before,
+.welcomeOverlay::after {
     content: '';
     position: absolute;
     border-radius: 50%;
@@ -713,7 +713,7 @@
     animation: pulse 6s infinite ease-in-out;
 }
 
-.welcomeScreen::before {
+.welcomeOverlay::before {
     top: -20%;
     right: -10%;
     width: 500px;
@@ -721,7 +721,7 @@
     background: radial-gradient(circle, #007aff, transparent 70%);
 }
 
-.welcomeScreen::after {
+.welcomeOverlay::after {
     bottom: -20%;
     left: -10%;
     width: 400px;

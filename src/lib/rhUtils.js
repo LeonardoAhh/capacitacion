@@ -42,7 +42,8 @@ export async function assignAccessCodeToCandidate(employeeId, expirationDays = 7
             accessCode,
             accessCodeExpires: expiresAt.getTime(),
             isCandidato: true,
-            accessCodeGeneratedAt: new Date().getTime()
+            accessCodeGeneratedAt: new Date().getTime(),
+            accessCodeUses: 0 // RESET USAGE COUNTER
         }, { merge: true });
 
         return {

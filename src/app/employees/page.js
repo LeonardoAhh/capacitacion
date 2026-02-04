@@ -199,7 +199,8 @@ export default function EmployeesPage() {
     const handleGenerateAccessCode = async (employeeId, employeeName) => {
         setGeneratingCode(true);
         try {
-            const result = await assignAccessCodeToCandidate(employeeId);
+            // Generate for 1 day (24 hours expiration)
+            const result = await assignAccessCodeToCandidate(employeeId, 1);
             if (result.success) {
                 setAccessCodeModal({
                     show: true,

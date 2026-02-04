@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manual de Usuario | Portal de Candidatos</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #007AFF;
+            --secondary: #5856D6;
+            --success: #34C759;
+            --warning: #FF9500;
+            --danger: #FF3B30;
+            --bg-primary: #FFFFFF;
+            --bg-secondary: #F2F2F7;
+            --text-primary: #000000;
+            --text-secondary: #3C3C43;
+            --text-tertiary: #8E8E93;
+            --border-color: rgba(60, 60, 67, 0.12);
+            --radius-lg: 14px;
+            --radius-md: 10px;
+            --shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-secondary);
+            color: var(--text-primary);
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* Navbar */
+        .navbar {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border-color);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            padding: 1rem 0;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .nav-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-weight: 700;
+            font-size: 1.2rem;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .logo-icon {
+            width: 32px;
+            height: 32px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 18px;
+        }
+
+        /* Hero */
+        .hero {
+            text-align: center;
+            padding: 4rem 0 3rem;
+        }
+
+        .hero h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, #1a1a1a, #666);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero p {
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* Cards */
+        .step-card {
+            background: var(--bg-primary);
+            border-radius: var(--radius-lg);
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border-color);
+            display: grid;
+            grid-template-columns: 80px 1fr;
+            gap: 20px;
+            transition: transform 0.2s;
+        }
+
+        .step-card:hover {
+            transform: translateY(-2px);
+        }
+
+        .step-number {
+            width: 60px;
+            height: 60px;
+            background: var(--bg-secondary);
+            color: var(--primary);
+            font-weight: 700;
+            font-size: 1.5rem;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid var(--border-color);
+        }
+
+        .step-content h2 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .step-details {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .instruction-item {
+            display: flex;
+            gap: 12px;
+            align-items: flex-start;
+            color: var(--text-secondary);
+        }
+
+        .check-icon {
+            color: var(--success);
+            flex-shrink: 0;
+            margin-top: 4px;
+        }
+
+        .info-box {
+            background: #EBF5FF;
+            color: #1E40AF;
+            padding: 1rem;
+            border-radius: var(--radius-md);
+            margin-top: 1rem;
+            font-size: 0.9rem;
+            display: flex;
+            gap: 10px;
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 3rem 0;
+            color: var(--text-tertiary);
+            font-size: 0.9rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 640px) {
+            .step-card {
+                grid-template-columns: 1fr;
+                text-align: center;
+                gap: 1rem;
+            }
+
+            .step-number {
+                margin: 0 auto;
+            }
+
+            .instruction-item {
+                justify-content: center;
+                /* Opcional, si quieres centrar todo */
+                text-align: left;
+                /* Mejor legibilidad */
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <nav class="navbar">
+        <div class="container nav-content">
+            <div class="logo">
+                <div class="logo-icon">VP</div>
+                Portal de Inducción
+            </div>
+            <a href="https://vertxk.xyz/login"
+                style="color: var(--primary); text-decoration: none; font-weight: 500;">Ir al login
+                &rarr;</a>
+        </div>
+    </nav>
+
+    <div class="container">
+        <section class="hero">
+            <h1>Guía de Inicio Rápido</h1>
+            <p>Bienvenido a ViñoPlastic. Sigue estos sencillos pasos para completar tu proceso de inducción inicial
+                desde nuestra plataforma digital.</p>
+
+            <div class="info-box"
+                style="margin: 2rem auto; max-width: 700px; background: #FFF4E5; border: 1px solid #FED7AA; color: #9A3412; text-align: left;">
+                <h3 style="margin-bottom: 10px; display: flex; align-items: center; gap: 8px;">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="10" />
+                        <line x1="12" y1="8" x2="12" y2="12" />
+                        <line x1="12" y1="16" x2="12.01" y2="16" />
+                    </svg>
+                    Información Importante
+                </h3>
+                <ul style="padding-left: 20px; line-height: 1.8;">
+                    <li>Solo tienes <strong>5 inicios de sesión</strong> disponibles.</li>
+                    <li>Puedes descargar el examen y contestarlo o solo anotar las respuestas.</li>
+                    <li>Presenta tus respuestas en tu primer día de trabajo.</li>
+                    <li>Si agotaste tus 5 intentos, contacta a Recursos Humanos para obtener un nuevo código.</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- Paso 1: Login -->
+        <div class="step-card">
+            <div class="step-number">1</div>
+            <div class="step-content">
+                <h2>Acceso al Portal</h2>
+                <div class="step-details">
+                    <p>Ingresa a la siguiente dirección web:</p>
+                    <div
+                        style="background: #F3F4F6; padding: 15px; border-radius: 8px; text-align: center; font-family: monospace; font-size: 1.1rem; margin-bottom: 10px; border: 1px dashed #ccc;">
+                        <a href="https://vertxk.xyz/login"
+                            style="text-decoration: none; color: #007AFF;">https://vertxk.xyz/login</a>
+                    </div>
+                    <div class="instruction-item"
+                        style="background: #fff; padding: 10px; border-radius: 8px; border: 1px solid #eee; margin-bottom: 15px;">
+                        <svg class="check-icon" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                            <polyline points="20 6 9 17 4 12" />
+                        </svg>
+                        <span><strong>Importante:</strong> Al ingresar, selecciona la tarjeta azul que dice
+                            <strong>&quot;Candidatos&quot;</strong>.</span>
+                    </div>
+                    <p>Una vez en el portal de candidatos, ingresa tus datos:</p>
+                    <div class="instruction-item">
+                        <svg class="check-icon" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                            <polyline points="20 6 9 17 4 12" />
+                        </svg>
+                        <span><strong>ID del Empleado:</strong> Tu número de nómina preliminar (Ej: 3204).</span>
+                    </div>
+                    <div class="instruction-item">
+                        <svg class="check-icon" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                            <polyline points="20 6 9 17 4 12" />
+                        </svg>
+                        <span><strong>CURP:</strong> Tu Clave Única de Registro de Población.</span>
+                    </div>
+                    <div class="instruction-item">
+                        <svg class="check-icon" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                            <polyline points="20 6 9 17 4 12" />
+                        </svg>
+                        <span><strong>Código de Acceso:</strong> Código de seguridad de 6 dígitos.</span>
+                    </div>
+                    <div class="info-box">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <circle cx="12" cy="12" r="10" />
+                            <line x1="12" y1="16" x2="12" y2="12" />
+                            <line x1="12" y1="8" x2="12.01" y2="8" />
+                        </svg>
+                        <div>Si tienes problemas para ingresar, verifica que tu CURP esté escrita correctamente (sin
+                            espacios).</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Paso 2: Dashboard -->
+        <div class="step-card">
+            <div class="step-number">2</div>
+            <div class="step-content">
+                <h2>Tu Panel de Cursos</h2>
+                <div class="step-details">
+                    <p>Al ingresar, verás un listado de cursos asignados específicamente para tu puesto.</p>
+                    <div class="instruction-item">
+                        <svg class="check-icon" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                            <polyline points="20 6 9 17 4 12" />
+                        </svg>
+                        <span>Navega por la lista de tarjetas de colores.</span>
+                    </div>
+                    <div class="instruction-item">
+                        <svg class="check-icon" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                            <polyline points="20 6 9 17 4 12" />
+                        </svg>
+                        <span>Selecciona cualquier curso para comenzar.</span>
+                    </div>
+                    <div class="instruction-item">
+                        <svg class="check-icon" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                            <polyline points="20 6 9 17 4 12" />
+                        </svg>
+                        <span>Verás tu progreso (barra verde) en la parte superior del curso.</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Paso 3: Tomar Curso -->
+        <div class="step-card">
+            <div class="step-number">3</div>
+            <div class="step-content">
+                <h2>Completar un Curso</h2>
+                <div class="step-details">
+                    <p>Cada curso consta de 4 pasos secuenciales. Debes completar uno para desbloquear el siguiente.</p>
+                    <div class="instruction-item">
+                        <span style="font-weight:600; min-width: 60px;">Paso 1:</span>
+                        <span>Bienvenida e introducción.</span>
+                    </div>
+                    <div class="instruction-item">
+                        <span style="font-weight:600; min-width: 60px;">Paso 2:</span>
+                        <span><strong>Ver Presentación:</strong> Lee el material o diapositivas presentadas. Haz clic en
+                            "Marcar como leído" al terminar.</span>
+                    </div>
+                    <div class="instruction-item">
+                        <span style="font-weight:600; min-width: 60px;">Paso 3:</span>
+                        <span>Instrucciones específicas del examen.</span>
+                    </div>
+                    <div class="instruction-item">
+                        <span style="font-weight:600; min-width: 60px;">Paso 4:</span>
+                        <span><strong>Examen:</strong> Descarga o realiza la evaluación final.</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <footer style="margin-top: auto;">
+        <p>© 2024 ViñoPlastic Inyección. Todos los derechos reservados.</p>
+        <p style="margin-top: 5px; font-size: 0.8rem; color: #999;">Documento generado el:
+            <script>document.write(new Date().toLocaleDateString())</script>
+        </p>
+    </footer>
+
+    <script>
+        // Script para que al imprimir se vean los colores de fondo (si el usuario activa la opción)
+        // y para asegurar que los links sean absolutos si se abre desde archivo local
+    </script>
+</body>
+
+</html>

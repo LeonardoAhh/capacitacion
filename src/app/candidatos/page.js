@@ -128,10 +128,10 @@ export default function CandidatosLoginPage() {
                 return;
             }
 
-            // Verificar usos del código (Max 3 usos)
+            // Verificar usos del código (Max 5 usos)
             const codeUses = data.accessCodeUses || 0;
-            if (codeUses >= 3) {
-                setError('Este código de acceso ya ha alcanzado el límite de 3 inicios de sesión. Contacta a RH para obtener un nuevo código.');
+            if (codeUses >= 5) {
+                setError('Este código de acceso ya ha alcanzado el límite de 5 inicios de sesión. Contacta a RH para obtener un nuevo código.');
                 setLoading(false);
                 return;
             }

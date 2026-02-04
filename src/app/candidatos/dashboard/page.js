@@ -40,8 +40,8 @@ export default function CandidatoDashboard() {
             setLoading(false);
         }
 
-        // Session Timeout Logic (4 hours)
-        const TIMEOUT_DURATION = 4 * 60 * 60 * 1000;
+        // Session Timeout Logic (2 hours)
+        const TIMEOUT_DURATION = 2 * 60 * 60 * 1000;
 
         let timeoutId;
         let intervalId;
@@ -61,6 +61,7 @@ export default function CandidatoDashboard() {
                 if (remaining <= 0) {
                     clearInterval(intervalId);
                     setTimeLeft(0);
+                    handleLogout(); // Ensure logout is called
                     return;
                 }
                 setTimeLeft(remaining);
@@ -68,8 +69,7 @@ export default function CandidatoDashboard() {
 
             // Timeout real para cerrar sesión
             timeoutId = setTimeout(() => {
-                sessionStorage.removeItem('candidate_session');
-                router.push('/candidatos');
+                handleLogout(); // Use handleLogout for consistency
             }, TIMEOUT_DURATION);
 
             // Resetear estado visual
@@ -227,13 +227,37 @@ export default function CandidatoDashboard() {
     const convertDriveUrl = (course) => {
         if (!course || !course.material) return null;
 
+        let url = course.material.url;
+        if (!url) return null;
+
+        // Check if input is a raw IFRAME code (starts with <iframe)
+        if (url.trim().startsWith('<iframe')) {
+            const srcMatch = url.match(/src="([^"]+)"/);
+            if (srcMatch && srcMatch[1]) {
+                url = srcMatch[1];
+            }
+        }
+
         // Si es un enlace directo de Google Drive
-        if (course.material.type === 'link' && course.material.url) {
-            const fileId = course.material.url.match(/\/d\/([^\/]+)/)?.[1];
+        if (course.material.type === 'link') {
+            // Google Drive
+            const fileId = url.match(/\/d\/([^\/]+)/)?.[1];
             if (fileId) {
                 return `https://drive.google.com/file/d/${fileId}/preview`;
             }
-            return course.material.url;
+
+            // OneDrive logic
+            if (url.includes('onedrive.live.com') || url.includes('1drv.ms')) {
+                // Si es un shortlink de 1drv.ms, usualmente ya es el link directo o de share
+                // Si es view.aspx, intentar cambiar a embed
+                if (url.includes('view.aspx')) {
+                    return url.replace('view.aspx', 'embed');
+                }
+
+                return url;
+            }
+
+            return url;
         }
 
         return null;
@@ -251,9 +275,10 @@ export default function CandidatoDashboard() {
         // Si hay material de tipo documento
         if (course.material?.type === 'document' && course.material?.url) {
             window.open(course.material.url, '_blank');
-            markStepComplete(course.id, 'examDownloaded');
         }
     };
+
+
 
     // Progress tracking functions
     const markStepComplete = (courseId, step) => {
@@ -304,10 +329,13 @@ export default function CandidatoDashboard() {
     // Pantalla de Bienvenida
     if (showWelcome) {
         return (
-            <div className={styles.welcomeScreen}>
+            <div className={styles.welcomeOverlay}>
                 <div className={styles.welcomeCard}>
-                    <div className={styles.welcomeIcon}>
-                        <Sparkles size={48} />
+                    {/* Welcome Header */}
+                    <div className={styles.welcomeHeader}>
+                        <div className={styles.welcomeAvatar}>
+                            <User size={64} />
+                        </div>
                     </div>
 
                     <h1 className={styles.welcomeTitle}>
@@ -340,32 +368,32 @@ export default function CandidatoDashboard() {
                         <div className={styles.welcomeHelpContent}>
                             <h3 className={styles.welcomeHelpTitle}>Información Importante</h3>
                             <ul className={styles.welcomeHelpList}>
-                                <li>Solo tienes <strong>3 inicios de sesión</strong> disponibles</li>
+                                <li>Solo tienes <strong>5 inicios de sesión</strong> disponibles</li>
                                 <li>Puedes descargar el examen y contestarlo o solo anotar las respuestas</li>
                                 <li>Presenta tus respuestas en tu primer día de trabajo</li>
-                                <li>Si agotaste tus 3 intentos, contacta a Recursos Humanos para obtener un nuevo código</li>
+                                <li>Si agotaste tus 5 oportunidades, contacta a Recursos Humanos para obtener un nuevo código</li>
                             </ul>
                         </div>
                     </div>
 
-                    <div className={styles.welcomeInfo}>
+                    <div className={styles.infoGrid}>
                         <div className={styles.infoItem}>
-                            <span className={styles.infoLabel}>Tu puesto:</span>
-                            <span className={styles.infoValue}>{candidate?.position || candidate?.puesto || 'N/A'}</span>
+                            <span className={styles.infoLabel}>Puesto:</span>
+                            <span className={styles.infoValue}>{candidate?.position || 'N/A'}</span>
                         </div>
                         <div className={styles.infoItem}>
                             <span className={styles.infoLabel}>Área:</span>
                             <span className={styles.infoValue}>{candidate?.area || 'N/A'}</span>
                         </div>
-                    </div>
 
-                    <button
-                        className={styles.welcomeButton}
-                        onClick={() => setShowWelcome(false)}
-                    >
-                        <span>Iniciar Cursos de Inducción</span>
-                        <ArrowRight size={20} />
-                    </button>
+                        <button
+                            className={styles.welcomeButton}
+                            onClick={() => setShowWelcome(false)}
+                        >
+                            <span>Iniciar Cursos de Inducción</span>
+                            <ArrowRight size={20} />
+                        </button>
+                    </div>
                 </div>
             </div>
         );
@@ -638,7 +666,8 @@ export default function CandidatoDashboard() {
                                                     src={convertDriveUrl(selectedCourse) || selectedCourse.contenidoUrl}
                                                     className={styles.iframe}
                                                     title={selectedCourse.title || selectedCourse.nombre}
-                                                    allow="autoplay"
+                                                    allow="autoplay; fullscreen"
+                                                    allowFullScreen
                                                 />
                                             ) : (
                                                 <div className={styles.noContent}>

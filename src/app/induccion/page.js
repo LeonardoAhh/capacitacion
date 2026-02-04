@@ -300,29 +300,39 @@ export default function InductionPage() {
         }));
     };
 
+    // State for editing candidate courses
+    const [editingCandidateCourse, setEditingCandidateCourse] = useState(null);
+
     const handleCreateCandidateCourse = async (e) => {
         e.preventDefault();
         if (!canEdit) return;
-        if (!candidateFormData.nombre.trim()) {
-            return toast.warning('Atención', 'El nombre del curso es obligatorio');
-        }
-        if (!candidateFormData.contenidoUrl.trim()) {
-            return toast.warning('Atención', 'La URL de presentación es obligatoria');
-        }
-        if (candidateFormData.puestosAplicables.length === 0) {
-            return toast.warning('Atención', 'Selecciona al menos un puesto');
-        }
+        if (!candidateFormData.nombre.trim()) return toast.warning('Atención', 'El nombre del curso es obligatorio');
+        if (!candidateFormData.contenidoUrl.trim()) return toast.warning('Atención', 'La URL de presentación es obligatoria');
+        if (candidateFormData.puestosAplicables.length === 0) return toast.warning('Atención', 'Selecciona al menos un puesto');
 
         setUploading(true);
         try {
-            await addDoc(collection(db, 'cursos_induccion'), {
-                ...candidateFormData,
-                activo: true,
-                creadoPor: user?.uid || 'unknown',
-                fechaCreacion: new Date().toISOString()
-            });
+            if (editingCandidateCourse) {
+                // UPDATE logic
+                await updateDoc(doc(db, 'cursos_induccion', editingCandidateCourse.id), {
+                    ...candidateFormData,
+                    updatedAt: new Date().toISOString()
+                });
+                toast.success('Actualizado', 'Curso actualizado exitosamente');
+            } else {
+                // CREATE logic
+                await addDoc(collection(db, 'cursos_induccion'), {
+                    ...candidateFormData,
+                    activo: true,
+                    creadoPor: user?.uid || 'unknown',
+                    createdAt: new Date().toISOString()
+                });
+                toast.success('Creado', 'Curso creado exitosamente');
+            }
 
-            toast.success('¡Listo!', 'Curso creado correctamente');
+            // Reset Form
+            setShowCandidateForm(false);
+            setEditingCandidateCourse(null);
             setCandidateFormData({
                 nombre: '',
                 descripcion: '',
@@ -333,13 +343,29 @@ export default function InductionPage() {
                 obligatorio: true,
                 orden: candidateCourses.length + 1
             });
-            setShowCandidateForm(false);
         } catch (error) {
-            console.error('Error creating candidate course:', error);
+            console.error('Error saving candidate course:', error);
             toast.error('Error', error.message);
         } finally {
             setUploading(false);
         }
+    };
+
+    const handleEditCandidateCourse = (e, course) => {
+        e.stopPropagation();
+        setEditingCandidateCourse(course);
+        setCandidateFormData({
+            nombre: course.nombre || '',
+            descripcion: course.descripcion || '',
+            contenidoUrl: course.contenidoUrl || '',
+            examenUrl: course.examenUrl || '',
+            puestosAplicables: course.puestosAplicables || [],
+            duracionEstimada: course.duracionEstimada || 30,
+            obligatorio: course.obligatorio !== undefined ? course.obligatorio : true,
+            orden: course.orden || 1
+        });
+        setShowCandidateForm(true);
+        window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
     };
 
     const handleDeleteCandidateCourse = async (e, courseId) => {
@@ -546,13 +572,24 @@ export default function InductionPage() {
                     <section style={{ marginBottom: '60px' }}>
                         <div className={styles.coursesHeader}>
                             <h2 className={styles.sectionTitle} style={{ marginBottom: 0 }}>Cursos de Candidatos</h2>
-                            <button className={styles.toggleBtn} onClick={() => setShowCandidateForm(!showCandidateForm)}>
+                            <button
+                                className={styles.toggleBtn}
+                                onClick={() => {
+                                    setShowCandidateForm(!showCandidateForm);
+                                    setEditingCandidateCourse(null);
+                                    setCandidateFormData({
+                                        nombre: '', descripcion: '', contenidoUrl: '', examenUrl: '',
+                                        puestosAplicables: [], duracionEstimada: 30, obligatorio: true, orden: 1
+                                    });
+                                }}
+                            >
                                 {showCandidateForm ? 'Cancelar' : '+ Nuevo Curso'}
                             </button>
                         </div>
 
                         {showCandidateForm && (
                             <div className={styles.createCourseContainer}>
+                                <h3 style={{ marginBottom: '20px' }}>{editingCandidateCourse ? 'Editar Curso' : 'Nuevo Curso'}</h3>
                                 <form onSubmit={handleCreateCandidateCourse} className={styles.createCourseForm}>
                                     <Combobox
                                         label="Nombre del Curso *"
@@ -576,15 +613,15 @@ export default function InductionPage() {
                                     </div>
 
                                     <div className={styles.inputGroup}>
-                                        <label>URL de Presentación (Google Drive) *</label>
+                                        <label>URL de Presentación (Google Drive / OneDrive) *</label>
                                         <input
                                             className={styles.input}
                                             value={candidateFormData.contenidoUrl}
                                             onChange={e => handleCandidateFormChange('contenidoUrl', e.target.value)}
-                                            placeholder="https://drive.google.com/file/d/..."
+                                            placeholder="Pegar link de 'Compartir' o 'Embed'..."
                                         />
                                         <small style={{ color: 'var(--text-tertiary)', fontSize: '0.85rem' }}>
-                                            Usa el enlace de &quot;Compartir&quot; de Google Drive
+                                            Soporta Google Drive y OneDrive (Links de compartir o IFRAME)
                                         </small>
                                     </div>
 
@@ -647,9 +684,24 @@ export default function InductionPage() {
                                         </div>
                                     </div>
 
-                                    <Button type="submit" disabled={uploading} style={{ alignSelf: 'flex-start' }}>
-                                        {uploading ? 'Guardando...' : 'Crear Curso'}
-                                    </Button>
+                                    <div style={{ display: 'flex', gap: '10px' }}>
+                                        <Button type="submit" disabled={uploading} style={{ alignSelf: 'flex-start' }}>
+                                            {uploading ? 'Guardando...' : (editingCandidateCourse ? 'Actualizar Curso' : 'Crear Curso')}
+                                        </Button>
+                                        {editingCandidateCourse && (
+                                            <button
+                                                type="button"
+                                                className={styles.toggleBtn}
+                                                onClick={() => {
+                                                    setEditingCandidateCourse(null);
+                                                    setShowCandidateForm(false);
+                                                }}
+                                                style={{ background: 'var(--bg-secondary)', border: '1px solid var(--border-color)' }}
+                                            >
+                                                Cancelar Edición
+                                            </button>
+                                        )}
+                                    </div>
                                 </form>
                             </div>
                         )}
@@ -659,7 +711,24 @@ export default function InductionPage() {
                             {candidateCourses.map(course => (
                                 <div key={course.id} className={styles.courseCard}>
                                     <div className={styles.cardTopColor} style={{ background: course.activo ? '#34C759' : '#8E8E93' }}></div>
-                                    <button className={styles.deleteBtn} onClick={(e) => handleDeleteCandidateCourse(e, course.id)}>✕</button>
+                                    <div style={{ position: 'absolute', top: '10px', right: '10px', display: 'flex', gap: '8px', zIndex: 10 }}>
+                                        <button
+                                            className={styles.editBtn}
+                                            onClick={(e) => handleEditCandidateCourse(e, course)}
+                                            title="Editar"
+                                            style={{
+                                                background: 'white', border: 'none', borderRadius: '50%', width: '28px', height: '28px',
+                                                display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 2px 8px rgba(0,0,0,0.1)', cursor: 'pointer'
+                                            }}
+                                        >
+                                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                                <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                                                <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                                            </svg>
+                                        </button>
+                                        <button className={styles.deleteBtn} onClick={(e) => handleDeleteCandidateCourse(e, course.id)} style={{ position: 'static' }}>✕</button>
+                                    </div>
+
                                     <div className={styles.cardContent}>
                                         <div>
                                             <h3 className={styles.courseTitle}>{course.nombre}</h3>

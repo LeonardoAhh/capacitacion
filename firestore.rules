@@ -9,38 +9,28 @@ service cloud.firestore {
       return get(/databases/$(database)/documents/users/$(request.auth.uid)).data;
     }
     
-    // Verificar si el usuario tiene un rol específico
-    function hasRole(role) {
-       return request.auth != null && getUserData().rol == role;
-    }
-
-    // Verificar si el usuario tiene permiso granular para un módulo y una acción
-    // Acciones: 'read', 'create', 'update', 'delete'
-    // Módulos: 'candidatos', 'capacitacion', 'employees', 'reports', 'dashboard', 'config'
-    function hasPermission(module, action) {
-      let userData = getUserData();
-      return userData.rol == 'super_admin' || 
-             (userData.permissions.get(module, {}).get(action, false) == true);
-    }
-    
     // Verificar si el usuario NO es anónimo
     function isNotAnonymous() {
       return request.auth != null && 
              request.auth.token.firebase.sign_in_provider != 'anonymous';
     }
+
+    // Verificar si el usuario tiene un rol específico
+    function hasRole(role) {
+       return isNotAnonymous() && getUserData().rol == role;
+    }
+
+    // Verificar si el usuario tiene permiso granular para un módulo y una acción
+    function hasPermission(module, action) {
+      return isNotAnonymous() && (
+        getUserData().rol == 'super_admin' || 
+        (getUserData().permissions.get(module, {}).get(action, false) == true)
+      );
+    }
     
     // Verificar si es un usuario autenticado (cualquier tipo)
     function isAuthenticated() {
       return request.auth != null;
-    }
-
-    // --- Validaciones de Datos ---
-    function isValidString(text) {
-      return text is string && text.size() > 0;
-    }
-
-    function isValidScore(score) {
-      return (score is number && score >= 0 && score <= 100) || score == null;
     }
     
     // ===== REGLAS POR COLECCIÓN =====
@@ -56,7 +46,7 @@ service cloud.firestore {
     
     // EMPLEADOS: Módulo 'employees'
     match /employees/{docId} {
-      allow read: if isNotAnonymous() && (hasPermission('employees', 'read') || request.auth.token.email != null); // Permiso basico de lectura para authed
+      allow read: if isAuthenticated(); // Permitir lectura a candidatos (anónimos) para login
       allow create: if hasPermission('employees', 'create');
       allow update: if hasPermission('employees', 'update');
       allow delete: if hasPermission('employees', 'delete');
@@ -70,9 +60,18 @@ service cloud.firestore {
       allow delete: if hasPermission('capacitacion', 'delete');
     }
     
-    // CURSOS DE INDUCCIÓN: Módulo 'capacitacion' (o 'induction' si se separara) -> Usaremos 'capacitacion'
+    // CURSOS DE INDUCCIÓN (NUEVO): Módulo 'capacitacion'
     match /induction_courses/{docId} {
       allow read: if isAuthenticated(); // Lectura abierta para candidatos
+      allow create: if hasPermission('capacitacion', 'create');
+      allow update: if hasPermission('capacitacion', 'update');
+      allow delete: if hasPermission('capacitacion', 'delete');
+    }
+
+    // CURSOS DE INDUCCIÓN (LEGACY): Módulo 'capacitacion'
+    // Necesario porque el sistema busca aquí si no encuentra en induction_courses
+    match /cursos_induccion/{docId} {
+      allow read: if isAuthenticated();
       allow create: if hasPermission('capacitacion', 'create');
       allow update: if hasPermission('capacitacion', 'update');
       allow delete: if hasPermission('capacitacion', 'delete');
@@ -88,7 +87,7 @@ service cloud.firestore {
     
     // POSICIONES/PUESTOS: Módulo 'config'
     match /positions/{docId} {
-      allow read: if isNotAnonymous();
+      allow read: if isAuthenticated(); // Permitir lectura a candidatos para cargar cursos
       allow create: if hasPermission('config', 'create');
       allow update: if hasPermission('config', 'update');
       allow delete: if hasPermission('config', 'delete');
