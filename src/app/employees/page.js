@@ -654,53 +654,50 @@ export default function EmployeesPage() {
 
             {/* Bulk Upload Actions */}
             {canWrite && (
-                <div className={styles.bulkActions} style={{ display: 'flex', gap: '12px', marginBottom: '16px', flexWrap: 'wrap' }}>
+                <div style={{ display: 'flex', gap: '16px', marginBottom: '16px', justifyContent: 'flex-end' }}>
                     <button
                         onClick={() => bulkFileInputRef.current?.click()}
-                        className={styles.bulkButton}
                         style={{
-                            padding: '10px 16px',
-                            background: 'linear-gradient(135deg, #5856D6 0%, #AF52DE 100%)',
-                            color: 'white',
+                            padding: '8px 12px',
+                            background: 'transparent',
+                            color: '#007AFF',
                             border: 'none',
-                            borderRadius: '10px',
-                            fontWeight: '600',
+                            borderRadius: '8px',
+                            fontWeight: '500',
                             cursor: 'pointer',
                             display: 'flex',
                             alignItems: 'center',
-                            gap: '8px',
-                            fontSize: '0.9rem'
+                            gap: '6px',
+                            fontSize: '0.85rem'
                         }}
                     >
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                             <polyline points="17 8 12 3 7 8" />
                             <line x1="12" y1="3" x2="12" y2="15" />
                         </svg>
-                        Cargar Masivo (JSON)
+                        Cargar
                     </button>
                     <button
                         onClick={handleDownloadTemplate}
                         style={{
-                            padding: '10px 16px',
-                            background: '#f2f2f7',
-                            color: '#1c1c1e',
+                            padding: '8px 12px',
+                            background: 'transparent',
+                            color: '#8e8e93',
                             border: 'none',
-                            borderRadius: '10px',
-                            fontWeight: '600',
+                            borderRadius: '8px',
+                            fontWeight: '500',
                             cursor: 'pointer',
                             display: 'flex',
                             alignItems: 'center',
-                            gap: '8px',
-                            fontSize: '0.9rem'
+                            gap: '6px',
+                            fontSize: '0.85rem'
                         }}
                     >
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                             <polyline points="7 10 12 15 17 10" />
                             <line x1="12" y1="15" x2="12" y2="3" />
                         </svg>
-                        Descargar Plantilla
+                        Plantilla
                     </button>
                 </div>
             )}
