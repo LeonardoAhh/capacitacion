@@ -1,13 +1,24 @@
 'use client';
 
+import { useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
+import CandidatoCard from '@/components/Dashboard/CandidatoCard';
 import styles from './page.module.css';
 
 export default function ModulesPage() {
     const { user, signOut } = useAuth();
     const router = useRouter();
+
+    // Protección: Redirigir candidatos a su dashboard
+    useEffect(() => {
+        const candidateSession = sessionStorage.getItem('candidate_session');
+        if (candidateSession) {
+            // Si hay sesión de candidato, redirigir a su dashboard
+            router.push('/candidatos/dashboard');
+        }
+    }, [router]);
 
     const handleLogout = async () => {
         try {
@@ -85,6 +96,11 @@ export default function ModulesPage() {
                         </div>
                         <div className={styles.cardArrow}>→</div>
                     </Link>
+
+                    {/* Module: Portal Candidatos */}
+                    {(user?.rol === 'super_admin' || user?.rol === 'rh') && (
+                        <CandidatoCard />
+                    )}
 
                     {/* Module: ILUO Manager */}
                     {user?.rol === 'super_admin' ? (

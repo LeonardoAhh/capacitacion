@@ -412,6 +412,63 @@
     border: 1px solid var(--border-color);
 }
 
+/* Puestos Checkbox Container */
+.puestosCheckboxContainer {
+    max-height: 200px;
+    overflow-y: auto;
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 12px;
+    background: var(--bg-primary);
+}
+
+[data-theme="dark"] .puestosCheckboxContainer {
+    background: rgba(20, 20, 25, 0.6);
+}
+
+/* Checkbox Styling */
+.puestosCheckboxContainer input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
+    accent-color: var(--color-primary);
+}
+
+.puestosCheckboxContainer label {
+    color: var(--text-primary);
+}
+
+/* Scrollbar Styling */
+.puestosCheckboxContainer::-webkit-scrollbar {
+    width: 8px;
+}
+
+.puestosCheckboxContainer::-webkit-scrollbar-track {
+    background: var(--bg-secondary);
+    border-radius: 10px;
+}
+
+.puestosCheckboxContainer::-webkit-scrollbar-thumb {
+    background: var(--text-tertiary);
+    border-radius: 10px;
+}
+
+.puestosCheckboxContainer::-webkit-scrollbar-thumb:hover {
+    background: var(--text-secondary);
+}
+
+[data-theme="dark"] .puestosCheckboxContainer::-webkit-scrollbar-track {
+    background: rgba(40, 40, 45, 0.5);
+}
+
+[data-theme="dark"] .puestosCheckboxContainer::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+[data-theme="dark"] .puestosCheckboxContainer::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.3);
+}
+
 /* Courses Grid */
 .coursesGrid {
     display: grid;

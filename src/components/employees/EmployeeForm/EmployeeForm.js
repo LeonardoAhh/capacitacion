@@ -22,6 +22,7 @@ export default function EmployeeForm({
     const [formData, setFormData] = useState({
         employeeId: '',
         name: '',
+        curp: '',
         position: '',
         area: '',
         department: '',
@@ -60,6 +61,7 @@ export default function EmployeeForm({
             setFormData({
                 employeeId: employee.employeeId || '',
                 name: employee.name || '',
+                curp: employee.curp || '',
                 position: employee.position || '',
                 area: employee.area || '',
                 department: employee.department || '',
@@ -252,6 +254,23 @@ export default function EmployeeForm({
                                         style={{ textTransform: 'uppercase' }}
                                         required
                                     />
+                                </div>
+                                <div className={styles.inputGroup}>
+                                    <label htmlFor="curp">CURP</label>
+                                    <input
+                                        id="curp"
+                                        type="text"
+                                        placeholder="AAAA000000HDFBBB00"
+                                        value={formData.curp}
+                                        onChange={(e) => setFormData({ ...formData, curp: e.target.value.toUpperCase() })}
+                                        style={{ textTransform: 'uppercase' }}
+                                        maxLength={18}
+                                        pattern="[A-Z]{4}[0-9]{6}[HM][A-Z]{5}[0-9]{2}"
+                                        title="CURP debe tener 18 caracteres (4 letras, 6 números, H/M, 5 letras, 2 números)"
+                                    />
+                                    <small style={{ fontSize: '0.8rem', color: 'var(--text-tertiary)', marginTop: '4px' }}>
+                                        Requerido para acceso al portal de candidatos
+                                    </small>
                                 </div>
                             </div>
                         </div>

@@ -16,6 +16,9 @@ import { Dialog, DialogHeader, DialogTitle, DialogDescription, DialogFooter, Dia
 import { useToast } from '@/components/ui/Toast/Toast';
 import EmployeeForm from '@/components/employees/EmployeeForm/EmployeeForm';
 
+// Utils
+import { assignAccessCodeToCandidate } from '@/lib/rhUtils';
+
 // Data
 import puestosData from '../../../puestos.json';
 import datosData from '../../../datos.json';
@@ -32,6 +35,15 @@ const getAreasForDepartment = (dept) => {
 export default function EmployeesPage() {
     const { user, loading: authLoading, canWrite } = useAuth();
     const router = useRouter();
+
+    // Protección: Redirigir candidatos a su dashboard
+    useEffect(() => {
+        const candidateSession = sessionStorage.getItem('candidate_session');
+        if (candidateSession) {
+            router.push('/candidatos/dashboard');
+            return;
+        }
+    }, [router]);
     const { toast } = useToast();
 
     // Custom Hooks
@@ -53,6 +65,8 @@ export default function EmployeesPage() {
     const [editingEmployee, setEditingEmployee] = useState(null);
     const [searchTerm, setSearchTerm] = useState('');
     const [deleteModal, setDeleteModal] = useState({ show: false, employee: null });
+    const [accessCodeModal, setAccessCodeModal] = useState({ show: false, code: null, expiresAt: null, employeeName: null });
+    const [generatingCode, setGeneratingCode] = useState(false);
 
     // iOS-style navigation state: 'list', 'detail', 'edit'
     const [activeView, setActiveView] = useState('list');
@@ -166,6 +180,42 @@ export default function EmployeesPage() {
     const selectEmployee = (emp) => {
         setSelectedEmployee(emp);
         setActiveView('detail');
+    };
+
+    const handleGenerateAccessCode = async (employeeId, employeeName) => {
+        setGeneratingCode(true);
+        try {
+            const result = await assignAccessCodeToCandidate(employeeId);
+            if (result.success) {
+                setAccessCodeModal({
+                    show: true,
+                    code: result.code,
+                    expiresAt: result.expiresAt,
+                    employeeName: employeeName
+                });
+                toast.success('Código generado', 'Código de acceso creado correctamente');
+                // Refresh employee data to show new code
+                refresh();
+            } else {
+                toast.error('Error', result.error || 'No se pudo generar el código');
+            }
+        } catch (error) {
+            console.error('Error generating access code:', error);
+            toast.error('Error', 'Ocurrió un error al generar el código');
+        } finally {
+            setGeneratingCode(false);
+        }
+    };
+
+    const handleCopyCode = () => {
+        if (accessCodeModal.code) {
+            navigator.clipboard.writeText(accessCodeModal.code);
+            toast.success('Copiado', 'Código copiado al portapapeles');
+        }
+    };
+
+    const closeAccessCodeModal = () => {
+        setAccessCodeModal({ show: false, code: null, expiresAt: null, employeeName: null });
     };
 
     const goBackToList = () => {
@@ -372,6 +422,67 @@ export default function EmployeesPage() {
                         </div>
                     )}
 
+                    {/* Candidate Management Section */}
+                    {(user?.rol === 'super_admin' || user?.rol === 'rh') && selectedEmployee.curp && (
+                        <div className={styles.settingsGroup}>
+                            <h3 className={styles.settingsGroupTitle}>Gestión de Candidatos</h3>
+                            <div className={styles.settingsCard}>
+                                <div className={styles.settingsItem}>
+                                    <div className={`${styles.settingsIcon} ${styles.iconBlue}`}>🔑</div>
+                                    <span className={styles.settingsLabel}>Código de Acceso</span>
+                                    <span className={styles.settingsValue}>
+                                        {selectedEmployee.accessCode ? (
+                                            <span style={{
+                                                background: 'linear-gradient(135deg, #007aff 0%, #5856d6 100%)',
+                                                padding: '4px 10px',
+                                                borderRadius: '6px',
+                                                color: 'white',
+                                                fontWeight: '600',
+                                                letterSpacing: '1px'
+                                            }}>
+                                                {selectedEmployee.accessCode}
+                                            </span>
+                                        ) : '—'}
+                                    </span>
+                                </div>
+                                {selectedEmployee.accessCodeExpires && (
+                                    <div className={styles.settingsItem}>
+                                        <div className={`${styles.settingsIcon} ${styles.iconOrange}`}>⏱️</div>
+                                        <span className={styles.settingsLabel}>Expira</span>
+                                        <span className={styles.settingsValue}>
+                                            {new Date(selectedEmployee.accessCodeExpires).toLocaleDateString('es-MX', {
+                                                year: 'numeric',
+                                                month: 'long',
+                                                day: 'numeric'
+                                            })}
+                                        </span>
+                                    </div>
+                                )}
+                                <div style={{ marginTop: '16px', paddingTop: '16px', borderTop: '1px solid var(--border-color)' }}>
+                                    <Button
+                                        variant="secondary"
+                                        onClick={() => handleGenerateAccessCode(
+                                            selectedEmployee.id,
+                                            selectedEmployee.name
+                                        )}
+                                        disabled={generatingCode}
+                                        style={{ width: '100%' }}
+                                    >
+                                        {generatingCode ? 'Generando...' : (selectedEmployee.accessCode ? '🔄 Regenerar Código' : '➕ Generar Código')}
+                                    </Button>
+                                    <p style={{
+                                        fontSize: '0.8rem',
+                                        color: 'var(--text-tertiary)',
+                                        marginTop: '8px',
+                                        textAlign: 'center'
+                                    }}>
+                                        El código permite acceso al portal de candidatos
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    )}
+
                     {/* Actions Section */}
                     {canWrite() && (
                         <div className={styles.settingsGroup}>
@@ -541,6 +652,87 @@ export default function EmployeesPage() {
                 <DialogFooter>
                     <Button variant="secondary" onClick={cancelDelete}>Cancelar</Button>
                     <Button variant="danger" onClick={confirmDelete}>Eliminar</Button>
+                </DialogFooter>
+            </Dialog>
+
+            {/* Access Code Dialog */}
+            <Dialog open={accessCodeModal.show} onOpenChange={(open) => !open && closeAccessCodeModal()}>
+                <DialogHeader>
+                    <DialogTitle>✅ Código de Acceso Generado</DialogTitle>
+                    <DialogDescription>
+                        Código de acceso para <strong>{accessCodeModal.employeeName}</strong>
+                    </DialogDescription>
+                    <DialogClose onClose={closeAccessCodeModal} />
+                </DialogHeader>
+
+                <div style={{
+                    padding: '24px',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    gap: '20px',
+                    alignItems: 'center'
+                }}>
+                    {/* Access Code Display */}
+                    <div style={{
+                        background: 'linear-gradient(135deg, #007aff 0%, #5856d6 100%)',
+                        padding: '20px 40px',
+                        borderRadius: '16px',
+                        boxShadow: '0 4px 16px rgba(0, 122, 255, 0.3)'
+                    }}>
+                        <p style={{
+                            fontSize: '2.5rem',
+                            fontWeight: '700',
+                            color: 'white',
+                            letterSpacing: '4px',
+                            margin: 0,
+                            fontFamily: 'monospace'
+                        }}>
+                            {accessCodeModal.code}
+                        </p>
+                    </div>
+
+                    {/* Expiration Info */}
+                    <div style={{ textAlign: 'center' }}>
+                        <p style={{ fontSize: '0.9rem', color: 'var(--text-secondary)', margin: 0 }}>
+                            <strong>Válido hasta:</strong> {accessCodeModal.expiresAt && new Date(accessCodeModal.expiresAt).toLocaleDateString('es-MX', {
+                                year: 'numeric',
+                                month: 'long',
+                                day: 'numeric',
+                                hour: '2-digit',
+                                minute: '2-digit'
+                            })}
+                        </p>
+                        <p style={{ fontSize: '0.85rem', color: 'var(--text-tertiary)', marginTop: '8px' }}>
+                            Este código expira en 7 días
+                        </p>
+                    </div>
+
+                    {/* Instructions */}
+                    <div style={{
+                        background: 'var(--bg-secondary)',
+                        padding: '16px',
+                        borderRadius: '12px',
+                        width: '100%'
+                    }}>
+                        <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', margin: 0 }}>
+                            📋 <strong>Instrucciones:</strong>
+                        </p>
+                        <ol style={{
+                            fontSize: '0.85rem',
+                            color: 'var(--text-secondary)',
+                            margin: '8px 0 0 0',
+                            paddingLeft: '20px'
+                        }}>
+                            <li>Proporciona este código al candidato</li>
+                            <li>El candidato debe acceder a <code>/candidatos</code></li>
+                            <li>Ingresar su ID, CURP y este código</li>
+                        </ol>
+                    </div>
+                </div>
+
+                <DialogFooter>
+                    <Button variant="secondary" onClick={closeAccessCodeModal}>Cerrar</Button>
+                    <Button onClick={handleCopyCode}>📋 Copiar Código</Button>
                 </DialogFooter>
             </Dialog>
         </>

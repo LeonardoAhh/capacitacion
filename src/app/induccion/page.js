@@ -4,15 +4,17 @@ import { useState, useEffect, useMemo } from 'react';
 import Link from 'next/link';
 import { db } from '@/lib/firebase';
 import { uploadFile } from '@/lib/upload';
-import { collection, query, where, getDocs, addDoc, orderBy, onSnapshot, deleteDoc, doc } from 'firebase/firestore';
+import { collection, query, where, getDocs, addDoc, orderBy, onSnapshot, deleteDoc, doc, updateDoc } from 'firebase/firestore';
 import { useAuth } from '@/contexts/AuthContext';
 import { Avatar } from '@/components/ui/Avatar/Avatar';
 import { Button } from '@/components/ui/Button/Button';
+import { Combobox } from '@/components/ui/Combobox/Combobox';
 import { useToast } from '@/components/ui/Toast/Toast';
 import Navbar from '@/components/Navbar/Navbar';
 import TriviaGame from '@/components/TriviaGame/TriviaGame';
 import inductionData from '@/data/induction_data.json';
 import produccionOrgData from '@/data/produccion_org.json';
+import puestosData from '../../../puestos.json';
 import { migrateInstructorsToFirebase } from '@/lib/migrateInstructors';
 import styles from './page.module.css';
 
@@ -82,6 +84,8 @@ export default function InductionPage() {
     const [employeesMap, setEmployeesMap] = useState({});
     const [loadingTeam, setLoadingTeam] = useState(true);
     const [courses, setCourses] = useState([]);
+    const [candidateCourses, setCandidateCourses] = useState([]);
+    const [availableCourseTitles, setAvailableCourseTitles] = useState([]);
 
     // Dynamic Instructors Data
     const [instructorsMap, setInstructorsMap] = useState({});
@@ -89,8 +93,21 @@ export default function InductionPage() {
 
     // Interaction States
     const [showCreateForm, setShowCreateForm] = useState(false);
+    const [showCandidateForm, setShowCandidateForm] = useState(false);
     const [previewCourse, setPreviewCourse] = useState(null);
     const [previewEmp, setPreviewEmp] = useState(null);
+
+    // Candidate Course Form States
+    const [candidateFormData, setCandidateFormData] = useState({
+        nombre: '',
+        descripcion: '',
+        contenidoUrl: '',
+        examenUrl: '',
+        puestosAplicables: [],
+        duracionEstimada: 30,
+        obligatorio: true,
+        orden: 1
+    });
 
     // Load instructors from Firebase
     useEffect(() => {
@@ -174,7 +191,20 @@ export default function InductionPage() {
     useEffect(() => {
         const q = query(collection(db, 'induction_courses'), orderBy('createdAt', 'desc'));
         const unsubscribe = onSnapshot(q, (snapshot) => {
-            setCourses(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
+            const coursesData = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+            setCourses(coursesData);
+            // Extract unique course titles for Combobox
+            const titles = coursesData.map(c => c.title).filter(Boolean).sort();
+            setAvailableCourseTitles(titles);
+        });
+        return () => unsubscribe();
+    }, []);
+
+    // Fetch Candidate Courses
+    useEffect(() => {
+        const q = query(collection(db, 'cursos_induccion'), orderBy('orden', 'asc'));
+        const unsubscribe = onSnapshot(q, (snapshot) => {
+            setCandidateCourses(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
         });
         return () => unsubscribe();
     }, []);
@@ -225,6 +255,111 @@ export default function InductionPage() {
         if (window.confirm('¿Borrar curso?')) {
             await deleteDoc(doc(db, 'induction_courses', courseId));
             toast.success('Borrado', 'Curso eliminado');
+        }
+    };
+
+    // Candidate Course Handlers
+    const handleCandidateFormChange = async (field, value) => {
+        setCandidateFormData(prev => ({ ...prev, [field]: value }));
+
+        // Auto-populate positions when course name is selected
+        if (field === 'nombre' && value) {
+            try {
+                // Query positions collection to find which positions require this course
+                const positionsRef = collection(db, 'positions');
+                const positionsSnapshot = await getDocs(positionsRef);
+
+                const matchingPositions = [];
+                positionsSnapshot.docs.forEach(doc => {
+                    const positionData = doc.data();
+                    if (positionData.requiredCourses && positionData.requiredCourses.includes(value)) {
+                        matchingPositions.push(positionData.name);
+                    }
+                });
+
+                if (matchingPositions.length > 0) {
+                    setCandidateFormData(prev => ({
+                        ...prev,
+                        nombre: value,
+                        puestosAplicables: matchingPositions
+                    }));
+                    toast.success('Auto-asignado', `${matchingPositions.length} puesto(s) seleccionado(s) automáticamente`);
+                }
+            } catch (error) {
+                console.error('Error fetching positions:', error);
+            }
+        }
+    };
+
+    const handlePuestoToggle = (puesto) => {
+        setCandidateFormData(prev => ({
+            ...prev,
+            puestosAplicables: prev.puestosAplicables.includes(puesto)
+                ? prev.puestosAplicables.filter(p => p !== puesto)
+                : [...prev.puestosAplicables, puesto]
+        }));
+    };
+
+    const handleCreateCandidateCourse = async (e) => {
+        e.preventDefault();
+        if (!canEdit) return;
+        if (!candidateFormData.nombre.trim()) {
+            return toast.warning('Atención', 'El nombre del curso es obligatorio');
+        }
+        if (!candidateFormData.contenidoUrl.trim()) {
+            return toast.warning('Atención', 'La URL de presentación es obligatoria');
+        }
+        if (candidateFormData.puestosAplicables.length === 0) {
+            return toast.warning('Atención', 'Selecciona al menos un puesto');
+        }
+
+        setUploading(true);
+        try {
+            await addDoc(collection(db, 'cursos_induccion'), {
+                ...candidateFormData,
+                activo: true,
+                creadoPor: user?.uid || 'unknown',
+                fechaCreacion: new Date().toISOString()
+            });
+
+            toast.success('¡Listo!', 'Curso creado correctamente');
+            setCandidateFormData({
+                nombre: '',
+                descripcion: '',
+                contenidoUrl: '',
+                examenUrl: '',
+                puestosAplicables: [],
+                duracionEstimada: 30,
+                obligatorio: true,
+                orden: candidateCourses.length + 1
+            });
+            setShowCandidateForm(false);
+        } catch (error) {
+            console.error('Error creating candidate course:', error);
+            toast.error('Error', error.message);
+        } finally {
+            setUploading(false);
+        }
+    };
+
+    const handleDeleteCandidateCourse = async (e, courseId) => {
+        e.stopPropagation();
+        if (!canEdit) return;
+        if (window.confirm('¿Borrar este curso de candidatos?')) {
+            await deleteDoc(doc(db, 'cursos_induccion', courseId));
+            toast.success('Borrado', 'Curso eliminado');
+        }
+    };
+
+    const handleToggleCourseActive = async (courseId, currentStatus) => {
+        if (!canEdit) return;
+        try {
+            await updateDoc(doc(db, 'cursos_induccion', courseId), {
+                activo: !currentStatus
+            });
+            toast.success('Actualizado', `Curso ${!currentStatus ? 'activado' : 'desactivado'}`);
+        } catch (error) {
+            toast.error('Error', error.message);
         }
     };
 
@@ -405,6 +540,164 @@ export default function InductionPage() {
                     <h2 className={styles.sectionTitle}>Pon a prueba tu conocimiento</h2>
                     <TriviaGame data={inductionData} />
                 </section>
+
+                {/* Candidate Courses Section */}
+                {canEdit && (
+                    <section style={{ marginBottom: '60px' }}>
+                        <div className={styles.coursesHeader}>
+                            <h2 className={styles.sectionTitle} style={{ marginBottom: 0 }}>Cursos de Candidatos</h2>
+                            <button className={styles.toggleBtn} onClick={() => setShowCandidateForm(!showCandidateForm)}>
+                                {showCandidateForm ? 'Cancelar' : '+ Nuevo Curso'}
+                            </button>
+                        </div>
+
+                        {showCandidateForm && (
+                            <div className={styles.createCourseContainer}>
+                                <form onSubmit={handleCreateCandidateCourse} className={styles.createCourseForm}>
+                                    <Combobox
+                                        label="Nombre del Curso *"
+                                        value={candidateFormData.nombre}
+                                        onChange={(value) => handleCandidateFormChange('nombre', value)}
+                                        options={availableCourseTitles}
+                                        placeholder="Seleccionar curso existente..."
+                                        searchPlaceholder="Buscar curso..."
+                                        required
+                                    />
+
+                                    <div className={styles.inputGroup}>
+                                        <label>Descripción</label>
+                                        <textarea
+                                            className={styles.input}
+                                            value={candidateFormData.descripcion}
+                                            onChange={e => handleCandidateFormChange('descripcion', e.target.value)}
+                                            placeholder="Breve descripción del curso..."
+                                            rows={3}
+                                        />
+                                    </div>
+
+                                    <div className={styles.inputGroup}>
+                                        <label>URL de Presentación (Google Drive) *</label>
+                                        <input
+                                            className={styles.input}
+                                            value={candidateFormData.contenidoUrl}
+                                            onChange={e => handleCandidateFormChange('contenidoUrl', e.target.value)}
+                                            placeholder="https://drive.google.com/file/d/..."
+                                        />
+                                        <small style={{ color: 'var(--text-tertiary)', fontSize: '0.85rem' }}>
+                                            Usa el enlace de "Compartir" de Google Drive
+                                        </small>
+                                    </div>
+
+                                    <div className={styles.inputGroup}>
+                                        <label>URL de Examen (Google Drive)</label>
+                                        <input
+                                            className={styles.input}
+                                            value={candidateFormData.examenUrl}
+                                            onChange={e => handleCandidateFormChange('examenUrl', e.target.value)}
+                                            placeholder="https://drive.google.com/file/d/... (opcional)"
+                                        />
+                                    </div>
+
+                                    <div className={styles.inputGroup} style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '15px' }}>
+                                        <div>
+                                            <label>Duración (min)</label>
+                                            <input
+                                                type="number"
+                                                className={styles.input}
+                                                value={candidateFormData.duracionEstimada}
+                                                onChange={e => handleCandidateFormChange('duracionEstimada', parseInt(e.target.value) || 0)}
+                                                min="1"
+                                            />
+                                        </div>
+                                        <div>
+                                            <label>Orden</label>
+                                            <input
+                                                type="number"
+                                                className={styles.input}
+                                                value={candidateFormData.orden}
+                                                onChange={e => handleCandidateFormChange('orden', parseInt(e.target.value) || 1)}
+                                                min="1"
+                                            />
+                                        </div>
+                                    </div>
+
+                                    <div className={styles.inputGroup}>
+                                        <label>Puestos Aplicables * ({candidateFormData.puestosAplicables.length} seleccionados)</label>
+                                        <div className={styles.puestosCheckboxContainer}>
+                                            {puestosData.map((p, idx) => (
+                                                <label
+                                                    key={idx}
+                                                    style={{
+                                                        display: 'flex',
+                                                        alignItems: 'center',
+                                                        gap: '8px',
+                                                        padding: '6px 0',
+                                                        cursor: 'pointer',
+                                                        fontSize: '0.9rem'
+                                                    }}
+                                                >
+                                                    <input
+                                                        type="checkbox"
+                                                        checked={candidateFormData.puestosAplicables.includes(p.puesto)}
+                                                        onChange={() => handlePuestoToggle(p.puesto)}
+                                                    />
+                                                    <span>{p.puesto}</span>
+                                                </label>
+                                            ))}
+                                        </div>
+                                    </div>
+
+                                    <Button type="submit" disabled={uploading} style={{ alignSelf: 'flex-start' }}>
+                                        {uploading ? 'Guardando...' : 'Crear Curso'}
+                                    </Button>
+                                </form>
+                            </div>
+                        )}
+
+                        {/* Candidate Courses List */}
+                        <div className={styles.coursesGrid} style={{ marginTop: '20px' }}>
+                            {candidateCourses.map(course => (
+                                <div key={course.id} className={styles.courseCard}>
+                                    <div className={styles.cardTopColor} style={{ background: course.activo ? '#34C759' : '#8E8E93' }}></div>
+                                    <button className={styles.deleteBtn} onClick={(e) => handleDeleteCandidateCourse(e, course.id)}>✕</button>
+                                    <div className={styles.cardContent}>
+                                        <div>
+                                            <h3 className={styles.courseTitle}>{course.nombre}</h3>
+                                            <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', margin: '4px 0' }}>
+                                                {course.descripcion || 'Sin descripción'}
+                                            </p>
+                                            <div style={{ display: 'flex', gap: '8px', marginTop: '8px', flexWrap: 'wrap' }}>
+                                                <span className={styles.courseTypeBadge}>
+                                                    {course.puestosAplicables?.length || 0} puestos
+                                                </span>
+                                                <span className={styles.courseTypeBadge}>
+                                                    {course.duracionEstimada} min
+                                                </span>
+                                                <span className={styles.courseTypeBadge}>
+                                                    Orden: {course.orden}
+                                                </span>
+                                            </div>
+                                        </div>
+                                        <div style={{ marginTop: '16px', display: 'flex', gap: '8px' }}>
+                                            <button
+                                                className={styles.toggleBtn}
+                                                onClick={() => handleToggleCourseActive(course.id, course.activo)}
+                                                style={{ fontSize: '0.85rem', padding: '6px 12px' }}
+                                            >
+                                                {course.activo ? 'Desactivar' : 'Activar'}
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            ))}
+                            {candidateCourses.length === 0 && (
+                                <div style={{ textAlign: 'center', padding: '40px', color: 'var(--text-tertiary)' }}>
+                                    <p>No hay cursos de candidatos. Crea uno usando el botón "+ Nuevo Curso"</p>
+                                </div>
+                            )}
+                        </div>
+                    </section>
+                )}
             </div>
 
             {/* Modals */}

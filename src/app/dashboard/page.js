@@ -17,6 +17,15 @@ export default function DashboardPage() {
     const { user, loading: authLoading } = useAuth();
     const router = useRouter();
 
+    // Protección: Redirigir candidatos a su dashboard
+    useEffect(() => {
+        const candidateSession = sessionStorage.getItem('candidate_session');
+        if (candidateSession) {
+            router.push('/candidatos/dashboard');
+            return;
+        }
+    }, [router]);
+
     // Data States
     // Data States
     const [userName, setUserName] = useState('');
