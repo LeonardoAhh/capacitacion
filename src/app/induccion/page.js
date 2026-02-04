@@ -584,7 +584,7 @@ export default function InductionPage() {
                                             placeholder="https://drive.google.com/file/d/..."
                                         />
                                         <small style={{ color: 'var(--text-tertiary)', fontSize: '0.85rem' }}>
-                                            Usa el enlace de "Compartir" de Google Drive
+                                            Usa el enlace de &quot;Compartir&quot; de Google Drive
                                         </small>
                                     </div>
 
@@ -692,7 +692,7 @@ export default function InductionPage() {
                             ))}
                             {candidateCourses.length === 0 && (
                                 <div style={{ textAlign: 'center', padding: '40px', color: 'var(--text-tertiary)' }}>
-                                    <p>No hay cursos de candidatos. Crea uno usando el botón "+ Nuevo Curso"</p>
+                                    <p>No hay cursos de candidatos. Crea uno usando el botón &quot;+ Nuevo Curso&quot;</p>
                                 </div>
                             )}
                         </div>
