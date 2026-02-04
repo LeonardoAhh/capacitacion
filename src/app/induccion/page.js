@@ -11,7 +11,7 @@ import { Button } from '@/components/ui/Button/Button';
 import { Combobox } from '@/components/ui/Combobox/Combobox';
 import { useToast } from '@/components/ui/Toast/Toast';
 import Navbar from '@/components/Navbar/Navbar';
-import TriviaGame from '@/components/TriviaGame/TriviaGame';
+
 import inductionData from '@/data/induction_data.json';
 import produccionOrgData from '@/data/produccion_org.json';
 import puestosData from '../../../puestos.json';
@@ -561,11 +561,7 @@ export default function InductionPage() {
                     </div>
                 </section>
 
-                {/* Trivia Game */}
-                <section style={{ marginBottom: '60px' }}>
-                    <h2 className={styles.sectionTitle}>Pon a prueba tu conocimiento</h2>
-                    <TriviaGame data={inductionData} />
-                </section>
+
 
                 {/* Candidate Courses Section */}
                 {canEdit && (

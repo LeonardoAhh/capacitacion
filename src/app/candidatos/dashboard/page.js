@@ -450,6 +450,7 @@ export default function CandidatoDashboard() {
                     <div className={styles.welcomeHeader}>
                         <div className={styles.welcomeAvatar}>
                             {(candidate?.photoUrl || candidate?.photoURL || candidate?.photo || candidate?.foto) ? (
+                                // eslint-disable-next-line @next/next/no-img-element
                                 <img
                                     src={candidate.photoUrl || candidate.photoURL || candidate.photo || candidate.foto}
                                     alt="Foto de perfil"
@@ -553,6 +554,7 @@ export default function CandidatoDashboard() {
                     <div className={styles.avatarContainer}>
                         <div className={styles.avatar}>
                             {(candidate?.photoUrl || candidate?.photoURL || candidate?.photo || candidate?.foto) ? (
+                                // eslint-disable-next-line @next/next/no-img-element
                                 <img
                                     src={candidate.photoUrl || candidate.photoURL || candidate.photo || candidate.foto}
                                     alt="Foto de perfil"
