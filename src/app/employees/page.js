@@ -707,42 +707,59 @@ export default function EmployeesPage() {
                 <div style={{
                     position: 'fixed',
                     inset: 0,
-                    background: 'rgba(0,0,0,0.5)',
+                    background: 'rgba(0,0,0,0.4)',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
-                    zIndex: 1000
+                    zIndex: 1000,
+                    backdropFilter: 'blur(4px)'
                 }}>
                     <div style={{
-                        background: 'white',
-                        borderRadius: '20px',
-                        padding: '24px',
-                        maxWidth: '400px',
-                        width: '90%',
-                        textAlign: 'center'
+                        background: 'var(--card-bg, white)',
+                        borderRadius: '16px',
+                        padding: '32px 40px',
+                        maxWidth: '320px',
+                        width: '85%',
+                        textAlign: 'center',
+                        boxShadow: '0 20px 60px rgba(0,0,0,0.15)'
                     }}>
-                        <h3 style={{ marginBottom: '16px' }}>Cargando Empleados</h3>
-                        <p style={{ marginBottom: '12px', fontSize: '2rem', fontWeight: '700' }}>
+                        <p style={{
+                            marginBottom: '20px',
+                            fontSize: '2.5rem',
+                            fontWeight: '300',
+                            color: 'var(--text-primary, #1c1c1e)',
+                            letterSpacing: '-1px'
+                        }}>
                             {bulkUploadProgress.current} / {bulkUploadProgress.total}
                         </p>
                         <div style={{
-                            height: '8px',
-                            background: '#f2f2f7',
-                            borderRadius: '4px',
+                            height: '4px',
+                            background: 'var(--divider, #e5e5ea)',
+                            borderRadius: '2px',
                             overflow: 'hidden',
-                            marginBottom: '16px'
+                            marginBottom: '24px'
                         }}>
                             <div style={{
                                 width: `${(bulkUploadProgress.current / bulkUploadProgress.total) * 100}%`,
                                 height: '100%',
                                 background: '#007AFF',
-                                transition: 'width 0.3s'
+                                transition: 'width 0.3s ease'
                             }} />
                         </div>
                         {bulkUploadProgress.errors.length > 0 && (
-                            <div style={{ textAlign: 'left', maxHeight: '150px', overflow: 'auto', fontSize: '0.8rem', color: '#FF3B30', marginBottom: '12px' }}>
+                            <div style={{
+                                textAlign: 'left',
+                                maxHeight: '100px',
+                                overflow: 'auto',
+                                fontSize: '0.75rem',
+                                color: '#FF3B30',
+                                marginBottom: '16px',
+                                padding: '8px',
+                                background: 'rgba(255,59,48,0.08)',
+                                borderRadius: '8px'
+                            }}>
                                 {bulkUploadProgress.errors.map((err, i) => (
-                                    <div key={i}>⚠️ {err}</div>
+                                    <div key={i} style={{ marginBottom: '4px' }}>{err}</div>
                                 ))}
                             </div>
                         )}
@@ -750,13 +767,14 @@ export default function EmployeesPage() {
                             <button
                                 onClick={closeBulkModal}
                                 style={{
-                                    padding: '12px 24px',
+                                    padding: '10px 28px',
                                     background: '#007AFF',
                                     color: 'white',
                                     border: 'none',
-                                    borderRadius: '10px',
+                                    borderRadius: '20px',
                                     fontWeight: '600',
-                                    cursor: 'pointer'
+                                    cursor: 'pointer',
+                                    fontSize: '0.9rem'
                                 }}
                             >
                                 Cerrar
