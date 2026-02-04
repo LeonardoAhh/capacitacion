@@ -20,6 +20,19 @@ export default function CandidatoDashboard() {
     const [courseProgress, setCourseProgress] = useState({}); // Track progress per course
     const [showHelpTooltip, setShowHelpTooltip] = useState(false);
 
+    // Logout handler (declared before useEffect that uses it)
+    const handleLogout = useCallback(async () => {
+        try {
+            await signOut(auth);
+            sessionStorage.removeItem('candidate_session');
+            router.push('/candidatos');
+        } catch (error) {
+            console.error('Error al cerrar sesión:', error);
+            sessionStorage.removeItem('candidate_session');
+            router.push('/candidatos');
+        }
+    }, [router]);
+
     useEffect(() => {
         // Verificar sesión
         const session = sessionStorage.getItem('candidate_session');
@@ -220,21 +233,7 @@ export default function CandidatoDashboard() {
         }
     };
 
-    const handleLogout = useCallback(async () => {
-        try {
-            // Cerrar sesión de Firebase Auth
-            await signOut(auth);
-            // Limpiar sessionStorage
-            sessionStorage.removeItem('candidate_session');
-            // Redirigir al login
-            router.push('/candidatos');
-        } catch (error) {
-            console.error('Error al cerrar sesión:', error);
-            // Aún así limpiar y redirigir
-            sessionStorage.removeItem('candidate_session');
-            router.push('/candidatos');
-        }
-    }, [router]);
+
 
     const viewCourse = (course) => {
         setSelectedCourse(course);
