@@ -83,8 +83,13 @@ export const useEmployees = () => {
                             department.includes(searchUpper);
                     });
 
-                    setEmployees(filtered.slice(0, ITEMS_PER_PAGE));
-                    setHasMore(filtered.length > ITEMS_PER_PAGE);
+                    // Batch state updates to prevent losing focus
+                    const newEmployees = filtered.slice(0, ITEMS_PER_PAGE);
+                    const newHasMore = filtered.length > ITEMS_PER_PAGE;
+
+                    // Update all states in a single batch
+                    setEmployees(newEmployees);
+                    setHasMore(newHasMore);
                     setPage(1);
                     cursorsStackRef.current = [];
                     setLoading(false);

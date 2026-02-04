@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useRouter } from 'next/navigation';
 import Navbar from '@/components/Navbar/Navbar';
@@ -68,6 +68,9 @@ export default function EmployeesPage() {
     const [accessCodeModal, setAccessCodeModal] = useState({ show: false, code: null, expiresAt: null, employeeName: null });
     const [generatingCode, setGeneratingCode] = useState(false);
 
+    // Search input ref to maintain focus
+    const searchInputRef = useRef(null);
+
     // iOS-style navigation state: 'list', 'detail', 'edit'
     const [activeView, setActiveView] = useState('list');
     const [selectedEmployee, setSelectedEmployee] = useState(null);
@@ -101,6 +104,17 @@ export default function EmployeesPage() {
         return () => clearTimeout(timeoutId);
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [searchTerm]);
+
+    // Restore focus to search input after search results update
+    useEffect(() => {
+        if (searchTerm && searchInputRef.current && document.activeElement !== searchInputRef.current) {
+            // Only restore focus if user was typing (not if they clicked elsewhere)
+            const wasTyping = searchInputRef.current.value === searchTerm;
+            if (wasTyping) {
+                searchInputRef.current.focus();
+            }
+        }
+    }, [employees, searchTerm]);
 
     // Handlers
     const handleSubmit = async (employeeData) => {
@@ -539,6 +553,7 @@ export default function EmployeesPage() {
                         <path d="M21 21l-4.35-4.35" />
                     </svg>
                     <input
+                        ref={searchInputRef}
                         type="text"
                         placeholder="Buscar por nombre o ID..."
                         value={searchTerm}

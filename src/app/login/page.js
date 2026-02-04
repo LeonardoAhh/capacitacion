@@ -193,7 +193,7 @@ export default function LoginPage() {
                         <LogoVinoPlastic
                             style={{
                                 width: '100%',
-                                maxWidth: '80px',
+                                maxWidth: '60px',
                                 height: 'auto',
                                 color: 'var(--text-primary)'
                             }}
@@ -202,9 +202,9 @@ export default function LoginPage() {
                     <HyperText
                         className={styles.appSubtitle}
                         startOnView={true}
-                        duration={2000}
+                        duration={1500}
                     >
-                        ViñoPlastic Inyección S.A. de C.V.
+                        ViñoPlastic Inyección
                     </HyperText>
                 </div>
 
@@ -212,7 +212,7 @@ export default function LoginPage() {
                 {!selectedLoginType ? (
                     /* SELECTOR DE TIPO DE LOGIN */
                     <div className={styles.selectorContainer}>
-                        <h2 className={styles.selectorTitle}>Selecciona tu tipo de acceso</h2>
+                        <h2 className={styles.selectorTitle}>Iniciar sesión</h2>
 
                         <div className={styles.cardsGrid}>
                             {/* Card: EMPLEADOS */}

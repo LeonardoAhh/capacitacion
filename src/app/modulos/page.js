@@ -83,7 +83,7 @@ export default function ModulesPage() {
                     )}
 
                     {/* Module: Inducción */}
-                    <Link href="/induccion" className={`${styles.moduleCard} ${styles.highlight}`} aria-label="Ir a Inducción">
+                    <Link href="/induccion" className={styles.moduleCard} aria-label="Ir a Inducción">
                         <div className={styles.iconWrapper}>
                             <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
                                 <path d="M22 10v6M2 10l10-5 10 5-10 5z" />

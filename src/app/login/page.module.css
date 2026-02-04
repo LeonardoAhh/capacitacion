@@ -1,11 +1,12 @@
-/* ==================== LOGIN PAGE - iOS STYLE ==================== */
+/* ==================== LOGIN PAGE - iOS/iCloud STYLE ==================== */
 
 .container {
     /* iOS Style Variables */
-    --ios-blur: 40px;
-    --ios-border-radius: 20px;
-    --ios-card-radius: 24px;
+    --ios-blur: 60px;
+    --ios-card-radius: 20px;
     --ios-transition: cubic-bezier(0.4, 0, 0.2, 1);
+    --ios-blue: #007AFF;
+    --ios-blue-hover: #0051D5;
 
     /* Layout */
     min-height: 100vh;
@@ -13,18 +14,19 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    background: var(--bg-primary);
+    background: linear-gradient(180deg, #000000 0%, #1c1c1e 100%);
     position: relative;
     overflow: hidden;
     color: var(--text-primary);
     padding: var(--spacing-lg);
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
 }
 
-[data-theme="dark"] .container {
-    background: linear-gradient(180deg, #000000 0%, #0a0a0a 100%);
+[data-theme="light"] .container {
+    background: linear-gradient(180deg, #f5f5f7 0%, #e8e8ed 100%);
 }
 
-/* ==================== BACKGROUND EFFECTS ==================== */
+/* ==================== BACKGROUND EFFECTS (MANTENIDAS) ==================== */
 .bgDecoration {
     position: absolute;
     top: 0;
@@ -38,14 +40,14 @@
 
 .blob {
     position: absolute;
-    filter: blur(100px);
-    opacity: 0.4;
+    filter: blur(120px);
+    opacity: 0.3;
     animation: float 25s infinite ease-in-out alternate;
     border-radius: 50%;
 }
 
-[data-theme="dark"] .blob {
-    opacity: 0.25;
+[data-theme="light"] .blob {
+    opacity: 0.2;
 }
 
 .blob1 {
@@ -92,270 +94,216 @@
     position: relative;
     z-index: 10;
     width: 100%;
-    max-width: 1000px;
+    max-width: 480px;
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: var(--spacing-2xl);
+    gap: var(--spacing-xl);
 }
 
 /* ==================== HEADER ==================== */
 .headerSection {
     text-align: center;
-    animation: fadeInDown 0.8s var(--ios-transition);
-    margin-bottom: var(--spacing-lg);
+    animation: fadeInDown 0.6s var(--ios-transition);
 }
 
 .logoContainer {
     display: flex;
     justify-content: center;
-    margin-bottom: var(--spacing-md);
-    filter: drop-shadow(0 10px 20px rgba(0, 122, 255, 0.3));
-    animation: logoFloat 3s ease-in-out infinite;
-}
-
-@keyframes logoFloat {
-
-    0%,
-    100% {
-        transform: translateY(0px);
-    }
-
-    50% {
-        transform: translateY(-10px);
-    }
+    margin-bottom: var(--spacing-sm);
+    filter: drop-shadow(0 8px 16px rgba(0, 122, 255, 0.3));
 }
 
 .appSubtitle {
-    font-size: 1rem;
-    color: var(--text-secondary);
-    margin: var(--spacing-sm) 0 0;
+    font-size: 0.8125rem;
+    color: var(--text-tertiary);
+    margin: 0;
     font-weight: 500;
-    letter-spacing: 0.5px;
-    text-transform: uppercase;
-    opacity: 0.8;
+    letter-spacing: 0.3px;
+    opacity: 0.7;
 }
 
 /* ==================== SELECTOR CONTAINER ==================== */
 .selectorContainer {
     width: 100%;
     text-align: center;
-    animation: fadeInUp 0.8s var(--ios-transition) 0.2s backwards;
+    animation: fadeInUp 0.6s var(--ios-transition) 0.1s backwards;
 }
 
 .selectorTitle {
-    font-size: 1.75rem;
-    font-weight: 700;
+    font-size: 1.5rem;
+    font-weight: 600;
     color: var(--text-primary);
-    margin-bottom: var(--spacing-2xl);
-    letter-spacing: -0.5px;
+    margin-bottom: var(--spacing-xl);
+    letter-spacing: -0.3px;
 }
 
 /* ==================== CARDS GRID ==================== */
 .cardsGrid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-    gap: var(--spacing-xl);
-    margin-bottom: var(--spacing-xl);
-    max-width: 600px;
-    /* Ajustado para 2 cards */
-    margin-left: auto;
-    margin-right: auto;
+    grid-template-columns: 1fr;
+    gap: var(--spacing-md);
+    margin-bottom: var(--spacing-lg);
 }
 
-@media (min-width: 768px) {
+@media (min-width: 640px) {
     .cardsGrid {
         grid-template-columns: repeat(2, 1fr);
-        /* 2 columnas en lugar de 3 */
     }
 }
 
 .loginCard {
-    background: rgba(255, 255, 255, 0.08);
+    background: rgba(28, 28, 30, 0.6);
     backdrop-filter: blur(var(--ios-blur));
     -webkit-backdrop-filter: blur(var(--ios-blur));
-    border: 1.5px solid rgba(255, 255, 255, 0.18);
+    border: 0.5px solid rgba(255, 255, 255, 0.15);
     border-radius: var(--ios-card-radius);
-    padding: var(--spacing-2xl) var(--spacing-xl);
+    padding: var(--spacing-2xl);
     cursor: pointer;
-    transition: all 0.4s var(--ios-transition);
-    box-shadow:
-        0 8px 32px rgba(0, 0, 0, 0.1),
-        inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    transition: all 0.3s var(--ios-transition);
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.3);
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: var(--spacing-lg);
-    min-height: 320px;
+    gap: var(--spacing-md);
+    min-height: 240px;
     position: relative;
     overflow: hidden;
 }
 
-[data-theme="dark"] .loginCard {
-    background: rgba(28, 28, 30, 0.7);
-    border-color: rgba(255, 255, 255, 0.12);
-    box-shadow:
-        0 8px 32px rgba(0, 0, 0, 0.4),
-        inset 0 1px 0 rgba(255, 255, 255, 0.05);
+[data-theme="light"] .loginCard {
+    background: rgba(255, 255, 255, 0.7);
+    border-color: rgba(0, 0, 0, 0.08);
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
 }
 
 .loginCard::before {
     content: '';
     position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 1px;
-    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    inset: 0;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.05) 0%, transparent 100%);
+    pointer-events: none;
 }
 
 .loginCard:hover {
-    transform: translateY(-12px) scale(1.02);
-    box-shadow:
-        0 24px 48px rgba(0, 122, 255, 0.2),
-        inset 0 1px 0 rgba(255, 255, 255, 0.2);
-    border-color: rgba(0, 122, 255, 0.5);
+    transform: translateY(-4px);
+    box-shadow: 0 12px 32px rgba(0, 122, 255, 0.2);
+    border-color: rgba(0, 122, 255, 0.4);
 }
 
-[data-theme="dark"] .loginCard:hover {
-    box-shadow:
-        0 24px 48px rgba(0, 122, 255, 0.3),
-        inset 0 1px 0 rgba(255, 255, 255, 0.1);
+[data-theme="light"] .loginCard:hover {
+    box-shadow: 0 12px 32px rgba(0, 122, 255, 0.15);
+}
+
+.loginCard:active {
+    transform: translateY(-2px);
 }
 
 .cardIcon {
-    width: 88px;
-    height: 88px;
+    width: 64px;
+    height: 64px;
     display: flex;
     align-items: center;
     justify-content: center;
-    background: linear-gradient(135deg, #007AFF 0%, #5856D6 100%);
-    border-radius: 50%;
+    background: linear-gradient(135deg, var(--ios-blue) 0%, rgba(88, 86, 214, 1) 100%);
+    border-radius: 18px;
     color: white;
-    margin-bottom: var(--spacing-sm);
-    transition: all 0.4s var(--ios-transition);
-    box-shadow:
-        0 8px 24px rgba(0, 122, 255, 0.4),
-        inset 0 2px 4px rgba(255, 255, 255, 0.2);
+    transition: all 0.3s var(--ios-transition);
+    box-shadow: 0 4px 16px rgba(0, 122, 255, 0.3);
 }
 
 .loginCard:hover .cardIcon {
-    transform: scale(1.15) rotate(-5deg);
-    box-shadow:
-        0 12px 32px rgba(0, 122, 255, 0.6),
-        inset 0 2px 4px rgba(255, 255, 255, 0.3);
+    transform: scale(1.08);
+    box-shadow: 0 8px 24px rgba(0, 122, 255, 0.4);
 }
 
 .cardTitle {
-    font-size: 1.4rem;
-    font-weight: 700;
+    font-size: 1.25rem;
+    font-weight: 600;
     color: var(--text-primary);
     margin: 0;
-    letter-spacing: -0.3px;
+    letter-spacing: -0.2px;
 }
 
 .cardDescription {
-    font-size: 0.95rem;
+    font-size: 0.9375rem;
     color: var(--text-secondary);
     margin: 0;
-    line-height: 1.5;
-    opacity: 0.85;
+    line-height: 1.4;
     flex: 1;
 }
 
 .cardButton {
     width: 100%;
-    padding: 14px;
-    background: linear-gradient(135deg, #007AFF 0%, #0051D5 100%);
+    padding: 12px;
+    background: var(--ios-blue);
     color: white;
     border: none;
-    border-radius: 14px;
-    font-weight: 700;
-    font-size: 1rem;
-    transition: all 0.3s var(--ios-transition);
-    box-shadow:
-        0 4px 12px rgba(0, 122, 255, 0.4),
-        inset 0 1px 0 rgba(255, 255, 255, 0.2);
-    letter-spacing: 0.3px;
+    border-radius: 12px;
+    font-weight: 600;
+    font-size: 1.0625rem;
+    transition: all 0.2s var(--ios-transition);
+    box-shadow: 0 2px 8px rgba(0, 122, 255, 0.3);
+    letter-spacing: -0.2px;
 }
 
 .loginCard:hover .cardButton {
-    background: linear-gradient(135deg, #0051D5 0%, #007AFF 100%);
-    transform: translateY(-2px);
-    box-shadow:
-        0 8px 20px rgba(0, 122, 255, 0.5),
-        inset 0 1px 0 rgba(255, 255, 255, 0.3);
-}
-
-.loginCard:active .cardButton {
-    transform: translateY(0px);
+    background: var(--ios-blue-hover);
+    box-shadow: 0 4px 12px rgba(0, 122, 255, 0.4);
 }
 
 /* ==================== FORM CARD ==================== */
 .card {
     width: 100%;
     max-width: 480px;
-    background: rgba(255, 255, 255, 0.08);
+    background: rgba(28, 28, 30, 0.6);
     backdrop-filter: blur(var(--ios-blur));
     -webkit-backdrop-filter: blur(var(--ios-blur));
-    border: 1.5px solid rgba(255, 255, 255, 0.18);
+    border: 0.5px solid rgba(255, 255, 255, 0.15);
     border-radius: var(--ios-card-radius);
     padding: var(--spacing-2xl);
-    box-shadow:
-        0 20px 60px rgba(0, 0, 0, 0.15),
-        inset 0 1px 0 rgba(255, 255, 255, 0.1);
-    animation: fadeInUp 0.8s var(--ios-transition) 0.2s backwards;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    animation: fadeInUp 0.6s var(--ios-transition) 0.1s backwards;
     position: relative;
 }
 
-[data-theme="dark"] .card {
-    background: rgba(28, 28, 30, 0.7);
-    border-color: rgba(255, 255, 255, 0.12);
-    box-shadow:
-        0 20px 60px rgba(0, 0, 0, 0.5),
-        inset 0 1px 0 rgba(255, 255, 255, 0.05);
+[data-theme="light"] .card {
+    background: rgba(255, 255, 255, 0.7);
+    border-color: rgba(0, 0, 0, 0.08);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
 }
 
 .card::before {
     content: '';
     position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 1px;
-    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    inset: 0;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.05) 0%, transparent 100%);
+    border-radius: var(--ios-card-radius);
+    pointer-events: none;
 }
 
 /* ==================== FORM ==================== */
 .backButton {
     margin-bottom: var(--spacing-lg);
-    padding: 10px 18px;
-    background: rgba(0, 0, 0, 0.05);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 12px;
-    color: var(--text-secondary);
-    font-size: 15px;
-    font-weight: 600;
+    padding: 8px 14px;
+    background: transparent;
+    border: none;
+    color: var(--ios-blue);
+    font-size: 1.0625rem;
+    font-weight: 400;
     cursor: pointer;
     transition: all 0.2s var(--ios-transition);
     display: inline-flex;
     align-items: center;
-    gap: 6px;
+    gap: 4px;
 }
 
 .backButton:hover {
-    background: rgba(0, 122, 255, 0.1);
-    border-color: rgba(0, 122, 255, 0.3);
-    color: var(--color-primary);
-    transform: translateX(-2px);
+    opacity: 0.7;
 }
 
-[data-theme="dark"] .backButton {
-    background: rgba(255, 255, 255, 0.05);
-}
-
-[data-theme="dark"] .backButton:hover {
-    background: rgba(0, 122, 255, 0.15);
+.backButton:active {
+    opacity: 0.5;
 }
 
 .formHeader {
@@ -369,15 +317,14 @@
 
 .formHeader h2 {
     margin: 0;
-    font-size: 1.75rem;
-    font-weight: 700;
+    font-size: 1.5rem;
+    font-weight: 600;
     color: var(--text-primary);
-    letter-spacing: -0.5px;
+    letter-spacing: -0.3px;
 }
 
 .formHeader svg {
-    color: var(--color-primary);
-    filter: drop-shadow(0 4px 12px rgba(0, 122, 255, 0.3));
+    color: var(--ios-blue);
 }
 
 .form {
@@ -386,91 +333,97 @@
     gap: var(--spacing-lg);
 }
 
-/* ==================== INPUT FIELDS ==================== */
+/* ==================== INPUT FIELDS (iOS Style) ==================== */
 .inputGroup {
     position: relative;
 }
 
 .inputIcon {
     position: absolute;
-    left: 18px;
+    left: 16px;
     top: 50%;
     transform: translateY(-50%);
     color: var(--text-tertiary);
     pointer-events: none;
-    transition: all 0.3s var(--ios-transition);
+    transition: all 0.2s var(--ios-transition);
     z-index: 1;
 }
 
 .inputGroup:focus-within .inputIcon {
-    color: var(--color-primary);
-    transform: translateY(-50%) scale(1.1);
+    color: var(--ios-blue);
 }
 
 .input {
     width: 100%;
-    padding: 18px 18px 18px 52px;
-    height: 58px;
-    background: rgba(0, 0, 0, 0.05);
-    border: 1.5px solid transparent;
-    border-radius: 14px;
-    font-size: 16px;
+    padding: 14px 16px 14px 48px;
+    height: 50px;
+    background: rgba(255, 255, 255, 0.08);
+    border: 0.5px solid rgba(255, 255, 255, 0.15);
+    border-radius: 12px;
+    font-size: 1.0625rem;
     color: var(--text-primary);
-    transition: all 0.3s var(--ios-transition);
+    transition: all 0.2s var(--ios-transition);
     outline: none;
-    font-weight: 500;
+    font-weight: 400;
 }
 
-[data-theme="dark"] .input {
-    background: rgba(255, 255, 255, 0.06);
+[data-theme="light"] .input {
+    background: rgba(0, 0, 0, 0.04);
+    border-color: rgba(0, 0, 0, 0.12);
+}
+
+.input::placeholder {
+    color: var(--text-tertiary);
+    opacity: 0.6;
 }
 
 .input:focus {
-    background: var(--bg-primary);
-    border-color: var(--color-primary);
-    box-shadow:
-        0 0 0 4px rgba(0, 122, 255, 0.1),
-        0 4px 12px rgba(0, 122, 255, 0.15);
-    transform: translateY(-1px);
+    background: rgba(255, 255, 255, 0.1);
+    border-color: var(--ios-blue);
+    box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.15);
 }
 
-[data-theme="dark"] .input:focus {
-    background: rgba(255, 255, 255, 0.08);
+[data-theme="light"] .input:focus {
+    background: rgba(255, 255, 255, 0.9);
 }
 
 .label {
     position: absolute;
-    left: 52px;
-    top: 20px;
-    font-size: 16px;
-    color: var(--text-secondary);
+    left: 48px;
+    top: 16px;
+    font-size: 1.0625rem;
+    color: var(--text-tertiary);
     pointer-events: none;
-    transition: all 0.3s var(--ios-transition);
-    font-weight: 500;
+    transition: all 0.2s var(--ios-transition);
+    font-weight: 400;
 }
 
 .input:focus~.label,
 .input:not(:placeholder-shown)~.label {
-    top: 8px;
-    font-size: 12px;
-    color: var(--color-primary);
-    font-weight: 700;
-    letter-spacing: 0.3px;
+    top: 6px;
+    font-size: 0.6875rem;
+    color: var(--ios-blue);
+    font-weight: 600;
+    letter-spacing: 0.2px;
 }
 
 /* ==================== ERROR BOX ==================== */
 .errorBox {
-    background: rgba(255, 59, 48, 0.12);
+    background: rgba(255, 59, 48, 0.1);
     color: #FF3B30;
-    padding: 14px 16px;
-    border-radius: 14px;
-    font-size: 14px;
-    font-weight: 600;
+    padding: 12px 14px;
+    border-radius: 12px;
+    font-size: 0.8125rem;
+    font-weight: 500;
     display: flex;
     align-items: center;
-    gap: 10px;
-    border: 1px solid rgba(255, 59, 48, 0.2);
-    animation: shake 0.4s ease;
+    gap: 8px;
+    border: 0.5px solid rgba(255, 59, 48, 0.3);
+    animation: shake 0.3s ease;
+}
+
+[data-theme="light"] .errorBox {
+    background: rgba(255, 59, 48, 0.08);
 }
 
 @keyframes shake {
@@ -481,11 +434,11 @@
     }
 
     25% {
-        transform: translateX(-4px);
+        transform: translateX(-3px);
     }
 
     75% {
-        transform: translateX(4px);
+        transform: translateX(3px);
     }
 }
 
@@ -496,40 +449,35 @@
 /* ==================== BUTTONS ==================== */
 .primaryBtn {
     width: 100%;
-    height: 56px;
-    background: linear-gradient(135deg, #007AFF 0%, #0051D5 100%);
+    height: 50px;
+    background: var(--ios-blue);
     color: white;
     border: none;
-    border-radius: 14px;
-    font-size: 17px;
-    font-weight: 700;
+    border-radius: 12px;
+    font-size: 1.0625rem;
+    font-weight: 600;
     cursor: pointer;
-    transition: all 0.3s var(--ios-transition);
+    transition: all 0.2s var(--ios-transition);
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 10px;
-    box-shadow:
-        0 6px 20px rgba(0, 122, 255, 0.4),
-        inset 0 1px 0 rgba(255, 255, 255, 0.2);
-    letter-spacing: 0.3px;
+    gap: 8px;
+    box-shadow: 0 2px 8px rgba(0, 122, 255, 0.3);
+    letter-spacing: -0.2px;
     margin-top: var(--spacing-sm);
 }
 
 .primaryBtn:hover {
-    background: linear-gradient(135deg, #0051D5 0%, #007AFF 100%);
-    transform: translateY(-2px);
-    box-shadow:
-        0 10px 30px rgba(0, 122, 255, 0.5),
-        inset 0 1px 0 rgba(255, 255, 255, 0.3);
+    background: var(--ios-blue-hover);
+    box-shadow: 0 4px 12px rgba(0, 122, 255, 0.4);
 }
 
 .primaryBtn:active {
-    transform: translateY(0px);
+    transform: scale(0.98);
 }
 
 .primaryBtn:disabled {
-    opacity: 0.6;
+    opacity: 0.5;
     cursor: not-allowed;
     transform: none;
 }
@@ -537,18 +485,18 @@
 /* ==================== FOOTER ==================== */
 .footer {
     text-align: center;
-    font-size: 13px;
+    font-size: 0.75rem;
     color: var(--text-tertiary);
-    opacity: 0.7;
-    font-weight: 500;
-    letter-spacing: 0.3px;
+    opacity: 0.6;
+    font-weight: 400;
+    letter-spacing: 0.2px;
 }
 
 /* ==================== ANIMATIONS ==================== */
 @keyframes fadeInDown {
     from {
         opacity: 0;
-        transform: translateY(-30px);
+        transform: translateY(-20px);
     }
 
     to {
@@ -560,7 +508,7 @@
 @keyframes fadeInUp {
     from {
         opacity: 0;
-        transform: translateY(30px);
+        transform: translateY(20px);
     }
 
     to {
@@ -570,19 +518,21 @@
 }
 
 /* ==================== RESPONSIVE ==================== */
-@media (max-width: 768px) {
+@media (max-width: 640px) {
     .cardsGrid {
         grid-template-columns: 1fr;
-        gap: var(--spacing-lg);
-        max-width: 400px;
     }
 
     .loginCard {
-        min-height: 280px;
+        min-height: 220px;
     }
 
     .selectorTitle {
-        font-size: 1.5rem;
+        font-size: 1.25rem;
+    }
+
+    .loginWrapper {
+        max-width: 100%;
     }
 }
 
@@ -593,24 +543,14 @@
 
     .card {
         padding: var(--spacing-xl);
-        background: rgba(255, 255, 255, 0.95);
-        backdrop-filter: blur(20px);
-    }
-
-    [data-theme="dark"] .card {
-        background: rgba(28, 28, 30, 0.95);
-    }
-
-    .headerSection {
-        margin-bottom: var(--spacing-md);
     }
 
     .formHeader h2 {
-        font-size: 1.5rem;
+        font-size: 1.25rem;
     }
 
     .loginWrapper {
-        gap: var(--spacing-xl);
+        gap: var(--spacing-lg);
     }
 }
 
