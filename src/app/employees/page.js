@@ -71,6 +71,10 @@ export default function EmployeesPage() {
     // Search input ref to maintain focus
     const searchInputRef = useRef(null);
 
+    // Bulk upload refs and state
+    const bulkFileInputRef = useRef(null);
+    const [bulkUploadProgress, setBulkUploadProgress] = useState({ show: false, current: 0, total: 0, errors: [] });
+
     // iOS-style navigation state: 'list', 'detail', 'edit'
     const [activeView, setActiveView] = useState('list');
     const [selectedEmployee, setSelectedEmployee] = useState(null);
@@ -236,6 +240,81 @@ export default function EmployeesPage() {
     const goBackToList = () => {
         setActiveView('list');
         setSelectedEmployee(null);
+    };
+
+    // === BULK UPLOAD HANDLERS ===
+    const handleBulkUpload = async (event) => {
+        const file = event.target.files?.[0];
+        if (!file) return;
+
+        try {
+            const text = await file.text();
+            const data = JSON.parse(text);
+
+            if (!Array.isArray(data)) {
+                toast.error('Formato Inválido', 'El archivo debe contener un arreglo de empleados.');
+                return;
+            }
+
+            setBulkUploadProgress({ show: true, current: 0, total: data.length, errors: [] });
+            const errors = [];
+
+            for (let i = 0; i < data.length; i++) {
+                const emp = data[i];
+
+                // Validate required fields
+                if (!emp.employeeId || !emp.name) {
+                    errors.push(`Fila ${i + 1}: Falta employeeId o name`);
+                    continue;
+                }
+
+                const result = await createEmployee({
+                    employeeId: String(emp.employeeId),
+                    name: emp.name.toUpperCase(),
+                    curp: emp.curp || '',
+                    position: emp.position || '',
+                    department: emp.department || '',
+                    area: emp.area || '',
+                    shift: emp.shift || '',
+                    startDate: emp.startDate || '',
+                    contractEndDate: emp.contractEndDate || '',
+                    isCandidato: emp.isCandidato || false,
+                    status: emp.isCandidato ? 'Candidato' : 'Activo'
+                });
+
+                if (!result.success) {
+                    errors.push(`${emp.employeeId}: ${result.message || result.error}`);
+                }
+
+                setBulkUploadProgress(prev => ({ ...prev, current: i + 1 }));
+            }
+
+            setBulkUploadProgress(prev => ({ ...prev, errors }));
+
+            if (errors.length === 0) {
+                toast.success('¡Carga Completa!', `Se importaron ${data.length} empleados correctamente.`);
+            } else {
+                toast.error('Carga con Errores', `${data.length - errors.length} importados, ${errors.length} con errores.`);
+            }
+
+            // Reset file input
+            if (bulkFileInputRef.current) bulkFileInputRef.current.value = '';
+
+            // Refresh list
+            refresh();
+
+        } catch (err) {
+            console.error('Bulk upload error:', err);
+            toast.error('Error de Archivo', 'No se pudo leer el archivo JSON. Verifica el formato.');
+        }
+    };
+
+    const handleDownloadTemplate = () => {
+        window.open('/plantilla_empleados.json', '_blank');
+    };
+
+    const closeBulkModal = () => {
+        setBulkUploadProgress({ show: false, current: 0, total: 0, errors: [] });
     };
 
     const getInitials = (name) => {
@@ -563,6 +642,132 @@ export default function EmployeesPage() {
                     />
                 </div>
             </div>
+
+            {/* Hidden File Input for Bulk Upload */}
+            <input
+                type="file"
+                ref={bulkFileInputRef}
+                accept=".json"
+                onChange={handleBulkUpload}
+                style={{ display: 'none' }}
+            />
+
+            {/* Bulk Upload Actions */}
+            {canWrite && (
+                <div className={styles.bulkActions} style={{ display: 'flex', gap: '12px', marginBottom: '16px', flexWrap: 'wrap' }}>
+                    <button
+                        onClick={() => bulkFileInputRef.current?.click()}
+                        className={styles.bulkButton}
+                        style={{
+                            padding: '10px 16px',
+                            background: 'linear-gradient(135deg, #5856D6 0%, #AF52DE 100%)',
+                            color: 'white',
+                            border: 'none',
+                            borderRadius: '10px',
+                            fontWeight: '600',
+                            cursor: 'pointer',
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '8px',
+                            fontSize: '0.9rem'
+                        }}
+                    >
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                            <polyline points="17 8 12 3 7 8" />
+                            <line x1="12" y1="3" x2="12" y2="15" />
+                        </svg>
+                        Cargar Masivo (JSON)
+                    </button>
+                    <button
+                        onClick={handleDownloadTemplate}
+                        style={{
+                            padding: '10px 16px',
+                            background: '#f2f2f7',
+                            color: '#1c1c1e',
+                            border: 'none',
+                            borderRadius: '10px',
+                            fontWeight: '600',
+                            cursor: 'pointer',
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '8px',
+                            fontSize: '0.9rem'
+                        }}
+                    >
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                            <polyline points="7 10 12 15 17 10" />
+                            <line x1="12" y1="15" x2="12" y2="3" />
+                        </svg>
+                        Descargar Plantilla
+                    </button>
+                </div>
+            )}
+
+            {/* Bulk Upload Progress Modal */}
+            {bulkUploadProgress.show && (
+                <div style={{
+                    position: 'fixed',
+                    inset: 0,
+                    background: 'rgba(0,0,0,0.5)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    zIndex: 1000
+                }}>
+                    <div style={{
+                        background: 'white',
+                        borderRadius: '20px',
+                        padding: '24px',
+                        maxWidth: '400px',
+                        width: '90%',
+                        textAlign: 'center'
+                    }}>
+                        <h3 style={{ marginBottom: '16px' }}>Cargando Empleados</h3>
+                        <p style={{ marginBottom: '12px', fontSize: '2rem', fontWeight: '700' }}>
+                            {bulkUploadProgress.current} / {bulkUploadProgress.total}
+                        </p>
+                        <div style={{
+                            height: '8px',
+                            background: '#f2f2f7',
+                            borderRadius: '4px',
+                            overflow: 'hidden',
+                            marginBottom: '16px'
+                        }}>
+                            <div style={{
+                                width: `${(bulkUploadProgress.current / bulkUploadProgress.total) * 100}%`,
+                                height: '100%',
+                                background: '#007AFF',
+                                transition: 'width 0.3s'
+                            }} />
+                        </div>
+                        {bulkUploadProgress.errors.length > 0 && (
+                            <div style={{ textAlign: 'left', maxHeight: '150px', overflow: 'auto', fontSize: '0.8rem', color: '#FF3B30', marginBottom: '12px' }}>
+                                {bulkUploadProgress.errors.map((err, i) => (
+                                    <div key={i}>⚠️ {err}</div>
+                                ))}
+                            </div>
+                        )}
+                        {bulkUploadProgress.current === bulkUploadProgress.total && (
+                            <button
+                                onClick={closeBulkModal}
+                                style={{
+                                    padding: '12px 24px',
+                                    background: '#007AFF',
+                                    color: 'white',
+                                    border: 'none',
+                                    borderRadius: '10px',
+                                    fontWeight: '600',
+                                    cursor: 'pointer'
+                                }}
+                            >
+                                Cerrar
+                            </button>
+                        )}
+                    </div>
+                </div>
+            )}
 
             {/* Stats Summary */}
             <div className={styles.statsRow}>

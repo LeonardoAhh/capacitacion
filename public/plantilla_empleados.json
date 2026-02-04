@@ -1,0 +1,26 @@
+[
+    {
+        "employeeId": "1001",
+        "name": "NOMBRE COMPLETO DEL EMPLEADO",
+        "curp": "XXXX000000XXXXXXXX",
+        "position": "OPERADOR DE MÁQUINA",
+        "department": "PRODUCCIÓN",
+        "area": "PRODUCCIÓN 1ER TURNO",
+        "shift": "1",
+        "startDate": "2026-02-01",
+        "contractEndDate": "2026-05-01",
+        "isCandidato": true
+    },
+    {
+        "employeeId": "1002",
+        "name": "SEGUNDO EMPLEADO EJEMPLO",
+        "curp": "YYYY000000YYYYYYYY",
+        "position": "AUXILIAR GENERAL",
+        "department": "ALMACÉN",
+        "area": "ALMACÉN GENERAL",
+        "shift": "2",
+        "startDate": "2026-02-15",
+        "contractEndDate": "2026-05-15",
+        "isCandidato": false
+    }
+]
