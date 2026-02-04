@@ -449,7 +449,15 @@ export default function CandidatoDashboard() {
                     {/* Welcome Header */}
                     <div className={styles.welcomeHeader}>
                         <div className={styles.welcomeAvatar}>
-                            <User size={64} />
+                            {(candidate?.photoUrl || candidate?.photoURL || candidate?.photo || candidate?.foto) ? (
+                                <img
+                                    src={candidate.photoUrl || candidate.photoURL || candidate.photo || candidate.foto}
+                                    alt="Foto de perfil"
+                                    style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '50%' }}
+                                />
+                            ) : (
+                                <User size={64} />
+                            )}
                         </div>
                     </div>
 
@@ -544,7 +552,15 @@ export default function CandidatoDashboard() {
                 <section className={styles.profileSection}>
                     <div className={styles.avatarContainer}>
                         <div className={styles.avatar}>
-                            <User size={48} />
+                            {(candidate?.photoUrl || candidate?.photoURL || candidate?.photo || candidate?.foto) ? (
+                                <img
+                                    src={candidate.photoUrl || candidate.photoURL || candidate.photo || candidate.foto}
+                                    alt="Foto de perfil"
+                                    style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '50%' }}
+                                />
+                            ) : (
+                                <User size={48} />
+                            )}
                         </div>
                     </div>
                     <h2 className={styles.profileName}>
