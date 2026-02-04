@@ -1,0 +1,377 @@
+/* AdminManager.module.css */
+.container {
+    background: white;
+    padding: 24px;
+    border-radius: 16px;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
+}
+
+[data-theme="dark"] .container {
+    background: #1c1c1e;
+}
+
+.header {
+    margin-bottom: 24px;
+    border-bottom: 1px solid rgba(60, 60, 67, 0.1);
+    padding-bottom: 16px;
+}
+
+.title {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 20px;
+    font-weight: 600;
+    color: #1c1c1e;
+    margin: 0;
+}
+
+[data-theme="dark"] .title {
+    color: #ffffff;
+}
+
+.icon {
+    color: #5856d6;
+}
+
+/* Search Bar */
+.searchSection {
+    margin-bottom: 20px;
+}
+
+.searchInput {
+    width: 100%;
+    padding: 12px 16px;
+    border-radius: 12px;
+    border: 1px solid rgba(60, 60, 67, 0.15);
+    background: rgba(118, 118, 128, 0.05);
+    font-size: 15px;
+    color: #1c1c1e;
+    transition: all 0.2s;
+}
+
+[data-theme="dark"] .searchInput {
+    border-color: rgba(84, 84, 88, 0.4);
+    background: rgba(118, 118, 128, 0.2);
+    color: #ffffff;
+}
+
+.searchInput:focus {
+    outline: none;
+    border-color: #5856d6;
+    background: white;
+    box-shadow: 0 0 0 4px rgba(88, 86, 214, 0.1);
+}
+
+[data-theme="dark"] .searchInput:focus {
+    background: #2c2c2e;
+}
+
+/* Users List */
+.usersList {
+    display: grid;
+    gap: 12px;
+}
+
+.userCard {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px;
+    border-radius: 12px;
+    background: #f2f2f7;
+    transition: transform 0.2s;
+}
+
+[data-theme="dark"] .userCard {
+    background: #2c2c2e;
+}
+
+.userCard:hover {
+    transform: translateY(-2px);
+}
+
+.userInfo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.userAvatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: #dfe1e5;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    color: #007aff;
+}
+
+.userDetails {
+    display: flex;
+    flex-direction: column;
+}
+
+.userEmail {
+    font-size: 15px;
+    font-weight: 500;
+    color: #1c1c1e;
+}
+
+[data-theme="dark"] .userEmail {
+    color: #ffffff;
+}
+
+.userRole {
+    font-size: 13px;
+    color: #8e8e93;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.roleTag {
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.roleTagAdmin {
+    background: rgba(88, 86, 214, 0.1);
+    color: #5856d6;
+}
+
+.roleTagUser {
+    background: rgba(142, 142, 147, 0.1);
+    color: #8e8e93;
+}
+
+.roleTagSuper {
+    background: rgba(255, 45, 85, 0.1);
+    color: #ff2d55;
+}
+
+/* Actions */
+.editButton {
+    background: white;
+    color: #1c1c1e;
+    border: 1px solid rgba(60, 60, 67, 0.15);
+    padding: 8px 16px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+[data-theme="dark"] .editButton {
+    background: #3a3a3c;
+    color: white;
+    border-color: rgba(84, 84, 88, 0.5);
+}
+
+.editButton:hover {
+    background: #f2f2f7;
+}
+
+/* Modal */
+.modalOverlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(4px);
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+.modalContent {
+    background: white;
+    width: 100%;
+    max-width: 600px;
+    border-radius: 20px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+    overflow: hidden;
+    animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+[data-theme="dark"] .modalContent {
+    background: #1c1c1e;
+    border: 1px solid rgba(84, 84, 88, 0.3);
+}
+
+.modalHeader {
+    padding: 20px 24px;
+    border-bottom: 1px solid rgba(60, 60, 67, 0.1);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.modalTitle {
+    margin: 0;
+    font-size: 18px;
+    font-weight: 600;
+    color: #1c1c1e;
+}
+
+[data-theme="dark"] .modalTitle {
+    color: white;
+}
+
+.closeButton {
+    background: none;
+    border: none;
+    color: #8e8e93;
+    cursor: pointer;
+    padding: 4px;
+    border-radius: 50%;
+}
+
+.closeButton:hover {
+    background: rgba(0, 0, 0, 0.05);
+}
+
+.modalBody {
+    padding: 24px;
+    max-height: 70vh;
+    overflow-y: auto;
+}
+
+/* Role Switch */
+.roleSwitch {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px;
+    background: rgba(0, 122, 255, 0.05);
+    border: 1px solid rgba(0, 122, 255, 0.2);
+    border-radius: 12px;
+    margin-bottom: 24px;
+}
+
+.switchLabel {
+    display: flex;
+    flex-direction: column;
+}
+
+.switchTitle {
+    font-weight: 600;
+    color: #007aff;
+    margin-bottom: 4px;
+}
+
+.switchDesc {
+    font-size: 13px;
+    color: #8e8e93;
+}
+
+/* Permissions Matrix */
+.permissionsGrid {
+    display: grid;
+    gap: 16px;
+}
+
+.moduleCard {
+    border: 1px solid rgba(60, 60, 67, 0.1);
+    border-radius: 12px;
+    padding: 16px;
+}
+
+[data-theme="dark"] .moduleCard {
+    border-color: rgba(84, 84, 88, 0.4);
+}
+
+.moduleHeader {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 12px;
+    font-weight: 600;
+    color: #1c1c1e;
+}
+
+[data-theme="dark"] .moduleHeader {
+    color: white;
+}
+
+.checkboxGroup {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+    gap: 8px;
+}
+
+.checkboxLabel {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    color: #3c3c43;
+    cursor: pointer;
+    padding: 6px;
+    border-radius: 6px;
+    transition: background 0.15s;
+}
+
+[data-theme="dark"] .checkboxLabel {
+    color: #ebebf5;
+}
+
+.checkboxLabel:hover {
+    background: rgba(0, 0, 0, 0.03);
+}
+
+.checkboxLabel input[type="checkbox"] {
+    accent-color: #5856d6;
+    width: 16px;
+    height: 16px;
+}
+
+/* Footer Actions */
+.modalFooter {
+    padding: 16px 24px;
+    border-top: 1px solid rgba(60, 60, 67, 0.1);
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    background: rgba(242, 242, 247, 0.5);
+}
+
+[data-theme="dark"] .modalFooter {
+    background: rgba(28, 28, 30, 0.5);
+}
+
+.button {
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    border: none;
+}
+
+.cancelButton {
+    background: none;
+    color: #8e8e93;
+}
+
+.saveButton {
+    background: #007aff;
+    color: white;
+    box-shadow: 0 4px 12px rgba(0, 122, 255, 0.3);
+}
+
+.saveButton:hover {
+    background: #0071eb;
+}
+
+@keyframes slideUp {
+    from { transform: translateY(20px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+}

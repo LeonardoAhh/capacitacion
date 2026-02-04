@@ -4,6 +4,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useRouter } from 'next/navigation';
 import Navbar from '@/components/Navbar/Navbar';
 import MFASetup from '@/components/Profile/MFASetup';
+import AdminManager from '@/components/Profile/AdminManager';
 import styles from './page.module.css';
 import { createAvatar } from '@dicebear/core';
 import { lorelei } from '@dicebear/collection';
@@ -176,6 +177,12 @@ export default function ProfilePage() {
                     </div>
                 </div>
 
+                {/* Admin Management Section - Only for Super Admins */}
+                {user.rol === 'super_admin' && (
+                    <div style={{ marginTop: '24px' }}>
+                        <AdminManager />
+                    </div>
+                )}
             </main>
         </div>
     );
