@@ -135,7 +135,15 @@
     outline: none;
 }
 
-/* ==================== SUMMARY CARDS ==================== */
+.yearSelector select option {
+    background: var(--bg-secondary);
+    color: var(--text-primary);
+}
+
+[data-theme="dark"] .yearSelector select option {
+    background: #1c1c1e;
+    color: #ffffff;
+}
 .summaryCards {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
