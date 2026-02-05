@@ -4,8 +4,10 @@ import { useState, useEffect } from 'react';
 import { db } from '@/lib/firebase';
 import { collection, getDocs, addDoc, query, where, Timestamp } from 'firebase/firestore';
 import Navbar from '@/components/Navbar/Navbar';
-import { Search, Plus, Calendar, Users, BookOpen, Filter, CheckCircle, ChevronLeft } from 'lucide-react';
+import { Search, Plus, Calendar, Users, BookOpen, Filter, CheckCircle, ChevronLeft, Edit2, Trash2, FileText } from 'lucide-react';
 import Link from 'next/link';
+import EditEmployeeModal from '@/components/Training/EditEmployeeModal';
+import EmployeeAssignmentsModal from '@/components/Training/EmployeeAssignmentsModal';
 import styles from './page.module.css';
 
 export default function ProgramacionPage() {
@@ -20,6 +22,21 @@ export default function ProgramacionPage() {
     const [selectedCourse, setSelectedCourse] = useState('');
     const [assigning, setAssigning] = useState(false);
     const [toast, setToast] = useState(null);
+
+    // Modal states
+    const [editingEmployee, setEditingEmployee] = useState(null);
+    const [historyEmployee, setHistoryEmployee] = useState(null);
+
+    const handleUpdateEmployee = (updatedEmp) => {
+        setEmployees(prev => prev.map(e => e.id === updatedEmp.id ? updatedEmp : e));
+        showToast('Empleado actualizado', 'success');
+    };
+
+    const handleDeleteEmployee = (deletedId) => {
+        setEmployees(prev => prev.filter(e => e.id !== deletedId));
+        setSelectedEmployees(prev => prev.filter(id => id !== deletedId));
+        showToast('Empleado eliminado', 'success');
+    };
 
     useEffect(() => {
         fetchData();
@@ -186,6 +203,23 @@ export default function ProgramacionPage() {
                                                 <div className={styles.empId}>{emp.employeeId}</div>
                                             </div>
                                             <div className={styles.empRole}>{emp.position || emp.puesto || '-'}</div>
+
+                                            <div className={styles.itemActions} onClick={(e) => e.stopPropagation()}>
+                                                <button
+                                                    className={styles.actionBtn}
+                                                    onClick={() => setHistoryEmployee(emp)}
+                                                    title="Ver Asignaciones"
+                                                >
+                                                    <FileText size={16} />
+                                                </button>
+                                                <button
+                                                    className={styles.actionBtn}
+                                                    onClick={() => setEditingEmployee(emp)}
+                                                    title="Editar Empleado"
+                                                >
+                                                    <Edit2 size={16} />
+                                                </button>
+                                            </div>
                                         </div>
                                     ))
                                 )}
@@ -247,6 +281,22 @@ export default function ProgramacionPage() {
                 <div className={`${styles.toast} ${styles[toast.type]}`}>
                     {toast.message}
                 </div>
+            )}
+
+            {editingEmployee && (
+                <EditEmployeeModal
+                    employee={editingEmployee}
+                    onClose={() => setEditingEmployee(null)}
+                    onUpdate={handleUpdateEmployee}
+                    onDelete={handleDeleteEmployee}
+                />
+            )}
+
+            {historyEmployee && (
+                <EmployeeAssignmentsModal
+                    employee={historyEmployee}
+                    onClose={() => setHistoryEmployee(null)}
+                />
             )}
         </div>
     );
