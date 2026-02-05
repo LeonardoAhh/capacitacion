@@ -29,7 +29,7 @@ export default function ProgramacionPage() {
         try {
             // Fetch Employees
             // Mock data for now if collection is empty or problematic, but trying real fetch
-            const empSnapshot = await getDocs(collection(db, 'employees'));
+            const empSnapshot = await getDocs(collection(db, 'employees_programacion'));
             const empList = empSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
             setEmployees(empList);
 

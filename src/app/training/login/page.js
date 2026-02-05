@@ -28,7 +28,7 @@ export default function TrainingLoginPage() {
         try {
             // Lógica simple de verificación
             // 1. Buscar empleado
-            const employeesRef = collection(db, 'employees');
+            const employeesRef = collection(db, 'employees_programacion');
             const q = query(employeesRef, where('employeeId', '==', employeeId));
             const querySnapshot = await getDocs(q);
 

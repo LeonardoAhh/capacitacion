@@ -42,7 +42,7 @@ export default function RegistroEmpleadosPage() {
 
         try {
             // 1. Validar duplicados
-            const employeesRef = collection(db, 'employees');
+            const employeesRef = collection(db, 'employees_programacion');
             const q = query(employeesRef, where('employeeId', '==', formData.employeeId));
             const querySnapshot = await getDocs(q);
 
