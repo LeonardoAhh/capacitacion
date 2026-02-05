@@ -212,13 +212,7 @@ export default function ProgramacionPage() {
                                 <h2 className={styles.cardTitle}><Users size={20} /> Seleccionar Empleados</h2>
 
                                 <div className={styles.filters}>
-                                    <div style={{ flex: 1 }}>
-                                        <ActionSearchBar
-                                            placeholder="Buscar empleado por nombre o ID..."
-                                            onSearch={setSearchTerm}
-                                            actions={[]} // Pasamos vacío para que funcione solo como buscador visual por ahora
-                                        />
-                                    </div>
+                                    {/* Search is handled globally at the top */}
 
                                     <select
                                         className={styles.select}

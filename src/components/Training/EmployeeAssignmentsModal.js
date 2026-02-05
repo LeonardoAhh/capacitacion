@@ -8,34 +8,21 @@ export default function EmployeeAssignmentsModal({ employee, onClose }) {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
+        const fetchAssignments = async () => {
+            try {
+                const q = query(collection(db, 'programacion'), where('employeeId', '==', employee.id));
+                const snapshot = await getDocs(q);
+                const list = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
+                setAssignments(list);
+            } catch (error) {
+                console.error("Error fetching assignments:", error);
+            } finally {
+                setLoading(false);
+            }
+        };
+
         fetchAssignments();
     }, [employee]);
-
-    const fetchAssignments = async () => {
-        try {
-            const q = query(collection(db, 'programacion'), where('employeeId', '==', employee.id));
-            const snapshot = await getDocs(q);
-
-            // Need to fetch course details for names? Or are they in the programacion?
-            // Usually just IDs. Ideally we would join, but for now we might just list IDs or try to look up names if courses props were passed.
-            // Let's assume we can fetch courses or just show IDs/Dates for MVP, OR pass coursesList as prop.
-            // For simplicity in this standalone component, I'll fetch courses here or rely on passed context?
-            // Let's fetch the list.
-
-            const list = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
-
-            // Resolve course names if we can. (For this step I will just simple list, refine later)
-            // But user wants to know WHAT to delete.
-            // Let's do a quick fetch of all courses to map names? Or just one by one.
-            // Efficient way: pass `allCourses` as prop. I'll add that prop.
-
-            setAssignments(list);
-        } catch (error) {
-            console.error("Error fetching assignments:", error);
-        } finally {
-            setLoading(false);
-        }
-    };
 
     const handleDeleteAssignment = async (assignmentId) => {
         if (!confirm('¿Eliminar esta asignación?')) return;
