@@ -48,7 +48,6 @@ export default function CandidateLogin({
     loading,
     isBlocked,
     blockTimeRemaining,
-    blockTimeRemaining,
     onSubmit,
     isSuccess
 }) {
