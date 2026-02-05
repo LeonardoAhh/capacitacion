@@ -2,6 +2,7 @@
 
 import { motion } from "framer-motion";
 import { PlayCircle, Award, CheckCircle, Clock } from "lucide-react";
+import Image from "next/image";
 import styles from './CourseCard.module.css';
 
 export default function CourseCard({ course, onClick }) {
@@ -13,7 +14,13 @@ export default function CourseCard({ course, onClick }) {
         >
             <div className={styles.imageContainer}>
                 {course.thumbnail ? (
-                    <img src={course.thumbnail} alt={course.title} className={styles.image} />
+                    <Image
+                        src={course.thumbnail}
+                        alt={course.title}
+                        className={styles.image}
+                        fill
+                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                    />
                 ) : (
                     <div className={styles.placeholderImage}>
                         <Award className={styles.placeholderIcon} />
