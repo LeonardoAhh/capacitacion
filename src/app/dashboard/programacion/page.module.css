@@ -1,0 +1,341 @@
+.container {
+    min-height: 100vh;
+    background-color: var(--bg-primary);
+    /* Depende de globals.css */
+    color: var(--text-primary);
+}
+
+.newEmployeeBtn {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1.5rem;
+    background: #ec4899;
+    /* Pink para distinguir */
+    color: white;
+    border-radius: 12px;
+    text-decoration: none;
+    font-weight: 600;
+    transition: all 0.2s;
+    box-shadow: 0 4px 12px rgba(236, 72, 153, 0.2);
+}
+
+.newEmployeeBtn:hover {
+    background: #db2777;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(236, 72, 153, 0.3);
+}
+
+.main {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 2rem;
+}
+
+.pageHeader {
+    margin-bottom: 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.title {
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+}
+
+.subtitle {
+    color: var(--text-secondary);
+}
+
+.grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+}
+
+@media (max-width: 1024px) {
+    .grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 640px) {
+    .pageHeader {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+    }
+
+    .newEmployeeBtn {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .filters {
+        flex-direction: column;
+    }
+
+    .card {
+        padding: 1rem;
+        max-height: none;
+        /* Permitir scroll natural en móvil */
+        height: auto;
+    }
+
+    .listHeader {
+        display: none;
+        /* Ocultar headers de tabla en móvil si es muy estrecho, o adaptar */
+    }
+
+    .employeeItem {
+        flex-wrap: wrap;
+        gap: 0.5rem;
+    }
+
+    .empRole {
+        width: 100%;
+        margin-left: 2.25rem;
+        /* Alinear con nombre */
+        font-size: 0.8rem;
+    }
+}
+
+.card {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: 16px;
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    max-height: 600px;
+}
+
+.cardTitle {
+    font-size: 1.25rem;
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.filters {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.searchBox {
+    position: relative;
+    flex: 1;
+}
+
+.input {
+    width: 100%;
+    padding: 0.75rem 1rem 0.75rem 2.5rem;
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+    background: var(--bg-tertiary);
+    color: var(--text-primary);
+}
+
+.select {
+    padding: 0.75rem 1rem;
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+    background: var(--bg-tertiary);
+    color: var(--text-primary);
+}
+
+.employeeList {
+    flex: 1;
+    overflow-y: auto;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+}
+
+.listHeader {
+    display: flex;
+    justify-content: space-between;
+    padding: 0.75rem 1rem;
+    background: var(--bg-tertiary);
+    font-weight: 600;
+    font-size: 0.875rem;
+    position: sticky;
+    top: 0;
+}
+
+.employeeItem {
+    display: flex;
+    align-items: center;
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid var(--border-color);
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.employeeItem:hover {
+    background: var(--hover-bg);
+}
+
+.employeeItem.selected {
+    background: rgba(99, 102, 241, 0.1);
+}
+
+.checkbox {
+    width: 20px;
+    margin-right: 1rem;
+    color: #6366f1;
+}
+
+.empName {
+    font-weight: 500;
+}
+
+.empId {
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+}
+
+.empRole {
+    margin-left: auto;
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+}
+
+.selectionCount {
+    margin-top: 1rem;
+    text-align: right;
+    font-weight: 600;
+    color: #6366f1;
+}
+
+.courseList {
+    display: grid;
+    gap: 1rem;
+    overflow-y: auto;
+    flex: 1;
+}
+
+.courseItem {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem;
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.courseItem:hover {
+    border-color: #6366f1;
+}
+
+.courseItem.selectedCourse {
+    border-color: #6366f1;
+    background: rgba(99, 102, 241, 0.05);
+    box-shadow: 0 4px 12px rgba(99, 102, 241, 0.1);
+}
+
+.courseIcon {
+    width: 48px;
+    height: 48px;
+    background: var(--bg-tertiary);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #6366f1;
+}
+
+.courseName {
+    font-weight: 600;
+    font-size: 1.1rem;
+}
+
+.courseInfo {
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+}
+
+.actions {
+    margin-top: 2rem;
+}
+
+.assignBtn {
+    width: 100%;
+    padding: 1rem;
+    background: #6366f1;
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-weight: 600;
+    font-size: 1.1rem;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.assignBtn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    background: var(--text-secondary);
+}
+
+.assignBtn:not(:disabled):hover {
+    background: #4f46e5;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+}
+
+.statsCard {
+    margin-top: 2rem;
+    height: auto;
+}
+
+.statsTitle {
+    font-size: 1rem;
+    margin-bottom: 1rem;
+}
+
+.statRow {
+    display: flex;
+    justify-content: space-between;
+    padding: 0.5rem 0;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.toast {
+    position: fixed;
+    bottom: 2rem;
+    right: 2rem;
+    padding: 1rem 2rem;
+    border-radius: 8px;
+    color: white;
+    font-weight: 600;
+    animation: slideIn 0.3s ease-out;
+}
+
+.toast.success {
+    background: #22c55e;
+}
+
+.toast.error {
+    background: #ef4444;
+}
+
+@keyframes slideIn {
+    from {
+        transform: translateY(100px);
+        opacity: 0;
+    }
+
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}

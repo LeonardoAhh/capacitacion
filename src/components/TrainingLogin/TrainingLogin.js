@@ -1,0 +1,182 @@
+"use client";
+
+import { motion } from "framer-motion";
+import { User, Lock, GraduationCap } from "lucide-react";
+import styles from './TrainingLogin.module.css';
+import AILoadingState from '../ui/AILoadingState/AILoadingState';
+
+function ElegantShape({ className, delay = 0, width = 400, height = 100, rotate = 0, color, borderRadius = 16 }) {
+    return (
+        <motion.div
+            animate={{ opacity: 1, y: 0, rotate }}
+            className={className}
+            initial={{ opacity: 0, y: -150, rotate: rotate - 15 }}
+            transition={{
+                duration: 2.4,
+                delay,
+                ease: [0.23, 0.86, 0.39, 0.96],
+                opacity: { duration: 1.2 },
+            }}
+            style={{ position: 'absolute', width: `${width}px`, height: `${height}px` }}
+        >
+            <motion.div
+                animate={{ y: [0, 15, 0] }}
+                transition={{ duration: 12, repeat: Infinity, ease: "easeInOut" }}
+                style={{
+                    width: '100%',
+                    height: '100%',
+                    background: `linear-gradient(135deg, ${color}40, ${color}20)`,
+                    borderRadius: `${borderRadius}px`,
+                    backdropFilter: 'blur(1px)',
+                    border: '1px solid rgba(255, 255, 255, 0.05)',
+                    boxShadow: '0 2px 16px -2px rgba(255, 255, 255, 0.04)',
+                }}
+            />
+        </motion.div>
+    );
+}
+
+export default function TrainingLogin({
+    employeeId,
+    setEmployeeId,
+    password,
+    setPassword,
+    error,
+    loading,
+    onSubmit,
+    isSuccess
+}) {
+    const fadeUpVariants = {
+        hidden: { opacity: 0, y: 30 },
+        visible: (i) => ({
+            opacity: 1,
+            y: 0,
+            transition: { duration: 0.8, delay: 0.2 + i * 0.1, ease: [0.25, 0.4, 0.25, 1] },
+        }),
+    };
+
+    return (
+        <div className={styles.container}>
+            <div className={styles.backgroundGradient} />
+
+            {/* Formas animadas - Tonos Rosa/Violeta/Azul para capacitación */}
+            <div className={styles.shapesContainer}>
+                <ElegantShape className={styles.shape1} delay={0.2} width={250} height={400} rotate={-12} color="#ec4899" borderRadius={20} />
+                <ElegantShape className={styles.shape2} delay={0.4} width={350} height={150} rotate={18} color="#8b5cf6" borderRadius={16} />
+                <ElegantShape className={styles.shape3} delay={0.3} width={200} height={200} rotate={-25} color="#3b82f6" borderRadius={24} />
+                <ElegantShape className={styles.shape4} delay={0.5} width={300} height={120} rotate={15} color="#d946ef" borderRadius={12} />
+            </div>
+
+            {/* Card de Login */}
+            <motion.div
+                className={styles.loginCard}
+                initial="hidden"
+                animate="visible"
+            >
+                {isSuccess ? (
+                    <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        transition={{ duration: 0.5 }}
+                        style={{
+                            padding: '40px 20px',
+                            minHeight: '400px',
+                            display: 'flex',
+                            flexDirection: 'column',
+                            alignItems: 'center',
+                            justifyContent: 'center'
+                        }}
+                    >
+                        <AILoadingState />
+                        <motion.p
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            transition={{ delay: 1 }}
+                            className={styles.subtitle}
+                            style={{ position: 'absolute', bottom: '40px', fontSize: '0.9rem' }}
+                        >
+                            Verificando asignaciones de cursos...
+                        </motion.p>
+                    </motion.div>
+                ) : (
+                    <>
+                        <motion.div variants={fadeUpVariants} custom={0} className={styles.header}>
+                            <div className={styles.iconWrapper}>
+                                <GraduationCap className={styles.icon} />
+                            </div>
+                            <h1 className={styles.title}>Capacitación</h1>
+                            <p className={styles.subtitle}>Portal de formación administrativa</p>
+                        </motion.div>
+
+                        {error && (
+                            <motion.div
+                                initial={{ opacity: 0, y: -10 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                className={styles.errorMessage}
+                            >
+                                {error}
+                            </motion.div>
+                        )}
+
+                        <form onSubmit={onSubmit} className={styles.form}>
+                            <motion.div variants={fadeUpVariants} custom={1} className={styles.inputGroup}>
+                                <label className={styles.label}>ID de Empleado</label>
+                                <div className={styles.inputWrapper}>
+                                    <User className={styles.inputIcon} />
+                                    <input
+                                        type="text"
+                                        value={employeeId}
+                                        onChange={(e) => setEmployeeId(e.target.value.toUpperCase())}
+                                        className={styles.input}
+                                        required
+                                        disabled={loading}
+                                    />
+                                </div>
+                            </motion.div>
+
+                            <motion.div variants={fadeUpVariants} custom={2} className={styles.inputGroup}>
+                                <label className={styles.label}>Contraseña / Código</label>
+                                <div className={styles.inputWrapper}>
+                                    <Lock className={styles.inputIcon} />
+                                    <input
+                                        type="password"
+                                        value={password}
+                                        onChange={(e) => setPassword(e.target.value)}
+                                        className={styles.input}
+                                        required
+                                        disabled={loading}
+                                    />
+                                </div>
+                            </motion.div>
+
+                            <motion.button
+                                variants={fadeUpVariants}
+                                custom={4}
+                                type="submit"
+                                className={styles.submitButton}
+                                disabled={loading}
+                                whileHover={{ scale: 1.02 }}
+                                whileTap={{ scale: 0.98 }}
+                            >
+                                {loading ? (
+                                    <span className={styles.spinner}></span>
+                                ) : (
+                                    'Ingresar al Portal'
+                                )}
+                            </motion.button>
+                        </form>
+
+                        <motion.div variants={fadeUpVariants} custom={5} className={styles.footer}>
+                            <p className={styles.footerText}>
+                                Innovando para tu crecimiento<br />
+                                <span style={{ opacity: 0.7, fontSize: '0.8rem' }}>Sistema Vertx</span>
+                            </p>
+                        </motion.div>
+                    </>
+                )}
+            </motion.div>
+
+            <div className={styles.overlay} />
+        </div>
+    );
+}

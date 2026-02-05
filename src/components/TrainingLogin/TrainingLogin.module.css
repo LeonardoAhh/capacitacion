@@ -1,0 +1,325 @@
+/* Mismos estilos base que ModernLogin/CandidateLogin pero con paleta de colores diferente */
+.container {
+    min-height: 100vh;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+    background-color: #030303;
+    font-family: var(--font-geist-sans);
+}
+
+.backgroundGradient {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: 
+        radial-gradient(circle at 15% 50%, rgba(236, 72, 153, 0.08), transparent 25%),
+        radial-gradient(circle at 85% 30%, rgba(139, 92, 246, 0.08), transparent 25%);
+    z-index: 0;
+}
+
+.shapesContainer {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    overflow: hidden;
+    pointer-events: none;
+}
+
+.loginCard {
+    width: 100%;
+    max-width: 440px;
+    background: rgba(255, 255, 255, 0.03);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 2rem;
+    padding: 3rem;
+    position: relative;
+    z-index: 10;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+    overflow: hidden;
+}
+
+/* Modo claro */
+@media (prefers-color-scheme: light) {
+    .container {
+        background-color: #ffffff;
+    }
+    .backgroundGradient {
+        background: 
+            radial-gradient(circle at 15% 50%, rgba(236, 72, 153, 0.05), transparent 25%),
+            radial-gradient(circle at 85% 30%, rgba(139, 92, 246, 0.05), transparent 25%);
+    }
+    .loginCard {
+        background: rgba(255, 255, 255, 0.7);
+        border: 1px solid rgba(255, 255, 255, 0.5);
+        box-shadow: 0 20px 40px -12px rgba(0, 0, 0, 0.1);
+    }
+}
+
+.header {
+    margin-bottom: 2.5rem;
+    text-align: center;
+}
+
+.iconWrapper {
+    width: 64px;
+    height: 64px;
+    border-radius: 20px;
+    background: linear-gradient(135deg, rgba(236, 72, 153, 0.1), rgba(139, 92, 246, 0.1));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 1.5rem;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.05);
+}
+
+.icon {
+    width: 32px;
+    height: 32px;
+    color: #ec4899; /* Pink-500 */
+}
+
+.title {
+    font-size: 1.875rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+    background: linear-gradient(to right, #fff, #a5b4fc);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    letter-spacing: -0.025em;
+}
+
+@media (prefers-color-scheme: light) {
+    .title {
+        background: linear-gradient(to right, #111827, #4b5563);
+        -webkit-background-clip: text;
+        background-clip: text;
+    }
+}
+
+.subtitle {
+    color: rgba(255, 255, 255, 0.5);
+    font-size: 0.95rem;
+    line-height: 1.5;
+}
+
+@media (prefers-color-scheme: light) {
+    .subtitle {
+        color: rgba(75, 85, 99, 0.8);
+    }
+}
+
+.form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+}
+
+.inputGroup {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.label {
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: rgba(255, 255, 255, 0.7);
+    margin-left: 0.25rem;
+}
+
+@media (prefers-color-scheme: light) {
+    .label {
+        color: rgba(55, 65, 81, 0.8);
+    }
+}
+
+.inputWrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.inputIcon {
+    position: absolute;
+    left: 1rem;
+    width: 20px;
+    height: 20px;
+    color: rgba(255, 255, 255, 0.4);
+    pointer-events: none;
+    transition: color 0.2s;
+}
+
+@media (prefers-color-scheme: light) {
+    .inputIcon {
+        color: rgba(0, 0, 0, 0.4);
+    }
+}
+
+.input {
+    width: 100%;
+    padding: 0.875rem 1rem 0.875rem 3rem;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    color: #fff;
+    font-size: 0.95rem;
+    transition: all 0.2s;
+    outline: none;
+}
+
+@media (prefers-color-scheme: light) {
+    .input {
+        background: rgba(0, 0, 0, 0.03);
+        border: 1px solid rgba(0, 0, 0, 0.1);
+        color: #111827;
+    }
+}
+
+.input:focus {
+    border-color: #ec4899;
+    box-shadow: 0 0 0 3px rgba(236, 72, 153, 0.15);
+    background: rgba(255, 255, 255, 0.08);
+}
+
+.input:focus + .inputIcon {
+    color: #ec4899;
+}
+
+@media (prefers-color-scheme: light) {
+    .input:focus {
+        background: #fff;
+    }
+}
+
+.submitButton {
+    margin-top: 1rem;
+    width: 100%;
+    padding: 1rem;
+    background: linear-gradient(135deg, #ec4899, #8b5cf6);
+    border: none;
+    border-radius: 12px;
+    color: white;
+    font-weight: 600;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 4px 16px rgba(236, 72, 153, 0.25);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.submitButton:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(236, 72, 153, 0.4);
+}
+
+.submitButton:active:not(:disabled) {
+    transform: translateY(0);
+}
+
+.submitButton:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+}
+
+.errorMessage {
+    background: rgba(239, 68, 68, 0.1);
+    border: 1px solid rgba(239, 68, 68, 0.2);
+    color: #fca5a5;
+    padding: 0.75rem 1rem;
+    border-radius: 12px;
+    font-size: 0.875rem;
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+@media (prefers-color-scheme: light) {
+    .errorMessage {
+        background: rgba(254, 226, 226, 0.5);
+        border: 1px solid rgba(252, 165, 165, 0.5);
+        color: #b91c1c;
+    }
+}
+
+.spinner {
+    width: 20px;
+    height: 20px;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-top-color: white;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+.blockedMessage {
+    background: rgba(245, 158, 11, 0.1);
+    border: 1px solid rgba(245, 158, 11, 0.2);
+    color: #fcd34d;
+    padding: 0.75rem 1rem;
+    border-radius: 12px;
+    font-size: 0.875rem;
+    margin-bottom: 1.5rem;
+    text-align: center;
+}
+
+@media (prefers-color-scheme: light) {
+    .blockedMessage {
+        background: rgba(254, 243, 199, 0.5);
+        border: 1px solid rgba(252, 211, 77, 0.5);
+        color: #b45309;
+    }
+}
+
+.helperText {
+    font-size: 0.75rem;
+    color: rgba(255, 255, 255, 0.4);
+    margin-top: 0.25rem;
+    margin-left: 0.25rem;
+}
+
+@media (prefers-color-scheme: light) {
+    .helperText {
+        color: rgba(0, 0, 0, 0.4);
+    }
+}
+
+.footer {
+    margin-top: 2rem;
+    text-align: center;
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+    padding-top: 1.5rem;
+}
+
+@media (prefers-color-scheme: light) {
+    .footer {
+        border-color: rgba(0, 0, 0, 0.05);
+    }
+}
+
+.footerText {
+    color: rgba(255, 255, 255, 0.4);
+    font-size: 0.875rem;
+    line-height: 1.6;
+}
+
+@media (prefers-color-scheme: light) {
+    .footerText {
+        color: rgba(107, 114, 128, 0.8);
+    }
+}

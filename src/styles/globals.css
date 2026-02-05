@@ -56,6 +56,9 @@
   --transition-fast: 200ms var(--ease-spring);
   --transition-base: 300ms var(--ease-spring);
   --transition-slow: 400ms var(--ease-spring);
+  /* --- iOS Scrollbar --- */
+  --scrollbar-thumb: rgba(0, 0, 0, 0.2);
+  --scrollbar-track: transparent;
 }
 
 [data-theme="dark"] {
@@ -81,9 +84,12 @@
   --color-primary: #0A84FF;
   --color-secondary: #5E5CE6;
   --color-accent: #64D2FF;
-  --color-success: #30D158;
   --color-warning: #FF9F0A;
   --color-danger: #FF453A;
+
+  /* --- iOS Scrollbar Dark --- */
+  --scrollbar-thumb: rgba(255, 255, 255, 0.2);
+  --scrollbar-track: transparent;
 }
 
 /* --- Reset Moderno --- */

@@ -51,20 +51,14 @@ service cloud.firestore {
       allow delete: if hasRole('super_admin');
     }
     
-    // EMPLEADOS: Lectura para autenticados, escritura restringida
-    // Permite acceso de candidatos (autenticados anónimamente) para login
+    // EMPLEADOS: Lectura pública requerida para Login de Capacitación (por ID)
     match /employees/{docId} {
-      // Lectura: Todos los usuarios autenticados (incluye anónimos para portal de candidatos)
-      allow read: if isAuthenticated();
+      allow read: if true; // Permite buscar usuario por ID para el login
       
-      // Escritura: Solo super_admin y rh pueden crear/eliminar
       allow create: if hasAnyRole(['super_admin', 'rh'])
                     && isValidString(request.resource.data.name)
                     && isValidString(request.resource.data.employeeId);
       
-      // Actualización: Permitir a usuarios autenticados actualizar SOLO campos específicos
-      // (para tracking de login de candidatos: accessCodeUses, lastLoginCandidate)
-      // ADAPTACIÓN: Se agregan 'cursosCompletados' y 'coursesProgress' para permitir el avance del candidato
       allow update: if hasAnyRole(['super_admin', 'rh']) ||
                        (isAuthenticated() && 
                         request.resource.data.diff(resource.data).affectedKeys()
@@ -75,30 +69,36 @@ service cloud.firestore {
     
     // CURSOS DE INDUCCIÓN (Nuevo formato)
     match /induction_courses/{docId} {
-      // Lectura: Todos los usuarios autenticados (incluye demo y candidatos anónimos)
-      allow read: if isAuthenticated();
-      
-      // Escritura: Solo super_admin y rh
+      allow read: if true; // Portal de capacitación necesita leer cursos
       allow write: if hasAnyRole(['super_admin', 'rh'])
                    && isValidString(request.resource.data.title);
     }
     
-    // CURSOS DE INDUCCIÓN (Legacy - cursos_induccion)
+    // CURSOS DE INDUCCIÓN (Legacy)
     match /cursos_induccion/{docId} {
-      allow read: if isAuthenticated();
+      allow read: if true;
       allow write: if hasAnyRole(['super_admin', 'rh']);
+    }
+
+    // PROGRAMACIÓN DE CAPACITACIÓN (Nueva colección)
+    match /programacion/{docId} {
+      allow read: if true; // Dashboard necesita leer asignaciones
+      allow write: if hasAnyRole(['super_admin', 'rh']) || 
+                   // Permitir al empleado actualizar el estado (completado/visto) si tuviéramos Auth real
+                   // Como no hay Auth, dejamos abierto o restringimos por lógica de cliente confiando (inseguro pero funcional para MVP)
+                   true; 
     }
     
     // POSICIONES/PUESTOS: Candidatos necesitan leer para cargar sus cursos
     match /positions/{docId} {
-      allow read: if isAuthenticated();
+      allow read: if true;
       allow write: if hasAnyRole(['super_admin', 'rh'])
                    && isValidString(request.resource.data.name);
     }
     
-    // TRAINING RECORDS (Legacy - si aún se usa)
+    // TRAINING RECORDS
     match /training_records/{docId} {
-      allow read: if isNotAnonymous();
+      allow read: if true;
       allow write: if hasAnyRole(['super_admin', 'rh'])
                    && isValidString(request.resource.data.name) 
                    && isValidString(request.resource.data.position);

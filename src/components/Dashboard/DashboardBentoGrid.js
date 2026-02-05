@@ -314,13 +314,13 @@ export default function DashboardBentoGrid({ stats, evaluations }) {
                         <ArrowUpRight className={styles.actionArrow} />
                     </Link>
 
-                    <Link href="/employees" className={styles.actionCard}>
+                    <Link href="/dashboard/programacion" className={styles.actionCard}>
                         <div className={`${styles.actionIcon} ${styles.actionIconBlue}`}>
                             <FileText className={styles.actionIconSvg} />
                         </div>
                         <div className={styles.actionText}>
-                            <div className={styles.actionTitle}>Contratos</div>
-                            <div className={styles.actionDesc}>Ver todos los contratos</div>
+                            <div className={styles.actionTitle}>Programación</div>
+                            <div className={styles.actionDesc}>Gestión de cursos internos</div>
                         </div>
                         <ArrowUpRight className={styles.actionArrow} />
                     </Link>

@@ -3,7 +3,7 @@
 import { motion } from "framer-motion";
 import { Pacifico } from "next/font/google";
 import Link from "next/link";
-import { Users, UserPlus } from "lucide-react";
+import { Users, UserPlus, GraduationCap } from "lucide-react";
 import styles from './ShapeHero.module.css';
 
 const pacifico = Pacifico({
@@ -186,6 +186,11 @@ export default function ShapeHero() {
                         <Link href="/candidatos" className={styles.secondaryButton}>
                             <UserPlus className={styles.buttonIcon} />
                             <span>Candidatos</span>
+                        </Link>
+
+                        <Link href="/training/login" className={styles.tertiaryButton}>
+                            <GraduationCap className={styles.buttonIcon} />
+                            <span>Capacitación</span>
                         </Link>
                     </motion.div>
                 </div>
