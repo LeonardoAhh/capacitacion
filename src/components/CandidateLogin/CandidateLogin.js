@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect } from "react";
 import { motion } from "framer-motion";
 import { User, IdCard, Key, UserPlus } from "lucide-react";
 import styles from './CandidateLogin.module.css';
@@ -49,27 +49,6 @@ export default function CandidateLogin({
     blockTimeRemaining,
     onSubmit,
 }) {
-    const formRef = useRef(null);
-
-    // Auto-submit cuando los 3 campos están completos
-    useEffect(() => {
-        const isFormComplete =
-            employeeId.trim() !== '' &&
-            curp.length === 18 &&
-            accessCode.length === 6 &&
-            !loading &&
-            !isBlocked;
-
-        if (isFormComplete) {
-            const timer = setTimeout(() => {
-                if (formRef.current) {
-                    formRef.current.requestSubmit();
-                }
-            }, 500);
-            return () => clearTimeout(timer);
-        }
-    }, [employeeId, curp, accessCode, loading, isBlocked]);
-
     const fadeUpVariants = {
         hidden: { opacity: 0, y: 30 },
         visible: (i) => ({
@@ -128,7 +107,7 @@ export default function CandidateLogin({
                     </motion.div>
                 )}
 
-                <form ref={formRef} onSubmit={onSubmit} className={styles.form}>
+                <form onSubmit={onSubmit} className={styles.form}>
                     <motion.div variants={fadeUpVariants} custom={1} className={styles.inputGroup}>
                         <label className={styles.label}>ID de Empleado</label>
                         <div className={styles.inputWrapper}>

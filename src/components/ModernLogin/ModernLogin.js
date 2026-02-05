@@ -52,18 +52,6 @@ export default function ModernLogin({
     const formRef = useRef(null);
     const mfaFormRef = useRef(null);
 
-    // Auto-submit para login normal cuando ambos campos están completos
-    useEffect(() => {
-        if (!mfaRequired && email && password && !loading) {
-            const timer = setTimeout(() => {
-                if (formRef.current) {
-                    formRef.current.requestSubmit();
-                }
-            }, 500); // Delay de 500ms para mejor UX
-            return () => clearTimeout(timer);
-        }
-    }, [email, password, mfaRequired, loading]);
-
     // Auto-submit para MFA cuando código tiene 6 dígitos
     useEffect(() => {
         if (mfaRequired && verificationCode.length === 6 && !loading) {
@@ -125,7 +113,7 @@ export default function ModernLogin({
                 )}
 
                 {!mfaRequired ? (
-                    <form ref={formRef} onSubmit={onSubmit} className={styles.form}>
+                    <form onSubmit={onSubmit} className={styles.form}>
                         <motion.div variants={fadeUpVariants} custom={1} className={styles.inputGroup}>
                             <label className={styles.label}>Correo Electrónico</label>
                             <div className={styles.inputWrapper}>
