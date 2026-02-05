@@ -8,6 +8,8 @@ import { Search, Plus, Calendar, Users, BookOpen, Filter, CheckCircle, ChevronLe
 import Link from 'next/link';
 import EditEmployeeModal from '@/components/Training/EditEmployeeModal';
 import EmployeeAssignmentsModal from '@/components/Training/EmployeeAssignmentsModal';
+import ActionSearchBar from '@/components/Shared/ActionSearchBar';
+import MonitoringTable from '@/components/Training/MonitoringTable';
 import styles from './page.module.css';
 
 export default function ProgramacionPage() {
@@ -22,6 +24,8 @@ export default function ProgramacionPage() {
     const [selectedCourse, setSelectedCourse] = useState('');
     const [assigning, setAssigning] = useState(false);
     const [toast, setToast] = useState(null);
+    const [activeTab, setActiveTab] = useState('assignment'); // assignment | monitoring
+    const [todayCount, setTodayCount] = useState(0);
 
     // Modal states
     const [editingEmployee, setEditingEmployee] = useState(null);
@@ -40,7 +44,25 @@ export default function ProgramacionPage() {
 
     useEffect(() => {
         fetchData();
+        fetchStats();
     }, []);
+
+    const fetchStats = async () => {
+        try {
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            const todayTimestamp = Timestamp.fromDate(today);
+
+            const q = query(
+                collection(db, 'programacion'),
+                where('assignedAt', '>=', todayTimestamp)
+            );
+            const snapshot = await getDocs(q);
+            setTodayCount(snapshot.size);
+        } catch (error) {
+            console.error("Error fetching stats:", error);
+        }
+    };
 
     const fetchData = async () => {
         try {
@@ -100,6 +122,7 @@ export default function ProgramacionPage() {
             setSelectedEmployees([]);
             setSelectedCourse('');
             setAssigning(false);
+            fetchStats(); // Update stats
         } catch (error) {
             console.error("Error signing:", error);
             showToast('Error al asignar curso', 'error');
@@ -151,130 +174,157 @@ export default function ProgramacionPage() {
                     </Link>
                 </div>
 
-                <div className={styles.grid}>
-                    {/* Left Column: Employee Selection */}
-                    <div className={styles.column}>
-                        <div className={styles.card}>
-                            <h2 className={styles.cardTitle}><Users size={20} /> Seleccionar Empleados</h2>
+                {/* Tabs de Navegación */}
+                <div style={{ display: 'flex', gap: '1rem', marginBottom: '2rem', borderBottom: '1px solid var(--border-color)', paddingBottom: '1px' }}>
+                    <button
+                        onClick={() => setActiveTab('assignment')}
+                        style={{
+                            padding: '0.75rem 1.5rem', background: 'none', border: 'none', cursor: 'pointer',
+                            borderBottom: activeTab === 'assignment' ? '2px solid #6366f1' : '2px solid transparent',
+                            color: activeTab === 'assignment' ? 'var(--text-primary)' : 'var(--text-secondary)',
+                            fontWeight: 600, fontSize: '1rem'
+                        }}
+                    >
+                        Asignación
+                    </button>
+                    <button
+                        onClick={() => setActiveTab('monitoring')}
+                        style={{
+                            padding: '0.75rem 1.5rem', background: 'none', border: 'none', cursor: 'pointer',
+                            borderBottom: activeTab === 'monitoring' ? '2px solid #6366f1' : '2px solid transparent',
+                            color: activeTab === 'monitoring' ? 'var(--text-primary)' : 'var(--text-secondary)',
+                            fontWeight: 600, fontSize: '1rem'
+                        }}
+                    >
+                        Monitoreo
+                    </button>
+                </div>
 
-                            <div className={styles.filters}>
-                                <div className={styles.searchBox}>
-                                    <Search size={16} />
-                                    <input
-                                        type="text"
-                                        placeholder="Buscar por nombre o ID..."
-                                        value={searchTerm}
-                                        onChange={(e) => setSearchTerm(e.target.value)}
-                                        className={styles.input}
-                                    />
+                {activeTab === 'assignment' ? (
+                    <div className={styles.grid}>
+                        {/* Left Column: Employee Selection */}
+                        <div className={styles.column}>
+                            <div className={styles.card}>
+                                <h2 className={styles.cardTitle}><Users size={20} /> Seleccionar Empleados</h2>
+
+                                <div className={styles.filters}>
+                                    <div style={{ flex: 1 }}>
+                                        <ActionSearchBar
+                                            placeholder="Buscar empleado por nombre o ID..."
+                                            onSearch={setSearchTerm}
+                                            actions={[]} // Pasamos vacío para que funcione solo como buscador visual por ahora
+                                        />
+                                    </div>
+
+                                    <select
+                                        className={styles.select}
+                                        value={selectedArea}
+                                        onChange={(e) => setSelectedArea(e.target.value)}
+                                    >
+                                        <option value="all">Todas las Áreas</option>
+                                        {areas.filter(a => a !== 'all').map(area => (
+                                            <option key={area} value={area}>{area}</option>
+                                        ))}
+                                    </select>
                                 </div>
 
-                                <select
-                                    className={styles.select}
-                                    value={selectedArea}
-                                    onChange={(e) => setSelectedArea(e.target.value)}
-                                >
-                                    <option value="all">Todas las Áreas</option>
-                                    {areas.filter(a => a !== 'all').map(area => (
-                                        <option key={area} value={area}>{area}</option>
-                                    ))}
-                                </select>
+                                <div className={styles.employeeList}>
+                                    <div className={styles.listHeader}>
+                                        <span>Empleado</span>
+                                        <span>Puesto</span>
+                                    </div>
+                                    {loading ? (
+                                        <div className={styles.loading}>Cargando...</div>
+                                    ) : (
+                                        filteredEmployees.map(emp => (
+                                            <div
+                                                key={emp.id}
+                                                className={`${styles.employeeItem} ${selectedEmployees.includes(emp.id) ? styles.selected : ''}`}
+                                                onClick={() => toggleEmployeeSelection(emp.id)}
+                                            >
+                                                <div className={styles.checkbox}>
+                                                    {selectedEmployees.includes(emp.id) && <CheckCircle size={14} />}
+                                                </div>
+                                                <div>
+                                                    <div className={styles.empName}>{emp.name || 'Sin Nombre'}</div>
+                                                    <div className={styles.empId}>{emp.employeeId}</div>
+                                                </div>
+                                                <div className={styles.empRole}>{emp.position || emp.puesto || '-'}</div>
+
+                                                <div className={styles.itemActions} onClick={(e) => e.stopPropagation()}>
+                                                    <button
+                                                        className={styles.actionBtn}
+                                                        onClick={() => setHistoryEmployee(emp)}
+                                                        title="Ver Asignaciones"
+                                                    >
+                                                        <FileText size={16} />
+                                                    </button>
+                                                    <button
+                                                        className={styles.actionBtn}
+                                                        onClick={() => setEditingEmployee(emp)}
+                                                        title="Editar Empleado"
+                                                    >
+                                                        <Edit2 size={16} />
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        ))
+                                    )}
+                                </div>
+
+                                <div className={styles.selectionCount}>
+                                    {selectedEmployees.length} empleados seleccionados
+                                </div>
                             </div>
+                        </div>
 
-                            <div className={styles.employeeList}>
-                                <div className={styles.listHeader}>
-                                    <span>Empleado</span>
-                                    <span>Puesto</span>
-                                </div>
-                                {loading ? (
-                                    <div className={styles.loading}>Cargando...</div>
-                                ) : (
-                                    filteredEmployees.map(emp => (
+                        {/* Right Column: Course Selection & Action */}
+                        <div className={styles.column}>
+                            <div className={styles.card}>
+                                <h2 className={styles.cardTitle}><BookOpen size={20} /> Seleccionar Curso</h2>
+
+                                <div className={styles.courseList}>
+                                    {courses.map(course => (
                                         <div
-                                            key={emp.id}
-                                            className={`${styles.employeeItem} ${selectedEmployees.includes(emp.id) ? styles.selected : ''}`}
-                                            onClick={() => toggleEmployeeSelection(emp.id)}
+                                            key={course.id}
+                                            className={`${styles.courseItem} ${selectedCourse === course.id ? styles.selectedCourse : ''}`}
+                                            onClick={() => setSelectedCourse(course.id)}
                                         >
-                                            <div className={styles.checkbox}>
-                                                {selectedEmployees.includes(emp.id) && <CheckCircle size={14} />}
+                                            <div className={styles.courseIcon}>
+                                                <BookOpen size={24} />
                                             </div>
                                             <div>
-                                                <div className={styles.empName}>{emp.name || 'Sin Nombre'}</div>
-                                                <div className={styles.empId}>{emp.employeeId}</div>
-                                            </div>
-                                            <div className={styles.empRole}>{emp.position || emp.puesto || '-'}</div>
-
-                                            <div className={styles.itemActions} onClick={(e) => e.stopPropagation()}>
-                                                <button
-                                                    className={styles.actionBtn}
-                                                    onClick={() => setHistoryEmployee(emp)}
-                                                    title="Ver Asignaciones"
-                                                >
-                                                    <FileText size={16} />
-                                                </button>
-                                                <button
-                                                    className={styles.actionBtn}
-                                                    onClick={() => setEditingEmployee(emp)}
-                                                    title="Editar Empleado"
-                                                >
-                                                    <Edit2 size={16} />
-                                                </button>
+                                                <div className={styles.courseName}>{course.title || course.nombre}</div>
+                                                <div className={styles.courseInfo}>{course.duration || 'Sin duración'}</div>
                                             </div>
                                         </div>
-                                    ))
-                                )}
-                            </div>
+                                    ))}
+                                </div>
 
-                            <div className={styles.selectionCount}>
-                                {selectedEmployees.length} empleados seleccionados
-                            </div>
-                        </div>
-                    </div>
-
-                    {/* Right Column: Course Selection & Action */}
-                    <div className={styles.column}>
-                        <div className={styles.card}>
-                            <h2 className={styles.cardTitle}><BookOpen size={20} /> Seleccionar Curso</h2>
-
-                            <div className={styles.courseList}>
-                                {courses.map(course => (
-                                    <div
-                                        key={course.id}
-                                        className={`${styles.courseItem} ${selectedCourse === course.id ? styles.selectedCourse : ''}`}
-                                        onClick={() => setSelectedCourse(course.id)}
+                                <div className={styles.actions}>
+                                    <button
+                                        className={styles.assignBtn}
+                                        disabled={assigning || selectedEmployees.length === 0 || !selectedCourse}
+                                        onClick={handleAssign}
                                     >
-                                        <div className={styles.courseIcon}>
-                                            <BookOpen size={24} />
-                                        </div>
-                                        <div>
-                                            <div className={styles.courseName}>{course.title || course.nombre}</div>
-                                            <div className={styles.courseInfo}>{course.duration || 'Sin duración'}</div>
-                                        </div>
-                                    </div>
-                                ))}
+                                        {assigning ? 'Asignando...' : 'Asignar Curso Seleccionado'}
+                                    </button>
+                                </div>
                             </div>
 
-                            <div className={styles.actions}>
-                                <button
-                                    className={styles.assignBtn}
-                                    disabled={assigning || selectedEmployees.length === 0 || !selectedCourse}
-                                    onClick={handleAssign}
-                                >
-                                    {assigning ? 'Asignando...' : 'Asignar Curso Seleccionado'}
-                                </button>
-                            </div>
-                        </div>
-
-                        {/* Recent Activity or Quick Stats could go here */}
-                        <div className={`${styles.card} ${styles.statsCard}`}>
-                            <h3 className={styles.statsTitle}>Resumen de Asignaciones</h3>
-                            <div className={styles.statRow}>
-                                <span>Total Asignados Hoy:</span>
-                                <strong>0</strong>
+                            {/* Recent Activity or Quick Stats could go here */}
+                            <div className={`${styles.card} ${styles.statsCard}`}>
+                                <h3 className={styles.statsTitle}>Resumen de Asignaciones</h3>
+                                <div className={styles.statRow}>
+                                    <span>Total Asignados Hoy:</span>
+                                    <strong>{todayCount}</strong>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
+                ) : (
+                    <MonitoringTable />
+                )}
             </main>
 
             {toast && (

@@ -2,40 +2,16 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import Navbar from '@/components/Navbar/Navbar';
 import CourseCard from '@/components/Training/CourseCard';
+import CourseViewer from '@/components/Training/CourseViewer';
 import { BookOpen, LogOut, Search, Filter } from 'lucide-react';
+import { db } from '@/lib/firebase';
+import { collection, query, where, getDocs, doc, getDoc } from 'firebase/firestore';
 import styles from './page.module.css';
 
-// Mock data (temporary until 'programacion' collection is ready)
-const MOCK_COURSES = [
-    {
-        id: 'c1',
-        title: 'Introducción a la Seguridad Industrial',
-        description: 'Conceptos básicos de seguridad en planta, uso de EPP y protocolos de emergencia.',
-        status: 'pending',
-        duration: '45 min',
-        thumbnail: null
-    },
-    {
-        id: 'c2',
-        title: 'Cultura Organizacional VIÑOPLASTIC',
-        description: 'Conoce nuestra misión, visión y valores fundamentales.',
-        status: 'completed',
-        completedAt: '2024-02-01',
-        duration: '30 min',
-        thumbnail: null
-    },
-    {
-        id: 'c3',
-        title: 'Buenas Prácticas de Manufactura',
-        description: 'Estándares de calidad e higiene en el proceso productivo.',
-        status: 'pending',
-        duration: '60 min',
-        thumbnail: null
-    }
-];
+
 
 export default function TrainingDashboard() {
     const router = useRouter();
@@ -44,22 +20,57 @@ export default function TrainingDashboard() {
     const [loading, setLoading] = useState(true);
     const [filter, setFilter] = useState('all'); // all, pending, completed
 
+    const [selectedCourse, setSelectedCourse] = useState(null);
+
     useEffect(() => {
-        // Verificar sesión
-        const session = sessionStorage.getItem('training_session');
-        if (!session) {
-            router.push('/training/login');
-            return;
-        }
+        const fetchCourses = async () => {
+            // Verificar sesión
+            const session = sessionStorage.getItem('training_session');
+            if (!session) {
+                router.push('/training/login');
+                return;
+            }
 
-        setUser(JSON.parse(session));
+            const userData = JSON.parse(session);
+            setUser(userData);
 
-        // Simular fetch de cursos
-        setTimeout(() => {
-            setCourses(MOCK_COURSES);
-            setLoading(false);
-        }, 1000);
+            try {
+                // 1. Obtener asignaciones del empleado desde 'programacion'
+                const progRef = collection(db, 'programacion');
+                const q = query(progRef, where('employeeId', '==', userData.id));
+                const progSnap = await getDocs(q);
 
+                if (progSnap.empty) {
+                    setCourses([]);
+                    setLoading(false);
+                    return;
+                }
+
+                // 2. Obtener detalles de cada curso desde 'cursos_induccion'
+                const coursesData = await Promise.all(progSnap.docs.map(async (pDoc) => {
+                    const progData = pDoc.data();
+                    // Buscar detalle del curso
+                    // Nota: Si courseId es un string simple o referencia, ajustar. Asumo ID string.
+                    const courseDoc = await getDoc(doc(db, 'cursos_induccion', progData.courseId));
+                    const courseDetail = courseDoc.exists() ? courseDoc.data() : { title: 'Curso no encontrado', description: '' };
+
+                    return {
+                        id: progData.courseId, // ID del curso base
+                        assignmentId: pDoc.id, // ID de la asignación (para updates)
+                        ...courseDetail,
+                        ...progData // Sobrescribe status, fechas, etc. de la asignación
+                    };
+                }));
+
+                setCourses(coursesData);
+            } catch (error) {
+                console.error("Error loading courses:", error);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchCourses();
     }, [router]);
 
     const handleLogout = () => {
@@ -68,8 +79,13 @@ export default function TrainingDashboard() {
     };
 
     const handleCourseClick = (course) => {
-        // TODO: Implement course viewer
-        console.log('Open course:', course);
+        setSelectedCourse(course);
+    };
+
+    const handleUpdateStatus = (assignmentId, newStatus) => {
+        setCourses(prev => prev.map(c =>
+            c.assignmentId === assignmentId ? { ...c, status: newStatus } : c
+        ));
     };
 
     const filteredCourses = courses.filter(course => {
@@ -162,6 +178,15 @@ export default function TrainingDashboard() {
                     </motion.div>
                 )}
             </main>
+
+            {selectedCourse && (
+                <CourseViewer
+                    course={selectedCourse}
+                    assignmentId={selectedCourse.assignmentId}
+                    onClose={() => setSelectedCourse(null)}
+                    onUpdateStatus={handleUpdateStatus}
+                />
+            )}
         </div>
     );
 }
