@@ -11,6 +11,7 @@ import { Badge } from '@/components/ui/Badge/Badge';
 import { Dialog, DialogHeader, DialogTitle, DialogBody, DialogClose } from '@/components/ui/Dialog/Dialog';
 import { RoleAvatar } from '@/components/RoleAvatar';
 import { useNotifications } from '@/hooks/useNotifications';
+import DashboardBentoGrid from '@/components/Dashboard/DashboardBentoGrid';
 import styles from './page.module.css';
 
 export default function DashboardPage() {
@@ -197,9 +198,15 @@ export default function DashboardPage() {
                         upcomingEvaluations.push({
                             employeeId: emp.employeeId,
                             employeeName: emp.name,
+                            position: emp.position,
+                            area: emp.area,
+                            department: emp.department,
+                            shift: emp.shift,
                             evalNum: evalItem.num,
                             date: evalItem.date,
-                            daysUntil: daysUntil
+                            daysUntil: daysUntil,
+                            evaluationType: `Evaluación ${evalItem.num}`,
+                            scheduledDate: evalItem.date
                         });
                     }
 
@@ -207,9 +214,15 @@ export default function DashboardPage() {
                         overdueEvaluations.push({
                             employeeId: emp.employeeId,
                             employeeName: emp.name,
+                            position: emp.position,
+                            area: emp.area,
+                            department: emp.department,
+                            shift: emp.shift,
                             evalNum: evalItem.num,
                             date: evalItem.date,
-                            daysOverdue: Math.abs(daysUntil)
+                            daysOverdue: Math.abs(daysUntil),
+                            evaluationType: `Evaluación ${evalItem.num}`,
+                            dueDate: evalItem.date
                         });
                     }
                 });
@@ -218,7 +231,12 @@ export default function DashboardPage() {
             upcomingEvaluations.sort((a, b) => a.daysUntil - b.daysUntil);
             overdueEvaluations.sort((a, b) => b.daysOverdue - a.daysOverdue);
 
-            setStats({ totalEmployees, activeContracts, expiringContracts });
+            setStats({
+                totalEmployees,
+                activeContracts,
+                expiringContracts,
+                expiringEmployees: expiringEmployeesList
+            });
             setEvaluations({ upcoming: upcomingEvaluations, overdue: overdueEvaluations });
             setExpiringEmployees(expiringEmployeesList);
         } catch (error) {
@@ -327,179 +345,11 @@ export default function DashboardPage() {
                     </div>
                 </header>
 
-                <div className={styles.statsGrid}>
-                    <div className={styles.statCard}>
-                        <div className={`${styles.statIcon} ${styles.primary}`}>
-                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
-                                <circle cx="9" cy="7" r="4" />
-                                <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
-                                <path d="M16 3.13a4 4 0 0 1 0 7.75" />
-                            </svg>
-                        </div>
-                        <div className={styles.statContent}>
-                            <div className={styles.statNumber}>{loading ? '-' : stats.totalEmployees}</div>
-                            <div className={styles.statLabel}>Total Empleados</div>
-                        </div>
-                    </div>
-
-                    <div className={styles.statCard}>
-                        <div className={`${styles.statIcon} ${styles.success}`}>
-                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
-                                <path d="M14 2v6h6" />
-                                <path d="M16 13H8" />
-                                <path d="M16 17H8" />
-                                <path d="M10 9H8" />
-                            </svg>
-                        </div>
-                        <div className={styles.statContent}>
-                            <div className={styles.statNumber}>{loading ? '-' : stats.activeContracts}</div>
-                            <div className={styles.statLabel}>Contratos Activos</div>
-                        </div>
-                    </div>
-
-                    <div
-                        className={`${styles.statCard} ${stats.expiringContracts > 0 ? styles.clickable : ''}`}
-                        onClick={() => stats.expiringContracts > 0 && setShowExpiringModal(true)}
-                    >
-                        <div className={`${styles.statIcon} ${stats.expiringContracts > 0 ? styles.warning : styles.success}`}>
-                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                <circle cx="12" cy="12" r="10" />
-                                <polyline points="12 6 12 12 16 14" />
-                            </svg>
-                        </div>
-                        <div className={styles.statContent}>
-                            <div className={styles.statNumber}>{loading ? '-' : stats.expiringContracts}</div>
-                            <div className={styles.statLabel}>Vencen pronto</div>
-                        </div>
-                    </div>
-                </div>
-
-                <div className={styles.dashboardGrid}>
-                    <div className={styles.column}>
-                        {(evaluations.upcoming.length > 0 || evaluations.overdue.length > 0) ? (
-                            <section className={styles.sectionCard}>
-                                <div className={styles.sectionHeader}>
-                                    <h2 className={styles.sectionTitle}>Evaluaciones Pendientes</h2>
-                                </div>
-                                <div className={styles.alertList}>
-                                    {evaluations.overdue.slice(0, 3).map((item, idx) => (
-                                        <div key={`overdue-${idx}`} className={styles.alertItem} style={{ borderLeft: '4px solid #FF3B30' }}>
-                                            <div className={styles.alertIcon} style={{ background: 'rgba(255, 59, 48, 0.1)', color: '#FF3B30' }}>
-                                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                                    <circle cx="12" cy="12" r="10" />
-                                                    <line x1="12" y1="8" x2="12" y2="12" />
-                                                    <line x1="12" y1="16" x2="12.01" y2="16" />
-                                                </svg>
-                                            </div>
-                                            <div className={styles.alertInfo}>
-                                                <span className={styles.alertTitle}>{item.employeeName}</span>
-                                                <span className={styles.alertSubtitle}>Evaluación {item.evalNum} vencida</span>
-                                            </div>
-                                            <div className={styles.alertMeta}>
-                                                <Badge variant="danger" size="sm">Hace {item.daysOverdue} días</Badge>
-                                            </div>
-                                        </div>
-                                    ))}
-                                    {evaluations.upcoming.slice(0, 5).map((item, idx) => (
-                                        <div key={`upcoming-${idx}`} className={styles.alertItem} style={{ borderLeft: '4px solid #FF9F0A' }}>
-                                            <div className={styles.alertIcon} style={{ background: 'rgba(255, 159, 10, 0.1)', color: '#FF9F0A' }}>
-                                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                                    <circle cx="12" cy="12" r="10" />
-                                                    <polyline points="12 6 12 12 16 14" />
-                                                </svg>
-                                            </div>
-                                            <div className={styles.alertInfo}>
-                                                <span className={styles.alertTitle}>{item.employeeName}</span>
-                                                <span className={styles.alertSubtitle}>Evaluación {item.evalNum} próxima</span>
-                                            </div>
-                                            <div className={styles.alertMeta}>
-                                                <Badge variant="warning" size="sm">En {item.daysUntil} días</Badge>
-                                            </div>
-                                        </div>
-                                    ))}
-                                </div>
-                            </section>
-                        ) : (
-                            <section className={styles.sectionCard}>
-                                <div className={styles.sectionHeader}>
-                                    <h2 className={styles.sectionTitle}>Todo al día</h2>
-                                </div>
-                                <div style={{ textAlign: 'center', padding: '40px', color: 'var(--text-secondary)' }}>
-                                    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1" style={{ marginBottom: '16px', opacity: 0.5 }}>
-                                        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
-                                        <polyline points="22 4 12 14.01 9 11.01" />
-                                    </svg>
-                                    <p>No hay evaluaciones pendientes ni atrasadas.</p>
-                                </div>
-                            </section>
-                        )}
-                    </div>
-
-                    <div className={styles.column}>
-                        <section className={styles.sectionCard}>
-                            <h2 className={styles.sectionTitle}>Accesos Directos</h2>
-                            <div className={styles.actionsGrid}>
-                                <Link href="/dashboard/candidates" className={styles.actionBtn}>
-                                    <div className={styles.actionIcon} style={{ color: '#FF9500', background: 'rgba(255, 149, 0, 0.1)' }}>
-                                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
-                                            <circle cx="9" cy="7" r="4"></circle>
-                                            <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
-                                            <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
-                                        </svg>
-                                    </div>
-                                    <span className={styles.actionText}>Candidatos</span>
-                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                        <polyline points="9 18 15 12 9 6" />
-                                    </svg>
-                                </Link>
-
-                                <Link href="/employees" className={styles.actionBtn}>
-                                    <div className={styles.actionIcon}>
-                                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
-                                            <circle cx="9" cy="7" r="4" />
-                                            <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
-                                        </svg>
-                                    </div>
-                                    <span className={styles.actionText}>Contratos</span>
-                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                        <polyline points="9 18 15 12 9 6" />
-                                    </svg>
-                                </Link>
-
-                                <Link href="/capacitacion" className={styles.actionBtn}>
-                                    <div className={styles.actionIcon}>
-                                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                            <path d="M22 10v6M2 10l10-5 10 5-10 5z" />
-                                            <path d="M6 12v5c3 3 9 3 12 0v-5" />
-                                        </svg>
-                                    </div>
-                                    <span className={styles.actionText}>Capacitación</span>
-                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                        <polyline points="9 18 15 12 9 6" />
-                                    </svg>
-                                </Link>
-
-                                <Link href="/reports" className={styles.actionBtn}>
-                                    <div className={styles.actionIcon}>
-                                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                            <line x1="18" y1="20" x2="18" y2="10" />
-                                            <line x1="12" y1="20" x2="12" y2="4" />
-                                            <line x1="6" y1="20" x2="6" y2="14" />
-                                        </svg>
-                                    </div>
-                                    <span className={styles.actionText}>Reportes</span>
-                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                        <polyline points="9 18 15 12 9 6" />
-                                    </svg>
-                                </Link>
-                            </div>
-                        </section>
-                    </div>
-                </div>
+                {/* Modern Bento Grid Dashboard */}
+                <DashboardBentoGrid
+                    stats={stats}
+                    evaluations={evaluations}
+                />
             </div>
 
             <Dialog open={showExpiringModal} onOpenChange={setShowExpiringModal}>

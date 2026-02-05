@@ -1,0 +1,484 @@
+/* Main Dashboard Container */
+.dashboard {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    padding: 0;
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+/* Hero Row */
+.heroRow {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 24px;
+}
+
+/* Feature Card - Always gradient (beautiful in both themes) */
+.featureCard {
+    position: relative;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 24px;
+    padding: 40px;
+    color: white;
+    overflow: hidden;
+    min-height: 320px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.featureGradient {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 50%;
+    height: 100%;
+    background: radial-gradient(circle at top right, rgba(255, 255, 255, 0.15) 0%, transparent 70%);
+    pointer-events: none;
+}
+
+.featureContent {
+    position: relative;
+    z-index: 1;
+}
+
+.featureBadge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(10px);
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 600;
+    margin-bottom: 20px;
+}
+
+.badgeIcon {
+    width: 16px;
+    height: 16px;
+}
+
+.featureTitle {
+    font-size: 32px;
+    font-weight: 700;
+    margin: 0 0 12px 0;
+    line-height: 1.2;
+}
+
+.featureDescription {
+    font-size: 16px;
+    opacity: 0.95;
+    line-height: 1.6;
+    margin: 0 0 32px 0;
+    max-width: 90%;
+}
+
+.featureStats {
+    display: flex;
+    gap: 32px;
+}
+
+.featureStat {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.featureStatIcon {
+    width: 24px;
+    height: 24px;
+    opacity: 0.9;
+}
+
+.featureStatValue {
+    font-size: 28px;
+    font-weight: 700;
+    line-height: 1;
+}
+
+.featureStatLabel {
+    font-size: 13px;
+    opacity: 0.85;
+    margin-top: 4px;
+}
+
+/* Quick Stats - Using CSS Variables from globals.css */
+.quickStats {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.statCard {
+    text-decoration: none;
+    color: inherit;
+    display: block;
+}
+
+.statCardInner {
+    background: var(--bg-tertiary);
+    border: 1px solid var(--border-color);
+    border-radius: 20px;
+    padding: 24px;
+    position: relative;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+    min-height: 145px;
+}
+
+.statCardInner:hover {
+    box-shadow: var(--shadow-lg);
+    transform: translateY(-2px);
+}
+
+.statIconWrapper {
+    width: 56px;
+    height: 56px;
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.statIconBlue {
+    background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+}
+
+.statIconGreen {
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+}
+
+.statIcon {
+    width: 28px;
+    height: 28px;
+    color: white;
+}
+
+.statContent {
+    flex: 1;
+}
+
+.statLabel {
+    font-size: 13px;
+    color: var(--text-tertiary);
+    font-weight: 500;
+    margin-bottom: 8px;
+}
+
+.statValue {
+    font-size: 36px;
+    font-weight: 700;
+    color: var(--text-primary);
+    line-height: 1;
+    margin-bottom: 8px;
+}
+
+.statChange {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 13px;
+    color: var(--text-tertiary);
+    font-weight: 500;
+}
+
+.statChangeIcon {
+    width: 14px;
+    height: 14px;
+}
+
+.statChangePositive {
+    color: var(--color-success);
+    font-weight: 600;
+}
+
+.statArrow {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    width: 20px;
+    height: 20px;
+    color: var(--text-tertiary);
+    opacity: 0;
+    transition: all 0.3s;
+}
+
+.statCardInner:hover .statArrow {
+    opacity: 1;
+    transform: translate(4px, -4px);
+}
+
+/* Alerts Row - Using CSS Variables */
+.alertsRow {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
+}
+
+.alertCard {
+    background: var(--bg-tertiary);
+    border: 1px solid var(--border-color);
+    border-radius: 16px;
+    padding: 20px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    transition: all 0.3s;
+}
+
+.alertCard:hover {
+    box-shadow: var(--shadow-md);
+    transform: translateY(-1px);
+}
+
+.alertWarning {
+    border-left: 4px solid #f59e0b;
+}
+
+.alertDanger {
+    border-left: 4px solid #ef4444;
+}
+
+.alertInfo {
+    border-left: 4px solid #3b82f6;
+}
+
+.alertIcon {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.alertWarning .alertIcon {
+    background: rgba(245, 158, 11, 0.15);
+}
+
+.alertDanger .alertIcon {
+    background: rgba(239, 68, 68, 0.15);
+}
+
+.alertInfo .alertIcon {
+    background: rgba(59, 130, 246, 0.15);
+}
+
+.alertIconSvg {
+    width: 24px;
+    height: 24px;
+}
+
+.alertWarning .alertIconSvg {
+    color: #f59e0b;
+}
+
+.alertDanger .alertIconSvg {
+    color: #ef4444;
+}
+
+.alertInfo .alertIconSvg {
+    color: #3b82f6;
+}
+
+.alertContent {
+    flex: 1;
+}
+
+.alertTitle {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 4px;
+}
+
+.alertDescription {
+    font-size: 13px;
+    color: var(--text-secondary);
+}
+
+.alertAction {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--color-primary);
+    text-decoration: none;
+    transition: all 0.2s;
+}
+
+.alertAction:hover {
+    gap: 8px;
+}
+
+.alertActionIcon {
+    width: 16px;
+    height: 16px;
+}
+
+/* Actions Grid - Using CSS Variables */
+.actionsGrid {
+    margin-top: 8px;
+}
+
+.sectionTitle {
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin: 0 0 16px 0;
+}
+
+.actionsContainer {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 16px;
+}
+
+.actionCard {
+    background: var(--bg-tertiary);
+    border: 1px solid var(--border-color);
+    border-radius: 16px;
+    padding: 20px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    text-decoration: none;
+    color: inherit;
+    transition: all 0.3s;
+    position: relative;
+}
+
+.actionCard:hover {
+    box-shadow: var(--shadow-md);
+    transform: translateY(-2px);
+}
+
+.actionIcon {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.actionIconOrange {
+    background: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
+}
+
+.actionIconBlue {
+    background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+}
+
+.actionIconPurple {
+    background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+}
+
+.actionIconGreen {
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+}
+
+.actionIconSvg {
+    width: 24px;
+    height: 24px;
+    color: white;
+}
+
+.actionText {
+    flex: 1;
+}
+
+.actionTitle {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 2px;
+}
+
+.actionDesc {
+    font-size: 13px;
+    color: var(--text-secondary);
+}
+
+.actionArrow {
+    width: 18px;
+    height: 18px;
+    color: var(--text-tertiary);
+    opacity: 0;
+    transition: all 0.3s;
+}
+
+.actionCard:hover .actionArrow {
+    opacity: 1;
+    transform: translate(4px, -4px);
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+    .heroRow {
+        grid-template-columns: 1fr;
+    }
+
+    .quickStats {
+        flex-direction: row;
+    }
+
+    .featureStats {
+        flex-wrap: wrap;
+    }
+}
+
+@media (max-width: 768px) {
+    .dashboard {
+        gap: 20px;
+    }
+
+    .heroRow,
+    .alertsRow {
+        grid-template-columns: 1fr;
+    }
+
+    .quickStats {
+        flex-direction: column;
+    }
+
+    .featureCard {
+        padding: 32px 24px;
+        min-height: 280px;
+    }
+
+    .featureTitle {
+        font-size: 24px;
+    }
+
+    .featureDescription {
+        font-size: 14px;
+        max-width: 100%;
+    }
+
+    .featureStats {
+        gap: 20px;
+    }
+
+    .featureStatValue {
+        font-size: 24px;
+    }
+
+    .statValue {
+        font-size: 32px;
+    }
+
+    .actionsContainer {
+        grid-template-columns: 1fr;
+    }
+}

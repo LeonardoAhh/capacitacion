@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState, useRef, useMemo, useCallback } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useRouter } from 'next/navigation';
 import Navbar from '@/components/Navbar/Navbar';
@@ -15,6 +15,7 @@ import { Button } from '@/components/ui/Button/Button';
 import { Dialog, DialogHeader, DialogTitle, DialogDescription, DialogFooter, DialogClose } from '@/components/ui/Dialog/Dialog';
 import { useToast } from '@/components/ui/Toast/Toast';
 import EmployeeForm from '@/components/employees/EmployeeForm/EmployeeForm';
+import EmployeeSearchBar from '@/components/EmployeeSearchBar/EmployeeSearchBar';
 
 // Utils
 import { assignAccessCodeToCandidate } from '@/lib/rhUtils';
@@ -99,6 +100,13 @@ export default function EmployeesPage() {
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [user]);
+
+    // Memoized stats calculations to prevent expensive recalculations
+    const employeeStats = useMemo(() => ({
+        total: employees.length,
+        withDepartment: employees.filter(e => e.department).length,
+        uniquePositions: new Set(employees.map(e => e.position).filter(Boolean)).size
+    }), [employees]);
 
     // Handle Search
     useEffect(() => {
@@ -612,36 +620,19 @@ export default function EmployeesPage() {
                     </svg>
                     Dashboard
                 </Link>
-                <div className={styles.headerTitleRow}>
-                    <h1 className={styles.pageTitle}>Empleados</h1>
-                    {canWrite() && (
-                        <button className={styles.addButton} onClick={handleNewEmployee}>
-                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                <path d="M12 5v14" />
-                                <path d="M5 12h14" />
-                            </svg>
-                        </button>
-                    )}
-                </div>
+                <h1 className={styles.pageTitle}>Empleados</h1>
             </div>
 
-            {/* Search Card */}
-            <div className={styles.searchCard}>
-                <div className={styles.searchInputWrapper}>
-                    <svg className={styles.searchIcon} width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                        <circle cx="11" cy="11" r="8" />
-                        <path d="M21 21l-4.35-4.35" />
-                    </svg>
-                    <input
-                        ref={searchInputRef}
-                        type="text"
-                        placeholder="Buscar por nombre o ID..."
-                        value={searchTerm}
-                        onChange={(e) => setSearchTerm(e.target.value)}
-                        className={styles.searchInput}
-                    />
-                </div>
-            </div>
+
+            {/* Modern Search Bar with Actions */}
+            <EmployeeSearchBar
+                searchTerm={searchTerm}
+                onSearchChange={setSearchTerm}
+                onUpload={() => bulkFileInputRef.current?.click()}
+                onDownload={handleDownloadTemplate}
+                onAddEmployee={handleNewEmployee}
+                canWrite={canWrite()}
+            />
 
             {/* Hidden File Input for Bulk Upload */}
             <input
@@ -652,55 +643,6 @@ export default function EmployeesPage() {
                 style={{ display: 'none' }}
             />
 
-            {/* Bulk Upload Actions */}
-            {canWrite && (
-                <div style={{ display: 'flex', gap: '16px', marginBottom: '16px', justifyContent: 'flex-end' }}>
-                    <button
-                        onClick={() => bulkFileInputRef.current?.click()}
-                        style={{
-                            padding: '8px 12px',
-                            background: 'transparent',
-                            color: '#007AFF',
-                            border: 'none',
-                            borderRadius: '8px',
-                            fontWeight: '500',
-                            cursor: 'pointer',
-                            display: 'flex',
-                            alignItems: 'center',
-                            gap: '6px',
-                            fontSize: '0.85rem'
-                        }}
-                    >
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                            <polyline points="17 8 12 3 7 8" />
-                            <line x1="12" y1="3" x2="12" y2="15" />
-                        </svg>
-                        Cargar
-                    </button>
-                    <button
-                        onClick={handleDownloadTemplate}
-                        style={{
-                            padding: '8px 12px',
-                            background: 'transparent',
-                            color: '#8e8e93',
-                            border: 'none',
-                            borderRadius: '8px',
-                            fontWeight: '500',
-                            cursor: 'pointer',
-                            display: 'flex',
-                            alignItems: 'center',
-                            gap: '6px',
-                            fontSize: '0.85rem'
-                        }}
-                    >
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                            <polyline points="7 10 12 15 17 10" />
-                            <line x1="12" y1="15" x2="12" y2="3" />
-                        </svg>
-                        Plantilla
-                    </button>
-                </div>
-            )}
 
             {/* Bulk Upload Progress Modal */}
             {bulkUploadProgress.show && (
@@ -787,15 +729,15 @@ export default function EmployeesPage() {
             {/* Stats Summary */}
             <div className={styles.statsRow}>
                 <div className={`${styles.statCard} ${styles.statBlue}`}>
-                    <span className={styles.statNumber}>{employees.length}</span>
+                    <span className={styles.statNumber}>{employeeStats.total}</span>
                     <span className={styles.statLabel}>Empleados</span>
                 </div>
                 <div className={`${styles.statCard} ${styles.statGreen}`}>
-                    <span className={styles.statNumber}>{employees.filter(e => e.department).length}</span>
+                    <span className={styles.statNumber}>{employeeStats.withDepartment}</span>
                     <span className={styles.statLabel}>Con Depto</span>
                 </div>
                 <div className={`${styles.statCard} ${styles.statPurple}`}>
-                    <span className={styles.statNumber}>{new Set(employees.map(e => e.position).filter(Boolean)).size}</span>
+                    <span className={styles.statNumber}>{employeeStats.uniquePositions}</span>
                     <span className={styles.statLabel}>Puestos</span>
                 </div>
             </div>

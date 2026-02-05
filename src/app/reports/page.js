@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo, useCallback } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useRouter } from 'next/navigation';
 import { collection, getDocs } from 'firebase/firestore';
@@ -63,7 +63,6 @@ const MONTHS = [
     'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'
 ];
 
-// Colores vibrantes para gráficos
 const CHART_COLORS = [
     '#3b82f6', // Blue
     '#22c55e', // Green  
@@ -76,6 +75,158 @@ const CHART_COLORS = [
     '#f97316', // Orange
     '#6366f1', // Indigo
 ];
+
+// Memoized Chart Components for Performance
+const MemoizedMonthlyBarChart = React.memo(({ data }) => (
+    <ResponsiveContainer width="100%" height="100%">
+        <BarChart data={data} margin={{ top: 10, right: 10, left: -10, bottom: 0 }}>
+            <CartesianGrid strokeDasharray="3 3" stroke="var(--border-color)" opacity={0.5} />
+            <XAxis
+                dataKey="monthName"
+                tick={{ fontSize: 11, fill: 'var(--text-secondary)' }}
+                tickFormatter={(value) => value.substring(0, 3)}
+                axisLine={{ stroke: 'var(--border-color)' }}
+            />
+            <YAxis
+                tick={{ fontSize: 11, fill: 'var(--text-secondary)' }}
+                axisLine={{ stroke: 'var(--border-color)' }}
+            />
+            <Tooltip
+                contentStyle={{
+                    backgroundColor: 'var(--bg-primary)',
+                    border: '1px solid var(--border-color)',
+                    borderRadius: '8px',
+                    boxShadow: 'var(--shadow-lg)'
+                }}
+                labelStyle={{ color: 'var(--text-primary)', fontWeight: 600 }}
+            />
+            <Bar dataKey="scheduled" name="Programados" fill="#3b82f6" radius={[4, 4, 0, 0]} />
+            <Bar dataKey="delivered" name="Entregados" fill="#22c55e" radius={[4, 4, 0, 0]} />
+        </BarChart>
+    </ResponsiveContainer>
+));
+
+const MemoizedStatusPieChart = React.memo(({ delivered, pending }) => (
+    <ResponsiveContainer width="100%" height="100%">
+        <PieChart>
+            <Pie
+                data={[
+                    { name: 'Entregados', value: delivered },
+                    { name: 'Pendientes', value: pending }
+                ]}
+                cx="50%"
+                cy="50%"
+                innerRadius={60}
+                outerRadius={90}
+                paddingAngle={5}
+                dataKey="value"
+                label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
+                labelLine={{ stroke: 'var(--text-secondary)' }}
+            >
+                <Cell fill="#22c55e" />
+                <Cell fill="#f59e0b" />
+            </Pie>
+            <Tooltip
+                contentStyle={{
+                    backgroundColor: 'var(--bg-primary)',
+                    border: '1px solid var(--border-color)',
+                    borderRadius: '8px',
+                    boxShadow: 'var(--shadow-lg)'
+                }}
+            />
+        </PieChart>
+    </ResponsiveContainer>
+));
+
+const MemoizedTrendAreaChart = React.memo(({ data }) => (
+    <ResponsiveContainer width="100%" height="100%">
+        <AreaChart data={data} margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
+            <defs>
+                <linearGradient id="colorPercentage" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor="#8b5cf6" stopOpacity={0.4} />
+                    <stop offset="95%" stopColor="#8b5cf6" stopOpacity={0} />
+                </linearGradient>
+            </defs>
+            <CartesianGrid strokeDasharray="3 3" stroke="var(--border-color)" opacity={0.5} />
+            <XAxis
+                dataKey="monthName"
+                tick={{ fontSize: 11, fill: 'var(--text-secondary)' }}
+                tickFormatter={(value) => value.substring(0, 3)}
+                axisLine={{ stroke: 'var(--border-color)' }}
+            />
+            <YAxis
+                tick={{ fontSize: 11, fill: 'var(--text-secondary)' }}
+                axisLine={{ stroke: 'var(--border-color)' }}
+                domain={[0, 100]}
+                tickFormatter={(value) => `${value}%`}
+            />
+            <Tooltip
+                contentStyle={{
+                    backgroundColor: 'var(--bg-primary)',
+                    border: '1px solid var(--border-color)',
+                    borderRadius: '8px',
+                    boxShadow: 'var(--shadow-lg)'
+                }}
+                formatter={(value) => [`${value}%`, 'Cumplimiento']}
+                labelStyle={{ color: 'var(--text-primary)', fontWeight: 600 }}
+            />
+            <Area
+                type="monotone"
+                dataKey="cumPercentage"
+                stroke="#8b5cf6"
+                strokeWidth={3}
+                fill="url(#colorPercentage)"
+            />
+        </AreaChart>
+    </ResponsiveContainer>
+));
+
+const MemoizedDepartmentBarChart = React.memo(({ data }) => (
+    <ResponsiveContainer width="100%" height="100%">
+        <BarChart
+            data={data}
+            layout="vertical"
+            margin={{ top: 5, right: 30, left: 80, bottom: 5 }}
+        >
+            <CartesianGrid strokeDasharray="3 3" stroke="var(--border-color)" opacity={0.5} />
+            <XAxis
+                type="number"
+                domain={[0, 100]}
+                tick={{ fontSize: 11, fill: 'var(--text-secondary)' }}
+                tickFormatter={(value) => `${value}%`}
+                axisLine={{ stroke: 'var(--border-color)' }}
+            />
+            <YAxis
+                type="category"
+                dataKey="name"
+                tick={{ fontSize: 11, fill: 'var(--text-secondary)' }}
+                axisLine={{ stroke: 'var(--border-color)' }}
+                width={75}
+            />
+            <Tooltip
+                contentStyle={{
+                    backgroundColor: 'var(--bg-primary)',
+                    border: '1px solid var(--border-color)',
+                    borderRadius: '8px',
+                    boxShadow: 'var(--shadow-lg)'
+                }}
+                formatter={(value, name, props) => [
+                    `${value}%`,
+                    `Cumplimiento (${props.payload.delivered}/${props.payload.scheduled})`
+                ]}
+                labelStyle={{ color: 'var(--text-primary)', fontWeight: 600 }}
+            />
+            <Bar dataKey="percentage" radius={[0, 4, 4, 0]}>
+                {data.map((entry, index) => (
+                    <Cell
+                        key={`cell-${index}`}
+                        fill={entry.percentage >= 80 ? '#22c55e' : entry.percentage >= 50 ? '#f59e0b' : '#ef4444'}
+                    />
+                ))}
+            </Bar>
+        </BarChart>
+    </ResponsiveContainer>
+));
 
 export default function ReportsPage() {
     const { user, loading: authLoading } = useAuth();
@@ -107,6 +258,18 @@ export default function ReportsPage() {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [user, selectedYear]);
 
+    // Memoized data transformations
+    const monthlyStatsWithPercentage = useMemo(() => {
+        return monthlyStats.map(m => ({
+            ...m,
+            cumPercentage: m.scheduled > 0 ? Math.round((m.delivered / m.scheduled) * 100) : 0
+        }));
+    }, [monthlyStats]);
+
+    const topDepartments = useMemo(() => {
+        return departmentStats.slice(0, 8);
+    }, [departmentStats]);
+
     const calculateTrainingPlanDate = (startDate, department, area) => {
         if (!startDate || !department || !area) return null;
 
@@ -128,7 +291,8 @@ export default function ReportsPage() {
         return deliveryDate;
     };
 
-    const loadReports = async () => {
+    const loadReports = useCallback(async () => {
+        setLoading(true);
         try {
             const employeesRef = collection(db, 'employees');
             const snapshot = await getDocs(employeesRef);
@@ -208,7 +372,7 @@ export default function ReportsPage() {
         } finally {
             setLoading(false);
         }
-    };
+    }, [selectedYear]);
 
     const formatDate = (dateString) => {
         if (!dateString) return '';
@@ -405,32 +569,7 @@ export default function ReportsPage() {
                                         </div>
                                     </div>
                                     <div className={styles.chartWrapper}>
-                                        <ResponsiveContainer width="100%" height="100%">
-                                            <BarChart data={monthlyStats} margin={{ top: 10, right: 10, left: -10, bottom: 0 }}>
-                                                <CartesianGrid strokeDasharray="3 3" stroke="var(--border-color)" opacity={0.5} />
-                                                <XAxis
-                                                    dataKey="monthName"
-                                                    tick={{ fontSize: 11, fill: 'var(--text-secondary)' }}
-                                                    tickFormatter={(value) => value.substring(0, 3)}
-                                                    axisLine={{ stroke: 'var(--border-color)' }}
-                                                />
-                                                <YAxis
-                                                    tick={{ fontSize: 11, fill: 'var(--text-secondary)' }}
-                                                    axisLine={{ stroke: 'var(--border-color)' }}
-                                                />
-                                                <Tooltip
-                                                    contentStyle={{
-                                                        backgroundColor: 'var(--bg-primary)',
-                                                        border: '1px solid var(--border-color)',
-                                                        borderRadius: '8px',
-                                                        boxShadow: 'var(--shadow-lg)'
-                                                    }}
-                                                    labelStyle={{ color: 'var(--text-primary)', fontWeight: 600 }}
-                                                />
-                                                <Bar dataKey="scheduled" name="Programados" fill="#3b82f6" radius={[4, 4, 0, 0]} />
-                                                <Bar dataKey="delivered" name="Entregados" fill="#22c55e" radius={[4, 4, 0, 0]} />
-                                            </BarChart>
-                                        </ResponsiveContainer>
+                                        <MemoizedMonthlyBarChart data={monthlyStats} />
                                     </div>
                                     <div className={styles.chartLegend}>
                                         <div className={styles.legendItem}>
@@ -453,35 +592,7 @@ export default function ReportsPage() {
                                         </div>
                                     </div>
                                     <div className={styles.chartWrapper}>
-                                        <ResponsiveContainer width="100%" height="100%">
-                                            <PieChart>
-                                                <Pie
-                                                    data={[
-                                                        { name: 'Entregados', value: totals.delivered },
-                                                        { name: 'Pendientes', value: totals.pending }
-                                                    ]}
-                                                    cx="50%"
-                                                    cy="50%"
-                                                    innerRadius={60}
-                                                    outerRadius={90}
-                                                    paddingAngle={5}
-                                                    dataKey="value"
-                                                    label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
-                                                    labelLine={{ stroke: 'var(--text-secondary)' }}
-                                                >
-                                                    <Cell fill="#22c55e" />
-                                                    <Cell fill="#f59e0b" />
-                                                </Pie>
-                                                <Tooltip
-                                                    contentStyle={{
-                                                        backgroundColor: 'var(--bg-primary)',
-                                                        border: '1px solid var(--border-color)',
-                                                        borderRadius: '8px',
-                                                        boxShadow: 'var(--shadow-lg)'
-                                                    }}
-                                                />
-                                            </PieChart>
-                                        </ResponsiveContainer>
+                                        <MemoizedStatusPieChart delivered={totals.delivered} pending={totals.pending} />
                                     </div>
                                     <div className={styles.chartLegend}>
                                         <div className={styles.legendItem}>
@@ -504,52 +615,7 @@ export default function ReportsPage() {
                                         </div>
                                     </div>
                                     <div className={styles.chartWrapper}>
-                                        <ResponsiveContainer width="100%" height="100%">
-                                            <AreaChart
-                                                data={monthlyStats.map(m => ({
-                                                    ...m,
-                                                    cumPercentage: m.scheduled > 0 ? Math.round((m.delivered / m.scheduled) * 100) : 0
-                                                }))}
-                                                margin={{ top: 10, right: 30, left: 0, bottom: 0 }}
-                                            >
-                                                <defs>
-                                                    <linearGradient id="colorPercentage" x1="0" y1="0" x2="0" y2="1">
-                                                        <stop offset="5%" stopColor="#8b5cf6" stopOpacity={0.4} />
-                                                        <stop offset="95%" stopColor="#8b5cf6" stopOpacity={0} />
-                                                    </linearGradient>
-                                                </defs>
-                                                <CartesianGrid strokeDasharray="3 3" stroke="var(--border-color)" opacity={0.5} />
-                                                <XAxis
-                                                    dataKey="monthName"
-                                                    tick={{ fontSize: 11, fill: 'var(--text-secondary)' }}
-                                                    tickFormatter={(value) => value.substring(0, 3)}
-                                                    axisLine={{ stroke: 'var(--border-color)' }}
-                                                />
-                                                <YAxis
-                                                    tick={{ fontSize: 11, fill: 'var(--text-secondary)' }}
-                                                    axisLine={{ stroke: 'var(--border-color)' }}
-                                                    domain={[0, 100]}
-                                                    tickFormatter={(value) => `${value}%`}
-                                                />
-                                                <Tooltip
-                                                    contentStyle={{
-                                                        backgroundColor: 'var(--bg-primary)',
-                                                        border: '1px solid var(--border-color)',
-                                                        borderRadius: '8px',
-                                                        boxShadow: 'var(--shadow-lg)'
-                                                    }}
-                                                    formatter={(value) => [`${value}%`, 'Cumplimiento']}
-                                                    labelStyle={{ color: 'var(--text-primary)', fontWeight: 600 }}
-                                                />
-                                                <Area
-                                                    type="monotone"
-                                                    dataKey="cumPercentage"
-                                                    stroke="#8b5cf6"
-                                                    strokeWidth={3}
-                                                    fill="url(#colorPercentage)"
-                                                />
-                                            </AreaChart>
-                                        </ResponsiveContainer>
+                                        <MemoizedTrendAreaChart data={monthlyStatsWithPercentage} />
                                     </div>
                                 </div>
 

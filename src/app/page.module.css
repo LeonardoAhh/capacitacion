@@ -600,6 +600,15 @@
     overflow: hidden;
 }
 
+/* Ensure all text in darkSection is white regardless of theme */
+.darkSection .sectionTitle {
+    color: white;
+}
+
+.darkSection p {
+    color: #94a3b8;
+}
+
 .darkBg {
     position: absolute;
     inset: 0;

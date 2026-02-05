@@ -1,0 +1,106 @@
+/* Drawer Overlay */
+.overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 9998;
+    backdrop-filter: blur(2px);
+}
+
+/* Drawer Container */
+.drawer {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    margin: 0 auto;
+    z-index: 9999;
+    width: 100%;
+    max-width: 600px;
+    background: var(--bg-primary);
+    border-radius: 24px 24px 0 0;
+    box-shadow: 0 -4px 24px rgba(0, 0, 0, 0.15);
+    max-height: 85vh;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Drawer Header */
+.drawerHeader {
+    padding: 24px 24px 16px 24px;
+    border-bottom: 1px solid var(--border-color);
+    flex-shrink: 0;
+}
+
+.drawerTitle {
+    font-size: 20px;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin: 0;
+}
+
+.drawerDescription {
+    font-size: 14px;
+    color: var(--text-secondary);
+    margin: 8px 0 0 0;
+    line-height: 1.5;
+}
+
+/* Drawer Body (scrollable) */
+.drawerBody {
+    flex: 1;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+/* Drawer Footer */
+.drawerFooter {
+    padding: 16px 24px 24px 24px;
+    border-top: 1px solid var(--border-color);
+    display: flex;
+    gap: 12px;
+    flex-direction: column;
+    flex-shrink: 0;
+}
+
+/* Close Button */
+.closeButton {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+    background: var(--bg-secondary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.closeButton:hover {
+    background: var(--bg-tertiary);
+    border-color: var(--text-tertiary);
+}
+
+.closeIcon {
+    width: 18px;
+    height: 18px;
+    color: var(--text-secondary);
+}
+
+/* Content Area */
+.drawerContent {
+    padding: 24px;
+}
+
+/* Responsive */
+@media (max-width: 640px) {
+    .drawer {
+        max-width: 100%;
+        border-radius: 16px 16px 0 0;
+    }
+}
