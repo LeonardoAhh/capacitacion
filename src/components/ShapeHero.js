@@ -164,7 +164,6 @@ export default function ShapeHero() {
                     >
                         <h1 className={styles.title}>
                             <span className={styles.mainTitle}>VIÑOPLASTIC</span>
-                            <br />
                             <span className={`${styles.subtitle} ${pacifico.className}`}>
                                 Planta Querétaro
                             </span>

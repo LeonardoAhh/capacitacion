@@ -77,7 +77,10 @@
     background-clip: text;
     color: transparent;
     display: block;
-    margin-top: 0.5rem;
+    margin-top: -1rem;
+    padding-bottom: 1rem;
+    /* Prevent descender clipping */
+    line-height: 1.2;
 }
 
 .buttonsContainer {
