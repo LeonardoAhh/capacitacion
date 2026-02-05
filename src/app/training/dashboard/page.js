@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import Navbar from '@/components/Navbar/Navbar';
+import ThemeToggle from '@/components/ThemeToggle/ThemeToggle';
 import CourseCard from '@/components/Training/CourseCard';
 import CourseViewer from '@/components/Training/CourseViewer';
 import { BookOpen, LogOut, Search, Filter } from 'lucide-react';
@@ -109,6 +110,7 @@ export default function TrainingDashboard() {
                     </div>
 
                     <div className={styles.userInfo}>
+                        <ThemeToggle />
                         <div className={styles.userDetails}>
                             <span className={styles.userName}>{user.name}</span>
                             <span className={styles.userRole}>{user.position}</span>
