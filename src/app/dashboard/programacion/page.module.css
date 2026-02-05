@@ -176,23 +176,45 @@
     border-radius: 8px;
 }
 
+/* Scrollbar styling for employeeList */
+.employeeList::-webkit-scrollbar {
+    width: 8px;
+}
+
+.employeeList::-webkit-scrollbar-track {
+    background: var(--bg-tertiary);
+    border-radius: 10px;
+}
+
+.employeeList::-webkit-scrollbar-thumb {
+    background: var(--border-color);
+    border-radius: 10px;
+}
+
+.employeeList::-webkit-scrollbar-thumb:hover {
+    background: var(--text-secondary);
+}
+
 .listHeader {
-    display: flex;
-    justify-content: space-between;
+    display: grid;
+    grid-template-columns: 40px 1.5fr 3fr 80px;
+    gap: 1rem;
     padding: 0.75rem 1rem;
     background: var(--bg-tertiary);
     font-weight: 600;
     font-size: 0.875rem;
     position: sticky;
     top: 0;
+    align-items: center;
 }
 
 .employeeItem {
-    display: flex;
+    display: grid;
+    grid-template-columns: 40px 1.5fr 3fr 80px;
+    gap: 1rem;
     align-items: center;
     padding: 0.75rem 1rem;
     border-bottom: 1px solid var(--border-color);
-    cursor: pointer;
     cursor: pointer;
     transition: background 0.2s;
 }
@@ -200,31 +222,30 @@
 .itemActions {
     display: flex;
     gap: 0.5rem;
-    margin-left: 1rem;
-    opacity: 0; 
-    transition: opacity 0.2s;
-}
-
-.employeeItem:hover .itemActions {
-    opacity: 1;
+    justify-content: flex-end;
+    align-items: center;
 }
 
 .actionBtn {
-    padding: 0.4rem;
-    border-radius: 6px;
-    border: none;
-    background: transparent;
-    color: var(--text-secondary);
+    padding: 0.5rem;
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+    background: var(--bg-tertiary);
+    color: var(--text-primary);
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
     transition: all 0.2s;
+    min-width: 32px;
+    min-height: 32px;
 }
 
 .actionBtn:hover {
-    background: var(--bg-primary);
-    color: #6366f1;
+    background: #6366f1;
+    color: white;
+    border-color: #6366f1;
+    transform: translateY(-1px);
 }
 
 .employeeItem:hover {
@@ -237,12 +258,21 @@
 
 .checkbox {
     width: 20px;
-    margin-right: 1rem;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     color: #6366f1;
 }
 
 .empName {
     font-weight: 500;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+    -webkit-box-orient: vertical;
 }
 
 .empId {
@@ -251,9 +281,14 @@
 }
 
 .empRole {
-    margin-left: auto;
     font-size: 0.875rem;
     color: var(--text-secondary);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+    -webkit-box-orient: vertical;
 }
 
 .selectionCount {
@@ -268,6 +303,25 @@
     gap: 1rem;
     overflow-y: auto;
     flex: 1;
+}
+
+/* Scrollbar styling for courseList */
+.courseList::-webkit-scrollbar {
+    width: 8px;
+}
+
+.courseList::-webkit-scrollbar-track {
+    background: var(--bg-tertiary);
+    border-radius: 10px;
+}
+
+.courseList::-webkit-scrollbar-thumb {
+    background: var(--border-color);
+    border-radius: 10px;
+}
+
+.courseList::-webkit-scrollbar-thumb:hover {
+    background: var(--text-secondary);
 }
 
 .courseItem {
@@ -319,7 +373,7 @@
 .assignBtn {
     width: 100%;
     padding: 1rem;
-    background: #6366f1;
+    background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
     color: white;
     border: none;
     border-radius: 12px;
@@ -327,18 +381,22 @@
     font-size: 1.1rem;
     cursor: pointer;
     transition: all 0.2s;
+    box-shadow: 0 2px 8px rgba(99, 102, 241, 0.2);
 }
 
 .assignBtn:disabled {
-    opacity: 0.5;
+    opacity: 1;
     cursor: not-allowed;
-    background: var(--text-secondary);
+    background: var(--bg-tertiary);
+    color: var(--text-secondary);
+    box-shadow: none;
+    border: 1px solid var(--border-color);
 }
 
 .assignBtn:not(:disabled):hover {
-    background: #4f46e5;
+    background: linear-gradient(135deg, #4f46e5 0%, #4338ca 100%);
     transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+    box-shadow: 0 6px 16px rgba(99, 102, 241, 0.4);
 }
 
 .statsCard {

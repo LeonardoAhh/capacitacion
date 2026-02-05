@@ -35,10 +35,43 @@ export default function RegistroEmpleadosPage() {
         setFormData(prev => ({ ...prev, accessCode: code }));
     };
 
+    const validateForm = () => {
+        if (!formData.name.trim()) {
+            return 'El nombre es requerido';
+        }
+        if (!formData.employeeId.trim()) {
+            return 'El ID de empleado es requerido';
+        }
+        if (formData.employeeId.length < 3) {
+            return 'El ID debe tener al menos 3 caracteres';
+        }
+        if (!formData.position.trim()) {
+            return 'El puesto es requerido';
+        }
+        if (!formData.area.trim()) {
+            return 'El área es requerida';
+        }
+        if (!formData.accessCode) {
+            return 'El código de acceso es requerido';
+        }
+        if (formData.accessCode.length < 6) {
+            return 'El código debe tener al menos 6 caracteres';
+        }
+        return null;
+    };
+
     const handleSubmit = async (e) => {
         e.preventDefault();
         setLoading(true);
         setStatus({ type: '', message: '' });
+
+        // Client-side validation
+        const validationError = validateForm();
+        if (validationError) {
+            setStatus({ type: 'error', message: validationError });
+            setLoading(false);
+            return;
+        }
 
         try {
             // 1. Validar duplicados
@@ -73,8 +106,13 @@ export default function RegistroEmpleadosPage() {
             });
 
         } catch (error) {
-            console.error(error);
-            setStatus({ type: 'error', message: 'Error al registrar empleado.' });
+            console.error('Error en registro:', error);
+            const errorMessage = error.code === 'permission-denied'
+                ? 'Error de permisos: No tienes autorización para registrar empleados.'
+                : error.code === 'unavailable'
+                    ? 'Error de conexión: No se puede conectar a la base de datos.'
+                    : 'Error al registrar empleado. Por favor, intenta de nuevo.';
+            setStatus({ type: 'error', message: errorMessage });
         } finally {
             setLoading(false);
         }

@@ -1,6 +1,7 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
+import { useRouter } from 'next/navigation';
 import { db } from '@/lib/firebase';
 import { collection, getDocs, addDoc, query, where, Timestamp } from 'firebase/firestore';
 import Navbar from '@/components/Navbar/Navbar';
@@ -13,6 +14,7 @@ import MonitoringTable from '@/components/Training/MonitoringTable';
 import styles from './page.module.css';
 
 export default function ProgramacionPage() {
+    const router = useRouter();
     const [employees, setEmployees] = useState([]);
     const [courses, setCourses] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -143,31 +145,33 @@ export default function ProgramacionPage() {
         setTimeout(() => setToast(null), 3000);
     };
 
-    // Filters
-    const filteredEmployees = employees.filter(emp => {
-        const matchesSearch = emp.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            emp.employeeId?.toLowerCase().includes(searchTerm.toLowerCase());
-        const matchesArea = selectedArea === 'all' || emp.area === selectedArea;
-        return matchesSearch && matchesArea;
-    });
+    // Filters - Memoized to avoid unnecessary recalculations
+    const filteredEmployees = useMemo(() =>
+        employees.filter(emp => {
+            const matchesSearch = emp.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                emp.employeeId?.toLowerCase().includes(searchTerm.toLowerCase());
+            const matchesArea = selectedArea === 'all' || emp.area === selectedArea;
+            return matchesSearch && matchesArea;
+        }),
+        [employees, searchTerm, selectedArea]
+    );
 
-    // Unique Areas for filter
-    const areas = ['all', ...new Set(employees.map(e => e.area).filter(Boolean))];
+    // Unique Areas for filter - Memoized to avoid recalculation
+    const areas = useMemo(() =>
+        ['all', ...new Set(employees.map(e => e.area).filter(Boolean))],
+        [employees]
+    );
 
     return (
         <div className={styles.container}>
             <Navbar />
 
             <main className={styles.main}>
-                {/* Stats & Actions */}
-                <div className={styles.statsGrid}>
-                    <div className={styles.statCard}>
-                        <h3>Total Asignados Hoy</h3>
-                        <div className={styles.statValue}>{todayCount}</div>
-                        <p className={styles.statLabel}>Empleados programados</p>
-                    </div>
-                    {/* Más stats si es necesario */}
-                </div>
+                {/* Back button */}
+                <Link href="/dashboard" className={styles.backLink}>
+                    <ChevronLeft size={20} />
+                    <span>Volver al Dashboard</span>
+                </Link>
 
                 <div className={styles.controls}>
                     <EmployeeSearchBar
@@ -228,8 +232,10 @@ export default function ProgramacionPage() {
 
                                 <div className={styles.employeeList}>
                                     <div className={styles.listHeader}>
+                                        <span></span> {/* Checkbox column */}
                                         <span>Empleado</span>
                                         <span>Puesto</span>
+                                        <span>Acciones</span>
                                     </div>
                                     {loading ? (
                                         <div className={styles.loading}>Cargando...</div>
