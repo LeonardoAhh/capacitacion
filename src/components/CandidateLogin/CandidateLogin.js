@@ -4,6 +4,7 @@ import { useEffect } from "react";
 import { motion } from "framer-motion";
 import { User, IdCard, Key, UserPlus } from "lucide-react";
 import styles from './CandidateLogin.module.css';
+import AILoadingState from '../ui/AILoadingState/AILoadingState';
 
 function ElegantShape({ className, delay = 0, width = 400, height = 100, rotate = 0, color, borderRadius = 16 }) {
     return (
@@ -47,7 +48,9 @@ export default function CandidateLogin({
     loading,
     isBlocked,
     blockTimeRemaining,
+    blockTimeRemaining,
     onSubmit,
+    isSuccess
 }) {
     const fadeUpVariants = {
         hidden: { opacity: 0, y: 30 },
@@ -79,137 +82,157 @@ export default function CandidateLogin({
                     visible: { transition: { staggerChildren: 0.1, delayChildren: 0.3 } },
                 }}
             >
-                <motion.div variants={fadeUpVariants} custom={0} className={styles.header}>
-                    <div className={styles.iconWrapper}>
-                        <UserPlus className={styles.icon} />
-                    </div>
-                    <h1 className={styles.title}>Portal de Candidatos</h1>
-                    <p className={styles.subtitle}>Bienvenido a tu proceso de inducción</p>
-                </motion.div>
-
-                {error && (
+                {isSuccess ? (
                     <motion.div
-                        initial={{ opacity: 0, y: -10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        className={styles.errorMessage}
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        transition={{ duration: 0.5 }}
+                        style={{
+                            padding: '40px 20px',
+                            minHeight: '400px',
+                            display: 'flex',
+                            flexDirection: 'column',
+                            alignItems: 'center',
+                            justifyContent: 'center'
+                        }}
                     >
-                        {error}
+                        <AILoadingState />
                     </motion.div>
-                )}
+                ) : (
+                    <>
+                        <motion.div variants={fadeUpVariants} custom={0} className={styles.header}>
+                            <div className={styles.iconWrapper}>
+                                <UserPlus className={styles.icon} />
+                            </div>
+                            <h1 className={styles.title}>Portal de Candidatos</h1>
+                            <p className={styles.subtitle}>Bienvenido a tu proceso de inducción</p>
+                        </motion.div>
 
-                {isBlocked && (
-                    <motion.div
-                        initial={{ opacity: 0, y: -10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        className={styles.blockedMessage}
-                    >
-                        Demasiados intentos fallidos. Espera {Math.ceil(blockTimeRemaining / 60)} minutos.
-                    </motion.div>
-                )}
-
-                <form onSubmit={onSubmit} className={styles.form}>
-                    <motion.div variants={fadeUpVariants} custom={1} className={styles.inputGroup}>
-                        <label className={styles.label}>ID de Empleado</label>
-                        <div className={styles.inputWrapper}>
-                            <User className={styles.inputIcon} />
-                            <input
-                                type="text"
-                                value={employeeId}
-                                onChange={(e) => setEmployeeId(e.target.value.toUpperCase())}
-                                className={styles.input}
-                                required
-                                disabled={loading || isBlocked}
-                            />
-                        </div>
-                    </motion.div>
-
-                    <motion.div variants={fadeUpVariants} custom={2} className={styles.inputGroup}>
-                        <label className={styles.label}>CURP</label>
-                        <div className={styles.inputWrapper}>
-                            <IdCard className={styles.inputIcon} />
-                            <input
-                                type="text"
-                                value={curp}
-                                onChange={(e) => setCurp(e.target.value.toUpperCase())}
-                                className={styles.input}
-                                maxLength={18}
-                                required
-                                disabled={loading || isBlocked}
-                            />
-                        </div>
-                    </motion.div>
-
-                    <motion.div variants={fadeUpVariants} custom={3} className={styles.inputGroup}>
-                        <label className={styles.label}>Código de Acceso</label>
-                        <div className={styles.inputWrapper}>
-                            <Key className={styles.inputIcon} />
-                            <input
-                                type="text"
-                                value={accessCode}
-                                onChange={(e) => setAccessCode(e.target.value)}
-                                className={styles.input}
-                                placeholder="Proporcionado por RRHH"
-                                maxLength={6}
-                                required
-                                disabled={loading || isBlocked}
-                            />
-                        </div>
-                        <p className={styles.helperText}>
-                            Código proporcionado por Recursos Humanos
-                        </p>
-                    </motion.div>
-
-                    <motion.button
-                        variants={fadeUpVariants}
-                        custom={4}
-                        type="submit"
-                        className={styles.submitButton}
-                        disabled={loading || isBlocked}
-                        whileHover={{ scale: 1.02 }}
-                        whileTap={{ scale: 0.98 }}
-                    >
-                        {loading ? (
-                            <span className={styles.spinner}></span>
-                        ) : (
-                            'Acceder'
-                        )}
-                    </motion.button>
-                </form>
-
-                <motion.div variants={fadeUpVariants} custom={5} className={styles.footer}>
-                    <p className={styles.footerText}>
-                        ¿Problemas para acceder?<br />
-                        <a
-                            href="https://wa.me/524211265940"
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            style={{
-                                color: '#25D366',
-                                textDecoration: 'none',
-                                fontWeight: '600',
-                                marginTop: '8px',
-                                display: 'inline-flex',
-                                alignItems: 'center',
-                                gap: '6px'
-                            }}
-                        >
-                            <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                width="18"
-                                height="18"
-                                viewBox="0 0 24 24"
-                                fill="none"
-                                stroke="currentColor"
-                                strokeWidth="2"
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
+                        {error && (
+                            <motion.div
+                                initial={{ opacity: 0, y: -10 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                className={styles.errorMessage}
                             >
-                                <path d="M3 21l1.65-3.8a9 9 0 1 1 3.4 2.9L3 21" />
-                            </svg>
-                            WhatsApp
-                        </a>
-                    </p>
-                </motion.div>
+                                {error}
+                            </motion.div>
+                        )}
+
+                        {isBlocked && (
+                            <motion.div
+                                initial={{ opacity: 0, y: -10 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                className={styles.blockedMessage}
+                            >
+                                Demasiados intentos fallidos. Espera {Math.ceil(blockTimeRemaining / 60)} minutos.
+                            </motion.div>
+                        )}
+
+                        <form onSubmit={onSubmit} className={styles.form}>
+                            <motion.div variants={fadeUpVariants} custom={1} className={styles.inputGroup}>
+                                <label className={styles.label}>ID de Empleado</label>
+                                <div className={styles.inputWrapper}>
+                                    <User className={styles.inputIcon} />
+                                    <input
+                                        type="text"
+                                        value={employeeId}
+                                        onChange={(e) => setEmployeeId(e.target.value.toUpperCase())}
+                                        className={styles.input}
+                                        required
+                                        disabled={loading || isBlocked}
+                                    />
+                                </div>
+                            </motion.div>
+
+                            <motion.div variants={fadeUpVariants} custom={2} className={styles.inputGroup}>
+                                <label className={styles.label}>CURP</label>
+                                <div className={styles.inputWrapper}>
+                                    <IdCard className={styles.inputIcon} />
+                                    <input
+                                        type="text"
+                                        value={curp}
+                                        onChange={(e) => setCurp(e.target.value.toUpperCase())}
+                                        className={styles.input}
+                                        maxLength={18}
+                                        required
+                                        disabled={loading || isBlocked}
+                                    />
+                                </div>
+                            </motion.div>
+
+                            <motion.div variants={fadeUpVariants} custom={3} className={styles.inputGroup}>
+                                <label className={styles.label}>Código de Acceso</label>
+                                <div className={styles.inputWrapper}>
+                                    <Key className={styles.inputIcon} />
+                                    <input
+                                        type="text"
+                                        value={accessCode}
+                                        onChange={(e) => setAccessCode(e.target.value)}
+                                        className={styles.input}
+                                        placeholder="Proporcionado por RRHH"
+                                        maxLength={6}
+                                        required
+                                        disabled={loading || isBlocked}
+                                    />
+                                </div>
+                                <p className={styles.helperText}>
+                                    Código proporcionado por Recursos Humanos
+                                </p>
+                            </motion.div>
+
+                            <motion.button
+                                variants={fadeUpVariants}
+                                custom={4}
+                                type="submit"
+                                className={styles.submitButton}
+                                disabled={loading || isBlocked}
+                                whileHover={{ scale: 1.02 }}
+                                whileTap={{ scale: 0.98 }}
+                            >
+                                {loading ? (
+                                    <span className={styles.spinner}></span>
+                                ) : (
+                                    'Acceder'
+                                )}
+                            </motion.button>
+                        </form>
+
+                        <motion.div variants={fadeUpVariants} custom={5} className={styles.footer}>
+                            <p className={styles.footerText}>
+                                ¿Problemas para acceder?<br />
+                                <a
+                                    href="https://wa.me/524211265940"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    style={{
+                                        color: '#25D366',
+                                        textDecoration: 'none',
+                                        fontWeight: '600',
+                                        marginTop: '8px',
+                                        display: 'inline-flex',
+                                        alignItems: 'center',
+                                        gap: '6px'
+                                    }}
+                                >
+                                    <svg
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        width="18"
+                                        height="18"
+                                        viewBox="0 0 24 24"
+                                        fill="none"
+                                        stroke="currentColor"
+                                        strokeWidth="2"
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                    >
+                                        <path d="M3 21l1.65-3.8a9 9 0 1 1 3.4 2.9L3 21" />
+                                    </svg>
+                                    WhatsApp
+                                </a>
+                            </p>
+                        </motion.div>
+                    </>
+                )}
             </motion.div>
 
             <div className={styles.overlay} />

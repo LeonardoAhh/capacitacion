@@ -13,6 +13,7 @@ export default function LoginPage() {
     const [mfaSecret, setMfaSecret] = useState(null);
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
+    const [isSuccess, setIsSuccess] = useState(false);
 
     const { signIn, verifyOtp } = useAuth();
     const router = useRouter();
@@ -26,7 +27,11 @@ export default function LoginPage() {
 
         if (result.success) {
             sessionStorage.setItem('showWelcome', 'true');
-            router.push('/modulos');
+            setLoading(false);
+            setIsSuccess(true);
+            setTimeout(() => {
+                router.push('/modulos');
+            }, 15000);
         } else if (result.mfaRequired) {
             setMfaRequired(true);
             setMfaSecret(result.secret);
@@ -45,7 +50,11 @@ export default function LoginPage() {
         const result = await verifyOtp(verificationCode, mfaSecret);
         if (result.success) {
             sessionStorage.setItem('showWelcome', 'true');
-            router.push('/modulos');
+            setLoading(false);
+            setIsSuccess(true);
+            setTimeout(() => {
+                router.push('/modulos');
+            }, 4500);
         } else {
             setError(result.error || 'Código incorrecto. Intenta de nuevo.');
             setLoading(false);
@@ -65,6 +74,7 @@ export default function LoginPage() {
             loading={loading}
             onSubmit={handleEmployeeSubmit}
             onMfaSubmit={handleMfaSubmit}
+            isSuccess={isSuccess}
         />
     );
 }

@@ -10,6 +10,7 @@ import CandidateLogin from '@/components/CandidateLogin/CandidateLogin';
 export default function CandidatosLoginPage() {
     const router = useRouter();
     const [loading, setLoading] = useState(false);
+    const [isSuccess, setIsSuccess] = useState(false);
     const [error, setError] = useState('');
 
     // Form fields
@@ -169,13 +170,18 @@ export default function CandidatosLoginPage() {
             setLoginAttempts(0);
             localStorage.removeItem('candidate_login_blocked');
 
-            // Redirigir al dashboard
-            router.push('/candidatos/dashboard');
+            // Trigger success animation
+            setIsSuccess(true);
+            setLoading(false);
+
+            // Redirigir al dashboard después de ejecutar la animación
+            setTimeout(() => {
+                router.push('/candidatos/dashboard');
+            }, 15000);
 
         } catch (err) {
             console.error('Error en login de candidato:', err);
             setError('Error al iniciar sesión. Intenta nuevamente.');
-        } finally {
             setLoading(false);
         }
     };
@@ -193,6 +199,7 @@ export default function CandidatosLoginPage() {
             isBlocked={isBlocked}
             blockTimeRemaining={blockTimeRemaining}
             onSubmit={handleSubmit}
+            isSuccess={isSuccess}
         />
     );
 }

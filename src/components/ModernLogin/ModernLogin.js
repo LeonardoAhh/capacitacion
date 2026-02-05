@@ -4,6 +4,7 @@ import { useEffect, useRef } from "react";
 import { motion } from "framer-motion";
 import { Mail, Lock, Key, Shield } from "lucide-react";
 import styles from './ModernLogin.module.css';
+import AILoadingState from '../ui/AILoadingState/AILoadingState';
 
 function ElegantShape({ className, delay = 0, width = 400, height = 100, rotate = 0, color, borderRadius = 16 }) {
     return (
@@ -48,6 +49,7 @@ export default function ModernLogin({
     loading,
     onSubmit,
     onMfaSubmit,
+    isSuccess
 }) {
     const formRef = useRef(null);
     const mfaFormRef = useRef(null);
@@ -90,115 +92,141 @@ export default function ModernLogin({
                 className={styles.loginCard}
                 initial="hidden"
                 animate="visible"
-                variants={{
-                    visible: { transition: { staggerChildren: 0.1, delayChildren: 0.3 } },
-                }}
             >
-                <motion.div variants={fadeUpVariants} custom={0} className={styles.header}>
-                    <div className={styles.iconWrapper}>
-                        <Shield className={styles.icon} />
-                    </div>
-                    <h1 className={styles.title}>Bienvenido</h1>
-                    <p className={styles.subtitle}>Acceso empleados</p>
-                </motion.div>
-
-                {error && (
+                {isSuccess ? (
                     <motion.div
-                        initial={{ opacity: 0, y: -10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        className={styles.errorMessage}
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        transition={{ duration: 0.5 }}
+                        style={{
+                            padding: '40px 20px',
+                            minHeight: '400px',
+                            display: 'flex',
+                            flexDirection: 'column',
+                            alignItems: 'center',
+                            justifyContent: 'center'
+                        }}
                     >
-                        {error}
+                        <AILoadingState />
+                        <motion.p
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            transition={{ delay: 1 }}
+                            className={styles.subtitle}
+                            style={{ position: 'absolute', bottom: '40px', fontSize: '0.9rem' }}
+                        >
+                            Verificando credenciales de administrador...
+                        </motion.p>
                     </motion.div>
-                )}
-
-                {!mfaRequired ? (
-                    <form onSubmit={onSubmit} className={styles.form}>
-                        <motion.div variants={fadeUpVariants} custom={1} className={styles.inputGroup}>
-                            <label className={styles.label}>Correo Electrónico</label>
-                            <div className={styles.inputWrapper}>
-                                <Mail className={styles.inputIcon} />
-                                <input
-                                    type="email"
-                                    value={email}
-                                    onChange={(e) => setEmail(e.target.value)}
-                                    className={styles.input}
-                                    required
-                                    disabled={loading}
-                                />
-                            </div>
-                        </motion.div>
-
-                        <motion.div variants={fadeUpVariants} custom={2} className={styles.inputGroup}>
-                            <label className={styles.label}>Contraseña</label>
-                            <div className={styles.inputWrapper}>
-                                <Lock className={styles.inputIcon} />
-                                <input
-                                    type="password"
-                                    value={password}
-                                    onChange={(e) => setPassword(e.target.value)}
-                                    className={styles.input}
-                                    required
-                                    disabled={loading}
-                                />
-                            </div>
-                        </motion.div>
-
-                        <motion.button
-                            variants={fadeUpVariants}
-                            custom={3}
-                            type="submit"
-                            className={styles.submitButton}
-                            disabled={loading}
-                            whileHover={{ scale: 1.02 }}
-                            whileTap={{ scale: 0.98 }}
-                        >
-                            {loading ? (
-                                <span className={styles.spinner}></span>
-                            ) : (
-                                'Iniciar Sesión'
-                            )}
-                        </motion.button>
-                    </form>
                 ) : (
-                    <form ref={mfaFormRef} onSubmit={onMfaSubmit} className={styles.form}>
-                        <motion.div variants={fadeUpVariants} custom={1} className={styles.inputGroup}>
-                            <label className={styles.label}>Código de Verificación</label>
-                            <div className={styles.inputWrapper}>
-                                <Key className={styles.inputIcon} />
-                                <input
-                                    type="text"
-                                    value={verificationCode}
-                                    onChange={(e) => setVerificationCode(e.target.value)}
-                                    className={styles.input}
-                                    placeholder="000000"
-                                    maxLength={6}
-                                    required
-                                    disabled={loading}
-                                    autoFocus
-                                />
+                    <>
+                        <motion.div variants={fadeUpVariants} custom={0} className={styles.header}>
+                            <div className={styles.iconWrapper}>
+                                <Shield className={styles.icon} />
                             </div>
-                            <p className={styles.helperText}>
-                                Ingresa el código de 6 dígitos de tu aplicación de autenticación
-                            </p>
+                            <h1 className={styles.title}>Bienvenido</h1>
+                            <p className={styles.subtitle}>Acceso empleados</p>
                         </motion.div>
 
-                        <motion.button
-                            variants={fadeUpVariants}
-                            custom={2}
-                            type="submit"
-                            className={styles.submitButton}
-                            disabled={loading}
-                            whileHover={{ scale: 1.02 }}
-                            whileTap={{ scale: 0.98 }}
-                        >
-                            {loading ? (
-                                <span className={styles.spinner}></span>
-                            ) : (
-                                'Verificar Código'
-                            )}
-                        </motion.button>
-                    </form>
+                        {error && (
+                            <motion.div
+                                initial={{ opacity: 0, y: -10 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                className={styles.errorMessage}
+                            >
+                                {error}
+                            </motion.div>
+                        )}
+
+                        {!mfaRequired ? (
+                            <form onSubmit={onSubmit} className={styles.form}>
+                                <motion.div variants={fadeUpVariants} custom={1} className={styles.inputGroup}>
+                                    <label className={styles.label}>Correo Electrónico</label>
+                                    <div className={styles.inputWrapper}>
+                                        <Mail className={styles.inputIcon} />
+                                        <input
+                                            type="email"
+                                            value={email}
+                                            onChange={(e) => setEmail(e.target.value)}
+                                            className={styles.input}
+                                            required
+                                            disabled={loading}
+                                        />
+                                    </div>
+                                </motion.div>
+
+                                <motion.div variants={fadeUpVariants} custom={2} className={styles.inputGroup}>
+                                    <label className={styles.label}>Contraseña</label>
+                                    <div className={styles.inputWrapper}>
+                                        <Lock className={styles.inputIcon} />
+                                        <input
+                                            type="password"
+                                            value={password}
+                                            onChange={(e) => setPassword(e.target.value)}
+                                            className={styles.input}
+                                            required
+                                            disabled={loading}
+                                        />
+                                    </div>
+                                </motion.div>
+
+                                <motion.button
+                                    variants={fadeUpVariants}
+                                    custom={3}
+                                    type="submit"
+                                    className={styles.submitButton}
+                                    disabled={loading}
+                                    whileHover={{ scale: 1.02 }}
+                                    whileTap={{ scale: 0.98 }}
+                                >
+                                    {loading ? (
+                                        <span className={styles.spinner}></span>
+                                    ) : (
+                                        'Iniciar Sesión'
+                                    )}
+                                </motion.button>
+                            </form>
+                        ) : (
+                            <form ref={mfaFormRef} onSubmit={onMfaSubmit} className={styles.form}>
+                                <motion.div variants={fadeUpVariants} custom={1} className={styles.inputGroup}>
+                                    <label className={styles.label}>Código de Verificación</label>
+                                    <div className={styles.inputWrapper}>
+                                        <Key className={styles.inputIcon} />
+                                        <input
+                                            type="text"
+                                            value={verificationCode}
+                                            onChange={(e) => setVerificationCode(e.target.value)}
+                                            className={styles.input}
+                                            placeholder="000000"
+                                            maxLength={6}
+                                            required
+                                            disabled={loading}
+                                            autoFocus
+                                        />
+                                    </div>
+                                    <p className={styles.helperText}>
+                                        Ingresa el código de 6 dígitos de tu aplicación de autenticación
+                                    </p>
+                                </motion.div>
+
+                                <motion.button
+                                    variants={fadeUpVariants}
+                                    custom={2}
+                                    type="submit"
+                                    className={styles.submitButton}
+                                    disabled={loading}
+                                    whileHover={{ scale: 1.02 }}
+                                    whileTap={{ scale: 0.98 }}
+                                >
+                                    {loading ? (
+                                        <span className={styles.spinner}></span>
+                                    ) : (
+                                        'Verificar Código'
+                                    )}
+                                </motion.button>
+                            </form>
+                        )}
+                    </>
                 )}
             </motion.div>
 
