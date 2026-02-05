@@ -105,6 +105,7 @@ const MemoizedMonthlyBarChart = React.memo(({ data }) => (
         </BarChart>
     </ResponsiveContainer>
 ));
+MemoizedMonthlyBarChart.displayName = 'MemoizedMonthlyBarChart';
 
 const MemoizedStatusPieChart = React.memo(({ delivered, pending }) => (
     <ResponsiveContainer width="100%" height="100%">
@@ -137,6 +138,7 @@ const MemoizedStatusPieChart = React.memo(({ delivered, pending }) => (
         </PieChart>
     </ResponsiveContainer>
 ));
+MemoizedStatusPieChart.displayName = 'MemoizedStatusPieChart';
 
 const MemoizedTrendAreaChart = React.memo(({ data }) => (
     <ResponsiveContainer width="100%" height="100%">
@@ -180,6 +182,7 @@ const MemoizedTrendAreaChart = React.memo(({ data }) => (
         </AreaChart>
     </ResponsiveContainer>
 ));
+MemoizedTrendAreaChart.displayName = 'MemoizedTrendAreaChart';
 
 const MemoizedDepartmentBarChart = React.memo(({ data }) => (
     <ResponsiveContainer width="100%" height="100%">
@@ -227,6 +230,7 @@ const MemoizedDepartmentBarChart = React.memo(({ data }) => (
         </BarChart>
     </ResponsiveContainer>
 ));
+MemoizedDepartmentBarChart.displayName = 'MemoizedDepartmentBarChart';
 
 export default function ReportsPage() {
     const { user, loading: authLoading } = useAuth();
