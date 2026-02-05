@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { db } from '@/lib/firebase';
 import { collection, getDocs, addDoc, query, where, Timestamp } from 'firebase/firestore';
 import Navbar from '@/components/Navbar/Navbar';
-import { Search, Plus, Calendar, Users, BookOpen, Filter, CheckCircle } from 'lucide-react';
+import { Search, Plus, Calendar, Users, BookOpen, Filter, CheckCircle, ChevronLeft } from 'lucide-react';
 import Link from 'next/link';
 import styles from './page.module.css';
 
@@ -121,6 +121,10 @@ export default function ProgramacionPage() {
             <main className={styles.main}>
                 <div className={styles.pageHeader}>
                     <div>
+                        <Link href="/dashboard" className={styles.backLink}>
+                            <ChevronLeft size={18} />
+                            Volver al Panel
+                        </Link>
                         <h1 className={styles.title}>Programación de Capacitación</h1>
                         <p className={styles.subtitle}>Asigna cursos y gestiona el plan de formación.</p>
                     </div>

@@ -39,6 +39,24 @@
     align-items: center;
 }
 
+.backLink {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--text-secondary);
+    text-decoration: none;
+    font-size: 0.875rem;
+    margin-bottom: 0.75rem;
+    transition: all 0.2s ease;
+    opacity: 0.8;
+}
+
+.backLink:hover {
+    color: var(--text-primary);
+    opacity: 1;
+    transform: translateX(-3px);
+}
+
 .title {
     font-size: 2rem;
     font-weight: 700;
