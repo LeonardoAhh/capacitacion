@@ -7,10 +7,7 @@ import { doc, updateDoc, Timestamp } from 'firebase/firestore';
 export default function CourseViewer({ course, assignmentId, onClose, onUpdateStatus }) {
     const [loading, setLoading] = useState(false);
 
-    const handleDownload = async () => {
-        // En un caso real, aquí se abriría el link del PDF o se iniciaría la descarga.
-        // Simularemos la descarga y actualizaremos el estado a 'viewed' si estaba en 'pending'.
-
+    const handleViewMaterial = async () => {
         if (course.status === 'pending') {
             try {
                 const assignRef = doc(db, 'programacion', assignmentId);
@@ -24,9 +21,11 @@ export default function CourseViewer({ course, assignmentId, onClose, onUpdateSt
             }
         }
 
-        // Simular descarga
-        alert(`Descargando material para: ${course.title}`);
-        // window.open(course.materialUrl, '_blank'); 
+        if (course.contenidoUrl) {
+            window.open(course.contenidoUrl, '_blank');
+        } else {
+            alert('No hay URL de material configurada para este curso.');
+        }
     };
 
     const handleComplete = async () => {
@@ -114,21 +113,57 @@ export default function CourseViewer({ course, assignmentId, onClose, onUpdateSt
                                             <FileText size={20} />
                                         </div>
                                         <div>
-                                            <div style={{ fontWeight: 600, color: 'var(--text-primary)' }}>Material de Lectura (PDF)</div>
-                                            <div style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>Lectura obligatoria • 15 min</div>
+                                            <div style={{ fontWeight: 600, color: 'var(--text-primary)' }}>Presentación / Material</div>
+                                            <div style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>Material de estudio</div>
                                         </div>
                                     </div>
                                     <button
-                                        onClick={handleDownload}
+                                        onClick={handleViewMaterial}
+                                        disabled={!course.contenidoUrl}
                                         style={{
                                             padding: '0.5rem 1rem', borderRadius: '8px', border: '1px solid var(--border-color)',
-                                            background: 'var(--bg-primary)', color: 'var(--text-primary)', cursor: 'pointer',
-                                            display: 'flex', alignItems: 'center', gap: '0.5rem', fontWeight: 500
+                                            background: course.contenidoUrl ? 'var(--bg-primary)' : 'var(--bg-tertiary)',
+                                            color: course.contenidoUrl ? 'var(--text-primary)' : 'var(--text-disabled)',
+                                            cursor: course.contenidoUrl ? 'pointer' : 'not-allowed',
+                                            display: 'flex', alignItems: 'center', gap: '0.5rem', fontWeight: 500,
+                                            opacity: course.contenidoUrl ? 1 : 0.5
                                         }}
                                     >
-                                        <Download size={16} /> Descargar
+                                        <Download size={16} /> Ver Material
                                     </button>
                                 </div>
+
+                                {/* Exam Section */}
+                                {course.examenUrl && (
+                                    <div style={{
+                                        padding: '1rem', background: 'var(--bg-tertiary)', borderRadius: '12px',
+                                        display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1rem'
+                                    }}>
+                                        <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                                            <div style={{
+                                                width: '40px', height: '40px', borderRadius: '8px',
+                                                background: 'rgba(236, 72, 153, 0.1)', color: '#ec4899',
+                                                display: 'flex', alignItems: 'center', justifyContent: 'center'
+                                            }}>
+                                                <Play size={20} />
+                                            </div>
+                                            <div>
+                                                <div style={{ fontWeight: 600, color: 'var(--text-primary)' }}>Examen de Validación</div>
+                                                <div style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>Evaluación obligatoria</div>
+                                            </div>
+                                        </div>
+                                        <button
+                                            onClick={() => window.open(course.examenUrl, '_blank')}
+                                            style={{
+                                                padding: '0.5rem 1rem', borderRadius: '8px', border: '1px solid #ec4899',
+                                                background: 'rgba(236, 72, 153, 0.1)', color: '#ec4899', cursor: 'pointer',
+                                                display: 'flex', alignItems: 'center', gap: '0.5rem', fontWeight: 500
+                                            }}
+                                        >
+                                            <Play size={16} /> Iniciar Examen
+                                        </button>
+                                    </div>
+                                )}
                             </div>
 
                             <div style={{

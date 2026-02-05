@@ -219,9 +219,9 @@ export default function AILoadingState() {
 
                 <div style={{
                     position: 'relative',
-                    background: 'var(--bg-secondary)',
+                    background: '#0f172a', // Force dark terminal background
                     borderRadius: '8px',
-                    border: '1px solid var(--border-color)',
+                    border: '1px solid rgba(255,255,255,0.1)',
                     padding: '12px'
                 }}>
                     <div
@@ -248,7 +248,7 @@ export default function AILoadingState() {
                                     }}
                                 >
                                     <div style={{
-                                        color: 'var(--text-tertiary)',
+                                        color: '#64748b', // Fixed slate-500
                                         paddingRight: '12px',
                                         userSelect: 'none',
                                         width: '24px',
@@ -258,7 +258,7 @@ export default function AILoadingState() {
                                     </div>
 
                                     <div style={{
-                                        color: 'var(--text-primary)',
+                                        color: '#f8fafc', // Fixed slate-50
                                         flex: 1,
                                         whiteSpace: 'nowrap',
                                         overflow: 'hidden',
@@ -280,7 +280,7 @@ export default function AILoadingState() {
                             bottom: 0,
                             pointerEvents: 'none',
                             borderRadius: '8px',
-                            background: 'linear-gradient(to bottom, transparent 0%, transparent 60%, var(--bg-secondary) 100%)'
+                            background: 'linear-gradient(to bottom, transparent 0%, transparent 60%, #0f172a 100%)'
                         }}
                     />
                 </div>

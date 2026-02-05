@@ -8,7 +8,7 @@ import { Search, Plus, Calendar, Users, BookOpen, Filter, CheckCircle, ChevronLe
 import Link from 'next/link';
 import EditEmployeeModal from '@/components/Training/EditEmployeeModal';
 import EmployeeAssignmentsModal from '@/components/Training/EmployeeAssignmentsModal';
-import ActionSearchBar from '@/components/Shared/ActionSearchBar';
+import EmployeeSearchBar from '@/components/EmployeeSearchBar/EmployeeSearchBar';
 import MonitoringTable from '@/components/Training/MonitoringTable';
 import styles from './page.module.css';
 
@@ -159,19 +159,23 @@ export default function ProgramacionPage() {
             <Navbar />
 
             <main className={styles.main}>
-                <div className={styles.pageHeader}>
-                    <div>
-                        <Link href="/dashboard" className={styles.backLink}>
-                            <ChevronLeft size={18} />
-                            Volver al Panel
-                        </Link>
-                        <h1 className={styles.title}>Programación de Capacitación</h1>
-                        <p className={styles.subtitle}>Asigna cursos y gestiona el plan de formación.</p>
+                {/* Stats & Actions */}
+                <div className={styles.statsGrid}>
+                    <div className={styles.statCard}>
+                        <h3>Total Asignados Hoy</h3>
+                        <div className={styles.statValue}>{dailyAssignments}</div>
+                        <p className={styles.statLabel}>Empleados programados</p>
                     </div>
-                    <Link href="/dashboard/training/registro" className={styles.newEmployeeBtn}>
-                        <Plus size={20} />
-                        Nuevo Empleado
-                    </Link>
+                    {/* Más stats si es necesario */}
+                </div>
+
+                <div className={styles.controls}>
+                    <EmployeeSearchBar
+                        searchTerm={searchTerm}
+                        onSearchChange={setSearchTerm}
+                        onAddEmployee={() => router.push('/dashboard/training/registro')}
+                        canWrite={true}
+                    />
                 </div>
 
                 {/* Tabs de Navegación */}

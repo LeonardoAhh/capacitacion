@@ -25,7 +25,7 @@ export default function MonitoringTable() {
             // Here we fetch all for simplicity as requested.
             const empSnap = await getDocs(collection(db, 'employees_programacion'));
             const employeesMap = {};
-            empSnap.docs.forEach(d => { employeesMap[d.data().employeeId] = d.data(); });
+            empSnap.docs.forEach(d => { employeesMap[d.id] = d.data(); });
 
             const courseSnap = await getDocs(collection(db, 'cursos_induccion'));
             const coursesMap = {};

@@ -1,6 +1,6 @@
 .card {
-    background: rgba(255, 255, 255, 0.03);
-    border: 1px solid rgba(255, 255, 255, 0.05);
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
     border-radius: 16px;
     overflow: hidden;
     cursor: pointer;
@@ -9,26 +9,11 @@
     flex-direction: column;
 }
 
-@media (prefers-color-scheme: light) {
-    .card {
-        background: rgba(255, 255, 255, 0.8);
-        border: 1px solid rgba(0, 0, 0, 0.05);
-        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-    }
-}
-
 .card:hover {
-    background: rgba(255, 255, 255, 0.06);
+    transform: translateY(-5px);
+    box-shadow: var(--shadow-lg);
     border-color: rgba(236, 72, 153, 0.3);
-    box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
-}
-
-@media (prefers-color-scheme: light) {
-    .card:hover {
-        background: white;
-        border-color: rgba(236, 72, 153, 0.3);
-        box-shadow: 0 10px 30px -10px rgba(236, 72, 153, 0.15);
-    }
+    /* Keep pink accent on hover */
 }
 
 .imageContainer {
@@ -48,11 +33,14 @@
 .placeholderImage {
     width: 100%;
     height: 100%;
+    /* Subtle gradient using semantic colors or defaults */
     background: linear-gradient(135deg, rgba(236, 72, 153, 0.1), rgba(139, 92, 246, 0.1));
     display: flex;
     align-items: center;
     justify-content: center;
 }
+
+/* Make placeholder background adapt slightly if needed, but the transparent gradient usually works on both if the container bg is set. */
 
 .card:hover .image {
     transform: scale(1.05);
@@ -68,6 +56,7 @@
     position: absolute;
     inset: 0;
     background: rgba(0, 0, 0, 0.3);
+    /* Always dark overlay for play icon visibility */
     display: flex;
     align-items: center;
     justify-content: center;
@@ -83,6 +72,7 @@
     width: 48px;
     height: 48px;
     color: white;
+    /* Always white on dark overlay */
     filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.5));
 }
 
@@ -110,29 +100,27 @@
 }
 
 .status.pending {
-    background: rgba(234, 179, 8, 0.1);
-    color: #fbbf24;
+    background: rgba(234, 179, 8, 0.15);
+    color: #f59e0b;
+    /* Amber 500 */
     border: 1px solid rgba(234, 179, 8, 0.2);
 }
 
+[data-theme='dark'] .status.pending {
+    color: #fbbf24;
+    /* Amber 400 for better dark contrast */
+}
+
 .status.completed {
-    background: rgba(34, 197, 94, 0.1);
-    color: #4ade80;
+    background: rgba(34, 197, 94, 0.15);
+    color: #16a34a;
+    /* Green 600 */
     border: 1px solid rgba(34, 197, 94, 0.2);
 }
 
-@media (prefers-color-scheme: light) {
-    .status.pending {
-        background: #fef3c7;
-        color: #d97706;
-        border-color: #fcd34d;
-    }
-
-    .status.completed {
-        background: #dcfce7;
-        color: #16a34a;
-        border-color: #86efac;
-    }
+[data-theme='dark'] .status.completed {
+    color: #4ade80;
+    /* Green 400 */
 }
 
 .duration {
@@ -140,44 +128,26 @@
     align-items: center;
     gap: 0.25rem;
     font-size: 0.75rem;
-    color: rgba(255, 255, 255, 0.4);
-}
-
-@media (prefers-color-scheme: light) {
-    .duration {
-        color: rgba(0, 0, 0, 0.5);
-    }
+    color: var(--text-tertiary);
 }
 
 .title {
     font-size: 1.125rem;
     font-weight: 600;
-    color: #fff;
+    color: var(--text-primary);
     margin: 0 0 0.5rem 0;
     line-height: 1.4;
 }
 
-@media (prefers-color-scheme: light) {
-    .title {
-        color: #111827;
-    }
-}
-
 .description {
     font-size: 0.875rem;
-    color: rgba(255, 255, 255, 0.5);
+    color: var(--text-secondary);
     line-height: 1.5;
     margin: 0;
     display: -webkit-box;
     -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
     overflow: hidden;
-}
-
-@media (prefers-color-scheme: light) {
-    .description {
-        color: rgba(75, 85, 99, 1);
-    }
 }
 
 .completedBadge {
@@ -187,11 +157,5 @@
     align-items: center;
     gap: 0.5rem;
     font-size: 0.75rem;
-    color: #4ade80;
-}
-
-@media (prefers-color-scheme: light) {
-    .completedBadge {
-        color: #16a34a;
-    }
+    color: var(--color-success);
 }

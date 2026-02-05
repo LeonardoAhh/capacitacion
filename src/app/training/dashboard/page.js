@@ -53,12 +53,14 @@ export default function TrainingDashboard() {
                     // Buscar detalle del curso
                     // Nota: Si courseId es un string simple o referencia, ajustar. Asumo ID string.
                     const courseDoc = await getDoc(doc(db, 'cursos_induccion', progData.courseId));
-                    const courseDetail = courseDoc.exists() ? courseDoc.data() : { title: 'Curso no encontrado', description: '' };
+                    const courseDetail = courseDoc.exists() ? courseDoc.data() : { nombre: 'Curso no encontrado', descripcion: '' };
 
                     return {
                         id: progData.courseId, // ID del curso base
                         assignmentId: pDoc.id, // ID de la asignación (para updates)
                         ...courseDetail,
+                        title: courseDetail.nombre || 'Sin Título', // Map nombre to title for UI components
+                        description: courseDetail.descripcion || '',
                         ...progData // Sobrescribe status, fechas, etc. de la asignación
                     };
                 }));
@@ -91,7 +93,9 @@ export default function TrainingDashboard() {
 
     const filteredCourses = courses.filter(course => {
         if (filter === 'all') return true;
-        return course.status === filter;
+        if (filter === 'pending') return course.status !== 'completed';
+        if (filter === 'completed') return course.status === 'completed';
+        return true;
     });
 
     if (!user) return null;
