@@ -163,7 +163,7 @@ export default function ProgramacionPage() {
                 <div className={styles.statsGrid}>
                     <div className={styles.statCard}>
                         <h3>Total Asignados Hoy</h3>
-                        <div className={styles.statValue}>{dailyAssignments}</div>
+                        <div className={styles.statValue}>{todayCount}</div>
                         <p className={styles.statLabel}>Empleados programados</p>
                     </div>
                     {/* Más stats si es necesario */}
