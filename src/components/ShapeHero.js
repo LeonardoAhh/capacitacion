@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import { Pacifico } from "next/font/google";
 import Link from "next/link";
 import { Users, UserPlus, GraduationCap } from "lucide-react";
+import DynamicCredits from './DynamicCredits/DynamicCredits';
 import styles from './ShapeHero.module.css';
 
 const pacifico = Pacifico({
@@ -192,6 +193,9 @@ export default function ShapeHero() {
                             <span>Capacitación</span>
                         </Link>
                     </motion.div>
+
+                    {/* Dynamic Credits */}
+                    <DynamicCredits />
                 </div>
             </div>
 

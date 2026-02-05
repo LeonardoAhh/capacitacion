@@ -181,6 +181,41 @@
     }
 }
 
+/* Credits section - Discrete and theme-aware */
+.credits {
+    position: fixed;
+    bottom: 1.5rem;
+    left: 0;
+    right: 0;
+    z-index: 10;
+    text-align: center;
+    width: 100%;
+    padding: 0 1rem;
+    pointer-events: none;
+    /* Allow clicks to pass through */
+}
+
+.creditsText {
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+    opacity: 0.6;
+    transition: opacity 0.3s ease;
+    font-weight: 400;
+    letter-spacing: 0.5px;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+    pointer-events: auto;
+    /* But allow interaction with the text itself */
+}
+
+.creditsText strong {
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.credits:hover .creditsText {
+    opacity: 0.9;
+}
+
 /* Responsive adjustments */
 @media (max-width: 768px) {
     .mainTitle {
@@ -202,5 +237,13 @@
     .tertiaryButton {
         width: 100%;
         justify-content: center;
+    }
+
+    .credits {
+        bottom: 1rem;
+    }
+
+    .creditsText {
+        font-size: 0.75rem;
     }
 }
