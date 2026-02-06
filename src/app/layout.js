@@ -8,8 +8,8 @@ import { Inter } from 'next/font/google';
 const inter = Inter({ subsets: ['latin'] });
 
 export const metadata = {
-    title: 'Sistema de Gestión de Empleados',
-    description: 'Sistema moderno de gestión de empleados con Firebase',
+    title: 'Vertx ViñoPlastic',
+    description: 'Plataforma de capacitación Viñoplastic.',
     icons: {
         icon: '/icon.svg',
     },

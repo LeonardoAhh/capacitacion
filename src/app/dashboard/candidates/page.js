@@ -37,18 +37,6 @@ export default function CandidateMonitoringPage() {
     const [searchTerm, setSearchTerm] = useState('');
     const [coursesMapRef, setCoursesMapRef] = useState({});
 
-    useEffect(() => {
-        if (!authLoading) {
-            if (!user) {
-                router.push('/login');
-            } else if (!['admin', 'super_admin'].includes(user.rol)) {
-                router.push('/dashboard'); // Unauthorized
-            } else {
-                fetchData();
-            }
-        }
-    }, [user, authLoading, router, fetchData]);
-
     // Helper function to calculate days since last login
     const calculateDaysSinceLastLogin = (lastLoginDate) => {
         if (!lastLoginDate || lastLoginDate === 'Nunca') return null;
@@ -69,8 +57,6 @@ export default function CandidateMonitoringPage() {
 
             // 1. Fetch Candidates (Status 'Candidato' OR isCandidato: true)
             const employeesRef = collection(db, 'employees');
-            // Firestore doesn't support logical OR directly in one query easily for distinct fields without multiple queries
-            // We'll fetch all and filter in client for simplicity given specific constraints or do two queries
             const snapshot = await getDocs(employeesRef);
 
             const rawCandidates = snapshot.docs
@@ -96,78 +82,99 @@ export default function CandidateMonitoringPage() {
                 }
             });
 
+            // Legacy courses support
+            try {
+                const legacyRef = collection(db, 'cursos_induccion'); // Assuming this is collection name
+                const legacySnap = await getDocs(legacyRef);
+                legacySnap.docs.forEach(doc => {
+                    const d = doc.data();
+                    if (d.activo !== false && !coursesMap[d.id] && !coursesMap[d.nombre]) {
+                        coursesMap[d.id] = { id: doc.id, name: d.nombre, ...d };
+                    }
+                });
+            } catch (e) {
+                // Ignore if collection doesnt exist
+            }
+
+            setCoursesMapRef(coursesMap);
 
 
-            // 3. Fetch Positions to know required courses (NAMES)
+            // 3. Process each candidate
+            // Determine Total Courses for THIS candidate based on Position
+            // Logic: Filter coursesMap where 'available_positions' includes candidate.position
+            // If no position or no match, maybe default? For now, 0.
+
+            // 3b. Actually we need the Position->Courses mapping first to be accurate.
             const positionsRef = collection(db, 'positions');
-            const posSnapshot = await getDocs(positionsRef);
-            const positionsMap = {};
-            posSnapshot.docs.forEach(doc => {
-                const data = doc.data();
-                const requiredCourseNames = data.requiredCourses || [];
-                positionsMap[data.name] = {
-                    count: requiredCourseNames.length,
-                    courseNames: requiredCourseNames // Keep as NAMES
-                };
+            const positionsSnap = await getDocs(positionsRef);
+            const positionRequirements = {}; // 'Operador' -> ['Curso 1', 'Curso 2']
+
+            positionsSnap.docs.forEach(doc => {
+                const p = doc.data();
+                if (p.name) {
+                    positionRequirements[p.name] = p.requiredCourses || [];
+                }
             });
 
-            // 4. Process Data
-            const processedCandidates = rawCandidates.map(c => {
-                const positionName = c.position || c.puesto;
-                const positionData = positionsMap[positionName];
-                const requiredCount = positionData?.count || 0;
-                const requiredCourseNames = positionData?.courseNames || [];
+            const finalCandidates = rawCandidates.map(c => {
+                const position = c.position;
+                const requiredCourseTitles = positionRequirements[position] || [];
 
-                // Calculate progress based on granular steps if available
-                // If not, fallback to cursosCompletados length
-                const completedCoursesList = c.cursosCompletados || [];
-                let completedCount = completedCoursesList.length;
+                // Find IDs of these courses in our coursesMap
+                // Logic: coursesMap values have 'name' === title
+                const requiredCourseIds = [];
+                requiredCourseTitles.forEach(title => {
+                    const found = Object.values(coursesMap).find(course => course.name === title || course.title === title);
+                    if (found) requiredCourseIds.push(found.id);
+                });
 
-                // Detailed check: Count unique courses where at least "presentationCompleted" is true
-                // This gives us "In Progress" insight even if not fully complete
-                const progressMap = c.coursesProgress || {};
-                const startedCoursesCount = Object.keys(progressMap).length;
+                // Also check legacy 'puestosAplicables' if the new system yielded 0
+                if (requiredCourseIds.length === 0) {
+                    Object.values(coursesMap).forEach(course => {
+                        if (course.puestosAplicables && course.puestosAplicables.includes(position)) {
+                            requiredCourseIds.push(course.id);
+                        }
+                    });
+                }
+
+                // Calculate Progress
+                const completedIds = c.cursosCompletados || [];
+                // Filter completedIds to only those that are actually REQUIRED (semantics?)
+                // Usually progress % is (Completed Required / Total Required)
+                // But simply: Count how many of 'requiredCourseIds' are in 'completedIds'
+
+                const totalRequired = requiredCourseIds.length;
+                const completedRequiredCount = requiredCourseIds.filter(id => completedIds.includes(id)).length;
+
+                const progress = totalRequired > 0 ? Math.round((completedRequiredCount / totalRequired) * 100) : 0;
+
+                // Determine Status
+                // - Inactivo: Last login > 7 days ago ?? Or just 'status' field?
+                // Let's use logic:
+                const daysIdle = calculateDaysSinceLastLogin(c.lastLoginCandidate); // Use lastLoginCandidate from raw data
+                const isInactive = daysIdle !== null && daysIdle > 2; // Example threshold, matching original logic
 
                 // Granular stats for UI
+                const progressMap = c.coursesProgress || {};
                 const presentationsViewed = Object.values(progressMap).filter(p => p.presentationCompleted).length;
                 const examsDownloaded = Object.values(progressMap).filter(p => p.examDownloaded).length;
 
-                let progress = 0;
-                if (requiredCount > 0) {
-                    progress = Math.round((completedCount / requiredCount) * 100);
-                } else if (completedCount > 0) {
-                    progress = 100;
-                }
-
-                // Cap at 100
-                if (progress > 100) progress = 100;
-
-                // Status Logic
-                let status = 'pending';
-                if (progress >= 100) status = 'completed'; // Completed
-                else if (progress > 0 || startedCoursesCount > 0) status = 'inProgress'; // In Progress
-                else status = 'notStarted'; // Not started
-
-                // Calculate days since last login
-                const lastLoginRaw = c.lastLoginCandidate || null;
-                const daysSinceLastLogin = lastLoginRaw ? calculateDaysSinceLastLogin(lastLoginRaw) : null;
-
-                // Check if inactive (>2 days without access and not completed)
-                if (daysSinceLastLogin !== null && daysSinceLastLogin > 2 && status !== 'completed') {
-                    status = 'inactive';
-                }
+                let status = 'notStarted';
+                if (progress >= 100) status = 'completed';
+                else if (progress > 0 || Object.keys(progressMap).length > 0) status = 'inProgress';
+                if (isInactive && status !== 'completed') status = 'inactive';
 
                 // Format last login display
                 let lastLoginDisplay = 'Nunca';
-                if (lastLoginRaw) {
-                    if (daysSinceLastLogin === 0) {
+                if (c.lastLoginCandidate) {
+                    if (daysIdle === 0) {
                         lastLoginDisplay = 'Hoy';
-                    } else if (daysSinceLastLogin === 1) {
+                    } else if (daysIdle === 1) {
                         lastLoginDisplay = 'Hace 1 día';
-                    } else if (daysSinceLastLogin !== null) {
-                        lastLoginDisplay = `Hace ${daysSinceLastLogin} días`;
+                    } else if (daysIdle !== null) {
+                        lastLoginDisplay = `Hace ${daysIdle} días`;
                     } else {
-                        lastLoginDisplay = new Date(lastLoginRaw).toLocaleDateString();
+                        lastLoginDisplay = new Date(c.lastLoginCandidate).toLocaleDateString();
                     }
                 }
 
@@ -175,39 +182,52 @@ export default function CandidateMonitoringPage() {
                     ...c,
                     name: c.name || c.nombre || 'Sin Nombre',
                     email: c.email || 'N/A',
-                    position: positionName || 'N/A',
-                    progress,
-                    requiredCount,
-                    requiredCourseNames, // Array of course NAMES
-                    coursesMapRef: coursesMap, // Reference to coursesMap for reverse lookup
-                    completedCount,
+                    position: position || 'N/A',
+                    requiredCount: totalRequired,
+                    completedCount: completedRequiredCount,
+                    progress: progress,
                     presentationsViewed,
                     examsDownloaded,
-                    status,
-                    daysSinceLastLogin,
-                    lastLogin: lastLoginDisplay
+                    status: status,
+                    daysSinceLastLogin: daysIdle,
+                    lastLogin: lastLoginDisplay,
+                    requiredCourseIds: requiredCourseIds // Store for detail view
                 };
             });
 
-            // 4. Calculate Stats
-            const total = processedCandidates.length;
-            const completed = processedCandidates.filter(c => c.progress >= 100).length;
-            const inactive = processedCandidates.filter(c => c.status === 'inactive').length;
-            const inProgress = processedCandidates.filter(c => c.status === 'inProgress').length;
-            const avgProgress = total > 0
-                ? Math.round(processedCandidates.reduce((acc, c) => acc + c.progress, 0) / total)
-                : 0;
 
-            setCandidates(processedCandidates);
-            setCoursesMapRef(coursesMap);
-            setStats({ total, completed, inProgress, avgProgress, inactive });
+            setCandidates(finalCandidates);
+
+            // 4. Calculate Stats
+            const newStats = {
+                total: finalCandidates.length,
+                completed: finalCandidates.filter(c => c.status === 'completed').length,
+                inProgress: finalCandidates.filter(c => c.status === 'inProgress').length,
+                inactive: finalCandidates.filter(c => c.status === 'inactive').length,
+                avgProgress: finalCandidates.length > 0
+                    ? Math.round(finalCandidates.reduce((acc, c) => acc + c.progress, 0) / finalCandidates.length)
+                    : 0
+            };
+            setStats(newStats);
 
         } catch (error) {
-            console.error("Error fetching candidates:", error);
+            console.error("Error fetching dashboard data:", error);
         } finally {
             setLoading(false);
         }
     }, []);
+
+    useEffect(() => {
+        if (!authLoading) {
+            if (!user) {
+                router.push('/login');
+            } else if (!['admin', 'super_admin'].includes(user.rol)) {
+                router.push('/dashboard'); // Unauthorized
+            } else {
+                fetchData();
+            }
+        }
+    }, [user, authLoading, router, fetchData]);
 
     const filteredCandidates = candidates.filter(c =>
         c.name.toLowerCase().includes(searchTerm.toLowerCase()) ||

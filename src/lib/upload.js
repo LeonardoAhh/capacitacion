@@ -47,10 +47,14 @@ export async function uploadFile(file, options = {}) {
         const result = await response.json();
 
         if (!response.ok) {
+            console.error('[Upload Debug] Error API:', result); // Log full response including debug info
+            if (result.debug) console.warn('[Upload Debug] Info:', result.debug);
+
             return {
                 success: false,
-                error: result.error || result.message || 'Error al subir archivo',
-                code: result.code
+                error: result.message || result.error || 'Error al subir archivo',
+                code: result.code,
+                debug: result.debug // Pass debug info up
             };
         }
 
@@ -60,7 +64,7 @@ export async function uploadFile(file, options = {}) {
         };
 
     } catch (error) {
-        console.error('Error en uploadFile:', error);
+        console.error('Error en uploadFile (Catch):', error);
         return {
             success: false,
             error: error.message || 'Error de conexión'

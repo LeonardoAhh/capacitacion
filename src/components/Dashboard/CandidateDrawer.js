@@ -190,24 +190,25 @@ export default function CandidateDrawer({
                             <motion.div variants={itemVariants} className={styles.coursesSection}>
                                 <h3 className={styles.sectionTitle}>Cursos Requeridos</h3>
                                 <div className={styles.coursesList}>
-                                    {requiredCourseNames.length > 0 ? (
-                                        requiredCourseNames.map((courseName, index) => {
-                                            const status = getCourseStatus(courseName);
-                                            const statusBadge = getStatusBadge(status);
+                                    {candidate.requiredCourseIds && candidate.requiredCourseIds.length > 0 ? (
+                                        candidate.requiredCourseIds.map((courseId, index) => {
+                                            const courseObj = coursesMap[courseId];
+                                            const courseName = courseObj?.name || courseObj?.nombre || courseObj?.title || 'Curso Desconocido';
 
-                                            // Find course ID for progress details
-                                            let courseId = null;
-                                            for (const [id, course] of Object.entries(coursesMap)) {
-                                                if (course.name === courseName || course.title === courseName || course.nombre === courseName) {
-                                                    courseId = id;
-                                                    break;
-                                                }
-                                            }
-                                            const progress = courseId ? (candidate.coursesProgress?.[courseId] || null) : null;
+                                            // Status Logic by ID (Direct & Robust)
+                                            const isCompleted = completedIds.includes(courseId);
+                                            const progress = candidate.coursesProgress?.[courseId] || null;
+                                            const hasProgress = progress?.presentationCompleted || progress?.examDownloaded;
+
+                                            let status = 'notStarted';
+                                            if (isCompleted) status = 'completed';
+                                            else if (hasProgress) status = 'inProgress';
+
+                                            const statusBadge = getStatusBadge(status);
 
                                             return (
                                                 <motion.div
-                                                    key={courseName}
+                                                    key={courseId}
                                                     variants={itemVariants}
                                                     className={`${styles.courseItem} ${styles[status]}`}
                                                 >

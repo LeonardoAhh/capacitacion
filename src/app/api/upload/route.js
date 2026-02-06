@@ -155,22 +155,26 @@ export async function POST(request) {
         });
 
     } catch (error) {
-        console.error('Error en API upload:', error);
+        console.error('Error en API upload (FULL DETAILS):', error);
 
-        // No exponer detalles del error en producción
-        const isProduction = process.env.NODE_ENV === 'production';
+        // Debug: Check if Env Vars are missing
+        const missingVars = [];
+        if (!process.env.GOOGLE_CLIENT_ID) missingVars.push('GOOGLE_CLIENT_ID');
+        if (!process.env.GOOGLE_CLIENT_SECRET) missingVars.push('GOOGLE_CLIENT_SECRET');
+        if (!process.env.GOOGLE_REFRESH_TOKEN) missingVars.push('GOOGLE_REFRESH_TOKEN');
+
+        const debugInfo = {
+            message: error.message,
+            stack: error.stack,
+            missingEnvVars: missingVars,
+            hasRootId: !!process.env.GOOGLE_DRIVE_ROOT_ID
+        };
 
         return NextResponse.json(
             {
                 error: 'Error interno al procesar la subida',
-                message: isProduction ? 'Error al subir archivo' : error.message,
-                // Solo mostrar debug info en desarrollo
-                ...(isProduction ? {} : {
-                    stack: error.stack,
-                    debug: {
-                        hasRootId: !!process.env.GOOGLE_DRIVE_ROOT_ID
-                    }
-                })
+                message: error.message || 'Error desconocido', // Always show message for debugging
+                debug: debugInfo
             },
             { status: 500 }
         );
