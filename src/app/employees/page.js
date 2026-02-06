@@ -211,8 +211,8 @@ export default function EmployeesPage() {
     const handleGenerateAccessCode = async (employeeId, employeeName) => {
         setGeneratingCode(true);
         try {
-            // Generate for 1 day (24 hours expiration)
-            const result = await assignAccessCodeToCandidate(employeeId, 1);
+            // Generate for 3 days expiration
+            const result = await assignAccessCodeToCandidate(employeeId, 3);
             if (result.success) {
                 setAccessCodeModal({
                     show: true,
@@ -881,7 +881,7 @@ export default function EmployeesPage() {
                             })}
                         </p>
                         <p style={{ fontSize: '0.85rem', color: 'var(--text-tertiary)', marginTop: '8px' }}>
-                            Este código expira en 7 días
+                            Este código expira en 3 días
                         </p>
                     </div>
 
