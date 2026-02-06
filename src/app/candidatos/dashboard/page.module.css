@@ -170,31 +170,31 @@
 }
 
 /* === SCROLLBAR STYLES (Light & Dark) === */
-/* CSS Modules requires global selectors to be marked as :global */
-:global(::-webkit-scrollbar) {
+/* === SCROLLBAR STYLES (Scoped to Modal Content) === */
+.modalContent :global(::-webkit-scrollbar) {
     width: 8px;
     height: 8px;
 }
 
-:global(::-webkit-scrollbar-track) {
+.modalContent :global(::-webkit-scrollbar-track) {
     background: transparent;
 }
 
-:global(::-webkit-scrollbar-thumb) {
+.modalContent :global(::-webkit-scrollbar-thumb) {
     background: rgba(60, 60, 67, 0.3);
     border-radius: 4px;
 }
 
-:global(::-webkit-scrollbar-thumb:hover) {
+.modalContent :global(::-webkit-scrollbar-thumb:hover) {
     background: rgba(60, 60, 67, 0.5);
 }
 
 /* Dark Mode Scrollbar */
-[data-theme="dark"] :global(::-webkit-scrollbar-thumb) {
+[data-theme="dark"] .modalContent :global(::-webkit-scrollbar-thumb) {
     background: rgba(235, 235, 245, 0.3);
 }
 
-[data-theme="dark"] :global(::-webkit-scrollbar-thumb:hover) {
+[data-theme="dark"] .modalContent :global(::-webkit-scrollbar-thumb:hover) {
     background: rgba(235, 235, 245, 0.5);
 }
 
