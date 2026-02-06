@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { collection, getDocs, query, where } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
@@ -47,7 +47,7 @@ export default function CandidateMonitoringPage() {
                 fetchData();
             }
         }
-    }, [user, authLoading, router]);
+    }, [user, authLoading, router, fetchData]);
 
     // Helper function to calculate days since last login
     const calculateDaysSinceLastLogin = (lastLoginDate) => {
@@ -63,7 +63,7 @@ export default function CandidateMonitoringPage() {
         }
     };
 
-    const fetchData = async () => {
+    const fetchData = useCallback(async () => {
         try {
             setLoading(true);
 
@@ -207,7 +207,7 @@ export default function CandidateMonitoringPage() {
         } finally {
             setLoading(false);
         }
-    };
+    }, []);
 
     const filteredCandidates = candidates.filter(c =>
         c.name.toLowerCase().includes(searchTerm.toLowerCase()) ||

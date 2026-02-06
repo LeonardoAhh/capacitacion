@@ -9,7 +9,10 @@ import { BookOpen, FileText, LogOut, CheckCircle, Clock, Sparkles, ArrowRight, C
 import { useTheme } from '@/contexts/ThemeContext';
 import LazyIframe from '@/components/ui/LazyIframe/LazyIframe';
 import { motion } from "framer-motion";
+import { Drawer, DrawerContent, DrawerHeader, DrawerTitle, DrawerDescription, DrawerFooter, DrawerClose } from "@/components/ui/Drawer/Drawer";
+import { Shield, MapPin, UserCheck, Smile, Download, ExternalLink, Phone, Calendar } from 'lucide-react';
 import styles from './page.module.css';
+import ProfileDropdown from './ProfileDropdown';
 
 function ElegantShape({ className, delay = 0, width = 400, height = 100, rotate = 0, color, borderRadius = 16 }) {
     return (
@@ -52,6 +55,82 @@ export default function CandidatoDashboard() {
     const [showWelcome, setShowWelcome] = useState(true);
     const [courseProgress, setCourseProgress] = useState({}); // Track progress per course
     const [showHelpTooltip, setShowHelpTooltip] = useState(false);
+    const [selectedDataCenterItem, setSelectedDataCenterItem] = useState(null);
+
+    const roadmapSteps = [
+        {
+            id: 1,
+            title: 'Bienvenida RH',
+            icon: <Smile size={20} />,
+            details: ['Prueba de Antidoping', 'Firma de contratos', 'Entrega de EPP']
+        },
+        {
+            id: 2,
+            title: 'Capacitación',
+            icon: <BookOpen size={20} />,
+            details: ['Dudas', 'Información general']
+        },
+        {
+            id: 3,
+            title: 'Recorrido Planta',
+            icon: <MapPin size={20} />,
+            details: ['Conoce las instalaciones y salidas de emergencia']
+        },
+        {
+            id: 4,
+            title: 'Horario de Comida',
+            icon: <Clock size={20} />,
+            details: ['Consumo de alimentos']
+        },
+        {
+            id: 5,
+            title: 'Incorporación al área',
+            icon: <UserCheck size={20} />,
+            details: ['Presentación con tu jefe inmediato y equipo']
+        }
+    ];
+
+    const dataCenterItems = [
+
+        {
+            id: 'dresscode',
+            title: 'Código de Vestimenta',
+            icon: <User size={24} />,
+            desc: 'Normas sobre el uso del uniforme y calzado de seguridad.',
+            content: (
+                <div style={{ textAlign: 'left' }}>
+                    <p style={{ fontWeight: 600, marginBottom: '8px' }}>DEBES PORTAR EL EQUIPO DE PROTECCIÓN PERSONAL</p>
+                    <ul style={{ paddingLeft: '20px', listStyleType: 'disc' }}>
+                        <li style={{ marginBottom: '4px' }}>USO DE COFIA</li>
+                        <li style={{ marginBottom: '4px' }}>USO DE PLAYERA / CHALECO</li>
+                        <li style={{ marginBottom: '4px' }}>PANTALON DE MEZCLILLA (NO ROTOS NO RAZGADOS)</li>
+                        <li style={{ marginBottom: '4px' }}>ZAPATOS/TENIS DE SEGURIDAD (CON CASQUILLO)</li>
+                    </ul>
+                </div>
+            )
+        },
+        {
+            id: 'rules',
+            title: 'Reglamento Interior',
+            icon: <FileText size={24} />,
+            desc: 'Políticas internas y normas de convivencia.',
+            content: (
+                <div style={{ textAlign: 'left' }}>
+                    <ul style={{ paddingLeft: '20px', listStyleType: 'disc' }}>
+                        <li style={{ marginBottom: '4px' }}>PROHIBIDO EL USO DE JOYERÍA EN LAS ESTACIONES DE TRABAJO</li>
+                        <li style={{ marginBottom: '4px' }}>NO INGERIR NINGÚN TIPO DE ALIMENTO O LÍQUIDO EN EL ÁREA DE TRABAJO</li>
+                        <li style={{ marginBottom: '4px' }}>PROHIBIDO EL USO DE TODO EQUIPO ELECTRONICO EN LAS ÁREA OPERATIVAS</li>
+                        <li style={{ marginBottom: '4px' }}>USO DE MAQUILLAJE</li>
+                        <li style={{ marginBottom: '4px' }}>QUEDA PROHIBIDO HACER VENTAS O NEGOCIOS DENTRO DE LAS INSTALACIONES</li>
+                        <li style={{ marginBottom: '4px' }}>QUEDA PROHIBIDO DORMIRSE DURANTE LA JORNADA LABORAL</li>
+                    </ul>
+                </div>
+            )
+        },
+    ];
+
+
+
 
     // Logout handler (declared before useEffect that uses it)
     const handleLogout = useCallback(async () => {
@@ -106,55 +185,48 @@ export default function CandidatoDashboard() {
             setLoading(false);
         }
 
-        // Session Timeout Logic (2 hours)
+        // Session Timeout Logic (2 hours fixed duration)
         const TIMEOUT_DURATION = 2 * 60 * 60 * 1000;
 
-        let timeoutId;
         let intervalId;
 
-        // Iniciar timer visual
         const startTimer = () => {
-            const startTime = Date.now();
-            const endTime = startTime + TIMEOUT_DURATION;
+            // Check for existing expiry
+            let storedExpiry = sessionStorage.getItem('candidate_session_expiry');
+            let expiryTime;
 
-            // Limpiar anteriores
-            if (timeoutId) clearTimeout(timeoutId);
-            if (intervalId) clearInterval(intervalId);
+            if (storedExpiry) {
+                expiryTime = parseInt(storedExpiry, 10);
+                // Validation: If expiry is in the past or way too far future (sanity check), reset?
+                // For now, trust storage. If expired, it will auto-logout immediately below.
+            } else {
+                expiryTime = Date.now() + TIMEOUT_DURATION;
+                sessionStorage.setItem('candidate_session_expiry', expiryTime.toString());
+            }
 
-            // Actualizar cuenta regresiva
-            intervalId = setInterval(() => {
-                const remaining = endTime - Date.now();
+            // Update Countdown
+            const tick = () => {
+                const now = Date.now();
+                const remaining = expiryTime - now;
+
                 if (remaining <= 0) {
                     clearInterval(intervalId);
                     setTimeLeft(0);
-                    handleLogout(); // Ensure logout is called
+                    handleLogout();
                     return;
                 }
-                setTimeLeft(remaining);
-            }, 1000);
+                setTimeLeft(remaining); // Store in ms
+            };
 
-            // Timeout real para cerrar sesión
-            timeoutId = setTimeout(() => {
-                handleLogout(); // Use handleLogout for consistency
-            }, TIMEOUT_DURATION);
-
-            // Resetear estado visual
-            setTimeLeft(TIMEOUT_DURATION);
+            // Immediate check
+            tick();
+            intervalId = setInterval(tick, 1000);
         };
 
-        const events = ['mousedown', 'keydown', 'scroll', 'touchstart'];
-        const resetTimer = () => {
-            startTimer();
-        };
-
-        events.forEach(event => document.addEventListener(event, resetTimer));
-
-        startTimer(); // Iniciar al montar
+        startTimer();
 
         return () => {
-            if (timeoutId) clearTimeout(timeoutId);
             if (intervalId) clearInterval(intervalId);
-            events.forEach(event => document.removeEventListener(event, resetTimer));
         };
     }, [router, handleLogout]);
 
@@ -510,7 +582,22 @@ export default function CandidatoDashboard() {
                     </h1>
 
                     <p className={styles.welcomeSubtitle}>
-                        {candidate?.name || candidate?.nombre || 'Nuevo Colaborador'}
+                        {(() => {
+                            const fullName = candidate?.name || candidate?.nombre || 'Nuevo Colaborador';
+                            const parts = fullName.trim().split(/\s+/);
+
+                            // Heuristic for "PATERNO MATERNO NOMBRE(S)" format
+                            // If 3 or more words (e.g. HERNANDEZ HERRERA LEONARDO), name is at index 2
+                            // If 2 words (e.g. HERNANDEZ LEONARDO), name is at index 1
+                            let firstName = parts.length > 2 ? parts[2] : (parts[1] || parts[0]);
+
+                            // Capitalize nicely (Leonardo)
+                            if (firstName) {
+                                firstName = firstName.charAt(0).toUpperCase() + firstName.slice(1).toLowerCase();
+                            }
+
+                            return firstName;
+                        })()}
                     </p>
 
                     <div className={styles.welcomeMessage}>
@@ -528,21 +615,6 @@ export default function CandidatoDashboard() {
                         </p>
                     </div>
 
-
-
-                    {/* Help Section */}
-                    <div className={styles.welcomeHelp}>
-                        <div className={styles.welcomeHelpContent}>
-                            <h3 className={styles.welcomeHelpTitle}>Información Importante</h3>
-                            <ul className={styles.welcomeHelpList}>
-                                <li>Solo tienes <strong>5 inicios de sesión</strong> disponibles</li>
-                                <li>Puedes descargar el examen y contestarlo o solo anotar las respuestas</li>
-                                <li>Presenta tus respuestas en tu primer día de trabajo</li>
-                                <li>Si agotaste tus 5 oportunidades, contacta a Recursos Humanos para obtener un nuevo código</li>
-                            </ul>
-                        </div>
-                    </div>
-
                     <div className={styles.infoGrid}>
                         <div className={styles.infoItem}>
                             <span className={styles.infoLabel}>Puesto:</span>
@@ -557,7 +629,7 @@ export default function CandidatoDashboard() {
                             className={styles.welcomeButton}
                             onClick={() => setShowWelcome(false)}
                         >
-                            <span>Iniciar Cursos de Inducción</span>
+                            <span>Iniciar</span>
                             <ArrowRight size={20} />
                         </button>
                     </div>
@@ -579,89 +651,192 @@ export default function CandidatoDashboard() {
                 <ElegantShape className={styles.shape4} delay={0.5} width={300} height={120} rotate={15} color="#3b82f6" borderRadius={12} />
             </div>
 
-            {/* iOS Navigation Bar */}
+            {/* Navbar */}
             <nav className={styles.navbar}>
-                <button onClick={handleLogout} className={styles.navBack}>
-                    <ChevronLeft size={24} />
-                    <span>Salir</span>
-                </button>
-                <h1 className={styles.navTitle}>Mi Perfil</h1>
+                {/* Logo removed as requested */}
+
                 <div className={styles.navActions}>
-                    <div className={styles.navTimer} style={{ color: getTimerColor() }}>
-                        <Clock size={14} />
-                        <span>{formatTime(timeLeft)}</span>
-                    </div>
-                    <button
-                        onClick={toggleTheme}
-                        className={styles.themeButton}
-                        aria-label="Cambiar tema"
-                    >
-                        <Contrast size={20} />
-                    </button>
+                    <ProfileDropdown
+                        candidate={candidate}
+                        onLogout={handleLogout}
+                        timeLeft={Math.floor(timeLeft / 1000)}
+                        toggleTheme={toggleTheme}
+                    />
                 </div>
             </nav>
 
             {/* Scrollable Content */}
             <div className={styles.scrollContent}>
-                {/* Profile Section */}
-                <section className={styles.profileSection}>
-                    <div className={styles.avatarContainer}>
-                        <div className={styles.avatar}>
-                            {(candidate?.photoUrl || candidate?.photoURL || candidate?.photo || candidate?.foto) ? (
-                                // eslint-disable-next-line @next/next/no-img-element
-                                <img
-                                    src={candidate.photoUrl || candidate.photoURL || candidate.photo || candidate.foto}
-                                    alt="Foto de perfil"
-                                    style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '50%' }}
-                                />
-                            ) : (
-                                <User size={48} />
-                            )}
+                {/* Profile Section removed as it is now in Navbar */}
+
+                {/* Important Info Section */}
+                <section className={styles.menuSection} style={{ marginBottom: '24px', marginTop: '40px' }}>
+                    <h3 className={styles.sectionHeader}>ℹ️ Información Importante</h3>
+                    <div className={styles.importantGrid}>
+                        {/* Card 1 */}
+                        <div className={styles.importantCard}>
+                            <div className={styles.importantCardIcon}>
+                                <User size={20} />
+                            </div>
+                            <p className={styles.importantCardText}>
+                                Solo tienes <span style={{ fontWeight: 800, color: '#007aff' }}>10 inicios de sesión</span> disponibles.
+                            </p>
+                        </div>
+                        {/* Card 2 */}
+                        <div className={styles.importantCard}>
+                            <div className={styles.importantCardIcon}>
+                                <Download size={20} />
+                            </div>
+                            <p className={styles.importantCardText}>
+                                Puedes descargar el examen y contestarlo o solo anotar las respuestas.
+                            </p>
+                        </div>
+                        {/* Card 3 */}
+                        <div className={styles.importantCard}>
+                            <div className={styles.importantCardIcon}>
+                                <FileText size={20} />
+                            </div>
+                            <p className={styles.importantCardText}>
+                                Presenta tus respuestas en tu <span style={{ fontWeight: 700 }}>primer día</span> de trabajo.
+                            </p>
+                        </div>
+                        {/* Card 4 */}
+                        <div className={styles.importantCard}>
+                            <div className={styles.importantCardIcon}>
+                                <Phone size={20} />
+                            </div>
+                            <p className={styles.importantCardText}>
+                                Si agotaste tus oportunidades, contacta a <span style={{ fontWeight: 700 }}>RH</span> para un nuevo código.
+                            </p>
                         </div>
                     </div>
-                    <h2 className={styles.profileName}>
-                        {candidate?.name || candidate?.nombre || 'Candidato'}
-                    </h2>
-                    <p className={styles.profilePosition}>
-                        {candidate?.position || candidate?.puesto || 'Nuevo Ingreso'}
-                    </p>
                 </section>
 
-                {/* Info Section */}
+                {/* Roadmap Section */}
+                <section className={styles.roadmapSection}>
+                    <h3 className={styles.sectionHeader}>📍 Tu Primer Día</h3>
+                    <div className={styles.timelineContainer}>
+                        {roadmapSteps.map((step, index) => (
+                            <div key={step.id} className={styles.timelineItem}>
+                                <div className={styles.timelineDot}></div>
+                                <div className={styles.timelineContent}>
+                                    <h4 className={styles.timelineTitle}>{step.title}</h4>
+                                    {step.details && (
+                                        <ul className={styles.timelineList}>
+                                            {step.details.map((detail, idx) => (
+                                                <li key={idx}>{detail}</li>
+                                            ))}
+                                        </ul>
+                                    )}
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                </section>
+
+                {/* HR Contact Section (Moved Up) */}
+                <section className={styles.menuSection} style={{ marginTop: '24px' }}>
+                    <h3 className={styles.sectionHeader}>📞 Contacto Recursos Humanos</h3>
+                    <div className={styles.contactGrid}>
+                        {/* Card 1: Turno Mixto */}
+                        <div className={styles.contactCard}>
+                            <div>
+                                <div className={styles.contactHeader}>
+                                    <span className={styles.menuLabel} style={{ fontWeight: 600, fontSize: '17px' }}>Turno Mixto</span>
+                                    <Calendar size={20} color="#007aff" />
+                                </div>
+                                <div style={{ display: 'flex', flexDirection: 'column', gap: '4px', marginBottom: '16px' }}>
+                                    <span className={styles.menuValue} style={{ textAlign: 'left', fontSize: '14px' }}>Lunes a Viernes: 8:00 - 18:00</span>
+                                    <span className={styles.menuValue} style={{ textAlign: 'left', fontSize: '14px' }}>Sábados: 8:00 - 11:00</span>
+                                </div>
+                            </div>
+                            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
+                                {['55 1406 3167', '55 1525 4782', '442 509 5534', '55 6326 5881'].map(num => (
+                                    <a key={num} href={`https://wa.me/${num.replace(/\s+/g, '')}`} target="_blank" rel="noopener noreferrer" style={{ display: 'flex', alignItems: 'center', gap: '4px', background: '#25D366', color: 'white', padding: '6px 10px', borderRadius: '12px', fontSize: '12px', textDecoration: 'none', fontWeight: 600, transition: 'transform 0.2s' }}>
+                                        <Phone size={12} fill="white" /> {num}
+                                    </a>
+                                ))}
+                            </div>
+                        </div>
+
+                        {/* Card 2: Tercer Turno */}
+                        <div className={styles.contactCard}>
+                            <div>
+                                <div className={styles.contactHeader}>
+                                    <span className={styles.menuLabel} style={{ fontWeight: 600, fontSize: '17px' }}>Tercer Turno</span>
+                                    <Calendar size={20} color="#5856d6" />
+                                </div>
+                                <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                                    <span className={styles.menuValue} style={{ textAlign: 'left', fontSize: '14px' }}>Lunes a Viernes: 22:00 - 6:00</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                {/* Data Center Section (Moved Up) */}
+                <section className={styles.dataCenterSection}>
+                    <h3 className={styles.sectionHeader}>📂 Datos importantes</h3>
+                    <div className={styles.dataGrid}>
+                        {dataCenterItems.map((item) => (
+                            <div
+                                key={item.id}
+                                className={styles.dataCard}
+                                onClick={() => setSelectedDataCenterItem(item)}
+                                role="button"
+                                tabIndex={0}
+                                onKeyDown={(e) => {
+                                    if (e.key === 'Enter' || e.key === ' ') {
+                                        e.preventDefault();
+                                        setSelectedDataCenterItem(item);
+                                    }
+                                }}
+                                aria-label={`Ver información sobre ${item.title}`}
+                            >
+                                <div className={styles.dataIcon}>
+                                    {item.icon}
+                                </div>
+                                <span className={styles.dataTitle}>{item.title}</span>
+                            </div>
+                        ))}
+                    </div>
+                </section>
+
+                {/* General Data Section (Moved Down) */}
                 <section className={styles.menuSection}>
-                    <div className={styles.menuGroup}>
-                        <div className={styles.menuItem}>
-                            <span className={styles.menuLabel}>ID Empleado</span>
-                            <span className={styles.menuValue}>{candidate?.employeeId}</span>
+                    <h3 className={styles.sectionHeader}>📋 Datos Generales</h3>
+                    <div className={styles.infoGrid}>
+                        <div className={styles.infoCard}>
+                            <span className={styles.infoLabelSmall}>ID Empleado</span>
+                            <span className={styles.infoValueLarge}>{candidate?.employeeId || 'ND'}</span>
                         </div>
-                        <div className={styles.menuItem}>
-                            <span className={styles.menuLabel}>CURP</span>
-                            <span className={styles.menuValue}>{candidate?.curp}</span>
+                        <div className={styles.infoCard}>
+                            <span className={styles.infoLabelSmall}>CURP</span>
+                            <span className={styles.infoValueLarge}>{candidate?.curp || 'Por definir'}</span>
                         </div>
-                        <div className={styles.menuItem}>
-                            <span className={styles.menuLabel}>Área</span>
-                            <span className={styles.menuValue}>{candidate?.area}</span>
+                        <div className={styles.infoCard}>
+                            <span className={styles.infoLabelSmall}>Área</span>
+                            <span className={styles.infoValueLarge}>{candidate?.area || 'General'}</span>
                         </div>
-                        <div className={styles.menuItem}>
-                            <span className={styles.menuLabel}>Departamento</span>
-                            <span className={styles.menuValue}>{candidate?.department}</span>
+                        <div className={styles.infoCard}>
+                            <span className={styles.infoLabelSmall}>Departamento</span>
+                            <span className={styles.infoValueLarge}>{candidate?.department || candidate?.departamento || 'No asignado'}</span>
                         </div>
-                        <div className={styles.menuItem}>
-                            <span className={styles.menuLabel}>Turno</span>
-                            <span className={styles.menuValue}>{candidate?.shift}</span>
+                        <div className={styles.infoCard}>
+                            <span className={styles.infoLabelSmall}>Turno</span>
+                            <span className={styles.infoValueLarge}>{candidate?.shift || candidate?.turno || 'Mixto'}</span>
                         </div>
-                        <div className={styles.menuItem}>
-                            <span className={styles.menuLabel}>Fecha de Ingreso</span>
-                            <span className={styles.menuValue}>{candidate?.startdate}</span>
+                        <div className={styles.infoCard}>
+                            <span className={styles.infoLabelSmall}>Fecha de Ingreso</span>
+                            <span className={styles.infoValueLarge}>{candidate?.startdate || new Date().toLocaleDateString('es-MX')}</span>
                         </div>
                     </div>
                 </section>
 
-                {/* Courses Section */}
+                {/* Courses Section (Moved to Bottom) */}
                 <section className={styles.menuSection}>
                     <div className={styles.sectionHeaderContainer}>
                         <h3 className={styles.sectionHeader}>Cursos de Inducción</h3>
-
                     </div>
 
                     {courses.length === 0 ? (
@@ -670,34 +845,45 @@ export default function CandidatoDashboard() {
                             <p>No hay cursos asignados</p>
                         </div>
                     ) : (
-                        <div className={styles.menuGroup}>
+                        <div className={styles.coursesGrid}>
                             {courses.map((course) => {
                                 const isCompleted = candidate?.cursosCompletados?.includes(course.id);
 
                                 return (
                                     <div
                                         key={course.id}
-                                        className={styles.courseItem}
+                                        className={styles.courseCard}
                                         onClick={() => viewCourse(course)}
+                                        tabIndex={0} // Make focusable
+                                        onKeyDown={(e) => {
+                                            if (e.key === 'Enter' || e.key === ' ') {
+                                                e.preventDefault();
+                                                viewCourse(course);
+                                            }
+                                        }}
+                                        aria-label={`Ver detalles del curso ${course.title || course.nombre}`}
                                     >
-                                        <div className={`${styles.courseIcon} ${isCompleted ? styles.courseIconCompleted : ''}`}>
-                                            {isCompleted ? (
-                                                <CheckCircle size={24} />
-                                            ) : (
-                                                <BookOpen size={24} />
-                                            )}
-                                        </div>
-                                        <div className={styles.courseContent}>
-                                            <span className={styles.courseTitle}>
-                                                {course.title || course.nombre}
-                                            </span>
-                                            {course.duration && (
-                                                <span className={styles.courseDuration}>
-                                                    {course.duration} min
+                                        <div className={styles.courseCardHeader}>
+                                            <div className={`${styles.courseIcon} ${isCompleted ? styles.courseIconCompleted : ''}`}>
+                                                {isCompleted ? (
+                                                    <CheckCircle size={24} />
+                                                ) : (
+                                                    <BookOpen size={24} />
+                                                )}
+                                            </div>
+                                            <div className={styles.courseContent}>
+                                                <span className={styles.courseCardTitle}>
+                                                    {course.title || course.nombre}
                                                 </span>
-                                            )}
+                                                {course.duration && (
+                                                    <span className={styles.courseDuration} style={{ display: 'block', marginTop: '4px' }}>
+                                                        {course.duration} min
+                                                    </span>
+                                                )}
+                                            </div>
                                         </div>
-                                        <div className={styles.courseActions}>
+
+                                        <div className={styles.courseCardFooter}>
                                             <button
                                                 className={isCompleted ? styles.btnCompleted : styles.btnMarkComplete}
                                                 onClick={(e) => {
@@ -705,7 +891,7 @@ export default function CandidatoDashboard() {
                                                     toggleCourseCompletion(course.id, !isCompleted);
                                                 }}
                                             >
-                                                {isCompleted ? 'Completado' : 'Marcar como Completado'}
+                                                {isCompleted ? 'Completado' : 'Marcar Completado'}
                                             </button>
                                             <ChevronRight size={20} className={styles.chevron} />
                                         </div>
@@ -715,35 +901,6 @@ export default function CandidatoDashboard() {
                         </div>
                     )}
                 </section>
-
-                {/* Exams Section - DESHABILITADA: Ahora los exámenes son parte del flujo de pasos progresivos */}
-                {/* {courses.some(c => c.examenUrl || (c.material?.type === 'document' && c.material?.url)) && (
-                    <section className={styles.menuSection}>
-                        <h3 className={styles.sectionHeader}>Exámenes</h3>
-                        <div className={styles.menuGroup}>
-                            {courses.filter(c => c.examenUrl || (c.material?.type === 'document' && c.material?.url)).map((course) => (
-                                <div
-                                    key={`exam-${course.id}`}
-                                    className={styles.courseItem}
-                                    onClick={() => downloadExam(course)}
-                                >
-                                    <div className={styles.examIcon}>
-                                        <FileText size={24} />
-                                    </div>
-                                    <div className={styles.courseContent}>
-                                        <span className={styles.courseTitle}>
-                                            Examen: {course.title || course.nombre}
-                                        </span>
-                                        <span className={styles.courseDuration}>
-                                            Descargar PDF
-                                        </span>
-                                    </div>
-                                    <ChevronRight size={20} className={styles.chevron} />
-                                </div>
-                            ))}
-                        </div>
-                    </section>
-                )} */}
 
                 {/* Footer */}
                 <footer className={styles.footer}>
@@ -984,6 +1141,36 @@ export default function CandidatoDashboard() {
                     </div>
                 </div>
             )}
+            {/* Data Center Drawer */}
+            <Drawer open={!!selectedDataCenterItem} onOpenChange={(open) => !open && setSelectedDataCenterItem(null)}>
+                <DrawerContent>
+                    <DrawerHeader>
+                        <DrawerTitle>{selectedDataCenterItem?.title}</DrawerTitle>
+                        <DrawerDescription>{selectedDataCenterItem?.desc}</DrawerDescription>
+                    </DrawerHeader>
+                    <div className={styles.drawerBodyContent}>
+                        <div style={{ padding: '24px', textAlign: 'center', color: '#8e8e93' }}>
+                            <div style={{ marginBottom: '16px', display: 'inline-block', padding: '16px', background: 'rgba(0,122,255,0.1)', borderRadius: '50%' }}>
+                                <FileText size={48} color="#007aff" />
+                            </div>
+                            <div style={{ marginBottom: '24px', fontSize: '16px', lineHeight: '1.5' }}>
+                                {selectedDataCenterItem?.content}
+                            </div>
+                            {selectedDataCenterItem?.id !== 'dresscode' && selectedDataCenterItem?.id !== 'rules' && (
+                                <button className={styles.welcomeButton}>
+                                    <Download size={20} />
+                                    Descargar PDF
+                                </button>
+                            )}
+                        </div>
+                    </div>
+                    <DrawerFooter>
+                        <DrawerClose asChild>
+                            <button className={styles.stepButton}>Cerrar</button>
+                        </DrawerClose>
+                    </DrawerFooter>
+                </DrawerContent>
+            </Drawer>
         </div>
     );
 }
