@@ -57,7 +57,7 @@ export default function CandidatosLoginPage() {
         const newAttempts = loginAttempts + 1;
         setLoginAttempts(newAttempts);
 
-        if (newAttempts >= 5) {
+        if (newAttempts >= 10) {
             const blockUntil = Date.now() + (15 * 60 * 1000); // 15 minutos
             localStorage.setItem('candidate_login_blocked', blockUntil.toString());
             setIsBlocked(true);
@@ -136,10 +136,10 @@ export default function CandidatosLoginPage() {
                 return;
             }
 
-            // Verificar usos del código (Max 5 usos)
+            // Verificar usos del código (Max 10 usos)
             const codeUses = data.accessCodeUses || 0;
-            if (codeUses >= 5) {
-                setError('Este código de acceso ya ha alcanzado el límite de 5 inicios de sesión. Contacta a RH para obtener un nuevo código.');
+            if (codeUses >= 10) {
+                setError('Este código de acceso ya ha alcanzado el límite de 10 inicios de sesión. Contacta a RH para obtener un nuevo código.');
                 setLoading(false);
                 return;
             }

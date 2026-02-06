@@ -104,7 +104,13 @@ export default function CandidateLogin({
                                 <UserPlus className={styles.icon} />
                             </div>
                             <h1 className={styles.title}>Portal de Candidatos</h1>
-                            <p className={styles.subtitle}>Bienvenido a tu proceso de inducción</p>
+                            <p className={styles.subtitle}>
+                                Bienvenido a tu proceso de inducción
+                                <br />
+                                <span style={{ fontSize: '0.85em', opacity: 0.8, marginTop: '8px', display: 'inline-block' }}>
+                                    Tienes 10 intentos. Después de 10 intentos fallidos serás bloqueado por 15 minutos.
+                                </span>
+                            </p>
                         </motion.div>
 
                         {error && (
