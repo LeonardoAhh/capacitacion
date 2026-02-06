@@ -7,8 +7,9 @@ import { db } from '@/lib/firebase';
 import { useAuth } from '@/contexts/AuthContext';
 import styles from './page.module.css';
 import Link from 'next/link';
-import { Search, ArrowLeft, Users, CheckCircle, Clock } from 'lucide-react';
+import { Search, ArrowLeft, Users, CheckCircle, Clock, FileText, FileCheck, AlertCircle, Bell } from 'lucide-react';
 import { useTheme } from '@/contexts/ThemeContext';
+import CandidateDrawer from '@/components/Dashboard/CandidateDrawer';
 
 export default function CandidateMonitoringPage() {
     const { user, loading: authLoading } = useAuth();
@@ -21,9 +22,20 @@ export default function CandidateMonitoringPage() {
         total: 0,
         completed: 0,
         inProgress: 0,
-        avgProgress: 0
+        avgProgress: 0,
+        inactive: 0,
     });
+    // Drawer State
+    const [selectedCandidate, setSelectedCandidate] = useState(null);
+    const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+
+    const handleRowClick = (candidate) => {
+        setSelectedCandidate(candidate);
+        setIsDrawerOpen(true);
+    };
+
     const [searchTerm, setSearchTerm] = useState('');
+    const [coursesMapRef, setCoursesMapRef] = useState({});
 
     useEffect(() => {
         if (!authLoading) {
@@ -36,6 +48,20 @@ export default function CandidateMonitoringPage() {
             }
         }
     }, [user, authLoading, router]);
+
+    // Helper function to calculate days since last login
+    const calculateDaysSinceLastLogin = (lastLoginDate) => {
+        if (!lastLoginDate || lastLoginDate === 'Nunca') return null;
+        try {
+            const lastLogin = new Date(lastLoginDate);
+            const today = new Date();
+            const diffTime = Math.abs(today - lastLogin);
+            const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+            return diffDays;
+        } catch (error) {
+            return null;
+        }
+    };
 
     const fetchData = async () => {
         try {
@@ -51,19 +77,46 @@ export default function CandidateMonitoringPage() {
                 .map(doc => ({ id: doc.id, ...doc.data() }))
                 .filter(emp => emp.status === 'Candidato' || emp.isCandidato === true);
 
-            // 2. Fetch Positions to know required course count
+            // 2. Fetch all courses from induction_courses (only active ones)
+            const coursesRef = collection(db, 'induction_courses');
+            const coursesSnapshot = await getDocs(coursesRef);
+            const coursesMap = {}; // ID -> {nombre, ...}
+
+            coursesSnapshot.docs.forEach(doc => {
+                const courseData = doc.data();
+                // Only include active courses
+                if (courseData.activo !== false) {
+                    const courseName = courseData.title || courseData.nombre || 'Sin nombre';
+
+                    coursesMap[doc.id] = {
+                        id: doc.id,
+                        name: courseName, // Normalize to 'name' for consistency
+                        ...courseData
+                    };
+                }
+            });
+
+
+
+            // 3. Fetch Positions to know required courses (NAMES)
             const positionsRef = collection(db, 'positions');
             const posSnapshot = await getDocs(positionsRef);
             const positionsMap = {};
             posSnapshot.docs.forEach(doc => {
                 const data = doc.data();
-                positionsMap[data.name] = (data.requiredCourses || []).length;
+                const requiredCourseNames = data.requiredCourses || [];
+                positionsMap[data.name] = {
+                    count: requiredCourseNames.length,
+                    courseNames: requiredCourseNames // Keep as NAMES
+                };
             });
 
-            // 3. Process Data
+            // 4. Process Data
             const processedCandidates = rawCandidates.map(c => {
-                const positionName = c.position || c.puesto; // Handle varied field names
-                const requiredCount = positionsMap[positionName] || 0;
+                const positionName = c.position || c.puesto;
+                const positionData = positionsMap[positionName];
+                const requiredCount = positionData?.count || 0;
+                const requiredCourseNames = positionData?.courseNames || [];
 
                 // Calculate progress based on granular steps if available
                 // If not, fallback to cursosCompletados length
@@ -91,8 +144,32 @@ export default function CandidateMonitoringPage() {
 
                 // Status Logic
                 let status = 'pending';
-                if (progress >= 100) status = 'active'; // Completed
-                else if (progress > 0 || startedCoursesCount > 0) status = 'pending'; // In Progress
+                if (progress >= 100) status = 'completed'; // Completed
+                else if (progress > 0 || startedCoursesCount > 0) status = 'inProgress'; // In Progress
+                else status = 'notStarted'; // Not started
+
+                // Calculate days since last login
+                const lastLoginRaw = c.lastLoginCandidate || null;
+                const daysSinceLastLogin = lastLoginRaw ? calculateDaysSinceLastLogin(lastLoginRaw) : null;
+
+                // Check if inactive (>2 days without access and not completed)
+                if (daysSinceLastLogin !== null && daysSinceLastLogin > 2 && status !== 'completed') {
+                    status = 'inactive';
+                }
+
+                // Format last login display
+                let lastLoginDisplay = 'Nunca';
+                if (lastLoginRaw) {
+                    if (daysSinceLastLogin === 0) {
+                        lastLoginDisplay = 'Hoy';
+                    } else if (daysSinceLastLogin === 1) {
+                        lastLoginDisplay = 'Hace 1 día';
+                    } else if (daysSinceLastLogin !== null) {
+                        lastLoginDisplay = `Hace ${daysSinceLastLogin} días`;
+                    } else {
+                        lastLoginDisplay = new Date(lastLoginRaw).toLocaleDateString();
+                    }
+                }
 
                 return {
                     ...c,
@@ -101,24 +178,29 @@ export default function CandidateMonitoringPage() {
                     position: positionName || 'N/A',
                     progress,
                     requiredCount,
+                    requiredCourseNames, // Array of course NAMES
+                    coursesMapRef: coursesMap, // Reference to coursesMap for reverse lookup
                     completedCount,
-                    presentationsViewed, // New field for granular tracking
-                    examsDownloaded,     // New field for granular tracking
+                    presentationsViewed,
+                    examsDownloaded,
                     status,
-                    lastLogin: c.lastLoginCandidate ? new Date(c.lastLoginCandidate).toLocaleDateString() : 'Nunca'
+                    daysSinceLastLogin,
+                    lastLogin: lastLoginDisplay
                 };
             });
 
             // 4. Calculate Stats
             const total = processedCandidates.length;
             const completed = processedCandidates.filter(c => c.progress >= 100).length;
-            const inProgress = total - completed;
+            const inactive = processedCandidates.filter(c => c.status === 'inactive').length;
+            const inProgress = processedCandidates.filter(c => c.status === 'inProgress').length;
             const avgProgress = total > 0
                 ? Math.round(processedCandidates.reduce((acc, c) => acc + c.progress, 0) / total)
                 : 0;
 
             setCandidates(processedCandidates);
-            setStats({ total, completed, inProgress, avgProgress });
+            setCoursesMapRef(coursesMap);
+            setStats({ total, completed, inProgress, avgProgress, inactive });
 
         } catch (error) {
             console.error("Error fetching candidates:", error);
@@ -183,6 +265,15 @@ export default function CandidateMonitoringPage() {
                         <p className={styles.statLabel}>Progreso Promedio</p>
                     </div>
                 </div>
+                <div className={styles.statCard}>
+                    <div className={`${styles.statIcon} red`}>
+                        <AlertCircle />
+                    </div>
+                    <div>
+                        <h3 className={styles.statValue}>{stats.inactive}</h3>
+                        <p className={styles.statLabel}>Sin Actividad (+2 días)</p>
+                    </div>
+                </div>
             </div>
 
             {/* Search */}
@@ -208,6 +299,7 @@ export default function CandidateMonitoringPage() {
                                 <th>Candidato</th>
                                 <th>ID Empleado</th>
                                 <th>Puesto</th>
+                                <th>Estado</th>
                                 <th>Progreso General</th>
                                 <th>Actividad Detallada</th>
                                 <th>Último Acceso</th>
@@ -216,7 +308,12 @@ export default function CandidateMonitoringPage() {
                         <tbody>
                             {filteredCandidates.length > 0 ? (
                                 filteredCandidates.map((candidate) => (
-                                    <tr key={candidate.id}>
+                                    <tr
+                                        key={candidate.id}
+                                        onClick={() => handleRowClick(candidate)}
+                                        style={{ cursor: 'pointer' }}
+                                        className={styles.tableRow} // Optional: add hover effect class
+                                    >
                                         <td>
                                             <div className={styles.userCell}>
                                                 <div className={styles.avatar}>
@@ -230,6 +327,14 @@ export default function CandidateMonitoringPage() {
                                         </td>
                                         <td>{candidate.employeeId || 'N/A'}</td>
                                         <td>{candidate.position}</td>
+                                        <td>
+                                            <span className={`${styles.badge} ${styles[candidate.status]}`}>
+                                                {candidate.status === 'completed' ? '✓ Completado' :
+                                                    candidate.status === 'inProgress' ? '⏳ En Proceso' :
+                                                        candidate.status === 'inactive' ? '⚠ Inactivo' :
+                                                            '○ Sin Iniciar'}
+                                            </span>
+                                        </td>
                                         <td style={{ minWidth: '140px' }}>
                                             <div className={styles.progressContainer}>
                                                 <div
@@ -244,21 +349,28 @@ export default function CandidateMonitoringPage() {
                                         <td>
                                             <div style={{ display: 'flex', gap: '8px', fontSize: '0.8rem', color: '#666' }}>
                                                 <div title="Presentaciones Vistas" style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-                                                    <Users size={14} />
+                                                    <FileText size={14} />
                                                     {candidate.presentationsViewed} Vistas
                                                 </div>
                                                 <div title="Exámenes Descargados" style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-                                                    <CheckCircle size={14} />
+                                                    <FileCheck size={14} />
                                                     {candidate.examsDownloaded} Descargas
                                                 </div>
                                             </div>
                                         </td>
-                                        <td>{candidate.lastLogin}</td>
+                                        <td>
+                                            <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                                                {candidate.daysSinceLastLogin !== null && candidate.daysSinceLastLogin > 2 && candidate.status !== 'completed' && (
+                                                    <Bell size={16} style={{ color: '#FF3B30' }} title="Sin actividad reciente" />
+                                                )}
+                                                {candidate.lastLogin}
+                                            </div>
+                                        </td>
                                     </tr>
                                 ))
                             ) : (
                                 <tr>
-                                    <td colSpan="6" className={styles.emptyState}>
+                                    <td colSpan="7" className={styles.emptyState}>
                                         No se encontraron candidatos que coincidan con la búsqueda.
                                     </td>
                                 </tr>
@@ -267,48 +379,51 @@ export default function CandidateMonitoringPage() {
                     </table>
                 </div>
 
-                {/* Mobile Cards - Hidden on desktop, shown on mobile */}
+                {/* Mobile Cards */}
                 <div className={styles.mobileCards}>
                     {filteredCandidates.length > 0 ? (
                         filteredCandidates.map((candidate) => (
-                            <div key={candidate.id} className={styles.mobileCard}>
-                                <div className={styles.mobileCardHeader}>
+                            <div
+                                key={candidate.id}
+                                className={styles.mobileCard}
+                                onClick={() => handleRowClick(candidate)}
+                            >
+                                <div className={styles.cardHeader}>
                                     <div className={styles.avatar}>
                                         {candidate.name.charAt(0)}
                                     </div>
-                                    <div className={styles.userInfo}>
+                                    <div className={styles.cardUserInfo}>
                                         <span className={styles.userName}>{candidate.name}</span>
-                                        <span className={styles.userEmail}>{candidate.position}</span>
+                                        <span className={styles.userDetail}>{candidate.position}</span>
                                     </div>
-                                </div>
-                                <div className={styles.mobileCardContent}>
-                                    <div>
-                                        <span className={styles.mobileCardLabel}>ID Empleado</span>
-                                        <div className={styles.mobileCardValue}>{candidate.employeeId || 'N/A'}</div>
-                                    </div>
-                                    <div>
-                                        <span className={styles.mobileCardLabel}>Último Acceso</span>
-                                        <div className={styles.mobileCardValue}>{candidate.lastLogin}</div>
-                                    </div>
-                                    <div>
-                                        <span className={styles.mobileCardLabel}>Vistas</span>
-                                        <div className={styles.mobileCardValue}>{candidate.presentationsViewed}</div>
-                                    </div>
-                                    <div>
-                                        <span className={styles.mobileCardLabel}>Descargas</span>
-                                        <div className={styles.mobileCardValue}>{candidate.examsDownloaded}</div>
-                                    </div>
-                                </div>
-                                <div className={styles.mobileProgressSection}>
-                                    <div className={styles.progressContainer}>
-                                        <div
-                                            className={`${styles.progressBar} ${candidate.progress >= 100 ? 'complete' : ''}`}
-                                            style={{ width: `${candidate.progress}%` }}
-                                        ></div>
-                                    </div>
-                                    <span className={styles.progressText}>
-                                        {candidate.completedCount}/{candidate.requiredCount} cursos ({candidate.progress}%)
+                                    <span className={`${styles.badge} ${styles[candidate.status]}`}>
+                                        {candidate.status === 'active' ? 'Activo' :
+                                            candidate.status === 'inactive' ? 'Inactivo' : 'Pendiente'}
                                     </span>
+                                </div>
+
+                                <div className={styles.cardStats}>
+                                    <div className={styles.statItem}>
+                                        <span className={styles.statLabel}>Progreso</span>
+                                        <div className={styles.progressContainer}>
+                                            <div className={styles.progressBar}>
+                                                <div
+                                                    className={styles.progressFill}
+                                                    style={{ width: `${candidate.progress}%` }}
+                                                />
+                                            </div>
+                                            <span className={styles.progressText}>{candidate.progress}%</span>
+                                        </div>
+                                        <div className={styles.statDetail}>
+                                            {candidate.completedCount}/{candidate.requiredCount} cursos
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div className={styles.cardActions}>
+                                    <button className={styles.viewDetailButton}>
+                                        Ver Detalle
+                                    </button>
                                 </div>
                             </div>
                         ))
@@ -318,6 +433,14 @@ export default function CandidateMonitoringPage() {
                         </div>
                     )}
                 </div>
+
+                {/* Global Candidate Drawer */}
+                <CandidateDrawer
+                    candidate={selectedCandidate}
+                    coursesMap={coursesMapRef}
+                    open={isDrawerOpen}
+                    onOpenChange={setIsDrawerOpen}
+                />
             </div>
         </div>
     );

@@ -15,7 +15,7 @@ const creditVariations = [
     { text: 'Para el crecimiento de nuestros', author: 'Colaboradores' },
     { text: 'Construyendo el futuro de', author: 'Viñoplastic' },
     { text: 'Impulsando el desarrollo de nuestro', author: 'Equipo' },
-    { text: 'Proyecto iniciado', author: 'Octubre 2025' },
+    { text: 'Proyecto iniciado', author: 'Agosto 2025' },
     { text: 'Completado en', author: 'Febrero 2026' },
 ];
 
