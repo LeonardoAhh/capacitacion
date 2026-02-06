@@ -295,6 +295,37 @@
                 display: none;
             }
         }
+
+        /* Image Placeholders */
+        .image-placeholder {
+            width: 100%;
+            height: 220px;
+            background-color: #f8fafc;
+            border: 2px dashed #cbd5e1;
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 1.5rem 0;
+            color: #64748b;
+            font-style: italic;
+            font-size: 0.9rem;
+            transition: all 0.2s;
+        }
+
+        .image-placeholder:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+            background-color: #f0f9ff;
+        }
+
+        @media print {
+            .image-placeholder {
+                border: 1px solid #ddd;
+                height: 180px;
+                page-break-inside: avoid;
+            }
+        }
     </style>
 </head>
 
@@ -346,6 +377,12 @@
                         <a href="https://vertxk.xyz/"
                             style="text-decoration: none; color: #007AFF;">https://vertxk.xyz/</a>
                     </div>
+
+                    <div style="text-align: center; margin: 20px 0;">
+                        <img src="assets/manual-step-1.png" alt="Página de Inicio Principal"
+                            style="max-width: 100%; border-radius: 8px; border: 1px solid #ddd; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);">
+                    </div>
+
                     <div class="instruction-item"
                         style="background: #fff; padding: 10px; border-radius: 8px; border: 1px solid #eee; margin-bottom: 15px;">
                         <svg class="check-icon" width="20" height="20" viewBox="0 0 24 24" fill="none"
@@ -355,9 +392,16 @@
                         <span><strong>Paso 1:</strong> En la página de inicio, busca y haz clic en el botón
                             <span
                                 style="background: #2563eb; color: white; padding: 2px 8px; border-radius: 4px; font-size: 0.9em;">Candidatos</span>
-                            ubicado en el menú superior o en la sección principal.</span>
+                            ubicado en el centro de la pagina</span>
                     </div>
+
                     <p>Una vez en el portal de candidatos, ingresa tus datos:</p>
+
+                    <div style="text-align: center; margin: 20px 0;">
+                        <img src="assets/manual-step-2.png" alt="Formulario de Login"
+                            style="max-width: 100%; border-radius: 8px; border: 1px solid #ddd; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);">
+                    </div>
+
                     <div class="instruction-item">
                         <svg class="check-icon" width="20" height="20" viewBox="0 0 24 24" fill="none"
                             stroke="currentColor" stroke-width="2" stroke-linecap="round">
@@ -397,39 +441,59 @@
         <div class="step-card">
             <div class="step-number">2</div>
             <div class="step-content">
-                <h2>Tu Panel de Cursos</h2>
+                <h2>Tu Panel del Candidato</h2>
                 <div class="step-details">
-                    <p>Al ingresar, verás un listado de cursos asignados específicamente para tu puesto.</p>
+                    <p>Al ingresar, verás tu panel principal dividido en secciones clave. Es importante que revises cada
+                        una:</p>
+
+                    <div style="text-align: center; margin: 20px 0;">
+                        <img src="assets/manual-step-3.png" alt="Dashboard Parte Superior"
+                            style="max-width: 100%; border-radius: 8px; border: 1px solid #ddd; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); margin-bottom: 15px;">
+
+                        <img src="assets/manual-step-3.1.png" alt="Dashboard Parte Inferior"
+                            style="max-width: 100%; border-radius: 8px; border: 1px solid #ddd; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);">
+                    </div>
+
                     <div class="instruction-item">
                         <svg class="check-icon" width="20" height="20" viewBox="0 0 24 24" fill="none"
                             stroke="currentColor" stroke-width="2" stroke-linecap="round">
                             <polyline points="20 6 9 17 4 12" />
                         </svg>
-                        <span>Navega por la lista de tarjetas de colores.</span>
+                        <span><strong>Información Importante & Primer Día:</strong> Revisa instrucciones sobre
+                            vestimenta, horarios y qué traer.</span>
                     </div>
+
                     <div class="instruction-item">
                         <svg class="check-icon" width="20" height="20" viewBox="0 0 24 24" fill="none"
                             stroke="currentColor" stroke-width="2" stroke-linecap="round">
                             <polyline points="20 6 9 17 4 12" />
                         </svg>
-                        <span>Selecciona cualquier curso para comenzar.</span>
+                        <span><strong>Datos Generales:</strong> Verifica que tu nombre y puesto sean correctos.</span>
                     </div>
+
                     <div class="instruction-item">
                         <svg class="check-icon" width="20" height="20" viewBox="0 0 24 24" fill="none"
                             stroke="currentColor" stroke-width="2" stroke-linecap="round">
                             <polyline points="20 6 9 17 4 12" />
                         </svg>
-                        <span>Verás tu progreso (barra verde) en la parte superior del curso.</span>
+                        <span><strong>Cursos de Inducción:</strong> Esta es la sección principal. Aquí verás los cursos
+                            que debes completar paso a paso.</span>
                     </div>
-                    <div class="instruction-item"
-                        style="background: #EBF5FF; padding: 10px; border-radius: 8px; border: 1px solid #BFDBFE; margin-top: 10px;">
-                        <svg class="check-icon" width="20" height="20" viewBox="0 0 24 24" fill="none"
-                            stroke="currentColor" stroke-width="2" stroke-linecap="round" style="color: #007AFF;">
-                            <polyline points="20 6 9 17 4 12" />
+
+                    <div class="info-box">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <circle cx="12" cy="12" r="10" />
+                            <line x1="12" y1="16" x2="12" y2="12" />
+                            <line x1="12" y1="8" x2="12.01" y2="8" />
                         </svg>
-                        <span style="color: #1E40AF;"><strong>IMPORTANTE:</strong> Al terminar tus actividades, haz clic
-                            en el botón <strong>"Marcar como Completado"</strong> junto a cada curso para confirmar tu
-                            avance.</span>
+                        <div>
+                            <strong>Acción Requerida:</strong> En la sección de "Cursos de Inducción", haz clic en cada
+                            tarjeta para abrir el contenido.
+                            <br /><br />
+                            Al finalizar cada material, recuerda hacer clic en <strong>"Marcar como Completado"</strong>
+                            para que se registre tu avance.
+                        </div>
                     </div>
                 </div>
             </div>
@@ -442,6 +506,11 @@
                 <h2>Completar un Curso</h2>
                 <div class="step-details">
                     <p>Cada curso consta de 4 pasos secuenciales. Debes completar uno para desbloquear el siguiente.</p>
+
+                    <div class="image-placeholder">
+                        [Captura de pantalla: Vista detallada de un curso (pasos 1-4)]
+                    </div>
+
                     <div class="instruction-item">
                         <span style="font-weight:600; min-width: 60px;">Paso 1:</span>
                         <span>Bienvenida e introducción.</span>

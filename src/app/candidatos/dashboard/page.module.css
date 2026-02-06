@@ -169,6 +169,34 @@
     gap: 8px;
 }
 
+/* === SCROLLBAR STYLES (Light & Dark) === */
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+    background: rgba(60, 60, 67, 0.3);
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: rgba(60, 60, 67, 0.5);
+}
+
+/* Dark Mode Scrollbar */
+[data-theme="dark"] ::-webkit-scrollbar-thumb {
+    background: rgba(235, 235, 245, 0.3);
+}
+
+[data-theme="dark"] ::-webkit-scrollbar-thumb:hover {
+    background: rgba(235, 235, 245, 0.5);
+}
+
 .navTimer {
     display: flex;
     align-items: center;
@@ -812,9 +840,9 @@
     }
 }
 
-.welcomeIcon {
-    width: 100px;
-    height: 100px;
+.welcomeAvatar {
+    width: 160px;
+    height: 160px;
     margin: 0 auto 24px;
     background: linear-gradient(135deg, #007aff 0%, #5856d6 100%);
     border-radius: 50%;
@@ -824,6 +852,8 @@
     color: white;
     box-shadow: 0 12px 32px rgba(0, 122, 255, 0.4);
     animation: bounceIn 0.8s ease-out 0.2s backwards;
+    overflow: hidden;
+    /* Ensure image stays inside circle */
 }
 
 @keyframes bounceIn {
