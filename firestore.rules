@@ -29,6 +29,7 @@ service cloud.firestore {
     function isAuthenticated() {
       return request.auth != null;
     }
+    
     // --- Validaciones de Datos ---
     function isValidString(text) {
       return text is string && text.size() > 0;
@@ -51,7 +52,7 @@ service cloud.firestore {
       allow delete: if hasRole('super_admin');
     }
     
-    // EMPLEADOS: Lectura pública requerida para Login de Capacitación (por ID)
+    // EMPLEADOS (Legacy): Lectura pública requerida para Login de Capacitación (por ID)
     match /employees/{docId} {
       allow read: if true; // Permite buscar usuario por ID para el login
       
@@ -63,6 +64,20 @@ service cloud.firestore {
                        (isAuthenticated() && 
                         request.resource.data.diff(resource.data).affectedKeys()
                           .hasOnly(['accessCodeUses', 'lastLoginCandidate', 'cursosCompletados', 'coursesProgress']));
+                          
+      allow delete: if hasRole('super_admin');
+    }
+    
+    // EMPLEADOS CON PROGRAMACIÓN (Nueva estructura)
+    match /employees_programacion/{docId} {
+      allow read: if true; // Permite login sin autenticación previa
+      
+      allow create: if hasAnyRole(['super_admin', 'rh'])
+                    && isValidString(request.resource.data.name)
+                    && isValidString(request.resource.data.employeeId)
+                    && isValidString(request.resource.data.accessCode);
+      
+      allow update: if hasAnyRole(['super_admin', 'rh']);
                           
       allow delete: if hasRole('super_admin');
     }
@@ -80,13 +95,12 @@ service cloud.firestore {
       allow write: if hasAnyRole(['super_admin', 'rh']);
     }
 
-    // PROGRAMACIÓN DE CAPACITACIÓN (Nueva colección)
+    // PROGRAMACIÓN DE CAPACITACIÓN (Asignaciones de cursos a empleados)
     match /programacion/{docId} {
-      allow read: if true; // Dashboard necesita leer asignaciones
-      allow write: if hasAnyRole(['super_admin', 'rh']) || 
-                   // Permitir al empleado actualizar el estado (completado/visto) si tuviéramos Auth real
-                   // Como no hay Auth, dejamos abierto o restringimos por lógica de cliente confiando (inseguro pero funcional para MVP)
-                   true; 
+      allow read: if true; // Los empleados necesitan ver sus cursos asignados
+      allow create: if hasAnyRole(['super_admin', 'rh']);
+      allow update: if hasAnyRole(['super_admin', 'rh']) || true; // Permitir actualizar estado (viewed/completed)
+      allow delete: if hasAnyRole(['super_admin', 'rh']);
     }
     
     // POSICIONES/PUESTOS: Candidatos necesitan leer para cargar sus cursos
