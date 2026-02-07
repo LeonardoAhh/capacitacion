@@ -10,7 +10,6 @@ import {
 } from 'firebase/auth';
 import { auth, db } from '@/lib/firebase';
 import { doc, getDoc, updateDoc } from 'firebase/firestore';
-import { generateSecret, generateURI, verify } from 'otplib';
 
 const AuthContext = createContext({});
 
@@ -92,14 +91,18 @@ export function AuthProvider({ children }) {
 
     const verifyOtp = async (token, secret) => {
         try {
-            // Using verify (async)
-            const isValid = await verify({
-                token,
-                secret,
+            // Configure otplib options
+            const totp = await import('otplib');
+            totp.authenticator.options = {
                 algorithm: 'sha1',
                 digits: 6,
-                period: 30
-            });
+                period: 30,
+                window: 1 // Allow 1 time step before/after for clock drift
+            };
+
+            // Verify the token - this is synchronous
+            const isValid = totp.authenticator.check(token, secret);
+
             if (isValid) {
                 // Determine current firebase user (should be signed in by now from first step)
                 const currentUser = auth.currentUser;
@@ -120,16 +123,18 @@ export function AuthProvider({ children }) {
     const generateMfaSecret = async (currentUser) => {
         if (!currentUser) return { success: false, error: 'No user' };
         try {
-            const secret = generateSecret();
-            // generateURI takes object arguments in v13
-            const otpauth = generateURI({
-                secret,
-                label: currentUser.email || 'Usuario',
-                issuer: 'VinoPlastic App',
-                algorithm: 'sha1',
-                digits: 6,
-                period: 30
-            });
+            const totp = await import('otplib');
+
+            // Generate a random secret
+            const secret = totp.authenticator.generateSecret();
+
+            // Generate the otpauth:// URI for QR code
+            const otpauth = totp.authenticator.keyuri(
+                currentUser.email || 'Usuario',
+                'VinoPlastic App',
+                secret
+            );
+
             return {
                 success: true,
                 secret: secret,
@@ -143,13 +148,18 @@ export function AuthProvider({ children }) {
 
     const enrollMfa = async (currentUser, verificationCode, secretKey) => {
         try {
-            const isValid = await verify({
-                token: verificationCode,
-                secret: secretKey,
+            // Configure otplib options
+            const totp = await import('otplib');
+            totp.authenticator.options = {
                 algorithm: 'sha1',
                 digits: 6,
-                period: 30
-            });
+                period: 30,
+                window: 1
+            };
+
+            // Verify the token - this is synchronous
+            const isValid = totp.authenticator.check(verificationCode, secretKey);
+
             if (!isValid) return { success: false, error: 'Código inválido' };
 
             // Save to Firestore
