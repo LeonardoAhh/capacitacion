@@ -4,7 +4,7 @@ import { useState, useEffect, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 import { db } from '@/lib/firebase';
 import { collection, getDocs, addDoc, query, where, Timestamp } from 'firebase/firestore';
-import Navbar from '@/components/Navbar/Navbar';
+import ProfileDropdown from '@/components/ProfileDropdown/ProfileDropdown';
 import { Search, Plus, Calendar, Users, BookOpen, Filter, CheckCircle, ChevronLeft, Edit2, Trash2, FileText } from 'lucide-react';
 import Link from 'next/link';
 import EditEmployeeModal from '@/components/Training/EditEmployeeModal';
@@ -164,7 +164,9 @@ export default function ProgramacionPage() {
 
     return (
         <div className={styles.container}>
-            <Navbar />
+            <div className={styles.profileContainer}>
+                <ProfileDropdown />
+            </div>
 
             <main className={styles.main}>
                 {/* Back button */}

@@ -6,6 +6,13 @@
     overflow-x: hidden;
 }
 
+.profileContainer {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 9999;
+}
+
 /* ==================== BACKGROUND EFFECTS ==================== */
 .bgDecoration {
     position: fixed;
@@ -59,6 +66,8 @@
     /* Wider for charts */
     margin: 0 auto;
     padding: var(--spacing-xl);
+    padding-top: 80px;
+    /* Extra space for ProfileDropdown */
     display: flex;
     flex-direction: column;
     gap: 32px;
@@ -144,6 +153,7 @@
     background: #1c1c1e;
     color: #ffffff;
 }
+
 .summaryCards {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
@@ -556,6 +566,8 @@
 @media (max-width: 768px) {
     .container {
         padding: var(--spacing-md);
+        padding-top: 70px;
+        /* Space for ProfileDropdown on mobile */
     }
 
     .tableHeader,

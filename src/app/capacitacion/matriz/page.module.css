@@ -1,12 +1,26 @@
-/* ==================== BASE LAYOUT ==================== */
+﻿/* ==================== BASE LAYOUT ==================== */
 .main {
     min-height: calc(100vh - 60px);
     padding: var(--spacing-xl) 0;
     background: var(--bg-primary);
 }
 
+.profileContainer {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 9999;
+}
+
 [data-theme="dark"] .main {
     background: #000000;
+}
+
+.profileContainer {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 9999;
 }
 
 .container {
@@ -676,6 +690,13 @@
     .main {
         padding: var(--spacing-lg) 0;
     }
+
+.profileContainer {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 9999;
+}
 
     .container {
         padding: 0 var(--spacing-md);

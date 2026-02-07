@@ -9,8 +9,7 @@ import {
     signInAnonymously
 } from 'firebase/auth';
 import { auth, db } from '@/lib/firebase';
-import { doc, getDoc, updateDoc } from 'firebase/firestore';
-import { authenticator } from 'otplib';
+import { doc, getDoc, updateDoc, setDoc } from 'firebase/firestore';
 
 const AuthContext = createContext({});
 
@@ -43,137 +42,66 @@ export function AuthProvider({ children }) {
             const userDoc = await getDoc(doc(db, 'users', uid));
             if (userDoc.exists()) {
                 const userData = userDoc.data();
-
-                // Check if MFA is verified for this session
-                // If MFA is NOT enabled, they are automatically verified.
-                // If MFA IS enabled, they must have the session flag.
-                const isMfaVerified = !userData.mfaEnabled || sessionStorage.getItem('mfa_verified') === 'true';
-
-                setUser({ ...authUser, ...userData, isMfaVerified });
+                setUser({ ...authUser, ...userData });
             } else {
-                // New users or no-doc users are considered verified (basic access)
-                setUser({ ...authUser, isMfaVerified: true });
+                // New users without doc
+                setUser({ ...authUser });
             }
         } catch (e) {
             console.error("Error fetching user data", e);
-            setUser({ ...authUser, isMfaVerified: true });
+            setUser({ ...authUser });
         }
     }
 
     const signIn = async (email, password) => {
         try {
             const result = await signInWithEmailAndPassword(auth, email, password);
-            const uid = result.user.uid;
-
-            // Check Custom 2FA in Firestore
-            const userDoc = await getDoc(doc(db, 'users', uid));
-            if (userDoc.exists()) {
-                const userData = userDoc.data();
-                if (userData.mfaEnabled && userData.mfaSecret) {
-                    // 2FA Required - Return secret to client for verification
-                    // NOTE: In a strictly secure env, verification should happen on server (Cloud Function).
-                    // Here we verify on client for simplicity as requested.
-                    return {
-                        success: false,
-                        mfaRequired: true,
-                        uid: uid,
-                        secret: userData.mfaSecret
-                    };
-                }
-            }
-
-            // If no 2FA, session is already valid via onAuthStateChanged
+            // Simple login, no MFA check
             return { success: true, user: result.user };
-
         } catch (error) {
             return { success: false, error: error.message };
         }
     };
 
-    const verifyOtp = async (token, secret) => {
+    const signInWithGoogle = async () => {
         try {
-            // Configure otplib options
-            authenticator.options = {
-                algorithm: 'sha1',
-                digits: 6,
-                period: 30,
-                window: 1 // Allow 1 time step before/after for clock drift
-            };
+            const { GoogleAuthProvider, signInWithPopup } = await import('firebase/auth');
+            const provider = new GoogleAuthProvider();
 
-            // Verify the token
-            const isValid = authenticator.check(token, secret);
-
-            if (isValid) {
-                // Determine current firebase user (should be signed in by now from first step)
-                const currentUser = auth.currentUser;
-                if (currentUser) {
-                    // Mark session as verified
-                    sessionStorage.setItem('mfa_verified', 'true');
-                    await fetchAndSetUser(currentUser.uid, currentUser);
-                    return { success: true };
-                }
-            }
-            return { success: false, error: 'Código inválido' };
-        } catch (error) {
-            console.error("OTP Error:", error);
-            return { success: false, error: 'Error verificando código' };
-        }
-    };
-
-    const generateMfaSecret = async (currentUser) => {
-        if (!currentUser) return { success: false, error: 'No user' };
-        try {
-            // Generate a random secret
-            const secret = authenticator.generateSecret();
-
-            // Generate the otpauth:// URI for QR code
-            const otpauth = authenticator.keyuri(
-                currentUser.email || 'Usuario',
-                'VinoPlastic App',
-                secret
-            );
-
-            return {
-                success: true,
-                secret: secret,
-                qrCodeUrl: otpauth
-            };
-        } catch (error) {
-            console.error("OTP Generate Error:", error);
-            return { success: false, error: 'Error generando secreto: ' + error.message };
-        }
-    };
-
-    const enrollMfa = async (currentUser, verificationCode, secretKey) => {
-        try {
-            // Configure otplib options
-            authenticator.options = {
-                algorithm: 'sha1',
-                digits: 6,
-                period: 30,
-                window: 1
-            };
-
-            // Verify the token
-            const isValid = authenticator.check(verificationCode, secretKey);
-
-            if (!isValid) return { success: false, error: 'Código inválido' };
-
-            // Save to Firestore
-            await updateDoc(doc(db, 'users', currentUser.uid || currentUser.id), {
-                mfaEnabled: true,
-                mfaSecret: secretKey
+            // Opcional: forzar selección de cuenta
+            provider.setCustomParameters({
+                prompt: 'select_account'
             });
 
-            // Update local state
-            setUser(prev => ({ ...prev, mfaEnabled: true, mfaSecret: secretKey }));
+            const result = await signInWithPopup(auth, provider);
+            const user = result.user;
 
-            return { success: true };
+            // Verificar si el usuario ya existe en Firestore
+            const userDoc = await getDoc(doc(db, 'users', user.uid));
+
+            if (!userDoc.exists()) {
+                // Usuario NO autorizado - cerrar sesión y rechazar acceso
+                await firebaseSignOut(auth);
+
+                return {
+                    success: false,
+                    error: 'Acceso no autorizado. Tu cuenta de Google no tiene permisos para acceder a esta aplicación. Contacta al administrador.'
+                };
+            }
+
+            // Usuario autorizado (ya existe en Firestore)
+            return { success: true, user: result.user, isNewUser: false };
         } catch (error) {
-            console.error("OTP Enroll Error:", error);
-            return { success: false, error: error.message };
+            console.error("Google Sign-In Error:", error);
+
+            // Manejar cancelación del popup
+            if (error.code === 'auth/popup-closed-by-user' || error.code === 'auth/cancelled-popup-request') {
+                return { success: false, error: 'Inicio de sesión cancelado' };
+            }
+
+            return { success: false, error: 'Error al iniciar sesión con Google' };
         }
-    }
+    };
 
     const signUp = async (email, password) => {
         try {
@@ -230,9 +158,7 @@ export function AuthProvider({ children }) {
         user,
         loading,
         signIn,
-        verifyOtp, // Changed from resolveMfa
-        generateMfaSecret,
-        enrollMfa,
+        signInWithGoogle, // Google Sign-In
         updateUserProfile,
         signInAnon,
         signUp,

@@ -2,23 +2,33 @@ import { google } from 'googleapis';
 import { Readable } from 'stream';
 
 // Configuración de OAuth2
-const oauth2Client = new google.auth.OAuth2(
-    process.env.GOOGLE_CLIENT_ID,
-    process.env.GOOGLE_CLIENT_SECRET,
-    'https://developers.google.com/oauthplayground' // Redirect URI (no se usa en flujo refresh, pero se requiere)
-);
+let oauth2Client = null;
+let drive = null;
 
-// Establecer credenciales (Refresh Token es la clave para acceso perpetuo)
-oauth2Client.setCredentials({
-    refresh_token: process.env.GOOGLE_REFRESH_TOKEN
-});
+// Inicializar solo si las variables de entorno están disponibles
+if (process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET && process.env.GOOGLE_REFRESH_TOKEN) {
+    oauth2Client = new google.auth.OAuth2(
+        process.env.GOOGLE_CLIENT_ID,
+        process.env.GOOGLE_CLIENT_SECRET,
+        'https://developers.google.com/oauthplayground' // Redirect URI (no se usa en flujo refresh, pero se requiere)
+    );
 
-const drive = google.drive({ version: 'v3', auth: oauth2Client });
+    // Establecer credenciales (Refresh Token es la clave para acceso perpetuo)
+    oauth2Client.setCredentials({
+        refresh_token: process.env.GOOGLE_REFRESH_TOKEN
+    });
+
+    drive = google.drive({ version: 'v3', auth: oauth2Client });
+}
 
 /**
  * Sube un archivo a Google Drive usando OAuth2 (actuando como el usuario)
  */
 export async function uploadFile(buffer, name, mimeType, folderId = null) {
+    if (!drive) {
+        throw new Error('Google Drive no está configurado. Verifica las variables de entorno.');
+    }
+
     try {
         const stream = new Readable();
         stream.push(buffer);
@@ -70,6 +80,10 @@ export async function uploadFile(buffer, name, mimeType, folderId = null) {
 
 // Mantenemos estas funciones auxiliares igual
 export async function createFolder(name, parentId = null) {
+    if (!drive) {
+        throw new Error('Google Drive no está configurado. Verifica las variables de entorno.');
+    }
+
     try {
         const fileMetadata = {
             name: name,
@@ -90,6 +104,10 @@ export async function createFolder(name, parentId = null) {
 }
 
 export async function findFolder(name, parentId = null) {
+    if (!drive) {
+        return null; // Si no está configurado, retornamos null
+    }
+
     try {
         let query = `mimeType='application/vnd.google-apps.folder' and name='${name}' and trashed=false`;
         if (parentId) query += ` and '${parentId}' in parents`;

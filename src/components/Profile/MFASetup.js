@@ -4,6 +4,8 @@ import { useAuth } from '@/contexts/AuthContext';
 import QRCode from 'qrcode';
 import Image from 'next/image';
 import styles from './MFASetup.module.css';
+import { db } from '@/lib/firebase';
+import { doc, updateDoc } from 'firebase/firestore';
 
 const MFASetup = () => {
     const { user, generateMfaSecret, enrollMfa } = useAuth();
@@ -44,6 +46,78 @@ const MFASetup = () => {
         }
         setLoading(false);
     };
+
+    const handleDisable2FA = async () => {
+        if (!confirm('¿Estás seguro de que deseas deshabilitar la autenticación de dos factores? Tu cuenta será menos segura.')) {
+            return;
+        }
+
+        setLoading(true);
+        setError('');
+        try {
+            // Update Firestore
+            await updateDoc(doc(db, 'users', user.uid || user.id), {
+                mfaEnabled: false,
+                mfaSecret: null
+            });
+
+            // Clear session storage
+            sessionStorage.removeItem('mfa_verified');
+
+            // Reload page to refresh user state
+            window.location.reload();
+        } catch (err) {
+            console.error('Error disabling 2FA:', err);
+            setError('Error al deshabilitar 2FA. Intenta de nuevo.');
+        }
+        setLoading(false);
+    };
+
+    // If 2FA is already enabled, show different UI
+    if (user?.mfaEnabled && step === 'INIT') {
+        return (
+            <div className={styles.wrapper}>
+                <div className={styles.introCard}>
+                    <div className={styles.headerRow}>
+                        <div className={styles.iconCircle} style={{ background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)' }}>
+                            <svg width="24" height="24" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                            </svg>
+                        </div>
+                        <div>
+                            <h4 className={styles.title}>2FA Activo ✓</h4>
+                            <p className={styles.description}>Tu cuenta está protegida con autenticación de dos factores.</p>
+                        </div>
+                    </div>
+
+                    {error && <div className={styles.errorBox}>{error}</div>}
+
+                    <div className={styles.statusInfo}>
+                        <div className={styles.statusItem}>
+                            <svg width="20" height="20" fill="currentColor" viewBox="0 0 20 20" style={{ color: '#10b981' }}>
+                                <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                            </svg>
+                            <span>Verificación de dos pasos activa</span>
+                        </div>
+                        <div className={styles.statusItem}>
+                            <svg width="20" height="20" fill="currentColor" viewBox="0 0 20 20" style={{ color: '#10b981' }}>
+                                <path fillRule="evenodd" d="M2.166 4.999A11.954 11.954 0 0010 1.944 11.954 11.954 0 0017.834 5c.11.65.166 1.32.166 2.001 0 5.225-3.34 9.67-8 11.317C5.34 16.67 2 12.225 2 7c0-.682.057-1.35.166-2.001zm11.541 3.708a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                            </svg>
+                            <span>Máxima seguridad habilitada</span>
+                        </div>
+                    </div>
+
+                    <button
+                        onClick={handleDisable2FA}
+                        disabled={loading}
+                        className={styles.buttonDanger}
+                    >
+                        {loading ? 'Deshabilitando...' : 'Deshabilitar 2FA'}
+                    </button>
+                </div>
+            </div>
+        );
+    }
 
     return (
         <div className={styles.wrapper}>
@@ -89,6 +163,27 @@ const MFASetup = () => {
 
                     <div className={styles.qrImageFrame}>
                         <Image src={qrDataUrl} alt="QR Code" width={180} height={180} className={styles.qrImage} />
+                    </div>
+
+                    <div style={{ textAlign: 'center', margin: '1rem 0', padding: '1rem', background: 'var(--bg-secondary)', borderRadius: '8px' }}>
+                        <p style={{ fontSize: '0.875rem', color: 'var(--text-secondary)', marginBottom: '0.5rem' }}>
+                            <strong>O ingresa manualmente:</strong>
+                        </p>
+                        <code style={{
+                            display: 'block',
+                            padding: '0.75rem',
+                            background: 'var(--bg-primary)',
+                            borderRadius: '6px',
+                            fontSize: '0.875rem',
+                            wordBreak: 'break-all',
+                            fontFamily: 'monospace',
+                            border: '1px solid var(--border-color)'
+                        }}>
+                            {secretKey}
+                        </code>
+                        <p style={{ fontSize: '0.75rem', color: 'var(--text-tertiary)', marginTop: '0.5rem' }}>
+                            Copia este código y agrégalo manualmente en Google Authenticator
+                        </p>
                     </div>
 
                     <div style={{ textAlign: 'left' }}>

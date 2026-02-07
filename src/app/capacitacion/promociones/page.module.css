@@ -1,4 +1,4 @@
-/* ==================== BASE LAYOUT ==================== */
+﻿/* ==================== BASE LAYOUT ==================== */
 .main {
     min-height: 100vh;
     background: var(--bg-primary);
@@ -6,8 +6,22 @@
     overflow-x: hidden;
 }
 
+.profileContainer {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 9999;
+}
+
 [data-theme="dark"] .main {
     background: #000000;
+}
+
+.profileContainer {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 9999;
 }
 
 /* === BACKGROUND EFFECTS === */

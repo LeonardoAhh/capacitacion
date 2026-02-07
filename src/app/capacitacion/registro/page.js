@@ -1,7 +1,7 @@
-'use client';
+﻿'use client';
 
 import { useState, useEffect, useRef, useCallback } from 'react';
-import Navbar from '@/components/Navbar/Navbar';
+import ProfileDropdown from '@/components/ProfileDropdown/ProfileDropdown';
 import Link from 'next/link';
 import { Button } from '@/components/ui/Button/Button';
 import { useToast } from '@/components/ui/Toast/Toast';
@@ -454,7 +454,9 @@ export default function RegistroPage() {
 
     return (
         <>
-            <Navbar />
+            <div className={styles.profileContainer}>
+                <ProfileDropdown />
+            </div>
             <main className={styles.main} id="main-content">
                 {/* Background Effects */}
                 <div className={styles.bgDecoration}>

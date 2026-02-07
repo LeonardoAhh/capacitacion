@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import Navbar from '@/components/Navbar/Navbar';
+import ProfileDropdown from '@/components/ProfileDropdown/ProfileDropdown';
 import Link from 'next/link';
 import { useToast } from '@/components/ui/Toast/Toast';
 import { recalculateComplianceFromFirestore } from '@/lib/seedHistorial';
@@ -184,7 +184,9 @@ export default function CapacitacionPage() {
 
     return (
         <div className={styles.main}>
-            <Navbar />
+            <div className={styles.profileContainer}>
+                <ProfileDropdown />
+            </div>
 
             {/* Background Decorations */}
             <div className={styles.bgDecoration}>

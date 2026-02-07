@@ -1,0 +1,487 @@
+/* Module Card Styles - Flip Card Effect */
+
+/* Accessibility */
+.linkWrapper:focus,
+.disabledWrapper:focus {
+    outline: 2px solid #007AFF;
+    outline-offset: 4px;
+    border-radius: 20px;
+}
+
+.linkWrapper:focus-visible {
+    outline: 3px solid #007AFF;
+    outline-offset: 4px;
+}
+
+.linkWrapper,
+.disabledWrapper {
+    text-decoration: none;
+    display: block;
+    min-height: 44px;
+    /* Minimum touch target */
+}
+
+.cardWrapper {
+    position: relative;
+    height: 280px;
+    width: 100%;
+    perspective: 2000px;
+}
+
+.cardInner {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    transform-style: preserve-3d;
+    transition: transform 0.7s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.cardInner.flipped {
+    transform: rotateY(180deg);
+}
+
+.cardFace {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    backface-visibility: hidden;
+    border-radius: 20px;
+    overflow: hidden;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+    transition: all 0.7s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+[data-theme="light"] .cardFace {
+    border-color: rgba(0, 0, 0, 0.08);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
+}
+
+.cardFront {
+    background: rgba(28, 28, 30, 0.7);
+    backdrop-filter: blur(60px);
+    -webkit-backdrop-filter: blur(60px);
+    transform: rotateY(0deg);
+}
+
+[data-theme="light"] .cardFront {
+    background: rgba(255, 255, 255, 0.8);
+}
+
+.cardFront.hidden {
+    opacity: 0;
+}
+
+.cardBack {
+    background: linear-gradient(135deg, rgba(28, 28, 30, 0.95) 0%, rgba(18, 18, 20, 0.95) 100%);
+    backdrop-filter: blur(60px);
+    -webkit-backdrop-filter: blur(60px);
+    transform: rotateY(180deg);
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    opacity: 0;
+}
+
+[data-theme="light"] .cardBack {
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(245, 245, 247, 0.95) 100%);
+}
+
+.cardBack.visible {
+    opacity: 1;
+}
+
+/* Front Card Styles */
+.frontGradient {
+    position: relative;
+    height: 100%;
+    background: linear-gradient(180deg, rgba(0, 122, 255, 0.05) 0%, transparent 100%);
+}
+
+[data-theme="light"] .frontGradient {
+    background: linear-gradient(180deg, rgba(0, 122, 255, 0.03) 0%, transparent 100%);
+}
+
+.iconAnimation {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding-top: 20px;
+}
+
+.iconWrapper {
+    position: relative;
+    width: 80px;
+    height: 80px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 20px;
+    background: linear-gradient(135deg, #007AFF 0%, #5856D6 100%);
+    box-shadow: 0 8px 32px rgba(0, 122, 255, 0.4);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+[data-theme="light"] .iconWrapper {
+    box-shadow: 0 8px 32px rgba(0, 122, 255, 0.3);
+}
+
+.cardWrapper:hover .iconWrapper {
+    transform: scale(1.08) translateY(-4px);
+    box-shadow: 0 12px 48px rgba(0, 122, 255, 0.5);
+}
+
+.icon {
+    color: white;
+    position: relative;
+    z-index: 2;
+}
+
+.frontContent {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 20px;
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 12px;
+}
+
+.textContainer {
+    flex: 1;
+}
+
+.title {
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin: 0 0 4px 0;
+    letter-spacing: -0.3px;
+    transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.cardWrapper:hover .title {
+    transform: translateY(-4px);
+}
+
+.subtitle {
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+    margin: 0;
+    line-height: 1.4;
+    transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    transition-delay: 50ms;
+}
+
+.cardWrapper:hover .subtitle {
+    transform: translateY(-4px);
+}
+
+.flipIndicator {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.iconGlow {
+    position: absolute;
+    inset: -8px;
+    border-radius: 12px;
+    background: linear-gradient(135deg, rgba(0, 122, 255, 0.2) 0%, rgba(88, 86, 214, 0.1) 100%);
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+
+.cardWrapper:hover .iconGlow {
+    opacity: 1;
+}
+
+.repeatIcon {
+    position: relative;
+    z-index: 2;
+    color: #007AFF;
+    transition: all 0.3s;
+}
+
+.cardWrapper:hover .repeatIcon {
+    transform: rotate(-12deg) scale(1.1);
+}
+
+.lockIcon {
+    font-size: 1.125rem;
+    opacity: 0.4;
+}
+
+/* Back Card Styles */
+.backContent {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    height: 100%;
+    padding: 8px 0;
+}
+
+.featuresList {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 14px;
+}
+
+.featureItem {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 0.9375rem;
+    color: var(--text-primary);
+    transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    font-weight: 500;
+}
+
+.featureArrow {
+    color: #007AFF;
+    flex-shrink: 0;
+}
+
+.backFooter {
+    margin-top: auto;
+    padding-top: 16px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+[data-theme="light"] .backFooter {
+    border-color: rgba(0, 0, 0, 0.1);
+}
+
+.ctaButton {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 16px;
+    margin: -12px -16px;
+    border-radius: 12px;
+    background: linear-gradient(90deg, rgba(0, 122, 255, 0.1) 0%, transparent 100%);
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.ctaButton:hover {
+    background: linear-gradient(90deg, rgba(0, 122, 255, 0.15) 0%, rgba(0, 122, 255, 0.05) 100%);
+    transform: scale(1.02);
+}
+
+.ctaButton span {
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--text-primary);
+    transition: color 0.3s;
+}
+
+.ctaButton:hover span {
+    color: #007AFF;
+}
+
+.ctaIconWrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.ctaIconGlow {
+    position: absolute;
+    inset: -6px;
+    border-radius: 8px;
+    background: linear-gradient(135deg, rgba(0, 122, 255, 0.2) 0%, rgba(88, 86, 214, 0.1) 100%);
+    opacity: 0;
+    transform: scale(0.9);
+    transition: all 0.3s;
+}
+
+.ctaButton:hover .ctaIconGlow {
+    opacity: 1;
+    transform: scale(1);
+}
+
+.ctaArrow {
+    position: relative;
+    z-index: 2;
+    color: #007AFF;
+    transition: all 0.3s;
+}
+
+.ctaButton:hover .ctaArrow {
+    transform: translateX(4px) scale(1.1);
+}
+
+/* Disabled State */
+.cardFront.disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.cardFront.disabled .iconWrapper {
+    background: linear-gradient(135deg, rgba(100, 100, 100, 0.5) 0%, rgba(80, 80, 80, 0.5) 100%);
+    box-shadow: none;
+}
+
+.disabledWrapper {
+    cursor: not-allowed;
+    opacity: 0.6;
+}
+
+/* Hover Effects */
+.linkWrapper:hover .cardFace {
+    box-shadow: 0 12px 48px rgba(0, 122, 255, 0.3);
+}
+
+[data-theme="light"] .linkWrapper:hover .cardFace {
+    box-shadow: 0 12px 48px rgba(0, 122, 255, 0.2);
+}
+
+/* Improved Disabled State Visibility */
+.disabledWrapper {
+    cursor: not-allowed;
+    opacity: 0.6;
+    position: relative;
+}
+
+.disabledWrapper::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 20px;
+    border: 2px dashed rgba(150, 150, 150, 0.3);
+    pointer-events: none;
+}
+
+/* Accessibility: Reduced Motion */
+@media (prefers-reduced-motion: reduce) {
+    .cardInner {
+        transition: none;
+    }
+
+    .cardWrapper:hover .iconWrapper,
+    .cardWrapper:hover .title,
+    .cardWrapper:hover .subtitle,
+    .cardWrapper:hover .repeatIcon {
+        transform: none;
+    }
+
+    .featureItem {
+        transition: none;
+        transform: none !important;
+        opacity: 1 !important;
+    }
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+    .cardWrapper {
+        height: 260px;
+    }
+
+    .iconWrapper {
+        width: 70px;
+        height: 70px;
+    }
+}
+
+@media (max-width: 768px) {
+    .cardWrapper {
+        height: 240px;
+        min-height: 200px;
+        /* Ensure minimum touch target */
+    }
+
+    .iconWrapper {
+        width: 64px;
+        height: 64px;
+        border-radius: 18px;
+    }
+
+    .icon {
+        width: 32px !important;
+        height: 32px !important;
+    }
+
+    .title {
+        font-size: 1rem;
+        line-height: 1.3;
+    }
+
+    .subtitle {
+        font-size: 0.8125rem;
+        line-height: 1.4;
+    }
+
+    .frontContent {
+        padding: 16px;
+        gap: 10px;
+    }
+
+    .cardBack {
+        padding: 16px;
+    }
+
+    .backHeader {
+        margin-bottom: 16px;
+    }
+
+    .featuresList {
+        gap: 12px;
+    }
+
+    .featureItem {
+        font-size: 0.875rem;
+        gap: 8px;
+    }
+
+    .backFooter {
+        margin-top: auto;
+        padding-top: 14px;
+    }
+}
+
+@media (max-width: 480px) {
+    .cardWrapper {
+        height: 220px;
+    }
+
+    .iconWrapper {
+        width: 56px;
+        height: 56px;
+        border-radius: 16px;
+    }
+
+    .icon {
+        width: 28px !important;
+        height: 28px !important;
+    }
+
+    .iconAnimation {
+        padding-top: 16px;
+    }
+
+    .title {
+        font-size: 0.9375rem;
+    }
+
+    .subtitle {
+        font-size: 0.75rem;
+    }
+
+    .featureItem {
+        font-size: 0.875rem;
+    }
+
+    .ctaButton span {
+        font-size: 0.8125rem;
+    }
+}

@@ -1,7 +1,7 @@
-'use client';
+﻿'use client';
 
 import { useState, useEffect, useCallback } from 'react';
-import Navbar from '@/components/Navbar/Navbar';
+import ProfileDropdown from '@/components/ProfileDropdown/ProfileDropdown';
 import Link from 'next/link';
 import { Button } from '@/components/ui/Button/Button';
 import { useToast } from '@/components/ui/Toast/Toast';
@@ -193,7 +193,9 @@ export default function CursosPage() {
 
     return (
         <>
-            <Navbar />
+            <div className={styles.profileContainer}>
+                <ProfileDropdown />
+            </div>
             <main className={styles.main} id="main-content">
                 <div className={styles.container}>
                     <div className={styles.header}>

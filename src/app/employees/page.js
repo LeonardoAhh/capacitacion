@@ -3,7 +3,7 @@
 import React, { useEffect, useState, useRef, useMemo, useCallback } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useRouter } from 'next/navigation';
-import Navbar from '@/components/Navbar/Navbar';
+import ProfileDropdown from '@/components/ProfileDropdown/ProfileDropdown';
 import Link from 'next/link';
 import styles from './page.module.css';
 
@@ -800,7 +800,9 @@ export default function EmployeesPage() {
 
     return (
         <>
-            <Navbar />
+            <div className={styles.profileContainer}>
+                <ProfileDropdown />
+            </div>
             <main className={styles.main} id="main-content">
                 {/* Background Effects */}
                 <div className={styles.bgDecoration}>

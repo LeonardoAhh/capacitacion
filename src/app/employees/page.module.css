@@ -15,6 +15,14 @@
     background: #000000;
 }
 
+/* === PROFILE DROPDOWN === */
+.profileContainer {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 9999;
+}
+
 /* === BACKGROUND EFFECTS === */
 .bgDecoration {
     position: fixed;

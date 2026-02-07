@@ -1,4 +1,4 @@
-/* ==================== PERFIL PAGE - iOS STYLE REDESIGN ==================== */
+﻿/* ==================== PERFIL PAGE - iOS STYLE REDESIGN ==================== */
 
 /* === BASE LAYOUT === */
 .main {
@@ -11,8 +11,22 @@
     padding-top: 84px;
 }
 
+.profileContainer {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 9999;
+}
+
 [data-theme="dark"] .main {
     background: #000000;
+}
+
+.profileContainer {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 9999;
 }
 
 /* === BACKGROUND EFFECTS === */

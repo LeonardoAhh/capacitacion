@@ -1,8 +1,8 @@
-'use client';
+﻿'use client';
 
 import { useState, useEffect, useMemo } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
-import Navbar from '@/components/Navbar/Navbar';
+import ProfileDropdown from '@/components/ProfileDropdown/ProfileDropdown';
 import Link from 'next/link';
 import { Button } from '@/components/ui/Button/Button';
 import { db } from '@/lib/firebase';
@@ -213,7 +213,9 @@ export default function CalendarPage() {
 
     return (
         <>
-            <Navbar />
+            <div className={styles.profileContainer}>
+                <ProfileDropdown />
+            </div>
             <main className={styles.main} id="main-content">
                 <div className={styles.container}>
                     {/* Header */}

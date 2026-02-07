@@ -2,9 +2,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useRouter } from 'next/navigation';
-import Navbar from '@/components/Navbar/Navbar';
-import MFASetup from '@/components/Profile/MFASetup';
-import AdminManager from '@/components/Profile/AdminManager';
+import ProfileDropdown from '@/components/ProfileDropdown/ProfileDropdown';
 import styles from './page.module.css';
 import { createAvatar } from '@dicebear/core';
 import { lorelei } from '@dicebear/collection';
@@ -60,7 +58,9 @@ export default function ProfilePage() {
 
     return (
         <div style={{ minHeight: '100vh', backgroundColor: 'var(--bg-primary)' }}>
-            <Navbar />
+            <div className={styles.profileContainer}>
+                <ProfileDropdown />
+            </div>
 
 
 
@@ -124,65 +124,37 @@ export default function ProfilePage() {
                             <span className={`${styles.badge} ${styles.badgePrimary}`}>
                                 {user.rol || 'Empleado'}
                             </span>
-                            <span className={`${styles.badge} ${styles.badgeSecondary}`}>
-                                {user.mfaEnabled ? '2FA Activo' : 'Sin 2FA'}
-                            </span>
                         </div>
                     </div>
                 </div>
 
-                <div className={styles.grid}>
-                    {/* Left Column: Details */}
-                    <div>
-                        <div className={styles.card}>
-                            <h3 className={styles.cardTitle}>
-                                <svg className={styles.cardIcon} fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                                </svg>
-                                Detalles
-                            </h3>
-                            <ul className={styles.detailsList}>
-                                <li className={styles.detailsItem}>
-                                    <span className={styles.label}>Puesto</span>
-                                    <span className={styles.value}>{user.puesto || 'No definido'}</span>
-                                </li>
-                                <li className={styles.detailsItem}>
-                                    <span className={styles.label}>Departamento</span>
-                                    <span className={styles.value}>{user.departamento || 'No definido'}</span>
-                                </li>
-                                <li className={styles.detailsItem}>
-                                    <span className={styles.label}>Fecha Ingreso</span>
-                                    <span className={styles.value}>{user.fechaIngreso || 'No definida'}</span>
-                                </li>
-                                <li className={styles.detailsItem}>
-                                    <span className={styles.label}>Género</span>
-                                    <span className={styles.value}>{user.genero || 'No definido'}</span>
-                                </li>
-                            </ul>
-                        </div>
-                    </div>
-
-                    {/* Right Column: Security */}
-                    <div>
-                        <div className={styles.card}>
-                            <h3 className={styles.cardTitle}>
-                                <svg className={styles.cardIcon} style={{ color: 'var(--color-success)' }} fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
-                                </svg>
-                                Seguridad y Autenticación
-                            </h3>
-
-                            <MFASetup />
-                        </div>
-                    </div>
+                {/* Details Card */}
+                <div className={styles.card}>
+                    <h3 className={styles.cardTitle}>
+                        <svg className={styles.cardIcon} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                        </svg>
+                        Detalles del Perfil
+                    </h3>
+                    <ul className={styles.detailsList}>
+                        <li className={styles.detailsItem}>
+                            <span className={styles.label}>Puesto</span>
+                            <span className={styles.value}>{user.puesto || 'No definido'}</span>
+                        </li>
+                        <li className={styles.detailsItem}>
+                            <span className={styles.label}>Departamento</span>
+                            <span className={styles.value}>{user.departamento || 'No definido'}</span>
+                        </li>
+                        <li className={styles.detailsItem}>
+                            <span className={styles.label}>Fecha Ingreso</span>
+                            <span className={styles.value}>{user.fechaIngreso || 'No definida'}</span>
+                        </li>
+                        <li className={styles.detailsItem}>
+                            <span className={styles.label}>Género</span>
+                            <span className={styles.value}>{user.genero || 'No definido'}</span>
+                        </li>
+                    </ul>
                 </div>
-
-                {/* Admin Management Section - Only for Super Admins */}
-                {user.rol === 'super_admin' && (
-                    <div style={{ marginTop: '24px' }}>
-                        <AdminManager />
-                    </div>
-                )}
             </main>
         </div>
     );

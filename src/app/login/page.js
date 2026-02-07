@@ -8,14 +8,11 @@ import ModernLogin from '@/components/ModernLogin/ModernLogin';
 export default function LoginPage() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const [verificationCode, setVerificationCode] = useState('');
-    const [mfaRequired, setMfaRequired] = useState(false);
-    const [mfaSecret, setMfaSecret] = useState(null);
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
     const [isSuccess, setIsSuccess] = useState(false);
 
-    const { signIn, verifyOtp } = useAuth();
+    const { signIn, signInWithGoogle } = useAuth();
     const router = useRouter();
 
     const handleEmployeeSubmit = async (e) => {
@@ -31,32 +28,28 @@ export default function LoginPage() {
             setIsSuccess(true);
             setTimeout(() => {
                 router.push('/modulos');
-            }, 15000);
-        } else if (result.mfaRequired) {
-            setMfaRequired(true);
-            setMfaSecret(result.secret);
-            setLoading(false);
+            }, 1500);
         } else {
             setError(result.error);
             setLoading(false);
         }
     };
 
-    const handleMfaSubmit = async (e) => {
-        e.preventDefault();
+    const handleGoogleSignIn = async () => {
         setError('');
         setLoading(true);
 
-        const result = await verifyOtp(verificationCode, mfaSecret);
+        const result = await signInWithGoogle();
+
         if (result.success) {
             sessionStorage.setItem('showWelcome', 'true');
             setLoading(false);
             setIsSuccess(true);
             setTimeout(() => {
                 router.push('/modulos');
-            }, 4500);
+            }, 1500);
         } else {
-            setError(result.error || 'Código incorrecto. Intenta de nuevo.');
+            setError(result.error || 'Error al iniciar sesión con Google');
             setLoading(false);
         }
     };
@@ -67,13 +60,10 @@ export default function LoginPage() {
             setEmail={setEmail}
             password={password}
             setPassword={setPassword}
-            verificationCode={verificationCode}
-            setVerificationCode={setVerificationCode}
-            mfaRequired={mfaRequired}
             error={error}
             loading={loading}
             onSubmit={handleEmployeeSubmit}
-            onMfaSubmit={handleMfaSubmit}
+            onGoogleSignIn={handleGoogleSignIn}
             isSuccess={isSuccess}
         />
     );

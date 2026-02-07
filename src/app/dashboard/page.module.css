@@ -69,39 +69,15 @@
     gap: var(--spacing-xl);
 }
 
-/* ==================== HEADER ==================== */
-.header {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-end;
-    margin-bottom: var(--spacing-lg);
-    animation: fadeInDown 0.8s ease-out;
+/* Profile Dropdown Container */
+.profileContainer {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 9999;
 }
 
-.headerTitle h1 {
-    font-size: 2.5rem;
-    font-weight: 700;
-    color: var(--text-primary);
-    margin: 0;
-    line-height: 1.2;
-    background: linear-gradient(135deg, var(--text-primary), var(--text-secondary));
-    -webkit-background-clip: text;
-    background-clip: text;
-    -webkit-text-fill-color: transparent;
-}
-
-.headerSubtitle {
-    font-size: 1.1rem;
-    color: var(--text-secondary);
-    margin: 8px 0 0;
-    font-weight: 400;
-}
-
-.headerTitleRow {
-    display: flex;
-    align-items: center;
-    gap: 16px;
-}
+/* ==================== HEADER (Now defined at bottom with new dynamic styles) ==================== */
 
 /* ==================== STATS GRID (BENTO TOP) ==================== */
 .statsGrid {
@@ -451,5 +427,156 @@
 
     .statCard {
         padding: 20px;
+    }
+
+    .statsBar {
+        flex-direction: column;
+        gap: 12px;
+    }
+
+    .statDivider {
+        display: none;
+    }
+
+    /* Profile dropdown on mobile */
+    .profileContainer {
+        top: 12px;
+        right: 12px;
+    }
+}
+
+/* Mobile-specific adjustments */
+@media (max-width: 480px) {
+    .profileContainer {
+        top: 8px;
+        right: 8px;
+    }
+
+    .container {
+        padding: 16px;
+    }
+}
+
+/* ==================== NEW DYNAMIC HEADER ==================== */
+.header {
+    background: rgba(255, 255, 255, 0.5);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 24px;
+    padding: 32px;
+    margin-bottom: var(--spacing-lg);
+    animation: fadeInDown 0.8s ease-out;
+}
+
+[data-theme="dark"] .header {
+    background: rgba(30, 30, 35, 0.5);
+    border-color: rgba(255, 255, 255, 0.08);
+}
+
+.greetingSection {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.greetingEmoji {
+    font-size: 3.5rem;
+    line-height: 1;
+    animation: fadeIn 1s ease-out;
+}
+
+.greetingText {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.mainGreeting {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin: 0;
+    line-height: 1.2;
+    background: linear-gradient(135deg, var(--text-primary), var(--color-primary));
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.subGreeting {
+    font-size: 1rem;
+    color: var(--text-secondary);
+    margin: 0;
+    font-weight: 500;
+}
+
+
+/* Stats Summary Bar */
+.statsBar {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    padding: 20px 24px;
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: 16px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+[data-theme="dark"] .statsBar {
+    background: rgba(0, 0, 0, 0.2);
+    border-color: rgba(255, 255, 255, 0.05);
+}
+
+.statItem {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex: 1;
+}
+
+.statIcon {
+    font-size: 2rem;
+    line-height: 1;
+}
+
+.statContent {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.statValue {
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    line-height: 1;
+}
+
+.statLabel {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    font-weight: 500;
+}
+
+.statDivider {
+    width: 1px;
+    height: 40px;
+    background: rgba(0, 0, 0, 0.1);
+}
+
+[data-theme="dark"] .statDivider {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: scale(0.8);
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1);
     }
 }

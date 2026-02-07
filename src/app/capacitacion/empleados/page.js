@@ -1,8 +1,8 @@
-'use client';
+﻿'use client';
 
 import { useState, useEffect } from 'react';
 
-import Navbar from '@/components/Navbar/Navbar';
+import ProfileDropdown from '@/components/ProfileDropdown/ProfileDropdown';
 import { useAuth } from '@/contexts/AuthContext';
 import Link from 'next/link';
 import { Card, CardContent } from '@/components/ui/Card/Card';
@@ -408,7 +408,9 @@ export default function EmpleadosPage() {
 
     return (
         <>
-            <Navbar />
+            <div className={styles.profileContainer}>
+                <ProfileDropdown />
+            </div>
             <main className={styles.main} id="main-content">
                 {/* Background Effects */}
                 <div className={styles.bgDecoration}>

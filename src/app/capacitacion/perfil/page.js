@@ -1,7 +1,7 @@
-'use client';
+﻿'use client';
 
 import { useState, useCallback } from 'react';
-import Navbar from '@/components/Navbar/Navbar';
+import ProfileDropdown from '@/components/ProfileDropdown/ProfileDropdown';
 import Link from 'next/link';
 import { Button } from '@/components/ui/Button/Button';
 import { Avatar } from '@/components/ui/Avatar/Avatar';
@@ -177,7 +177,9 @@ export default function PerfilPage() {
 
     return (
         <>
-            <Navbar />
+            <div className={styles.profileContainer}>
+                <ProfileDropdown />
+            </div>
             <main className={styles.main} id="main-content">
                 {/* Background */}
                 <div className={styles.bgDecoration}>

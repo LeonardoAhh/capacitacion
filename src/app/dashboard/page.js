@@ -5,11 +5,10 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useRouter } from 'next/navigation';
 import { collection, getDocs, query, where } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
-import Navbar from '@/components/Navbar/Navbar';
+import ProfileDropdown from '@/components/ProfileDropdown/ProfileDropdown';
 import Link from 'next/link';
 import { Badge } from '@/components/ui/Badge/Badge';
 import { Dialog, DialogHeader, DialogTitle, DialogBody, DialogClose } from '@/components/ui/Dialog/Dialog';
-import { RoleAvatar } from '@/components/RoleAvatar';
 import { useNotifications } from '@/hooks/useNotifications';
 import DashboardBentoGrid from '@/components/Dashboard/DashboardBentoGrid';
 import styles from './page.module.css';
@@ -282,7 +281,9 @@ export default function DashboardPage() {
 
     return (
         <div className={styles.main}>
-            <Navbar />
+            <div className={styles.profileContainer}>
+                <ProfileDropdown />
+            </div>
 
             <div className={styles.bgDecoration}>
                 <div className={`${styles.blob} ${styles.blob1}`}></div>
@@ -334,16 +335,6 @@ export default function DashboardPage() {
                         </button>
                     </div>
                 )}
-
-                <header className={styles.header}>
-                    <div className={styles.headerTitle}>
-                        <div className={styles.headerTitleRow}>
-                            <h1>{getGreeting(userName)}{userName ? `, ${userName}` : ''}</h1>
-                            {user?.rol && <RoleAvatar role={user.rol} size={40} />}
-                        </div>
-                        <p className={styles.headerSubtitle}>Resumen de actividad y pendientes</p>
-                    </div>
-                </header>
 
                 {/* Modern Bento Grid Dashboard */}
                 <DashboardBentoGrid

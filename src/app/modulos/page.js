@@ -1,10 +1,11 @@
 'use client';
 
 import { useEffect } from 'react';
-import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
-import CandidatoCard from '@/components/Dashboard/CandidatoCard';
+import { LayoutDashboard, GraduationCap, Settings } from 'lucide-react';
+import ModuleCard from '@/components/ModuleCard/ModuleCard';
+import ProfileDropdown from '@/components/ProfileDropdown/ProfileDropdown';
 import styles from './page.module.css';
 
 export default function ModulesPage() {
@@ -15,135 +16,114 @@ export default function ModulesPage() {
     useEffect(() => {
         const candidateSession = sessionStorage.getItem('candidate_session');
         if (candidateSession) {
-            // Si hay sesión de candidato, redirigir a su dashboard
             router.push('/candidatos/dashboard');
         }
     }, [router]);
 
-    const handleLogout = async () => {
-        try {
-            await signOut();
-            router.push('/');
-        } catch (error) {
-            console.error('Error logging out:', error);
-        }
-    };
-
     const isDemo = user?.rol === 'demo' || user?.email?.includes('demo');
+    const isSuperAdmin = user?.rol === 'super_admin';
+
+    // Definir módulos con sus características
+    const modules = [
+        {
+            id: 'dashboard',
+            title: 'Gestión de Talento',
+            subtitle: 'Administra empleados y desarrollo',
+            description: 'Sistema completo de gestión de recursos humanos y desarrollo de talento.',
+            features: [
+                'Gestión de empleados',
+                'Reportes y analíticas',
+                'Control de capacitación',
+                'Dashboard ejecutivo'
+            ],
+            icon: LayoutDashboard,
+            href: '/dashboard',
+            disabled: isDemo,
+        },
+        {
+            id: 'induction',
+            title: 'Inducción',
+            subtitle: 'Cursos y onboarding',
+            description: 'Portal de capacitación e inducción para nuevos colaboradores.',
+            features: [
+                'Cursos de inducción',
+                'Material didáctico',
+                'Evaluaciones',
+                'Certificaciones'
+            ],
+            icon: GraduationCap,
+            href: '/induccion',
+            disabled: false,
+        },
+        {
+            id: 'iluo',
+            title: 'ILUO Manager',
+            subtitle: 'Ajustes del sistema ILUO',
+            description: 'Configuración avanzada del sistema de gestión de habilidades.',
+            features: [
+                'Configuración de skills',
+                'Gestión de matrices',
+                'Ajustes de sistema',
+                'Solo para admins'
+            ],
+            icon: Settings,
+            href: '/iluo-manager',
+            disabled: !isSuperAdmin,
+        },
+    ];
 
     return (
         <div className={styles.container}>
+            {/* Skip to Content Link for Accessibility */}
+            <a href="#main-content" className={styles.skipLink}>
+                Saltar al contenido principal
+            </a>
+
+            {/* ProfileDropdown */}
+            <div className={styles.profileContainer}>
+                <ProfileDropdown />
+            </div>
+
             {/* Background Effects */}
-            <div className={styles.bgDecoration}>
+            <div className={styles.bgDecoration} aria-hidden="true">
                 <div className={`${styles.blob} ${styles.blob1}`}></div>
                 <div className={`${styles.blob} ${styles.blob2}`}></div>
+                <div className={`${styles.blob} ${styles.blob3}`}></div>
             </div>
 
             <div className={styles.content}>
-                <header className={styles.header}>
+                <header className={styles.header} role="banner">
                     <h1 className={styles.title}>
                         Hola, <span className={styles.userName}>{(user?.nombre || user?.name || user?.displayName || 'Usuario').split(' ')[0]}</span>
                     </h1>
-                    <p className={styles.subtitle}>Selecciona un módulo</p>
+                    <p className={styles.subtitle}>Selecciona un módulo para comenzar</p>
                 </header>
 
-                <div className={styles.grid} id="main-content" role="navigation" aria-label="Módulos disponibles">
-                    {/* Module: Dashboard */}
-                    {!isDemo ? (
-                        <Link href="/dashboard" className={styles.moduleCard} aria-label="Ir a Gestión de Talento">
-                            <div className={styles.iconWrapper}>
-                                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
-                                    <rect x="3" y="3" width="7" height="7" rx="1" />
-                                    <rect x="14" y="3" width="7" height="7" rx="1" />
-                                    <rect x="14" y="14" width="7" height="7" rx="1" />
-                                    <rect x="3" y="14" width="7" height="7" rx="1" />
-                                </svg>
-                            </div>
-                            <div className={styles.cardContent}>
-                                <h2 className={styles.cardTitle}>Gestión de Talento</h2>
-                                <p className={styles.cardDescription}>Administra empleados y desarrollo.</p>
-                            </div>
-                            <div className={styles.cardArrow}>→</div>
-                        </Link>
-                    ) : (
-                        <div className={`${styles.moduleCard} ${styles.disabled}`} aria-disabled="true">
-                            <div className={styles.iconWrapper}>
-                                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                    <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z" />
-                                    <path d="M17 21v-8H7v8" />
-                                    <path d="M7 3v5h8" />
-                                </svg>
-                            </div>
-                            <div className={styles.cardContent}>
-                                <h2 className={styles.cardTitle}>Gestión de Talento</h2>
-                                <p className={styles.cardDescription}>Bloqueado en modo Instructor</p>
-                            </div>
-                            <div className={styles.lockIcon}>🔒</div>
+                {/* Bento Grid */}
+                <div className={styles.bentoGrid} id="main-content" role="navigation" aria-label="Módulos disponibles">
+                    {modules.map((module, index) => (
+                        <div
+                            key={module.id}
+                            className={styles.gridItem}
+                            style={{ animationDelay: `${index * 0.1}s` }}
+                        >
+                            <ModuleCard
+                                title={module.title}
+                                subtitle={module.subtitle}
+                                description={module.description}
+                                features={module.features}
+                                icon={module.icon}
+                                href={module.href}
+                                disabled={module.disabled}
+                            />
                         </div>
-                    )}
-
-                    {/* Module: Inducción */}
-                    <Link href="/induccion" className={styles.moduleCard} aria-label="Ir a Inducción">
-                        <div className={styles.iconWrapper}>
-                            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
-                                <path d="M22 10v6M2 10l10-5 10 5-10 5z" />
-                                <path d="M6 12v5c3 3 9 3 12 0v-5" />
-                            </svg>
-                        </div>
-                        <div className={styles.cardContent}>
-                            <h2 className={styles.cardTitle}>Inducción</h2>
-                            <p className={styles.cardDescription}>Cursos y onboarding.</p>
-                        </div>
-                        <div className={styles.cardArrow}>→</div>
-                    </Link>
-
-
-
-                    {/* Module: ILUO Manager */}
-                    {user?.rol === 'super_admin' ? (
-                        <Link href="/iluo-manager" className={styles.moduleCard} aria-label="Ir a Configuración ILUO">
-                            <div className={styles.iconWrapper}>
-                                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                    <circle cx="12" cy="12" r="3" />
-                                    <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z" />
-                                </svg>
-                            </div>
-                            <div className={styles.cardContent}>
-                                <h2 className={styles.cardTitle}>ILUO Manager</h2>
-                                <p className={styles.cardDescription}>Ajustes del sistema ILUO.</p>
-                            </div>
-                            <div className={styles.cardArrow}>→</div>
-                        </Link>
-                    ) : (
-                        <div className={`${styles.moduleCard} ${styles.disabled}`} aria-disabled="true">
-                            <div className={styles.iconWrapper}>
-                                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                    <circle cx="12" cy="12" r="3" />
-                                    <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z" />
-                                </svg>
-                            </div>
-                            <div className={styles.cardContent}>
-                                <h2 className={styles.cardTitle}>ILUO Manager</h2>
-                                <p className={styles.cardDescription}>Solo disponible para 🔒 </p>
-                            </div>
-                            <div className={styles.lockIcon}>🔒</div>
-                        </div>
-                    )}
+                    ))}
                 </div>
 
-                <div className={styles.footer}>
-                    <button onClick={handleLogout} className={styles.logoutBtn}>
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
-                            <polyline points="16 17 21 12 16 7" />
-                            <line x1="21" y1="12" x2="9" y2="12" />
-                        </svg>
-                        Cerrar Sesión
-                    </button>
+                <footer className={styles.footer}>
                     <p className={styles.copyright}>© 2024 Vertx System</p>
-                </div>
+                </footer>
             </div>
         </div>
     );
 }
-

@@ -1,7 +1,7 @@
-'use client';
+﻿'use client';
 
 import { useState, useEffect, useMemo } from 'react';
-import Navbar from '@/components/Navbar/Navbar';
+import ProfileDropdown from '@/components/ProfileDropdown/ProfileDropdown';
 import Link from 'next/link';
 import { Card, CardContent } from '@/components/ui/Card/Card';
 import { Skeleton } from '@/components/ui/Skeleton/Skeleton';
@@ -78,7 +78,9 @@ export default function HabilidadesPage() {
 
     return (
         <>
-            <Navbar />
+            <div className={styles.profileContainer}>
+                <ProfileDropdown />
+            </div>
             <main className={styles.main} id="main-content">
                 <div className={styles.container}>
                     {/* Header */}

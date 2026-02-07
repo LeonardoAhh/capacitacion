@@ -7,6 +7,14 @@
     overflow-x: hidden;
 }
 
+/* Profile Dropdown Container */
+.profileContainer {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 9999;
+}
+
 /* ==================== BACKGROUND EFFECTS ==================== */
 .bgDecoration {
     position: fixed;

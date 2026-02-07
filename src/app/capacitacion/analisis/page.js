@@ -1,7 +1,7 @@
-'use client';
+﻿'use client';
 
 import { useState, useEffect } from 'react';
-import Navbar from '@/components/Navbar/Navbar';
+import ProfileDropdown from '@/components/ProfileDropdown/ProfileDropdown';
 import Link from 'next/link';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card/Card';
 import { Button } from '@/components/ui/Button/Button';
@@ -352,7 +352,9 @@ export default function AnalisisPage() {
 
     return (
         <>
-            <Navbar />
+            <div className={styles.profileContainer}>
+                <ProfileDropdown />
+            </div>
             <main className={styles.main} id="main-content">
                 {/* Background Effects */}
                 <div className={styles.bgDecoration}>
