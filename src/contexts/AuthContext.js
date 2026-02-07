@@ -10,6 +10,7 @@ import {
 } from 'firebase/auth';
 import { auth, db } from '@/lib/firebase';
 import { doc, getDoc, updateDoc } from 'firebase/firestore';
+import { authenticator } from 'otplib';
 
 const AuthContext = createContext({});
 
@@ -92,16 +93,15 @@ export function AuthProvider({ children }) {
     const verifyOtp = async (token, secret) => {
         try {
             // Configure otplib options
-            const totp = await import('otplib');
-            totp.authenticator.options = {
+            authenticator.options = {
                 algorithm: 'sha1',
                 digits: 6,
                 period: 30,
                 window: 1 // Allow 1 time step before/after for clock drift
             };
 
-            // Verify the token - this is synchronous
-            const isValid = totp.authenticator.check(token, secret);
+            // Verify the token
+            const isValid = authenticator.check(token, secret);
 
             if (isValid) {
                 // Determine current firebase user (should be signed in by now from first step)
@@ -123,13 +123,11 @@ export function AuthProvider({ children }) {
     const generateMfaSecret = async (currentUser) => {
         if (!currentUser) return { success: false, error: 'No user' };
         try {
-            const totp = await import('otplib');
-
             // Generate a random secret
-            const secret = totp.authenticator.generateSecret();
+            const secret = authenticator.generateSecret();
 
             // Generate the otpauth:// URI for QR code
-            const otpauth = totp.authenticator.keyuri(
+            const otpauth = authenticator.keyuri(
                 currentUser.email || 'Usuario',
                 'VinoPlastic App',
                 secret
@@ -149,16 +147,15 @@ export function AuthProvider({ children }) {
     const enrollMfa = async (currentUser, verificationCode, secretKey) => {
         try {
             // Configure otplib options
-            const totp = await import('otplib');
-            totp.authenticator.options = {
+            authenticator.options = {
                 algorithm: 'sha1',
                 digits: 6,
                 period: 30,
                 window: 1
             };
 
-            // Verify the token - this is synchronous
-            const isValid = totp.authenticator.check(verificationCode, secretKey);
+            // Verify the token
+            const isValid = authenticator.check(verificationCode, secretKey);
 
             if (!isValid) return { success: false, error: 'Código inválido' };
 
