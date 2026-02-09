@@ -7,7 +7,7 @@ import { db } from '@/lib/firebase';
 import { useAuth } from '@/contexts/AuthContext';
 import styles from './page.module.css';
 import Link from 'next/link';
-import { Search, ArrowLeft, Users, CheckCircle, Clock, FileText, FileCheck, AlertCircle, Bell } from 'lucide-react';
+import { Search, ArrowLeft, Users, CheckCircle, Clock, FileText, FileCheck, AlertCircle, Bell, MessageCircle, Key } from 'lucide-react';
 import { useTheme } from '@/contexts/ThemeContext';
 import CandidateDrawer from '@/components/Dashboard/CandidateDrawer';
 
@@ -36,6 +36,72 @@ export default function CandidateMonitoringPage() {
 
     const [searchTerm, setSearchTerm] = useState('');
     const [coursesMapRef, setCoursesMapRef] = useState({});
+
+    // WhatsApp Modal State
+    const [whatsappModal, setWhatsappModal] = useState({
+        isOpen: false,
+        candidate: null
+    });
+
+    // Predefined WhatsApp message templates
+    const messageTemplates = [
+        {
+            id: 'progress_check',
+            title: '✅ Revisión de Progreso',
+            message: (name) => `Hola ${name}, ¿cómo vas con tu capacitación? Nos gustaría saber si tienes alguna duda o necesitas ayuda.`
+        },
+        {
+            id: 'problem_inquiry',
+            title: '❓ Consulta de Problemas',
+            message: (name) => `Hola ${name}, hemos notado que no has avanzado mucho en tus cursos. ¿Hay algún problema o dificultad que podamos ayudarte a resolver?`
+        },
+        {
+            id: 'inactive_alert',
+            title: '⏰ Recordatorio de Inactividad',
+            message: (name) => `Hola ${name}, notamos que no has ingresado a la plataforma recientemente. Recuerda que es importante completar tus cursos a tiempo. ¿Necesitas ayuda?`
+        },
+        {
+            id: 'completion_reminder',
+            title: '🎯 Recordatorio de Finalización',
+            message: (name) => `Hola ${name}, te recordamos completar los cursos pendientes. Cualquier duda que tengas, estamos para ayudarte.`
+        },
+        {
+            id: 'support_offer',
+            title: '🤝 Ofrecimiento de Apoyo',
+            message: (name) => `Hola ${name}, queremos ofrecerte nuestro apoyo en tu proceso de capacitación. ¿Hay algo en lo que podamos asistirte?`
+        }
+    ];
+
+    // WhatsApp handler
+    const handleWhatsApp = (candidate, e) => {
+        e.stopPropagation(); // Prevent row click
+        setWhatsappModal({
+            isOpen: true,
+            candidate
+        });
+    };
+
+    const sendWhatsAppMessage = (template) => {
+        if (!whatsappModal.candidate) return;
+
+        const { name, phone } = whatsappModal.candidate;
+        if (!phone) {
+            alert('El candidato no tiene número de teléfono registrado');
+            return;
+        }
+
+        // Clean phone number (remove spaces, dashes, etc.)
+        const cleanPhone = phone.replace(/\D/g, '');
+        const message = template.message(name);
+        const encodedMessage = encodeURIComponent(message);
+
+        // Open WhatsApp with message
+        window.open(`https://wa.me/${cleanPhone}?text=${encodedMessage}`, '_blank');
+
+        // Close modal
+        setWhatsappModal({ isOpen: false, candidate: null });
+    };
+
 
     // Helper function to calculate days since last login
     const calculateDaysSinceLastLogin = (lastLoginDate) => {
@@ -191,7 +257,11 @@ export default function CandidateMonitoringPage() {
                     status: status,
                     daysSinceLastLogin: daysIdle,
                     lastLogin: lastLoginDisplay,
-                    requiredCourseIds: requiredCourseIds // Store for detail view
+                    requiredCourseIds: requiredCourseIds, // Store for detail view
+                    // Access Code Info
+                    accessCode: c.accessCode || '-',
+                    accessCodeUses: c.accessCodeUses || 0,
+                    accessCodeExpires: c.accessCodeExpires ? new Date(c.accessCodeExpires).toLocaleDateString() : '-'
                 };
             });
 
@@ -299,19 +369,21 @@ export default function CandidateMonitoringPage() {
             {/* Search */}
             <div className={styles.filterBar}>
                 <div className={styles.searchContainer}>
-                    <Search className={styles.searchIcon} size={18} />
+                    <Search className={styles.searchIcon} size={18} aria-hidden="true" />
                     <input
                         type="text"
                         placeholder="Buscar por nombre, ID o puesto..."
                         className={styles.searchInput}
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
+                        aria-label="Buscar candidatos"
                     />
                 </div>
             </div>
 
             {/* Table */}
             <div className={styles.tableCard}>
+
                 <div className={styles.tableContainer}>
                     <table className={styles.table}>
                         <thead>
@@ -323,6 +395,7 @@ export default function CandidateMonitoringPage() {
                                 <th>Progreso General</th>
                                 <th>Actividad Detallada</th>
                                 <th>Último Acceso</th>
+                                <th>WhatsApp</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -367,14 +440,27 @@ export default function CandidateMonitoringPage() {
                                             </span>
                                         </td>
                                         <td>
-                                            <div style={{ display: 'flex', gap: '8px', fontSize: '0.8rem', color: '#666' }}>
-                                                <div title="Presentaciones Vistas" style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-                                                    <FileText size={14} />
-                                                    {candidate.presentationsViewed} Vistas
+                                            <div style={{ display: 'flex', flexDirection: 'column', gap: '4px', fontSize: '0.8rem', color: '#666' }}>
+                                                <div style={{ display: 'flex', gap: '8px' }}>
+                                                    <div title="Presentaciones Vistas" style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                                                        <FileText size={14} />
+                                                        {candidate.presentationsViewed} Vistas
+                                                    </div>
+                                                    <div title="Exámenes Descargados" style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                                                        <FileCheck size={14} />
+                                                        {candidate.examsDownloaded} Descargas
+                                                    </div>
                                                 </div>
-                                                <div title="Exámenes Descargados" style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-                                                    <FileCheck size={14} />
-                                                    {candidate.examsDownloaded} Descargas
+
+                                                {/* Access Code Info */}
+                                                <div style={{ display: 'flex', alignItems: 'center', gap: '4px', marginTop: '4px', paddingTop: '4px', borderTop: '1px solid rgba(0,0,0,0.05)' }}>
+                                                    <Key size={14} style={{ color: '#007AFF' }} aria-hidden="true" />
+                                                    <span title={`Expira el: ${candidate.accessCodeExpires}`}>
+                                                        Code: <strong style={{ color: '#1c1c1e' }}>{candidate.accessCode}</strong>
+                                                    </span>
+                                                    <span title="Veces utilizado" style={{ marginLeft: '4px', fontSize: '0.75rem', color: '#8e8e93' }}>
+                                                        ({candidate.accessCodeUses} usos)
+                                                    </span>
                                                 </div>
                                             </div>
                                         </td>
@@ -386,11 +472,21 @@ export default function CandidateMonitoringPage() {
                                                 {candidate.lastLogin}
                                             </div>
                                         </td>
+                                        <td>
+                                            <button
+                                                onClick={(e) => handleWhatsApp(candidate, e)}
+                                                className={styles.whatsappButton}
+                                                title={candidate.phone ? "Enviar mensaje de WhatsApp" : "Sin número de teléfono"}
+                                                disabled={!candidate.phone}
+                                            >
+                                                <MessageCircle size={18} />
+                                            </button>
+                                        </td>
                                     </tr>
                                 ))
                             ) : (
                                 <tr>
-                                    <td colSpan="7" className={styles.emptyState}>
+                                    <td colSpan="8" className={styles.emptyState}>
                                         No se encontraron candidatos que coincidan con la búsqueda.
                                     </td>
                                 </tr>
@@ -407,9 +503,18 @@ export default function CandidateMonitoringPage() {
                                 key={candidate.id}
                                 className={styles.mobileCard}
                                 onClick={() => handleRowClick(candidate)}
+                                role="button"
+                                tabIndex={0}
+                                onKeyDown={(e) => {
+                                    if (e.key === 'Enter' || e.key === ' ') {
+                                        e.preventDefault();
+                                        handleRowClick(candidate);
+                                    }
+                                }}
+                                aria-label={`Ver detalles de ${candidate.name}`}
                             >
                                 <div className={styles.cardHeader}>
-                                    <div className={styles.avatar}>
+                                    <div className={styles.avatar} aria-hidden="true">
                                         {candidate.name.charAt(0)}
                                     </div>
                                     <div className={styles.cardUserInfo}>
@@ -417,32 +522,44 @@ export default function CandidateMonitoringPage() {
                                         <span className={styles.userDetail}>{candidate.position}</span>
                                     </div>
                                     <span className={`${styles.badge} ${styles[candidate.status]}`}>
-                                        {candidate.status === 'active' ? 'Activo' :
-                                            candidate.status === 'inactive' ? 'Inactivo' : 'Pendiente'}
+                                        {candidate.status === 'completed' ? 'Completado' :
+                                            candidate.status === 'inProgress' ? 'En Proceso' :
+                                                candidate.status === 'inactive' ? 'Inactivo' : 'Pendiente'}
                                     </span>
                                 </div>
 
                                 <div className={styles.cardStats}>
                                     <div className={styles.statItem}>
                                         <span className={styles.statLabel}>Progreso</span>
-                                        <div className={styles.progressContainer}>
-                                            <div className={styles.progressBar}>
-                                                <div
-                                                    className={styles.progressFill}
-                                                    style={{ width: `${candidate.progress}%` }}
-                                                />
-                                            </div>
-                                            <span className={styles.progressText}>{candidate.progress}%</span>
+                                        <div className={styles.progressContainer} aria-label={`Progreso: ${candidate.progress}%`}>
+                                            <div
+                                                className={styles.progressBar}
+                                                style={{ width: `${candidate.progress}%` }}
+                                            />
                                         </div>
                                         <div className={styles.statDetail}>
-                                            {candidate.completedCount}/{candidate.requiredCount} cursos
+                                            {candidate.completedCount}/{candidate.requiredCount} cursos ({candidate.progress}%)
                                         </div>
                                     </div>
                                 </div>
 
                                 <div className={styles.cardActions}>
-                                    <button className={styles.viewDetailButton}>
+                                    <button
+                                        className={styles.viewDetailButton}
+                                        aria-label={`Ver detalles de ${candidate.name}`}
+                                    >
                                         Ver Detalle
+                                    </button>
+
+                                    <button
+                                        onClick={(e) => handleWhatsApp(candidate, e)}
+                                        className={styles.whatsappButton}
+                                        title={candidate.phone ? "Enviar mensaje por WhatsApp" : "Sin número de teléfono"}
+                                        disabled={!candidate.phone}
+                                        aria-label={`Enviar WhatsApp a ${candidate.name}`}
+                                        style={{ marginLeft: 'auto' }} // Push to right if needed
+                                    >
+                                        <MessageCircle size={18} aria-hidden="true" />
                                     </button>
                                 </div>
                             </div>
@@ -453,6 +570,54 @@ export default function CandidateMonitoringPage() {
                         </div>
                     )}
                 </div>
+
+                {/* WhatsApp Message Selector Modal */}
+                {whatsappModal.isOpen && (
+                    <div
+                        className={styles.modalOverlay}
+                        onClick={() => setWhatsappModal({ isOpen: false, candidate: null })}
+                        role="dialog"
+                        aria-modal="true"
+                        aria-labelledby="modal-title"
+                    >
+                        <div className={styles.modalContent} onClick={(e) => e.stopPropagation()}>
+                            <div className={styles.modalHeader}>
+                                <h3 id="modal-title">
+                                    <MessageCircle size={24} style={{ marginRight: '8px' }} aria-hidden="true" />
+                                    Selecciona un Mensaje
+                                </h3>
+                                <button
+                                    className={styles.modalCloseBtn}
+                                    onClick={() => setWhatsappModal({ isOpen: false, candidate: null })}
+                                    aria-label="Cerrar modal"
+                                >
+                                    ×
+                                </button>
+                            </div>
+
+                            <div className={styles.modalBody}>
+                                <p className={styles.modalSubtitle}>
+                                    Enviando mensaje a: <strong>{whatsappModal.candidate?.name}</strong>
+                                </p>
+
+                                <div className={styles.messageTemplates}>
+                                    {messageTemplates.map(template => (
+                                        <button
+                                            key={template.id}
+                                            className={styles.templateButton}
+                                            onClick={() => sendWhatsAppMessage(template)}
+                                        >
+                                            <div className={styles.templateTitle}>{template.title}</div>
+                                            <div className={styles.templatePreview}>
+                                                {template.message(whatsappModal.candidate?.name || 'Candidato')}
+                                            </div>
+                                        </button>
+                                    ))}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                )}
 
                 {/* Global Candidate Drawer */}
                 <CandidateDrawer

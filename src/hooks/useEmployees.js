@@ -1,4 +1,4 @@
-import { useState, useCallback, useRef } from 'react';
+import { useState, useCallback, useRef, useEffect } from 'react';
 import { db } from '@/lib/firebase';
 import {
     collection,
@@ -16,9 +16,9 @@ import {
     where
 } from 'firebase/firestore';
 
-const ITEMS_PER_PAGE = 10;
+const ITEMS_PER_PAGE = 4; // Default value
 
-export const useEmployees = () => {
+export const useEmployees = (itemsPerPage = ITEMS_PER_PAGE) => {
     const [employees, setEmployees] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -84,8 +84,8 @@ export const useEmployees = () => {
                     });
 
                     // Batch state updates to prevent losing focus
-                    const newEmployees = filtered.slice(0, ITEMS_PER_PAGE);
-                    const newHasMore = filtered.length > ITEMS_PER_PAGE;
+                    const newEmployees = filtered.slice(0, itemsPerPage);
+                    const newHasMore = filtered.length > itemsPerPage;
 
                     // Update all states in a single batch
                     setEmployees(newEmployees);
@@ -104,7 +104,7 @@ export const useEmployees = () => {
             } else {
                 // Pagination Logic
                 if (direction === 'next' && lastVisibleRef.current) {
-                    q = query(employeesRef, ...baseConstraints, startAfter(lastVisibleRef.current), limit(ITEMS_PER_PAGE));
+                    q = query(employeesRef, ...baseConstraints, startAfter(lastVisibleRef.current), limit(itemsPerPage));
                 } else if (direction === 'prev' && cursorsStackRef.current.length > 1) {
                     // Pop current page start
                     cursorsStackRef.current.pop();
@@ -142,14 +142,14 @@ export const useEmployees = () => {
                     const previousCursor = cursorsStackRef.current[cursorsStackRef.current.length - 1];
 
                     if (previousCursor) {
-                        q = query(employeesRef, ...baseConstraints, startAfter(previousCursor), limit(ITEMS_PER_PAGE));
+                        q = query(employeesRef, ...baseConstraints, startAfter(previousCursor), limit(itemsPerPage));
                     } else {
-                        q = query(employeesRef, ...baseConstraints, limit(ITEMS_PER_PAGE));
+                        q = query(employeesRef, ...baseConstraints, limit(itemsPerPage));
                     }
 
                 } else {
                     // Initial load
-                    q = query(employeesRef, ...baseConstraints, limit(ITEMS_PER_PAGE));
+                    q = query(employeesRef, ...baseConstraints, limit(itemsPerPage));
                     cursorsStackRef.current = [];
                     setPage(1);
                 }
@@ -210,29 +210,30 @@ export const useEmployees = () => {
         } finally {
             setLoading(false);
         }
-    }, []);
+    }, [itemsPerPage]); // Added itemsPerPage as dependency
+
 
     // Helper wrapper to manage the stack correctly
-    const nextPage = () => {
+    const nextPage = useCallback(() => {
         if (!hasMore) return;
         cursorsStackRef.current.push(lastVisibleRef.current);
         loadEmployees('next');
-    };
+    }, [hasMore, loadEmployees]);
 
-    const prevPage = () => {
+    const prevPage = useCallback(() => {
         if (page <= 1) return;
         loadEmployees('prev');
-    };
+    }, [page, loadEmployees]);
 
-    const searchEmployees = (term) => {
+    const searchEmployees = useCallback((term) => {
         loadEmployees('initial', term);
-    };
+    }, [loadEmployees]);
 
-    const refresh = () => {
+    const refresh = useCallback(() => {
         loadEmployees('initial');
-    };
+    }, [loadEmployees]);
 
-    const createEmployee = async (employeeData) => {
+    const createEmployee = useCallback(async (employeeData) => {
         try {
             // Validate unique employeeId
             if (employeeData.employeeId) {
@@ -264,33 +265,26 @@ export const useEmployees = () => {
             console.error('Error creating employee:', err);
             return { success: false, error: err.message };
         }
-    };
+    }, [refresh]);
 
-    const updateEmployee = async (id, employeeData) => {
+    const updateEmployee = useCallback(async (id, employeeData) => {
         try {
             await updateDoc(doc(db, 'employees', id), {
                 ...employeeData,
                 updatedAt: new Date().toISOString()
             });
-            // Don't full reload, just local update if possible or reload current page
-            // For pagination consistency, easiest ensures data is correct:
-            // loadEmployees('initial'); // Or keep current page?
-            // Keeping current page is hard without refetching it specifically.
-            // Let's reload current page context if simple, or just refresh to be safe.
             refresh();
             return { success: true };
         } catch (err) {
             console.error('Error updating employee:', err);
             return { success: false, error: err.message };
         }
-    };
+    }, [refresh]);
 
-    const deleteEmployee = async (id) => {
+    const deleteEmployee = useCallback(async (id) => {
         try {
             await deleteDoc(doc(db, 'employees', id));
             setEmployees(prev => prev.filter(emp => emp.id !== id));
-            // Recalculate if page is empty? 
-            // If page becomes empty, we should fetch prev?
             if (employees.length === 1 && page > 1) {
                 prevPage();
             }
@@ -300,7 +294,24 @@ export const useEmployees = () => {
             refresh();
             return { success: false, error: err.message };
         }
-    };
+    }, [employees.length, page, prevPage, refresh]);
+
+    // Initial load effect to ensure data is fetched if no one calls refresh
+    // We remove this if we want manual control, but standard hooks usually auto-load
+    // However, page.js controls it with `user` check. 
+    // If we add it here, we might double load if page.js also calls it.
+    // Let's relying on `refresh` being stable now, so page.js logic is safe.
+
+    // Reset pagination when itemsPerPage changes
+    useEffect(() => {
+        // Reset to page 1 and clear cursors when itemsPerPage changes
+        setPage(1);
+        lastVisibleRef.current = null;
+        firstVisibleRef.current = null;
+        cursorsStackRef.current = [];
+        // Reload data with new page size
+        loadEmployees('initial');
+    }, [itemsPerPage, loadEmployees]);
 
     return {
         employees,

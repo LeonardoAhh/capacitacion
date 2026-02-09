@@ -1,84 +1,152 @@
 'use client';
 
-import React, { useEffect, useState, useRef, useMemo, useCallback } from 'react';
+import React, { useEffect, useState, useMemo, useCallback } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useRouter } from 'next/navigation';
 import ProfileDropdown from '@/components/ProfileDropdown/ProfileDropdown';
-import Link from 'next/link';
+import {
+    User, Briefcase, Activity, FileText, ChevronRight, ArrowLeft,
+    Search, Users, UserCheck, UserPlus, Download, Edit, Trash2, X, Save, Upload, Phone, Key, RefreshCw, Loader2
+} from 'lucide-react';
 import styles from './page.module.css';
-
-// Hooks
 import { useEmployees } from '@/hooks/useEmployees';
-
-// Components
-import { Button } from '@/components/ui/Button/Button';
-import { Dialog, DialogHeader, DialogTitle, DialogDescription, DialogFooter, DialogClose } from '@/components/ui/Dialog/Dialog';
-import { useToast } from '@/components/ui/Toast/Toast';
-import EmployeeForm from '@/components/employees/EmployeeForm/EmployeeForm';
 import EmployeeSearchBar from '@/components/EmployeeSearchBar/EmployeeSearchBar';
+import {
+    Drawer,
+    DrawerContent,
+    DrawerHeader,
+    DrawerTitle,
+    DrawerFooter,
+    DrawerClose
+} from '@/components/ui/Drawer/Drawer';
+import { uploadFile } from '@/lib/upload';
+import { useToast } from '@/components/ui/Toast/Toast';
+import ConfirmDialog from '@/components/ui/ConfirmDialog/ConfirmDialog';
+import EmployeeSkeleton from '@/components/EmployeeSkeleton/EmployeeSkeleton';
+import { useDebounce } from '@/utils/debounce';
+import { useFormValidation } from '@/hooks/useFormValidation';
 
-// Utils
-import { assignAccessCodeToCandidate } from '@/lib/rhUtils';
+// Helper functions
+const formatDate = (dateString) => {
+    if (!dateString) return '—';
+    try {
+        if (typeof dateString === 'number') {
+            return new Date(dateString).toLocaleDateString('es-MX', {
+                year: 'numeric',
+                month: 'short',
+                day: 'numeric'
+            });
+        }
+        return new Date(dateString).toLocaleDateString('es-MX', {
+            year: 'numeric',
+            month: 'short',
+            day: 'numeric'
+        });
+    } catch (e) {
+        return dateString;
+    }
+};
 
-// Data
-import puestosData from '../../../puestos.json';
-import datosData from '../../../datos.json';
+const formatDateForInput = (dateString) => {
+    if (!dateString) return '';
+    try {
+        const date = new Date(dateString);
+        return date.toISOString().split('T')[0];
+    } catch (e) {
+        return '';
+    }
+};
 
-// Procesar datos para los comboboxes
-const PUESTOS_OPTIONS = puestosData.map(p => p.puesto);
-const DEPARTAMENTOS_OPTIONS = [...new Set(datosData.map(d => d.departamento))];
-const getAreasForDepartment = (dept) => {
-    return datosData
-        .filter(d => d.departamento === dept)
-        .map(d => d.área);
+const getInitials = (name) => {
+    if (!name) return 'EM';
+    return name
+        .split(' ')
+        .map(n => n[0])
+        .join('')
+        .slice(0, 2)
+        .toUpperCase();
+};
+
+const calculateDatesFromStart = (startDate) => {
+    if (!startDate) return {};
+
+    const start = new Date(startDate);
+
+    // Calculate contract end date (90 days)
+    const contractEnd = new Date(start);
+    contractEnd.setDate(contractEnd.getDate() + 90);
+
+    // Calculate evaluation dates
+    const eval1 = new Date(start);
+    eval1.setDate(eval1.getDate() + 30);
+
+    const eval2 = new Date(start);
+    eval2.setDate(eval2.getDate() + 60);
+
+    const eval3 = new Date(start);
+    eval3.setDate(eval3.getDate() + 75);
+
+    return {
+        contractEndDate: contractEnd.toISOString().split('T')[0],
+        eval1Date: eval1.toISOString().split('T')[0],
+        eval2Date: eval2.toISOString().split('T')[0],
+        eval3Date: eval3.toISOString().split('T')[0]
+    };
 };
 
 export default function EmployeesPage() {
-    const { user, loading: authLoading, canWrite } = useAuth();
+    const { user, loading: authLoading } = useAuth();
     const router = useRouter();
+    const { showToast } = useToast(); // Global toast context
 
-    // Protección: Redirigir candidatos a su dashboard
-    useEffect(() => {
-        const candidateSession = sessionStorage.getItem('candidate_session');
-        if (candidateSession) {
-            router.push('/candidatos/dashboard');
-            return;
-        }
-    }, [router]);
-    const { toast } = useToast();
+    // Pagination state
+    const [itemsPerPage, setItemsPerPage] = useState(4);
 
-    // Custom Hooks
     const {
         employees,
         loading,
+        refresh,
         page,
         hasMore,
         nextPage,
         prevPage,
-        searchEmployees,
-        refresh,
         createEmployee,
         updateEmployee,
         deleteEmployee
-    } = useEmployees();
+    } = useEmployees(itemsPerPage);
 
-    // Local State
-    const [editingEmployee, setEditingEmployee] = useState(null);
     const [searchTerm, setSearchTerm] = useState('');
-    const [deleteModal, setDeleteModal] = useState({ show: false, employee: null });
-    const [accessCodeModal, setAccessCodeModal] = useState({ show: false, code: null, expiresAt: null, employeeName: null });
-    const [generatingCode, setGeneratingCode] = useState(false);
-
-    // Search input ref to maintain focus
-    const searchInputRef = useRef(null);
-
-    // Bulk upload refs and state
-    const bulkFileInputRef = useRef(null);
-    const [bulkUploadProgress, setBulkUploadProgress] = useState({ show: false, current: 0, total: 0, errors: [] });
-
-    // iOS-style navigation state: 'list', 'detail', 'edit'
-    const [activeView, setActiveView] = useState('list');
     const [selectedEmployee, setSelectedEmployee] = useState(null);
+    const [activeTab, setActiveTab] = useState('personal');
+
+    // Drawer states
+    const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+    const [drawerMode, setDrawerMode] = useState('create'); // 'create' or 'edit'
+    const [formData, setFormData] = useState({});
+    const [isSaving, setIsSaving] = useState(false);
+    const [photoFile, setPhotoFile] = useState(null);
+    const [photoPreview, setPhotoPreview] = useState(null);
+    const [uploadProgress, setUploadProgress] = useState(0);
+
+    // Toast notification state
+    const [toast, setToast] = useState(null);
+
+    // Confirmation dialog state
+    const [confirmDialog, setConfirmDialog] = useState({
+        isOpen: false,
+        title: '',
+        message: '',
+        onConfirm: null
+    });
+
+    // Deleting state
+    const [isDeleting, setIsDeleting] = useState(false);
+
+    // Form validation
+    const { errors: formErrors, validate, clearError, clearAllErrors } = useFormValidation();
+
+    // Debounced search term
+    const debouncedSearchTerm = useDebounce(searchTerm, 300);
 
     // Auth Protection
     useEffect(() => {
@@ -93,828 +161,1243 @@ export default function EmployeesPage() {
         }
     }, [user, authLoading, router]);
 
-    // Initialize Data
     useEffect(() => {
-        if (user) {
-            refresh();
-        }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [user]);
+        if (user) refresh();
+    }, [user, refresh]);
 
-    // Memoized stats calculations to prevent expensive recalculations
-    const employeeStats = useMemo(() => ({
-        total: employees.length,
-        withDepartment: employees.filter(e => e.department).length,
-        uniquePositions: new Set(employees.map(e => e.position).filter(Boolean)).size
-    }), [employees]);
+    // Filter and sort employees with useMemo for performance
+    const filteredEmployees = useMemo(() => {
+        return employees
+            .filter(emp =>
+                emp.name?.toLowerCase().includes(debouncedSearchTerm.toLowerCase()) ||
+                emp.employeeId?.includes(debouncedSearchTerm) ||
+                emp.position?.toLowerCase().includes(debouncedSearchTerm.toLowerCase())
+            )
+            .sort((a, b) => {
+                // Sort by employeeId (ascending - lowest to highest)  
+                const idA = a.employeeId || '';
+                const idB = b.employeeId || '';
+                return idA.localeCompare(idB, undefined, { numeric: true });
+            });
+    }, [employees, debouncedSearchTerm]);
 
-    // Handle Search
-    useEffect(() => {
-        const timeoutId = setTimeout(() => {
-            searchEmployees(searchTerm);
-        }, 500);
-        return () => clearTimeout(timeoutId);
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [searchTerm]);
 
-    // Restore focus to search input after search results update
-    useEffect(() => {
-        if (searchTerm && searchInputRef.current && document.activeElement !== searchInputRef.current) {
-            // Only restore focus if user was typing (not if they clicked elsewhere)
-            const wasTyping = searchInputRef.current.value === searchTerm;
-            if (wasTyping) {
-                searchInputRef.current.focus();
-            }
-        }
-    }, [employees, searchTerm]);
-
-    // Handlers
-    const handleSubmit = async (employeeData) => {
-        let result;
-        if (editingEmployee) {
-            result = await updateEmployee(editingEmployee.id, employeeData);
-            if (result.success) toast.success('¡Actualizado!', 'El empleado se actualizó correctamente.');
-        } else {
-            result = await createEmployee(employeeData);
-            if (result.success) toast.success('¡Guardado!', 'El empleado se registró correctamente.');
-        }
-        if (result.success) {
-            // Update selected employee if editing
-            if (editingEmployee && selectedEmployee?.id === editingEmployee.id) {
-                setSelectedEmployee({ ...selectedEmployee, ...employeeData });
-            }
-            setEditingEmployee(null);
-            // Go back to previous view
-            if (selectedEmployee) {
-                setActiveView('detail');
-            } else {
-                setActiveView('list');
-            }
-        } else {
-            if (result.error === 'ID_DUPLICADO') {
-                toast.error('ID Duplicado', result.message || 'Este ID de empleado ya existe.');
-            } else {
-                toast.error('Error', 'No se pudo guardar el empleado. Intenta de nuevo.');
-            }
-        }
-    };
-
-    const handleEdit = (employee) => {
-        setEditingEmployee(employee);
-        setActiveView('edit');
-    };
-
-    const handleNewEmployee = () => {
-        setEditingEmployee(null);
-        setSelectedEmployee(null);
-        setActiveView('edit');
-    };
-
-    const handleCancelEdit = () => {
-        setEditingEmployee(null);
-        if (selectedEmployee) {
-            setActiveView('detail');
-        } else {
-            setActiveView('list');
-        }
-    };
-
-    const handleDelete = (employee) => {
-        setDeleteModal({ show: true, employee });
-    };
-
-    const confirmDelete = async () => {
-        if (!deleteModal.employee) return;
-        const result = await deleteEmployee(deleteModal.employee.id);
-        if (result.success) {
-            setDeleteModal({ show: false, employee: null });
-            toast.success('Eliminado', 'El empleado fue eliminado correctamente.');
-            // Go back to list if we deleted the selected employee
-            if (selectedEmployee?.id === deleteModal.employee.id) {
-                setActiveView('list');
-                setSelectedEmployee(null);
-            }
-        } else {
-            toast.error('Error', 'No se pudo eliminar el empleado.');
-        }
-    };
-
-    const cancelDelete = () => {
-        setDeleteModal({ show: false, employee: null });
-    };
-
-    const selectEmployee = (emp) => {
+    const handleSelectEmployee = useCallback((emp) => {
         setSelectedEmployee(emp);
-        setActiveView('detail');
+        setActiveTab('personal');
+    }, []);
+
+    const handleBackToList = useCallback(() => {
+        setSelectedEmployee(null);
+    }, []);
+
+    // Drawer handlers
+    const openCreateDrawer = () => {
+        setDrawerMode('create');
+        setFormData({
+            name: '',
+            employeeId: '',
+            curp: '',
+            phone: '',
+            position: '',
+            department: '',
+            area: '',
+            shift: '',
+            status: 'Activo',
+            isCandidato: false,
+            startDate: '',
+            contractEndDate: '',
+            photoUrl: '',
+            eval1Date: '',
+            eval1Score: '',
+            eval2Date: '',
+            eval2Score: '',
+            eval3Date: '',
+            eval3Score: ''
+        });
+        clearAllErrors();
+        setIsDrawerOpen(true);
     };
 
-    const handleGenerateAccessCode = async (employeeId, employeeName) => {
-        setGeneratingCode(true);
+    const openEditDrawer = (employee) => {
+        setDrawerMode('edit');
+        setFormData({
+            id: employee.id,
+            name: employee.name || '',
+            employeeId: employee.employeeId || '',
+            curp: employee.curp || '',
+            phone: employee.phone || '',
+            position: employee.position || '',
+            department: employee.department || '',
+            area: employee.area || '',
+            shift: employee.shift || '',
+            status: employee.status || 'Activo',
+            isCandidato: employee.isCandidato || false,
+            startDate: employee.startDate || '',
+            contractEndDate: employee.contractEndDate || '',
+            photoUrl: employee.photoUrl || '',
+            accessCode: employee.accessCode || '',
+            accessCodeExpires: employee.accessCodeExpires || null,
+            accessCodeGeneratedAt: employee.accessCodeGeneratedAt || null,
+            accessCodeUses: employee.accessCodeUses || 0,
+            trainingPlanDelivered: employee.trainingPlanDelivered || false,
+            eval1Date: employee.eval1Date || '',
+            eval1Score: employee.eval1Score || '',
+            eval2Date: employee.eval2Date || '',
+            eval2Score: employee.eval2Score || '',
+            eval3Date: employee.eval3Date || '',
+            eval3Score: employee.eval3Score || ''
+        });
+        clearAllErrors();
+        setPhotoFile(null);
+        setPhotoPreview(employee.photoUrl || null);
+        setIsDrawerOpen(true);
+    };
+
+    const closeDrawer = () => {
+        setIsDrawerOpen(false);
+        setFormData({});
+        clearAllErrors();
+        setPhotoFile(null);
+        setPhotoPreview(null);
+        setUploadProgress(0);
+    };
+
+    const handleInputChange = (e) => {
+        const { name, value, type, checked } = e.target;
+
+        // If startDate is changing, calculate related dates automatically
+        if (name === 'startDate' && value) {
+            const calculatedDates = calculateDatesFromStart(value);
+            setFormData(prev => ({
+                ...prev,
+                startDate: value,
+                ...calculatedDates
+            }));
+        } else {
+            setFormData(prev => ({
+                ...prev,
+                [name]: type === 'checkbox' ? checked : value
+            }));
+        }
+
+        // Clear error for this field
+        if (formErrors[name]) {
+            clearError(name);
+        }
+    };
+
+    const handlePhotoChange = (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            setPhotoFile(file);
+            // Create preview
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                setPhotoPreview(reader.result);
+            };
+            reader.readAsDataURL(file);
+        }
+    };
+
+    const handleRemovePhoto = () => {
+        setPhotoFile(null);
+        setPhotoPreview(null);
+    };
+
+    const handleGenerateAccessCode = () => {
+        // Generate a random 6-digit code
+        const code = Math.floor(100000 + Math.random() * 900000).toString();
+        const now = Date.now();
+        const expiresIn3Days = now + (3 * 24 * 60 * 60 * 1000); // 3 days from now
+
+        setFormData(prev => ({
+            ...prev,
+            accessCode: code,
+            accessCodeGeneratedAt: now,
+            accessCodeExpires: expiresIn3Days,
+            accessCodeUses: 0
+        }));
+    };
+
+    const validateFormData = () => {
+        const validationRules = {
+            name: 'required',
+            employeeId: 'required',
+            curp: formData.curp ? 'curp' : null,
+            phone: formData.phone ? 'phone' : null
+        };
+
+        // Remove null rules
+        Object.keys(validationRules).forEach(key => {
+            if (validationRules[key] === null) {
+                delete validationRules[key];
+            }
+        });
+
+        return validate(formData, validationRules);
+    };
+
+    const handleSave = async () => {
+        if (!validateFormData()) {
+            showToast('Por favor corrige los errores en el formulario', 'error');
+            return;
+        }
+
+        setIsSaving(true);
+        setUploadProgress(0);
+
         try {
-            // Generate for 3 days expiration
-            const result = await assignAccessCodeToCandidate(employeeId, 3);
-            if (result.success) {
-                setAccessCodeModal({
-                    show: true,
-                    code: result.code,
-                    expiresAt: result.expiresAt,
-                    employeeName: employeeName
+            let photoData = {};
+
+            // Upload photo if selected
+            if (photoFile) {
+                setUploadProgress(30);
+                const uploadResult = await uploadFile(photoFile, {
+                    employeeId: formData.employeeId,
+                    docType: 'profile'
                 });
-                toast.success('Código generado', 'Código de acceso creado correctamente');
-                // Refresh employee data to show new code
-                refresh();
+
+                setUploadProgress(60);
+
+                if (uploadResult.success) {
+                    photoData = {
+                        photoUrl: uploadResult.data.viewLink,
+                        photoDriveId: uploadResult.data.id
+                    };
+                } else {
+                    showToast('Error al subir la foto: ' + (uploadResult.error || 'Error desconocido'), 'error');
+                    setIsSaving(false);
+                    setUploadProgress(0);
+                    return;
+                }
+            }
+
+            setUploadProgress(80);
+
+            // Merge photo data with form data
+            const employeeData = { ...formData, ...photoData };
+
+            let result;
+            if (drawerMode === 'create') {
+                result = await createEmployee(employeeData);
             } else {
-                toast.error('Error', result.error || 'No se pudo generar el código');
+                const { id, ...updateData } = employeeData;
+                result = await updateEmployee(id, updateData);
+            }
+
+            setUploadProgress(100);
+
+            if (result.success) {
+                showToast(
+                    drawerMode === 'create'
+                        ? 'Empleado creado exitosamente'
+                        : 'Empleado actualizado exitosamente',
+                    'success'
+                );
+                closeDrawer();
+                if (drawerMode === 'edit' && selectedEmployee) {
+                    // Update selected employee view
+                    setSelectedEmployee(null);
+                }
+            } else {
+                if (result.error === 'ID_DUPLICADO') {
+                    clearAllErrors();
+                    // Manually set the specific error
+                    showToast(result.message, 'error');
+                } else {
+                    showToast('Error: ' + (result.error || 'Error desconocido'), 'error');
+                }
             }
         } catch (error) {
-            console.error('Error generating access code:', error);
-            toast.error('Error', 'Ocurrió un error al generar el código');
+            console.error('Error saving employee:', error);
+            showToast('Error al guardar el empleado', 'error');
         } finally {
-            setGeneratingCode(false);
+            setIsSaving(false);
+            setUploadProgress(0);
         }
     };
 
-    const handleCopyCode = () => {
-        if (accessCodeModal.code) {
-            navigator.clipboard.writeText(accessCodeModal.code);
-            toast.success('Copiado', 'Código copiado al portapapeles');
+    const handleDelete = async (employeeId) => {
+        if (!confirm('¿Estás seguro de que deseas eliminar este empleado? Esta acción no se puede deshacer.')) {
+            return;
         }
-    };
-
-    const closeAccessCodeModal = () => {
-        setAccessCodeModal({ show: false, code: null, expiresAt: null, employeeName: null });
-    };
-
-    const goBackToList = () => {
-        setActiveView('list');
-        setSelectedEmployee(null);
-    };
-
-    // === BULK UPLOAD HANDLERS ===
-    const handleBulkUpload = async (event) => {
-        const file = event.target.files?.[0];
-        if (!file) return;
 
         try {
-            const text = await file.text();
-            const data = JSON.parse(text);
-
-            if (!Array.isArray(data)) {
-                toast.error('Formato Inválido', 'El archivo debe contener un arreglo de empleados.');
-                return;
-            }
-
-            setBulkUploadProgress({ show: true, current: 0, total: data.length, errors: [] });
-            const errors = [];
-
-            for (let i = 0; i < data.length; i++) {
-                const emp = data[i];
-
-                // Validate required fields
-                if (!emp.employeeId || !emp.name) {
-                    errors.push(`Fila ${i + 1}: Falta employeeId o name`);
-                    continue;
-                }
-
-                const result = await createEmployee({
-                    employeeId: String(emp.employeeId),
-                    name: emp.name.toUpperCase(),
-                    curp: emp.curp || '',
-                    position: emp.position || '',
-                    department: emp.department || '',
-                    area: emp.area || '',
-                    shift: emp.shift || '',
-                    startDate: emp.startDate || '',
-                    contractEndDate: emp.contractEndDate || '',
-                    isCandidato: emp.isCandidato || false,
-                    status: emp.isCandidato ? 'Candidato' : 'Activo'
-                });
-
-                if (!result.success) {
-                    errors.push(`${emp.employeeId}: ${result.message || result.error}`);
-                }
-
-                setBulkUploadProgress(prev => ({ ...prev, current: i + 1 }));
-            }
-
-            setBulkUploadProgress(prev => ({ ...prev, errors }));
-
-            if (errors.length === 0) {
-                toast.success('¡Carga Completa!', `Se importaron ${data.length} empleados correctamente.`);
+            const result = await deleteEmployee(employeeId);
+            if (result.success) {
+                setSelectedEmployee(null);
+                alert('Empleado eliminado exitosamente');
             } else {
-                toast.error('Carga con Errores', `${data.length - errors.length} importados, ${errors.length} con errores.`);
+                alert('Error al eliminar: ' + (result.error || 'Error desconocido'));
             }
-
-            // Reset file input
-            if (bulkFileInputRef.current) bulkFileInputRef.current.value = '';
-
-            // Refresh list
-            refresh();
-
-        } catch (err) {
-            console.error('Bulk upload error:', err);
-            toast.error('Error de Archivo', 'No se pudo leer el archivo JSON. Verifica el formato.');
+        } catch (error) {
+            console.error('Error deleting employee:', error);
+            alert('Error al eliminar el empleado');
         }
     };
 
-    const handleDownloadTemplate = () => {
-        window.open('/plantilla_empleados.json', '_blank');
-    };
-
-    const closeBulkModal = () => {
-        setBulkUploadProgress({ show: false, current: 0, total: 0, errors: [] });
-    };
-
-    const getInitials = (name) => {
-        if (!name) return '?';
-        return name.split(' ').slice(0, 2).map(n => n[0]).join('').toUpperCase();
-    };
-
-    // Chevron Icon
-    const ChevronRight = () => (
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-            <polyline points="9 18 15 12 9 6" />
-        </svg>
-    );
-
-    if (authLoading || !user) {
+    // Loading state
+    if (authLoading || loading) {
         return (
-            <div className={styles.loadingContainer}>
-                <div className="spinner"></div>
-            </div>
-        );
-    }
-
-    // Demo user restriction
-    const isDemo = user?.rol === 'demo' || user?.email?.includes('demo');
-    if (isDemo) {
-        return (
-            <div style={{
-                height: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center',
-                flexDirection: 'column', background: 'var(--bg-primary)', color: 'var(--text-primary)',
-                textAlign: 'center', padding: '20px'
-            }}>
-                <div style={{ fontSize: '4rem', marginBottom: '16px' }}>🔒</div>
-                <h2 style={{ margin: '0 0 10px', fontSize: '1.5rem' }}>Acceso Restringido</h2>
-                <p style={{ color: 'var(--text-secondary)', margin: '0 0 20px' }}>
-                    Esta sección no está disponible en modo Demo.
-                </p>
-                <button onClick={() => router.push('/induccion')}
-                    style={{
-                        padding: '12px 30px', background: 'var(--color-primary)', color: 'white',
-                        border: 'none', borderRadius: '50px', cursor: 'pointer', fontWeight: '600'
-                    }}>
-                    Ir a Inducción
-                </button>
-            </div>
-        );
-    }
-
-    // Get slide class based on view hierarchy
-    const getSlideClass = (view) => {
-        if (view === activeView) return styles.active;
-
-        const viewOrder = ['list', 'detail', 'edit'];
-        const currentIndex = viewOrder.indexOf(activeView);
-        const viewIndex = viewOrder.indexOf(view);
-
-        if (viewIndex < currentIndex) return styles.slideOut;
-        return styles.slideIn;
-    };
-
-    // Edit View Component
-    const EditView = () => (
-        <div className={`${styles.slidePanel} ${getSlideClass('edit')}`}>
-            {/* Back button and title */}
-            <div className={styles.detailHeader}>
-                <button onClick={handleCancelEdit} className={styles.backButton}>
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                        <path d="M19 12H5" />
-                        <polyline points="12 19 5 12 12 5" />
-                    </svg>
-                    {editingEmployee ? 'Detalle' : 'Empleados'}
-                </button>
-            </div>
-
-            <div className={styles.formContainer}>
-                <h1 className={styles.formTitle}>
-                    {editingEmployee ? 'Editar Empleado' : 'Nuevo Empleado'}
-                </h1>
-                <div className={styles.formCard}>
-                    <EmployeeForm
-                        title={editingEmployee ? 'Editar Empleado' : 'Nuevo Empleado'}
-                        employee={editingEmployee}
-                        onSubmit={handleSubmit}
-                        onCancel={handleCancelEdit}
-                        puestosOptions={PUESTOS_OPTIONS}
-                        departamentosOptions={DEPARTAMENTOS_OPTIONS}
-                        getAreasForDepartment={getAreasForDepartment}
-                        embedded={true}
-                    />
+            <div className={styles.main}>
+                <div className={styles.loadingContainer}>
+                    <div className={styles.spinner}></div>
+                    <p>Cargando empleados...</p>
                 </div>
             </div>
-        </div>
-    );
+        );
+    }
 
-    // Detail View Component
-    const DetailView = () => (
-        <div className={`${styles.slidePanel} ${getSlideClass('detail')}`}>
-            {/* Back button and title */}
-            <div className={styles.detailHeader}>
-                <button onClick={goBackToList} className={styles.backButton}>
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                        <path d="M19 12H5" />
-                        <polyline points="12 19 5 12 12 5" />
-                    </svg>
-                    Empleados
-                </button>
+    // Stats calculations
+    const totalEmployees = employees.length;
+    const activeEmployees = employees.filter(e => e.status !== 'Inactivo').length;
+    const candidates = employees.filter(e => e.isCandidato).length;
+
+    return (
+        <main className={styles.main}>
+            {/* Skip Link for Accessibility */}
+            <a href="#main-content" className={styles.skipLink}>
+                Saltar al contenido principal
+            </a>
+
+            {/* Profile Dropdown */}
+            <div className={styles.profileContainer}>
+                <ProfileDropdown />
             </div>
 
-            {!selectedEmployee && (
-                <div className={styles.emptyDetail}>
-                    <div className={styles.emptyDetailIcon}>
-                        <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
-                            <circle cx="12" cy="7" r="4" />
-                        </svg>
+            {/* Background Effects */}
+            <div className={styles.bgDecoration} aria-hidden="true">
+                <div className={`${styles.blob} ${styles.blob1}`}></div>
+                <div className={`${styles.blob} ${styles.blob2}`}></div>
+            </div>
+
+            {/* Main Container */}
+            <div className={styles.container} id="main-content">
+                {/* Header Section */}
+                <div className={styles.header}>
+                    <div className={styles.headerContent}>
+                        {/* Back to Dashboard Button */}
+                        <button
+                            onClick={() => router.push('/dashboard')}
+                            className={styles.backButton}
+                            title="Volver al Dashboard"
+                        >
+                            <ArrowLeft size={20} />
+                            <span className={styles.backButtonText}>Dashboard</span>
+                        </button>
+
+                        <h1 className={styles.pageTitle}>
+                            <Users size={32} style={{ marginRight: '12px' }} />
+                            Gestión de Empleados
+                        </h1>
+                        <p className={styles.pageSubtitle}>
+                            Administra y consulta la información de tu equipo
+                        </p>
                     </div>
-                    <h3 className={styles.emptyDetailTitle}>Selecciona un empleado</h3>
-                    <p className={styles.emptyDetailText}>Elige un empleado de la lista para ver sus detalles</p>
-                </div>
-            )}
 
-            {selectedEmployee && (
-                <>
-                    {/* Profile Header */}
-                    <div className={styles.profileHeaderCard}>
-                        <div className={styles.avatarSection}>
+                    {/* Stats Cards */}
+                    <div className={styles.statsGrid}>
+                        <div className={styles.statCard}>
+                            <div className={styles.statIcon} style={{ background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)' }}>
+                                <Users size={20} />
+                            </div>
+                            <div className={styles.statContent}>
+                                <div className={styles.statValue}>{totalEmployees}</div>
+                                <div className={styles.statLabel}>Total</div>
+                            </div>
+                        </div>
+                        <div className={styles.statCard}>
+                            <div className={styles.statIcon} style={{ background: 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)' }}>
+                                <UserCheck size={20} />
+                            </div>
+                            <div className={styles.statContent}>
+                                <div className={styles.statValue}>{activeEmployees}</div>
+                                <div className={styles.statLabel}>Activos</div>
+                            </div>
+                        </div>
+                        <div className={styles.statCard}>
+                            <div className={styles.statIcon} style={{ background: 'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)' }}>
+                                <UserPlus size={20} />
+                            </div>
+                            <div className={styles.statContent}>
+                                <div className={styles.statValue}>{candidates}</div>
+                                <div className={styles.statLabel}>Candidatos</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                {/* Search Bar with Add Button */}
+                <div className={styles.searchSection}>
+                    <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
+                        <div style={{ flex: 1 }}>
+                            <EmployeeSearchBar
+                                searchTerm={searchTerm}
+                                onSearchChange={setSearchTerm}
+                                onUpload={() => { }}
+                                onDownload={() => { }}
+                                onAddEmployee={openCreateDrawer}
+                                canWrite={true}
+                            />
+                        </div>
+                        <button
+                            onClick={openCreateDrawer}
+                            className={styles.addButton}
+                            title="Agregar nuevo empleado"
+                        >
+                            <UserPlus size={20} />
+                            <span className={styles.buttonText}>Nuevo Empleado</span>
+                        </button>
+                    </div>
+                </div>
+
+                {/* Content Area */}
+                {!selectedEmployee ? (
+                    /* LIST VIEW */
+                    <div className={styles.contentSection}>
+                        {loading ? (
+                            /* Show skeleton while loading */
+                            <EmployeeSkeleton count={itemsPerPage} />
+                        ) : filteredEmployees.length > 0 ? (
+                            <>
+                                <div className={styles.employeeGrid}>
+                                    {filteredEmployees.map(emp => (
+                                        <div
+                                            key={emp.id}
+                                            role="button"
+                                            tabIndex={0}
+                                            className={styles.employeeCard}
+                                            onClick={() => handleSelectEmployee(emp)}
+                                            onKeyDown={(e) => {
+                                                if (e.key === 'Enter' || e.key === ' ') {
+                                                    e.preventDefault();
+                                                    handleSelectEmployee(emp);
+                                                }
+                                            }}
+                                            aria-label={`Ver detalles de ${emp.name}, ${emp.position || 'sin puesto'}`}
+                                        >
+                                            <div className={styles.cardHeader}>
+                                                <div className={styles.employeeAvatar}>
+                                                    {emp.photoUrl ? (
+                                                        <img
+                                                            src={emp.photoUrl}
+                                                            alt={`Foto de ${emp.name}`}
+                                                            loading="lazy"
+                                                        />
+                                                    ) : (
+                                                        <span aria-hidden="true">{getInitials(emp.name)}</span>
+                                                    )}
+                                                </div>
+                                                <div className={styles.employeeInfo}>
+                                                    <h3 className={styles.employeeName}>{emp.name}</h3>
+                                                    <p className={styles.employeePosition}>{emp.position || 'Sin puesto'}</p>
+                                                </div>
+                                            </div>
+                                            <div className={styles.cardFooter}>
+                                                <span className={styles.employeeId}>ID: {emp.employeeId || emp.id}</span>
+                                                <span className={`${styles.statusBadge} ${emp.status === 'Inactivo' ? styles.statusInactive : styles.statusActive}`}>
+                                                    {emp.status || 'Activo'}
+                                                </span>
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+
+                                {/* Pagination */}
+                                <div className={styles.paginationContainer}>
+                                    <div className={styles.itemsPerPageSelector}>
+                                        <label htmlFor="itemsPerPage" className={styles.itemsPerPageLabel}>
+                                            Mostrar:
+                                        </label>
+                                        <select
+                                            id="itemsPerPage"
+                                            value={itemsPerPage}
+                                            onChange={(e) => {
+                                                setItemsPerPage(Number(e.target.value));
+                                            }}
+                                            className={styles.itemsPerPageSelect}
+                                        >
+                                            <option value={4}>4</option>
+                                            <option value={8}>8</option>
+                                            <option value={12}>12</option>
+                                        </select>
+                                        <span className={styles.itemsPerPageText}>por página</span>
+                                    </div>
+
+                                    <div className={styles.paginationControls}>
+                                        <button
+                                            onClick={prevPage}
+                                            disabled={page <= 1}
+                                            className={styles.paginationBtn}
+                                        >
+                                            <ChevronRight size={18} style={{ transform: 'rotate(180deg)' }} />
+                                            Anterior
+                                        </button>
+                                        <span className={styles.pageIndicator}>Página {page}</span>
+                                        <button
+                                            onClick={nextPage}
+                                            disabled={!hasMore}
+                                            className={styles.paginationBtn}
+                                        >
+                                            Siguiente
+                                            <ChevronRight size={18} />
+                                        </button>
+                                    </div>
+                                </div>
+                            </>
+                        ) : (
+                            <div className={styles.emptyState}>
+                                <Search size={48} />
+                                <h3>No se encontraron empleados</h3>
+                                <p>Intenta con otros términos de búsqueda</p>
+                            </div>
+                        )}
+                    </div>
+                ) : (
+                    /* DETAIL VIEW */
+                    <div className={styles.detailView}>
+                        <button onClick={handleBackToList} className={styles.backButton}>
+                            <ArrowLeft size={18} />
+                            Volver a la lista
+                        </button>
+
+                        {/* Employee Header */}
+                        <div className={styles.detailHeader}>
                             <div className={styles.avatarLarge}>
                                 {selectedEmployee.photoUrl ? (
-                                    // eslint-disable-next-line @next/next/no-img-element
-                                    <img src={selectedEmployee.photoUrl} alt={selectedEmployee.name} referrerPolicy="no-referrer" />
+                                    <img
+                                        src={selectedEmployee.photoUrl}
+                                        alt={selectedEmployee.name}
+                                        onError={(e) => {
+                                            e.target.style.display = 'none';
+                                            e.target.parentElement.innerHTML = `<span>${getInitials(selectedEmployee.name)}</span>`;
+                                        }}
+                                    />
                                 ) : (
                                     <span>{getInitials(selectedEmployee.name)}</span>
                                 )}
                             </div>
-                            <h2 className={styles.employeeName}>{selectedEmployee.name}</h2>
-                            <p className={styles.employeeIdText}>ID: {selectedEmployee.employeeId || selectedEmployee.id}</p>
-                        </div>
-                    </div>
-
-                    {/* Personal Info Section */}
-                    <div className={styles.settingsGroup}>
-                        <h3 className={styles.settingsGroupTitle}>Información Personal</h3>
-                        <div className={styles.settingsCard}>
-                            <div className={styles.settingsItem}>
-                                <div className={`${styles.settingsIcon} ${styles.iconBlue}`}>📋</div>
-                                <span className={styles.settingsLabel}>CURP</span>
-                                <span className={styles.settingsValue}>{selectedEmployee.curp || '—'}</span>
+                            <div className={styles.headerInfo}>
+                                <h2 className={styles.detailName}>{selectedEmployee.name}</h2>
+                                <p className={styles.detailId}>ID: {selectedEmployee.employeeId || selectedEmployee.id}</p>
+                                <span className={`${styles.statusBadge} ${selectedEmployee.status === 'Inactivo' ? styles.statusInactive : styles.statusActive}`}>
+                                    {selectedEmployee.status || 'Activo'}
+                                </span>
                             </div>
-                            <div className={styles.settingsItem}>
-                                <div className={`${styles.settingsIcon} ${styles.iconPurple}`}>🎓</div>
-                                <span className={styles.settingsLabel}>Escolaridad</span>
-                                <span className={styles.settingsValue}>{selectedEmployee.education || '—'}</span>
-                            </div>
-                            <div className={styles.settingsItem}>
-                                <div className={`${styles.settingsIcon} ${styles.iconGreen}`}>📅</div>
-                                <span className={styles.settingsLabel}>Fecha Ingreso</span>
-                                <span className={styles.settingsValue}>{selectedEmployee.startDate || '—'}</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    {/* Work Info Section */}
-                    <div className={styles.settingsGroup}>
-                        <h3 className={styles.settingsGroupTitle}>Información Laboral</h3>
-                        <div className={styles.settingsCard}>
-                            <div className={styles.settingsItem}>
-                                <div className={`${styles.settingsIcon} ${styles.iconOrange}`}>💼</div>
-                                <span className={styles.settingsLabel}>Puesto</span>
-                                <span className={styles.settingsValue}>{selectedEmployee.position || '—'}</span>
-                            </div>
-                            <div className={styles.settingsItem}>
-                                <div className={`${styles.settingsIcon} ${styles.iconTeal}`}>🏢</div>
-                                <span className={styles.settingsLabel}>Departamento</span>
-                                <span className={styles.settingsValue}>{selectedEmployee.department || '—'}</span>
-                            </div>
-                            <div className={styles.settingsItem}>
-                                <div className={`${styles.settingsIcon} ${styles.iconPink}`}>📍</div>
-                                <span className={styles.settingsLabel}>Área</span>
-                                <span className={styles.settingsValue}>{selectedEmployee.area || '—'}</span>
-                            </div>
-                            <div className={styles.settingsItem}>
-                                <div className={`${styles.settingsIcon} ${styles.iconGray}`}>⏰</div>
-                                <span className={styles.settingsLabel}>Turno</span>
-                                <span className={styles.settingsValue}>{selectedEmployee.shift || '—'}</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    {/* Performance Section */}
-                    {selectedEmployee.promotionData?.performanceScore && (
-                        <div className={styles.settingsGroup}>
-                            <h3 className={styles.settingsGroupTitle}>Desempeño</h3>
-                            <div className={styles.settingsCard}>
-                                <div className={styles.settingsItem}>
-                                    <div className={`${styles.settingsIcon} ${styles.iconGreen}`}>📊</div>
-                                    <span className={styles.settingsLabel}>Evaluación</span>
-                                    <span className={styles.settingsValue}>{selectedEmployee.promotionData.performanceScore}%</span>
-                                </div>
-                            </div>
-                        </div>
-                    )}
-
-                    {/* Candidate Management Section */}
-                    {(user?.rol === 'super_admin' || user?.rol === 'rh') && selectedEmployee.curp && (
-                        <div className={styles.settingsGroup}>
-                            <h3 className={styles.settingsGroupTitle}>Gestión de Candidatos</h3>
-                            <div className={styles.settingsCard}>
-                                <div className={styles.settingsItem}>
-                                    <div className={`${styles.settingsIcon} ${styles.iconBlue}`}>🔑</div>
-                                    <span className={styles.settingsLabel}>Código de Acceso</span>
-                                    <span className={styles.settingsValue}>
-                                        {selectedEmployee.accessCode ? (
-                                            <span style={{
-                                                background: 'linear-gradient(135deg, #007aff 0%, #5856d6 100%)',
-                                                padding: '4px 10px',
-                                                borderRadius: '6px',
-                                                color: 'white',
-                                                fontWeight: '600',
-                                                letterSpacing: '1px'
-                                            }}>
-                                                {selectedEmployee.accessCode}
-                                            </span>
-                                        ) : '—'}
-                                    </span>
-                                </div>
-                                {selectedEmployee.accessCodeExpires && (
-                                    <div className={styles.settingsItem}>
-                                        <div className={`${styles.settingsIcon} ${styles.iconOrange}`}>⏱️</div>
-                                        <span className={styles.settingsLabel}>Expira</span>
-                                        <span className={styles.settingsValue}>
-                                            {new Date(selectedEmployee.accessCodeExpires).toLocaleDateString('es-MX', {
-                                                year: 'numeric',
-                                                month: 'long',
-                                                day: 'numeric'
-                                            })}
-                                        </span>
-                                    </div>
-                                )}
-                                <div style={{ marginTop: '16px', paddingTop: '16px', borderTop: '1px solid var(--border-color)' }}>
-                                    <Button
-                                        variant="secondary"
-                                        onClick={() => handleGenerateAccessCode(
-                                            selectedEmployee.id,
-                                            selectedEmployee.name
-                                        )}
-                                        disabled={generatingCode}
-                                        style={{ width: '100%' }}
+                            <div className={styles.actionButtons}>
+                                {selectedEmployee.phone && (
+                                    <a
+                                        href={`https://wa.me/${selectedEmployee.phone.replace(/\s/g, '')}`}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className={styles.whatsappButton}
+                                        title="Enviar mensaje por WhatsApp"
                                     >
-                                        {generatingCode ? 'Generando...' : (selectedEmployee.accessCode ? '🔄 Regenerar Código' : '➕ Generar Código')}
-                                    </Button>
-                                    <p style={{
-                                        fontSize: '0.8rem',
-                                        color: 'var(--text-tertiary)',
-                                        marginTop: '8px',
-                                        textAlign: 'center'
-                                    }}>
-                                        El código permite acceso al portal de candidatos
-                                    </p>
-                                </div>
-                            </div>
-                        </div>
-                    )}
-
-                    {/* Actions Section */}
-                    {canWrite() && (
-                        <div className={styles.settingsGroup}>
-                            <h3 className={styles.settingsGroupTitle}>Acciones</h3>
-                            <div className={styles.settingsCard}>
-                                <button className={styles.settingsItem} onClick={() => handleEdit(selectedEmployee)}>
-                                    <div className={`${styles.settingsIcon} ${styles.iconBlue}`}>✏️</div>
-                                    <span className={styles.settingsLabel}>Editar Empleado</span>
-                                    <ChevronRight />
+                                        <Phone size={18} />
+                                        WhatsApp
+                                    </a>
+                                )}
+                                <button
+                                    onClick={() => openEditDrawer(selectedEmployee)}
+                                    className={styles.editButton}
+                                    title="Editar empleado"
+                                >
+                                    <Edit size={18} />
+                                    Editar
                                 </button>
-                                <button className={`${styles.settingsItem} ${styles.dangerItem}`} onClick={() => handleDelete(selectedEmployee)}>
-                                    <div className={`${styles.settingsIcon} ${styles.iconRed}`}>🗑️</div>
-                                    <span className={`${styles.settingsLabel} ${styles.dangerText}`}>Eliminar Empleado</span>
-                                    <ChevronRight />
+                                <button
+                                    onClick={() => handleDelete(selectedEmployee.id)}
+                                    className={styles.deleteButton}
+                                    title="Eliminar empleado"
+                                >
+                                    <Trash2 size={18} />
+                                    Eliminar
                                 </button>
                             </div>
                         </div>
-                    )}
-                </>
-            )}
-        </div>
-    );
 
-    // List View Component
-    const ListView = () => (
-        <div className={`${styles.slidePanel} ${getSlideClass('list')}`}>
-            {/* Page Header */}
-            <div className={styles.pageHeader}>
-                <Link href="/dashboard" className={styles.headerBackLink}>
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                        <path d="M19 12H5" />
-                        <polyline points="12 19 5 12 12 5" />
-                    </svg>
-                    Dashboard
-                </Link>
-                <h1 className={styles.pageTitle}>Empleados</h1>
-            </div>
-
-
-            {/* Modern Search Bar with Actions */}
-            <EmployeeSearchBar
-                searchTerm={searchTerm}
-                onSearchChange={setSearchTerm}
-                onUpload={() => bulkFileInputRef.current?.click()}
-                onDownload={handleDownloadTemplate}
-                onAddEmployee={handleNewEmployee}
-                canWrite={canWrite()}
-            />
-
-            {/* Hidden File Input for Bulk Upload */}
-            <input
-                type="file"
-                ref={bulkFileInputRef}
-                accept=".json"
-                onChange={handleBulkUpload}
-                style={{ display: 'none' }}
-            />
-
-
-            {/* Bulk Upload Progress Modal */}
-            {bulkUploadProgress.show && (
-                <div style={{
-                    position: 'fixed',
-                    inset: 0,
-                    background: 'rgba(0,0,0,0.4)',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    zIndex: 1000,
-                    backdropFilter: 'blur(4px)'
-                }}>
-                    <div style={{
-                        background: 'var(--card-bg, white)',
-                        borderRadius: '16px',
-                        padding: '32px 40px',
-                        maxWidth: '320px',
-                        width: '85%',
-                        textAlign: 'center',
-                        boxShadow: '0 20px 60px rgba(0,0,0,0.15)'
-                    }}>
-                        <p style={{
-                            marginBottom: '20px',
-                            fontSize: '2.5rem',
-                            fontWeight: '300',
-                            color: 'var(--text-primary, #1c1c1e)',
-                            letterSpacing: '-1px'
-                        }}>
-                            {bulkUploadProgress.current} / {bulkUploadProgress.total}
-                        </p>
-                        <div style={{
-                            height: '4px',
-                            background: 'var(--divider, #e5e5ea)',
-                            borderRadius: '2px',
-                            overflow: 'hidden',
-                            marginBottom: '24px'
-                        }}>
-                            <div style={{
-                                width: `${(bulkUploadProgress.current / bulkUploadProgress.total) * 100}%`,
-                                height: '100%',
-                                background: '#007AFF',
-                                transition: 'width 0.3s ease'
-                            }} />
-                        </div>
-                        {bulkUploadProgress.errors.length > 0 && (
-                            <div style={{
-                                textAlign: 'left',
-                                maxHeight: '100px',
-                                overflow: 'auto',
-                                fontSize: '0.75rem',
-                                color: '#FF3B30',
-                                marginBottom: '16px',
-                                padding: '8px',
-                                background: 'rgba(255,59,48,0.08)',
-                                borderRadius: '8px'
-                            }}>
-                                {bulkUploadProgress.errors.map((err, i) => (
-                                    <div key={i} style={{ marginBottom: '4px' }}>{err}</div>
-                                ))}
-                            </div>
-                        )}
-                        {bulkUploadProgress.current === bulkUploadProgress.total && (
+                        {/* Tabs Navigation */}
+                        <div className={styles.tabsNav}>
                             <button
-                                onClick={closeBulkModal}
-                                style={{
-                                    padding: '10px 28px',
-                                    background: '#007AFF',
-                                    color: 'white',
-                                    border: 'none',
-                                    borderRadius: '20px',
-                                    fontWeight: '600',
-                                    cursor: 'pointer',
-                                    fontSize: '0.9rem'
-                                }}
+                                className={`${styles.tabButton} ${activeTab === 'personal' ? styles.tabActive : ''}`}
+                                onClick={() => setActiveTab('personal')}
                             >
-                                Cerrar
+                                <User size={18} />
+                                Personal
                             </button>
-                        )}
-                    </div>
-                </div>
-            )}
+                            <button
+                                className={`${styles.tabButton} ${activeTab === 'laboral' ? styles.tabActive : ''}`}
+                                onClick={() => setActiveTab('laboral')}
+                            >
+                                <Briefcase size={18} />
+                                Laboral
+                            </button>
+                            <button
+                                className={`${styles.tabButton} ${activeTab === 'actividad' ? styles.tabActive : ''}`}
+                                onClick={() => setActiveTab('actividad')}
+                            >
+                                <Activity size={18} />
+                                Actividad
+                            </button>
+                            <button
+                                className={`${styles.tabButton} ${activeTab === 'documentos' ? styles.tabActive : ''}`}
+                                onClick={() => setActiveTab('documentos')}
+                            >
+                                <FileText size={18} />
+                                Documentos
+                            </button>
+                        </div>
 
-            {/* Stats Summary */}
-            <div className={styles.statsRow}>
-                <div className={`${styles.statCard} ${styles.statBlue}`}>
-                    <span className={styles.statNumber}>{employeeStats.total}</span>
-                    <span className={styles.statLabel}>Empleados</span>
-                </div>
-                <div className={`${styles.statCard} ${styles.statGreen}`}>
-                    <span className={styles.statNumber}>{employeeStats.withDepartment}</span>
-                    <span className={styles.statLabel}>Con Depto</span>
-                </div>
-                <div className={`${styles.statCard} ${styles.statPurple}`}>
-                    <span className={styles.statNumber}>{employeeStats.uniquePositions}</span>
-                    <span className={styles.statLabel}>Puestos</span>
-                </div>
+                        {/* Tab Content */}
+                        <div className={styles.tabContent}>
+                            {activeTab === 'personal' && (
+                                <div className={styles.infoGrid}>
+                                    <div className={styles.infoItem}>
+                                        <label>Nombre Completo</label>
+                                        <span>{selectedEmployee.name}</span>
+                                    </div>
+                                    <div className={styles.infoItem}>
+                                        <label>CURP</label>
+                                        <span>{selectedEmployee.curp || '—'}</span>
+                                    </div>
+                                    <div className={styles.infoItem}>
+                                        <label>ID Empleado</label>
+                                        <span>{selectedEmployee.employeeId || '—'}</span>
+                                    </div>
+                                    <div className={styles.infoItem}>
+                                        <label>Tipo</label>
+                                        <span>{selectedEmployee.isCandidato ? 'Candidato' : 'Empleado'}</span>
+                                    </div>
+                                </div>
+                            )}
+
+                            {activeTab === 'laboral' && (
+                                <div className={styles.infoGrid}>
+                                    <div className={styles.infoItem}>
+                                        <label>Puesto</label>
+                                        <span>{selectedEmployee.position || '—'}</span>
+                                    </div>
+                                    <div className={styles.infoItem}>
+                                        <label>Departamento</label>
+                                        <span>{selectedEmployee.department || '—'}</span>
+                                    </div>
+                                    <div className={styles.infoItem}>
+                                        <label>Área</label>
+                                        <span>{selectedEmployee.area || '—'}</span>
+                                    </div>
+                                    <div className={styles.infoItem}>
+                                        <label>Turno</label>
+                                        <span>{selectedEmployee.shift || '—'}</span>
+                                    </div>
+                                    <div className={styles.infoItem}>
+                                        <label>Fecha de Inicio</label>
+                                        <span>{formatDate(selectedEmployee.startDate)}</span>
+                                    </div>
+                                    <div className={styles.infoItem}>
+                                        <label>Fin de Contrato</label>
+                                        <span>{formatDate(selectedEmployee.contractEndDate)}</span>
+                                    </div>
+                                </div>
+                            )}
+
+                            {activeTab === 'actividad' && (
+                                <div>
+                                    <div className={styles.infoGrid}>
+                                        <div className={styles.infoItem}>
+                                            <label>Código de Acceso</label>
+                                            <span style={{ fontFamily: 'monospace', fontWeight: 'bold' }}>
+                                                {selectedEmployee.accessCode || '—'}
+                                            </span>
+                                        </div>
+                                        <div className={styles.infoItem}>
+                                            <label>Plan Entregado</label>
+                                            <span>{selectedEmployee.trainingPlanDelivered ? 'Sí' : 'No'}</span>
+                                        </div>
+                                        <div className={styles.infoItem}>
+                                            <label>Fecha Notificación</label>
+                                            <span>{formatDate(selectedEmployee.notificationDate)}</span>
+                                        </div>
+                                        <div className={styles.infoItem}>
+                                            <label>Último Login</label>
+                                            <span>{formatDate(selectedEmployee.lastLoginCandidate)}</span>
+                                        </div>
+                                    </div>
+
+                                    {selectedEmployee.cursosCompletados && selectedEmployee.cursosCompletados.length > 0 && (
+                                        <div style={{ marginTop: '24px' }}>
+                                            <h4 style={{ marginBottom: '12px', color: 'var(--text-primary)' }}>Cursos Completados</h4>
+                                            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
+                                                {selectedEmployee.cursosCompletados.map((courseId, idx) => (
+                                                    <span key={idx} className={styles.courseBadge}>
+                                                        {courseId.substring(0, 12)}...
+                                                    </span>
+                                                ))}
+                                            </div>
+                                        </div>
+                                    )}
+
+                                    {selectedEmployee.coursesProgress && Object.keys(selectedEmployee.coursesProgress).length > 0 && (
+                                        <div style={{ marginTop: '24px' }}>
+                                            <h4 style={{ marginBottom: '12px', color: 'var(--text-primary)' }}>Progreso de Cursos</h4>
+                                            {Object.entries(selectedEmployee.coursesProgress).map(([courseId, progress]) => (
+                                                <div key={courseId} className={styles.progressItem}>
+                                                    <span className={styles.courseId}>{courseId.substring(0, 12)}...</span>
+                                                    <div className={styles.progressSteps}>
+                                                        <span className={progress.step1Completed ? styles.stepCompleted : styles.stepPending}>
+                                                            Paso 1
+                                                        </span>
+                                                        <span className={progress.step2Completed ? styles.stepCompleted : styles.stepPending}>
+                                                            Paso 2
+                                                        </span>
+                                                        {progress.examDownloaded && (
+                                                            <span className={styles.stepInfo}>
+                                                                <Download size={14} /> Examen
+                                                            </span>
+                                                        )}
+                                                    </div>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    )}
+                                </div>
+                            )}
+
+                            {activeTab === 'documentos' && (
+                                <div>
+                                    {selectedEmployee.documents && selectedEmployee.documents.length > 0 ? (
+                                        <div className={styles.documentsList}>
+                                            {selectedEmployee.documents.map((doc, idx) => (
+                                                <div key={idx} className={styles.documentItem}>
+                                                    <FileText size={20} />
+                                                    <span>Documento {idx + 1}</span>
+                                                    <a href="#" className={styles.documentLink}>Ver</a>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    ) : (
+                                        <div className={styles.emptyState}>
+                                            <FileText size={32} />
+                                            <p>No hay documentos disponibles</p>
+                                        </div>
+                                    )}
+                                </div>
+                            )}
+                        </div>
+                    </div>
+                )}
             </div>
 
-            {/* Employees List */}
-            {loading ? (
-                <div className={styles.loadingContainer}>
-                    <div className="spinner"></div>
-                </div>
-            ) : employees.length === 0 ? (
-                <div className={styles.emptyState}>
-                    <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-                        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
-                        <circle cx="9" cy="7" r="4" />
-                        <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
-                        <path d="M16 3.13a4 4 0 0 1 0 7.75" />
-                    </svg>
-                    <h3>No hay empleados</h3>
-                    <p>{searchTerm ? 'No hay resultados para tu búsqueda' : 'Comienza agregando un nuevo empleado'}</p>
-                </div>
-            ) : (
-                <>
-                    <div className={styles.settingsGroup}>
-                        <h3 className={styles.settingsGroupTitle}>Lista de Empleados</h3>
-                        <div className={styles.settingsCard}>
-                            {employees.map((emp) => (
-                                <button key={emp.id} className={styles.employeeItem} onClick={() => selectEmployee(emp)}>
-                                    <div className={styles.employeeAvatar}>
-                                        {emp.photoUrl ? (
-                                            // eslint-disable-next-line @next/next/no-img-element
-                                            <img src={emp.photoUrl} alt={emp.name} referrerPolicy="no-referrer" />
+            {/* DRAWER for Create/Edit Employee - Using shadcn UI */}
+            <Drawer open={isDrawerOpen} onOpenChange={setIsDrawerOpen}>
+                <DrawerContent>
+                    <DrawerHeader>
+                        <DrawerTitle>
+                            {drawerMode === 'create' ? (
+                                <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                                    <UserPlus size={24} />
+                                    Nuevo Empleado
+                                </div>
+                            ) : (
+                                <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                                    <Edit size={24} />
+                                    Editar Empleado
+                                </div>
+                            )}
+                        </DrawerTitle>
+                        <DrawerClose asChild>
+                            <button className={styles.closeButtonIcon}>
+                                <X size={24} />
+                            </button>
+                        </DrawerClose>
+                    </DrawerHeader>
+
+                    <div className={styles.drawerContentScroll}>
+                        <form onSubmit={(e) => { e.preventDefault(); handleSave(); }}>
+                            {/* Personal Information */}
+                            <div className={styles.formSection}>
+                                <h3 className={styles.formSectionTitle}>Información Personal</h3>
+
+                                <div className={styles.formGroup}>
+                                    <label htmlFor="name" className={styles.formLabel}>
+                                        Nombre Completo <span className={styles.required}>*</span>
+                                    </label>
+                                    <input
+                                        type="text"
+                                        id="name"
+                                        name="name"
+                                        value={formData.name || ''}
+                                        onChange={handleInputChange}
+                                        className={`${styles.formInput} ${formErrors.name ? styles.inputError : ''}`}
+                                        placeholder="Ej: Juan Pérez García"
+                                        autoComplete="name"
+                                        aria-invalid={!!formErrors.name}
+                                        aria-describedby={formErrors.name ? 'name-error' : undefined}
+                                        required
+                                    />
+                                    {formErrors.name && <span id="name-error" className={styles.errorText} role="alert">{formErrors.name}</span>}
+                                </div>
+
+                                <div className={styles.formRow}>
+                                    <div className={styles.formGroup}>
+                                        <label htmlFor="employeeId" className={styles.formLabel}>
+                                            ID Empleado <span className={styles.required}>*</span>
+                                        </label>
+                                        <input
+                                            type="text"
+                                            id="employeeId"
+                                            name="employeeId"
+                                            value={formData.employeeId || ''}
+                                            onChange={handleInputChange}
+                                            className={`${styles.formInput} ${formErrors.employeeId ? styles.inputError : ''}`}
+                                            placeholder="Ej: EMP-001"
+                                            autoComplete="off"
+                                            aria-invalid={!!formErrors.employeeId}
+                                            aria-describedby={formErrors.employeeId ? 'employeeId-error' : undefined}
+                                            required
+                                        />
+                                        {formErrors.employeeId && <span id="employeeId-error" className={styles.errorText} role="alert">{formErrors.employeeId}</span>}
+                                    </div>
+
+                                    <div className={styles.formGroup}>
+                                        <label htmlFor="curp" className={styles.formLabel}>
+                                            CURP
+                                        </label>
+                                        <input
+                                            type="text"
+                                            id="curp"
+                                            name="curp"
+                                            value={formData.curp || ''}
+                                            onChange={handleInputChange}
+                                            className={`${styles.formInput} ${formErrors.curp ? styles.inputError : ''}`}
+                                            placeholder="Ej: JUPE800101HDFRNN00"
+                                            maxLength="18"
+                                            autoComplete="off"
+                                            aria-invalid={!!formErrors.curp}
+                                            aria-describedby={formErrors.curp ? 'curp-error' : undefined}
+                                        />
+                                        {formErrors.curp && <span id="curp-error" className={styles.errorText} role="alert">{formErrors.curp}</span>}
+                                    </div>
+                                </div>
+
+                                <div className={styles.formGroup}>
+                                    <label className={styles.formLabel}>
+                                        Foto de Perfil
+                                    </label>
+                                    <div className={styles.photoUploadContainer}>
+                                        {photoPreview ? (
+                                            <div className={styles.photoPreviewBox}>
+                                                <img
+                                                    src={photoPreview}
+                                                    alt="Preview"
+                                                    className={styles.photoPreview}
+                                                />
+                                                <button
+                                                    type="button"
+                                                    onClick={handleRemovePhoto}
+                                                    className={styles.removePhotoButton}
+                                                >
+                                                    <X size={16} />
+                                                    Quitar foto
+                                                </button>
+                                            </div>
                                         ) : (
-                                            <span>{getInitials(emp.name)}</span>
+                                            <label className={styles.photoUploadLabel}>
+                                                <Upload size={24} />
+                                                <span>Seleccionar foto</span>
+                                                <span className={styles.photoUploadHint}>PNG, JPG hasta 5MB</span>
+                                                <input
+                                                    type="file"
+                                                    accept="image/*"
+                                                    onChange={handlePhotoChange}
+                                                    className={styles.photoInput}
+                                                />
+                                            </label>
                                         )}
                                     </div>
-                                    <div className={styles.employeeInfo}>
-                                        <span className={styles.empName}>{emp.name}</span>
-                                        <span className={styles.empMeta}>{emp.position || 'Sin puesto'} • ID: {emp.employeeId || emp.id}</span>
+                                </div>
+
+                                <div className={styles.formGroup}>
+                                    <label htmlFor="phone" className={styles.formLabel}>
+                                        Teléfono (WhatsApp)
+                                    </label>
+                                    <div className={styles.phoneInputContainer}>
+                                        <Phone size={18} className={styles.phoneIcon} />
+                                        <input
+                                            type="tel"
+                                            id="phone"
+                                            name="phone"
+                                            value={formData.phone || ''}
+                                            onChange={handleInputChange}
+                                            className={styles.formInput}
+                                            placeholder="Ej: +52 442 123 4567"
+                                        />
                                     </div>
-                                    <ChevronRight />
-                                </button>
-                            ))}
-                        </div>
+                                </div>
+                            </div>
+
+                            {/* Work Information */}
+                            <div className={styles.formSection}>
+                                <h3 className={styles.formSectionTitle}>Información Laboral</h3>
+
+                                <div className={styles.formGroup}>
+                                    <label htmlFor="position" className={styles.formLabel}>
+                                        Puesto
+                                    </label>
+                                    <input
+                                        type="text"
+                                        id="position"
+                                        name="position"
+                                        value={formData.position || ''}
+                                        onChange={handleInputChange}
+                                        className={styles.formInput}
+                                        placeholder="Ej: Desarrollador Senior"
+                                    />
+                                </div>
+
+                                <div className={styles.formRow}>
+                                    <div className={styles.formGroup}>
+                                        <label htmlFor="department" className={styles.formLabel}>
+                                            Departamento
+                                        </label>
+                                        <input
+                                            type="text"
+                                            id="department"
+                                            name="department"
+                                            value={formData.department || ''}
+                                            onChange={handleInputChange}
+                                            className={styles.formInput}
+                                            placeholder="Ej: Tecnología"
+                                        />
+                                    </div>
+
+                                    <div className={styles.formGroup}>
+                                        <label htmlFor="area" className={styles.formLabel}>
+                                            Área
+                                        </label>
+                                        <input
+                                            type="text"
+                                            id="area"
+                                            name="area"
+                                            value={formData.area || ''}
+                                            onChange={handleInputChange}
+                                            className={styles.formInput}
+                                            placeholder="Ej: Backend"
+                                        />
+                                    </div>
+                                </div>
+
+                                <div className={styles.formRow}>
+                                    <div className={styles.formGroup}>
+                                        <label htmlFor="shift" className={styles.formLabel}>
+                                            Turno
+                                        </label>
+                                        <select
+                                            id="shift"
+                                            name="shift"
+                                            value={formData.shift || ''}
+                                            onChange={handleInputChange}
+                                            className={styles.formInput}
+                                        >
+                                            <option value="">Seleccionar...</option>
+                                            <option value="Matutino">Matutino</option>
+                                            <option value="Vespertino">Vespertino</option>
+                                            <option value="Nocturno">Nocturno</option>
+                                            <option value="Mixto">Mixto</option>
+                                        </select>
+                                    </div>
+
+                                    <div className={styles.formGroup}>
+                                        <label htmlFor="status" className={styles.formLabel}>
+                                            Estado
+                                        </label>
+                                        <select
+                                            id="status"
+                                            name="status"
+                                            value={formData.status || 'Activo'}
+                                            onChange={handleInputChange}
+                                            className={styles.formInput}
+                                        >
+                                            <option value="Activo">Activo</option>
+                                            <option value="Inactivo">Inactivo</option>
+                                            <option value="Suspendido">Suspendido</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div className={styles.formRow}>
+                                    <div className={styles.formGroup}>
+                                        <label htmlFor="startDate" className={styles.formLabel}>
+                                            Fecha de Inicio
+                                        </label>
+                                        <input
+                                            type="date"
+                                            id="startDate"
+                                            name="startDate"
+                                            value={formatDateForInput(formData.startDate)}
+                                            onChange={handleInputChange}
+                                            className={styles.formInput}
+                                        />
+                                    </div>
+
+                                    <div className={styles.formGroup}>
+                                        <label htmlFor="contractEndDate" className={styles.formLabel}>
+                                            Fin de Contrato
+                                        </label>
+                                        <input
+                                            type="date"
+                                            id="contractEndDate"
+                                            name="contractEndDate"
+                                            value={formatDateForInput(formData.contractEndDate)}
+                                            className={`${styles.formInput} ${styles.readonlyInput}`}
+                                            readOnly
+                                            disabled
+                                        />
+                                    </div>
+                                </div>
+
+                                <div className={styles.formGroup}>
+                                    <label className={styles.checkboxLabel}>
+                                        <input
+                                            type="checkbox"
+                                            name="isCandidato"
+                                            checked={formData.isCandidato || false}
+                                            onChange={handleInputChange}
+                                            className={styles.checkbox}
+                                        />
+                                        <span>Es candidato</span>
+                                    </label>
+                                </div>
+                            </div>
+
+                            {/* Performance Evaluations */}
+                            {drawerMode === 'edit' && formData.startDate && (
+                                <div className={styles.formSection}>
+                                    <h3 className={styles.formSectionTitle}>Evaluaciones de Desempeño</h3>
+                                    <p className={styles.formSectionHint}>
+                                        Las fechas se calculan automáticamente desde la fecha de inicio
+                                    </p>
+
+                                    {/* Evaluación 1 - 30 días */}
+                                    <div className={styles.evalCard}>
+                                        <h4 className={styles.evalTitle}>Evaluación 1 (30 días)</h4>
+                                        <div className={styles.formRow}>
+                                            <div className={styles.formGroup}>
+                                                <label className={styles.formLabel}>
+                                                    Fecha de Evaluación
+                                                </label>
+                                                <input
+                                                    type="date"
+                                                    value={formatDateForInput(formData.eval1Date)}
+                                                    className={`${styles.formInput} ${styles.readonlyInput}`}
+                                                    readOnly
+                                                    disabled
+                                                />
+                                            </div>
+                                            <div className={styles.formGroup}>
+                                                <label htmlFor="eval1Score" className={styles.formLabel}>
+                                                    Resultado / Calificación
+                                                </label>
+                                                <input
+                                                    type="text"
+                                                    id="eval1Score"
+                                                    name="eval1Score"
+                                                    value={formData.eval1Score || ''}
+                                                    onChange={handleInputChange}
+                                                    className={styles.formInput}
+                                                    placeholder="Ej: Aprobado, 85/100, Excelente"
+                                                />
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    {/* Evaluación 2 - 60 días */}
+                                    <div className={styles.evalCard}>
+                                        <h4 className={styles.evalTitle}>Evaluación 2 (60 días)</h4>
+                                        <div className={styles.formRow}>
+                                            <div className={styles.formGroup}>
+                                                <label className={styles.formLabel}>
+                                                    Fecha de Evaluación
+                                                </label>
+                                                <input
+                                                    type="date"
+                                                    value={formatDateForInput(formData.eval2Date)}
+                                                    className={`${styles.formInput} ${styles.readonlyInput}`}
+                                                    readOnly
+                                                    disabled
+                                                />
+                                            </div>
+                                            <div className={styles.formGroup}>
+                                                <label htmlFor="eval2Score" className={styles.formLabel}>
+                                                    Resultado / Calificación
+                                                </label>
+                                                <input
+                                                    type="text"
+                                                    id="eval2Score"
+                                                    name="eval2Score"
+                                                    value={formData.eval2Score || ''}
+                                                    onChange={handleInputChange}
+                                                    className={styles.formInput}
+                                                    placeholder="Ej: Aprobado, 85/100, Excelente"
+                                                />
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    {/* Evaluación 3 - 75 días */}
+                                    <div className={styles.evalCard}>
+                                        <h4 className={styles.evalTitle}>Evaluación 3 (75 días)</h4>
+                                        <div className={styles.formRow}>
+                                            <div className={styles.formGroup}>
+                                                <label className={styles.formLabel}>
+                                                    Fecha de Evaluación
+                                                </label>
+                                                <input
+                                                    type="date"
+                                                    value={formatDateForInput(formData.eval3Date)}
+                                                    className={`${styles.formInput} ${styles.readonlyInput}`}
+                                                    readOnly
+                                                    disabled
+                                                />
+                                            </div>
+                                            <div className={styles.formGroup}>
+                                                <label htmlFor="eval3Score" className={styles.formLabel}>
+                                                    Resultado / Calificación
+                                                </label>
+                                                <input
+                                                    type="text"
+                                                    id="eval3Score"
+                                                    name="eval3Score"
+                                                    value={formData.eval3Score || ''}
+                                                    onChange={handleInputChange}
+                                                    className={styles.formInput}
+                                                    placeholder="Ej: Aprobado, 85/100, Excelente"
+                                                />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            )}
+
+                            {/* Additional Information */}
+                            {drawerMode === 'edit' && (
+                                <div className={styles.formSection}>
+                                    <h3 className={styles.formSectionTitle}>Información Adicional</h3>
+
+                                    <div className={styles.formGroup}>
+                                        <label className={styles.formLabel}>
+                                            Código de Acceso
+                                        </label>
+                                        <div className={styles.accessCodeContainer}>
+                                            {formData.accessCode ? (
+                                                <div className={styles.accessCodeDisplay}>
+                                                    <div className={styles.codeValueBox}>
+                                                        <Key size={20} />
+                                                        <span className={styles.codeValue}>{formData.accessCode}</span>
+                                                    </div>
+                                                    <button
+                                                        type="button"
+                                                        onClick={handleGenerateAccessCode}
+                                                        className={styles.regenerateButton}
+                                                        title="Regenerar código"
+                                                    >
+                                                        <RefreshCw size={16} />
+                                                        Regenerar
+                                                    </button>
+                                                </div>
+                                            ) : (
+                                                <button
+                                                    type="button"
+                                                    onClick={handleGenerateAccessCode}
+                                                    className={styles.generateButton}
+                                                >
+                                                    <Key size={18} />
+                                                    Generar Código de Acceso
+                                                </button>
+                                            )}
+
+                                            {formData.accessCode && (
+                                                <div className={styles.codeInfo}>
+                                                    <div className={styles.codeInfoItem}>
+                                                        <strong>Generado:</strong>
+                                                        <span>{new Date(formData.accessCodeGeneratedAt).toLocaleString('es-MX')}</span>
+                                                    </div>
+                                                    <div className={styles.codeInfoItem}>
+                                                        <strong>Expira:</strong>
+                                                        <span>{new Date(formData.accessCodeExpires).toLocaleString('es-MX')}</span>
+                                                    </div>
+                                                    <div className={styles.codeInfoItem}>
+                                                        <strong>Usos:</strong>
+                                                        <span>{formData.accessCodeUses || 0}</span>
+                                                    </div>
+                                                </div>
+                                            )}
+                                        </div>
+                                    </div>
+
+                                    <div className={styles.formGroup}>
+                                        <label className={styles.checkboxLabel}>
+                                            <input
+                                                type="checkbox"
+                                                name="trainingPlanDelivered"
+                                                checked={formData.trainingPlanDelivered || false}
+                                                onChange={handleInputChange}
+                                                className={styles.checkbox}
+                                            />
+                                            <span>Plan de capacitación entregado</span>
+                                        </label>
+                                    </div>
+                                </div>
+                            )}
+                        </form>
                     </div>
 
-                    {/* Pagination */}
-                    <div className={styles.pagination}>
-                        <button className={styles.paginationBtn} onClick={prevPage} disabled={page <= 1 || loading}>
-                            ← Anterior
+                    <DrawerFooter>
+                        <button
+                            type="button"
+                            onClick={closeDrawer}
+                            className={styles.cancelButton}
+                            disabled={isSaving}
+                        >
+                            Cancelar
                         </button>
-                        <span className={styles.pageIndicator}>Página {page}</span>
-                        <button className={styles.paginationBtn} onClick={nextPage} disabled={!hasMore || loading}>
-                            Siguiente →
+                        <button
+                            type="button"
+                            onClick={handleSave}
+                            className={styles.saveButton}
+                            disabled={isSaving}
+                            aria-busy={isSaving}
+                        >
+                            {isSaving ? (
+                                <>
+                                    <Loader2 size={18} className={styles.spinning} />
+                                    Guardando...
+                                </>
+                            ) : (
+                                <>
+                                    <Save size={18} />
+                                    {drawerMode === 'create' ? 'Crear Empleado' : 'Guardar Cambios'}
+                                </>
+                            )}
                         </button>
-                    </div>
-                </>
-            )}
-        </div>
-    );
+                    </DrawerFooter>
+                </DrawerContent>
+            </Drawer>
 
-    return (
-        <>
-            <div className={styles.profileContainer}>
-                <ProfileDropdown />
-            </div>
-            <main className={styles.main} id="main-content">
-                {/* Background Effects */}
-                <div className={styles.bgDecoration}>
-                    <div className={`${styles.blob} ${styles.blob1}`}></div>
-                    <div className={`${styles.blob} ${styles.blob2}`}></div>
-                </div>
-
-                <div className={styles.container}>
-                    <div className={styles.slideContainer}>
-                        <ListView />
-                        <DetailView />
-                        <EditView />
-                    </div>
-                </div>
-            </main>
-
-            {/* Delete Dialog - Keep as modal for confirmation */}
-            <Dialog open={deleteModal.show} onOpenChange={(open) => !open && cancelDelete()}>
-                <DialogHeader>
-                    <DialogTitle>¿Eliminar Empleado?</DialogTitle>
-                    <DialogDescription>
-                        Estás a punto de eliminar a <strong>{deleteModal.employee?.name}</strong>.
-                        Esta acción no se puede deshacer.
-                    </DialogDescription>
-                    <DialogClose onClose={cancelDelete} />
-                </DialogHeader>
-                <DialogFooter>
-                    <Button variant="secondary" onClick={cancelDelete}>Cancelar</Button>
-                    <Button variant="danger" onClick={confirmDelete}>Eliminar</Button>
-                </DialogFooter>
-            </Dialog>
-
-            {/* Access Code Dialog */}
-            <Dialog open={accessCodeModal.show} onOpenChange={(open) => !open && closeAccessCodeModal()}>
-                <DialogHeader>
-                    <DialogTitle>✅ Código de Acceso Generado</DialogTitle>
-                    <DialogDescription>
-                        Código de acceso para <strong>{accessCodeModal.employeeName}</strong>
-                    </DialogDescription>
-                    <DialogClose onClose={closeAccessCodeModal} />
-                </DialogHeader>
-
-                <div style={{
-                    padding: '24px',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    gap: '20px',
-                    alignItems: 'center'
-                }}>
-                    {/* Access Code Display */}
-                    <div style={{
-                        background: 'linear-gradient(135deg, #007aff 0%, #5856d6 100%)',
-                        padding: '20px 40px',
-                        borderRadius: '16px',
-                        boxShadow: '0 4px 16px rgba(0, 122, 255, 0.3)'
-                    }}>
-                        <p style={{
-                            fontSize: '2.5rem',
-                            fontWeight: '700',
-                            color: 'white',
-                            letterSpacing: '4px',
-                            margin: 0,
-                            fontFamily: 'monospace'
-                        }}>
-                            {accessCodeModal.code}
-                        </p>
-                    </div>
-
-                    {/* Expiration Info */}
-                    <div style={{ textAlign: 'center' }}>
-                        <p style={{ fontSize: '0.9rem', color: 'var(--text-secondary)', margin: 0 }}>
-                            <strong>Válido hasta:</strong> {accessCodeModal.expiresAt && new Date(accessCodeModal.expiresAt).toLocaleDateString('es-MX', {
-                                year: 'numeric',
-                                month: 'long',
-                                day: 'numeric',
-                                hour: '2-digit',
-                                minute: '2-digit'
-                            })}
-                        </p>
-                        <p style={{ fontSize: '0.85rem', color: 'var(--text-tertiary)', marginTop: '8px' }}>
-                            Este código expira en 3 días
-                        </p>
-                    </div>
-
-                    {/* Instructions */}
-                    <div style={{
-                        background: 'var(--bg-secondary)',
-                        padding: '16px',
-                        borderRadius: '12px',
-                        width: '100%'
-                    }}>
-                        <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', margin: 0 }}>
-                            📋 <strong>Instrucciones:</strong>
-                        </p>
-                        <ol style={{
-                            fontSize: '0.85rem',
-                            color: 'var(--text-secondary)',
-                            margin: '8px 0 0 0',
-                            paddingLeft: '20px'
-                        }}>
-                            <li>Proporciona este código al candidato</li>
-                            <li>El candidato debe acceder a <code>/candidatos</code></li>
-                            <li>Ingresar su ID, CURP y este código</li>
-                        </ol>
-                    </div>
-                </div>
-
-                <DialogFooter>
-                    <Button variant="secondary" onClick={closeAccessCodeModal}>Cerrar</Button>
-                    <Button onClick={handleCopyCode}>📋 Copiar Código</Button>
-                </DialogFooter>
-            </Dialog>
-        </>
+            {/* Confirmation Dialog */}
+            <ConfirmDialog
+                isOpen={confirmDialog.isOpen}
+                title={confirmDialog.title}
+                message={confirmDialog.message}
+                confirmText={confirmDialog.confirmText || 'Confirmar'}
+                cancelText="Cancelar"
+                onConfirm={() => {
+                    confirmDialog.onConfirm?.();
+                    setConfirmDialog({ ...confirmDialog, isOpen: false });
+                }}
+                onCancel={() => setConfirmDialog({ ...confirmDialog, isOpen: false })}
+                variant={confirmDialog.variant || 'danger'}
+            />
+        </main>
     );
 }

@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { Settings, CreditCard, FileText, LogOut, User } from "lucide-react";
+import { Settings, CreditCard, FileText, LogOut, User, Moon, Sun } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useAuth } from "@/contexts/AuthContext";
@@ -20,6 +20,24 @@ export default function ProfileDropdown({ className, ...props }) {
     const { user, signOut } = useAuth();
     const router = useRouter();
     const [isOpen, setIsOpen] = React.useState(false);
+    const [theme, setTheme] = React.useState('dark');
+
+    // Initialize theme from localStorage/system preference
+    React.useEffect(() => {
+        const savedTheme = localStorage.getItem('theme');
+        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        const initialTheme = savedTheme || (prefersDark ? 'dark' : 'light');
+        setTheme(initialTheme);
+        document.documentElement.setAttribute('data-theme', initialTheme);
+    }, []);
+
+    // Toggle theme
+    const toggleTheme = () => {
+        const newTheme = theme === 'dark' ? 'light' : 'dark';
+        setTheme(newTheme);
+        document.documentElement.setAttribute('data-theme', newTheme);
+        localStorage.setItem('theme', newTheme);
+    };
 
     // Usar datos del usuario autenticado
     const profileData = {
@@ -136,6 +154,33 @@ export default function ProfileDropdown({ className, ...props }) {
                                 </DropdownMenuItem>
                             ))}
                         </div>
+
+                        <div className={styles.separator} />
+
+                        {/* Theme Toggle */}
+                        <DropdownMenuItem asChild>
+                            <button
+                                type="button"
+                                onClick={toggleTheme}
+                                className={styles.themeToggle}
+                            >
+                                <div className={styles.menuItemContent}>
+                                    {theme === 'dark' ? (
+                                        <Sun className={styles.menuItemIcon} />
+                                    ) : (
+                                        <Moon className={styles.menuItemIcon} />
+                                    )}
+                                    <span className={styles.menuItemLabel}>
+                                        Tema
+                                    </span>
+                                </div>
+                                <div className={styles.themeIndicator}>
+                                    <div className={`${styles.themeToggleSwitch} ${theme === 'dark' ? styles.themeDark : styles.themeLight}`}>
+                                        <div className={styles.themeToggleThumb} />
+                                    </div>
+                                </div>
+                            </button>
+                        </DropdownMenuItem>
 
                         <div className={styles.separator} />
 
