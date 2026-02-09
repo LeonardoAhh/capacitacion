@@ -70,10 +70,12 @@ function EmployeeSearchBar({
     const [activeIndex, setActiveIndex] = useState(-1);
     const debouncedQuery = useDebounce(query, 300);
 
-    // Sync with external searchTerm
+    // Sync with external searchTerm ONLY if not focused (to avoid cursor jumps)
     useEffect(() => {
-        setQuery(searchTerm);
-    }, [searchTerm]);
+        if (!isFocused && searchTerm !== query) {
+            setQuery(searchTerm);
+        }
+    }, [searchTerm, isFocused]);
 
     // Notify parent of debounced search
     useEffect(() => {

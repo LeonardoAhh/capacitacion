@@ -23,26 +23,23 @@ import { uploadFile } from '@/lib/upload';
 import { useToast } from '@/components/ui/Toast/Toast';
 import ConfirmDialog from '@/components/ui/ConfirmDialog/ConfirmDialog';
 import EmployeeSkeleton from '@/components/EmployeeSkeleton/EmployeeSkeleton';
-import { useDebounce } from '@/utils/debounce';
 import { useFormValidation } from '@/hooks/useFormValidation';
 
-// Helper functions
+// ============================================================================
+// HELPER FUNCTIONS
+// ============================================================================
+
 const formatDate = (dateString) => {
     if (!dateString) return '—';
     try {
-        if (typeof dateString === 'number') {
-            return new Date(dateString).toLocaleDateString('es-MX', {
-                year: 'numeric',
-                month: 'short',
-                day: 'numeric'
-            });
-        }
-        return new Date(dateString).toLocaleDateString('es-MX', {
+        const date = typeof dateString === 'number' ? new Date(dateString) : new Date(dateString);
+        return date.toLocaleDateString('es-MX', {
             year: 'numeric',
             month: 'short',
             day: 'numeric'
         });
     } catch (e) {
+        console.error('Error formatting date:', e);
         return dateString;
     }
 };
@@ -53,6 +50,7 @@ const formatDateForInput = (dateString) => {
         const date = new Date(dateString);
         return date.toISOString().split('T')[0];
     } catch (e) {
+        console.error('Error formatting date for input:', e);
         return '';
     }
 };
@@ -94,10 +92,37 @@ const calculateDatesFromStart = (startDate) => {
     };
 };
 
+const getEmptyFormData = () => ({
+    name: '',
+    employeeId: '',
+    curp: '',
+    phone: '',
+    position: '',
+    department: '',
+    area: '',
+    shift: '',
+    status: 'Activo',
+    isCandidato: false,
+    startDate: '',
+    contractEndDate: '',
+    photoUrl: '',
+    eval1Date: '',
+    eval1Score: '',
+    eval2Date: '',
+    eval2Score: '',
+    eval3Date: '',
+    eval3Score: '',
+    trainingPlanDelivered: false
+});
+
+// ============================================================================
+// MAIN COMPONENT
+// ============================================================================
+
 export default function EmployeesPage() {
     const { user, loading: authLoading } = useAuth();
     const router = useRouter();
-    const { showToast } = useToast(); // Global toast context
+    const { showToast } = useToast();
 
     // Pagination state
     const [itemsPerPage, setItemsPerPage] = useState(4);
@@ -112,7 +137,8 @@ export default function EmployeesPage() {
         prevPage,
         createEmployee,
         updateEmployee,
-        deleteEmployee
+        deleteEmployee,
+        searchEmployees
     } = useEmployees(itemsPerPage);
 
     const [searchTerm, setSearchTerm] = useState('');
@@ -121,21 +147,20 @@ export default function EmployeesPage() {
 
     // Drawer states
     const [isDrawerOpen, setIsDrawerOpen] = useState(false);
-    const [drawerMode, setDrawerMode] = useState('create'); // 'create' or 'edit'
-    const [formData, setFormData] = useState({});
+    const [drawerMode, setDrawerMode] = useState('create');
+    const [formData, setFormData] = useState(getEmptyFormData());
     const [isSaving, setIsSaving] = useState(false);
     const [photoFile, setPhotoFile] = useState(null);
     const [photoPreview, setPhotoPreview] = useState(null);
     const [uploadProgress, setUploadProgress] = useState(0);
-
-    // Toast notification state
-    const [toast, setToast] = useState(null);
 
     // Confirmation dialog state
     const [confirmDialog, setConfirmDialog] = useState({
         isOpen: false,
         title: '',
         message: '',
+        confirmText: 'Confirmar',
+        variant: 'danger',
         onConfirm: null
     });
 
@@ -145,42 +170,52 @@ export default function EmployeesPage() {
     // Form validation
     const { errors: formErrors, validate, clearError, clearAllErrors } = useFormValidation();
 
-    // Debounced search term
-    const debouncedSearchTerm = useDebounce(searchTerm, 300);
+    // ============================================================================
+    // EFFECTS
+    // ============================================================================
 
     // Auth Protection
     useEffect(() => {
-        if (!authLoading) {
-            if (!user) {
-                router.push('/');
-                return;
-            }
-            if (user.rol === 'demo' || user.email?.includes('demo')) {
-                router.push('/induccion');
-            }
+        if (authLoading) return;
+
+        if (!user) {
+            router.push('/');
+            return;
+        }
+
+        if (user.rol === 'demo' || user.email?.includes('demo')) {
+            router.push('/induccion');
         }
     }, [user, authLoading, router]);
 
+    // Trigger search when term changes
     useEffect(() => {
-        if (user) refresh();
-    }, [user, refresh]);
+        if (searchEmployees) {
+            searchEmployees(searchTerm);
+        }
+    }, [searchTerm, searchEmployees]);
 
-    // Filter and sort employees with useMemo for performance
-    const filteredEmployees = useMemo(() => {
-        return employees
-            .filter(emp =>
-                emp.name?.toLowerCase().includes(debouncedSearchTerm.toLowerCase()) ||
-                emp.employeeId?.includes(debouncedSearchTerm) ||
-                emp.position?.toLowerCase().includes(debouncedSearchTerm.toLowerCase())
-            )
-            .sort((a, b) => {
-                // Sort by employeeId (ascending - lowest to highest)  
-                const idA = a.employeeId || '';
-                const idB = b.employeeId || '';
-                return idA.localeCompare(idB, undefined, { numeric: true });
-            });
-    }, [employees, debouncedSearchTerm]);
+    // Initial refresh when search is empty
+    useEffect(() => {
+        if (user && searchTerm === '') {
+            refresh();
+        }
+    }, [user, refresh, searchTerm]);
 
+    // ============================================================================
+    // MEMOIZED VALUES
+    // ============================================================================
+
+    // Stats calculations - memoized to avoid recalculation on every render
+    const stats = useMemo(() => ({
+        total: employees.length,
+        active: employees.filter(e => e.status !== 'Inactivo').length,
+        candidates: employees.filter(e => e.isCandidato).length
+    }), [employees]);
+
+    // ============================================================================
+    // HANDLERS
+    // ============================================================================
 
     const handleSelectEmployee = useCallback((emp) => {
         setSelectedEmployee(emp);
@@ -191,35 +226,16 @@ export default function EmployeesPage() {
         setSelectedEmployee(null);
     }, []);
 
-    // Drawer handlers
-    const openCreateDrawer = () => {
+    const openCreateDrawer = useCallback(() => {
         setDrawerMode('create');
-        setFormData({
-            name: '',
-            employeeId: '',
-            curp: '',
-            phone: '',
-            position: '',
-            department: '',
-            area: '',
-            shift: '',
-            status: 'Activo',
-            isCandidato: false,
-            startDate: '',
-            contractEndDate: '',
-            photoUrl: '',
-            eval1Date: '',
-            eval1Score: '',
-            eval2Date: '',
-            eval2Score: '',
-            eval3Date: '',
-            eval3Score: ''
-        });
+        setFormData(getEmptyFormData());
         clearAllErrors();
+        setPhotoFile(null);
+        setPhotoPreview(null);
         setIsDrawerOpen(true);
-    };
+    }, [clearAllErrors]);
 
-    const openEditDrawer = (employee) => {
+    const openEditDrawer = useCallback((employee) => {
         setDrawerMode('edit');
         setFormData({
             id: employee.id,
@@ -252,21 +268,20 @@ export default function EmployeesPage() {
         setPhotoFile(null);
         setPhotoPreview(employee.photoUrl || null);
         setIsDrawerOpen(true);
-    };
+    }, [clearAllErrors]);
 
-    const closeDrawer = () => {
+    const closeDrawer = useCallback(() => {
         setIsDrawerOpen(false);
-        setFormData({});
+        setFormData(getEmptyFormData());
         clearAllErrors();
         setPhotoFile(null);
         setPhotoPreview(null);
         setUploadProgress(0);
-    };
+    }, [clearAllErrors]);
 
-    const handleInputChange = (e) => {
+    const handleInputChange = useCallback((e) => {
         const { name, value, type, checked } = e.target;
 
-        // If startDate is changing, calculate related dates automatically
         if (name === 'startDate' && value) {
             const calculatedDates = calculateDatesFromStart(value);
             setFormData(prev => ({
@@ -281,35 +296,53 @@ export default function EmployeesPage() {
             }));
         }
 
-        // Clear error for this field
         if (formErrors[name]) {
             clearError(name);
         }
-    };
+    }, [formErrors, clearError]);
 
-    const handlePhotoChange = (e) => {
-        const file = e.target.files[0];
-        if (file) {
-            setPhotoFile(file);
-            // Create preview
-            const reader = new FileReader();
-            reader.onloadend = () => {
-                setPhotoPreview(reader.result);
-            };
-            reader.readAsDataURL(file);
+    const handlePhotoChange = useCallback((e) => {
+        const file = e.target.files?.[0];
+        if (!file) return;
+
+        // Validate file size (5MB max)
+        const MAX_SIZE = 5 * 1024 * 1024; // 5MB in bytes
+        if (file.size > MAX_SIZE) {
+            showToast('La imagen no debe superar 5MB', 'error');
+            e.target.value = ''; // Reset input
+            return;
         }
-    };
 
-    const handleRemovePhoto = () => {
+        // Validate file type
+        const validTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
+        if (!validTypes.includes(file.type)) {
+            showToast('Solo se permiten imágenes (JPG, PNG, GIF, WEBP)', 'error');
+            e.target.value = ''; // Reset input
+            return;
+        }
+
+        setPhotoFile(file);
+
+        const reader = new FileReader();
+        reader.onloadend = () => {
+            setPhotoPreview(reader.result);
+        };
+        reader.onerror = () => {
+            showToast('Error al leer la imagen', 'error');
+            setPhotoFile(null);
+        };
+        reader.readAsDataURL(file);
+    }, [showToast]);
+
+    const handleRemovePhoto = useCallback(() => {
         setPhotoFile(null);
         setPhotoPreview(null);
-    };
+    }, []);
 
-    const handleGenerateAccessCode = () => {
-        // Generate a random 6-digit code
+    const handleGenerateAccessCode = useCallback(() => {
         const code = Math.floor(100000 + Math.random() * 900000).toString();
         const now = Date.now();
-        const expiresIn3Days = now + (3 * 24 * 60 * 60 * 1000); // 3 days from now
+        const expiresIn3Days = now + (3 * 24 * 60 * 60 * 1000);
 
         setFormData(prev => ({
             ...prev,
@@ -318,27 +351,28 @@ export default function EmployeesPage() {
             accessCodeExpires: expiresIn3Days,
             accessCodeUses: 0
         }));
-    };
 
-    const validateFormData = () => {
+        showToast('Código de acceso generado', 'success');
+    }, [showToast]);
+
+    const validateFormData = useCallback(() => {
         const validationRules = {
             name: 'required',
-            employeeId: 'required',
-            curp: formData.curp ? 'curp' : null,
-            phone: formData.phone ? 'phone' : null
+            employeeId: 'required'
         };
 
-        // Remove null rules
-        Object.keys(validationRules).forEach(key => {
-            if (validationRules[key] === null) {
-                delete validationRules[key];
-            }
-        });
+        // Add optional validations only if fields have values
+        if (formData.curp?.trim()) {
+            validationRules.curp = 'curp';
+        }
+        if (formData.phone?.trim()) {
+            validationRules.phone = 'phone';
+        }
 
         return validate(formData, validationRules);
-    };
+    }, [formData, validate]);
 
-    const handleSave = async () => {
+    const handleSave = useCallback(async () => {
         if (!validateFormData()) {
             showToast('Por favor corrige los errores en el formulario', 'error');
             return;
@@ -350,7 +384,6 @@ export default function EmployeesPage() {
         try {
             let photoData = {};
 
-            // Upload photo if selected
             if (photoFile) {
                 setUploadProgress(30);
                 const uploadResult = await uploadFile(photoFile, {
@@ -360,22 +393,18 @@ export default function EmployeesPage() {
 
                 setUploadProgress(60);
 
-                if (uploadResult.success) {
-                    photoData = {
-                        photoUrl: uploadResult.data.viewLink,
-                        photoDriveId: uploadResult.data.id
-                    };
-                } else {
-                    showToast('Error al subir la foto: ' + (uploadResult.error || 'Error desconocido'), 'error');
-                    setIsSaving(false);
-                    setUploadProgress(0);
-                    return;
+                if (!uploadResult.success) {
+                    throw new Error(uploadResult.error || 'Error al subir la foto');
                 }
+
+                photoData = {
+                    photoUrl: uploadResult.data.viewLink,
+                    photoDriveId: uploadResult.data.id
+                };
             }
 
             setUploadProgress(80);
 
-            // Merge photo data with form data
             const employeeData = { ...formData, ...photoData };
 
             let result;
@@ -388,57 +417,93 @@ export default function EmployeesPage() {
 
             setUploadProgress(100);
 
-            if (result.success) {
-                showToast(
-                    drawerMode === 'create'
-                        ? 'Empleado creado exitosamente'
-                        : 'Empleado actualizado exitosamente',
-                    'success'
-                );
-                closeDrawer();
-                if (drawerMode === 'edit' && selectedEmployee) {
-                    // Update selected employee view
-                    setSelectedEmployee(null);
-                }
-            } else {
+            if (!result.success) {
                 if (result.error === 'ID_DUPLICADO') {
-                    clearAllErrors();
-                    // Manually set the specific error
-                    showToast(result.message, 'error');
+                    showToast(result.message || 'El ID del empleado ya existe', 'error');
                 } else {
-                    showToast('Error: ' + (result.error || 'Error desconocido'), 'error');
+                    throw new Error(result.error || 'Error al guardar');
                 }
+                return;
+            }
+
+            showToast(
+                drawerMode === 'create'
+                    ? 'Empleado creado exitosamente'
+                    : 'Empleado actualizado exitosamente',
+                'success'
+            );
+
+            closeDrawer();
+
+            if (drawerMode === 'edit' && selectedEmployee) {
+                setSelectedEmployee(null);
             }
         } catch (error) {
             console.error('Error saving employee:', error);
-            showToast('Error al guardar el empleado', 'error');
+            showToast(error.message || 'Error al guardar el empleado', 'error');
         } finally {
             setIsSaving(false);
             setUploadProgress(0);
         }
-    };
+    }, [
+        validateFormData,
+        photoFile,
+        formData,
+        drawerMode,
+        createEmployee,
+        updateEmployee,
+        showToast,
+        closeDrawer,
+        selectedEmployee
+    ]);
 
-    const handleDelete = async (employeeId) => {
-        if (!confirm('¿Estás seguro de que deseas eliminar este empleado? Esta acción no se puede deshacer.')) {
-            return;
-        }
+    const handleDeleteEmployee = useCallback((employeeId) => {
+        setConfirmDialog({
+            isOpen: true,
+            title: 'Eliminar Empleado',
+            message: '¿Estás seguro de que deseas eliminar este empleado? Esta acción no se puede deshacer.',
+            confirmText: 'Eliminar',
+            variant: 'danger',
+            onConfirm: async () => {
+                setIsDeleting(true);
+                try {
+                    const result = await deleteEmployee(employeeId);
 
-        try {
-            const result = await deleteEmployee(employeeId);
-            if (result.success) {
-                setSelectedEmployee(null);
-                alert('Empleado eliminado exitosamente');
-            } else {
-                alert('Error al eliminar: ' + (result.error || 'Error desconocido'));
+                    if (!result.success) {
+                        throw new Error(result.error || 'Error al eliminar');
+                    }
+
+                    setSelectedEmployee(null);
+                    showToast('Empleado eliminado exitosamente', 'success');
+                } catch (error) {
+                    console.error('Error deleting employee:', error);
+                    showToast(error.message || 'Error al eliminar el empleado', 'error');
+                } finally {
+                    setIsDeleting(false);
+                }
             }
-        } catch (error) {
-            console.error('Error deleting employee:', error);
-            alert('Error al eliminar el empleado');
-        }
-    };
+        });
+    }, [deleteEmployee, showToast]);
 
-    // Loading state
-    if (authLoading || loading) {
+    const handleItemsPerPageChange = useCallback((e) => {
+        setItemsPerPage(Number(e.target.value));
+    }, []);
+
+    const handleImageError = useCallback((e, employeeName) => {
+        e.target.style.display = 'none';
+        const parent = e.target.parentElement;
+        if (parent && !parent.querySelector('span')) {
+            const span = document.createElement('span');
+            span.textContent = getInitials(employeeName);
+            parent.appendChild(span);
+        }
+    }, []);
+
+    // ============================================================================
+    // RENDER LOADING STATE
+    // ============================================================================
+
+    if (authLoading) {
         return (
             <div className={styles.main}>
                 <div className={styles.loadingContainer}>
@@ -449,10 +514,9 @@ export default function EmployeesPage() {
         );
     }
 
-    // Stats calculations
-    const totalEmployees = employees.length;
-    const activeEmployees = employees.filter(e => e.status !== 'Inactivo').length;
-    const candidates = employees.filter(e => e.isCandidato).length;
+    // ============================================================================
+    // MAIN RENDER
+    // ============================================================================
 
     return (
         <main className={styles.main}>
@@ -477,7 +541,6 @@ export default function EmployeesPage() {
                 {/* Header Section */}
                 <div className={styles.header}>
                     <div className={styles.headerContent}>
-                        {/* Back to Dashboard Button */}
                         <button
                             onClick={() => router.push('/dashboard')}
                             className={styles.backButton}
@@ -503,7 +566,7 @@ export default function EmployeesPage() {
                                 <Users size={20} />
                             </div>
                             <div className={styles.statContent}>
-                                <div className={styles.statValue}>{totalEmployees}</div>
+                                <div className={styles.statValue}>{stats.total}</div>
                                 <div className={styles.statLabel}>Total</div>
                             </div>
                         </div>
@@ -512,7 +575,7 @@ export default function EmployeesPage() {
                                 <UserCheck size={20} />
                             </div>
                             <div className={styles.statContent}>
-                                <div className={styles.statValue}>{activeEmployees}</div>
+                                <div className={styles.statValue}>{stats.active}</div>
                                 <div className={styles.statLabel}>Activos</div>
                             </div>
                         </div>
@@ -521,16 +584,14 @@ export default function EmployeesPage() {
                                 <UserPlus size={20} />
                             </div>
                             <div className={styles.statContent}>
-                                <div className={styles.statValue}>{candidates}</div>
+                                <div className={styles.statValue}>{stats.candidates}</div>
                                 <div className={styles.statLabel}>Candidatos</div>
                             </div>
                         </div>
                     </div>
-                </div>
 
-                {/* Search Bar with Add Button */}
-                <div className={styles.searchSection}>
-                    <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
+                    {/* Search Bar */}
+                    <div className={styles.searchSection}>
                         <div style={{ flex: 1 }}>
                             <EmployeeSearchBar
                                 searchTerm={searchTerm}
@@ -541,354 +602,369 @@ export default function EmployeesPage() {
                                 canWrite={true}
                             />
                         </div>
-                        <button
-                            onClick={openCreateDrawer}
-                            className={styles.addButton}
-                            title="Agregar nuevo empleado"
-                        >
-                            <UserPlus size={20} />
-                            <span className={styles.buttonText}>Nuevo Empleado</span>
-                        </button>
                     </div>
                 </div>
 
                 {/* Content Area */}
-                {!selectedEmployee ? (
-                    /* LIST VIEW */
-                    <div className={styles.contentSection}>
-                        {loading ? (
-                            /* Show skeleton while loading */
-                            <EmployeeSkeleton count={itemsPerPage} />
-                        ) : filteredEmployees.length > 0 ? (
-                            <>
-                                <div className={styles.employeeGrid}>
-                                    {filteredEmployees.map(emp => (
-                                        <div
-                                            key={emp.id}
-                                            role="button"
-                                            tabIndex={0}
-                                            className={styles.employeeCard}
-                                            onClick={() => handleSelectEmployee(emp)}
-                                            onKeyDown={(e) => {
-                                                if (e.key === 'Enter' || e.key === ' ') {
-                                                    e.preventDefault();
-                                                    handleSelectEmployee(emp);
-                                                }
-                                            }}
-                                            aria-label={`Ver detalles de ${emp.name}, ${emp.position || 'sin puesto'}`}
-                                        >
-                                            <div className={styles.cardHeader}>
-                                                <div className={styles.employeeAvatar}>
-                                                    {emp.photoUrl ? (
-                                                        <img
-                                                            src={emp.photoUrl}
-                                                            alt={`Foto de ${emp.name}`}
-                                                            loading="lazy"
-                                                        />
-                                                    ) : (
-                                                        <span aria-hidden="true">{getInitials(emp.name)}</span>
-                                                    )}
-                                                </div>
-                                                <div className={styles.employeeInfo}>
-                                                    <h3 className={styles.employeeName}>{emp.name}</h3>
-                                                    <p className={styles.employeePosition}>{emp.position || 'Sin puesto'}</p>
-                                                </div>
-                                            </div>
-                                            <div className={styles.cardFooter}>
-                                                <span className={styles.employeeId}>ID: {emp.employeeId || emp.id}</span>
-                                                <span className={`${styles.statusBadge} ${emp.status === 'Inactivo' ? styles.statusInactive : styles.statusActive}`}>
-                                                    {emp.status || 'Activo'}
-                                                </span>
-                                            </div>
-                                        </div>
-                                    ))}
-                                </div>
-
-                                {/* Pagination */}
-                                <div className={styles.paginationContainer}>
-                                    <div className={styles.itemsPerPageSelector}>
-                                        <label htmlFor="itemsPerPage" className={styles.itemsPerPageLabel}>
-                                            Mostrar:
-                                        </label>
-                                        <select
-                                            id="itemsPerPage"
-                                            value={itemsPerPage}
-                                            onChange={(e) => {
-                                                setItemsPerPage(Number(e.target.value));
-                                            }}
-                                            className={styles.itemsPerPageSelect}
-                                        >
-                                            <option value={4}>4</option>
-                                            <option value={8}>8</option>
-                                            <option value={12}>12</option>
-                                        </select>
-                                        <span className={styles.itemsPerPageText}>por página</span>
-                                    </div>
-
-                                    <div className={styles.paginationControls}>
-                                        <button
-                                            onClick={prevPage}
-                                            disabled={page <= 1}
-                                            className={styles.paginationBtn}
-                                        >
-                                            <ChevronRight size={18} style={{ transform: 'rotate(180deg)' }} />
-                                            Anterior
-                                        </button>
-                                        <span className={styles.pageIndicator}>Página {page}</span>
-                                        <button
-                                            onClick={nextPage}
-                                            disabled={!hasMore}
-                                            className={styles.paginationBtn}
-                                        >
-                                            Siguiente
-                                            <ChevronRight size={18} />
-                                        </button>
-                                    </div>
-                                </div>
-                            </>
-                        ) : (
-                            <div className={styles.emptyState}>
-                                <Search size={48} />
-                                <h3>No se encontraron empleados</h3>
-                                <p>Intenta con otros términos de búsqueda</p>
-                            </div>
-                        )}
-                    </div>
-                ) : (
-                    /* DETAIL VIEW */
-                    <div className={styles.detailView}>
-                        <button onClick={handleBackToList} className={styles.backButton}>
-                            <ArrowLeft size={18} />
-                            Volver a la lista
-                        </button>
-
-                        {/* Employee Header */}
-                        <div className={styles.detailHeader}>
-                            <div className={styles.avatarLarge}>
-                                {selectedEmployee.photoUrl ? (
-                                    <img
-                                        src={selectedEmployee.photoUrl}
-                                        alt={selectedEmployee.name}
-                                        onError={(e) => {
-                                            e.target.style.display = 'none';
-                                            e.target.parentElement.innerHTML = `<span>${getInitials(selectedEmployee.name)}</span>`;
-                                        }}
-                                    />
-                                ) : (
-                                    <span>{getInitials(selectedEmployee.name)}</span>
-                                )}
-                            </div>
-                            <div className={styles.headerInfo}>
-                                <h2 className={styles.detailName}>{selectedEmployee.name}</h2>
-                                <p className={styles.detailId}>ID: {selectedEmployee.employeeId || selectedEmployee.id}</p>
-                                <span className={`${styles.statusBadge} ${selectedEmployee.status === 'Inactivo' ? styles.statusInactive : styles.statusActive}`}>
-                                    {selectedEmployee.status || 'Activo'}
-                                </span>
-                            </div>
-                            <div className={styles.actionButtons}>
-                                {selectedEmployee.phone && (
-                                    <a
-                                        href={`https://wa.me/${selectedEmployee.phone.replace(/\s/g, '')}`}
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                        className={styles.whatsappButton}
-                                        title="Enviar mensaje por WhatsApp"
-                                    >
-                                        <Phone size={18} />
-                                        WhatsApp
-                                    </a>
-                                )}
-                                <button
-                                    onClick={() => openEditDrawer(selectedEmployee)}
-                                    className={styles.editButton}
-                                    title="Editar empleado"
-                                >
-                                    <Edit size={18} />
-                                    Editar
-                                </button>
-                                <button
-                                    onClick={() => handleDelete(selectedEmployee.id)}
-                                    className={styles.deleteButton}
-                                    title="Eliminar empleado"
-                                >
-                                    <Trash2 size={18} />
-                                    Eliminar
-                                </button>
-                            </div>
-                        </div>
-
-                        {/* Tabs Navigation */}
-                        <div className={styles.tabsNav}>
-                            <button
-                                className={`${styles.tabButton} ${activeTab === 'personal' ? styles.tabActive : ''}`}
-                                onClick={() => setActiveTab('personal')}
-                            >
-                                <User size={18} />
-                                Personal
-                            </button>
-                            <button
-                                className={`${styles.tabButton} ${activeTab === 'laboral' ? styles.tabActive : ''}`}
-                                onClick={() => setActiveTab('laboral')}
-                            >
-                                <Briefcase size={18} />
-                                Laboral
-                            </button>
-                            <button
-                                className={`${styles.tabButton} ${activeTab === 'actividad' ? styles.tabActive : ''}`}
-                                onClick={() => setActiveTab('actividad')}
-                            >
-                                <Activity size={18} />
-                                Actividad
-                            </button>
-                            <button
-                                className={`${styles.tabButton} ${activeTab === 'documentos' ? styles.tabActive : ''}`}
-                                onClick={() => setActiveTab('documentos')}
-                            >
-                                <FileText size={18} />
-                                Documentos
-                            </button>
-                        </div>
-
-                        {/* Tab Content */}
-                        <div className={styles.tabContent}>
-                            {activeTab === 'personal' && (
-                                <div className={styles.infoGrid}>
-                                    <div className={styles.infoItem}>
-                                        <label>Nombre Completo</label>
-                                        <span>{selectedEmployee.name}</span>
-                                    </div>
-                                    <div className={styles.infoItem}>
-                                        <label>CURP</label>
-                                        <span>{selectedEmployee.curp || '—'}</span>
-                                    </div>
-                                    <div className={styles.infoItem}>
-                                        <label>ID Empleado</label>
-                                        <span>{selectedEmployee.employeeId || '—'}</span>
-                                    </div>
-                                    <div className={styles.infoItem}>
-                                        <label>Tipo</label>
-                                        <span>{selectedEmployee.isCandidato ? 'Candidato' : 'Empleado'}</span>
-                                    </div>
-                                </div>
-                            )}
-
-                            {activeTab === 'laboral' && (
-                                <div className={styles.infoGrid}>
-                                    <div className={styles.infoItem}>
-                                        <label>Puesto</label>
-                                        <span>{selectedEmployee.position || '—'}</span>
-                                    </div>
-                                    <div className={styles.infoItem}>
-                                        <label>Departamento</label>
-                                        <span>{selectedEmployee.department || '—'}</span>
-                                    </div>
-                                    <div className={styles.infoItem}>
-                                        <label>Área</label>
-                                        <span>{selectedEmployee.area || '—'}</span>
-                                    </div>
-                                    <div className={styles.infoItem}>
-                                        <label>Turno</label>
-                                        <span>{selectedEmployee.shift || '—'}</span>
-                                    </div>
-                                    <div className={styles.infoItem}>
-                                        <label>Fecha de Inicio</label>
-                                        <span>{formatDate(selectedEmployee.startDate)}</span>
-                                    </div>
-                                    <div className={styles.infoItem}>
-                                        <label>Fin de Contrato</label>
-                                        <span>{formatDate(selectedEmployee.contractEndDate)}</span>
-                                    </div>
-                                </div>
-                            )}
-
-                            {activeTab === 'actividad' && (
-                                <div>
-                                    <div className={styles.infoGrid}>
-                                        <div className={styles.infoItem}>
-                                            <label>Código de Acceso</label>
-                                            <span style={{ fontFamily: 'monospace', fontWeight: 'bold' }}>
-                                                {selectedEmployee.accessCode || '—'}
-                                            </span>
-                                        </div>
-                                        <div className={styles.infoItem}>
-                                            <label>Plan Entregado</label>
-                                            <span>{selectedEmployee.trainingPlanDelivered ? 'Sí' : 'No'}</span>
-                                        </div>
-                                        <div className={styles.infoItem}>
-                                            <label>Fecha Notificación</label>
-                                            <span>{formatDate(selectedEmployee.notificationDate)}</span>
-                                        </div>
-                                        <div className={styles.infoItem}>
-                                            <label>Último Login</label>
-                                            <span>{formatDate(selectedEmployee.lastLoginCandidate)}</span>
-                                        </div>
-                                    </div>
-
-                                    {selectedEmployee.cursosCompletados && selectedEmployee.cursosCompletados.length > 0 && (
-                                        <div style={{ marginTop: '24px' }}>
-                                            <h4 style={{ marginBottom: '12px', color: 'var(--text-primary)' }}>Cursos Completados</h4>
-                                            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
-                                                {selectedEmployee.cursosCompletados.map((courseId, idx) => (
-                                                    <span key={idx} className={styles.courseBadge}>
-                                                        {courseId.substring(0, 12)}...
-                                                    </span>
-                                                ))}
-                                            </div>
-                                        </div>
-                                    )}
-
-                                    {selectedEmployee.coursesProgress && Object.keys(selectedEmployee.coursesProgress).length > 0 && (
-                                        <div style={{ marginTop: '24px' }}>
-                                            <h4 style={{ marginBottom: '12px', color: 'var(--text-primary)' }}>Progreso de Cursos</h4>
-                                            {Object.entries(selectedEmployee.coursesProgress).map(([courseId, progress]) => (
-                                                <div key={courseId} className={styles.progressItem}>
-                                                    <span className={styles.courseId}>{courseId.substring(0, 12)}...</span>
-                                                    <div className={styles.progressSteps}>
-                                                        <span className={progress.step1Completed ? styles.stepCompleted : styles.stepPending}>
-                                                            Paso 1
-                                                        </span>
-                                                        <span className={progress.step2Completed ? styles.stepCompleted : styles.stepPending}>
-                                                            Paso 2
-                                                        </span>
-                                                        {progress.examDownloaded && (
-                                                            <span className={styles.stepInfo}>
-                                                                <Download size={14} /> Examen
-                                                            </span>
+                <div
+                    className={styles.contentSection}
+                    role="region"
+                    aria-live="polite"
+                    aria-busy={loading}
+                >
+                    {!selectedEmployee ? (
+                        /* LIST VIEW */
+                        <>
+                            {loading ? (
+                                <EmployeeSkeleton count={itemsPerPage} />
+                            ) : employees.length > 0 ? (
+                                <>
+                                    <div className={styles.employeeGrid}>
+                                        {employees.map(emp => (
+                                            <div
+                                                key={emp.id}
+                                                role="button"
+                                                tabIndex={0}
+                                                className={styles.employeeCard}
+                                                onClick={() => handleSelectEmployee(emp)}
+                                                onKeyDown={(e) => {
+                                                    if (e.key === 'Enter' || e.key === ' ') {
+                                                        e.preventDefault();
+                                                        handleSelectEmployee(emp);
+                                                    }
+                                                }}
+                                                aria-label={`Ver detalles de ${emp.name}, ${emp.position || 'sin puesto'}`}
+                                            >
+                                                <div className={styles.cardHeader}>
+                                                    <div className={styles.employeeAvatar}>
+                                                        {emp.photoUrl ? (
+                                                            <img
+                                                                src={emp.photoUrl}
+                                                                alt={`Foto de ${emp.name}`}
+                                                                loading="lazy"
+                                                                onError={(e) => handleImageError(e, emp.name)}
+                                                            />
+                                                        ) : (
+                                                            <span aria-hidden="true">{getInitials(emp.name)}</span>
                                                         )}
                                                     </div>
+                                                    <div className={styles.employeeInfo}>
+                                                        <h3 className={styles.employeeName}>{emp.name}</h3>
+                                                        <p className={styles.employeePosition}>{emp.position || 'Sin puesto'}</p>
+                                                    </div>
                                                 </div>
-                                            ))}
-                                        </div>
-                                    )}
-                                </div>
-                            )}
+                                                <div className={styles.cardFooter}>
+                                                    <span className={styles.employeeId}>ID: {emp.employeeId || emp.id}</span>
+                                                    <span className={`${styles.statusBadge} ${emp.status === 'Inactivo' ? styles.statusInactive : styles.statusActive}`}>
+                                                        {emp.status || 'Activo'}
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        ))}
+                                    </div>
 
-                            {activeTab === 'documentos' && (
-                                <div>
-                                    {selectedEmployee.documents && selectedEmployee.documents.length > 0 ? (
-                                        <div className={styles.documentsList}>
-                                            {selectedEmployee.documents.map((doc, idx) => (
-                                                <div key={idx} className={styles.documentItem}>
-                                                    <FileText size={20} />
-                                                    <span>Documento {idx + 1}</span>
-                                                    <a href="#" className={styles.documentLink}>Ver</a>
-                                                </div>
-                                            ))}
+                                    {/* Pagination */}
+                                    <div className={styles.paginationContainer}>
+                                        <div className={styles.itemsPerPageSelector}>
+                                            <label htmlFor="itemsPerPage" className={styles.itemsPerPageLabel}>
+                                                Mostrar:
+                                            </label>
+                                            <select
+                                                id="itemsPerPage"
+                                                value={itemsPerPage}
+                                                onChange={handleItemsPerPageChange}
+                                                className={styles.itemsPerPageSelect}
+                                            >
+                                                <option value={4}>4</option>
+                                                <option value={8}>8</option>
+                                                <option value={12}>12</option>
+                                            </select>
+                                            <span className={styles.itemsPerPageText}>por página</span>
                                         </div>
-                                    ) : (
-                                        <div className={styles.emptyState}>
-                                            <FileText size={32} />
-                                            <p>No hay documentos disponibles</p>
+
+                                        <div className={styles.paginationControls}>
+                                            <button
+                                                onClick={prevPage}
+                                                disabled={page <= 1}
+                                                className={styles.paginationBtn}
+                                                aria-label="Página anterior"
+                                            >
+                                                <ChevronRight size={18} style={{ transform: 'rotate(180deg)' }} />
+                                                Anterior
+                                            </button>
+                                            <span className={styles.pageIndicator} aria-current="page">
+                                                Página {page}
+                                            </span>
+                                            <button
+                                                onClick={nextPage}
+                                                disabled={!hasMore}
+                                                className={styles.paginationBtn}
+                                                aria-label="Página siguiente"
+                                            >
+                                                Siguiente
+                                                <ChevronRight size={18} />
+                                            </button>
                                         </div>
-                                    )}
+                                    </div>
+                                </>
+                            ) : (
+                                <div className={styles.emptyState}>
+                                    <Search size={48} />
+                                    <h3>No se encontraron empleados</h3>
+                                    <p>Intenta con otros términos de búsqueda</p>
                                 </div>
                             )}
+                        </>
+                    ) : (
+                        /* DETAIL VIEW */
+                        <div className={styles.detailView}>
+                            <button onClick={handleBackToList} className={styles.backButton}>
+                                <ArrowLeft size={18} />
+                                Volver a la lista
+                            </button>
+
+                            {/* Employee Header */}
+                            <div className={styles.detailHeader}>
+                                <div className={styles.avatarLarge}>
+                                    {selectedEmployee.photoUrl ? (
+                                        <img
+                                            src={selectedEmployee.photoUrl}
+                                            alt={selectedEmployee.name}
+                                            onError={(e) => handleImageError(e, selectedEmployee.name)}
+                                        />
+                                    ) : (
+                                        <span>{getInitials(selectedEmployee.name)}</span>
+                                    )}
+                                </div>
+                                <div className={styles.headerInfo}>
+                                    <h2 className={styles.detailName}>{selectedEmployee.name}</h2>
+                                    <p className={styles.detailId}>ID: {selectedEmployee.employeeId || selectedEmployee.id}</p>
+                                    <span className={`${styles.statusBadge} ${selectedEmployee.status === 'Inactivo' ? styles.statusInactive : styles.statusActive}`}>
+                                        {selectedEmployee.status || 'Activo'}
+                                    </span>
+                                </div>
+                                <div className={styles.actionButtons}>
+                                    {selectedEmployee.phone && (
+                                        <a
+                                            href={`https://wa.me/${selectedEmployee.phone.replace(/\s/g, '')}`}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            className={styles.whatsappButton}
+                                            title="Enviar mensaje por WhatsApp"
+                                        >
+                                            <Phone size={18} />
+                                            WhatsApp
+                                        </a>
+                                    )}
+                                    <button
+                                        onClick={() => openEditDrawer(selectedEmployee)}
+                                        className={styles.editButton}
+                                        title="Editar empleado"
+                                    >
+                                        <Edit size={18} />
+                                        Editar
+                                    </button>
+                                    <button
+                                        onClick={() => handleDeleteEmployee(selectedEmployee.id)}
+                                        className={styles.deleteButton}
+                                        title="Eliminar empleado"
+                                        disabled={isDeleting}
+                                    >
+                                        {isDeleting ? (
+                                            <Loader2 size={18} className={styles.spinning} />
+                                        ) : (
+                                            <Trash2 size={18} />
+                                        )}
+                                        Eliminar
+                                    </button>
+                                </div>
+                            </div>
+
+                            {/* Tabs Navigation */}
+                            <div className={styles.tabsNav} role="tablist">
+                                <button
+                                    role="tab"
+                                    aria-selected={activeTab === 'personal'}
+                                    aria-controls="personal-panel"
+                                    className={`${styles.tabButton} ${activeTab === 'personal' ? styles.tabActive : ''}`}
+                                    onClick={() => setActiveTab('personal')}
+                                >
+                                    <User size={18} />
+                                    Personal
+                                </button>
+                                <button
+                                    role="tab"
+                                    aria-selected={activeTab === 'laboral'}
+                                    aria-controls="laboral-panel"
+                                    className={`${styles.tabButton} ${activeTab === 'laboral' ? styles.tabActive : ''}`}
+                                    onClick={() => setActiveTab('laboral')}
+                                >
+                                    <Briefcase size={18} />
+                                    Laboral
+                                </button>
+                                <button
+                                    role="tab"
+                                    aria-selected={activeTab === 'actividad'}
+                                    aria-controls="actividad-panel"
+                                    className={`${styles.tabButton} ${activeTab === 'actividad' ? styles.tabActive : ''}`}
+                                    onClick={() => setActiveTab('actividad')}
+                                >
+                                    <Activity size={18} />
+                                    Actividad
+                                </button>
+                                <button
+                                    role="tab"
+                                    aria-selected={activeTab === 'documentos'}
+                                    aria-controls="documentos-panel"
+                                    className={`${styles.tabButton} ${activeTab === 'documentos' ? styles.tabActive : ''}`}
+                                    onClick={() => setActiveTab('documentos')}
+                                >
+                                    <FileText size={18} />
+                                    Documentos
+                                </button>
+                            </div>
+
+                            {/* Tab Content */}
+                            <div className={styles.tabContent}>
+                                {activeTab === 'personal' && (
+                                    <div id="personal-panel" role="tabpanel" className={styles.infoGrid}>
+                                        <div className={styles.infoItem}>
+                                            <label>Nombre Completo</label>
+                                            <span>{selectedEmployee.name}</span>
+                                        </div>
+                                        <div className={styles.infoItem}>
+                                            <label>CURP</label>
+                                            <span>{selectedEmployee.curp || '—'}</span>
+                                        </div>
+                                        <div className={styles.infoItem}>
+                                            <label>ID Empleado</label>
+                                            <span>{selectedEmployee.employeeId || '—'}</span>
+                                        </div>
+                                        <div className={styles.infoItem}>
+                                            <label>Tipo</label>
+                                            <span>{selectedEmployee.isCandidato ? 'Candidato' : 'Empleado'}</span>
+                                        </div>
+                                    </div>
+                                )}
+
+                                {activeTab === 'laboral' && (
+                                    <div id="laboral-panel" role="tabpanel" className={styles.infoGrid}>
+                                        <div className={styles.infoItem}>
+                                            <label>Puesto</label>
+                                            <span>{selectedEmployee.position || '—'}</span>
+                                        </div>
+                                        <div className={styles.infoItem}>
+                                            <label>Departamento</label>
+                                            <span>{selectedEmployee.department || '—'}</span>
+                                        </div>
+                                        <div className={styles.infoItem}>
+                                            <label>Área</label>
+                                            <span>{selectedEmployee.area || '—'}</span>
+                                        </div>
+                                        <div className={styles.infoItem}>
+                                            <label>Turno</label>
+                                            <span>{selectedEmployee.shift || '—'}</span>
+                                        </div>
+                                        <div className={styles.infoItem}>
+                                            <label>Fecha de Inicio</label>
+                                            <span>{formatDate(selectedEmployee.startDate)}</span>
+                                        </div>
+                                        <div className={styles.infoItem}>
+                                            <label>Fin de Contrato</label>
+                                            <span>{formatDate(selectedEmployee.contractEndDate)}</span>
+                                        </div>
+                                    </div>
+                                )}
+
+                                {activeTab === 'actividad' && (
+                                    <div id="actividad-panel" role="tabpanel">
+                                        <div className={styles.infoGrid}>
+                                            <div className={styles.infoItem}>
+                                                <label>Código de Acceso</label>
+                                                <span style={{ fontFamily: 'monospace', fontWeight: 'bold' }}>
+                                                    {selectedEmployee.accessCode || '—'}
+                                                </span>
+                                            </div>
+                                            <div className={styles.infoItem}>
+                                                <label>Plan Entregado</label>
+                                                <span>{selectedEmployee.trainingPlanDelivered ? 'Sí' : 'No'}</span>
+                                            </div>
+                                            <div className={styles.infoItem}>
+                                                <label>Fecha Notificación</label>
+                                                <span>{formatDate(selectedEmployee.notificationDate)}</span>
+                                            </div>
+                                            <div className={styles.infoItem}>
+                                                <label>Último Login</label>
+                                                <span>{formatDate(selectedEmployee.lastLoginCandidate)}</span>
+                                            </div>
+                                        </div>
+
+                                        {selectedEmployee.cursosCompletados && selectedEmployee.cursosCompletados.length > 0 && (
+                                            <div style={{ marginTop: '24px' }}>
+                                                <h4 style={{ marginBottom: '12px', color: 'var(--text-primary)' }}>Cursos Completados</h4>
+                                                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
+                                                    {selectedEmployee.cursosCompletados.map((courseId, idx) => (
+                                                        <span key={idx} className={styles.courseBadge}>
+                                                            {courseId.substring(0, 12)}...
+                                                        </span>
+                                                    ))}
+                                                </div>
+                                            </div>
+                                        )}
+
+                                        {selectedEmployee.coursesProgress && Object.keys(selectedEmployee.coursesProgress).length > 0 && (
+                                            <div style={{ marginTop: '24px' }}>
+                                                <h4 style={{ marginBottom: '12px', color: 'var(--text-primary)' }}>Progreso de Cursos</h4>
+                                                {Object.entries(selectedEmployee.coursesProgress).map(([courseId, progress]) => (
+                                                    <div key={courseId} className={styles.progressItem}>
+                                                        <span className={styles.courseId}>{courseId.substring(0, 12)}...</span>
+                                                        <div className={styles.progressSteps}>
+                                                            <span className={progress.step1Completed ? styles.stepCompleted : styles.stepPending}>
+                                                                Paso 1
+                                                            </span>
+                                                            <span className={progress.step2Completed ? styles.stepCompleted : styles.stepPending}>
+                                                                Paso 2
+                                                            </span>
+                                                            {progress.examDownloaded && (
+                                                                <span className={styles.stepInfo}>
+                                                                    <Download size={14} /> Examen
+                                                                </span>
+                                                            )}
+                                                        </div>
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        )}
+                                    </div>
+                                )}
+
+                                {activeTab === 'documentos' && (
+                                    <div id="documentos-panel" role="tabpanel">
+                                        {selectedEmployee.documents && selectedEmployee.documents.length > 0 ? (
+                                            <div className={styles.documentsList}>
+                                                {selectedEmployee.documents.map((doc, idx) => (
+                                                    <div key={idx} className={styles.documentItem}>
+                                                        <FileText size={20} />
+                                                        <span>Documento {idx + 1}</span>
+                                                        <a href="#" className={styles.documentLink}>Ver</a>
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        ) : (
+                                            <div className={styles.emptyState}>
+                                                <FileText size={32} />
+                                                <p>No hay documentos disponibles</p>
+                                            </div>
+                                        )}
+                                    </div>
+                                )}
+                            </div>
                         </div>
-                    </div>
-                )}
+                    )}
+                </div>
             </div>
 
-            {/* DRAWER for Create/Edit Employee - Using shadcn UI */}
+            {/* DRAWER for Create/Edit Employee */}
             <Drawer open={isDrawerOpen} onOpenChange={setIsDrawerOpen}>
                 <DrawerContent>
                     <DrawerHeader>
@@ -906,7 +982,7 @@ export default function EmployeesPage() {
                             )}
                         </DrawerTitle>
                         <DrawerClose asChild>
-                            <button className={styles.closeButtonIcon}>
+                            <button className={styles.closeButtonIcon} aria-label="Cerrar">
                                 <X size={24} />
                             </button>
                         </DrawerClose>
@@ -971,7 +1047,7 @@ export default function EmployeesPage() {
                                             onChange={handleInputChange}
                                             className={`${styles.formInput} ${formErrors.curp ? styles.inputError : ''}`}
                                             placeholder="Ej: JUPE800101HDFRNN00"
-                                            maxLength="18"
+                                            maxLength={18}
                                             autoComplete="off"
                                             aria-invalid={!!formErrors.curp}
                                             aria-describedby={formErrors.curp ? 'curp-error' : undefined}
@@ -996,6 +1072,7 @@ export default function EmployeesPage() {
                                                     type="button"
                                                     onClick={handleRemovePhoto}
                                                     className={styles.removePhotoButton}
+                                                    aria-label="Quitar foto"
                                                 >
                                                     <X size={16} />
                                                     Quitar foto
@@ -1011,6 +1088,7 @@ export default function EmployeesPage() {
                                                     accept="image/*"
                                                     onChange={handlePhotoChange}
                                                     className={styles.photoInput}
+                                                    aria-label="Seleccionar foto de perfil"
                                                 />
                                             </label>
                                         )}
@@ -1022,17 +1100,21 @@ export default function EmployeesPage() {
                                         Teléfono (WhatsApp)
                                     </label>
                                     <div className={styles.phoneInputContainer}>
-                                        <Phone size={18} className={styles.phoneIcon} />
+                                        <Phone size={18} className={styles.phoneIcon} aria-hidden="true" />
                                         <input
                                             type="tel"
                                             id="phone"
                                             name="phone"
                                             value={formData.phone || ''}
                                             onChange={handleInputChange}
-                                            className={styles.formInput}
+                                            className={`${styles.formInput} ${formErrors.phone ? styles.inputError : ''}`}
                                             placeholder="Ej: +52 442 123 4567"
+                                            autoComplete="tel"
+                                            aria-invalid={!!formErrors.phone}
+                                            aria-describedby={formErrors.phone ? 'phone-error' : undefined}
                                         />
                                     </div>
+                                    {formErrors.phone && <span id="phone-error" className={styles.errorText} role="alert">{formErrors.phone}</span>}
                                 </div>
                             </div>
 
@@ -1052,6 +1134,7 @@ export default function EmployeesPage() {
                                         onChange={handleInputChange}
                                         className={styles.formInput}
                                         placeholder="Ej: Desarrollador Senior"
+                                        autoComplete="organization-title"
                                     />
                                 </div>
 
@@ -1152,6 +1235,7 @@ export default function EmployeesPage() {
                                             className={`${styles.formInput} ${styles.readonlyInput}`}
                                             readOnly
                                             disabled
+                                            aria-readonly="true"
                                         />
                                     </div>
                                 </div>
@@ -1192,6 +1276,7 @@ export default function EmployeesPage() {
                                                     className={`${styles.formInput} ${styles.readonlyInput}`}
                                                     readOnly
                                                     disabled
+                                                    aria-readonly="true"
                                                 />
                                             </div>
                                             <div className={styles.formGroup}>
@@ -1225,6 +1310,7 @@ export default function EmployeesPage() {
                                                     className={`${styles.formInput} ${styles.readonlyInput}`}
                                                     readOnly
                                                     disabled
+                                                    aria-readonly="true"
                                                 />
                                             </div>
                                             <div className={styles.formGroup}>
@@ -1258,6 +1344,7 @@ export default function EmployeesPage() {
                                                     className={`${styles.formInput} ${styles.readonlyInput}`}
                                                     readOnly
                                                     disabled
+                                                    aria-readonly="true"
                                                 />
                                             </div>
                                             <div className={styles.formGroup}>
@@ -1349,6 +1436,23 @@ export default function EmployeesPage() {
                                     </div>
                                 </div>
                             )}
+
+                            {/* Upload Progress Indicator */}
+                            {uploadProgress > 0 && uploadProgress < 100 && (
+                                <div className={styles.uploadProgress}>
+                                    <div className={styles.progressBar}>
+                                        <div
+                                            className={styles.progressFill}
+                                            style={{ width: `${uploadProgress}%` }}
+                                            role="progressbar"
+                                            aria-valuenow={uploadProgress}
+                                            aria-valuemin="0"
+                                            aria-valuemax="100"
+                                        />
+                                    </div>
+                                    <span className={styles.progressText}>{uploadProgress}%</span>
+                                </div>
+                            )}
                         </form>
                     </div>
 
@@ -1389,14 +1493,16 @@ export default function EmployeesPage() {
                 isOpen={confirmDialog.isOpen}
                 title={confirmDialog.title}
                 message={confirmDialog.message}
-                confirmText={confirmDialog.confirmText || 'Confirmar'}
+                confirmText={confirmDialog.confirmText}
                 cancelText="Cancelar"
                 onConfirm={() => {
-                    confirmDialog.onConfirm?.();
-                    setConfirmDialog({ ...confirmDialog, isOpen: false });
+                    if (confirmDialog.onConfirm) {
+                        confirmDialog.onConfirm();
+                    }
+                    setConfirmDialog(prev => ({ ...prev, isOpen: false }));
                 }}
-                onCancel={() => setConfirmDialog({ ...confirmDialog, isOpen: false })}
-                variant={confirmDialog.variant || 'danger'}
+                onCancel={() => setConfirmDialog(prev => ({ ...prev, isOpen: false }))}
+                variant={confirmDialog.variant}
             />
         </main>
     );

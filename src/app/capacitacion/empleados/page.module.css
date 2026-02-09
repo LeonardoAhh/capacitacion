@@ -251,6 +251,10 @@
 }
 
 /* === STATS & FILTERS === */
+.searchSection {
+    margin-bottom: var(--spacing-lg);
+}
+
 .topSection {
     display: flex;
     flex-wrap: wrap;

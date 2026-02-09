@@ -1,47 +1,256 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 import { collection, getDocs, query, where } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import { useAuth } from '@/contexts/AuthContext';
 import styles from './page.module.css';
 import Link from 'next/link';
-import { Search, ArrowLeft, Users, CheckCircle, Clock, FileText, FileCheck, AlertCircle, Bell, MessageCircle, Key } from 'lucide-react';
+import { Search, ArrowLeft, Users, CheckCircle, Clock, FileText, FileCheck, AlertCircle, Bell, MessageCircle, Key, Filter, X } from 'lucide-react';
 import { useTheme } from '@/contexts/ThemeContext';
 import CandidateDrawer from '@/components/Dashboard/CandidateDrawer';
+
+// Custom hook for data fetching
+function useDataFetching() {
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
+    const [candidates, setCandidates] = useState([]);
+    const [coursesMapRef, setCoursesMapRef] = useState({});
+
+    const fetchData = useCallback(async () => {
+        try {
+            setLoading(true);
+            setError(null);
+
+            // Parallel fetching for better performance
+            const [employeesSnap, coursesSnap, positionsSnap, legacyCoursesSnap] = await Promise.allSettled([
+                getDocs(collection(db, 'employees')),
+                getDocs(collection(db, 'induction_courses')),
+                getDocs(collection(db, 'positions')),
+                getDocs(collection(db, 'cursos_induccion')).catch(() => ({ docs: [] }))
+            ]);
+
+            // Process employees
+            const rawCandidates = employeesSnap.status === 'fulfilled'
+                ? employeesSnap.value.docs
+                    .map(doc => ({ id: doc.id, ...doc.data() }))
+                    .filter(emp => emp.status === 'Candidato' || emp.isCandidato === true)
+                : [];
+
+            // Process courses
+            const coursesMap = {};
+            if (coursesSnap.status === 'fulfilled') {
+                coursesSnap.value.docs.forEach(doc => {
+                    const courseData = doc.data();
+                    if (courseData.activo !== false) {
+                        const courseName = courseData.title || courseData.nombre || 'Sin nombre';
+                        coursesMap[doc.id] = {
+                            id: doc.id,
+                            name: courseName,
+                            ...courseData
+                        };
+                    }
+                });
+            }
+
+            // Process legacy courses
+            if (legacyCoursesSnap.status === 'fulfilled') {
+                legacyCoursesSnap.value.docs.forEach(doc => {
+                    const d = doc.data();
+                    if (d.activo !== false && !coursesMap[d.id] && !coursesMap[d.nombre]) {
+                        coursesMap[d.id] = { id: doc.id, name: d.nombre, ...d };
+                    }
+                });
+            }
+
+            setCoursesMapRef(coursesMap);
+
+            // Process positions
+            const positionRequirements = {};
+            if (positionsSnap.status === 'fulfilled') {
+                positionsSnap.value.docs.forEach(doc => {
+                    const p = doc.data();
+                    if (p.name) {
+                        positionRequirements[p.name] = p.requiredCourses || [];
+                    }
+                });
+            }
+
+            // Helper function to calculate days since last login
+            const calculateDaysSinceLastLogin = (lastLoginDate) => {
+                if (!lastLoginDate || lastLoginDate === 'Nunca') return null;
+                try {
+                    const lastLogin = new Date(lastLoginDate);
+                    const today = new Date();
+                    const diffTime = Math.abs(today - lastLogin);
+                    const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+                    return diffDays;
+                } catch (error) {
+                    return null;
+                }
+            };
+
+            // Process candidates
+            const finalCandidates = rawCandidates.map(c => {
+                const position = c.position;
+                const requiredCourseTitles = positionRequirements[position] || [];
+
+                // Find required course IDs
+                const requiredCourseIds = [];
+                requiredCourseTitles.forEach(title => {
+                    const found = Object.values(coursesMap).find(course =>
+                        course.name === title || course.title === title
+                    );
+                    if (found) requiredCourseIds.push(found.id);
+                });
+
+                // Fallback to legacy system
+                if (requiredCourseIds.length === 0) {
+                    Object.values(coursesMap).forEach(course => {
+                        if (course.puestosAplicables && course.puestosAplicables.includes(position)) {
+                            requiredCourseIds.push(course.id);
+                        }
+                    });
+                }
+
+                // Calculate progress
+                const completedIds = c.cursosCompletados || [];
+                const totalRequired = requiredCourseIds.length;
+                const completedRequiredCount = requiredCourseIds.filter(id => completedIds.includes(id)).length;
+                const progress = totalRequired > 0 ? Math.round((completedRequiredCount / totalRequired) * 100) : 0;
+
+                // Calculate activity metrics
+                const progressMap = c.coursesProgress || {};
+                const presentationsViewed = Object.values(progressMap).filter(p => p.presentationCompleted).length;
+                const examsDownloaded = Object.values(progressMap).filter(p => p.examDownloaded).length;
+
+                // Determine status
+                const daysIdle = calculateDaysSinceLastLogin(c.lastLoginCandidate);
+                const isInactive = daysIdle !== null && daysIdle > 2;
+
+                let status = 'notStarted';
+                if (progress >= 100) status = 'completed';
+                else if (progress > 0 || Object.keys(progressMap).length > 0) status = 'inProgress';
+                if (isInactive && status !== 'completed') status = 'inactive';
+
+                // Format last login
+                let lastLoginDisplay = 'Nunca';
+                if (c.lastLoginCandidate) {
+                    if (daysIdle === 0) lastLoginDisplay = 'Hoy';
+                    else if (daysIdle === 1) lastLoginDisplay = 'Hace 1 día';
+                    else if (daysIdle !== null) lastLoginDisplay = `Hace ${daysIdle} días`;
+                    else lastLoginDisplay = new Date(c.lastLoginCandidate).toLocaleDateString();
+                }
+
+                return {
+                    ...c,
+                    name: c.name || c.nombre || 'Sin Nombre',
+                    email: c.email || 'N/A',
+                    position: position || 'N/A',
+                    requiredCount: totalRequired,
+                    completedCount: completedRequiredCount,
+                    progress: progress,
+                    presentationsViewed,
+                    examsDownloaded,
+                    status: status,
+                    daysSinceLastLogin: daysIdle,
+                    lastLogin: lastLoginDisplay,
+                    requiredCourseIds: requiredCourseIds,
+                    accessCode: c.accessCode || '-',
+                    accessCodeUses: c.accessCodeUses || 0,
+                    accessCodeExpires: c.accessCodeExpires ? new Date(c.accessCodeExpires).toLocaleDateString() : '-'
+                };
+            });
+
+            setCandidates(finalCandidates);
+
+        } catch (error) {
+            console.error("Error fetching dashboard data:", error);
+            setError('Error al cargar los datos. Por favor, intenta de nuevo.');
+        } finally {
+            setLoading(false);
+        }
+    }, []);
+
+    return { loading, error, candidates, coursesMapRef, fetchData };
+}
 
 export default function CandidateMonitoringPage() {
     const { user, loading: authLoading } = useAuth();
     const router = useRouter();
     const { theme } = useTheme();
 
-    const [loading, setLoading] = useState(true);
-    const [candidates, setCandidates] = useState([]);
-    const [stats, setStats] = useState({
-        total: 0,
-        completed: 0,
-        inProgress: 0,
-        avgProgress: 0,
-        inactive: 0,
-    });
-    // Drawer State
+    // Data fetching hook
+    const { loading, error, candidates, coursesMapRef, fetchData } = useDataFetching();
+
+    // UI States
+    const [searchTerm, setSearchTerm] = useState('');
+    const [statusFilter, setStatusFilter] = useState('all');
     const [selectedCandidate, setSelectedCandidate] = useState(null);
     const [isDrawerOpen, setIsDrawerOpen] = useState(false);
-
-    const handleRowClick = (candidate) => {
-        setSelectedCandidate(candidate);
-        setIsDrawerOpen(true);
-    };
-
-    const [searchTerm, setSearchTerm] = useState('');
-    const [coursesMapRef, setCoursesMapRef] = useState({});
-
-    // WhatsApp Modal State
+    const [showMobileFilters, setShowMobileFilters] = useState(false);
     const [whatsappModal, setWhatsappModal] = useState({
         isOpen: false,
         candidate: null
     });
+
+    // Memoized calculations
+    const stats = useMemo(() => {
+        return {
+            total: candidates.length,
+            completed: candidates.filter(c => c.status === 'completed').length,
+            inProgress: candidates.filter(c => c.status === 'inProgress').length,
+            inactive: candidates.filter(c => c.status === 'inactive').length,
+            avgProgress: candidates.length > 0
+                ? Math.round(candidates.reduce((acc, c) => acc + c.progress, 0) / candidates.length)
+                : 0
+        };
+    }, [candidates]);
+
+    const filteredCandidates = useMemo(() => {
+        return candidates.filter(c => {
+            const matchesSearch =
+                c.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                c.position.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                c.employeeId?.toLowerCase().includes(searchTerm.toLowerCase());
+
+            const matchesStatus = statusFilter === 'all' || c.status === statusFilter;
+
+            return matchesSearch && matchesStatus;
+        });
+    }, [candidates, searchTerm, statusFilter]);
+
+    // Event handlers
+    const handleRowClick = useCallback((candidate) => {
+        setSelectedCandidate(candidate);
+        setIsDrawerOpen(true);
+    }, []);
+
+    const handleWhatsApp = useCallback((candidate, e) => {
+        e?.stopPropagation();
+        setWhatsappModal({
+            isOpen: true,
+            candidate
+        });
+    }, []);
+
+    const sendWhatsAppMessage = useCallback((template) => {
+        if (!whatsappModal.candidate) return;
+
+        const { name, phone } = whatsappModal.candidate;
+        if (!phone) {
+            alert('El candidato no tiene número de teléfono registrado');
+            return;
+        }
+
+        const cleanPhone = phone.replace(/\D/g, '');
+        const message = template.message(name);
+        const encodedMessage = encodeURIComponent(message);
+
+        window.open(`https://wa.me/${cleanPhone}?text=${encodedMessage}`, '_blank');
+        setWhatsappModal({ isOpen: false, candidate: null });
+    }, [whatsappModal.candidate]);
 
     // Predefined WhatsApp message templates
     const messageTemplates = [
@@ -72,243 +281,55 @@ export default function CandidateMonitoringPage() {
         }
     ];
 
-    // WhatsApp handler
-    const handleWhatsApp = (candidate, e) => {
-        e.stopPropagation(); // Prevent row click
-        setWhatsappModal({
-            isOpen: true,
-            candidate
-        });
-    };
-
-    const sendWhatsAppMessage = (template) => {
-        if (!whatsappModal.candidate) return;
-
-        const { name, phone } = whatsappModal.candidate;
-        if (!phone) {
-            alert('El candidato no tiene número de teléfono registrado');
-            return;
-        }
-
-        // Clean phone number (remove spaces, dashes, etc.)
-        const cleanPhone = phone.replace(/\D/g, '');
-        const message = template.message(name);
-        const encodedMessage = encodeURIComponent(message);
-
-        // Open WhatsApp with message
-        window.open(`https://wa.me/${cleanPhone}?text=${encodedMessage}`, '_blank');
-
-        // Close modal
-        setWhatsappModal({ isOpen: false, candidate: null });
-    };
-
-
-    // Helper function to calculate days since last login
-    const calculateDaysSinceLastLogin = (lastLoginDate) => {
-        if (!lastLoginDate || lastLoginDate === 'Nunca') return null;
-        try {
-            const lastLogin = new Date(lastLoginDate);
-            const today = new Date();
-            const diffTime = Math.abs(today - lastLogin);
-            const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
-            return diffDays;
-        } catch (error) {
-            return null;
-        }
-    };
-
-    const fetchData = useCallback(async () => {
-        try {
-            setLoading(true);
-
-            // 1. Fetch Candidates (Status 'Candidato' OR isCandidato: true)
-            const employeesRef = collection(db, 'employees');
-            const snapshot = await getDocs(employeesRef);
-
-            const rawCandidates = snapshot.docs
-                .map(doc => ({ id: doc.id, ...doc.data() }))
-                .filter(emp => emp.status === 'Candidato' || emp.isCandidato === true);
-
-            // 2. Fetch all courses from induction_courses (only active ones)
-            const coursesRef = collection(db, 'induction_courses');
-            const coursesSnapshot = await getDocs(coursesRef);
-            const coursesMap = {}; // ID -> {nombre, ...}
-
-            coursesSnapshot.docs.forEach(doc => {
-                const courseData = doc.data();
-                // Only include active courses
-                if (courseData.activo !== false) {
-                    const courseName = courseData.title || courseData.nombre || 'Sin nombre';
-
-                    coursesMap[doc.id] = {
-                        id: doc.id,
-                        name: courseName, // Normalize to 'name' for consistency
-                        ...courseData
-                    };
-                }
-            });
-
-            // Legacy courses support
-            try {
-                const legacyRef = collection(db, 'cursos_induccion'); // Assuming this is collection name
-                const legacySnap = await getDocs(legacyRef);
-                legacySnap.docs.forEach(doc => {
-                    const d = doc.data();
-                    if (d.activo !== false && !coursesMap[d.id] && !coursesMap[d.nombre]) {
-                        coursesMap[d.id] = { id: doc.id, name: d.nombre, ...d };
-                    }
-                });
-            } catch (e) {
-                // Ignore if collection doesnt exist
-            }
-
-            setCoursesMapRef(coursesMap);
-
-
-            // 3. Process each candidate
-            // Determine Total Courses for THIS candidate based on Position
-            // Logic: Filter coursesMap where 'available_positions' includes candidate.position
-            // If no position or no match, maybe default? For now, 0.
-
-            // 3b. Actually we need the Position->Courses mapping first to be accurate.
-            const positionsRef = collection(db, 'positions');
-            const positionsSnap = await getDocs(positionsRef);
-            const positionRequirements = {}; // 'Operador' -> ['Curso 1', 'Curso 2']
-
-            positionsSnap.docs.forEach(doc => {
-                const p = doc.data();
-                if (p.name) {
-                    positionRequirements[p.name] = p.requiredCourses || [];
-                }
-            });
-
-            const finalCandidates = rawCandidates.map(c => {
-                const position = c.position;
-                const requiredCourseTitles = positionRequirements[position] || [];
-
-                // Find IDs of these courses in our coursesMap
-                // Logic: coursesMap values have 'name' === title
-                const requiredCourseIds = [];
-                requiredCourseTitles.forEach(title => {
-                    const found = Object.values(coursesMap).find(course => course.name === title || course.title === title);
-                    if (found) requiredCourseIds.push(found.id);
-                });
-
-                // Also check legacy 'puestosAplicables' if the new system yielded 0
-                if (requiredCourseIds.length === 0) {
-                    Object.values(coursesMap).forEach(course => {
-                        if (course.puestosAplicables && course.puestosAplicables.includes(position)) {
-                            requiredCourseIds.push(course.id);
-                        }
-                    });
-                }
-
-                // Calculate Progress
-                const completedIds = c.cursosCompletados || [];
-                // Filter completedIds to only those that are actually REQUIRED (semantics?)
-                // Usually progress % is (Completed Required / Total Required)
-                // But simply: Count how many of 'requiredCourseIds' are in 'completedIds'
-
-                const totalRequired = requiredCourseIds.length;
-                const completedRequiredCount = requiredCourseIds.filter(id => completedIds.includes(id)).length;
-
-                const progress = totalRequired > 0 ? Math.round((completedRequiredCount / totalRequired) * 100) : 0;
-
-                // Determine Status
-                // - Inactivo: Last login > 7 days ago ?? Or just 'status' field?
-                // Let's use logic:
-                const daysIdle = calculateDaysSinceLastLogin(c.lastLoginCandidate); // Use lastLoginCandidate from raw data
-                const isInactive = daysIdle !== null && daysIdle > 2; // Example threshold, matching original logic
-
-                // Granular stats for UI
-                const progressMap = c.coursesProgress || {};
-                const presentationsViewed = Object.values(progressMap).filter(p => p.presentationCompleted).length;
-                const examsDownloaded = Object.values(progressMap).filter(p => p.examDownloaded).length;
-
-                let status = 'notStarted';
-                if (progress >= 100) status = 'completed';
-                else if (progress > 0 || Object.keys(progressMap).length > 0) status = 'inProgress';
-                if (isInactive && status !== 'completed') status = 'inactive';
-
-                // Format last login display
-                let lastLoginDisplay = 'Nunca';
-                if (c.lastLoginCandidate) {
-                    if (daysIdle === 0) {
-                        lastLoginDisplay = 'Hoy';
-                    } else if (daysIdle === 1) {
-                        lastLoginDisplay = 'Hace 1 día';
-                    } else if (daysIdle !== null) {
-                        lastLoginDisplay = `Hace ${daysIdle} días`;
-                    } else {
-                        lastLoginDisplay = new Date(c.lastLoginCandidate).toLocaleDateString();
-                    }
-                }
-
-                return {
-                    ...c,
-                    name: c.name || c.nombre || 'Sin Nombre',
-                    email: c.email || 'N/A',
-                    position: position || 'N/A',
-                    requiredCount: totalRequired,
-                    completedCount: completedRequiredCount,
-                    progress: progress,
-                    presentationsViewed,
-                    examsDownloaded,
-                    status: status,
-                    daysSinceLastLogin: daysIdle,
-                    lastLogin: lastLoginDisplay,
-                    requiredCourseIds: requiredCourseIds, // Store for detail view
-                    // Access Code Info
-                    accessCode: c.accessCode || '-',
-                    accessCodeUses: c.accessCodeUses || 0,
-                    accessCodeExpires: c.accessCodeExpires ? new Date(c.accessCodeExpires).toLocaleDateString() : '-'
-                };
-            });
-
-
-            setCandidates(finalCandidates);
-
-            // 4. Calculate Stats
-            const newStats = {
-                total: finalCandidates.length,
-                completed: finalCandidates.filter(c => c.status === 'completed').length,
-                inProgress: finalCandidates.filter(c => c.status === 'inProgress').length,
-                inactive: finalCandidates.filter(c => c.status === 'inactive').length,
-                avgProgress: finalCandidates.length > 0
-                    ? Math.round(finalCandidates.reduce((acc, c) => acc + c.progress, 0) / finalCandidates.length)
-                    : 0
-            };
-            setStats(newStats);
-
-        } catch (error) {
-            console.error("Error fetching dashboard data:", error);
-        } finally {
-            setLoading(false);
-        }
-    }, []);
-
+    // Effects
     useEffect(() => {
         if (!authLoading) {
             if (!user) {
                 router.push('/login');
             } else if (!['admin', 'super_admin'].includes(user.rol)) {
-                router.push('/dashboard'); // Unauthorized
+                router.push('/dashboard');
             } else {
                 fetchData();
             }
         }
     }, [user, authLoading, router, fetchData]);
 
-    const filteredCandidates = candidates.filter(c =>
-        c.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        c.position.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        c.employeeId?.toLowerCase().includes(searchTerm.toLowerCase())
-    );
+    // Cleanup on unmount
+    useEffect(() => {
+        return () => {
+            setSelectedCandidate(null);
+            setIsDrawerOpen(false);
+            setWhatsappModal({ isOpen: false, candidate: null });
+        };
+    }, []);
 
+    // Loading state
     if (loading) {
         return (
-            <div className={styles.container} style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-                <div className="spinner"></div>
+            <div className={styles.container}>
+                <div className={styles.loadingContainer}>
+                    <div className={styles.spinner}></div>
+                    <p>Cargando monitoreo de candidatos...</p>
+                </div>
+            </div>
+        );
+    }
+
+    // Error state
+    if (error) {
+        return (
+            <div className={styles.container}>
+                <div className={styles.errorContainer}>
+                    <AlertCircle size={48} className={styles.errorIcon} />
+                    <h2>Error al cargar datos</h2>
+                    <p>{error}</p>
+                    <button
+                        onClick={fetchData}
+                        className={styles.retryButton}
+                    >
+                        Intentar de nuevo
+                    </button>
+                </div>
             </div>
         );
     }
@@ -316,86 +337,148 @@ export default function CandidateMonitoringPage() {
     return (
         <div className={styles.container}>
             <header className={styles.header}>
-                <div className={styles.title}>
-                    <h1>Monitoreo de Candidatos</h1>
-                    <p className={styles.subtitle}>Supervisa el avance de inducción en tiempo real</p>
+                <div className={styles.headerContent}>
+                    <div className={styles.title}>
+                        <h1>Monitoreo de Candidatos</h1>
+                        <p className={styles.subtitle}>Supervisa el avance de inducción en tiempo real</p>
+                    </div>
+                    <Link href="/dashboard" className={styles.backButton}>
+                        <ArrowLeft size={18} />
+                        <span>Volver al Dashboard</span>
+                    </Link>
                 </div>
-                <Link href="/dashboard" className={styles.backButton}>
-                    <ArrowLeft size={18} />
-                    <span>Volver al Dashboard</span>
-                </Link>
             </header>
 
             {/* Stats Overview */}
             <div className={styles.statsGrid}>
                 <div className={styles.statCard}>
-                    <div className={`${styles.statIcon} blue`}>
+                    <div className={`${styles.statIcon} ${styles.blue}`}>
                         <Users />
                     </div>
-                    <div>
+                    <div className={styles.statContent}>
                         <h3 className={styles.statValue}>{stats.total}</h3>
                         <p className={styles.statLabel}>Candidatos Totales</p>
                     </div>
                 </div>
                 <div className={styles.statCard}>
-                    <div className={`${styles.statIcon} green`}>
+                    <div className={`${styles.statIcon} ${styles.green}`}>
                         <CheckCircle />
                     </div>
-                    <div>
+                    <div className={styles.statContent}>
                         <h3 className={styles.statValue}>{stats.completed}</h3>
                         <p className={styles.statLabel}>Inducción Completada</p>
                     </div>
                 </div>
                 <div className={styles.statCard}>
-                    <div className={`${styles.statIcon} orange`}>
+                    <div className={`${styles.statIcon} ${styles.orange}`}>
                         <Clock />
                     </div>
-                    <div>
+                    <div className={styles.statContent}>
                         <h3 className={styles.statValue}>{stats.avgProgress}%</h3>
                         <p className={styles.statLabel}>Progreso Promedio</p>
                     </div>
                 </div>
                 <div className={styles.statCard}>
-                    <div className={`${styles.statIcon} red`}>
+                    <div className={`${styles.statIcon} ${styles.red}`}>
                         <AlertCircle />
                     </div>
-                    <div>
+                    <div className={styles.statContent}>
                         <h3 className={styles.statValue}>{stats.inactive}</h3>
                         <p className={styles.statLabel}>Sin Actividad (+2 días)</p>
                     </div>
                 </div>
             </div>
 
-            {/* Search */}
+            {/* Search and Filters */}
             <div className={styles.filterBar}>
-                <div className={styles.searchContainer}>
-                    <Search className={styles.searchIcon} size={18} aria-hidden="true" />
-                    <input
-                        type="text"
-                        placeholder="Buscar por nombre, ID o puesto..."
-                        className={styles.searchInput}
-                        value={searchTerm}
-                        onChange={(e) => setSearchTerm(e.target.value)}
-                        aria-label="Buscar candidatos"
-                    />
+                <div className={styles.filterContent}>
+                    <div className={styles.searchContainer}>
+                        <Search className={styles.searchIcon} size={18} aria-hidden="true" />
+                        <input
+                            type="text"
+                            placeholder="Buscar por nombre, ID o puesto..."
+                            className={styles.searchInput}
+                            value={searchTerm}
+                            onChange={(e) => setSearchTerm(e.target.value)}
+                            aria-label="Buscar candidatos"
+                        />
+                        {searchTerm && (
+                            <button
+                                onClick={() => setSearchTerm('')}
+                                className={styles.clearSearch}
+                                aria-label="Limpiar búsqueda"
+                            >
+                                <X size={16} />
+                            </button>
+                        )}
+                    </div>
+
+                    {/* Desktop Filters */}
+                    <div className={styles.desktopFilters}>
+                        <select
+                            value={statusFilter}
+                            onChange={(e) => setStatusFilter(e.target.value)}
+                            className={styles.statusFilter}
+                            aria-label="Filtrar por estado"
+                        >
+                            <option value="all">Todos los estados</option>
+                            <option value="completed">Completados</option>
+                            <option value="inProgress">En Proceso</option>
+                            <option value="inactive">Inactivos</option>
+                            <option value="notStarted">Sin Iniciar</option>
+                        </select>
+                    </div>
+
+                    {/* Mobile Filter Toggle */}
+                    <button
+                        onClick={() => setShowMobileFilters(!showMobileFilters)}
+                        className={styles.mobileFilterToggle}
+                        aria-label="Mostrar filtros"
+                    >
+                        <Filter size={18} />
+                    </button>
                 </div>
+
+                {/* Mobile Filters Panel */}
+                {showMobileFilters && (
+                    <div className={styles.mobileFiltersPanel}>
+                        <select
+                            value={statusFilter}
+                            onChange={(e) => setStatusFilter(e.target.value)}
+                            className={styles.statusFilter}
+                        >
+                            <option value="all">Todos los estados</option>
+                            <option value="completed">Completados</option>
+                            <option value="inProgress">En Proceso</option>
+                            <option value="inactive">Inactivos</option>
+                            <option value="notStarted">Sin Iniciar</option>
+                        </select>
+                    </div>
+                )}
             </div>
 
-            {/* Table */}
-            <div className={styles.tableCard}>
+            {/* Results Summary */}
+            <div className={styles.resultsInfo}>
+                <span>
+                    Mostrando {filteredCandidates.length} de {candidates.length} candidatos
+                </span>
+            </div>
 
+            {/* Table Container */}
+            <div className={styles.tableCard}>
+                {/* Desktop Table */}
                 <div className={styles.tableContainer}>
-                    <table className={styles.table}>
+                    <table className={styles.table} role="table">
                         <thead>
                             <tr>
-                                <th>Candidato</th>
-                                <th>ID Empleado</th>
-                                <th>Puesto</th>
-                                <th>Estado</th>
-                                <th>Progreso General</th>
-                                <th>Actividad Detallada</th>
-                                <th>Último Acceso</th>
-                                <th>WhatsApp</th>
+                                <th scope="col">Candidato</th>
+                                <th scope="col">ID Empleado</th>
+                                <th scope="col">Puesto</th>
+                                <th scope="col">Estado</th>
+                                <th scope="col">Progreso General</th>
+                                <th scope="col">Actividad Detallada</th>
+                                <th scope="col">Último Acceso</th>
+                                <th scope="col">WhatsApp</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -404,12 +487,20 @@ export default function CandidateMonitoringPage() {
                                     <tr
                                         key={candidate.id}
                                         onClick={() => handleRowClick(candidate)}
-                                        style={{ cursor: 'pointer' }}
-                                        className={styles.tableRow} // Optional: add hover effect class
+                                        className={styles.tableRow}
+                                        role="button"
+                                        tabIndex={0}
+                                        onKeyDown={(e) => {
+                                            if (e.key === 'Enter' || e.key === ' ') {
+                                                e.preventDefault();
+                                                handleRowClick(candidate);
+                                            }
+                                        }}
+                                        aria-label={`Ver detalles de ${candidate.name}`}
                                     >
                                         <td>
                                             <div className={styles.userCell}>
-                                                <div className={styles.avatar}>
+                                                <div className={styles.avatar} aria-hidden="true">
                                                     {candidate.name.charAt(0)}
                                                 </div>
                                                 <div className={styles.userInfo}>
@@ -428,48 +519,48 @@ export default function CandidateMonitoringPage() {
                                                             '○ Sin Iniciar'}
                                             </span>
                                         </td>
-                                        <td style={{ minWidth: '140px' }}>
-                                            <div className={styles.progressContainer}>
-                                                <div
-                                                    className={`${styles.progressBar} ${candidate.progress >= 100 ? 'complete' : ''}`}
-                                                    style={{ width: `${candidate.progress}%` }}
-                                                ></div>
+                                        <td>
+                                            <div className={styles.progressCell}>
+                                                <div className={styles.progressContainer} aria-label={`Progreso: ${candidate.progress}%`}>
+                                                    <div
+                                                        className={`${styles.progressBar} ${candidate.progress >= 100 ? styles.complete : ''}`}
+                                                        style={{ width: `${candidate.progress}%` }}
+                                                    />
+                                                </div>
+                                                <span className={styles.progressText}>
+                                                    {candidate.completedCount} de {candidate.requiredCount} completados ({candidate.progress}%)
+                                                </span>
                                             </div>
-                                            <span className={styles.progressText}>
-                                                {candidate.completedCount} de {candidate.requiredCount} completados ({candidate.progress}%)
-                                            </span>
                                         </td>
                                         <td>
-                                            <div style={{ display: 'flex', flexDirection: 'column', gap: '4px', fontSize: '0.8rem', color: '#666' }}>
-                                                <div style={{ display: 'flex', gap: '8px' }}>
-                                                    <div title="Presentaciones Vistas" style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                                            <div className={styles.activityCell}>
+                                                <div className={styles.activityRow}>
+                                                    <div className={styles.activityItem} title="Presentaciones Vistas">
                                                         <FileText size={14} />
                                                         {candidate.presentationsViewed} Vistas
                                                     </div>
-                                                    <div title="Exámenes Descargados" style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                                                    <div className={styles.activityItem} title="Exámenes Descargados">
                                                         <FileCheck size={14} />
                                                         {candidate.examsDownloaded} Descargas
                                                     </div>
                                                 </div>
-
-                                                {/* Access Code Info */}
-                                                <div style={{ display: 'flex', alignItems: 'center', gap: '4px', marginTop: '4px', paddingTop: '4px', borderTop: '1px solid rgba(0,0,0,0.05)' }}>
-                                                    <Key size={14} style={{ color: '#007AFF' }} aria-hidden="true" />
-                                                    <span title={`Expira el: ${candidate.accessCodeExpires}`}>
-                                                        Code: <strong style={{ color: '#1c1c1e' }}>{candidate.accessCode}</strong>
+                                                <div className={styles.accessCodeInfo} title={`Expira el: ${candidate.accessCodeExpires}`}>
+                                                    <Key size={14} />
+                                                    <span>
+                                                        Code: <strong>{candidate.accessCode}</strong>
                                                     </span>
-                                                    <span title="Veces utilizado" style={{ marginLeft: '4px', fontSize: '0.75rem', color: '#8e8e93' }}>
+                                                    <span className={styles.usageCount}>
                                                         ({candidate.accessCodeUses} usos)
                                                     </span>
                                                 </div>
                                             </div>
                                         </td>
                                         <td>
-                                            <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                                            <div className={styles.lastLoginCell}>
                                                 {candidate.daysSinceLastLogin !== null && candidate.daysSinceLastLogin > 2 && candidate.status !== 'completed' && (
-                                                    <Bell size={16} style={{ color: '#FF3B30' }} title="Sin actividad reciente" />
+                                                    <Bell size={16} className={styles.inactiveIcon} title="Sin actividad reciente" />
                                                 )}
-                                                {candidate.lastLogin}
+                                                <span>{candidate.lastLogin}</span>
                                             </div>
                                         </td>
                                         <td>
@@ -478,6 +569,7 @@ export default function CandidateMonitoringPage() {
                                                 className={styles.whatsappButton}
                                                 title={candidate.phone ? "Enviar mensaje de WhatsApp" : "Sin número de teléfono"}
                                                 disabled={!candidate.phone}
+                                                aria-label={`Enviar WhatsApp a ${candidate.name}`}
                                             >
                                                 <MessageCircle size={18} />
                                             </button>
@@ -520,6 +612,7 @@ export default function CandidateMonitoringPage() {
                                     <div className={styles.cardUserInfo}>
                                         <span className={styles.userName}>{candidate.name}</span>
                                         <span className={styles.userDetail}>{candidate.position}</span>
+                                        <span className={styles.userMeta}>{candidate.employeeId || 'Sin ID'}</span>
                                     </div>
                                     <span className={`${styles.badge} ${styles[candidate.status]}`}>
                                         {candidate.status === 'completed' ? 'Completado' :
@@ -528,17 +621,50 @@ export default function CandidateMonitoringPage() {
                                     </span>
                                 </div>
 
-                                <div className={styles.cardStats}>
-                                    <div className={styles.statItem}>
-                                        <span className={styles.statLabel}>Progreso</span>
+                                <div className={styles.cardBody}>
+                                    <div className={styles.progressSection}>
+                                        <div className={styles.progressHeader}>
+                                            <span className={styles.progressLabel}>Progreso de Inducción</span>
+                                            <span className={styles.progressPercentage}>{candidate.progress}%</span>
+                                        </div>
                                         <div className={styles.progressContainer} aria-label={`Progreso: ${candidate.progress}%`}>
                                             <div
-                                                className={styles.progressBar}
+                                                className={`${styles.progressBar} ${candidate.progress >= 100 ? styles.complete : ''}`}
                                                 style={{ width: `${candidate.progress}%` }}
                                             />
                                         </div>
-                                        <div className={styles.statDetail}>
-                                            {candidate.completedCount}/{candidate.requiredCount} cursos ({candidate.progress}%)
+                                        <div className={styles.progressDetail}>
+                                            {candidate.completedCount} de {candidate.requiredCount} cursos completados
+                                        </div>
+                                    </div>
+
+                                    <div className={styles.activitySection}>
+                                        <div className={styles.activityItem}>
+                                            <FileText size={14} />
+                                            <span>{candidate.presentationsViewed} Presentaciones vistas</span>
+                                        </div>
+                                        <div className={styles.activityItem}>
+                                            <FileCheck size={14} />
+                                            <span>{candidate.examsDownloaded} Exámenes descargados</span>
+                                        </div>
+                                        <div className={styles.accessCodeItem}>
+                                            <Key size={14} />
+                                            <div className={styles.accessCodeDetails}>
+                                                <span className={styles.accessCode}>Code: {candidate.accessCode}</span>
+                                                <span className={styles.accessCodeMeta}>
+                                                    {candidate.accessCodeUses} usos · Expira: {candidate.accessCodeExpires}
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div className={styles.lastLoginSection}>
+                                        <div className={styles.lastLoginInfo}>
+                                            <span className={styles.lastLoginLabel}>Último acceso:</span>
+                                            <span className={styles.lastLoginValue}>{candidate.lastLogin}</span>
+                                            {candidate.daysSinceLastLogin !== null && candidate.daysSinceLastLogin > 2 && candidate.status !== 'completed' && (
+                                                <Bell size={16} className={styles.inactiveIcon} title="Sin actividad reciente" />
+                                            )}
                                         </div>
                                     </div>
                                 </div>
@@ -547,6 +673,10 @@ export default function CandidateMonitoringPage() {
                                     <button
                                         className={styles.viewDetailButton}
                                         aria-label={`Ver detalles de ${candidate.name}`}
+                                        onClick={(e) => {
+                                            e.stopPropagation();
+                                            handleRowClick(candidate);
+                                        }}
                                     >
                                         Ver Detalle
                                     </button>
@@ -557,7 +687,6 @@ export default function CandidateMonitoringPage() {
                                         title={candidate.phone ? "Enviar mensaje por WhatsApp" : "Sin número de teléfono"}
                                         disabled={!candidate.phone}
                                         aria-label={`Enviar WhatsApp a ${candidate.name}`}
-                                        style={{ marginLeft: 'auto' }} // Push to right if needed
                                     >
                                         <MessageCircle size={18} aria-hidden="true" />
                                     </button>
@@ -566,7 +695,7 @@ export default function CandidateMonitoringPage() {
                         ))
                     ) : (
                         <div className={styles.emptyState}>
-                            No se encontraron candidatos.
+                            No se encontraron candidatos que coincidan con la búsqueda.
                         </div>
                     )}
                 </div>
