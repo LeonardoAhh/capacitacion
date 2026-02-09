@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 import { collection, query, where, getDocs, doc, updateDoc, setDoc, getDoc, arrayUnion, arrayRemove } from 'firebase/firestore';
 import { db, auth } from '@/lib/firebase';
@@ -15,6 +15,21 @@ import styles from './page.module.css';
 import ProfileDropdown from './ProfileDropdown';
 import induccionEmpresaExam from '../../../../public/examenes/induccion_empresa.json';
 
+// Custom Hooks and Utils
+import { useCandidateSession, useCourseProgress } from './hooks';
+import {
+    PASSING_SCORE,
+    INDUCTION_COURSE_NAME,
+    ONE_MINUTE_MS,
+    FIVE_MINUTES_MS,
+    TIMER_COLORS,
+    SESSION_KEYS
+} from './utils/constants';
+import { convertDriveUrl, extractFirstName, getCandidatePhotoUrl } from './utils/helpers';
+
+// UI Components
+import { DashboardSkeleton, useToast } from './components';
+
 
 function ElegantShape({ className, delay = 0, width = 400, height = 100, rotate = 0, color, borderRadius = 16 }) {
     return (
@@ -28,7 +43,7 @@ function ElegantShape({ className, delay = 0, width = 400, height = 100, rotate 
                 ease: [0.23, 0.86, 0.39, 0.96],
                 opacity: { duration: 1.2 },
             }}
-            style={{ position: 'absolute', width: `${width}px`, height: `${height}px`, zIndex: 0 }}
+            style={{ position: 'absolute', width: `min(${width}px, 90vw)`, height: `${height}px`, zIndex: 0 }}
         >
             <motion.div
                 animate={{ y: [0, 15, 0] }}
@@ -237,18 +252,20 @@ export default function CandidatoDashboard() {
     // Timer State and Helpers
     const [timeLeft, setTimeLeft] = useState(30 * 60 * 1000);
 
-    const formatTime = (ms) => {
-        const totalSeconds = Math.max(0, Math.floor(ms / 1000));
+    // Memoized time formatting
+    const formattedTime = useMemo(() => {
+        const totalSeconds = Math.max(0, Math.floor(timeLeft / 1000));
         const minutes = Math.floor(totalSeconds / 60);
         const seconds = totalSeconds % 60;
         return `${minutes}:${seconds.toString().padStart(2, '0')}`;
-    };
+    }, [timeLeft]);
 
-    const getTimerColor = () => {
-        if (timeLeft < 60 * 1000) return '#ef4444'; // Rojo (último minuto)
-        if (timeLeft < 5 * 60 * 1000) return '#f59e0b'; // Naranja (últimos 5 min)
-        return 'inherit';
-    };
+    // Memoized timer color based on remaining time
+    const timerColor = useMemo(() => {
+        if (timeLeft < ONE_MINUTE_MS) return TIMER_COLORS.DANGER;
+        if (timeLeft < FIVE_MINUTES_MS) return TIMER_COLORS.WARNING;
+        return TIMER_COLORS.DEFAULT;
+    }, [timeLeft]);
 
 
     const loadCourses = async (position) => {
@@ -344,13 +361,13 @@ export default function CandidatoDashboard() {
 
 
 
-    const viewCourse = (course) => {
+    const viewCourse = useCallback((course) => {
         setSelectedCourse(course);
-    };
+    }, []);
 
-    const closeViewer = () => {
+    const closeViewer = useCallback(() => {
         setSelectedCourse(null);
-    };
+    }, []);
 
     const convertDriveUrl = (course) => {
         if (!course || !course.material) return null;
@@ -610,66 +627,64 @@ export default function CandidatoDashboard() {
 
     if (loading) {
         return (
-            <div className={styles.loading}>
-                <div className={styles.spinner}></div>
-                <p>Cargando cursos...</p>
+            <div className={styles.container}>
+                <div className={styles.backgroundGradient} />
+                <DashboardSkeleton />
             </div>
         );
     }
 
     // Pantalla de Bienvenida
     if (showWelcome) {
-        return (
-            <div className={styles.welcomeOverlay}>
-                {/* Background Gradient */}
-                <div className={styles.backgroundGradient} />
+        // Extract first name using the helper function
+        const firstName = extractFirstName(candidate?.name || candidate?.nombre);
+        const photoUrl = getCandidatePhotoUrl(candidate);
 
-                {/* Background Shapes */}
-                <div className={styles.shapesContainer}>
+        return (
+            <div
+                className={styles.welcomeOverlay}
+                role="main"
+                aria-labelledby="welcome-title"
+            >
+                {/* Background Gradient */}
+                <div className={styles.backgroundGradient} aria-hidden="true" />
+
+                {/* Background Shapes - Hidden from screen readers */}
+                <div className={styles.shapesContainer} aria-hidden="true">
                     <ElegantShape className={styles.shape1} delay={0.2} width={300} height={400} rotate={-12} color="#10b981" borderRadius={20} />
                     <ElegantShape className={styles.shape2} delay={0.4} width={350} height={150} rotate={18} color="#14b8a6" borderRadius={16} />
                     <ElegantShape className={styles.shape3} delay={0.3} width={200} height={200} rotate={-25} color="#06b6d4" borderRadius={24} />
                     <ElegantShape className={styles.shape4} delay={0.5} width={300} height={120} rotate={15} color="#3b82f6" borderRadius={12} />
                 </div>
 
-                <div className={styles.welcomeCard}>
+                <div className={styles.welcomeCard} role="article">
                     {/* Welcome Header */}
-                    <div className={styles.welcomeHeader}>
-                        <div className={styles.welcomeAvatar}>
-                            {(candidate?.photoUrl || candidate?.photoURL || candidate?.photo || candidate?.foto) ? (
+                    <header className={styles.welcomeHeader}>
+                        <div
+                            className={styles.welcomeAvatar}
+                            role="img"
+                            aria-label={photoUrl ? `Foto de perfil de ${firstName}` : 'Ícono de usuario'}
+                        >
+                            {photoUrl ? (
                                 // eslint-disable-next-line @next/next/no-img-element
                                 <img
-                                    src={candidate.photoUrl || candidate.photoURL || candidate.photo || candidate.foto}
-                                    alt="Foto de perfil"
+                                    src={photoUrl}
+                                    alt={`Foto de perfil de ${firstName}`}
                                     style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '50%' }}
+                                    loading="eager"
                                 />
                             ) : (
-                                <User size={64} />
+                                <User size={64} aria-hidden="true" />
                             )}
                         </div>
-                    </div>
+                    </header>
 
-                    <h1 className={styles.welcomeTitle}>
+                    <h1 id="welcome-title" className={styles.welcomeTitle}>
                         ¡Bienvenido a <span>ViñoPlastic</span>!
                     </h1>
 
-                    <p className={styles.welcomeSubtitle}>
-                        {(() => {
-                            const fullName = candidate?.name || candidate?.nombre || 'Nuevo Colaborador';
-                            const parts = fullName.trim().split(/\s+/);
-
-                            // Heuristic for "PATERNO MATERNO NOMBRE(S)" format
-                            // If 3 or more words (e.g. HERNANDEZ HERRERA LEONARDO), name is at index 2
-                            // If 2 words (e.g. HERNANDEZ LEONARDO), name is at index 1
-                            let firstName = parts.length > 2 ? parts[2] : (parts[1] || parts[0]);
-
-                            // Capitalize nicely (Leonardo)
-                            if (firstName) {
-                                firstName = firstName.charAt(0).toUpperCase() + firstName.slice(1).toLowerCase();
-                            }
-
-                            return firstName;
-                        })()}
+                    <p className={styles.welcomeSubtitle} aria-label={`Hola ${firstName}`}>
+                        {firstName}
                     </p>
 
                     <div className={styles.welcomeMessage}>
@@ -687,28 +702,35 @@ export default function CandidatoDashboard() {
                         </p>
                     </div>
 
-                    <div className={styles.infoGrid}>
-                        <div className={styles.infoItem}>
-                            <span className={styles.infoLabel}>Puesto:</span>
-                            <span className={styles.infoValue}>{candidate?.position || 'N/A'}</span>
+                    <div className={styles.infoGrid} role="list" aria-label="Información del candidato">
+                        <div className={styles.infoItem} role="listitem">
+                            <span className={styles.infoLabel} id="position-label">Puesto:</span>
+                            <span className={styles.infoValue} aria-labelledby="position-label">
+                                {candidate?.position || candidate?.puesto || 'Por asignar'}
+                            </span>
                         </div>
-                        <div className={styles.infoItem}>
-                            <span className={styles.infoLabel}>Área:</span>
-                            <span className={styles.infoValue}>{candidate?.area || 'N/A'}</span>
+                        <div className={styles.infoItem} role="listitem">
+                            <span className={styles.infoLabel} id="area-label">Área:</span>
+                            <span className={styles.infoValue} aria-labelledby="area-label">
+                                {candidate?.area || 'Por asignar'}
+                            </span>
                         </div>
 
                         <button
                             className={styles.welcomeButton}
                             onClick={() => setShowWelcome(false)}
+                            aria-label="Iniciar sesión de inducción"
+                            type="button"
                         >
                             <span>Iniciar</span>
-                            <ArrowRight size={20} />
+                            <ArrowRight size={20} aria-hidden="true" />
                         </button>
                     </div>
                 </div>
             </div>
         );
     }
+
 
     return (
         <div className={styles.container}>
@@ -724,9 +746,11 @@ export default function CandidatoDashboard() {
             </div>
 
             {/* Navbar */}
-            <nav className={styles.navbar}>
-                {/* Logo removed as requested */}
-
+            <nav
+                className={styles.navbar}
+                aria-label="Navegación principal del candidato"
+                role="navigation"
+            >
                 <div className={styles.navActions}>
                     <ProfileDropdown
                         candidate={candidate}

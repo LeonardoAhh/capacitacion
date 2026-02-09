@@ -1,9 +1,11 @@
+'use client';
 
-export const metadata = {
-    title: 'Portal Candidato',
-    description: 'Portal de candidatos para inducción',
-};
+import { ToastProvider } from './components';
 
 export default function CandidateDashboardLayout({ children }) {
-    return <>{children}</>;
+    return (
+        <ToastProvider>
+            {children}
+        </ToastProvider>
+    );
 }

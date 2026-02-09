@@ -231,8 +231,107 @@
     background: rgba(0, 122, 255, 0.05);
     border: 1px solid rgba(0, 122, 255, 0.1);
     margin-bottom: 8px;
+    cursor: default;
 }
 
 .timerItem:hover {
     background: rgba(0, 122, 255, 0.1);
+}
+
+[data-theme="dark"] .timerItem {
+    background: rgba(10, 132, 255, 0.1);
+    border-color: rgba(10, 132, 255, 0.2);
+}
+
+[data-theme="dark"] .timerItem:hover {
+    background: rgba(10, 132, 255, 0.15);
+}
+
+/* ==================== FOCUS VISIBLE STATES ==================== */
+
+.triggerButton:focus-visible {
+    outline: 2px solid #007aff;
+    outline-offset: 2px;
+    box-shadow: 0 0 0 4px rgba(0, 122, 255, 0.2);
+}
+
+[data-theme="dark"] .triggerButton:focus-visible {
+    outline-color: #0a84ff;
+    box-shadow: 0 0 0 4px rgba(10, 132, 255, 0.3);
+}
+
+.menuItem:focus-visible {
+    outline: 2px solid #007aff;
+    outline-offset: -2px;
+    background: rgba(0, 122, 255, 0.1);
+}
+
+[data-theme="dark"] .menuItem:focus-visible {
+    outline-color: #0a84ff;
+    background: rgba(10, 132, 255, 0.15);
+}
+
+.logoutButton:focus-visible {
+    outline-color: #ff3b30;
+    background: rgba(255, 59, 48, 0.15);
+}
+
+[data-theme="dark"] .logoutButton:focus-visible {
+    outline-color: #ff453a;
+}
+
+/* ==================== TOUCH-FRIENDLY SIZING ==================== */
+
+@media (max-width: 640px) {
+    .menuItem {
+        min-height: 48px;
+        padding: 12px 16px;
+    }
+
+    .dropdownMenu {
+        width: calc(100vw - 32px);
+        max-width: 280px;
+    }
+
+    .avatarContainer {
+        width: 44px;
+        height: 44px;
+    }
+}
+
+/* ==================== IMPROVED CONTRAST ==================== */
+
+.userEmail {
+    font-size: 11px;
+    color: #636366;
+    /* Improved from #8e8e93 */
+}
+
+[data-theme="dark"] .userEmail {
+    color: #a1a1a6;
+}
+
+.mobileUserSubtitle {
+    font-size: 11px;
+    color: #636366;
+    /* Improved contrast */
+    margin-top: 2px;
+}
+
+[data-theme="dark"] .mobileUserSubtitle {
+    color: #a1a1a6;
+}
+
+/* ==================== REDUCED MOTION ==================== */
+
+@media (prefers-reduced-motion: reduce) {
+    .dropdownMenu {
+        animation: none;
+    }
+
+    .triggerButton,
+    .menuItem,
+    .chevron {
+        transition: none;
+    }
 }

@@ -1,6 +1,6 @@
 "use client";
 
-import { User, GraduationCap, FileText, FileCheck, ArrowRight, CheckCircle2, Clock, Circle, Printer } from "lucide-react";
+import { User, GraduationCap, FileText, FileCheck, ArrowRight, CheckCircle2, Clock, Circle } from "lucide-react";
 import { motion } from "framer-motion";
 import {
     Drawer,
@@ -13,7 +13,6 @@ import {
     DrawerTrigger,
 } from "@/components/ui/Drawer/Drawer";
 import styles from './CandidateDrawer.module.css';
-import induccionEmpresaExam from '../../../public/examenes/induccion_empresa.json';
 
 const itemVariants = {
     hidden: { y: 20, opacity: 0 },
@@ -117,110 +116,6 @@ export default function CandidateDrawer({
     };
 
     const progressBadge = getProgressBadge();
-
-    const handlePrintExam = (courseId, courseName, examData) => {
-        if (!candidate || !courseId) return;
-
-        const progress = candidate.coursesProgress?.[courseId];
-        const answers = progress?.examAnswers || {};
-        const score = progress?.examScore || 0;
-        const examDate = progress?.examDate ? new Date(progress.examDate).toLocaleDateString('es-MX') : new Date().toLocaleDateString('es-MX');
-
-        const printWindow = window.open('', '_blank');
-
-        let questionsHtml = '';
-        const questions = induccionEmpresaExam.cuestionario || [];
-
-        questions.forEach((q, index) => {
-            const userAnswer = answers[q.id];
-
-            let optionsHtml = '';
-            q.opciones.forEach(opt => {
-                const isSelected = userAnswer === opt;
-                const style = isSelected ? 'font-weight: bold; text-decoration: underline;' : '';
-                const check = isSelected ? '[X]' : '[ ]';
-                optionsHtml += `<div style="${style} margin-bottom: 4px;">${check} ${opt}</div>`;
-            });
-
-            questionsHtml += `
-                <div style="margin-bottom: 20px; page-break-inside: avoid;">
-                    <p style="font-weight: bold; margin-bottom: 8px;">${index + 1}. ${q.pregunta}</p>
-                    <div style="margin-left: 20px;">
-                        ${optionsHtml}
-                    </div>
-                </div>
-            `;
-        });
-
-        const htmlContent = `
-            <!DOCTYPE html>
-            <html>
-            <head>
-                <title>Examen - ${candidate.name}</title>
-                <style>
-                    body { font-family: Arial, sans-serif; font-size: 12px; line-height: 1.4; color: #333; margin: 0; padding: 20px; }
-                    .header { display: flex; align-items: center; border-bottom: 2px solid #333; padding-bottom: 10px; margin-bottom: 20px; }
-                    .logo { width: 100px; margin-right: 20px; }
-                    .title-container { flex: 1; text-align: center; }
-                    .title { font-size: 18px; font-weight: bold; margin: 0; }
-                    .info-table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
-                    .info-table td { border: 1px solid #ccc; padding: 6px; }
-                    .info-label { font-weight: bold; background-color: #f5f5f5; width: 120px; }
-                    .footer { margin-top: 30px; border-top: 1px solid #ccc; padding-top: 10px; display: flex; justify-content: space-between; font-size: 10px; color: #666; }
-                </style>
-            </head>
-            <body>
-                <div class="header">
-                    <img src="/logo.png" class="logo" alt="Viñoplastic" />
-                    <div class="title-container">
-                        <h1 class="title">${induccionEmpresaExam.exámen.courseName}</h1>
-                    </div>
-                </div>
-
-                <table class="info-table">
-                    <tr>
-                        <td class="info-label">Nombre:</td>
-                        <td>${candidate.name}</td>
-                        <td class="info-label">No. Empleado:</td>
-                        <td>${candidate.employeeId || 'N/A'}</td>
-                    </tr>
-                    <tr>
-                        <td class="info-label">Puesto:</td>
-                        <td>${candidate.position || 'N/A'}</td>
-                        <td class="info-label">Departamento:</td>
-                        <td>${candidate.department || candidate.area || 'N/A'}</td>
-                    </tr>
-                    <tr>
-                        <td class="info-label">Fecha:</td>
-                        <td>${examDate}</td>
-                        <td class="info-label">Turno:</td>
-                        <td>${candidate.shift || 'N/A'}</td>
-                    </tr>
-                     <tr>
-                        <td class="info-label">Calificación:</td>
-                        <td colspan="3"><strong>${score.toFixed(1)}%</strong></td>
-                    </tr>
-                </table>
-
-                <div class="questions">
-                    ${questionsHtml}
-                </div>
-
-                <div class="footer">
-                    <span>RG-ADM-060</span>
-                    <span>REV.1</span>
-                </div>
-
-                <script>
-                    window.onload = function() { window.print(); }
-                </script>
-            </body>
-            </html>
-        `;
-
-        printWindow.document.write(htmlContent);
-        printWindow.document.close();
-    };
 
     return (
         <Drawer open={open} onOpenChange={onOpenChange}>
@@ -333,30 +228,6 @@ export default function CandidateDrawer({
                                                                     <span className={styles.courseDetail}>
                                                                         <FileCheck size={12} /> Examen
                                                                     </span>
-                                                                )}
-                                                                {/* Print Button for Induction Exam */}
-                                                                {(courseName.toUpperCase().includes('INDUCCIÓN A LA EMPRESA') && (progress?.examScore !== undefined || progress?.examDownloaded)) && (
-                                                                    <button
-                                                                        onClick={(e) => {
-                                                                            e.stopPropagation();
-                                                                            handlePrintExam(courseId, courseName);
-                                                                        }}
-                                                                        className={styles.printButton}
-                                                                        style={{
-                                                                            marginLeft: '8px',
-                                                                            padding: '2px 8px',
-                                                                            fontSize: '11px',
-                                                                            display: 'inline-flex',
-                                                                            alignItems: 'center',
-                                                                            gap: '4px',
-                                                                            border: '1px solid #ccc',
-                                                                            borderRadius: '4px',
-                                                                            background: 'white',
-                                                                            cursor: 'pointer'
-                                                                        }}
-                                                                    >
-                                                                        <Printer size={10} /> Imprimir
-                                                                    </button>
                                                                 )}
                                                             </div>
                                                         </div>

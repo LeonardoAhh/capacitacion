@@ -232,6 +232,60 @@
     color: #ffffff;
 }
 
+/* ==================== ACCESSIBILITY: FOCUS STYLES ==================== */
+
+/* Global focus-visible styles for all interactive elements */
+.themeButton:focus-visible,
+.welcomeButton:focus-visible,
+.welcomeStart:focus-visible,
+.btnMarkComplete:focus-visible,
+.btnCompleted:focus-visible,
+.modalBack:focus-visible,
+.courseItem:focus-visible,
+.examPrimaryButton:focus-visible,
+.examSecondaryButton:focus-visible,
+.dataCenterCard:focus-visible,
+.optionLabel:focus-visible {
+    outline: 2px solid #007aff;
+    outline-offset: 2px;
+    box-shadow: 0 0 0 4px rgba(0, 122, 255, 0.2);
+}
+
+[data-theme="dark"] .themeButton:focus-visible,
+[data-theme="dark"] .welcomeButton:focus-visible,
+[data-theme="dark"] .welcomeStart:focus-visible,
+[data-theme="dark"] .btnMarkComplete:focus-visible,
+[data-theme="dark"] .btnCompleted:focus-visible,
+[data-theme="dark"] .modalBack:focus-visible,
+[data-theme="dark"] .courseItem:focus-visible,
+[data-theme="dark"] .examPrimaryButton:focus-visible,
+[data-theme="dark"] .examSecondaryButton:focus-visible,
+[data-theme="dark"] .dataCenterCard:focus-visible,
+[data-theme="dark"] .optionLabel:focus-visible {
+    outline-color: #0a84ff;
+    box-shadow: 0 0 0 4px rgba(10, 132, 255, 0.3);
+}
+
+/* Note: Global outline resets should be done in globals.css, not in CSS modules */
+
+/* Ensure skip-link styles (for screen readers) */
+.skipLink {
+    position: absolute;
+    top: -100px;
+    left: 0;
+    background: #007aff;
+    color: white;
+    padding: 12px 24px;
+    z-index: 9999;
+    font-weight: 600;
+    border-radius: 0 0 8px 0;
+    transition: top 0.3s;
+}
+
+.skipLink:focus {
+    top: 0;
+}
+
 /* === MENU AND CARDS GLASSMORPHISM === */
 .menuGroup {
     background: rgba(255, 255, 255, 0.6);
@@ -1092,33 +1146,180 @@
     color: #0a84ff;
 }
 
-/* Responsive Welcome Screen */
-@media (max-width: 480px) {
+/* ==================== WELCOME SCREEN ACCESSIBILITY ==================== */
+
+/* Improved contrast for subtitle (WCAG 2.1 AA compliant) */
+.welcomeSubtitle {
+    font-size: 24px;
+    font-weight: 500;
+    color: #636366;
+    /* Improved from #8e8e93 - ratio 4.6:1 */
+    margin: 8px 0 32px 0;
+    letter-spacing: -0.5px;
+}
+
+[data-theme="dark"] .welcomeSubtitle {
+    color: #a1a1a6;
+    /* Improved from #98989d - ratio 4.5:1 */
+}
+
+/* Focus visible for welcome button */
+.welcomeButton:focus-visible {
+    outline: 3px solid #007aff;
+    outline-offset: 3px;
+    box-shadow: 0 8px 24px rgba(0, 122, 255, 0.35), 0 0 0 6px rgba(0, 122, 255, 0.2);
+}
+
+[data-theme="dark"] .welcomeButton:focus-visible {
+    outline-color: #0a84ff;
+    box-shadow: 0 8px 24px rgba(10, 132, 255, 0.35), 0 0 0 6px rgba(10, 132, 255, 0.3);
+}
+
+/* Loading state for button */
+.welcomeButton.loading {
+    opacity: 0.8;
+    pointer-events: none;
+}
+
+.welcomeButton .spinner {
+    animation: spin 1s linear infinite;
+}
+
+/* Progress indicator */
+.progressIndicator {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    margin-top: 16px;
+    font-size: 13px;
+    color: #636366;
+}
+
+[data-theme="dark"] .progressIndicator {
+    color: #a1a1a6;
+}
+
+.progressDot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: rgba(0, 122, 255, 0.3);
+}
+
+.progressDot.active {
+    background: #007aff;
+}
+
+/* ==================== WELCOME SCREEN RESPONSIVE ==================== */
+
+/* Extra small devices (phones, 360px and below) */
+@media (max-width: 360px) {
+    .welcomeOverlay {
+        padding: 12px;
+    }
+
     .welcomeCard {
-        padding: 32px 24px;
+        padding: 24px 16px;
+        border-radius: 20px;
+    }
+
+    .welcomeAvatar {
+        width: 80px;
+        height: 80px;
+        margin-bottom: 16px;
+    }
+
+    .welcomeAvatar svg {
+        width: 32px;
+        height: 32px;
     }
 
     .welcomeTitle {
-        font-size: 26px;
+        font-size: 22px;
+    }
+
+    .welcomeSubtitle {
+        font-size: 16px;
+        margin-bottom: 20px;
+    }
+
+    .welcomeMessage p {
+        font-size: 14px;
+        line-height: 1.6;
+    }
+
+    .welcomeButton {
+        padding: 14px 20px;
+        font-size: 15px;
+        min-height: 48px;
+        /* Touch-friendly */
+    }
+
+    /* Hide decorative shapes on very small screens */
+    .shapesContainer {
+        opacity: 0.3;
+    }
+}
+
+/* Small devices (phones, 480px and below) */
+@media (max-width: 480px) {
+    .welcomeOverlay {
+        padding: 16px;
+    }
+
+    .welcomeCard {
+        padding: 28px 20px;
+        border-radius: 24px;
+    }
+
+    .welcomeAvatar {
+        width: 100px;
+        height: 100px;
+        margin-bottom: 20px;
+    }
+
+    .welcomeAvatar svg {
+        width: 40px;
+        height: 40px;
+    }
+
+    .welcomeTitle {
+        font-size: 24px;
     }
 
     .welcomeSubtitle {
         font-size: 18px;
+        margin-bottom: 24px;
+    }
+
+    .welcomeMessage {
+        margin-bottom: 20px;
+    }
+
+    .welcomeMessage p {
+        font-size: 14px;
+        margin-bottom: 10px;
+    }
+
+    .infoGrid {
+        gap: 12px;
+    }
+
+    .infoItem {
+        padding: 12px;
+    }
+
+    .welcomeButton {
+        padding: 14px 20px;
+        font-size: 16px;
+        min-height: 48px;
+        /* Touch-friendly */
     }
 
     .welcomeInfo {
         flex-direction: column;
         gap: 12px;
-    }
-
-    .welcomeIcon {
-        width: 80px;
-        height: 80px;
-    }
-
-    .welcomeIcon svg {
-        width: 36px;
-        height: 36px;
     }
 
     .welcomeHelp {
@@ -1127,13 +1328,8 @@
     }
 
     .welcomeHelpIcon {
-        width: 40px;
-        height: 40px;
-    }
-
-    .welcomeHelpIcon svg {
-        width: 20px;
-        height: 20px;
+        width: 36px;
+        height: 36px;
     }
 
     .welcomeHelpTitle {
@@ -1142,6 +1338,89 @@
 
     .welcomeHelpList li {
         font-size: 13px;
+    }
+
+    /* Reduce shape visibility on mobile */
+    .shapesContainer {
+        opacity: 0.5;
+    }
+}
+
+/* Medium devices (tablets, 768px and below) */
+@media (max-width: 768px) {
+    .welcomeCard {
+        max-width: 100%;
+        padding: 36px 28px;
+    }
+
+    .welcomeAvatar {
+        width: 120px;
+        height: 120px;
+    }
+
+    .welcomeTitle {
+        font-size: 28px;
+    }
+}
+
+/* Landscape mode on mobile */
+@media (max-height: 500px) and (orientation: landscape) {
+    .welcomeOverlay {
+        padding: 12px;
+        align-items: flex-start;
+        overflow-y: auto;
+    }
+
+    .welcomeCard {
+        padding: 24px;
+        margin: 12px 0;
+    }
+
+    .welcomeAvatar {
+        width: 60px;
+        height: 60px;
+        margin-bottom: 12px;
+    }
+
+    .welcomeTitle {
+        font-size: 20px;
+        margin-bottom: 4px;
+    }
+
+    .welcomeSubtitle {
+        font-size: 14px;
+        margin-bottom: 12px;
+    }
+
+    .welcomeMessage {
+        margin-bottom: 12px;
+    }
+
+    .welcomeMessage p {
+        font-size: 13px;
+        margin-bottom: 6px;
+    }
+
+    /* Hide shapes in landscape mobile */
+    .shapesContainer {
+        display: none;
+    }
+}
+
+/* Reduced motion preference */
+@media (prefers-reduced-motion: reduce) {
+
+    .welcomeCard,
+    .welcomeAvatar {
+        animation: none !important;
+    }
+
+    .welcomeButton {
+        transition: none;
+    }
+
+    .welcomeButton:hover {
+        transform: none;
     }
 }
 
@@ -2311,4 +2590,457 @@
 
 [data-theme="dark"] .scoreLow {
     color: #ff9f0a;
+}
+
+/* ==================== MOBILE RESPONSIVE FIXES ==================== */
+
+/* Small Mobile (320px - 480px) */
+@media (max-width: 480px) {
+    .welcomeCard {
+        padding: 32px 20px;
+        border-radius: 20px;
+        max-width: 100%;
+    }
+
+    .welcomeAvatar {
+        width: 120px;
+        height: 120px;
+    }
+
+    .welcomeTitle {
+        font-size: 24px;
+    }
+
+    .welcomeSubtitle {
+        font-size: 18px;
+        margin-bottom: 24px;
+    }
+
+    .welcomeStart {
+        padding: 14px 28px;
+        font-size: 15px;
+    }
+
+    .profileSection {
+        padding: 24px 16px 32px;
+    }
+
+    .avatar {
+        width: 80px;
+        height: 80px;
+    }
+
+    .avatar svg {
+        width: 32px;
+        height: 32px;
+    }
+
+    .profileName {
+        font-size: 22px;
+    }
+
+    .profilePosition {
+        font-size: 14px;
+    }
+
+    .scrollContent {
+        padding: 0 12px 24px;
+    }
+
+    .sectionHeader {
+        font-size: 12px;
+        padding: 0 4px;
+        margin-bottom: 6px;
+    }
+
+    .courseItem {
+        padding: 10px 12px;
+        gap: 10px;
+    }
+
+    .courseIcon,
+    .examIcon {
+        width: 40px;
+        height: 40px;
+        border-radius: 8px;
+    }
+
+    .courseIcon svg,
+    .examIcon svg {
+        width: 18px;
+        height: 18px;
+    }
+
+    .courseTitle {
+        font-size: 14px;
+    }
+
+    .courseDuration {
+        font-size: 12px;
+    }
+
+    .menuItem {
+        padding: 10px 12px;
+    }
+
+    .menuLabel,
+    .menuValue {
+        font-size: 14px;
+    }
+
+    .navTimer {
+        font-size: 11px;
+        padding: 4px 8px;
+    }
+
+    .themeButton {
+        width: 32px;
+        height: 32px;
+    }
+
+    .themeButton svg {
+        width: 16px;
+        height: 16px;
+    }
+
+    .btnMarkComplete {
+        padding: 6px 10px;
+        font-size: 0.7rem;
+    }
+
+    /* Exam Modal Mobile */
+    .examModalContent {
+        width: 100%;
+        max-width: 100%;
+        margin: 0;
+        border-radius: 16px 16px 0 0;
+        max-height: 90vh;
+    }
+
+    .examModalHeader {
+        padding: 14px 16px;
+    }
+
+    .examModalTitle {
+        font-size: 16px;
+    }
+
+    .examModalBody {
+        padding: 16px;
+    }
+
+    .questionText {
+        font-size: 1rem;
+    }
+
+    .optionLabel {
+        padding: 12px;
+    }
+
+    .optionText {
+        font-size: 0.85rem;
+    }
+
+    .examModalFooter {
+        padding: 14px 16px;
+    }
+
+    .examPrimaryButton,
+    .examSecondaryButton {
+        padding: 12px 20px;
+        font-size: 14px;
+        min-height: 44px;
+        /* Touch-friendly size */
+    }
+
+    /* Roadmap Mobile */
+    .roadmapContainer {
+        padding: 16px;
+    }
+
+    .roadmapStep {
+        padding: 12px;
+    }
+
+    .roadmapIcon {
+        width: 36px;
+        height: 36px;
+    }
+
+    .roadmapTitle {
+        font-size: 14px;
+    }
+
+    .roadmapDetails li {
+        font-size: 12px;
+    }
+
+    /* Data Center Mobile */
+    .dataCenterGrid {
+        grid-template-columns: 1fr;
+        gap: 12px;
+    }
+
+    .dataCenterCard {
+        padding: 16px;
+    }
+
+    .dataCenterIcon {
+        width: 40px;
+        height: 40px;
+    }
+
+    .dataCenterTitle {
+        font-size: 14px;
+    }
+
+    .dataCenterDesc {
+        font-size: 12px;
+    }
+
+    /* Footer Mobile */
+    .footer {
+        padding: 24px 16px;
+    }
+
+    .footer p {
+        font-size: 12px;
+    }
+
+    /* Result Modal Mobile */
+    .resultEmoji {
+        font-size: 48px;
+    }
+
+    .resultTitle {
+        font-size: 1.2rem;
+    }
+
+    .resultScore {
+        font-size: 0.95rem;
+    }
+}
+
+/* Medium Mobile (481px - 576px) */
+@media (min-width: 481px) and (max-width: 576px) {
+    .welcomeCard {
+        padding: 40px 28px;
+        max-width: 420px;
+    }
+
+    .welcomeTitle {
+        font-size: 28px;
+    }
+
+    .profileName {
+        font-size: 26px;
+    }
+
+    .courseIcon,
+    .examIcon {
+        width: 44px;
+        height: 44px;
+    }
+
+    .examModalContent {
+        max-width: 100%;
+        border-radius: 20px 20px 0 0;
+    }
+}
+
+/* Tablet Portrait (577px - 768px) */
+@media (min-width: 577px) and (max-width: 768px) {
+    .scrollContent {
+        padding: 0 24px 24px;
+    }
+
+    .dataCenterGrid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .examModalContent {
+        max-width: 90%;
+        border-radius: 20px;
+    }
+
+    .welcomeCard {
+        max-width: 480px;
+    }
+}
+
+/* Large Desktop (1200px+) */
+@media (min-width: 1200px) {
+    .scrollContent {
+        max-width: 1100px;
+        padding: 0 64px;
+    }
+
+    .dataCenterGrid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+
+    .profileSection {
+        padding: 64px 48px 72px;
+    }
+
+    .avatar {
+        width: 160px;
+        height: 160px;
+    }
+
+    .profileName {
+        font-size: 36px;
+    }
+}
+
+/* ==================== TOUCH-FRIENDLY IMPROVEMENTS ==================== */
+
+/* Ensure minimum touch target size (44x44px recommended by Apple/Google) */
+@media (hover: none) and (pointer: coarse) {
+
+    .themeButton,
+    .helpButton,
+    .navButton {
+        min-width: 44px;
+        min-height: 44px;
+    }
+
+    .courseItem {
+        min-height: 56px;
+    }
+
+    .menuItem {
+        min-height: 48px;
+    }
+
+    .btnMarkComplete {
+        min-height: 44px;
+        padding: 10px 16px;
+    }
+
+    .modalBack {
+        min-height: 44px;
+        min-width: 44px;
+        padding: 8px 12px;
+    }
+
+    .optionLabel {
+        min-height: 48px;
+    }
+
+    .examPrimaryButton,
+    .examSecondaryButton {
+        min-height: 48px;
+    }
+
+    .welcomeStart {
+        min-height: 52px;
+    }
+
+    .roadmapStep {
+        min-height: 60px;
+    }
+
+    .dataCenterCard {
+        min-height: 80px;
+    }
+}
+
+/* ==================== REDUCED MOTION PREFERENCE ==================== */
+
+@media (prefers-reduced-motion: reduce) {
+    /* Note: Global * selector moved to globals.css for CSS modules compatibility */
+
+    .shape,
+    .shape1,
+    .shape2,
+    .shape3,
+    .shape4,
+    .welcomeCard,
+    .welcomeAvatar,
+    .courseItem,
+    .menuGroup,
+    .dataCenterCard {
+        animation: none !important;
+        transition: none !important;
+    }
+
+    .spinner {
+        animation: spin 2s linear infinite;
+        /* Keep essential loading animation */
+    }
+}
+
+/* ==================== LANDSCAPE MOBILE FIX ==================== */
+
+@media (max-height: 500px) and (orientation: landscape) {
+    .welcomeOverlay {
+        padding: 16px;
+        min-height: auto;
+    }
+
+    .welcomeCard {
+        padding: 24px;
+        max-width: 480px;
+    }
+
+    .welcomeAvatar {
+        width: 80px;
+        height: 80px;
+        margin-bottom: 16px;
+    }
+
+    .welcomeTitle {
+        font-size: 22px;
+        margin-bottom: 4px;
+    }
+
+    .welcomeSubtitle {
+        font-size: 16px;
+        margin-bottom: 16px;
+    }
+
+    .examModalContent {
+        max-height: 95vh;
+    }
+
+    .examModalBody {
+        max-height: 50vh;
+    }
+
+    .modal {
+        padding: 8px;
+    }
+
+    .modalContent {
+        max-height: 98vh;
+    }
+}
+
+/* ==================== PRINT STYLES ==================== */
+
+@media print {
+
+    .navbar,
+    .themeButton,
+    .helpButton,
+    .modalBack,
+    .btnMarkComplete,
+    .footer {
+        display: none !important;
+    }
+
+    .container {
+        background: white !important;
+    }
+
+    .backgroundShapes,
+    .backgroundGradient,
+    .shapesContainer {
+        display: none !important;
+    }
+
+    .courseItem {
+        break-inside: avoid;
+    }
 }
