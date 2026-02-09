@@ -1,4 +1,6 @@
-/* Mismos estilos base */
+/* ==================== SHAPE HERO - iOS INSPIRED ==================== */
+
+/* === CONTAINER === */
 .container {
     height: 100vh;
     width: 100%;
@@ -10,12 +12,37 @@
     background-color: #030303;
 }
 
+[data-theme="light"] .container {
+    background-color: #ffffff;
+}
+
 @media (prefers-color-scheme: light) {
     .container {
         background-color: #ffffff;
     }
 }
 
+/* === SKIP LINK (Accessibility) === */
+.skipLink {
+    position: absolute;
+    top: -100%;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 1rem 2rem;
+    background: #6366f1;
+    color: white;
+    border-radius: 0 0 12px 12px;
+    font-weight: 600;
+    text-decoration: none;
+    z-index: 100;
+    transition: top 0.3s ease;
+}
+
+.skipLink:focus {
+    top: 0;
+}
+
+/* === BACKGROUND GRADIENT === */
 .backgroundGradient {
     position: absolute;
     inset: 0;
@@ -23,6 +50,7 @@
     z-index: 10;
 }
 
+/* === SHAPES CONTAINER === */
 .shapesContainer {
     position: absolute;
     inset: 0;
@@ -30,6 +58,7 @@
     z-index: 20;
 }
 
+/* === CONTENT === */
 .content {
     position: relative;
     z-index: 30;
@@ -46,13 +75,14 @@
     text-align: center;
 }
 
+/* === TITLE === */
 .title {
     margin-bottom: 2rem;
     line-height: 1.1;
 }
 
 .mainTitle {
-    font-size: 5rem;
+    font-size: clamp(2.5rem, 8vw, 5rem);
     font-weight: 900;
     letter-spacing: -0.05em;
     background: linear-gradient(to right, #ffffff, #94a3b8);
@@ -60,6 +90,12 @@
     background-clip: text;
     color: transparent;
     display: block;
+}
+
+[data-theme="light"] .mainTitle {
+    background: linear-gradient(to right, #0f172a, #475569);
+    -webkit-background-clip: text;
+    background-clip: text;
 }
 
 @media (prefers-color-scheme: light) {
@@ -71,18 +107,18 @@
 }
 
 .subtitle {
-    font-size: 4rem;
+    font-size: clamp(2rem, 6vw, 4rem);
     background: linear-gradient(to right, #6366f1, #ec4899, #8b5cf6);
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
     display: block;
-    margin-top: -1rem;
+    margin-top: -0.5rem;
     padding-bottom: 1rem;
-    /* Prevent descender clipping */
     line-height: 1.2;
 }
 
+/* === BUTTONS CONTAINER === */
 .buttonsContainer {
     display: flex;
     gap: 1.5rem;
@@ -94,9 +130,10 @@
 .buttonIcon {
     width: 20px;
     height: 20px;
+    flex-shrink: 0;
 }
 
-/* Base button styles */
+/* === BASE BUTTON STYLES === */
 .primaryButton,
 .secondaryButton,
 .tertiaryButton {
@@ -104,14 +141,17 @@
     align-items: center;
     gap: 0.75rem;
     padding: 1rem 2rem;
+    min-height: 48px;
     border-radius: 9999px;
     font-weight: 600;
+    font-size: 1rem;
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     text-decoration: none;
     position: relative;
     overflow: hidden;
 }
 
+/* === PRIMARY BUTTON === */
 .primaryButton {
     background: linear-gradient(135deg, #6366f1, #4f46e5);
     color: white;
@@ -123,19 +163,28 @@
     box-shadow: 0 8px 25px rgba(99, 102, 241, 0.5);
 }
 
+.primaryButton:focus-visible {
+    outline: 3px solid #c7d2fe;
+    outline-offset: 2px;
+    box-shadow: 0 8px 25px rgba(99, 102, 241, 0.5);
+}
+
+/* === SECONDARY BUTTON === */
 .secondaryButton {
     background: linear-gradient(135deg, #2563eb, #1d4ed8);
-    /* Royal Blue */
     color: white;
     border: none;
     box-shadow: 0 4px 15px rgba(37, 99, 235, 0.3);
 }
 
+[data-theme="light"] .secondaryButton {
+    background: linear-gradient(135deg, #3b82f6, #2563eb);
+    box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);
+}
+
 @media (prefers-color-scheme: light) {
     .secondaryButton {
         background: linear-gradient(135deg, #3b82f6, #2563eb);
-        color: white;
-        border: none;
         box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);
     }
 }
@@ -146,16 +195,13 @@
     background: linear-gradient(135deg, #1d4ed8, #1e40af);
 }
 
-@media (prefers-color-scheme: light) {
-    .secondaryButton:hover {
-        background: linear-gradient(135deg, #2563eb, #1d4ed8);
-        box-shadow: 0 8px 25px rgba(59, 130, 246, 0.5);
-    }
+.secondaryButton:focus-visible {
+    outline: 3px solid #93c5fd;
+    outline-offset: 2px;
+    box-shadow: 0 8px 25px rgba(37, 99, 235, 0.5);
 }
 
-
-
-/* New Tertiary Button (Capacitación) */
+/* === TERTIARY BUTTON === */
 .tertiaryButton {
     background: linear-gradient(135deg, #ec4899, #d946ef);
     color: white;
@@ -167,6 +213,13 @@
     box-shadow: 0 8px 25px rgba(236, 72, 153, 0.5);
 }
 
+.tertiaryButton:focus-visible {
+    outline: 3px solid #f9a8d4;
+    outline-offset: 2px;
+    box-shadow: 0 8px 25px rgba(236, 72, 153, 0.5);
+}
+
+/* === OVERLAY === */
 .overlay {
     position: absolute;
     inset: 0;
@@ -175,13 +228,58 @@
     z-index: 15;
 }
 
+[data-theme="light"] .overlay {
+    background: radial-gradient(circle at 50% 50%, transparent 0%, rgba(255, 255, 255, 0.2) 100%);
+}
+
 @media (prefers-color-scheme: light) {
     .overlay {
         background: radial-gradient(circle at 50% 50%, transparent 0%, rgba(255, 255, 255, 0.2) 100%);
     }
 }
 
-/* Credits section - Discrete and theme-aware */
+/* === SHAPE POSITIONS === */
+.shape1 {
+    top: 5%;
+    left: -5%;
+}
+
+.shape2 {
+    bottom: 15%;
+    right: -10%;
+}
+
+.shape3 {
+    top: 60%;
+    left: 10%;
+}
+
+.shape4 {
+    top: 10%;
+    right: 15%;
+}
+
+.shape5 {
+    bottom: 30%;
+    left: 20%;
+}
+
+.shape6 {
+    top: 30%;
+    right: 5%;
+}
+
+.shape7 {
+    bottom: 5%;
+    left: 40%;
+}
+
+.shape8 {
+    top: 50%;
+    right: 25%;
+}
+
+/* === CREDITS === */
 .credits {
     position: fixed;
     bottom: 1.5rem;
@@ -192,40 +290,30 @@
     width: 100%;
     padding: 0 1rem;
     pointer-events: none;
-    /* Allow clicks to pass through */
 }
 
 .creditsText {
     font-size: 0.875rem;
-    color: var(--text-secondary);
+    color: rgba(255, 255, 255, 0.5);
     opacity: 0.6;
     transition: opacity 0.3s ease;
     font-weight: 400;
     letter-spacing: 0.5px;
     text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
     pointer-events: auto;
-    /* But allow interaction with the text itself */
 }
 
 .creditsText strong {
     font-weight: 600;
-    color: var(--text-primary);
+    color: rgba(255, 255, 255, 0.8);
 }
 
 .credits:hover .creditsText {
     opacity: 0.9;
 }
 
-/* Responsive adjustments */
+/* ==================== RESPONSIVE - TABLET ==================== */
 @media (max-width: 768px) {
-    .mainTitle {
-        font-size: 3rem;
-    }
-
-    .subtitle {
-        font-size: 2.5rem;
-    }
-
     .buttonsContainer {
         flex-direction: column;
         width: 100%;
@@ -245,5 +333,164 @@
 
     .creditsText {
         font-size: 0.75rem;
+    }
+
+    .shape7,
+    .shape8 {
+        opacity: 0.5;
+    }
+}
+
+/* ==================== RESPONSIVE - MOBILE ==================== */
+@media (max-width: 640px) {
+    .content {
+        padding: 1.5rem;
+    }
+
+    .title {
+        margin-bottom: 1.5rem;
+    }
+
+    .buttonsContainer {
+        gap: 1rem;
+        margin-top: 2rem;
+    }
+
+    .primaryButton,
+    .secondaryButton,
+    .tertiaryButton {
+        padding: 0.875rem 1.5rem;
+        font-size: 0.9375rem;
+    }
+
+    .shape3,
+    .shape4,
+    .shape7,
+    .shape8 {
+        display: none;
+    }
+}
+
+/* ==================== RESPONSIVE - SMALL MOBILE ==================== */
+@media (max-width: 480px) {
+    .content {
+        padding: 1rem;
+    }
+
+    .buttonsContainer {
+        max-width: 280px;
+    }
+
+    .shape2,
+    .shape3,
+    .shape4,
+    .shape5,
+    .shape7,
+    .shape8 {
+        display: none;
+    }
+
+    .shape1,
+    .shape6 {
+        opacity: 0.5;
+    }
+}
+
+/* ==================== RESPONSIVE - EXTRA SMALL ==================== */
+@media (max-width: 360px) {
+    .buttonsContainer {
+        max-width: 100%;
+        padding: 0 0.5rem;
+    }
+
+    .primaryButton,
+    .secondaryButton,
+    .tertiaryButton {
+        padding: 0.75rem 1.25rem;
+        font-size: 0.875rem;
+    }
+
+    .shapesContainer {
+        opacity: 0.3;
+    }
+}
+
+/* ==================== LANDSCAPE MODE ==================== */
+@media (max-height: 500px) and (orientation: landscape) {
+    .container {
+        height: auto;
+        min-height: 100vh;
+        padding: 1rem 0;
+    }
+
+    .title {
+        margin-bottom: 1rem;
+    }
+
+    .mainTitle {
+        font-size: 2.5rem;
+    }
+
+    .subtitle {
+        font-size: 1.75rem;
+        margin-top: 0;
+        padding-bottom: 0.5rem;
+    }
+
+    .buttonsContainer {
+        flex-direction: row;
+        margin-top: 1.5rem;
+        gap: 1rem;
+    }
+
+    .primaryButton,
+    .secondaryButton,
+    .tertiaryButton {
+        padding: 0.75rem 1.5rem;
+    }
+
+    .credits {
+        position: relative;
+        margin-top: 1rem;
+    }
+
+    .shapesContainer {
+        display: none;
+    }
+}
+
+/* ==================== REDUCED MOTION ==================== */
+@media (prefers-reduced-motion: reduce) {
+
+    .primaryButton,
+    .secondaryButton,
+    .tertiaryButton,
+    .skipLink,
+    .creditsText {
+        transition: none;
+    }
+
+    .primaryButton:hover,
+    .secondaryButton:hover,
+    .tertiaryButton:hover {
+        transform: none;
+    }
+
+    .shapesContainer {
+        display: none;
+    }
+}
+
+/* ==================== HIGH CONTRAST MODE ==================== */
+@media (prefers-contrast: high) {
+
+    .primaryButton,
+    .secondaryButton,
+    .tertiaryButton {
+        border: 2px solid white;
+    }
+
+    .skipLink {
+        border: 2px solid white;
     }
 }

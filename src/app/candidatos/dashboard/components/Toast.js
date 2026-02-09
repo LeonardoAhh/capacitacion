@@ -1,6 +1,6 @@
 'use client';
 
-import React, { createContext, useContext, useState, useCallback, useEffect } from 'react';
+import React, { createContext, useContext, useState, useCallback, useMemo, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { CheckCircle, AlertCircle, AlertTriangle, Info, X } from 'lucide-react';
 import styles from './Toast.module.css';
@@ -100,12 +100,12 @@ export function ToastProvider({ children }) {
         setToasts(prev => prev.filter(toast => toast.id !== id));
     }, []);
 
-    const toast = useCallback({
+    const toast = useMemo(() => ({
         success: (message) => addToast('success', message),
         error: (message) => addToast('error', message),
         warning: (message) => addToast('warning', message),
         info: (message) => addToast('info', message)
-    }, [addToast]);
+    }), [addToast]);
 
     return (
         <ToastContext.Provider value={toast}>
