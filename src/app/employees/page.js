@@ -8,6 +8,7 @@ import {
     User, Briefcase, Activity, FileText, ChevronRight, ArrowLeft,
     Search, Users, UserCheck, UserPlus, Download, Edit, Trash2, X, Save, Upload, Phone, Key, RefreshCw, Loader2
 } from 'lucide-react';
+import Image from 'next/image';
 import styles from './page.module.css';
 import { useEmployees } from '@/hooks/useEmployees';
 import EmployeeSearchBar from '@/components/EmployeeSearchBar/EmployeeSearchBar';
@@ -638,10 +639,12 @@ export default function EmployeesPage() {
                                                 <div className={styles.cardHeader}>
                                                     <div className={styles.employeeAvatar}>
                                                         {emp.photoUrl ? (
-                                                            <img
+                                                            <Image
                                                                 src={emp.photoUrl}
                                                                 alt={`Foto de ${emp.name}`}
-                                                                loading="lazy"
+                                                                width={56}
+                                                                height={56}
+                                                                unoptimized
                                                                 onError={(e) => handleImageError(e, emp.name)}
                                                             />
                                                         ) : (
@@ -727,9 +730,12 @@ export default function EmployeesPage() {
                             <div className={styles.detailHeader}>
                                 <div className={styles.avatarLarge}>
                                     {selectedEmployee.photoUrl ? (
-                                        <img
+                                        <Image
                                             src={selectedEmployee.photoUrl}
                                             alt={selectedEmployee.name}
+                                            width={100}
+                                            height={100}
+                                            unoptimized
                                             onError={(e) => handleImageError(e, selectedEmployee.name)}
                                         />
                                     ) : (
@@ -1063,9 +1069,12 @@ export default function EmployeesPage() {
                                     <div className={styles.photoUploadContainer}>
                                         {photoPreview ? (
                                             <div className={styles.photoPreviewBox}>
-                                                <img
+                                                <Image
                                                     src={photoPreview}
                                                     alt="Preview"
+                                                    width={150}
+                                                    height={150}
+                                                    unoptimized
                                                     className={styles.photoPreview}
                                                 />
                                                 <button

@@ -75,7 +75,7 @@ function EmployeeSearchBar({
         if (!isFocused && searchTerm !== query) {
             setQuery(searchTerm);
         }
-    }, [searchTerm, isFocused]);
+    }, [searchTerm, isFocused, query]);
 
     // Notify parent of debounced search
     useEffect(() => {

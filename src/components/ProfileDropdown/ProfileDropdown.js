@@ -114,7 +114,7 @@ export default function ProfileDropdown({ className, ...props }) {
             icon: <CreditCard className={styles.menuItemIcon} />,
             badgeType: "purple"
         },
-    ], [profileData.model, profileData.subscription]);
+    ], [profileData.subscription]);
 
     // No renderizar hasta que el tema esté cargado (evitar flash)
     if (!isLoaded) {
