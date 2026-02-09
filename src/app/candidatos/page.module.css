@@ -5,15 +5,16 @@
     min-height: 100vh;
     display: flex;
     align-items: center;
+    align-items: center;
     justify-content: center;
-    background: #f2f2f7;
+    background: transparent;
     position: relative;
     padding: 20px;
     overflow: hidden;
 }
 
 [data-theme="dark"] .container {
-    background: #000000;
+    background: transparent;
 }
 
 /* === THEME TOGGLE === */
@@ -26,7 +27,7 @@
 
 /* === BACKGROUND EFFECTS === */
 .bgDecoration {
-    position: fixed;
+    display: none;
     top: 0;
     left: 0;
     width: 100vw;

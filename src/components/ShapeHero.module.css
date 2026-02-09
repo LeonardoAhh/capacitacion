@@ -1,5 +1,13 @@
 /* ==================== SHAPE HERO - iOS INSPIRED ==================== */
 
+/* === TOP CONTROLS (Theme Switcher) === */
+.topControls {
+    position: absolute;
+    top: 1.5rem;
+    right: 1.5rem;
+    z-index: 50;
+}
+
 /* === CONTAINER === */
 .container {
     height: 100vh;
@@ -9,17 +17,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    background-color: #030303;
-}
-
-[data-theme="light"] .container {
-    background-color: #ffffff;
-}
-
-@media (prefers-color-scheme: light) {
-    .container {
-        background-color: #ffffff;
-    }
+    background-color: transparent;
 }
 
 /* === SKIP LINK (Accessibility) === */
@@ -122,7 +120,7 @@
 .buttonsContainer {
     display: flex;
     gap: 1.5rem;
-    margin-top: 3rem;
+    margin-top: 1.5rem;
     flex-wrap: wrap;
     justify-content: center;
 }
@@ -294,18 +292,40 @@
 
 .creditsText {
     font-size: 0.875rem;
-    color: rgba(255, 255, 255, 0.5);
-    opacity: 0.6;
-    transition: opacity 0.3s ease;
+    color: var(--text-primary);
+    opacity: 0.8;
+    transition: color 0.3s ease, opacity 0.3s ease;
     font-weight: 400;
     letter-spacing: 0.5px;
-    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+    /* text-shadow removed for cleaner look, or maybe adjust shadow color? I'll remove it for simplicity */
     pointer-events: auto;
+}
+
+[data-theme="light"] .creditsText {
+    color: #000000 !important;
+    opacity: 1;
+}
+
+@media (prefers-color-scheme: light) {
+    .creditsText {
+        color: #000000 !important;
+        opacity: 1;
+    }
 }
 
 .creditsText strong {
     font-weight: 600;
-    color: rgba(255, 255, 255, 0.8);
+    color: var(--text-primary);
+}
+
+[data-theme="light"] .creditsText strong {
+    color: #000000 !important;
+}
+
+@media (prefers-color-scheme: light) {
+    .creditsText strong {
+        color: #000000 !important;
+    }
 }
 
 .credits:hover .creditsText {

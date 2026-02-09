@@ -7,8 +7,18 @@
     justify-content: center;
     position: relative;
     overflow: hidden;
-    background-color: #030303;
+    background-color: transparent;
     font-family: var(--font-geist-sans);
+}
+
+[data-theme="light"] .container {
+    background-color: transparent;
+}
+
+@media (prefers-color-scheme: light) {
+    .container {
+        background-color: transparent;
+    }
 }
 
 .backgroundGradient {
@@ -17,18 +27,30 @@
     left: 0;
     right: 0;
     bottom: 0;
-    background: 
+    background:
         radial-gradient(circle at 15% 50%, rgba(236, 72, 153, 0.08), transparent 25%),
         radial-gradient(circle at 85% 30%, rgba(139, 92, 246, 0.08), transparent 25%);
     z-index: 0;
+    pointer-events: none;
 }
 
+[data-theme="light"] .backgroundGradient {
+    background:
+        radial-gradient(circle at 15% 50%, rgba(236, 72, 153, 0.05), transparent 25%),
+        radial-gradient(circle at 85% 30%, rgba(139, 92, 246, 0.05), transparent 25%);
+}
+
+@media (prefers-color-scheme: light) {
+    .backgroundGradient {
+        background:
+            radial-gradient(circle at 15% 50%, rgba(236, 72, 153, 0.05), transparent 25%),
+            radial-gradient(circle at 85% 30%, rgba(139, 92, 246, 0.05), transparent 25%);
+    }
+}
+
+/* Shapes removed for global BackgroundLines */
 .shapesContainer {
-    position: absolute;
-    inset: 0;
-    z-index: 1;
-    overflow: hidden;
-    pointer-events: none;
+    display: none;
 }
 
 .loginCard {
@@ -46,20 +68,17 @@
     overflow: hidden;
 }
 
-/* Modo claro */
+[data-theme="light"] .loginCard {
+    background: rgba(255, 255, 255, 0.9);
+    border: 1px solid rgba(0, 0, 0, 0.12);
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.2);
+}
+
 @media (prefers-color-scheme: light) {
-    .container {
-        background-color: #ffffff;
-    }
-    .backgroundGradient {
-        background: 
-            radial-gradient(circle at 15% 50%, rgba(236, 72, 153, 0.05), transparent 25%),
-            radial-gradient(circle at 85% 30%, rgba(139, 92, 246, 0.05), transparent 25%);
-    }
     .loginCard {
-        background: rgba(255, 255, 255, 0.7);
-        border: 1px solid rgba(255, 255, 255, 0.5);
-        box-shadow: 0 20px 40px -12px rgba(0, 0, 0, 0.1);
+        background: rgba(255, 255, 255, 0.85);
+        border: 1px solid rgba(0, 0, 0, 0.1);
+        box-shadow: 0 20px 40px -12px rgba(0, 0, 0, 0.15);
     }
 }
 
@@ -84,7 +103,8 @@
 .icon {
     width: 32px;
     height: 32px;
-    color: #ec4899; /* Pink-500 */
+    color: #ec4899;
+    /* Pink-500 */
 }
 
 .title {
@@ -96,6 +116,13 @@
     background-clip: text;
     color: transparent;
     letter-spacing: -0.025em;
+}
+
+[data-theme="light"] .title {
+    background: linear-gradient(to right, #111827, #4b5563);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
 }
 
 @media (prefers-color-scheme: light) {
@@ -110,6 +137,10 @@
     color: rgba(255, 255, 255, 0.5);
     font-size: 0.95rem;
     line-height: 1.5;
+}
+
+[data-theme="light"] .subtitle {
+    color: rgba(75, 85, 99, 0.9);
 }
 
 @media (prefers-color-scheme: light) {
@@ -137,6 +168,11 @@
     margin-left: 0.25rem;
 }
 
+[data-theme="light"] .label {
+    color: rgba(55, 65, 81, 1);
+    font-weight: 600;
+}
+
 @media (prefers-color-scheme: light) {
     .label {
         color: rgba(55, 65, 81, 0.8);
@@ -159,6 +195,10 @@
     transition: color 0.2s;
 }
 
+[data-theme="light"] .inputIcon {
+    color: rgba(0, 0, 0, 0.5);
+}
+
 @media (prefers-color-scheme: light) {
     .inputIcon {
         color: rgba(0, 0, 0, 0.4);
@@ -177,6 +217,12 @@
     outline: none;
 }
 
+[data-theme="light"] .input {
+    background: rgba(0, 0, 0, 0.06);
+    border: 1px solid rgba(0, 0, 0, 0.15);
+    color: #000;
+}
+
 @media (prefers-color-scheme: light) {
     .input {
         background: rgba(0, 0, 0, 0.03);
@@ -191,8 +237,13 @@
     background: rgba(255, 255, 255, 0.08);
 }
 
-.input:focus + .inputIcon {
+.input:focus+.inputIcon {
     color: #ec4899;
+}
+
+[data-theme="light"] .input:focus {
+    background: #fff;
+    border-color: #ec4899;
 }
 
 @media (prefers-color-scheme: light) {
@@ -246,6 +297,12 @@
     gap: 0.5rem;
 }
 
+[data-theme="light"] .errorMessage {
+    background: rgba(254, 226, 226, 0.8);
+    border: 1px solid rgba(252, 165, 165, 0.8);
+    color: #b91c1c;
+}
+
 @media (prefers-color-scheme: light) {
     .errorMessage {
         background: rgba(254, 226, 226, 0.5);
@@ -264,7 +321,9 @@
 }
 
 @keyframes spin {
-    to { transform: rotate(360deg); }
+    to {
+        transform: rotate(360deg);
+    }
 }
 
 .blockedMessage {
@@ -276,6 +335,12 @@
     font-size: 0.875rem;
     margin-bottom: 1.5rem;
     text-align: center;
+}
+
+[data-theme="light"] .blockedMessage {
+    background: rgba(254, 243, 199, 0.8);
+    border: 1px solid rgba(252, 211, 77, 0.8);
+    color: #b45309;
 }
 
 @media (prefers-color-scheme: light) {
@@ -293,6 +358,10 @@
     margin-left: 0.25rem;
 }
 
+[data-theme="light"] .helperText {
+    color: rgba(0, 0, 0, 0.5);
+}
+
 @media (prefers-color-scheme: light) {
     .helperText {
         color: rgba(0, 0, 0, 0.4);
@@ -306,6 +375,10 @@
     padding-top: 1.5rem;
 }
 
+[data-theme="light"] .footer {
+    border-color: rgba(0, 0, 0, 0.1);
+}
+
 @media (prefers-color-scheme: light) {
     .footer {
         border-color: rgba(0, 0, 0, 0.05);
@@ -316,6 +389,10 @@
     color: rgba(255, 255, 255, 0.4);
     font-size: 0.875rem;
     line-height: 1.6;
+}
+
+[data-theme="light"] .footerText {
+    color: rgba(107, 114, 128, 1);
 }
 
 @media (prefers-color-scheme: light) {

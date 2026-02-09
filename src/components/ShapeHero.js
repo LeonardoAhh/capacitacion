@@ -5,9 +5,10 @@ import { motion } from "framer-motion";
 import { Pacifico } from "next/font/google";
 import Link from "next/link";
 import { Users, UserPlus, GraduationCap } from "lucide-react";
-import { ElegantShape } from './ui/ElegantShape';
 import DynamicCredits from './DynamicCredits/DynamicCredits';
 import styles from './ShapeHero.module.css';
+
+import SwitchButton from './ui/SwitchButton/SwitchButton';
 
 // ==================== FONT CONFIG ====================
 const pacifico = Pacifico({
@@ -21,18 +22,6 @@ const BRAND = {
     name: "VIÑOPLASTIC",
     location: "Planta Querétaro"
 };
-
-// Shape configurations - extracted for maintainability
-const SHAPES_CONFIG = [
-    { className: 'shape1', delay: 0.3, width: 300, height: 500, rotate: -8, color: "#6366f1", borderRadius: 24 },
-    { className: 'shape2', delay: 0.5, width: 600, height: 200, rotate: 15, color: "#f43f5e", borderRadius: 20 },
-    { className: 'shape3', delay: 0.4, width: 300, height: 300, rotate: 24, color: "#8b5cf6", borderRadius: 32 },
-    { className: 'shape4', delay: 0.6, width: 250, height: 100, rotate: -20, color: "#f59e0b", borderRadius: 12 },
-    { className: 'shape5', delay: 0.7, width: 400, height: 150, rotate: 35, color: "#10b981", borderRadius: 16 },
-    { className: 'shape6', delay: 0.2, width: 200, height: 200, rotate: -25, color: "#3b82f6", borderRadius: 28 },
-    { className: 'shape7', delay: 0.8, width: 150, height: 80, rotate: 45, color: "#a855f7", borderRadius: 10 },
-    { className: 'shape8', delay: 0.9, width: 450, height: 120, rotate: -12, color: "#14b8a6", borderRadius: 18 },
-];
 
 // Navigation links configuration
 const NAV_LINKS = [
@@ -82,33 +71,12 @@ const NavButton = memo(function NavButton({ href, label, ariaLabel, icon: Icon, 
     );
 });
 
-/**
- * ShapesBackground - Container for decorative shapes
- */
-const ShapesBackground = memo(function ShapesBackground() {
-    return (
-        <div className={styles.shapesContainer} aria-hidden="true">
-            {SHAPES_CONFIG.map((shape) => (
-                <ElegantShape
-                    key={shape.className}
-                    className={styles[shape.className]}
-                    delay={shape.delay}
-                    width={shape.width}
-                    height={shape.height}
-                    rotate={shape.rotate}
-                    color={shape.color}
-                    borderRadius={shape.borderRadius}
-                />
-            ))}
-        </div>
-    );
-});
 
 // ==================== MAIN COMPONENT ====================
 
 /**
  * ShapeHero - Main landing page hero section
- * Features animated shapes, brand title, and navigation buttons
+ * Features brand title and navigation buttons with animated background lines
  */
 function ShapeHeroComponent() {
     return (
@@ -122,11 +90,13 @@ function ShapeHeroComponent() {
                 Saltar al contenido principal
             </a>
 
+            {/* Theme Toggle */}
+            <div className={styles.topControls}>
+                <SwitchButton />
+            </div>
+
             {/* Background gradient - decorative */}
             <div className={styles.backgroundGradient} aria-hidden="true" />
-
-            {/* Animated shapes - decorative */}
-            <ShapesBackground />
 
             {/* Main content */}
             <div className={styles.content} id="main-content">

@@ -6,11 +6,11 @@
     align-items: center;
     justify-content: center;
     overflow: hidden;
-    background: #030303;
+    background: transparent;
 }
 
 [data-theme="light"] .container {
-    background: #fff;
+    background: transparent;
 }
 
 .backgroundGradient {
@@ -18,34 +18,12 @@
     inset: 0;
     background: radial-gradient(ellipse at center, rgba(99, 102, 241, 0.08) 0%, transparent 50%, rgba(139, 92, 246, 0.08) 100%);
     filter: blur(60px);
-}
-
-.shapesContainer {
-    position: absolute;
-    inset: 0;
-    overflow: hidden;
     pointer-events: none;
 }
 
-/* Posiciones de formas */
-.shape1 {
-    top: 5%;
-    left: -10%;
-}
-
-.shape2 {
-    bottom: 10%;
-    right: -8%;
-}
-
-.shape3 {
-    top: 45%;
-    left: 8%;
-}
-
-.shape4 {
-    bottom: 25%;
-    right: 15%;
+/* Shapes removed for global BackgroundLines integration */
+.shapesContainer {
+    display: none;
 }
 
 .overlay {

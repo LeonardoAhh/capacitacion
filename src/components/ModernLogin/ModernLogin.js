@@ -5,36 +5,7 @@ import { Mail, Lock, Shield } from "lucide-react";
 import styles from './ModernLogin.module.css';
 import AILoadingState from '../ui/AILoadingState/AILoadingState';
 
-function ElegantShape({ className, delay = 0, width = 400, height = 100, rotate = 0, color, borderRadius = 16 }) {
-    return (
-        <motion.div
-            animate={{ opacity: 1, y: 0, rotate }}
-            className={className}
-            initial={{ opacity: 0, y: -150, rotate: rotate - 15 }}
-            transition={{
-                duration: 2.4,
-                delay,
-                ease: [0.23, 0.86, 0.39, 0.96],
-                opacity: { duration: 1.2 },
-            }}
-            style={{ position: 'absolute', width: `${width}px`, height: `${height}px` }}
-        >
-            <motion.div
-                animate={{ y: [0, 15, 0] }}
-                transition={{ duration: 12, repeat: Infinity, ease: "easeInOut" }}
-                style={{
-                    width: '100%',
-                    height: '100%',
-                    background: `linear-gradient(135deg, ${color}40, ${color}20)`,
-                    borderRadius: `${borderRadius}px`,
-                    backdropFilter: 'blur(1px)',
-                    border: '1px solid rgba(255, 255, 255, 0.05)',
-                    boxShadow: '0 2px 16px -2px rgba(255, 255, 255, 0.04)',
-                }}
-            />
-        </motion.div>
-    );
-}
+
 
 export default function ModernLogin({
     email,
@@ -59,14 +30,6 @@ export default function ModernLogin({
     return (
         <div className={styles.container}>
             <div className={styles.backgroundGradient} />
-
-            {/* Formas animadas */}
-            <div className={styles.shapesContainer}>
-                <ElegantShape className={styles.shape1} delay={0.2} width={250} height={400} rotate={-12} color="#6366f1" borderRadius={20} />
-                <ElegantShape className={styles.shape2} delay={0.4} width={350} height={150} rotate={18} color="#8b5cf6" borderRadius={16} />
-                <ElegantShape className={styles.shape3} delay={0.3} width={200} height={200} rotate={-25} color="#a855f7" borderRadius={24} />
-                <ElegantShape className={styles.shape4} delay={0.5} width={300} height={120} rotate={15} color="#6366f1" borderRadius={12} />
-            </div>
 
             {/* Card de Login */}
             <motion.div

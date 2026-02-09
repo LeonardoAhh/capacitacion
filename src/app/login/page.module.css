@@ -16,9 +16,10 @@
     display: flex;
     flex-direction: column;
     align-items: center;
+    align-items: center;
     justify-content: center;
-    background: #f5f5f7;
-    /* Apple-like light gray background */
+    background: transparent;
+    /* Apple-like light gray background removed for global BG */
     font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, sans-serif;
     padding: 20px;
     color: var(--text-primary);
@@ -30,7 +31,7 @@
     --bg-input: #1c1c1e;
     --bg-card: #000000;
     --shadow-card: 0 4px 24px rgba(0, 0, 0, 0.4);
-    background: #000000;
+    background: transparent;
 }
 
 /* === BACKGROUND (Removed Blobs for Minimalism) === */

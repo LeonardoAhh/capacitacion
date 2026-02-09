@@ -1,7 +1,7 @@
 import { AuthProvider } from '@/contexts/AuthContext';
 import { ThemeProvider } from '@/contexts/ThemeContext';
 import { ToastProvider } from '@/components/ui/Toast/Toast';
-import ParticlesBackground from '@/components/ParticlesBackground/ParticlesBackground';
+import { BackgroundLines } from '@/components/ui/BackgroundLines';
 import '@/styles/globals.css';
 import { Inter } from 'next/font/google';
 
@@ -36,9 +36,13 @@ export default function RootLayout({ children }) {
                 <ThemeProvider>
                     <AuthProvider>
                         <ToastProvider>
-                            {/* Particles background - visible en todas las páginas */}
-                            <ParticlesBackground />
-                            {children}
+                            {/* Background Lines - Fixed absolute background */}
+                            <BackgroundLines style={{ position: 'fixed', inset: 0, pointerEvents: 'none', zIndex: 0 }} />
+
+                            {/* Main content */}
+                            <div style={{ position: 'relative', zIndex: 10 }}>
+                                {children}
+                            </div>
                         </ToastProvider>
                     </AuthProvider>
                 </ThemeProvider>

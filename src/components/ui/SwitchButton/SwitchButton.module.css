@@ -1,0 +1,147 @@
+.button {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    /* default size */
+    border-radius: 0.5rem;
+    background: linear-gradient(to bottom, rgba(250, 250, 250, 0.95), rgba(244, 244, 245, 0.95));
+    border: 1px solid #e4e4e7;
+    box-shadow: 0 1px 2px -1px rgba(0, 0, 0, 0.1), 0 1px 3px -2px rgba(0, 0, 0, 0.1);
+    color: #52525b;
+    cursor: pointer;
+    transition: all 0.3s ease-out;
+    backdrop-filter: blur(4px);
+    font-family: inherit;
+    font-size: 0.875rem;
+    font-weight: 500;
+    overflow: hidden;
+}
+
+.button:hover {
+    background: linear-gradient(to bottom, rgba(244, 244, 245, 0.95), rgba(228, 228, 231, 0.95));
+    border-color: #d4d4d8;
+    box-shadow: 0 2px 4px -2px rgba(0, 0, 0, 0.15), 0 2px 6px -3px rgba(0, 0, 0, 0.15);
+    color: #27272a;
+}
+
+[data-theme="dark"] .button {
+    background: linear-gradient(to bottom, rgba(39, 39, 42, 0.95), rgba(24, 24, 27, 0.95));
+    border-color: rgba(63, 63, 70, 0.8);
+    box-shadow: 0 1px 2px -1px rgba(0, 0, 0, 0.3), 0 1px 3px -2px rgba(0, 0, 0, 0.3);
+    color: #d4d4d8;
+}
+
+[data-theme="dark"] .button:hover {
+    background: linear-gradient(to bottom, rgba(63, 63, 70, 0.95), rgba(39, 39, 42, 0.95));
+    border-color: #52525b;
+    color: #f4f4f5;
+    box-shadow: 0 2px 4px -2px rgba(0, 0, 0, 0.4), 0 2px 6px -3px rgba(0, 0, 0, 0.4);
+}
+
+.iconWrapper {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: all 0.3s ease-out;
+    position: relative;
+    z-index: 10;
+}
+
+.sunIcon {
+    width: 1rem;
+    height: 1rem;
+    transition: all 0.7s ease-in-out;
+    color: #f59e0b;
+    /* amber-500 */
+    filter: drop-shadow(0 0 12px rgba(252, 211, 77, 0.3));
+}
+
+[data-theme="dark"] .sunIcon {
+    transform: rotate(180deg);
+    color: #d4d4d8;
+    /* zinc-300 */
+    filter: drop-shadow(0 0 12px rgba(252, 211, 77, 0.2));
+}
+
+.button:hover .sunIcon {
+    transform: rotate(360deg) scale(1.1);
+}
+
+[data-theme="dark"] .button:hover .sunIcon {
+    color: #f4f4f5;
+    /* zinc-100 */
+}
+
+.labelContainer {
+    position: relative;
+    height: 1.5em;
+    width: 2.8em;
+    overflow: hidden;
+}
+
+.labelText {
+    position: absolute;
+    inset: 0;
+    transition: opacity 0.3s ease-out, transform 0.3s ease-out;
+    white-space: nowrap;
+}
+
+.lightText {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.darkText {
+    opacity: 0;
+    transform: translateY(100%);
+}
+
+[data-theme="dark"] .lightText {
+    opacity: 0;
+    transform: translateY(-100%);
+}
+
+[data-theme="dark"] .darkText {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* Glare effect on hover */
+.glare {
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.12), transparent 70%);
+    opacity: 0;
+    transition: opacity 0.5s;
+    pointer-events: none;
+    z-index: 5;
+}
+
+[data-theme="dark"] .glare {
+    background: radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.07), transparent 70%);
+}
+
+.button:hover .glare {
+    opacity: 1;
+}
+
+/* Shine effect */
+.shine {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to right, rgba(113, 113, 122, 0) 0%, rgba(113, 113, 122, 0.12) 50%, rgba(113, 113, 122, 0) 100%);
+    transform: translateX(-100%);
+    transition: transform 0.5s ease-in-out;
+    pointer-events: none;
+    z-index: 1;
+}
+
+[data-theme="dark"] .shine {
+    background: linear-gradient(to right, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0.05) 50%, rgba(255, 255, 255, 0) 100%);
+}
+
+.button:hover .shine {
+    transform: translateX(100%);
+}

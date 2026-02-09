@@ -26,37 +26,7 @@ const SHAPE_CONFIG = [
 /**
  * Animated decorative shape component
  */
-function ElegantShape({ className, delay = 0, width = 400, height = 100, rotate = 0, color, borderRadius = 16 }) {
-    return (
-        <motion.div
-            animate={{ opacity: 1, y: 0, rotate }}
-            className={className}
-            initial={{ opacity: 0, y: -150, rotate: rotate - 15 }}
-            transition={{
-                duration: ANIMATION_CONFIG.duration,
-                delay,
-                ease: ANIMATION_CONFIG.ease,
-                opacity: { duration: ANIMATION_CONFIG.opacityDuration },
-            }}
-            style={{ position: 'absolute', width: `${width}px`, height: `${height}px` }}
-            aria-hidden="true"
-        >
-            <motion.div
-                animate={{ y: [0, 15, 0] }}
-                transition={{ duration: ANIMATION_CONFIG.floatDuration, repeat: Infinity, ease: "easeInOut" }}
-                style={{
-                    width: '100%',
-                    height: '100%',
-                    background: `linear-gradient(135deg, ${color}40, ${color}20)`,
-                    borderRadius: `${borderRadius}px`,
-                    backdropFilter: 'blur(1px)',
-                    border: '1px solid rgba(255, 255, 255, 0.05)',
-                    boxShadow: '0 2px 16px -2px rgba(255, 255, 255, 0.04)',
-                }}
-            />
-        </motion.div>
-    );
-}
+
 
 /**
  * Input field with icon and accessibility
@@ -162,16 +132,8 @@ export default function CandidateLogin({
         <div className={styles.container}>
             <div className={styles.backgroundGradient} aria-hidden="true" />
 
-            {/* Animated shapes - decorative only */}
-            <div className={styles.shapesContainer} aria-hidden="true">
-                {SHAPE_CONFIG.map((shape) => (
-                    <ElegantShape
-                        key={shape.className}
-                        className={styles[shape.className]}
-                        {...shape}
-                    />
-                ))}
-            </div>
+            <div className={styles.backgroundGradient} aria-hidden="true" />
+
 
             {/* Login Card */}
             <motion.div
