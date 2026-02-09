@@ -1,0 +1,103 @@
+{
+    "exámen": {
+        "courseName": "INDUCCIÓN A LA EMPRESA"
+    },
+    "campos_empleado": [
+        "name",
+        "employeeId",
+        "score",
+        "shift",
+        "department",
+        "date"
+    ],
+    "cuestionario": [
+        {
+            "id": 1,
+            "pregunta": "¿A qué se dedica Viñoplastic en planta Querétaro?",
+            "respuesta": "A la fabricación de autopartes mediante procesos de inyección de plástico",
+            "opciones": [
+                "A la fabricación de autopartes mediante procesos de inyección de plástico",
+                "A la comercialización de maquinaria industrial",
+                "A la consultoría en recursos humanos",
+                "A la producción de empaques de cartón"
+            ]
+        },
+        {
+            "id": 2,
+            "pregunta": "¿Por qué razón no obtendrías el bono de asistencia perfecta?",
+            "respuesta": "Todas las anteriores",
+            "opciones": [
+                "Por llegar tarde al trabajo",
+                "Por faltar sin justificación",
+                "Por salir antes de la hora establecida",
+                "Todas las anteriores"
+            ]
+        },
+        {
+            "id": 3,
+            "pregunta": "¿Cuándo se considera una falta injustificada?",
+            "respuesta": "Cuando el trabajador no se presenta a laborar sin previo aviso ni justificación válida",
+            "opciones": [
+                "Cuando el trabajador no se presenta a laborar sin previo aviso ni justificación válida",
+                "Cuando el trabajador avisa con anticipación y presenta comprobante médico",
+                "Cuando el trabajador solicita permiso autorizado por su jefe inmediato",
+                "Cuando el trabajador falta por capacitación programada por la empresa"
+            ]
+        },
+        {
+            "id": 4,
+            "pregunta": "¿Cuándo se considera una falta justificada?",
+            "respuesta": "Cuando el trabajador presenta comprobante emitido por IMSS o un mandato legal",
+            "opciones": [
+                "Cuando el trabajador presenta comprobante emitido por IMSS o un mandato legal",
+                "Cuando el trabajador falta por motivos personales sin dar aviso",
+                "Cuando el trabajador se ausenta sin permiso ni justificación",
+                "Cuando el trabajador decide tomar un día de descanso adicional por cuenta propia"
+            ]
+        },
+        {
+            "id": 5,
+            "pregunta": "¿Cuándo inicia y termina la semana de nómina, y qué día se realizan los pagos en Viñoplastic?",
+            "respuesta": "Inicia jueves, termina miércoles y se paga los viernes",
+            "opciones": [
+                "Inicia lunes, termina domingo y se paga los lunes",
+                "Inicia martes, termina lunes y se paga los miércoles",
+                "Inicia jueves, termina miércoles y se paga los viernes",
+                "Inicia domingo, termina sábado y se paga los jueves"
+            ]
+        },
+        {
+            "id": 6,
+            "pregunta": "Según la política de asistencia de VIÑOPLASTIC, ¿cuál de las siguientes afirmaciones sobre los permisos es correcta?",
+            "respuesta": "Todo permiso solicitado será sin goce de sueldo a excepción de permiso por paternidad o defunción",
+            "opciones": [
+                "Los permisos son con goce de sueldo y se autorizan automáticamente por RH",
+                "Todo permiso solicitado será sin goce de sueldo a excepción de permiso por paternidad o defunción",
+                "El colaborador no necesita notificar a RH, solo informar a sus compañeros de área",
+                "Los permisos se otorgan únicamente en casos de vacaciones programadas"
+            ]
+        },
+        {
+            "id": 7,
+            "pregunta": "Según la tabla, cual es la misión y visión de la empresa:",
+            "respuesta": "Opción C y D",
+            "opciones": [
+                "Cualquier cambio que ocurre en el medio ambiente por algo que hacemos. Puede ser bueno o malo, resultado del aspecto ambiental.",
+                "Prevención de los impactos ambientales y compromiso con la protección del medio ambiente.",
+                "Ser reconocidos como líderes en la inyección de plásticos, representando la mejor alternativa del mercado...",
+                "Satisfacer las necesidades de nuestros clientes con excelencia, proporcionando soluciones integrales e innovadoras..."
+            ]
+        },
+        {
+            "id": 8,
+            "pregunta": "¿Cuál de las siguientes opciones incluye únicamente prestaciones que VIÑOPLASTIC otorga a sus empleados?",
+            "respuesta": "Utilidades, aguinaldo, vales de despensa 3% mensual, bono de asistencia, fondo de ahorro 4%",
+            "opciones": [
+                "Seguro de automóvil particular",
+                "Utilidades, aguinaldo, vales de despensa 3% mensual, bono de asistencia, fondo de ahorro 4%",
+                "Apoyo de vivienda",
+                "Membresía en gimnasio"
+            ]
+        }
+    ]
+}

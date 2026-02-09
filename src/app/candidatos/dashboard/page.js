@@ -13,6 +13,8 @@ import { Drawer, DrawerContent, DrawerHeader, DrawerTitle, DrawerDescription, Dr
 import { Shield, MapPin, UserCheck, Smile, Download, ExternalLink, Phone, Calendar } from 'lucide-react';
 import styles from './page.module.css';
 import ProfileDropdown from './ProfileDropdown';
+import induccionEmpresaExam from '../../../../public/examenes/induccion_empresa.json';
+
 
 function ElegantShape({ className, delay = 0, width = 400, height = 100, rotate = 0, color, borderRadius = 16 }) {
     return (
@@ -56,6 +58,8 @@ export default function CandidatoDashboard() {
     const [courseProgress, setCourseProgress] = useState({}); // Track progress per course
     const [showHelpTooltip, setShowHelpTooltip] = useState(false);
     const [selectedDataCenterItem, setSelectedDataCenterItem] = useState(null);
+    const [showExamModal, setShowExamModal] = useState(false);
+    const [examData, setExamData] = useState(induccionEmpresaExam);
 
     const roadmapSteps = [
         {
@@ -463,6 +467,72 @@ export default function CandidatoDashboard() {
         }
     };
 
+    const handleExamSubmit = async (finalScore, answers) => {
+        if (!candidate?.id) return;
+
+        try {
+            const employeeRef = doc(db, 'employees', candidate.id);
+            const courseId = Object.keys(courseProgress).find(id => {
+                const course = courses.find(c => c.id === id);
+                return course?.title?.toUpperCase().includes('INDUCCIÓN A LA EMPRESA') ||
+                    course?.nombre?.toUpperCase().includes('INDUCCIÓN A LA EMPRESA');
+            });
+
+            // Legacy update for backward compatibility
+            await updateDoc(employeeRef, {
+                inductionScore: finalScore,
+                inductionDate: new Date().toISOString(),
+                inductionPassed: finalScore >= 70,
+                inductionAnswers: answers
+            });
+
+            if (courseId) {
+                // Update course progress with detailed exam results
+                const updatePayload = {
+                    [`coursesProgress.${courseId}.examScore`]: finalScore,
+                    [`coursesProgress.${courseId}.examAnswers`]: answers,
+                    [`coursesProgress.${courseId}.examDate`]: new Date().toISOString(),
+                    [`coursesProgress.${courseId}.examDownloaded`]: true
+                };
+
+                await updateDoc(employeeRef, updatePayload);
+
+                // Update local state
+                setCourseProgress(prev => ({
+                    ...prev,
+                    [courseId]: {
+                        ...prev[courseId],
+                        examScore: finalScore,
+                        examAnswers: answers,
+                        examDate: new Date().toISOString(),
+                        examDownloaded: true
+                    }
+                }));
+
+                // Mark as completed if passed
+                if (finalScore >= 70) {
+                    await updateDoc(employeeRef, {
+                        cursosCompletados: arrayUnion(courseId)
+                    });
+                    setCandidate(prev => ({
+                        ...prev,
+                        cursosCompletados: [...(prev.cursosCompletados || []), courseId]
+                    }));
+                }
+            }
+
+            // Close modal after delay
+            if (finalScore >= 70) {
+                setTimeout(() => {
+                    setShowExamModal(false);
+                }, 2000);
+            }
+
+        } catch (error) {
+            console.error("Error submitting exam:", error);
+        }
+    };
+
     // Progress tracking functions
     const markStepComplete = async (courseId, step) => {
         // 1. Optimistic UI update
@@ -509,6 +579,8 @@ export default function CandidatoDashboard() {
             // Optionally revert UI state on error
         }
     };
+
+
 
     const isStepUnlocked = (courseId, step) => {
         const progress = courseProgress[courseId] || {};
@@ -1111,15 +1183,27 @@ export default function CandidatoDashboard() {
                                 {isStepUnlocked(selectedCourse.id, 'exam') && (selectedCourse.examenUrl || (selectedCourse.material?.type === 'document' && selectedCourse.material?.url)) && (
                                     <div className={styles.stepContent}>
                                         <p className={styles.stepText}>
-                                            Descarga el examen y respóndelo para completar el curso.
+                                            Descarga el examen y respóndelo para completar el curso, o realízalo digitalmente.
                                         </p>
+
+                                        {/* Digital Exam Option */}
+                                        {(selectedCourse.title?.toUpperCase().includes('INDUCCIÓN A LA EMPRESA') || selectedCourse.nombre?.toUpperCase().includes('INDUCCIÓN A LA EMPRESA')) && (
+                                            <button
+                                                className={styles.stepButtonPrimary}
+                                                onClick={() => setShowExamModal(true)}
+                                                style={{ marginBottom: '12px', width: '100%', background: 'var(--color-primary)', color: 'white', border: 'none' }}
+                                            >
+                                                📝 Realizar Examen Digital
+                                            </button>
+                                        )}
 
                                         <button
                                             className={styles.stepButtonPrimary}
                                             onClick={() => downloadExam(selectedCourse)}
+                                            style={{ background: 'transparent', border: '1px solid var(--color-primary)', color: 'var(--color-primary)' }}
                                         >
                                             <FileText size={18} />
-                                            Descargar Examen
+                                            Descargar Examen (PDF)
                                         </button>
 
                                         {courseProgress[selectedCourse.id]?.examDownloaded && (
@@ -1171,6 +1255,152 @@ export default function CandidatoDashboard() {
                     </DrawerFooter>
                 </DrawerContent>
             </Drawer>
+
+            {/* Exam Modal */}
+            {showExamModal && (
+                <ExamModal
+                    isOpen={showExamModal}
+                    onClose={() => setShowExamModal(false)}
+                    examData={examData}
+                    onSubmit={handleExamSubmit}
+                />
+            )}
+        </div>
+    );
+}
+
+// --- EXAM MODAL COMPONENT ---
+function ExamModal({ isOpen, onClose, examData, onSubmit }) {
+    const [answers, setAnswers] = useState({});
+    const [step, setStep] = useState(0); // 0: Intro, 1...N: Questions, 99: Result
+    const [score, setScore] = useState(0);
+    const [submitting, setSubmitting] = useState(false);
+
+    if (!isOpen || !examData) return null;
+
+    const questions = examData.cuestionario || [];
+    const totalQuestions = questions.length;
+
+    const handleOptionSelect = (questionId, option) => {
+        setAnswers(prev => ({ ...prev, [questionId]: option }));
+    };
+
+    const handleNext = () => {
+        if (step < totalQuestions) {
+            setStep(prev => prev + 1);
+        } else {
+            // Calculate Score
+            let correctCount = 0;
+            questions.forEach(q => {
+                if (answers[q.id] === q.respuesta) {
+                    correctCount++;
+                }
+            });
+            const finalScore = (correctCount / totalQuestions) * 100;
+            setScore(finalScore);
+            handleSubmit(finalScore);
+        }
+    };
+
+    const handleSubmit = async (finalScore) => {
+        setSubmitting(true);
+        await onSubmit(finalScore, answers);
+        setSubmitting(false);
+        setStep(99); // Show Result
+    };
+
+    return (
+        <div className={styles.modal} style={{ zIndex: 1100 }}>
+            <div className={`${styles.modalContent} ${styles.examContainer}`}>
+                <div className={styles.modalHeader}>
+                    <button onClick={onClose} className={styles.modalBack}>
+                        <ChevronLeft size={24} />
+                        Cancelar
+                    </button>
+                    <h3 className={styles.modalTitle}>Examen</h3>
+                    <div style={{ width: 40 }}></div>
+                </div>
+
+                <div className={styles.examBody}>
+                    {step === 0 && (
+                        <div style={{ textAlign: 'center' }}>
+                            <h2 className={styles.examTitle}>{examData.exámen?.courseName || 'Examen de Inducción'}</h2>
+                            <p className={styles.examDescription}>
+                                Este examen consta de {totalQuestions} preguntas. Debes responderlas todas para completar tu inducción.
+                                Necesitas una calificación mínima de 70% para aprobar.
+                            </p>
+                            <button className={styles.stepButtonPrimary} onClick={() => setStep(1)} style={{ width: '100%', justifyContent: 'center' }}>
+                                Comenzar Examen
+                            </button>
+                        </div>
+                    )}
+
+                    {step > 0 && step <= totalQuestions && (
+                        <div>
+                            <div className={styles.examMeta}>
+                                <span>Pregunta {step} de {totalQuestions}</span>
+                                <span>{Math.round(((step - 1) / totalQuestions) * 100)}%</span>
+                            </div>
+                            <div className={styles.examProgressBar}>
+                                <div className={styles.examProgressFill} style={{ width: `${((step - 1) / totalQuestions) * 100}%` }}></div>
+                            </div>
+
+                            <h3 className={styles.questionText}>{questions[step - 1].pregunta}</h3>
+
+                            <div className={styles.optionsContainer}>
+                                {questions[step - 1].opciones.map((opt, idx) => (
+                                    <label key={idx} className={`${styles.optionLabel} ${answers[questions[step - 1].id] === opt ? styles.optionLabelSelected : ''}`}>
+                                        <input
+                                            type="radio"
+                                            name={`q-${questions[step - 1].id}`}
+                                            value={opt}
+                                            checked={answers[questions[step - 1].id] === opt}
+                                            onChange={() => handleOptionSelect(questions[step - 1].id, opt)}
+                                            className={styles.radioInput}
+                                        />
+                                        <span className={styles.optionText}>{opt}</span>
+                                    </label>
+                                ))}
+                            </div>
+
+                            <div style={{ marginTop: '32px' }}>
+                                <button
+                                    className={styles.stepButtonPrimary}
+                                    onClick={handleNext}
+                                    disabled={!answers[questions[step - 1].id]}
+                                    style={{ width: '100%', justifyContent: 'center', opacity: !answers[questions[step - 1].id] ? 0.5 : 1 }}
+                                >
+                                    {step === totalQuestions ? 'Finalizar Examen' : 'Siguiente Pregunta'}
+                                </button>
+                            </div>
+                        </div>
+                    )}
+
+                    {step === 99 && (
+                        <div className={styles.resultContainer}>
+                            <div className={styles.resultEmoji}>{score >= 70 ? '🎉' : '⚠️'}</div>
+                            <h2 className={styles.resultTitle}>{score >= 70 ? '¡Felicidades!' : 'Inténtalo de nuevo'}</h2>
+                            <p className={styles.resultScore}>
+                                Tu calificación: <strong className={score >= 70 ? styles.scoreHigh : styles.scoreLow}>{score.toFixed(1)}%</strong>
+                            </p>
+
+                            <p className={styles.resultText}>
+                                {score >= 70
+                                    ? 'Has aprobado el examen de inducción correctamente. Se ha registrado tu avance.'
+                                    : 'Necesitas un mínimo de 70% para aprobar. Por favor, repasa el material e inténtalo nuevamente.'}
+                            </p>
+
+                            <button
+                                className={styles.stepButtonPrimary}
+                                onClick={onClose}
+                                style={{ width: '100%', justifyContent: 'center' }}
+                            >
+                                {score >= 70 ? 'Finalizar y Cerrar' : 'Cerrar'}
+                            </button>
+                        </div>
+                    )}
+                </div>
+            </div>
         </div>
     );
 }

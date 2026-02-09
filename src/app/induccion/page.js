@@ -393,6 +393,45 @@ export default function InductionPage() {
         }
     };
 
+    const handleExamSubmit = async (score, answers) => {
+        if (!user) return;
+
+        try {
+            // Find user's training record
+            const trainingQuery = query(collection(db, 'training_records'), where('employeeId', '==', user.employeeId || ''));
+            const snapshot = await getDocs(trainingQuery);
+
+            if (!snapshot.empty) {
+                const recordId = snapshot.docs[0].id;
+                // Add exam result to 'inductionExams' array or similar field
+                const examResult = {
+                    examName: 'INDUCCIÓN A LA EMPRESA',
+                    score: score,
+                    date: new Date().toISOString(),
+                    passed: score >= 80
+                };
+
+                // For now, let's assume we store it in a subcollection or update a field
+                // Simple approach: update a dedicated field for Induction status
+                await updateDoc(doc(db, 'training_records', recordId), {
+                    inductionScore: score,
+                    inductionDate: new Date().toISOString(),
+                    inductionPassed: score >= 80,
+                    inductionAnswers: answers // Optional: store answers
+                });
+
+                toast.success('Enviado', `Examen completado. Calificación: ${score.toFixed(1)}%`);
+            } else {
+                // Fallback if no training record, maybe create one or just log
+                console.warn("No training record found for user", user.employeeId);
+                toast.success('Completado', `Calificación: ${score.toFixed(1)}% (No se guardó en expediente)`);
+            }
+        } catch (error) {
+            console.error("Error saving exam:", error);
+            toast.error("Error", "No se pudo guardar el resultado del examen");
+        }
+    };
+
     return (
         <div className={styles.main}>
             {/* Navbar Global */}
@@ -536,6 +575,13 @@ export default function InductionPage() {
                                 {showCreateForm ? 'Cancelar' : '+ Nuevo Curso'}
                             </button>
                         )}
+                        <button
+                            className={styles.toggleBtn}
+                            style={{ background: 'var(--color-primary)', color: 'white', border: 'none', marginLeft: '12px' }}
+                            onClick={() => setShowExamModal(true)}
+                        >
+                            📝 Examen de Inducción
+                        </button>
                     </div>
 
                     {materialExpanded && (
@@ -846,6 +892,116 @@ export default function InductionPage() {
                     </div>
                 </div>
             )}
+        </div>
+    );
+}
+
+// --- EXAM MODAL COMPONENT ---
+function ExamModal({ isOpen, onClose, examData, onSubmit }) {
+    const [answers, setAnswers] = useState({});
+    const [step, setStep] = useState(0); // 0: Intro, 1...N: Questions, 99: Result
+    const [score, setScore] = useState(0);
+    const [submitting, setSubmitting] = useState(false);
+
+    if (!isOpen || !examData) return null;
+
+    const questions = examData.cuestionario || [];
+    const totalQuestions = questions.length;
+
+    const handleOptionSelect = (questionId, option) => {
+        setAnswers(prev => ({ ...prev, [questionId]: option }));
+    };
+
+    const handleNext = () => {
+        if (step < totalQuestions) {
+            setStep(prev => prev + 1);
+        } else {
+            // Calculate Score
+            let correctCount = 0;
+            questions.forEach(q => {
+                if (answers[q.id] === q.respuesta) {
+                    correctCount++;
+                }
+            });
+            const finalScore = (correctCount / totalQuestions) * 100;
+            setScore(finalScore);
+            handleSubmit(finalScore);
+        }
+    };
+
+    const handleSubmit = async (finalScore) => {
+        setSubmitting(true);
+        await onSubmit(finalScore, answers);
+        setSubmitting(false);
+        setStep(99); // Show Result
+    };
+
+    return (
+        <div className={styles.modalBackdrop}>
+            <div className={styles.modalContent} style={{ maxWidth: '600px' }}>
+                <button className={styles.closeModalBtn} onClick={onClose}>✕</button>
+
+                {step === 0 && (
+                    <div style={{ textAlign: 'center', padding: '20px' }}>
+                        <h2>{examData.exámen?.courseName || 'Examen'}</h2>
+                        <p>Este examen consta de {totalQuestions} preguntas. Debes responderlas todas para completar tu inducción.</p>
+                        <Button onClick={() => setStep(1)} style={{ marginTop: '20px' }}>Comenzar Examen</Button>
+                    </div>
+                )}
+
+                {step > 0 && step <= totalQuestions && (
+                    <div>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '10px', fontSize: '0.9rem', color: 'var(--text-secondary)' }}>
+                            <span>Pregunta {step} de {totalQuestions}</span>
+                            <span>Progreso: {Math.round(((step - 1) / totalQuestions) * 100)}%</span>
+                        </div>
+                        <div style={{ background: 'var(--bg-secondary)', height: '6px', borderRadius: '3px', marginBottom: '20px', overflow: 'hidden' }}>
+                            <div style={{ height: '100%', background: 'var(--color-primary)', width: `${((step - 1) / totalQuestions) * 100}%`, transition: 'width 0.3s' }}></div>
+                        </div>
+
+                        <h3 style={{ marginBottom: '20px' }}>{questions[step - 1].pregunta}</h3>
+
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', textAlign: 'left' }}>
+                            {questions[step - 1].opciones.map((opt, idx) => (
+                                <label key={idx} className={`${styles.optionLabel} ${answers[questions[step - 1].id] === opt ? styles.selectedOption : ''}`} style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '10px', borderRadius: '8px', border: '1px solid var(--border-color)', cursor: 'pointer', transition: 'all 0.2s' }}>
+                                    <input
+                                        type="radio"
+                                        name={`q-${questions[step - 1].id}`}
+                                        value={opt}
+                                        checked={answers[questions[step - 1].id] === opt}
+                                        onChange={() => handleOptionSelect(questions[step - 1].id, opt)}
+                                        style={{ accentColor: 'var(--color-primary)' }}
+                                    />
+                                    {opt}
+                                </label>
+                            ))}
+                        </div>
+
+                        <div style={{ marginTop: '24px', display: 'flex', justifyContent: 'flex-end' }}>
+                            <Button
+                                onClick={handleNext}
+                                disabled={!answers[questions[step - 1].id]}
+                            >
+                                {step === totalQuestions ? 'Finalizar Examen' : 'Siguiente'}
+                            </Button>
+                        </div>
+                    </div>
+                )}
+
+                {step === 99 && (
+                    <div style={{ textAlign: 'center', padding: '20px' }}>
+                        <div style={{ fontSize: '48px', marginBottom: '10px' }}>{score >= 80 ? '🎉' : '⚠️'}</div>
+                        <h2>{score >= 80 ? '¡Felicidades!' : 'Inténtalo de nuevo'}</h2>
+                        <p style={{ fontSize: '1.2rem', margin: '10px 0' }}>Tu calificación: <strong>{score.toFixed(1)}%</strong></p>
+                        <p style={{ color: 'var(--text-secondary)' }}>
+                            {score >= 80
+                                ? 'Has aprobado el examen de inducción.'
+                                : 'Necesitas un mínimo de 80% para aprobar. Por favor, repasa el material.'}
+                        </p>
+                        <Button onClick={onClose} style={{ marginTop: '20px' }}>Cerrar</Button>
+                    </div>
+                )}
+            </div>
         </div>
     );
 }

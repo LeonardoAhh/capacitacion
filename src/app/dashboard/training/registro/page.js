@@ -223,11 +223,11 @@ export default function RegistroEmpleadosPage() {
                                             className={styles.select}
                                         >
                                             <option value="">Seleccionar...</option>
-                                            <option value="1">1er Turno</option>
-                                            <option value="2">2do Turno</option>
-                                            <option value="3">3er Turno</option>
-                                            <option value="4">4to Turno (Mixto)</option>
-                                            <option value="Admin">Administrativo</option>
+                                            <option value="1">1</option>
+                                            <option value="2">2</option>
+                                            <option value="3">3</option>
+                                            <option value="4">4</option>
+                                            <option value="Mixto">Mixto</option>
                                         </select>
                                     </div>
                                 </div>

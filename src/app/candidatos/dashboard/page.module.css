@@ -2105,3 +2105,210 @@
 [data-theme="dark"] .importantCardText {
     color: #ebebf5;
 }
+
+/* ==================== EXAM MODAL STYLES ==================== */
+.examContainer {
+    width: 100%;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    overflow: hidden;
+}
+
+@media (min-width: 768px) {
+    .examContainer {
+        max-width: 700px;
+    }
+}
+
+.examBody {
+    padding: 24px;
+    overflow-y: auto;
+    flex: 1;
+    -webkit-overflow-scrolling: touch;
+}
+
+/* Typography */
+.examTitle {
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin-bottom: 16px;
+    color: #1c1c1e;
+    text-align: center;
+}
+
+[data-theme="dark"] .examTitle {
+    color: #ffffff;
+}
+
+.examDescription {
+    color: #8e8e93;
+    margin-bottom: 24px;
+    line-height: 1.5;
+    text-align: center;
+}
+
+[data-theme="dark"] .examDescription {
+    color: #aeaeb2;
+}
+
+.examMeta {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
+    font-size: 0.9rem;
+    color: #8e8e93;
+}
+
+[data-theme="dark"] .examMeta {
+    color: #aeaeb2;
+}
+
+/* Progress Bar */
+.examProgressBar {
+    background: rgba(0, 0, 0, 0.05);
+    height: 6px;
+    border-radius: 3px;
+    margin-bottom: 24px;
+    overflow: hidden;
+}
+
+[data-theme="dark"] .examProgressBar {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.examProgressFill {
+    height: 100%;
+    background: #007aff;
+    transition: width 0.3s ease;
+}
+
+[data-theme="dark"] .examProgressFill {
+    background: #0a84ff;
+}
+
+/* Questions */
+.questionText {
+    margin-bottom: 20px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #1c1c1e;
+    line-height: 1.4;
+}
+
+[data-theme="dark"] .questionText {
+    color: #ffffff;
+}
+
+.optionsContainer {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.optionLabel {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 16px;
+    border-radius: 12px;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    background: #ffffff;
+    cursor: pointer;
+    transition: all 0.2s;
+    color: #1c1c1e;
+}
+
+[data-theme="dark"] .optionLabel {
+    background: #2c2c2e;
+    border-color: rgba(255, 255, 255, 0.1);
+    color: #ffffff;
+}
+
+.optionLabel:hover {
+    background: rgba(0, 0, 0, 0.02);
+}
+
+[data-theme="dark"] .optionLabel:hover {
+    background: #3a3a3c;
+}
+
+.optionLabelSelected {
+    border-color: #007aff;
+    background: rgba(0, 122, 255, 0.05);
+}
+
+[data-theme="dark"] .optionLabelSelected {
+    border-color: #0a84ff;
+    background: rgba(10, 132, 255, 0.15);
+}
+
+.radioInput {
+    accent-color: #007aff;
+    width: 20px;
+    height: 20px;
+}
+
+.optionText {
+    font-size: 0.95rem;
+    line-height: 1.4;
+}
+
+/* Results */
+.resultContainer {
+    text-align: center;
+    padding: 20px 0;
+}
+
+.resultEmoji {
+    font-size: 64px;
+    margin-bottom: 16px;
+}
+
+.resultTitle {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-bottom: 8px;
+    color: #1c1c1e;
+}
+
+[data-theme="dark"] .resultTitle {
+    color: #ffffff;
+}
+
+.resultScore {
+    font-size: 1.1rem;
+    margin: 0 0 24px 0;
+    color: #8e8e93;
+}
+
+[data-theme="dark"] .resultScore {
+    color: #aeaeb2;
+}
+
+.resultText {
+    margin-bottom: 32px;
+    line-height: 1.5;
+    color: #8e8e93;
+}
+
+[data-theme="dark"] .resultText {
+    color: #aeaeb2;
+}
+
+.scoreHigh {
+    color: #34c759;
+}
+
+[data-theme="dark"] .scoreHigh {
+    color: #30d158;
+}
+
+.scoreLow {
+    color: #ff9500;
+}
+
+[data-theme="dark"] .scoreLow {
+    color: #ff9f0a;
+}

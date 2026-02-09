@@ -1192,9 +1192,10 @@ export default function EmployeesPage() {
                                             className={styles.formInput}
                                         >
                                             <option value="">Seleccionar...</option>
-                                            <option value="Matutino">Matutino</option>
-                                            <option value="Vespertino">Vespertino</option>
-                                            <option value="Nocturno">Nocturno</option>
+                                            <option value="1">1</option>
+                                            <option value="2">2</option>
+                                            <option value="3">3</option>
+                                            <option value="4">4</option>
                                             <option value="Mixto">Mixto</option>
                                         </select>
                                     </div>
