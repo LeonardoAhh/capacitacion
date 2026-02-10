@@ -47,20 +47,20 @@ export default function ModernLogin({
                             minHeight: '400px',
                             display: 'flex',
                             flexDirection: 'column',
-                            alignments: 'center',
+                            alignItems: 'center',
                             justifyContent: 'center'
                         }}
                     >
-                        <AILoadingState />
-                        <motion.p
-                            initial={{ opacity: 0 }}
-                            animate={{ opacity: 1 }}
-                            transition={{ delay: 1 }}
-                            className={styles.subtitle}
-                            style={{ position: 'absolute', bottom: '40px', fontSize: '0.9rem' }}
-                        >
-                            Verificando credenciales de administrador...
-                        </motion.p>
+                        <AILoadingState
+                            interval={1000}
+                            texts={[
+                                "Verificando credenciales...",
+                                "Validando acceso...",
+                                "Iniciando sesión...",
+                                "Preparando entorno...",
+                                "¡Bienvenido!"
+                            ]}
+                        />
                     </motion.div>
                 ) : (
                     <>
