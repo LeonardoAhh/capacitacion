@@ -1,8 +1,8 @@
-﻿/* ==================== BASE LAYOUT ==================== */
+/* ==================== BASE LAYOUT ==================== */
 .main {
     min-height: 100vh;
     padding: var(--spacing-xl) 0;
-    background: var(--bg-primary);
+    background: transparent;
     position: relative;
     overflow: hidden;
 }
@@ -15,7 +15,7 @@
 }
 
 [data-theme="dark"] .main {
-    background: #000000;
+    background: transparent;
 }
 
 .profileContainer {

@@ -1,9 +1,9 @@
-﻿/* ==================== PUESTOS PAGE - MINIMALIST REDESIGN ==================== */
+/* ==================== PUESTOS PAGE - MINIMALIST REDESIGN ==================== */
 
 /* === BASE LAYOUT === */
 .main {
     min-height: 100vh;
-    background: var(--bg-primary);
+    background: transparent;
     position: relative;
     overflow-x: hidden;
 }

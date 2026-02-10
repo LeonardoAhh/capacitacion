@@ -1,8 +1,8 @@
-﻿/* Cursos Page - Premium Theme Support */
+/* Cursos Page - Premium Theme Support */
 .main {
     min-height: 100vh;
     padding: 2rem;
-    background: var(--bg-primary);
+    background: transparent;
 }
 
 .profileContainer {
@@ -13,7 +13,7 @@
 }
 
 [data-theme="dark"] .main {
-    background: #000000;
+    background: transparent;
 }
 
 .profileContainer {

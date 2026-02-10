@@ -2,11 +2,11 @@
 .main {
     min-height: 100vh;
     padding: 2rem;
-    background: var(--bg-primary);
+    background: transparent;
 }
 
 [data-theme="dark"] .main {
-    background: #000000;
+    background: transparent;
 }
 
 .container {

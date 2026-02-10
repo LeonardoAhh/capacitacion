@@ -64,8 +64,12 @@ export async function uploadFile(buffer, name, mimeType, folderId = null) {
             },
         });
 
-        // Construir URL pública estable para imágenes
+        // Construir URL pública usando thumbnail API (más confiable para imágenes públicas)
+        // sz=w1000 especifica el ancho máximo de 1000px
         const directUrl = `https://drive.google.com/thumbnail?id=${file.data.id}&sz=w1000`;
+
+        console.log('📸 [Drive Upload] URL generada:', directUrl);
+        console.log('📸 [Drive Upload] File ID:', file.data.id);
 
         return {
             id: file.data.id,

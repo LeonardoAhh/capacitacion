@@ -1,4 +1,4 @@
-﻿/* ==================== PERFIL PAGE - iOS STYLE REDESIGN ==================== */
+/* ==================== PERFIL PAGE - iOS STYLE REDESIGN ==================== */
 
 /* === BASE LAYOUT === */
 .main {
@@ -19,7 +19,7 @@
 }
 
 [data-theme="dark"] .main {
-    background: #000000;
+    background: transparent;
 }
 
 .profileContainer {

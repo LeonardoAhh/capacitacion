@@ -1,6 +1,6 @@
 .container {
     min-height: 100vh;
-    background-color: var(--bg-primary);
+    background-color: transparent;
     /* Depende de globals.css */
     color: var(--text-primary);
 }

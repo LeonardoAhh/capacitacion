@@ -10,6 +10,7 @@ import Link from 'next/link';
 import { Search, ArrowLeft, Users, CheckCircle, Clock, FileText, FileCheck, AlertCircle, Bell, MessageCircle, Key, Filter, X } from 'lucide-react';
 import { useTheme } from '@/contexts/ThemeContext';
 import CandidateDrawer from '@/components/Dashboard/CandidateDrawer';
+import ProfileDropdown from '@/components/ProfileDropdown/ProfileDropdown';
 
 // Custom hook for data fetching
 function useDataFetching() {
@@ -338,14 +339,18 @@ export default function CandidateMonitoringPage() {
         <div className={styles.container}>
             <header className={styles.header}>
                 <div className={styles.headerContent}>
-                    <div className={styles.title}>
-                        <h1>Monitoreo de Candidatos</h1>
-                        <p className={styles.subtitle}>Supervisa el avance de inducción en tiempo real</p>
+                    <div className={styles.headerLeft}>
+                        <Link href="/dashboard" className={styles.backButton} aria-label="Volver al Dashboard">
+                            <ArrowLeft size={20} />
+                        </Link>
+                        <div className={styles.title}>
+                            <h1>Monitoreo de Candidatos</h1>
+                            <p className={styles.subtitle}>Supervisa el avance de inducción en tiempo real</p>
+                        </div>
                     </div>
-                    <Link href="/dashboard" className={styles.backButton}>
-                        <ArrowLeft size={18} />
-                        <span>Volver al Dashboard</span>
-                    </Link>
+                    <div className={styles.headerActions}>
+                        <ProfileDropdown className={styles.profileDropdown} />
+                    </div>
                 </div>
             </header>
 

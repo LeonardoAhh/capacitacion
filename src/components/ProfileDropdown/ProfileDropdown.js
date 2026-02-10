@@ -68,7 +68,7 @@ function useTheme() {
     return { theme, toggleTheme, isLoaded };
 }
 
-export default function ProfileDropdown({ className, ...props }) {
+export default function ProfileDropdown({ className = '', ...props }) {
     const { user, signOut } = useAuth();
     const router = useRouter();
     const [isOpen, setIsOpen] = React.useState(false);
@@ -278,8 +278,3 @@ export default function ProfileDropdown({ className, ...props }) {
         </div>
     );
 }
-
-// PropTypes para mejor documentación (opcional)
-ProfileDropdown.defaultProps = {
-    className: '',
-};
