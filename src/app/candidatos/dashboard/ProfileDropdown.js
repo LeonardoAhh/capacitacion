@@ -25,6 +25,7 @@ const MENU_ITEMS = {
 export default function ProfileDropdown({ candidate, onLogout, timeLeft, toggleTheme }) {
     const [isOpen, setIsOpen] = useState(false);
     const [focusedIndex, setFocusedIndex] = useState(-1);
+    const [imgError, setImgError] = useState(false);
     const dropdownRef = useRef(null);
     const triggerRef = useRef(null);
     const menuItemRefs = useRef([]);
@@ -171,13 +172,14 @@ export default function ProfileDropdown({ candidate, onLogout, timeLeft, toggleT
 
                 <div className={styles.avatarContainer}>
                     <div className={styles.avatar}>
-                        {photoUrl ? (
+                        {photoUrl && !imgError ? (
                             // eslint-disable-next-line @next/next/no-img-element
                             <img
                                 src={photoUrl}
                                 alt=""
                                 className={styles.avatarImg}
                                 aria-hidden="true"
+                                onError={() => setImgError(true)}
                             />
                         ) : (
                             <User size={20} color="#1c1c1e" aria-hidden="true" />

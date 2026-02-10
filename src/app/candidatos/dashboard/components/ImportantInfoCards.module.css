@@ -1,0 +1,82 @@
+/* ==================== IMPORTANT INFO GRID ==================== */
+.importantGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 16px;
+    margin-top: 16px;
+}
+
+.importantCard {
+    background: rgba(255, 255, 255, 0.6);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-radius: 16px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+    height: 100%;
+    transition: transform 0.2s;
+}
+
+.importantCard:hover {
+    transform: translateY(-2px);
+}
+
+[data-theme="dark"] .importantCard {
+    background: rgba(28, 28, 30, 0.6);
+    border-color: rgba(255, 255, 255, 0.15);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+}
+
+.importantCardIcon {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    background: rgba(0, 122, 255, 0.1);
+    color: #007aff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+[data-theme="dark"] .importantCardIcon {
+    background: rgba(10, 132, 255, 0.15);
+    color: #0a84ff;
+}
+
+.importantCardText {
+    font-size: 14px;
+    line-height: 1.4;
+    color: #1c1c1e;
+    font-weight: 500;
+}
+
+[data-theme="dark"] .importantCardText {
+    color: #ebebf5;
+}
+
+/* Reusing section header style if needed, or keeping it consistent */
+.sectionHeader {
+    font-size: 19px;
+    font-weight: 700;
+    color: #1c1c1e;
+    margin: 0 0 16px 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+[data-theme="dark"] .sectionHeader {
+    color: #ffffff;
+}
+
+@media (max-width: 768px) {
+    .sectionHeader {
+        font-size: 17px;
+        margin-bottom: 12px;
+    }
+}

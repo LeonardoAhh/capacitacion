@@ -1,0 +1,204 @@
+/* ==================== COURSES GRID ==================== */
+.coursesGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 16px;
+    margin-top: 16px;
+}
+
+.courseCard {
+    background: rgba(255, 255, 255, 0.6);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-radius: 20px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 16px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    height: 100%;
+}
+
+.courseCard:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.08);
+}
+
+.courseCard:active {
+    transform: scale(0.98);
+}
+
+[data-theme="dark"] .courseCard {
+    background: rgba(28, 28, 30, 0.6);
+    border-color: rgba(255, 255, 255, 0.15);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+}
+
+.courseCardHeader {
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+}
+
+.courseIcon {
+    width: 44px;
+    height: 44px;
+    border-radius: 10px;
+    background: linear-gradient(135deg, #007aff 0%, #5856d6 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    flex-shrink: 0;
+}
+
+.courseIconCompleted {
+    background: linear-gradient(135deg, #34c759 0%, #30d158 100%);
+}
+
+/* [data-theme="dark"] .courseIcon {} - Removed empty rule */
+
+@media (min-width: 768px) {
+    .courseIcon {
+        width: 56px;
+        height: 56px;
+        border-radius: 14px;
+    }
+}
+
+.courseContent {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.courseCardTitle {
+    font-size: 16px;
+    font-weight: 700;
+    color: #1c1c1e;
+    line-height: 1.4;
+    white-space: normal;
+}
+
+[data-theme="dark"] .courseCardTitle {
+    color: #ffffff;
+}
+
+.courseDuration {
+    font-size: 14px;
+    color: #8e8e93;
+}
+
+.courseCardFooter {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: auto;
+    padding-top: 16px;
+    border-top: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+[data-theme="dark"] .courseCardFooter {
+    border-top-color: rgba(255, 255, 255, 0.05);
+}
+
+.btnMarkComplete {
+    padding: 10px 16px;
+    background: transparent;
+    border: 1px solid #007AFF;
+    color: #007AFF;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    white-space: nowrap;
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+}
+
+.btnMarkComplete:hover {
+    background: rgba(0, 122, 255, 0.05);
+}
+
+.btnCompleted {
+    padding: 10px 16px;
+    background: rgba(52, 199, 89, 0.15);
+    color: #34C759;
+    border: 1px solid transparent;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    white-space: nowrap;
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+}
+
+.btnCompleted:hover {
+    background: rgba(52, 199, 89, 0.25);
+    border-color: #34C759;
+}
+
+.chevron {
+    color: #c7c7cc;
+    flex-shrink: 0;
+}
+
+[data-theme="dark"] .chevron {
+    color: #48484a;
+}
+
+/* Empty State */
+.emptyState {
+    padding: 48px 24px;
+    text-align: center;
+    color: #8e8e93;
+    background: rgba(255, 255, 255, 0.6);
+    backdrop-filter: blur(20px);
+    border-radius: 12px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+}
+
+[data-theme="dark"] .emptyState {
+    background: rgba(28, 28, 30, 0.4);
+}
+
+.emptyState p {
+    margin: 0;
+    font-size: 15px;
+}
+
+.sectionHeaderContainer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 8px;
+}
+
+.sectionHeader {
+    font-size: clamp(17px, 4vw, 19px);
+    font-weight: 700;
+    color: #1c1c1e;
+    margin: 0 0 16px 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+[data-theme="dark"] .sectionHeader {
+    color: #ffffff;
+}

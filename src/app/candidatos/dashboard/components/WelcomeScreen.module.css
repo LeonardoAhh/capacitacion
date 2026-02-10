@@ -1,0 +1,278 @@
+/* ==================== WELCOME SCREEN ==================== */
+.welcomeOverlay {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #f2f2f7;
+    padding: 24px;
+    position: relative;
+    overflow: hidden;
+}
+
+[data-theme="dark"] .welcomeOverlay {
+    background: #000000;
+}
+
+.backgroundGradient {
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse at center, rgba(16, 185, 129, 0.05) 0%, transparent 60%, rgba(6, 182, 212, 0.05) 100%);
+    filter: blur(60px);
+    z-index: 0;
+}
+
+.shapesContainer {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    pointer-events: none;
+    z-index: 0;
+}
+
+.welcomeCard {
+    position: relative;
+    z-index: 10;
+    width: 100%;
+    max-width: 520px;
+    background: rgba(255, 255, 255, 0.6);
+    backdrop-filter: blur(40px);
+    -webkit-backdrop-filter: blur(40px);
+    border-radius: 28px;
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
+    padding: 48px 40px;
+    text-align: center;
+    animation: fadeInUp 0.8s ease-out;
+}
+
+[data-theme="dark"] .welcomeCard {
+    background: rgba(28, 28, 30, 0.6);
+    border-color: rgba(255, 255, 255, 0.15);
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.welcomeHeader {
+    margin-bottom: 24px;
+}
+
+.welcomeAvatar {
+    width: 160px;
+    height: 160px;
+    margin: 0 auto;
+    background: linear-gradient(135deg, #007aff 0%, #5856d6 100%);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    box-shadow: 0 12px 32px rgba(0, 122, 255, 0.4);
+    animation: bounceIn 0.8s ease-out 0.2s backwards;
+    overflow: hidden;
+}
+
+@keyframes bounceIn {
+    0% {
+        transform: scale(0);
+    }
+
+    50% {
+        transform: scale(1.1);
+    }
+
+    100% {
+        transform: scale(1);
+    }
+}
+
+.welcomeTitle {
+    font-size: clamp(24px, 5vw, 32px);
+    font-weight: 800;
+    color: #1c1c1e;
+    margin: 0 0 8px 0;
+    letter-spacing: -0.5px;
+}
+
+[data-theme="dark"] .welcomeTitle {
+    color: #ffffff;
+}
+
+.welcomeTitle span {
+    background: linear-gradient(135deg, #007aff 0%, #5856d6 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.welcomeSubtitle {
+    font-size: clamp(18px, 4vw, 24px);
+    font-weight: 500;
+    color: #636366;
+    margin: 8px 0 32px 0;
+    letter-spacing: -0.5px;
+}
+
+[data-theme="dark"] .welcomeSubtitle {
+    color: #a1a1a6;
+}
+
+.welcomeMessage {
+    text-align: left;
+    margin-bottom: 28px;
+}
+
+.welcomeMessage p {
+    font-size: 15px;
+    line-height: 1.7;
+    color: #3c3c43;
+    margin: 0 0 12px 0;
+}
+
+[data-theme="dark"] .welcomeMessage p {
+    color: #ebebf5;
+}
+
+.welcomeMessage strong {
+    color: #007aff;
+    font-weight: 600;
+}
+
+[data-theme="dark"] .welcomeMessage strong {
+    color: #0a84ff;
+}
+
+.infoGrid {
+    display: flex;
+    gap: 32px;
+    margin-bottom: 32px;
+    padding: 24px 0;
+    border-top: 1px solid rgba(60, 60, 67, 0.1);
+    border-bottom: 1px solid rgba(60, 60, 67, 0.1);
+    background: transparent;
+}
+
+[data-theme="dark"] .infoGrid {
+    border-color: rgba(84, 84, 88, 0.5);
+    background: transparent;
+}
+
+.infoItem {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    align-items: flex-start;
+}
+
+.infoLabel {
+    font-size: 12px;
+    font-weight: 600;
+    color: #8e8e93;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.infoValue {
+    font-size: 15px;
+    font-weight: 600;
+    color: #1c1c1e;
+    text-align: left;
+}
+
+[data-theme="dark"] .infoValue {
+    color: #ffffff;
+}
+
+.welcomeButton {
+    width: 100%;
+    padding: 16px 24px;
+    background: linear-gradient(135deg, #007aff 0%, #5856d6 100%);
+    border: none;
+    border-radius: 14px;
+    color: white;
+    font-size: 17px;
+    font-weight: 700;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    transition: all 0.3s ease;
+    box-shadow: 0 8px 24px rgba(0, 122, 255, 0.35);
+}
+
+.welcomeButton:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 12px 32px rgba(0, 122, 255, 0.45);
+}
+
+.welcomeButton:active {
+    transform: translateY(0);
+}
+
+.welcomeButton:focus-visible {
+    outline: 3px solid #007aff;
+    outline-offset: 3px;
+    box-shadow: 0 8px 24px rgba(0, 122, 255, 0.35), 0 0 0 6px rgba(0, 122, 255, 0.2);
+}
+
+[data-theme="dark"] .welcomeButton:focus-visible {
+    outline-color: #0a84ff;
+    box-shadow: 0 8px 24px rgba(10, 132, 255, 0.35), 0 0 0 6px rgba(10, 132, 255, 0.3);
+}
+
+/* Shapes Positioning - REMOVED */
+
+/* Responsive */
+@media (max-width: 480px) {
+    .welcomeOverlay {
+        padding: 16px;
+    }
+
+    .welcomeCard {
+        padding: 28px 20px;
+        border-radius: 24px;
+    }
+
+    .welcomeAvatar {
+        width: 100px;
+        height: 100px;
+        margin-bottom: 20px;
+    }
+
+    .welcomeTitle {
+        font-size: 24px;
+    }
+
+    .welcomeSubtitle {
+        font-size: 18px;
+        margin-bottom: 24px;
+    }
+
+    .infoGrid {
+        gap: 12px;
+        flex-direction: column;
+    }
+
+    .infoItem {
+        align-items: center;
+    }
+
+    /* Center items on mobile if stacked? Or keep left aligned. Original was a bit flexy */
+    /* Original CSS had .welcomeInfo with flex-direction: column; gap 12px */
+    .shapesContainer {
+        opacity: 0.5;
+    }
+}

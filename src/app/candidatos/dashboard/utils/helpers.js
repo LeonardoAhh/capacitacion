@@ -74,7 +74,19 @@ export function extractFirstName(fullName) {
  */
 export function getCandidatePhotoUrl(candidate) {
     if (!candidate) return null;
-    return candidate.photoUrl || candidate.photoURL || candidate.photo || candidate.foto || null;
+    const url = candidate.photoUrl || candidate.photoURL || candidate.photo || candidate.foto || null;
+
+    if (!url) return null;
+
+    // Check for Google Drive URL
+    if (url.includes('drive.google.com') || url.includes('docs.google.com')) {
+        const idMatch = url.match(/\/d\/([a-zA-Z0-9_-]+)/) || url.match(/id=([a-zA-Z0-9_-]+)/);
+        if (idMatch && idMatch[1]) {
+            return `https://lh3.googleusercontent.com/d/${idMatch[1]}`;
+        }
+    }
+
+    return url;
 }
 
 /**
