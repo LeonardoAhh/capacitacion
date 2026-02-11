@@ -14,6 +14,9 @@ import { useTheme } from '@/contexts/ThemeContext';
 import AvatarSelector from '@/components/AvatarSelector/AvatarSelector';
 import SetupWizard from '@/components/SetupWizard/SetupWizard';
 import UserMenu from '@/components/UserMenu/UserMenu';
+import { useGamification } from '@/hooks/useGamification';
+import LevelProgress from '@/components/Gamification/LevelProgress';
+import BadgesGallery from '@/components/Gamification/BadgesGallery';
 import { formatDisplayName } from '@/utils/nameUtils';
 import {
     Drawer,
@@ -40,6 +43,8 @@ const themeLineColors = {
 export default function TrainingDashboard() {
     const { user, courses, loading, stats, markAsViewed, markAsCompleted, updateTheme, updateAvatar, updateNickname, logout } = useTrainingData();
     const { theme, setTheme, availableThemes } = useTheme();
+    const gamification = useGamification(user, courses, stats);
+
     const [showWelcome, setShowWelcome] = useState(false);
     const [showSetupWizard, setShowSetupWizard] = useState(false);
     const [showAvatarSelector, setShowAvatarSelector] = useState(false);
@@ -236,6 +241,20 @@ export default function TrainingDashboard() {
 
             {/* Main Content */}
             <main className={styles.main} style={{ position: 'relative', zIndex: 1 }}>
+
+                {/* GAMIFICATION: Level Progress */}
+                <div style={{ marginBottom: '2rem' }}>
+                    <LevelProgress
+                        level={gamification.level}
+                        rank={gamification.rank}
+                        nextRank={gamification.nextRank}
+                        xp={gamification.xp}
+                        progress={gamification.progress}
+                        earnedBadges={gamification.earnedBadgesCount}
+                        totalBadges={gamification.badges.length}
+                    />
+                </div>
+
                 {/* Stats Cards */}
                 {/* Stats Overview */}
                 <motion.div
@@ -380,6 +399,9 @@ export default function TrainingDashboard() {
                         ))}
                     </motion.div>
                 )}
+                {/* Badges Gallery at Bottom */}
+                <BadgesGallery badges={gamification.badges} />
+
             </main>
 
             {/* Course Modal */}
