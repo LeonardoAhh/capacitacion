@@ -17,7 +17,14 @@ const AVATAR_STYLES = [
     { id: 'avataaars', name: 'Caricatura' },
     { id: 'bottts', name: 'Robots' },
     { id: 'fun-emoji', name: 'Emojis' },
-    { id: 'lorelei', name: 'Lorelei' }
+    { id: 'lorelei', name: 'Lorelei' },
+    { id: 'notionists', name: 'Notion' },
+    { id: 'open-peeps', name: 'Open Peeps' },
+    { id: 'micah', name: 'Micah' },
+    { id: 'personas', name: 'Personas' },
+    { id: 'pixel-art', name: 'Pixel Art' },
+    { id: 'miniavs', name: 'Miniavs' },
+    { id: 'identicon', name: 'Patrones' }
 ];
 
 export default function SetupWizard({ isOpen, onClose, user, onUpdateAvatar, onUpdateTheme, onUpdateNickname }) {

@@ -83,7 +83,11 @@ service cloud.firestore {
                     && isValidString(request.resource.data.employeeId)
                     && isValidString(request.resource.data.accessCode);
       
-      allow update: if hasAnyRole(['super_admin', 'rh']);
+      // FIX: Permitir actualizar avatar/theme/nickname a usuarios "logueados" (sin Auth de Firebase)
+      // Limitamos los campos permitidos para evitar que cambien su ID o Nombre
+      allow update: if hasAnyRole(['super_admin', 'rh']) || 
+                       request.resource.data.diff(resource.data).affectedKeys()
+                         .hasOnly(['avatar', 'theme', 'nickname']);
                           
       allow delete: if hasRole('super_admin');
     }
