@@ -5,6 +5,7 @@ import { Settings, CreditCard, FileText, LogOut, User, Moon, Sun } from "lucide-
 import Image from "next/image";
 import Link from "next/link";
 import { useAuth } from "@/contexts/AuthContext";
+import { useTheme } from "@/contexts/ThemeContext";
 import { useRouter } from "next/navigation";
 import {
     DropdownMenu,
@@ -13,67 +14,19 @@ import {
     DropdownMenuSeparator,
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import Gemini from "../icons/gemini";
 import styles from './ProfileDropdown.module.css';
-
-// Hook personalizado para manejo de temas
-function useTheme() {
-    const [theme, setTheme] = React.useState('dark');
-    const [isLoaded, setIsLoaded] = React.useState(false);
-
-    React.useEffect(() => {
-        // Solo ejecutar en el cliente para evitar hydration mismatch
-        if (typeof window === 'undefined') return;
-
-        try {
-            const savedTheme = localStorage.getItem('theme');
-            const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-            const initialTheme = savedTheme || (prefersDark ? 'dark' : 'light');
-
-            setTheme(initialTheme);
-            document.documentElement.setAttribute('data-theme', initialTheme);
-            setIsLoaded(true);
-
-            // Listener para cambios en preferencias del sistema
-            const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
-            const handleChange = (e) => {
-                if (!localStorage.getItem('theme')) {
-                    const newTheme = e.matches ? 'dark' : 'light';
-                    setTheme(newTheme);
-                    document.documentElement.setAttribute('data-theme', newTheme);
-                }
-            };
-
-            mediaQuery.addEventListener('change', handleChange);
-
-            // Cleanup
-            return () => mediaQuery.removeEventListener('change', handleChange);
-        } catch (error) {
-            console.warn('Error initializing theme:', error);
-            setIsLoaded(true);
-        }
-    }, []);
-
-    const toggleTheme = React.useCallback(() => {
-        try {
-            const newTheme = theme === 'dark' ? 'light' : 'dark';
-            setTheme(newTheme);
-            document.documentElement.setAttribute('data-theme', newTheme);
-            localStorage.setItem('theme', newTheme);
-        } catch (error) {
-            console.warn('Error saving theme:', error);
-        }
-    }, [theme]);
-
-    return { theme, toggleTheme, isLoaded };
-}
 
 export default function ProfileDropdown({ className = '', ...props }) {
     const { user, signOut } = useAuth();
     const router = useRouter();
     const [isOpen, setIsOpen] = React.useState(false);
     const [isSigningOut, setIsSigningOut] = React.useState(false);
-    const { theme, toggleTheme, isLoaded } = useTheme();
+    const { theme, toggleTheme } = useTheme();
+    const [isMounted, setIsMounted] = React.useState(false);
+
+    React.useEffect(() => {
+        setIsMounted(true);
+    }, []);
 
     // Memoizar datos del perfil para evitar recreación
     const profileData = React.useMemo(() => ({
@@ -116,8 +69,8 @@ export default function ProfileDropdown({ className = '', ...props }) {
         },
     ], [profileData.subscription]);
 
-    // No renderizar hasta que el tema esté cargado (evitar flash)
-    if (!isLoaded) {
+    // No renderizar hasta que el componente esté montado (evitar hydration mismatch)
+    if (!isMounted) {
         return (
             <div className={`${styles.container} ${styles.loading} ${className || ''}`}>
                 <div className={styles.loadingSkeleton} />
