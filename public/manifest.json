@@ -1,17 +1,57 @@
 {
-    "name": "Vertx - Gestión de Talento",
-    "short_name": "Vertx",
-    "description": "Sistema integral de gestión de talento y capacitación",
-    "start_url": "/dashboard",
+    "name": "Portal de Capacitación Viñoplastic",
+    "short_name": "Viñoplastic",
+    "description": "Plataforma profesional de capacitación y desarrollo.",
+    "start_url": "/training/dashboard",
     "display": "standalone",
     "background_color": "#ffffff",
-    "theme_color": "#007AFF",
+    "theme_color": "#1e3a8a",
+    "orientation": "portrait-primary",
+    "categories": [
+        "education",
+        "productivity",
+        "business"
+    ],
     "icons": [
         {
-            "src": "/icon.svg",
-            "sizes": "any",
-            "type": "image/svg+xml",
-            "purpose": "any maskable"
+            "src": "/web-app-manifest-192x192.png",
+            "sizes": "192x192",
+            "type": "image/png",
+            "purpose": "maskable"
+        },
+        {
+            "src": "/web-app-manifest-512x512.png",
+            "sizes": "512x512",
+            "type": "image/png",
+            "purpose": "maskable"
+        }
+    ],
+    "shortcuts": [
+        {
+            "name": "Ver Cursos",
+            "short_name": "Cursos",
+            "description": "Ir a mis cursos asignados",
+            "url": "/training/dashboard",
+            "icons": [
+                {
+                    "src": "/web-app-manifest-192x192.png",
+                    "sizes": "192x192"
+                }
+            ]
+        }
+    ],
+    "screenshots": [
+        {
+            "src": "/screenshot-desktop.png",
+            "sizes": "1280x800",
+            "type": "image/png",
+            "form_factor": "wide"
+        },
+        {
+            "src": "/screenshot-mobile.png",
+            "sizes": "750x1334",
+            "type": "image/png",
+            "form_factor": "narrow"
         }
     ]
 }

@@ -7,19 +7,35 @@ import { Inter } from 'next/font/google';
 
 const inter = Inter({ subsets: ['latin'] });
 
-export const metadata = {
-    title: 'Vertx ViñoPlastic',
-    description: 'Plataforma de capacitación Viñoplastic.',
-    icons: {
-        icon: '/icon.svg',
-    },
-};
-
 export const viewport = {
     themeColor: '#ffffff',
     width: 'device-width',
     initialScale: 1,
     maximumScale: 1,
+    userScalable: false, // App-like feel
+};
+
+export const metadata = {
+    title: 'Vertx ViñoPlastic',
+    description: 'Plataforma de capacitación Viñoplastic.',
+    manifest: '/manifest.json',
+    icons: {
+        icon: [
+            { url: '/favicon-96x96.png', sizes: '96x96', type: 'image/png' },
+            { url: '/favicon.svg', type: 'image/svg+xml' },
+        ],
+        shortcut: '/favicon.ico',
+        apple: '/apple-touch-icon.png',
+    },
+    appleWebApp: {
+        capable: true,
+        statusBarStyle: 'black-translucent',
+        title: 'Viñoplastic',
+    },
+    applicationName: 'Viñoplastic Training',
+    formatDetection: {
+        telephone: false,
+    },
 };
 
 export default function RootLayout({ children }) {
@@ -36,8 +52,8 @@ export default function RootLayout({ children }) {
                 <ThemeProvider>
                     <AuthProvider>
                         <ToastProvider>
-                            {/* Background Lines - Fixed absolute background */}
-                            <BackgroundLines style={{ position: 'fixed', inset: 0, pointerEvents: 'none', zIndex: 0 }} />
+                            {/* Background Lines - Removed to avoid duplication with Dashboard */}
+
 
                             {/* Main content */}
                             <div style={{ position: 'relative', zIndex: 10 }}>

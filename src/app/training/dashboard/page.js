@@ -1,17 +1,23 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
+import Image from 'next/image';
 import ThemeToggle from '@/components/ThemeToggle/ThemeToggle';
 import {
     BookOpen, LogOut, Search, GraduationCap, Clock, Award,
     User, Calendar, CheckCircle, AlertCircle, ChevronRight
 } from 'lucide-react';
-import { db } from '@/lib/firebase';
-import { collection, query, where, getDocs, doc, getDoc, updateDoc } from 'firebase/firestore';
+import { useTrainingData } from '@/hooks/useTrainingData';
+import { useTheme } from '@/contexts/ThemeContext';
+import AvatarSelector from '@/components/AvatarSelector/AvatarSelector';
+import SetupWizard from '@/components/SetupWizard/SetupWizard';
+import UserMenu from '@/components/UserMenu/UserMenu';
+import { formatDisplayName } from '@/utils/nameUtils';
 import {
     Drawer,
+
     DrawerClose,
     DrawerContent,
     DrawerDescription,
@@ -19,74 +25,59 @@ import {
     DrawerHeader,
     DrawerTitle,
 } from '@/components/ui/Drawer/Drawer';
+import { BackgroundLines } from '@/components/ui/BackgroundLines/BackgroundLines';
 import styles from './page.module.css';
 
+const themeLineColors = {
+    light: ["#e5e7eb", "#d1d5db", "#9ca3af"],
+    dark: ["#3f3f46", "#52525b", "#71717a"],
+    vinoplastic: ["#c7d2fe", "#a5b4fc", "#818cf8"],
+    forest: ["#bbf7d0", "#86efac", "#4ade80"],
+    ocean: ["#bae6fd", "#7dd3fc", "#38bdf8"],
+    sunset: ["#fed7aa", "#fdba74", "#fb923c"],
+};
+
 export default function TrainingDashboard() {
-    const router = useRouter();
-    const [user, setUser] = useState(null);
-    const [courses, setCourses] = useState([]);
-    const [loading, setLoading] = useState(true);
+    const { user, courses, loading, stats, markAsViewed, markAsCompleted, updateTheme, updateAvatar, updateNickname, logout } = useTrainingData();
+    const { theme, setTheme, availableThemes } = useTheme();
     const [showWelcome, setShowWelcome] = useState(false);
+    const [showSetupWizard, setShowSetupWizard] = useState(false);
+    const [showAvatarSelector, setShowAvatarSelector] = useState(false);
 
     const [selectedCourse, setSelectedCourse] = useState(null);
     const [searchQuery, setSearchQuery] = useState('');
 
+    // Check for welcome message/setup wizard and Theme
     useEffect(() => {
-        const fetchData = async () => {
-            const session = sessionStorage.getItem('training_session');
-            if (!session) {
-                router.push('/training/login');
-                return;
-            }
+        if (user && typeof window !== 'undefined') {
+            const hasSeenSetup = sessionStorage.getItem(`training_setup_${user.id}`);
 
-            const userData = JSON.parse(session);
-            setUser(userData);
-
-            // Check if first visit
-            const hasSeenWelcome = sessionStorage.getItem(`training_welcome_${userData.id}`);
-            if (!hasSeenWelcome) {
-                setShowWelcome(true);
-            }
-
-            try {
-                const progRef = collection(db, 'programacion');
-                const q = query(progRef, where('employeeId', '==', userData.id));
-                const progSnap = await getDocs(q);
-
-                if (progSnap.empty) {
-                    setCourses([]);
-                    setLoading(false);
-                    return;
+            // If user already has a nickname (from DB), assume setup is done
+            if (user.nickname && user.nickname.trim() !== '') {
+                // optionally set the flag so it doesn't check again
+                if (!hasSeenSetup) {
+                    sessionStorage.setItem(`training_setup_${user.id}`, 'true');
                 }
 
-                const coursesData = await Promise.all(progSnap.docs.map(async (pDoc) => {
-                    const progData = pDoc.data();
-                    const courseDoc = await getDoc(doc(db, 'cursos_induccion', progData.courseId));
-                    const courseDetail = courseDoc.exists() ? courseDoc.data() : {
-                        nombre: 'Curso no encontrado',
-                        descripcion: ''
-                    };
-
-                    return {
-                        id: progData.courseId,
-                        assignmentId: pDoc.id,
-                        ...courseDetail,
-                        title: courseDetail.nombre || 'Sin Título',
-                        description: courseDetail.descripcion || '',
-                        ...progData
-                    };
-                }));
-
-                setCourses(coursesData);
-            } catch (error) {
-                console.error("Error loading courses:", error);
-            } finally {
-                setLoading(false);
+                const hasSeenWelcome = sessionStorage.getItem(`training_welcome_${user.id}`);
+                if (!hasSeenWelcome) {
+                    setShowWelcome(true);
+                }
+            } else if (!hasSeenSetup) {
+                setShowSetupWizard(true);
+            } else {
+                const hasSeenWelcome = sessionStorage.getItem(`training_welcome_${user.id}`);
+                if (!hasSeenWelcome) {
+                    setShowWelcome(true);
+                }
             }
-        };
 
-        fetchData();
-    }, [router]);
+            // Apply saved theme if exists
+            if (user.theme) {
+                setTheme(user.theme);
+            }
+        }
+    }, [user, setTheme]);
 
     const handleWelcomeClose = () => {
         if (user) {
@@ -95,88 +86,90 @@ export default function TrainingDashboard() {
         setShowWelcome(false);
     };
 
-    const handleLogout = () => {
-        sessionStorage.removeItem('training_session');
-        router.push('/training/login');
+    const handleSetupClose = async () => {
+        if (user) {
+            sessionStorage.setItem(`training_setup_${user.id}`, 'true');
+        }
+        setShowSetupWizard(false);
+        // Optional: Open Welcome Drawer after Setup if desired
+        setShowWelcome(true);
     };
 
-    const handleCourseClick = async (course) => {
-        setSelectedCourse(course);
+    const handleThemeSave = async (newTheme) => {
+        await updateTheme(newTheme);
+    };
 
-        // Mark as viewed if not already
-        if (course.status !== 'viewed' && course.status !== 'completed') {
-            try {
-                await updateDoc(doc(db, 'programacion', course.assignmentId), {
-                    status: 'viewed',
-                    viewedAt: new Date()
-                });
-                setCourses(prev => prev.map(c =>
-                    c.assignmentId === course.assignmentId
-                        ? { ...c, status: 'viewed', viewedAt: new Date() }
-                        : c
-                ));
-            } catch (error) {
-                console.error('Error updating status:', error);
-            }
-        }
+    const handleAvatarSave = async (newUrl) => {
+        await updateAvatar(newUrl);
+    };
+
+    const handleCourseClick = (course) => {
+        setSelectedCourse(course);
+        markAsViewed(course);
     };
 
     const handleMarkComplete = async (assignmentId) => {
-        try {
-            await updateDoc(doc(db, 'programacion', assignmentId), {
-                status: 'completed',
-                completedAt: new Date()
-            });
-            setCourses(prev => prev.map(c =>
-                c.assignmentId === assignmentId
-                    ? { ...c, status: 'completed', completedAt: new Date() }
-                    : c
-            ));
+        const success = await markAsCompleted(assignmentId);
+        if (success) {
             setSelectedCourse(null);
-        } catch (error) {
-            console.error('Error marking complete:', error);
         }
     };
 
-    const filteredCourses = courses.filter(course => {
-        return course.title?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-            course.description?.toLowerCase().includes(searchQuery.toLowerCase());
-    });
-
-    const stats = {
-        total: courses.length,
-        completed: courses.filter(c => c.status === 'completed').length,
-        inProgress: courses.filter(c => c.status === 'viewed').length,
-        pending: courses.filter(c => !c.status || c.status === 'assigned').length
-    };
+    const filteredCourses = useMemo(() => {
+        if (!searchQuery) return courses;
+        const lowerQuery = searchQuery.toLowerCase();
+        return courses.filter(course =>
+            course.title?.toLowerCase().includes(lowerQuery) ||
+            course.description?.toLowerCase().includes(lowerQuery)
+        );
+    }, [courses, searchQuery]);
 
     if (!user) return null;
 
     return (
         <div className={styles.container}>
+            <BackgroundLines
+                colors={themeLineColors[theme] || themeLineColors.light}
+                style={{ position: 'absolute', inset: 0, zIndex: 0, opacity: 0.5 }}
+                svgOptions={{ duration: 15 }}
+            />
+            <AvatarSelector
+                isOpen={showAvatarSelector}
+                onClose={() => setShowAvatarSelector(false)}
+                onSave={handleAvatarSave}
+                userName={user.nickname || formatDisplayName(user.name)}
+            />
+
+            <SetupWizard
+                isOpen={showSetupWizard}
+                onClose={handleSetupClose}
+                user={user}
+                onUpdateAvatar={handleAvatarSave}
+                onUpdateTheme={handleThemeSave}
+                onUpdateNickname={updateNickname}
+            />
+
             {/* Welcome Drawer */}
             <Drawer open={showWelcome} onOpenChange={setShowWelcome}>
                 <DrawerContent className={styles.welcomeDrawerContent}>
                     <DrawerHeader className={styles.welcomeDrawerHeader}>
                         <div className={styles.welcomeAvatar}>
-                            <User size={32} />
+                            {user.avatar ? (
+                                <Image
+                                    src={user.avatar}
+                                    alt="Avatar"
+                                    fill
+                                    sizes="80px"
+                                    style={{ objectFit: 'cover' }}
+                                    priority
+                                    unoptimized
+                                />
+                            ) : (
+                                <User size={32} />
+                            )}
                         </div>
                         <DrawerTitle className={styles.welcomeTitle}>
-                            ¡Bienvenido/a, {(() => {
-                                const fullName = user.name || '';
-                                const parts = fullName.trim().split(/\s+/);
-
-                                if (parts.length === 1) {
-                                    return parts[0];
-                                } else if (parts.length === 2) {
-                                    return `${parts[0]} ${parts[1]}`;
-                                } else if (parts.length >= 3) {
-                                    return parts.length === 3
-                                        ? `${parts[0]} ${parts[2]}`
-                                        : `${parts[0]} ${parts[2]}`;
-                                }
-                                return fullName;
-                            })()}!
+                            ¡Bienvenido/a, {user.nickname || formatDisplayName(user.name)}!
                         </DrawerTitle>
                         <DrawerDescription className={styles.welcomeText}>
                             Nos alegra tenerte en el <strong>Portal de Capacitación</strong> de Viñoplastic.
@@ -218,7 +211,7 @@ export default function TrainingDashboard() {
             </Drawer>
 
             {/* Navbar */}
-            <nav className={styles.navbar}>
+            <nav className={styles.navbar} style={{ position: 'relative', zIndex: 100 }}>
                 <div className={styles.navContent}>
                     <div className={styles.navBrand}>
                         <div className={styles.navIcon}>
@@ -231,87 +224,66 @@ export default function TrainingDashboard() {
                     </div>
 
                     <div className={styles.navActions}>
-                        <ThemeToggle />
-                        <div className={styles.navUser}>
-                            <div className={styles.navUserAvatar}>
-                                {user.name?.charAt(0) || 'U'}
-                            </div>
-                            <div className={styles.navUserInfo}>
-                                <span className={styles.navUserName}>{user.name}</span>
-                                <span className={styles.navUserRole}>{user.position}</span>
-                            </div>
-                        </div>
-                        <button onClick={handleLogout} className={styles.navLogout} title="Cerrar Sesión">
-                            <LogOut size={18} />
-                        </button>
+                        <UserMenu
+                            user={user}
+                            onLogout={logout}
+                            onAvatarClick={() => setShowAvatarSelector(true)}
+                            onThemeChange={updateTheme}
+                        />
                     </div>
                 </div>
             </nav>
 
             {/* Main Content */}
-            <main className={styles.main}>
+            <main className={styles.main} style={{ position: 'relative', zIndex: 1 }}>
                 {/* Stats Cards */}
-                <div className={styles.statsGrid}>
-                    <motion.div
-                        className={styles.statCard}
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: 0.1 }}
-                    >
-                        <div className={styles.statIcon} style={{ background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)' }}>
-                            <BookOpen size={20} />
+                {/* Stats Overview */}
+                <motion.div
+                    className={styles.statsOverview}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.5 }}
+                >
+                    <div className={styles.statItem}>
+                        <div className={styles.statIconWrapper} style={{ background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)' }}>
+                            <BookOpen size={24} />
                         </div>
-                        <div className={styles.statInfo}>
+                        <div className={styles.statContent}>
                             <span className={styles.statLabel}>Cursos Totales</span>
-                            <span className={styles.statValue}>{stats.total}</span>
+                            <span className={styles.statNumber}>{stats.total}</span>
                         </div>
-                    </motion.div>
+                    </div>
 
-                    <motion.div
-                        className={styles.statCard}
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: 0.2 }}
-                    >
-                        <div className={styles.statIcon} style={{ background: 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)' }}>
-                            <Clock size={20} />
+                    <div className={styles.statItem}>
+                        <div className={styles.statIconWrapper} style={{ background: 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)' }}>
+                            <Clock size={24} />
                         </div>
-                        <div className={styles.statInfo}>
+                        <div className={styles.statContent}>
                             <span className={styles.statLabel}>En Progreso</span>
-                            <span className={styles.statValue}>{stats.inProgress}</span>
+                            <span className={styles.statNumber}>{stats.inProgress}</span>
                         </div>
-                    </motion.div>
+                    </div>
 
-                    <motion.div
-                        className={styles.statCard}
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: 0.3 }}
-                    >
-                        <div className={styles.statIcon} style={{ background: 'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)' }}>
-                            <CheckCircle size={20} />
+                    <div className={styles.statItem}>
+                        <div className={styles.statIconWrapper} style={{ background: 'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)' }}>
+                            <CheckCircle size={24} />
                         </div>
-                        <div className={styles.statInfo}>
+                        <div className={styles.statContent}>
                             <span className={styles.statLabel}>Completados</span>
-                            <span className={styles.statValue}>{stats.completed}</span>
+                            <span className={styles.statNumber}>{stats.completed}</span>
                         </div>
-                    </motion.div>
+                    </div>
 
-                    <motion.div
-                        className={styles.statCard}
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: 0.4 }}
-                    >
-                        <div className={styles.statIcon} style={{ background: 'linear-gradient(135deg, #fa709a 0%, #fee140 100%)' }}>
-                            <AlertCircle size={20} />
+                    <div className={styles.statItem}>
+                        <div className={styles.statIconWrapper} style={{ background: 'linear-gradient(135deg, #fa709a 0%, #fee140 100%)' }}>
+                            <AlertCircle size={24} />
                         </div>
-                        <div className={styles.statInfo}>
+                        <div className={styles.statContent}>
                             <span className={styles.statLabel}>Pendientes</span>
-                            <span className={styles.statValue}>{stats.pending}</span>
+                            <span className={styles.statNumber}>{stats.pending}</span>
                         </div>
-                    </motion.div>
-                </div>
+                    </div>
+                </motion.div>
 
                 {/* Header */}
                 <div className={styles.header}>
@@ -358,13 +330,15 @@ export default function TrainingDashboard() {
                         transition={{ duration: 0.3 }}
                     >
                         {filteredCourses.map((course, index) => (
-                            <motion.div
+                            <motion.button
                                 key={course.id}
                                 className={styles.courseCard}
                                 initial={{ opacity: 0, y: 20 }}
                                 animate={{ opacity: 1, y: 0 }}
                                 transition={{ delay: index * 0.05 }}
                                 onClick={() => handleCourseClick(course)}
+                                whileHover={{ y: -8 }}
+                                whileTap={{ scale: 0.98 }}
                             >
                                 <div className={styles.courseHeader}>
                                     <div className={styles.courseIconWrapper}>
@@ -402,7 +376,7 @@ export default function TrainingDashboard() {
                                     </div>
                                     <ChevronRight size={18} className={styles.courseArrow} />
                                 </div>
-                            </motion.div>
+                            </motion.button>
                         ))}
                     </motion.div>
                 )}

@@ -68,7 +68,10 @@ export default function TrainingLoginPage() {
                 name: employeeData.name || employeeData.Nombre,
                 position: employeeData.position || employeeData.Puesto,
                 department: employeeData.department || employeeData.Departamento,
-                role: 'employee_training'
+                role: 'employee_training',
+                nickname: employeeData.nickname || '',
+                avatar: employeeData.avatar || '',
+                theme: employeeData.theme || 'light'
             };
 
             sessionStorage.setItem('training_session', JSON.stringify(sessionData));
