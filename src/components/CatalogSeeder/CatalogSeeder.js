@@ -58,7 +58,7 @@ export default function CatalogSeeder() {
             <h3 className="font-bold text-lg mb-2">Administración de Catálogos</h3>
             <p className="text-sm text-gray-600 mb-4">
                 Usa este botón para cargar los archivos JSON (Puestos, Departamentos, Áreas) a Firebase.
-                Esto sobrescribirá los datos existentes en la colección 'datos'.
+                Esto sobrescribirá los datos existentes en la colección &apos;datos&apos;.
             </p>
 
             <div className="flex items-center gap-4">
@@ -82,7 +82,7 @@ export default function CatalogSeeder() {
 
                 {status.message && (
                     <div className={`text-sm flex items-center gap-2 ${status.type === 'success' ? 'text-green-600' :
-                            status.type === 'error' ? 'text-red-600' : 'text-blue-600'
+                        status.type === 'error' ? 'text-red-600' : 'text-blue-600'
                         }`}>
                         {status.type === 'success' && <Check size={18} />}
                         {status.message}
