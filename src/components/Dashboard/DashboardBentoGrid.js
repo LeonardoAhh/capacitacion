@@ -10,6 +10,7 @@ import {
     ArrowUpRight,
     TrendingUp,
     Award,
+    GitCompareArrows,
 } from "lucide-react";
 import { motion } from "framer-motion";
 import Link from "next/link";
@@ -303,48 +304,34 @@ export default function DashboardBentoGrid({ stats, evaluations }) {
             >
                 <h3 className={styles.sectionTitle}>Accesos Rápidos</h3>
                 <div className={styles.actionsContainer}>
-                    <Link href="/dashboard/candidates" className={styles.actionCard}>
+                    <Link href="/dashboard/candidates" className={styles.actionCard} title="Candidatos">
                         <div className={`${styles.actionIcon} ${styles.actionIconOrange}`}>
                             <Users className={styles.actionIconSvg} />
                         </div>
-                        <div className={styles.actionText}>
-                            <div className={styles.actionTitle}>Candidatos</div>
-                            <div className={styles.actionDesc}>Gestión de candidatos</div>
-                        </div>
-                        <ArrowUpRight className={styles.actionArrow} />
                     </Link>
 
-                    <Link href="/dashboard/programacion" className={styles.actionCard}>
+                    <Link href="/dashboard/programacion" className={styles.actionCard} title="Programación">
                         <div className={`${styles.actionIcon} ${styles.actionIconBlue}`}>
                             <FileText className={styles.actionIconSvg} />
                         </div>
-                        <div className={styles.actionText}>
-                            <div className={styles.actionTitle}>Programación</div>
-                            <div className={styles.actionDesc}>Gestión de cursos internos</div>
-                        </div>
-                        <ArrowUpRight className={styles.actionArrow} />
                     </Link>
 
-                    <Link href="/capacitacion" className={styles.actionCard}>
+                    <Link href="/capacitacion" className={styles.actionCard} title="Capacitación">
                         <div className={`${styles.actionIcon} ${styles.actionIconPurple}`}>
                             <Award className={styles.actionIconSvg} />
                         </div>
-                        <div className={styles.actionText}>
-                            <div className={styles.actionTitle}>Capacitación</div>
-                            <div className={styles.actionDesc}>Cursos y entrenamientos</div>
-                        </div>
-                        <ArrowUpRight className={styles.actionArrow} />
                     </Link>
 
-                    <Link href="/reports" className={styles.actionCard}>
+                    <Link href="/reports" className={styles.actionCard} title="Reportes">
                         <div className={`${styles.actionIcon} ${styles.actionIconGreen}`}>
                             <TrendingUp className={styles.actionIconSvg} />
                         </div>
-                        <div className={styles.actionText}>
-                            <div className={styles.actionTitle}>Reportes</div>
-                            <div className={styles.actionDesc}>Análisis y métricas</div>
+                    </Link>
+
+                    <Link href="/capacitacion/comparacion" className={styles.actionCard} title="Comparación">
+                        <div className={`${styles.actionIcon} ${styles.actionIconCyan}`}>
+                            <GitCompareArrows className={styles.actionIconSvg} />
                         </div>
-                        <ArrowUpRight className={styles.actionArrow} />
                     </Link>
                 </div>
             </motion.div>

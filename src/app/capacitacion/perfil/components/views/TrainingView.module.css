@@ -1,0 +1,195 @@
+.statsRow {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+
+.statCard {
+    background: rgba(255, 255, 255, 0.5);
+    backdrop-filter: blur(8px);
+    border-radius: 16px;
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+}
+
+[data-theme="dark"] .statCard {
+    background: rgba(28, 28, 30, 0.4);
+    border-color: rgba(255, 255, 255, 0.05);
+}
+
+.statNumber {
+    font-size: 2.5rem;
+    font-weight: 700;
+    line-height: 1;
+    margin-bottom: 0.5rem;
+}
+
+.statLabel {
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: #64748b;
+}
+
+[data-theme="dark"] .statLabel {
+    color: #94a3b8;
+}
+
+.statGreen {
+    color: #22c55e;
+    border-bottom: 3px solid #22c55e;
+}
+
+.statRed {
+    color: #ef4444;
+    border-bottom: 3px solid #ef4444;
+}
+
+.statYellow {
+    color: #f59e0b;
+    border-bottom: 3px solid #f59e0b;
+}
+
+.courseSection {
+    margin-bottom: 2rem;
+}
+
+.sectionTitle {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #334155;
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+[data-theme="dark"] .sectionTitle {
+    color: #e2e8f0;
+}
+
+.courseList {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.courseItem {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 1.25rem;
+    background: rgba(255, 255, 255, 0.6);
+    border-radius: 12px;
+    border: 1px solid rgba(0, 0, 0, 0.05);
+    transition: all 0.2s ease;
+}
+
+[data-theme="dark"] .courseItem {
+    background: rgba(28, 28, 30, 0.4);
+    border-color: rgba(255, 255, 255, 0.05);
+}
+
+.courseItem:hover {
+    transform: translateX(4px);
+    background: rgba(255, 255, 255, 0.8);
+}
+
+[data-theme="dark"] .courseItem:hover {
+    background: rgba(28, 28, 30, 0.6);
+}
+
+.courseName {
+    font-weight: 500;
+    color: #1e293b;
+    font-size: 0.95rem;
+}
+
+[data-theme="dark"] .courseName {
+    color: #f1f5f9;
+}
+
+.courseScore {
+    font-weight: 700;
+    font-size: 0.9rem;
+    padding: 0.25rem 0.75rem;
+    border-radius: 9999px;
+    background: rgba(255, 255, 255, 0.5);
+}
+
+[data-theme="dark"] .courseScore {
+    background: rgba(0, 0, 0, 0.2);
+}
+
+.metricCard {
+    background: rgba(255, 255, 255, 0.6);
+    border-radius: 16px;
+    padding: 1.25rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 2rem;
+    border: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+[data-theme="dark"] .metricCard {
+    background: rgba(28, 28, 30, 0.4);
+    border-color: rgba(255, 255, 255, 0.05);
+}
+
+/* Back Button */
+.backBtn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.625rem 1.125rem;
+    background: rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(148, 163, 184, 0.2);
+    border-radius: 12px;
+    color: #64748b;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+[data-theme="dark"] .backBtn {
+    background: rgba(28, 28, 30, 0.8);
+    border-color: rgba(148, 163, 184, 0.1);
+    color: #94a3b8;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.backBtn:hover {
+    background: rgba(255, 255, 255, 1);
+    border-color: #3b82f6;
+    color: #3b82f6;
+    transform: translateX(-2px);
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.15);
+}
+
+[data-theme="dark"] .backBtn:hover {
+    background: rgba(28, 28, 30, 1);
+    border-color: #60a5fa;
+    color: #60a5fa;
+    box-shadow: 0 4px 12px rgba(96, 165, 250, 0.2);
+}
+
+.viewTitle {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #1e293b;
+    margin-left: 1rem;
+}
+
+[data-theme="dark"] .viewTitle {
+    color: #f1f5f9;
+}

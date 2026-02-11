@@ -338,19 +338,19 @@
 }
 
 .actionsContainer {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    display: flex;
     gap: 16px;
+    flex-wrap: wrap;
 }
 
 .actionCard {
     background: var(--bg-tertiary);
     border: 1px solid var(--border-color);
     border-radius: 16px;
-    padding: 20px;
+    padding: 16px;
     display: flex;
     align-items: center;
-    gap: 16px;
+    justify-content: center;
     text-decoration: none;
     color: inherit;
     transition: all 0.3s;
@@ -386,6 +386,10 @@
 
 .actionIconGreen {
     background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+}
+
+.actionIconCyan {
+    background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
 }
 
 .actionIconSvg {
