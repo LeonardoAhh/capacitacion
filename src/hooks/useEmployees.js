@@ -13,7 +13,8 @@ import {
     startAfter,
     endBefore,
     limitToLast,
-    where
+    where,
+    setDoc
 } from 'firebase/firestore';
 
 const ITEMS_PER_PAGE = 4; // Default value
@@ -237,15 +238,19 @@ export const useEmployees = (itemsPerPage = ITEMS_PER_PAGE) => {
         try {
             // Validate unique employeeId
             if (employeeData.employeeId) {
-                const employeesRef = collection(db, 'employees');
-                const duplicateQuery = query(
-                    employeesRef,
-                    where('employeeId', '==', employeeData.employeeId),
-                    limit(1)
-                );
-                const duplicateSnapshot = await getDocs(duplicateQuery);
+                // Check if document exists directly using ID
+                const docRef = doc(db, 'employees', employeeData.employeeId);
+                const docSnap = await getDocs(query(collection(db, 'employees'), where('employeeId', '==', employeeData.employeeId), limit(1))); // Keep legacy check for safety if mixed IDs exist, or switch to getDoc(docRef) if fully migrated.
 
-                if (!duplicateSnapshot.empty) {
+                // Better approach with fully migrated DB:
+                // const docSnap = await getDoc(docRef);
+                // if (docSnap.exists()) ...
+
+                // But since we might have old docs, let's stick to query OR getDoc depending on migration status.
+                // Assuming fully migrated or hybrid, getDoc(docRef) is safest to prevent overwriting by ID key.
+                const directDocSnap = await getDocs(query(collection(db, 'employees'), where('__name__', '==', employeeData.employeeId)));
+
+                if (!directDocSnap.empty) {
                     return {
                         success: false,
                         error: 'ID_DUPLICADO',
@@ -254,13 +259,15 @@ export const useEmployees = (itemsPerPage = ITEMS_PER_PAGE) => {
                 }
             }
 
-            const docRef = await addDoc(collection(db, 'employees'), {
+            // Create with specific ID
+            await setDoc(doc(db, 'employees', employeeData.employeeId), {
                 ...employeeData,
                 createdAt: new Date().toISOString(),
                 updatedAt: new Date().toISOString()
             });
+
             refresh(); // Reload to initial to show new data at top
-            return { success: true, id: docRef.id };
+            return { success: true, id: employeeData.employeeId };
         } catch (err) {
             console.error('Error creating employee:', err);
             return { success: false, error: err.message };

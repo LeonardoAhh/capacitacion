@@ -36,6 +36,7 @@ function InputField({
     label,
     value,
     onChange,
+    onBlur,
     icon: Icon,
     disabled,
     maxLength,
@@ -58,6 +59,7 @@ function InputField({
                     type="text"
                     value={value}
                     onChange={onChange}
+                    onBlur={onBlur}
                     className={`${styles.input} ${hasError ? styles.inputError : ''}`}
                     maxLength={maxLength}
                     placeholder={placeholder}
@@ -86,11 +88,13 @@ function InputField({
  */
 export default function CandidateLogin({
     employeeId,
-    setEmployeeId,
+    onEmployeeIdChange,
+    onEmployeeIdBlur,
     curp,
-    setCurp,
+    onCurpChange,
+    onCurpBlur,
     accessCode,
-    setAccessCode,
+    onAccessCodeChange,
     error,
     loading,
     isBlocked,
@@ -213,7 +217,8 @@ export default function CandidateLogin({
                                     id={employeeIdInputId}
                                     label="ID de Empleado"
                                     value={employeeId}
-                                    onChange={setEmployeeId}
+                                    onChange={onEmployeeIdChange}
+                                    onBlur={onEmployeeIdBlur}
                                     icon={User}
                                     disabled={loading || isBlocked}
                                     hasError={!!error}
@@ -228,7 +233,8 @@ export default function CandidateLogin({
                                     id={curpInputId}
                                     label="CURP"
                                     value={curp}
-                                    onChange={setCurp}
+                                    onChange={onCurpChange}
+                                    onBlur={onCurpBlur}
                                     icon={IdCard}
                                     disabled={loading || isBlocked}
                                     maxLength={18}
@@ -243,7 +249,7 @@ export default function CandidateLogin({
                                     id={accessCodeInputId}
                                     label="Código de Acceso"
                                     value={accessCode}
-                                    onChange={setAccessCode}
+                                    onChange={onAccessCodeChange}
                                     icon={Key}
                                     disabled={loading || isBlocked}
                                     maxLength={6}

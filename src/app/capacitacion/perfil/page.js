@@ -1,26 +1,34 @@
 ﻿'use client';
 
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useMemo } from 'react';
 import Link from 'next/link';
-import { AnimatePresence, motion } from 'framer-motion';
-import ProfileDropdown from '@/components/ProfileDropdown/ProfileDropdown';
-import { BackgroundLines } from '@/components/ui/BackgroundLines';
-import { useToast } from '@/components/ui/Toast/Toast';
+import { AnimatePresence } from 'framer-motion';
+import { Search, ArrowLeft } from 'lucide-react';
+
+// Firebase
 import { db } from '@/lib/firebase';
 import { collection, getDocs, query, where, doc, getDoc } from 'firebase/firestore';
+
+// Utils
 import { checkPromotionCriteria, calculateMonthsInPosition } from '@/lib/promotionUtils';
 
 // Components
+import ProfileDropdown from '@/components/ProfileDropdown/ProfileDropdown';
+import { BackgroundLines } from '@/components/ui/BackgroundLines';
+import { useToast } from '@/components/ui/Toast/Toast';
 import ProfileHeader from './components/ProfileHeader';
 import GeneralView from './components/views/GeneralView';
 import TrainingView from './components/views/TrainingView';
 import PromotionView from './components/views/PromotionView';
 import ILUOView from './components/views/ILUOView';
 import DocumentsView from './components/views/DocumentsView';
-import { Search, ArrowLeft } from 'lucide-react';
 
 // Styles
 import styles from './page.module.css';
+
+// Constants
+const PASSING_SCORE = 80;
+const MAX_SEARCH_ID_LENGTH = 5;
 
 export default function PerfilPage() {
     const { toast } = useToast();
@@ -47,6 +55,11 @@ export default function PerfilPage() {
         return { text: `${months} meses`, years: 0, months };
     };
 
+    /**
+     * Searches for an employee by ID and fetches related data
+     * Optimized with parallel queries using Promise.all
+     * @async
+     */
     const handleSearch = useCallback(async () => {
         if (!searchId.trim()) {
             toast.warning('Atención', 'Ingresa un ID de empleado');
@@ -61,10 +74,12 @@ export default function PerfilPage() {
         setActiveView('profile');
 
         try {
+            // Try to fetch employee by direct ID first
             const directRef = doc(db, 'training_records', searchId.trim());
             let empDoc = await getDoc(directRef);
             let empData = null;
 
+            // If not found by direct ID, search by employeeId field
             if (empDoc.exists()) {
                 empData = { id: empDoc.id, ...empDoc.data() };
             } else {
@@ -82,23 +97,27 @@ export default function PerfilPage() {
             if (empData) {
                 setEmployee(empData);
 
+                // Fetch position and promotion data in parallel (performance optimization)
                 if (empData.position) {
                     const posName = empData.position.toUpperCase().trim();
-                    const posQuery = query(
-                        collection(db, 'positions'),
-                        where('name', '==', posName)
-                    );
-                    const posSnap = await getDocs(posQuery);
+
+                    const [posSnap, rulesSnap] = await Promise.all([
+                        getDocs(query(
+                            collection(db, 'positions'),
+                            where('name', '==', posName)
+                        )),
+                        getDocs(query(
+                            collection(db, 'promotion_rules'),
+                            where('currentPosition', '==', posName)
+                        ))
+                    ]);
+
                     if (!posSnap.empty) {
                         setPositionData({ id: posSnap.docs[0].id, ...posSnap.docs[0].data() });
                     }
 
-                    const rulesSnap = await getDocs(collection(db, 'promotion_rules'));
-                    const rule = rulesSnap.docs.find(d =>
-                        d.data().currentPosition === posName
-                    );
-                    if (rule) {
-                        setPromotionRule({ id: rule.id, ...rule.data() });
+                    if (!rulesSnap.empty) {
+                        setPromotionRule({ id: rulesSnap.docs[0].id, ...rulesSnap.docs[0].data() });
                     }
                 }
 
@@ -108,14 +127,27 @@ export default function PerfilPage() {
                 toast.error('No Encontrado', 'No existe empleado con ese ID');
             }
         } catch (error) {
-            console.error('Error searching employee:', error);
-            toast.error('Error', 'Error al buscar el empleado');
+            console.error('Error searching employee:', {
+                searchId,
+                error: error.message,
+                code: error.code,
+                timestamp: new Date().toISOString()
+            });
+
+            // Provide specific error messages
+            if (error.code === 'permission-denied') {
+                toast.error('Sin permisos', 'No tienes acceso a este empleado');
+            } else if (error.code === 'unavailable') {
+                toast.error('Sin conexión', 'Verifica tu conexión a internet');
+            } else {
+                toast.error('Error', 'Error al buscar el empleado. Intenta de nuevo.');
+            }
         } finally {
             setLoading(false);
         }
     }, [searchId, toast]);
 
-    const analyzeTraining = () => {
+    const analyzeTraining = useCallback(() => {
         if (!employee) return { approved: [], failed: [], pending: [], all: [], matrixCompliance: 0 };
 
         const history = employee.history || [];
@@ -127,7 +159,7 @@ export default function PerfilPage() {
         history.forEach(record => {
             const courseName = record.courseName || record.course;
             const score = parseFloat(record.score) || parseFloat(record.qualification) || 0;
-            const isApproved = record.status === 'approved' || (record.status === undefined && score >= 80);
+            const isApproved = record.status === 'approved' || (record.status === undefined && score >= PASSING_SCORE);
 
             if (isApproved) {
                 approved.push({ name: courseName, date: record.date, score });
@@ -153,19 +185,26 @@ export default function PerfilPage() {
         }
 
         return { approved, failed, pending, all: history, matrixCompliance };
-    };
+    }, [employee, positionData]);
 
-    const getPromotionInfo = () => {
+    const getPromotionInfo = useCallback(() => {
         if (!employee || !promotionRule) return null;
         return checkPromotionCriteria(employee, promotionRule);
-    };
+    }, [employee, promotionRule]);
 
-    const training = analyzeTraining();
-    const promotionInfo = getPromotionInfo();
-    const seniority = employee ? calculateSeniority(employee.startDate) : null;
-    const monthsInPosition = employee?.promotionData?.positionStartDate
-        ? calculateMonthsInPosition(employee.promotionData.positionStartDate)
-        : 0;
+    // Memoize expensive calculations to prevent unnecessary re-renders
+    const training = useMemo(() => analyzeTraining(), [analyzeTraining]);
+    const promotionInfo = useMemo(() => getPromotionInfo(), [getPromotionInfo]);
+    const seniority = useMemo(
+        () => employee ? calculateSeniority(employee.startDate) : null,
+        [employee]
+    );
+    const monthsInPosition = useMemo(
+        () => employee?.promotionData?.positionStartDate
+            ? calculateMonthsInPosition(employee.promotionData.positionStartDate)
+            : 0,
+        [employee]
+    );
 
     return (
         <div className={styles.main}>
@@ -175,7 +214,11 @@ export default function PerfilPage() {
                 {/* Header */}
                 <header className={styles.topBar}>
                     <div className={styles.topBarLeft}>
-                        <Link href="/dashboard" className={styles.topBarBack}>
+                        <Link
+                            href="/dashboard"
+                            className={styles.topBarBack}
+                            aria-label="Regresar al dashboard"
+                        >
                             <ArrowLeft size={18} strokeWidth={2} />
                         </Link>
                         <span className={styles.topBarTitle}>Perfil</span>
@@ -184,21 +227,33 @@ export default function PerfilPage() {
                     <div className={styles.topBarCenter}>
                         <div className={styles.searchPill}>
                             <Search className={styles.searchPillIcon} size={16} strokeWidth={2.5} />
+                            <label htmlFor="employee-search" className={styles.srOnly}>
+                                Buscar empleado por ID
+                            </label>
                             <input
+                                id="employee-search"
                                 type="text"
                                 placeholder="ID"
                                 value={searchId}
                                 onChange={(e) => setSearchId(e.target.value)}
                                 onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
                                 className={styles.searchPillInput}
-                                maxLength={5}
+                                maxLength={MAX_SEARCH_ID_LENGTH}
+                                aria-label="ID del empleado"
+                                aria-describedby="search-instructions"
+                                disabled={loading}
                             />
+                            <span id="search-instructions" className={styles.srOnly}>
+                                Ingresa el ID del empleado (máximo {MAX_SEARCH_ID_LENGTH} caracteres) y presiona Enter o el botón Buscar
+                            </span>
                             <button
                                 onClick={handleSearch}
                                 disabled={loading}
                                 className={styles.searchPillBtn}
+                                aria-label={loading ? 'Buscando empleado...' : 'Buscar empleado'}
+                                aria-busy={loading}
                             >
-                                {loading ? <div className={styles.spinner} /> : 'Buscar'}
+                                {loading ? <div className={styles.spinner} aria-hidden="true" /> : 'Buscar'}
                             </button>
                         </div>
                     </div>
@@ -208,17 +263,38 @@ export default function PerfilPage() {
                     </div>
                 </header>
 
-                <main className={styles.mainGrid}>
+                {/* Live region for screen readers */}
+                <div
+                    role="status"
+                    aria-live="polite"
+                    aria-atomic="true"
+                    className={styles.srOnly}
+                >
+                    {loading && 'Buscando empleado...'}
+                    {employee && `Empleado ${employee.name} cargado correctamente`}
+                    {notFound && `No se encontró el empleado con ID ${searchId}`}
+                </div>
 
-                    {/* Not Found Integration */}
+                <main id="main-content" className={styles.mainGrid} aria-label="Contenido del perfil">
+
+                    {/* Not Found State */}
                     {notFound && (
-                        <div className={`${styles.colFull} ${styles.notFound}`}>
-                            <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+                        <div className={`${styles.colFull} ${styles.notFound}`} role="alert">
+                            <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true">
                                 <circle cx="11" cy="11" r="8" />
                                 <path d="M21 21l-4.35-4.35" />
                                 <path d="M8 8l6 6M14 8l-6 6" />
                             </svg>
                             <p className="text-xl">No se encontró empleado con ID: <strong>{searchId}</strong></p>
+                        </div>
+                    )}
+
+                    {/* Empty State - Initial Load */}
+                    {!employee && !loading && !notFound && (
+                        <div className={`${styles.colFull} ${styles.emptyState}`}>
+                            <Search size={64} strokeWidth={1.5} aria-hidden="true" />
+                            <h3>Busca un empleado</h3>
+                            <p>Ingresa un ID de empleado en el buscador para ver su perfil completo, capacitaciones, evaluaciones y documentos.</p>
                         </div>
                     )}
 

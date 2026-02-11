@@ -15,10 +15,20 @@ export default function TrainingLoginPage() {
     const [loading, setLoading] = useState(false);
     const [isSuccess, setIsSuccess] = useState(false);
 
-    // NOTA: Por ahora simularemos el login de empleado verificando que exista en la colección "employees"
-    // y usando el accessCode como contraseña simple para esta primera versión, 
-    // o simplemente validando ID si no hay sistema de contraseñas definido.
-    // El usuario mencionó "new login" so asumo autenticación básica.
+    // Optimized handlers to prevent input lag on mobile
+    const handleEmployeeIdChange = (value) => {
+        setEmployeeId(value);
+        setError('');
+    };
+
+    const handleEmployeeIdBlur = () => {
+        setEmployeeId(prev => prev.toUpperCase());
+    };
+
+    const handlePasswordChange = (value) => {
+        setPassword(value);
+        setError('');
+    };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -68,7 +78,7 @@ export default function TrainingLoginPage() {
             setIsSuccess(true);
             setTimeout(() => {
                 router.push('/training/dashboard');
-            }, 15000); // 15s como solicitado en los otros logins
+            }, 2000); // Reduced to 2s for better UX
 
         } catch (err) {
             console.error('Error login training:', err);
@@ -80,9 +90,10 @@ export default function TrainingLoginPage() {
     return (
         <TrainingLogin
             employeeId={employeeId}
-            setEmployeeId={setEmployeeId}
+            setEmployeeId={handleEmployeeIdChange}
+            onBlurEmployeeId={handleEmployeeIdBlur}
             password={password}
-            setPassword={setPassword}
+            setPassword={handlePasswordChange}
             error={error}
             loading={loading}
             onSubmit={handleSubmit}

@@ -49,9 +49,9 @@ export default function CourseViewer({
         selectedCourse.nombre?.toUpperCase().includes('INDUCCIÓN');
 
     const step1Unlocked = true;
-    const presentationUnlocked = isStepUnlocked(courseProgress, selectedCourse.id, 2);
-    const step2Unlocked = isStepUnlocked(courseProgress, selectedCourse.id, 3);
-    const examUnlocked = isStepUnlocked(courseProgress, selectedCourse.id, 4);
+    const presentationUnlocked = isStepUnlocked(courseProgress, selectedCourse.id, 'presentation');
+    const step2Unlocked = isStepUnlocked(courseProgress, selectedCourse.id, 'step2');
+    const examUnlocked = isStepUnlocked(courseProgress, selectedCourse.id, 'exam');
 
     return (
         <AnimatePresence>

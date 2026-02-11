@@ -28,7 +28,7 @@ export default function LoginPage() {
             setIsSuccess(true);
             setTimeout(() => {
                 router.push('/modulos');
-            }, 5500);
+            }, 2000);
         } else {
             setError(result.error);
             setLoading(false);
@@ -47,7 +47,7 @@ export default function LoginPage() {
             setIsSuccess(true);
             setTimeout(() => {
                 router.push('/modulos');
-            }, 5500);
+            }, 2000);
         } else {
             setError(result.error || 'Error al iniciar sesión con Google');
             setLoading(false);

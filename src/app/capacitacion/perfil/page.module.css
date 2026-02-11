@@ -1,5 +1,18 @@
 /* ==================== PERFIL PAGE - iOS STYLE REDESIGN ==================== */
 
+/* === ACCESSIBILITY UTILITIES === */
+.srOnly {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border-width: 0;
+}
+
 /* === BASE LAYOUT === */
 .main {
     min-height: 100vh;
@@ -94,6 +107,33 @@
     padding: 16px;
     padding-bottom: 40px;
 }
+
+/* === MAIN GRID LAYOUT === */
+.mainGrid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 20px;
+    width: 100%;
+}
+
+.colProfile {
+    width: 100%;
+}
+
+.colContent {
+    width: 100%;
+    min-width: 0;
+    /* Prevent grid blowout */
+}
+
+.contentArea {
+    width: 100%;
+}
+
+.colFull {
+    grid-column: 1 / -1;
+}
+
 
 /* === MASTER-DETAIL LAYOUT FOR LARGE SCREENS === */
 @media (min-width: 1024px) {
@@ -827,21 +867,27 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    padding: 60px 20px;
+    padding: 80px 20px;
     text-align: center;
     color: #8e8e93;
+    min-height: 400px;
 }
 
 .emptyState svg {
-    margin-bottom: 16px;
-    opacity: 0.5;
+    margin-bottom: 20px;
+    opacity: 0.4;
+    color: #007aff;
+}
+
+[data-theme="dark"] .emptyState svg {
+    color: #0a84ff;
 }
 
 .emptyState h3 {
-    font-size: 18px;
+    font-size: 24px;
     font-weight: 600;
     color: #1c1c1e;
-    margin: 0 0 8px 0;
+    margin: 0 0 12px 0;
 }
 
 [data-theme="dark"] .emptyState h3 {
@@ -849,8 +895,56 @@
 }
 
 .emptyState p {
-    margin: 0 0 20px 0;
-    font-size: 15px;
+    margin: 0;
+    font-size: 16px;
+    max-width: 480px;
+    line-height: 1.5;
+    color: #8e8e93;
+}
+
+/* === NOT FOUND STATE === */
+.notFound {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 80px 20px;
+    text-align: center;
+    min-height: 400px;
+}
+
+.notFound svg {
+    margin-bottom: 20px;
+    opacity: 0.4;
+    color: #ff3b30;
+}
+
+[data-theme="dark"] .notFound svg {
+    color: #ff453a;
+}
+
+.notFound p {
+    font-size: 18px;
+    color: #1c1c1e;
+    margin: 0;
+    max-width: 480px;
+}
+
+[data-theme="dark"] .notFound p {
+    color: #ffffff;
+}
+
+.notFound strong {
+    color: #ff3b30;
+    font-weight: 600;
+}
+
+[data-theme="dark"] .notFound strong {
+    color: #ff453a;
+}
+
+.colFull {
+    grid-column: 1 / -1;
 }
 
 /* === ILUO GRID === */
@@ -1306,10 +1400,164 @@
 }
 
 /* === RESPONSIVE ADJUSTMENTS === */
-@media (min-width: 640px) {
-    .searchContainerOuter {
-        flex-direction: row;
-        align-items: center;
+
+/* === Mobile First - Extra Small Devices (< 480px) === */
+@media (max-width: 480px) {
+    .container {
+        padding: 12px;
+    }
+
+    /* Top Bar */
+    .topBar {
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        padding: 0.625rem 0.75rem;
+    }
+
+    .topBarTitle {
+        font-size: 0.95rem;
+    }
+
+    .topBarLeft {
+        gap: 0.5rem;
+    }
+
+    .topBarCenter {
+        order: 3;
+        width: 100%;
+        margin-top: 0.5rem;
+    }
+
+    .searchPill {
+        max-width: 100%;
+        width: 100%;
+    }
+
+    .searchPillInput {
+        max-width: 100px;
+        min-width: 60px;
+    }
+
+    .searchPillBtn {
+        padding: 0.625rem 1.25rem;
+        font-size: 0.85rem;
+        min-width: 70px;
+    }
+
+    /* Typography */
+    .employeeName {
+        font-size: 20px;
+    }
+
+    .detailTitle {
+        font-size: 22px;
+    }
+
+    .pageTitle {
+        font-size: 26px;
+    }
+
+    /* Avatar */
+    .avatarLarge {
+        width: 80px;
+        height: 80px;
+    }
+
+    .avatarLarge span {
+        font-size: 28px;
+    }
+
+    /* Stats Row - Stack vertically */
+    .statsRow {
+        grid-template-columns: 1fr;
+        gap: 8px;
+    }
+
+    .statCard {
+        padding: 12px;
+    }
+
+    .statNumber {
+        font-size: 24px;
+    }
+
+    /* ILUO Buttons - 2 columns */
+    .iluoButtons {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 8px;
+    }
+
+    .iluoBtn {
+        padding: 12px 0;
+        font-size: 14px;
+    }
+
+    /* Settings */
+    .settingsItem {
+        padding: 10px 14px;
+        gap: 10px;
+    }
+
+    .settingsIcon {
+        width: 28px;
+        height: 28px;
+    }
+
+    .settingsLabel {
+        font-size: 15px;
+    }
+
+    .settingsValue {
+        font-size: 14px;
+    }
+}
+
+/* === Small Devices (480px - 640px) === */
+@media (min-width: 481px) and (max-width: 640px) {
+    .container {
+        padding: 14px;
+    }
+
+    .topBar {
+        flex-wrap: wrap;
+        gap: 0.625rem;
+    }
+
+    .topBarCenter {
+        order: 3;
+        width: 100%;
+        margin-top: 0.5rem;
+    }
+
+    .searchPill {
+        max-width: 100%;
+        width: 100%;
+    }
+
+    .employeeName {
+        font-size: 22px;
+    }
+
+    .avatarLarge {
+        width: 90px;
+        height: 90px;
+    }
+
+    .avatarLarge span {
+        font-size: 32px;
+    }
+
+    .statsRow {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 8px;
+    }
+
+    .statNumber {
+        font-size: 24px;
+    }
+
+    .detailTitle {
+        font-size: 24px;
     }
 }
 
@@ -1322,5 +1570,170 @@
 
     .headerTitleGradient {
         font-size: 1.4rem;
+    }
+
+    .searchCard {
+        flex-direction: column;
+    }
+}
+
+/* === Tablet Devices (641px - 768px) === */
+@media (min-width: 641px) and (max-width: 768px) {
+    .container {
+        padding: 18px 20px;
+        max-width: 100%;
+    }
+
+    .topBar {
+        gap: 1rem;
+    }
+
+    .searchPill {
+        max-width: 450px;
+    }
+
+    /* Keep single column for content */
+    .mainGrid {
+        grid-template-columns: 1fr;
+        max-width: 600px;
+        margin: 0 auto;
+    }
+}
+
+/* === Medium Tablets (768px - 1024px) === */
+@media (min-width: 769px) and (max-width: 1023px) {
+    .container {
+        padding: 20px 28px;
+        max-width: 100%;
+    }
+
+    .searchPill {
+        max-width: 480px;
+    }
+
+    /* Single column centered layout */
+    .mainGrid {
+        grid-template-columns: 1fr;
+        max-width: 720px;
+        margin: 0 auto;
+        gap: 20px;
+    }
+
+    /* Don't make profile sticky on tablets */
+    .stickyProfile {
+        position: relative;
+        top: auto;
+    }
+}
+
+/* === Large Tablets and Small Desktops (1024px - 1280px) === */
+@media (min-width: 1024px) and (max-width: 1280px) {
+    .container {
+        max-width: 1200px;
+        padding: 24px 32px;
+    }
+
+    /* Two column layout */
+    .mainGrid {
+        grid-template-columns: 380px 1fr;
+        gap: 20px;
+        align-items: start;
+    }
+
+    /* Enable sticky profile */
+    .stickyProfile {
+        position: sticky;
+        top: 100px;
+        align-self: start;
+    }
+}
+
+/* === Desktop (1280px+) === */
+@media (min-width: 1281px) {
+    .container {
+        max-width: 1400px;
+        padding: 24px 40px;
+    }
+
+    .mainGrid {
+        grid-template-columns: 400px 1fr;
+        gap: 24px;
+        align-items: start;
+    }
+
+    .stickyProfile {
+        position: sticky;
+        top: 100px;
+        align-self: start;
+    }
+}
+
+/* === Touch Device Optimizations === */
+@media (hover: none) and (pointer: coarse) {
+
+    /* Larger touch targets */
+    .settingsItem {
+        min-height: 48px;
+    }
+
+    .iluoBtn {
+        min-height: 44px;
+    }
+
+    .searchPillBtn {
+        min-height: 44px;
+    }
+
+    /* Remove hover effects on touch devices */
+    .settingsItem:hover {
+        background: transparent;
+    }
+
+    .documentCard:hover {
+        transform: none;
+    }
+}
+
+/* === Landscape Orientation on Mobile === */
+@media (max-width: 768px) and (orientation: landscape) {
+    .avatarLarge {
+        width: 70px;
+        height: 70px;
+    }
+
+    .avatarLarge span {
+        font-size: 24px;
+    }
+
+    .topBar {
+        padding: 0.5rem 0.75rem;
+    }
+
+    .container {
+        padding-top: 12px;
+        padding-bottom: 12px;
+    }
+}
+
+/* === Print Styles === */
+@media print {
+
+    .topBar,
+    .backLink,
+    .backButton {
+        display: none;
+    }
+
+    .main {
+        background: white;
+    }
+
+    .mainGrid {
+        grid-template-columns: 1fr;
+    }
+
+    .stickyProfile {
+        position: relative;
+        top: auto;
     }
 }

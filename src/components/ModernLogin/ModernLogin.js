@@ -2,6 +2,7 @@
 
 import { motion } from "framer-motion";
 import { Mail, Lock, Shield } from "lucide-react";
+import { useId } from "react";
 import styles from './ModernLogin.module.css';
 import AILoadingState from '../ui/AILoadingState/AILoadingState';
 
@@ -26,6 +27,9 @@ export default function ModernLogin({
             transition: { duration: 0.8, delay: 0.2 + i * 0.1, ease: [0.25, 0.4, 0.25, 1] },
         }),
     };
+
+    const emailId = useId();
+    const passwordId = useId();
 
     return (
         <div className={styles.container}>
@@ -84,31 +88,39 @@ export default function ModernLogin({
 
                         <form onSubmit={onSubmit} className={styles.form}>
                             <motion.div variants={fadeUpVariants} custom={1} className={styles.inputGroup}>
-                                <label className={styles.label}>Correo Electrónico</label>
+                                <label htmlFor={emailId} className={styles.label}>Correo Electrónico</label>
                                 <div className={styles.inputWrapper}>
-                                    <Mail className={styles.inputIcon} />
+                                    <Mail className={styles.inputIcon} aria-hidden="true" />
                                     <input
+                                        id={emailId}
                                         type="email"
                                         value={email}
                                         onChange={(e) => setEmail(e.target.value)}
                                         className={styles.input}
                                         required
                                         disabled={loading}
+                                        autoComplete="email"
+                                        aria-label="Correo Electrónico"
+                                        placeholder="correo@ejemplo.com"
                                     />
                                 </div>
                             </motion.div>
 
                             <motion.div variants={fadeUpVariants} custom={2} className={styles.inputGroup}>
-                                <label className={styles.label}>Contraseña</label>
+                                <label htmlFor={passwordId} className={styles.label}>Contraseña</label>
                                 <div className={styles.inputWrapper}>
-                                    <Lock className={styles.inputIcon} />
+                                    <Lock className={styles.inputIcon} aria-hidden="true" />
                                     <input
+                                        id={passwordId}
                                         type="password"
                                         value={password}
                                         onChange={(e) => setPassword(e.target.value)}
                                         className={styles.input}
                                         required
                                         disabled={loading}
+                                        autoComplete="current-password"
+                                        aria-label="Contraseña"
+                                        placeholder="••••••••"
                                     />
                                 </div>
                             </motion.div>
@@ -121,9 +133,10 @@ export default function ModernLogin({
                                 disabled={loading}
                                 whileHover={{ scale: 1.02 }}
                                 whileTap={{ scale: 0.98 }}
+                                aria-busy={loading}
                             >
                                 {loading ? (
-                                    <span className={styles.spinner}></span>
+                                    <span className={styles.spinner} aria-hidden="true"></span>
                                 ) : (
                                     'Iniciar Sesión'
                                 )}

@@ -2,6 +2,7 @@
 
 import { motion } from "framer-motion";
 import { User, Lock, GraduationCap } from "lucide-react";
+import { useId } from "react";
 import styles from './TrainingLogin.module.css';
 import AILoadingState from '../ui/AILoadingState/AILoadingState';
 
@@ -12,6 +13,7 @@ export default function TrainingLogin({
     setEmployeeId,
     password,
     setPassword,
+    onBlurEmployeeId,
     error,
     loading,
     onSubmit,
@@ -25,6 +27,9 @@ export default function TrainingLogin({
             transition: { duration: 0.8, delay: 0.2 + i * 0.1, ease: [0.25, 0.4, 0.25, 1] },
         }),
     };
+
+    const employeeIdInputId = useId();
+    const passwordInputId = useId();
 
     return (
         <div className={styles.container}>
@@ -84,31 +89,39 @@ export default function TrainingLogin({
 
                         <form onSubmit={onSubmit} className={styles.form}>
                             <motion.div variants={fadeUpVariants} custom={1} className={styles.inputGroup}>
-                                <label className={styles.label}>ID de Empleado</label>
+                                <label htmlFor={employeeIdInputId} className={styles.label}>ID de Empleado</label>
                                 <div className={styles.inputWrapper}>
-                                    <User className={styles.inputIcon} />
+                                    <User className={styles.inputIcon} aria-hidden="true" />
                                     <input
+                                        id={employeeIdInputId}
                                         type="text"
                                         value={employeeId}
-                                        onChange={(e) => setEmployeeId(e.target.value.toUpperCase())}
+                                        onChange={(e) => setEmployeeId(e.target.value)}
+                                        onBlur={onBlurEmployeeId}
                                         className={styles.input}
                                         required
                                         disabled={loading}
+                                        autoComplete="username"
+                                        aria-label="ID de Empleado"
+                                        placeholder="Ej: 12345"
                                     />
                                 </div>
                             </motion.div>
 
                             <motion.div variants={fadeUpVariants} custom={2} className={styles.inputGroup}>
-                                <label className={styles.label}>Contraseña / Código</label>
+                                <label htmlFor={passwordInputId} className={styles.label}>Contraseña / Código</label>
                                 <div className={styles.inputWrapper}>
-                                    <Lock className={styles.inputIcon} />
+                                    <Lock className={styles.inputIcon} aria-hidden="true" />
                                     <input
+                                        id={passwordInputId}
                                         type="password"
                                         value={password}
                                         onChange={(e) => setPassword(e.target.value)}
                                         className={styles.input}
                                         required
                                         disabled={loading}
+                                        autoComplete="current-password"
+                                        aria-label="Contraseña"
                                     />
                                 </div>
                             </motion.div>
@@ -121,9 +134,10 @@ export default function TrainingLogin({
                                 disabled={loading}
                                 whileHover={{ scale: 1.02 }}
                                 whileTap={{ scale: 0.98 }}
+                                aria-busy={loading}
                             >
                                 {loading ? (
-                                    <span className={styles.spinner}></span>
+                                    <span className={styles.spinner} aria-hidden="true"></span>
                                 ) : (
                                     'Ingresar al Portal'
                                 )}

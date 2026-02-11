@@ -11,7 +11,7 @@ import CandidateLogin from '@/components/CandidateLogin/CandidateLogin';
 const LOGIN_CONSTANTS = {
     MAX_ATTEMPTS: 10,
     BLOCK_DURATION_MS: 15 * 60 * 1000, // 15 minutes
-    SUCCESS_REDIRECT_DELAY_MS: 2500, // 2.5 seconds (reduced from 15s)
+    SUCCESS_REDIRECT_DELAY_MS: 2000, // 2 seconds (reduced from 15s for better UX)
     MAX_CODE_USES: 10,
     STORAGE_KEYS: {
         BLOCK: 'candidate_login_blocked',
@@ -142,15 +142,29 @@ export default function CandidatosLoginPage() {
     }, [loginAttempts]);
 
     // Clear error when user modifies input
-    const handleInputChange = useCallback((setter) => (e) => {
+    const handleEmployeeIdChange = useCallback((e) => {
         setError('');
-        setter(e.target.value.toUpperCase());
+        setEmployeeId(e.target.value);
+    }, []);
+
+    const handleCurpChange = useCallback((e) => {
+        setError('');
+        setCurp(e.target.value);
     }, []);
 
     // Handle access code change (no uppercase)
     const handleAccessCodeChange = useCallback((e) => {
         setError('');
         setAccessCode(e.target.value);
+    }, []);
+
+    // Convert to uppercase on blur (prevents input lag on mobile)
+    const handleEmployeeIdBlur = useCallback(() => {
+        setEmployeeId(prev => prev.toUpperCase());
+    }, []);
+
+    const handleCurpBlur = useCallback(() => {
+        setCurp(prev => prev.toUpperCase());
     }, []);
 
     // Form submission handler
@@ -288,11 +302,13 @@ export default function CandidatosLoginPage() {
     return (
         <CandidateLogin
             employeeId={employeeId}
-            setEmployeeId={handleInputChange(setEmployeeId)}
+            onEmployeeIdChange={handleEmployeeIdChange}
+            onEmployeeIdBlur={handleEmployeeIdBlur}
             curp={curp}
-            setCurp={handleInputChange(setCurp)}
+            onCurpChange={handleCurpChange}
+            onCurpBlur={handleCurpBlur}
             accessCode={accessCode}
-            setAccessCode={handleAccessCodeChange}
+            onAccessCodeChange={handleAccessCodeChange}
             error={error}
             loading={loading}
             isBlocked={isBlocked}
