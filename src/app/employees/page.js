@@ -25,6 +25,10 @@ import { useToast } from '@/components/ui/Toast/Toast';
 import ConfirmDialog from '@/components/ui/ConfirmDialog/ConfirmDialog';
 import EmployeeSkeleton from '@/components/EmployeeSkeleton/EmployeeSkeleton';
 import { useFormValidation } from '@/hooks/useFormValidation';
+import { useCatalogs } from '@/hooks/useCatalogs';
+
+
+import { generateEmployeeTemplate, parseImportFile, validateEmployeeImportRecords } from '@/utils/importUtils';
 
 // ============================================================================
 // HELPER FUNCTIONS
@@ -128,6 +132,9 @@ export default function EmployeesPage() {
     // Pagination state
     const [itemsPerPage, setItemsPerPage] = useState(4);
 
+    // Catalogs
+    const { positions, departments, areas, loading: catalogsLoading } = useCatalogs();
+
     const {
         employees,
         loading,
@@ -154,6 +161,10 @@ export default function EmployeesPage() {
     const [photoFile, setPhotoFile] = useState(null);
     const [photoPreview, setPhotoPreview] = useState(null);
     const [uploadProgress, setUploadProgress] = useState(0);
+
+    // Bulk Import State
+    const [isImporting, setIsImporting] = useState(false);
+    const fileInputRef = React.useRef(null);
 
     // Confirmation dialog state
     const [confirmDialog, setConfirmDialog] = useState({
@@ -501,6 +512,78 @@ export default function EmployeesPage() {
     }, []);
 
     // ============================================================================
+    // BULK IMPORT HANDLERS
+    // ============================================================================
+
+    const handleDownloadTemplate = useCallback(() => {
+        try {
+            generateEmployeeTemplate();
+            showToast('Plantilla descargada correctamente', 'success');
+        } catch (error) {
+            console.error('Error downloading template:', error);
+            showToast('Error al descargar la plantilla', 'error');
+        }
+    }, [showToast]);
+
+    const handleImportClick = useCallback(() => {
+        if (fileInputRef.current) {
+            fileInputRef.current.value = ''; // Reset input
+            fileInputRef.current.click();
+        }
+    }, []);
+
+    const handleFileImport = useCallback(async (e) => {
+        const file = e.target.files?.[0];
+        if (!file) return;
+
+        setIsImporting(true);
+        const toastId = showToast('Procesando archivo...', 'info', { autoClose: false });
+
+        try {
+            // 1. Parse File
+            const records = await parseImportFile(file);
+
+            if (records.length === 0) {
+                throw new Error('El archivo no contiene registros válidos');
+            }
+
+            // 2. Validate Records
+            const validation = validateEmployeeImportRecords(records, employees);
+
+            if (validation.invalid.length > 0) {
+                // Show errors (simplified for now, could be a modal)
+                const errorMsg = `Se encontraron ${validation.invalid.length} errores. Primer error: Fila ${validation.invalid[0].row} - ${validation.invalid[0].issues.join(', ')}`;
+                throw new Error(errorMsg);
+            }
+
+            // 3. Import Valid Records
+            let importedCount = 0;
+            for (const record of validation.valid) {
+                const result = await createEmployee({
+                    ...record,
+                    status: 'Activo',
+                    isCandidato: false
+                });
+
+                if (result.success) {
+                    importedCount++;
+                } else {
+                    console.error(`Error importing row ${record.row}:`, result.error);
+                }
+            }
+
+            showToast(`Importación completada: ${importedCount} empleados creados`, 'success');
+            refresh(); // Refresh list
+
+        } catch (error) {
+            console.error('Import error:', error);
+            showToast(error.message || 'Error al importar el archivo', 'error');
+        } finally {
+            setIsImporting(false);
+        }
+    }, [employees, createEmployee, refresh, showToast]);
+
+    // ============================================================================
     // RENDER LOADING STATE
     // ============================================================================
 
@@ -560,6 +643,8 @@ export default function EmployeesPage() {
                         </p>
                     </div>
 
+
+
                     {/* Stats Cards */}
                     <div className={styles.statsGrid}>
                         <div className={styles.statCard}>
@@ -597,10 +682,19 @@ export default function EmployeesPage() {
                             <EmployeeSearchBar
                                 searchTerm={searchTerm}
                                 onSearchChange={setSearchTerm}
-                                onUpload={() => { }}
-                                onDownload={() => { }}
+                                onUpload={handleImportClick}
+                                onDownload={handleDownloadTemplate}
                                 onAddEmployee={openCreateDrawer}
                                 canWrite={true}
+                            />
+                            {/* Hidden File Input for Import */}
+                            <input
+                                type="file"
+                                ref={fileInputRef}
+                                style={{ display: 'none' }}
+                                accept=".xlsx,.xls,.json"
+                                onChange={handleFileImport}
+                                disabled={isImporting}
                             />
                         </div>
                     </div>
@@ -1135,16 +1229,19 @@ export default function EmployeesPage() {
                                     <label htmlFor="position" className={styles.formLabel}>
                                         Puesto
                                     </label>
-                                    <input
-                                        type="text"
+                                    <select
                                         id="position"
                                         name="position"
                                         value={formData.position || ''}
                                         onChange={handleInputChange}
                                         className={styles.formInput}
-                                        placeholder="Ej: Desarrollador Senior"
-                                        autoComplete="organization-title"
-                                    />
+                                        disabled={catalogsLoading}
+                                    >
+                                        <option value="">Seleccionar...</option>
+                                        {positions.map((pos, idx) => (
+                                            <option key={idx} value={pos}>{pos}</option>
+                                        ))}
+                                    </select>
                                 </div>
 
                                 <div className={styles.formRow}>
@@ -1152,30 +1249,38 @@ export default function EmployeesPage() {
                                         <label htmlFor="department" className={styles.formLabel}>
                                             Departamento
                                         </label>
-                                        <input
-                                            type="text"
+                                        <select
                                             id="department"
                                             name="department"
                                             value={formData.department || ''}
                                             onChange={handleInputChange}
                                             className={styles.formInput}
-                                            placeholder="Ej: Tecnología"
-                                        />
+                                            disabled={catalogsLoading}
+                                        >
+                                            <option value="">Seleccionar...</option>
+                                            {departments.map((dept, idx) => (
+                                                <option key={idx} value={dept}>{dept}</option>
+                                            ))}
+                                        </select>
                                     </div>
 
                                     <div className={styles.formGroup}>
                                         <label htmlFor="area" className={styles.formLabel}>
                                             Área
                                         </label>
-                                        <input
-                                            type="text"
+                                        <select
                                             id="area"
                                             name="area"
                                             value={formData.area || ''}
                                             onChange={handleInputChange}
                                             className={styles.formInput}
-                                            placeholder="Ej: Backend"
-                                        />
+                                            disabled={catalogsLoading}
+                                        >
+                                            <option value="">Seleccionar...</option>
+                                            {areas.map((area, idx) => (
+                                                <option key={idx} value={area}>{area}</option>
+                                            ))}
+                                        </select>
                                     </div>
                                 </div>
 

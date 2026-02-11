@@ -1,0 +1,368 @@
+[
+    {
+        "positions": "ALMACENISTA DE MATERIA PRIMA"
+    },
+    {
+        "positions": "ANALISTA DE CAPACITACIÓN"
+    },
+    {
+        "positions": "ANALISTA DE RECLUTAMIENTO Y SELECCIÓN A"
+    },
+    {
+        "positions": "ANALISTA DE RECLUTAMIENTO Y SELECCIÓN B"
+    },
+    {
+        "positions": "ANALISTA DE RECURSOS HUMANOS"
+    },
+    {
+        "positions": "ANALISTA DE SEGURIDAD E HIGIENE"
+    },
+    {
+        "positions": "ASISTENTE DE PRODUCCIÓN A"
+    },
+    {
+        "positions": "ASISTENTE DE PRODUCCIÓN B"
+    },
+    {
+        "positions": "ASISTENTE DE RECURSOS HUMANOS"
+    },
+    {
+        "positions": "AUXILIAR ADMINISTRATIVO DE ALMACÉN A"
+    },
+    {
+        "positions": "AUXILIAR ADMINISTRATIVO DE ALMACÉN B"
+    },
+    {
+        "positions": "AUXILIAR ADMINISTRATIVO DE MANTENIMIENTO"
+    },
+    {
+        "positions": "AUXILIAR ADMINISTRATIVO DE TALLER DE MOLDES"
+    },
+    {
+        "positions": "AUXILIAR DE ALMACÉN A"
+    },
+    {
+        "positions": "AUXILIAR DE ALMACÉN B"
+    },
+    {
+        "positions": "AUXILIAR DE ALMACÉN C"
+    },
+    {
+        "positions": "AUXILIAR DE ALMACÉN D"
+    },
+    {
+        "positions": "AUXILIAR DE BÁSCULA  A"
+    },
+    {
+        "positions": "AUXILIAR DE BÁSCULA  B"
+    },
+    {
+        "positions": "AUXILIAR DE CALIDAD"
+    },
+    {
+        "positions": "AUXILIAR DE LIMPIEZA A"
+    },
+    {
+        "positions": "AUXILIAR DE LIMPIEZA B"
+    },
+    {
+        "positions": "AUXILIAR DE MANTENIMIENTO A"
+    },
+    {
+        "positions": "AUXILIAR DE MANTENIMIENTO B"
+    },
+    {
+        "positions": "AUXILIAR DE MANTENIMIENTO C"
+    },
+    {
+        "positions": "AUXILIAR DE METROLOGÍA"
+    },
+    {
+        "positions": "AUXILIAR DE PROYECTOS"
+    },
+    {
+        "positions": "AUXILIAR DE SCRAP A"
+    },
+    {
+        "positions": "AUXILIAR DE SCRAP B"
+    },
+    {
+        "positions": "AUXILIAR DE SUPERVISOR A"
+    },
+    {
+        "positions": "AUXILIAR DE SUPERVISOR B"
+    },
+    {
+        "positions": "AUXILIAR DEL SGI B"
+    },
+    {
+        "positions": "AUXILIAR DEL SGI C"
+    },
+    {
+        "positions": "AUXILIAR PROGRAMADOR"
+    },
+    {
+        "positions": "CAPTURISTA RPS A"
+    },
+    {
+        "positions": "CAPTURISTA RPS B"
+    },
+    {
+        "positions": "CHECK LIST A"
+    },
+    {
+        "positions": "CHECK LIST B"
+    },
+    {
+        "positions": "CHOFER A"
+    },
+    {
+        "positions": "CHOFER B"
+    },
+    {
+        "positions": "COORDINADOR DE RECLUTAMIENTO Y SELECCIÓN"
+    },
+    {
+        "positions": "COORDINADOR DE RPS"
+    },
+    {
+        "positions": "COORDINADOR DEL SGC"
+    },
+    {
+        "positions": "GERENTE DE CALIDAD"
+    },
+    {
+        "positions": "GERENTE DE PLANTA"
+    },
+    {
+        "positions": "GERENTE DE PRODUCCIÓN"
+    },
+    {
+        "positions": "GERENTE DE PROYECTOS"
+    },
+    {
+        "positions": "INGENIERO DE CALIDAD A"
+    },
+    {
+        "positions": "INGENIERO DE CALIDAD B"
+    },
+    {
+        "positions": "INGENIERO DE CALIDAD C"
+    },
+    {
+        "positions": "INGENIERO DE PROCESO A"
+    },
+    {
+        "positions": "INGENIERO DE PROCESO B"
+    },
+    {
+        "positions": "INGENIERO DE PROCESO C"
+    },
+    {
+        "positions": "INGENIERO DE PROCESO D"
+    },
+    {
+        "positions": "INGENIERO DE PROYECTOS A"
+    },
+    {
+        "positions": "INGENIERO DE PROYECTOS B"
+    },
+    {
+        "positions": "INGENIERO DE PROYECTOS C"
+    },
+    {
+        "positions": "INGENIERO DE PROYECTOS D"
+    },
+    {
+        "positions": "INSPECTOR DE CALIDAD A"
+    },
+    {
+        "positions": "INSPECTOR DE CALIDAD B"
+    },
+    {
+        "positions": "INSPECTOR DE CALIDAD C"
+    },
+    {
+        "positions": "INSPECTOR DE CALIDAD D"
+    },
+    {
+        "positions": "INSPECTOR RECIBO"
+    },
+    {
+        "positions": "JEFE DE ALMACÉN"
+    },
+    {
+        "positions": "JEFE DE LOGÍSTICA"
+    },
+    {
+        "positions": "JEFE DE MANTENIMIENTO"
+    },
+    {
+        "positions": "JEFE DE METROLOGÍA"
+    },
+    {
+        "positions": "JEFE DE PROCESO"
+    },
+    {
+        "positions": "JEFE DE PRODUCCIÓN"
+    },
+    {
+        "positions": "JEFE DE RECURSOS HUMANOS"
+    },
+    {
+        "positions": "LÍDER DE COTIZACIONES"
+    },
+    {
+        "positions": "LÍDER DE PROYECTOS A"
+    },
+    {
+        "positions": "LÍDER DE PROYECTOS B"
+    },
+    {
+        "positions": "LÍDER DE PROYECTOS C"
+    },
+    {
+        "positions": "MATERIALISTA A"
+    },
+    {
+        "positions": "MATERIALISTA B"
+    },
+    {
+        "positions": "METRÓLOGO A"
+    },
+    {
+        "positions": "METRÓLOGO B"
+    },
+    {
+        "positions": "METRÓLOGO C"
+    },
+    {
+        "positions": "MONTADOR DE MOLDES A"
+    },
+    {
+        "positions": "MONTADOR DE MOLDES B"
+    },
+    {
+        "positions": "MONTADOR DE MOLDES C"
+    },
+    {
+        "positions": "OPERADOR DE ACABADOS - GP12 A"
+    },
+    {
+        "positions": "OPERADOR DE ACABADOS - GP12 B"
+    },
+    {
+        "positions": "OPERADOR DE ACABADOS - GP12 C"
+    },
+    {
+        "positions": "OPERADOR DE ACABADOS - GP12 D"
+    },
+    {
+        "positions": "OPERADOR DE MÁQUINA A"
+    },
+    {
+        "positions": "OPERADOR DE MÁQUINA B"
+    },
+    {
+        "positions": "OPERADOR DE MÁQUINA C"
+    },
+    {
+        "positions": "OPERADOR DE MÁQUINA D"
+    },
+    {
+        "positions": "PLANEADOR DE PRODUCCIÓN"
+    },
+    {
+        "positions": "PREPARADOR A"
+    },
+    {
+        "positions": "PREPARADOR B"
+    },
+    {
+        "positions": "RESIDENTE DE CALIDAD A"
+    },
+    {
+        "positions": "RESIDENTE DE CALIDAD B"
+    },
+    {
+        "positions": "RESIDENTE DE CALIDAD C"
+    },
+    {
+        "positions": "SUPERVISOR DE ACABADOS - GP12 A"
+    },
+    {
+        "positions": "SUPERVISOR DE ACABADOS - GP12 B"
+    },
+    {
+        "positions": "SUPERVISOR DE ACABADOS - GP12 C"
+    },
+    {
+        "positions": "SUPERVISOR DE LOGÍSTICA"
+    },
+    {
+        "positions": "SUPERVISOR DE METROLOGÍA"
+    },
+    {
+        "positions": "SUPERVISOR DE MONTAJE"
+    },
+    {
+        "positions": "SUPERVISOR DE PRODUCCIÓN A"
+    },
+    {
+        "positions": "SUPERVISOR DE PRODUCCIÓN B"
+    },
+    {
+        "positions": "SUPERVISOR DE PRODUCCIÓN C"
+    },
+    {
+        "positions": "SUPERVISOR DE PRODUCCIÓN D"
+    },
+    {
+        "positions": "TEC. ESPECIALISTA DE MOLDES (JEFE)"
+    },
+    {
+        "positions": "TÉCNICO DE MANTENIMIENTO A"
+    },
+    {
+        "positions": "TÉCNICO DE MANTENIMIENTO B"
+    },
+    {
+        "positions": "TÉCNICO DE MANTENIMIENTO C"
+    },
+    {
+        "positions": "TÉCNICO DE MANTENIMIENTO D"
+    },
+    {
+        "positions": "TÉCNICO DE MANTENIMIENTO DE EDIFICIOS A"
+    },
+    {
+        "positions": "TÉCNICO DE MANTENIMIENTO DE EDIFICIOS B"
+    },
+    {
+        "positions": "TÉCNICO DE MANTENIMIENTO DE EDIFICIOS C"
+    },
+    {
+        "positions": "TÉCNICO DE MANTENIMIENTO E"
+    },
+    {
+        "positions": "TÉCNICO DE MOLDES A"
+    },
+    {
+        "positions": "TÉCNICO DE MOLDES B"
+    },
+    {
+        "positions": "TÉCNICO DE MOLDES C"
+    },
+    {
+        "positions": "TÉCNICO DE MOLDES D"
+    },
+    {
+        "positions": "TÉCNICO DE MOLDES E"
+    },
+    {
+        "positions": "TÉCNICO ESPECIALISTA DE MANTENIMIENTO A"
+    },
+    {
+        "positions": "TÉCNICO ESPECIALISTA DE MANTENIMIENTO B"
+    }
+]

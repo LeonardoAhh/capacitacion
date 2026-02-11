@@ -47,7 +47,13 @@ service cloud.firestore {
     match /users/{userId} {
       allow read: if isAuthenticated() && 
                      (request.auth.uid == userId || hasAnyRole(['super_admin', 'rh']));
-      allow create: if hasRole('super_admin');
+      
+      // Permitir crear: super_admin O el mismo usuario creando su propio documento
+      allow create: if hasRole('super_admin') || 
+                      (isAuthenticated() && 
+                       request.auth.uid == userId &&
+                       request.resource.data.email == request.auth.token.email);
+      
       allow update: if hasAnyRole(['super_admin', 'rh']) || request.auth.uid == userId;
       allow delete: if hasRole('super_admin');
     }
@@ -108,6 +114,12 @@ service cloud.firestore {
       allow read: if true;
       allow write: if hasAnyRole(['super_admin', 'rh'])
                    && isValidString(request.resource.data.name);
+    }
+
+    // CATÁLOGOS DE DATOS (Dropdowns)
+    match /datos/{docId} {
+      allow read: if isAuthenticated();
+      allow write: if hasAnyRole(['super_admin', 'rh']);
     }
     
     // TRAINING RECORDS

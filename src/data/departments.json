@@ -1,0 +1,32 @@
+[
+    {
+        "department": "ALMACÉN"
+    },
+    {
+        "department": "CALIDAD"
+    },
+    {
+        "department": "GERENCIA DE PLANTA"
+    },
+    {
+        "department": "LOGISTICA"
+    },
+    {
+        "department": "MANTENIMIENTO"
+    },
+    {
+        "department": "PRODUCCIÓN"
+    },
+    {
+        "department": "PROYECTOS"
+    },
+    {
+        "department": "RECURSOS HUMANOS"
+    },
+    {
+        "department": "SISTEMAS"
+    },
+    {
+        "department": "TALLER DE MOLDES"
+    }
+]

@@ -2,6 +2,7 @@
 
 import styles from './Avatar.module.css';
 import { cn } from '@/lib/utils';
+import { getOptimizedImageUrl } from '@/lib/imageUtils';
 
 /**
  * Avatar component for displaying user photos or initials
@@ -49,7 +50,7 @@ export function Avatar({
             {src ? (
                 // eslint-disable-next-line @next/next/no-img-element
                 <img
-                    src={src}
+                    src={getOptimizedImageUrl(src, size)}
                     alt={alt || name || 'Foto de perfil'}
                     className={styles.image}
                     referrerPolicy="no-referrer"

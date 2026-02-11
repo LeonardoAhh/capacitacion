@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
-import { collection, getDocs, query, where } from 'firebase/firestore';
+import { collection, getDocs, query, where, updateDoc, doc } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import { useAuth } from '@/contexts/AuthContext';
 import styles from './page.module.css';
@@ -198,13 +198,15 @@ export default function CandidateMonitoringPage() {
 
     // Memoized calculations
     const stats = useMemo(() => {
+        // Only count NON-ARCHIVED candidates for stats
+        const activeCandidates = candidates.filter(c => !c.isArchived);
         return {
-            total: candidates.length,
-            completed: candidates.filter(c => c.status === 'completed').length,
-            inProgress: candidates.filter(c => c.status === 'inProgress').length,
-            inactive: candidates.filter(c => c.status === 'inactive').length,
-            avgProgress: candidates.length > 0
-                ? Math.round(candidates.reduce((acc, c) => acc + c.progress, 0) / candidates.length)
+            total: activeCandidates.length,
+            completed: activeCandidates.filter(c => c.status === 'completed').length,
+            inProgress: activeCandidates.filter(c => c.status === 'inProgress').length,
+            inactive: activeCandidates.filter(c => c.status === 'inactive').length,
+            avgProgress: activeCandidates.length > 0
+                ? Math.round(activeCandidates.reduce((acc, c) => acc + c.progress, 0) / activeCandidates.length)
                 : 0
         };
     }, [candidates]);
@@ -216,7 +218,17 @@ export default function CandidateMonitoringPage() {
                 c.position.toLowerCase().includes(searchTerm.toLowerCase()) ||
                 c.employeeId?.toLowerCase().includes(searchTerm.toLowerCase());
 
-            const matchesStatus = statusFilter === 'all' || c.status === statusFilter;
+            const isArchived = c.isArchived === true;
+
+            // Logica de filtrado por estado
+            let matchesStatus = false;
+            if (statusFilter === 'archived') {
+                matchesStatus = isArchived;
+            } else {
+                // Si no estamos filtrando por archivados, excluimos los archivados por defecto
+                if (isArchived) return false;
+                matchesStatus = statusFilter === 'all' || c.status === statusFilter;
+            }
 
             return matchesSearch && matchesStatus;
         });
@@ -252,6 +264,28 @@ export default function CandidateMonitoringPage() {
         window.open(`https://wa.me/${cleanPhone}?text=${encodedMessage}`, '_blank');
         setWhatsappModal({ isOpen: false, candidate: null });
     }, [whatsappModal.candidate]);
+
+    // Archive Handler
+    const handleArchiveCandidate = useCallback(async (candidate) => {
+        if (!confirm(`¿Estás seguro de que deseas ${candidate.isArchived ? 'restaurar' : 'archivar'} a ${candidate.name}?`)) return;
+
+        try {
+            const docRef = doc(db, 'employees', candidate.id);
+            await updateDoc(docRef, {
+                isArchived: !candidate.isArchived,
+                archivedAt: !candidate.isArchived ? new Date().toISOString() : null
+            });
+
+            // Optimistic update handled by fetch or real-time listener, but we can force refresh if needed
+            // For now, let's rely on data refetch or local state update if we had it.
+            // Since we use real-time listeners for some parts, or manual fetch for this page:
+            fetchData();
+            setIsDrawerOpen(false);
+        } catch (error) {
+            console.error('Error updating candidate archive status:', error);
+            alert('Error al actualizar el estado del candidato');
+        }
+    }, [fetchData]);
 
     // Predefined WhatsApp message templates
     const messageTemplates = [
@@ -431,6 +465,7 @@ export default function CandidateMonitoringPage() {
                             <option value="inProgress">En Proceso</option>
                             <option value="inactive">Inactivos</option>
                             <option value="notStarted">Sin Iniciar</option>
+                            <option value="archived">🗄️ Archivados</option>
                         </select>
                     </div>
 
@@ -457,6 +492,7 @@ export default function CandidateMonitoringPage() {
                             <option value="inProgress">En Proceso</option>
                             <option value="inactive">Inactivos</option>
                             <option value="notStarted">Sin Iniciar</option>
+                            <option value="archived">🗄️ Archivados</option>
                         </select>
                     </div>
                 )}
@@ -759,6 +795,7 @@ export default function CandidateMonitoringPage() {
                     coursesMap={coursesMapRef}
                     open={isDrawerOpen}
                     onOpenChange={setIsDrawerOpen}
+                    onArchive={() => handleArchiveCandidate(selectedCandidate)}
                 />
             </div>
         </div>
