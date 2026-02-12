@@ -1130,6 +1130,11 @@ export default function PromocionesPage() {
                                                                             <strong>≥{criteria.temporality.required} meses</strong>
                                                                         </div>
                                                                     </div>
+                                                                    {canWrite() && (
+                                                                        <Button variant="ghost" size="sm" onClick={() => handleEditEmployee(emp)}>
+                                                                            ✏️ Editar
+                                                                        </Button>
+                                                                    )}
                                                                 </div>
 
                                                                 {/* 3. Matrix */}
