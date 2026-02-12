@@ -24,7 +24,7 @@ export default function SwitchButton({
                 <Sun className={styles.sunIcon} />
 
                 {showLabel && (
-                    <div className={styles.labelContainer}>
+                    <div className={`${styles.labelContainer} ${styles.hideOnMobile}`}>
                         <span className={`${styles.labelText} ${styles.lightText}`}>
                             Light
                         </span>

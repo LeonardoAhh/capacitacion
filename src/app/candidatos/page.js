@@ -70,6 +70,9 @@ const formatBlockTime = (seconds) => {
 };
 
 // ==================== COMPONENT ====================
+import Link from 'next/link';
+import { ArrowLeft } from 'lucide-react';
+
 export default function CandidatosLoginPage() {
     const router = useRouter();
 
@@ -300,22 +303,47 @@ export default function CandidatosLoginPage() {
     }, [employeeId, curp, accessCode, handleFailedAttempt, router]);
 
     return (
-        <CandidateLogin
-            employeeId={employeeId}
-            onEmployeeIdChange={handleEmployeeIdChange}
-            onEmployeeIdBlur={handleEmployeeIdBlur}
-            curp={curp}
-            onCurpChange={handleCurpChange}
-            onCurpBlur={handleCurpBlur}
-            accessCode={accessCode}
-            onAccessCodeChange={handleAccessCodeChange}
-            error={error}
-            loading={loading}
-            isBlocked={isBlocked}
-            blockTimeRemaining={blockTimeRemaining}
-            onSubmit={handleSubmit}
-            isSuccess={isSuccess}
-            isFormValid={isFormValid}
-        />
+        <>
+            <Link href="/" style={{
+                position: 'fixed',
+                top: '20px',
+                left: '20px',
+                zIndex: 50,
+                display: 'flex',
+                alignItems: 'center',
+                gap: '8px',
+                padding: '10px 16px',
+                background: 'rgba(255, 255, 255, 0.9)',
+                backdropFilter: 'blur(8px)',
+                borderRadius: '50px',
+                boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
+                textDecoration: 'none',
+                color: '#333',
+                fontWeight: '500',
+                fontSize: '14px',
+                transition: 'all 0.2s ease',
+                cursor: 'pointer'
+            }}>
+                <ArrowLeft size={18} />
+                <span>Volver</span>
+            </Link>
+            <CandidateLogin
+                employeeId={employeeId}
+                onEmployeeIdChange={handleEmployeeIdChange}
+                onEmployeeIdBlur={handleEmployeeIdBlur}
+                curp={curp}
+                onCurpChange={handleCurpChange}
+                onCurpBlur={handleCurpBlur}
+                accessCode={accessCode}
+                onAccessCodeChange={handleAccessCodeChange}
+                error={error}
+                loading={loading}
+                isBlocked={isBlocked}
+                blockTimeRemaining={blockTimeRemaining}
+                onSubmit={handleSubmit}
+                isSuccess={isSuccess}
+                isFormValid={isFormValid}
+            />
+        </>
     );
 }

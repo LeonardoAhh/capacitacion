@@ -10,7 +10,7 @@
 
 /* === CONTAINER === */
 .container {
-    height: 100vh;
+    min-height: 100dvh;
     width: 100%;
     position: relative;
     overflow: hidden;
@@ -18,6 +18,8 @@
     align-items: center;
     justify-content: center;
     background-color: transparent;
+    padding-top: 4rem;
+    /* Add padding to account for top controls on mobile */
 }
 
 /* === SKIP LINK (Accessibility) === */

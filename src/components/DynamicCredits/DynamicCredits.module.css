@@ -13,6 +13,10 @@
     display: inline-block;
     min-height: 24px;
     pointer-events: auto;
+    max-width: 90vw;
+    /* Prevent overflow on small screens */
+    white-space: normal;
+    /* Allow wrapping */
 }
 
 .creditText {

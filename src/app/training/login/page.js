@@ -7,6 +7,9 @@ import TrainingLogin from '@/components/TrainingLogin/TrainingLogin';
 import { db } from '@/lib/firebase';
 import { collection, query, where, getDocs } from 'firebase/firestore';
 
+import Link from 'next/link';
+import { ArrowLeft } from 'lucide-react';
+
 export default function TrainingLoginPage() {
     const router = useRouter();
     const [employeeId, setEmployeeId] = useState('');
@@ -91,16 +94,41 @@ export default function TrainingLoginPage() {
     };
 
     return (
-        <TrainingLogin
-            employeeId={employeeId}
-            setEmployeeId={handleEmployeeIdChange}
-            onBlurEmployeeId={handleEmployeeIdBlur}
-            password={password}
-            setPassword={handlePasswordChange}
-            error={error}
-            loading={loading}
-            onSubmit={handleSubmit}
-            isSuccess={isSuccess}
-        />
+        <>
+            <Link href="/" style={{
+                position: 'fixed',
+                top: '20px',
+                left: '20px',
+                zIndex: 50,
+                display: 'flex',
+                alignItems: 'center',
+                gap: '8px',
+                padding: '10px 16px',
+                background: 'rgba(255, 255, 255, 0.9)',
+                backdropFilter: 'blur(8px)',
+                borderRadius: '50px',
+                boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
+                textDecoration: 'none',
+                color: '#333',
+                fontWeight: '500',
+                fontSize: '14px',
+                transition: 'all 0.2s ease',
+                cursor: 'pointer'
+            }}>
+                <ArrowLeft size={18} />
+                <span>Volver</span>
+            </Link>
+            <TrainingLogin
+                employeeId={employeeId}
+                setEmployeeId={handleEmployeeIdChange}
+                onBlurEmployeeId={handleEmployeeIdBlur}
+                password={password}
+                setPassword={handlePasswordChange}
+                error={error}
+                loading={loading}
+                onSubmit={handleSubmit}
+                isSuccess={isSuccess}
+            />
+        </>
     );
 }

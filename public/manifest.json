@@ -2,7 +2,7 @@
     "name": "Portal de Capacitación Viñoplastic",
     "short_name": "Viñoplastic",
     "description": "Plataforma profesional de capacitación y desarrollo.",
-    "start_url": "/training/dashboard",
+    "start_url": "/",
     "display": "standalone",
     "background_color": "#ffffff",
     "theme_color": "#1e3a8a",
