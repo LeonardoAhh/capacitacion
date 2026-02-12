@@ -48,7 +48,8 @@ export default function QuestionManager({ isOpen, onClose }) {
             type: 'Múltiple', // 'Múltiple' or 'Abierta'
             question: '',
             options: { a: '', b: '', c: '' },
-            correctAnswer: 'a' // 'a', 'b', 'c' or text
+            correctAnswer: 'a', // 'a', 'b', 'c' or text
+            isFixed: false
         };
     }
 
@@ -74,7 +75,8 @@ export default function QuestionManager({ isOpen, onClose }) {
                 b: q.options?.b || '',
                 c: q.options?.c || ''
             },
-            correctAnswer: q.correctAnswer || ''
+            correctAnswer: q.correctAnswer || '',
+            isFixed: q.isFixed || false
         });
         setEditingQuestion(q);
     };
@@ -108,6 +110,7 @@ export default function QuestionManager({ isOpen, onClose }) {
                 question: formData.question,
                 options: formData.type === 'Múltiple' ? formData.options : null,
                 correctAnswer: formData.correctAnswer,
+                isFixed: formData.isFixed,
                 updatedAt: serverTimestamp()
             };
 
@@ -198,6 +201,17 @@ export default function QuestionManager({ isOpen, onClose }) {
                                         </select>
                                     </div>
 
+                                    <div className={styles.formGroup} style={{ flexDirection: 'row', alignItems: 'center', gap: '10px' }}>
+                                        <input
+                                            type="checkbox"
+                                            id="isFixed"
+                                            checked={formData.isFixed}
+                                            onChange={e => setFormData({ ...formData, isFixed: e.target.checked })}
+                                            style={{ width: 'auto', margin: 0 }}
+                                        />
+                                        <label htmlFor="isFixed" style={{ marginBottom: 0, cursor: 'pointer' }}>Pregunta Fija (Siempre aparecerá en el examen)</label>
+                                    </div>
+
                                     {formData.type === 'Múltiple' && (
                                         <div className={styles.optionsGrid}>
                                             <div className={styles.formGroup}>
@@ -276,6 +290,7 @@ export default function QuestionManager({ isOpen, onClose }) {
                                                     <div className={styles.questionHeader}>
                                                         <span className={styles.badge}>{q.theme || 'General'}</span>
                                                         <span className={styles.badge}>{q.type}</span>
+                                                        {q.isFixed && <span className={styles.badge} style={{ backgroundColor: '#ffd700', color: '#000' }}>★ Fija</span>}
                                                     </div>
                                                     <p className={styles.questionText}>{q.question}</p>
                                                     <div className={styles.actions}>

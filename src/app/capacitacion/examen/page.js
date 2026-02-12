@@ -95,16 +95,28 @@ export default function ExamenPage() {
                 return;
             }
 
-            // 3. Randomize and Slice
-            const shuffled = [...allQuestions].sort(() => 0.5 - Math.random());
-            const selectedQuestions = shuffled.slice(0, count);
+            // 3. Separate Fixed vs Pool
+            const fixedQuestions = allQuestions.filter(q => q.isFixed === true);
+            const otherQuestions = allQuestions.filter(q => q.isFixed !== true);
 
-            // 4. Set Exam Data
+            // 4. Calculate slots
+            const neededRandom = Math.max(0, count - fixedQuestions.length);
+
+            // 5. Randomize Pool and Slice
+            const shuffledPool = [...otherQuestions].sort(() => 0.5 - Math.random());
+            const selectedRandom = shuffledPool.slice(0, neededRandom);
+
+            // 6. Combine and Shuffle Final Set
+            // We shuffle again so fixed questions aren't always at the top
+            const combinedQuestions = [...fixedQuestions, ...selectedRandom];
+            const finalQuestions = combinedQuestions.sort(() => 0.5 - Math.random());
+
+            // 7. Set Exam Data
             setExamData({
                 employee: selectedEmployee,
                 date: new Date().toLocaleDateString('es-MX', { year: 'numeric', month: 'long', day: 'numeric' }),
                 categoryLabel: getCategoryLabel(category),
-                questions: selectedQuestions
+                questions: finalQuestions
             });
 
             toast.success("Éxito", "Examen generado correctamente.");
