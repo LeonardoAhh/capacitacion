@@ -3,6 +3,8 @@
 import { useState, useEffect, useMemo, useCallback } from 'react';
 import ProfileDropdown from '@/components/ProfileDropdown/ProfileDropdown';
 import Link from 'next/link';
+import { useAuth } from '@/contexts/AuthContext';
+import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/Button/Button';
 import { useToast } from '@/components/ui/Toast/Toast';
 import { db } from '@/lib/firebase';
@@ -13,6 +15,8 @@ import styles from './page.module.css';
 const normalize = (str) => str?.trim().toUpperCase() || '';
 
 export default function CumplimientoPage() {
+    const { user, loading: authLoading } = useAuth();
+    const router = useRouter();
     const { toast } = useToast();
     const [loading, setLoading] = useState(true);
     const [courses, setCourses] = useState([]);
@@ -67,8 +71,14 @@ export default function CumplimientoPage() {
     }, [toast]);
 
     useEffect(() => {
-        loadData();
-    }, [loadData]);
+        if (!authLoading && !user) {
+            router.push('/login');
+        } else if (user) {
+            loadData();
+        }
+    }, [loadData, user, authLoading, router]);
+
+
 
     // Calculate statistics and filtered employees for selected course
     const { stats, courseEmployees } = useMemo(() => {
@@ -162,6 +172,16 @@ export default function CumplimientoPage() {
         (currentPage - 1) * itemsPerPage,
         currentPage * itemsPerPage
     );
+
+    if (authLoading || !user) {
+        return (
+            <div className={styles.main}>
+                <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', color: 'var(--text-primary)' }}>
+                    <div className="spinner"></div>
+                </div>
+            </div>
+        );
+    }
 
     const getStatusBadge = (status) => {
         switch (status) {

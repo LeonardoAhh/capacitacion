@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import ProfileDropdown from '@/components/ProfileDropdown/ProfileDropdown';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/Button/Button';
 import { useToast } from '@/components/ui/Toast/Toast';
 import { useAuth } from '@/contexts/AuthContext';
@@ -13,7 +14,8 @@ import styles from './page.module.css';
 import multiStyles from './multi-styles.module.css';
 
 export default function RegistroPage() {
-    const { canWrite } = useAuth();
+    const { user, loading: authLoading, canWrite } = useAuth();
+    const router = useRouter();
     const { toast } = useToast();
     const [loading, setLoading] = useState(true);
     const [submitting, setSubmitting] = useState(false);
@@ -42,8 +44,18 @@ export default function RegistroPage() {
     const [importMode, setImportMode] = useState('manual'); // 'manual' | 'file'
     const [importFile, setImportFile] = useState(null);
     const [importPreview, setImportPreview] = useState(null); // { valid, invalid }
+
     const [importing, setImporting] = useState(false);
     const fileInputRef = useRef(null);
+
+    // Auth Protection
+    useEffect(() => {
+        if (!authLoading && !user) {
+            router.push('/login');
+        }
+    }, [user, authLoading, router]);
+
+
 
     const loadData = useCallback(async () => {
         setLoading(true);
@@ -451,6 +463,16 @@ export default function RegistroPage() {
             setImporting(false);
         }
     };
+
+    if (authLoading || !user) {
+        return (
+            <div className={styles.main}>
+                <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', color: 'var(--text-primary)' }}>
+                    <div className="spinner"></div>
+                </div>
+            </div>
+        );
+    }
 
     return (
         <>

@@ -9,16 +9,31 @@ import ProfileDropdown from '@/components/ProfileDropdown/ProfileDropdown';
 import styles from './page.module.css';
 
 export default function ModulesPage() {
-    const { user, signOut } = useAuth();
+    const { user, loading: authLoading, signOut } = useAuth();
     const router = useRouter();
 
     // Protección: Redirigir candidatos a su dashboard
     useEffect(() => {
+        if (!authLoading && !user) {
+            router.push('/'); // OR /login
+            return;
+        }
+
         const candidateSession = sessionStorage.getItem('candidate_session');
         if (candidateSession) {
             router.push('/candidatos/dashboard');
         }
-    }, [router]);
+    }, [router, user, authLoading]);
+
+    if (authLoading || !user) {
+        return (
+            <div className={styles.container}>
+                <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', color: 'white' }}>
+                    <div className="spinner"></div>
+                </div>
+            </div>
+        );
+    }
 
     const isDemo = user?.rol === 'demo' || user?.email?.includes('demo');
     const isSuperAdmin = user?.rol === 'super_admin';

@@ -7,6 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card/C
 import { Button } from '@/components/ui/Button/Button';
 import { useToast } from '@/components/ui/Toast/Toast';
 import { useAuth } from '@/contexts/AuthContext';
+import { useRouter } from 'next/navigation';
 import { db } from '@/lib/firebase';
 import { collection, getDocs, doc, updateDoc, query, orderBy, where, writeBatch } from 'firebase/firestore';
 import { seedCapacitacionDataRobust } from '@/lib/seedCapacitacion';
@@ -14,7 +15,8 @@ import styles from './page.module.css';
 import { Dialog, DialogHeader, DialogTitle, DialogBody, DialogFooter, DialogClose } from '@/components/ui/Dialog/Dialog';
 
 export default function MatrizPage() {
-    const { canWrite } = useAuth();
+    const { user, loading: authLoading, canWrite } = useAuth();
+    const router = useRouter();
     const { toast } = useToast();
     const [positions, setPositions] = useState([]);
     const [courses, setCourses] = useState([]); // All available courses for autocomplete
@@ -34,8 +36,14 @@ export default function MatrizPage() {
     const [courseSearch, setCourseSearch] = useState('');
 
     useEffect(() => {
-        loadData();
-    }, []);
+        if (!authLoading && !user) {
+            router.push('/login');
+        } else if (user) {
+            loadData();
+        }
+    }, [user, authLoading, router]);
+
+
 
     const loadData = async () => {
         setLoading(true);
@@ -116,6 +124,16 @@ export default function MatrizPage() {
     const [matchingEmployees, setMatchingEmployees] = useState([]);
     const [loadingEmployees, setLoadingEmployees] = useState(false);
     const [activeTab, setActiveTab] = useState('courses'); // 'courses' | 'employees'
+
+    if (authLoading || !user) {
+        return (
+            <div className={styles.main}>
+                <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', color: 'var(--text-primary)' }}>
+                    <div className="spinner"></div>
+                </div>
+            </div>
+        );
+    }
 
     // Edit Handlers
     const openEdit = async (position) => {

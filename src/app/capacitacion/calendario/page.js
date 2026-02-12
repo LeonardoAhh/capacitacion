@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useMemo } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
+import { useRouter } from 'next/navigation';
 import ProfileDropdown from '@/components/ProfileDropdown/ProfileDropdown';
 import Link from 'next/link';
 import { Button } from '@/components/ui/Button/Button';
@@ -13,7 +14,8 @@ import styles from './page.module.css';
 
 
 export default function CalendarPage() {
-    const { user, canWrite } = useAuth();
+    const { user, loading: authLoading, canWrite } = useAuth();
+    const router = useRouter();
     const { toast } = useToast();
     const [date, setDate] = useState(new Date());
     const [events, setEvents] = useState([]);
@@ -32,6 +34,23 @@ export default function CalendarPage() {
         loadEvents();
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [date]);
+
+    // Auth Protection
+    useEffect(() => {
+        if (!authLoading && !user) {
+            router.push('/login');
+        }
+    }, [user, authLoading, router]);
+
+    if (authLoading || !user) {
+        return (
+            <div className={styles.main}>
+                <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', color: 'var(--text-primary)' }}>
+                    <div className="spinner"></div>
+                </div>
+            </div>
+        );
+    }
 
     const generateCalendar = () => {
         const year = date.getFullYear();

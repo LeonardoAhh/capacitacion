@@ -2,6 +2,8 @@
 
 import { useState, useEffect } from 'react';
 import ProfileDropdown from '@/components/ProfileDropdown/ProfileDropdown';
+import { useAuth } from '@/contexts/AuthContext';
+import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { Button } from '@/components/ui/Button/Button';
 import { db } from '@/lib/firebase';
@@ -9,6 +11,8 @@ import { collection, getDocs, query, orderBy } from 'firebase/firestore';
 import styles from './page.module.css';
 
 export default function PuestosPage() {
+    const { user, loading: authLoading } = useAuth();
+    const router = useRouter();
     const [positions, setPositions] = useState([]);
     const [loading, setLoading] = useState(true);
     const [expandedPos, setExpandedPos] = useState(null);
@@ -19,9 +23,23 @@ export default function PuestosPage() {
     const itemsPerPage = 20;
 
     useEffect(() => {
-        loadData();
+        if (!authLoading && !user) {
+            router.push('/login');
+        } else if (user) {
+            loadData();
+        }
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
+    }, [user, authLoading, router]);
+
+    if (authLoading || !user) {
+        return (
+            <div className={styles.main}>
+                <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', color: 'var(--text-primary)' }}>
+                    <div className="spinner"></div>
+                </div>
+            </div>
+        );
+    }
 
     const loadData = async () => {
         setLoading(true);

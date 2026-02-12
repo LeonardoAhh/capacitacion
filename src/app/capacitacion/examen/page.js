@@ -10,9 +10,21 @@ import { Card, CardContent } from '@/components/ui/Card/Card';
 import QuestionManager from '@/components/QuestionManager/QuestionManager'; // [NEW]
 import styles from './page.module.css';
 
+import { useAuth } from '@/contexts/AuthContext';
+import { useRouter } from 'next/navigation';
+
 export default function ExamenPage() {
+    const { user, loading: authLoading } = useAuth();
+    const router = useRouter();
     const { toast } = useToast();
     const [showQuestionManager, setShowQuestionManager] = useState(false); // [NEW]
+
+    // Auth Protection
+    useEffect(() => {
+        if (!authLoading && !user) {
+            router.push('/login');
+        }
+    }, [user, authLoading, router]);
 
     // Config State
     const [employees, setEmployees] = useState([]);
@@ -124,6 +136,16 @@ export default function ExamenPage() {
         setSearchTerm('');
         setCategory('D_C');
     };
+
+
+
+    if (authLoading || !user) {
+        return (
+            <div className={styles.loadingContainer}>
+                <div className="spinner"></div>
+            </div>
+        );
+    }
 
     if (examData) {
         return (

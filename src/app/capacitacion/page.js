@@ -1,6 +1,8 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useAuth } from '@/contexts/AuthContext';
+import { useRouter } from 'next/navigation';
 import ProfileDropdown from '@/components/ProfileDropdown/ProfileDropdown';
 import Link from 'next/link';
 import { useToast } from '@/components/ui/Toast/Toast';
@@ -8,8 +10,27 @@ import { recalculateComplianceFromFirestore } from '@/lib/seedHistorial';
 import styles from './page.module.css';
 
 export default function CapacitacionPage() {
+    const { user, loading: authLoading } = useAuth();
+    const router = useRouter();
     const [isRecalculating, setIsRecalculating] = useState(false);
     const { toast } = useToast();
+
+    // Auth Protection
+    useEffect(() => {
+        if (!authLoading && !user) {
+            router.push('/login');
+        }
+    }, [user, authLoading, router]);
+
+    if (authLoading || !user) {
+        return (
+            <div className={styles.main}>
+                <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', color: 'var(--text-primary)' }}>
+                    <div className="spinner"></div>
+                </div>
+            </div>
+        );
+    }
 
     // Function preserved for potential future administrative use
     const handleRecalculateCompliance = async () => {

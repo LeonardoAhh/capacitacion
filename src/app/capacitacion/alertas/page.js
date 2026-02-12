@@ -1,6 +1,8 @@
 ﻿'use client';
 
 import { useState, useEffect } from 'react';
+import { useAuth } from '@/contexts/AuthContext';
+import { useRouter } from 'next/navigation';
 import ProfileDropdown from '@/components/ProfileDropdown/ProfileDropdown';
 import Link from 'next/link';
 import { db } from '@/lib/firebase';
@@ -8,14 +10,30 @@ import { collection, getDocs } from 'firebase/firestore';
 import styles from './page.module.css';
 
 export default function AlertsPage() {
+    const { user, loading: authLoading } = useAuth();
+    const router = useRouter();
     const [alerts, setAlerts] = useState([]);
     const [loading, setLoading] = useState(true);
     const [filterStatus, setFilterStatus] = useState('ALL');
     const [expandedId, setExpandedId] = useState(null);
 
     useEffect(() => {
-        loadData();
-    }, []);
+        if (!authLoading && !user) {
+            router.push('/login');
+        } else if (user) {
+            loadData();
+        }
+    }, [user, authLoading, router]);
+
+    if (authLoading || !user) {
+        return (
+            <div className={styles.main}>
+                <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', color: 'var(--text-primary)' }}>
+                    <div className="spinner"></div>
+                </div>
+            </div>
+        );
+    }
 
     const loadData = async () => {
         setLoading(true);

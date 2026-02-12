@@ -32,6 +32,9 @@ export const metadata = {
         statusBarStyle: 'black-translucent',
         title: 'Viñoplastic',
     },
+    other: {
+        'mobile-web-app-capable': 'yes',
+    },
     applicationName: 'Viñoplastic Training',
     formatDetection: {
         telephone: false,

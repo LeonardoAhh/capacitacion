@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { Button } from '@/components/ui/Button/Button';
 import { useToast } from '@/components/ui/Toast/Toast';
 import { useAuth } from '@/contexts/AuthContext';
+import { useRouter } from 'next/navigation';
 import { Dialog, DialogHeader, DialogTitle, DialogBody, DialogFooter, DialogClose } from '@/components/ui/Dialog/Dialog';
 import { db } from '@/lib/firebase';
 import { collection, getDocs, query, orderBy, doc, updateDoc, setDoc, deleteDoc } from 'firebase/firestore';
@@ -21,8 +22,10 @@ import { seedHistoryData } from '@/lib/seedHistorial';
 import styles from './page.module.css';
 
 export default function PromocionesPage() {
-    const { canWrite } = useAuth();
+    const { user, loading: authLoading, canWrite } = useAuth();
+    const router = useRouter();
     const { toast } = useToast();
+
     const [loading, setLoading] = useState(true);
     const [employees, setEmployees] = useState([]);
     const [promotionRules, setPromotionRules] = useState([]);
@@ -157,8 +160,14 @@ export default function PromocionesPage() {
     }, [toast, seedPromotionRulesRef]);
 
     useEffect(() => {
-        loadData();
-    }, [loadData]);
+        if (!authLoading && !user) {
+            router.push('/login');
+        } else if (user) {
+            loadData();
+        }
+    }, [loadData, user, authLoading, router]);
+
+
 
     const seedPromotionRules = async (forceReload = false) => {
         try {
@@ -764,6 +773,16 @@ export default function PromocionesPage() {
             toast.error('Error', 'No se pudo exportar el reporte');
         }
     };
+
+    if (authLoading || !user) {
+        return (
+            <div className={styles.main}>
+                <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', color: 'var(--text-primary)' }}>
+                    <div className="spinner"></div>
+                </div>
+            </div>
+        );
+    }
 
     return (
         <>

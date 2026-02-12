@@ -1,6 +1,8 @@
 ﻿'use client';
 
 import { useState, useEffect } from 'react';
+import { useAuth } from '@/contexts/AuthContext';
+import { useRouter } from 'next/navigation';
 import ProfileDropdown from '@/components/ProfileDropdown/ProfileDropdown';
 import Link from 'next/link';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card/Card';
@@ -15,6 +17,8 @@ import { exportToExcel, exportPDFCompliance } from '@/utils/exportUtils';
 import { Dialog, DialogHeader, DialogTitle, DialogBody, DialogFooter, DialogClose } from '@/components/ui/Dialog/Dialog';
 
 export default function AnalisisPage() {
+    const { user, loading: authLoading } = useAuth();
+    const router = useRouter();
     const { toast } = useToast();
     const [records, setRecords] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -49,9 +53,15 @@ export default function AnalisisPage() {
     const [yearlyDetails, setYearlyDetails] = useState([]);
 
     useEffect(() => {
-        loadData();
+        if (!authLoading && !user) {
+            router.push('/login');
+        } else if (user) {
+            loadData();
+        }
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
+    }, [user, authLoading, router]);
+
+
 
     const loadData = async () => {
         setLoading(true);
@@ -349,6 +359,16 @@ export default function AnalisisPage() {
         if (!name) return '?';
         return name.split(' ').slice(0, 2).map(n => n[0]).join('').toUpperCase();
     };
+
+    if (authLoading || !user) {
+        return (
+            <div className={styles.main}>
+                <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', color: 'var(--text-primary)' }}>
+                    <div className="spinner"></div>
+                </div>
+            </div>
+        );
+    }
 
     return (
         <>

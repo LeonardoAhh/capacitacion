@@ -1,13 +1,13 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
 import styles from './page.module.css';
 
 export default function CompleteProfilePage() {
-    const { user, updateUserProfile } = useAuth();
+    const { user, loading: authLoading, updateUserProfile } = useAuth();
     const router = useRouter();
 
     const [formData, setFormData] = useState({
@@ -50,6 +50,20 @@ export default function CompleteProfilePage() {
             setLoading(false);
         }
     };
+
+    useEffect(() => {
+        if (!authLoading && !user) {
+            router.push('/login');
+        }
+    }, [user, authLoading, router]);
+
+    if (authLoading || !user) {
+        return (
+            <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', color: 'var(--text-primary)' }}>
+                <span>Cargando...</span>
+            </div>
+        );
+    }
 
     return (
         <div className={styles.container}>

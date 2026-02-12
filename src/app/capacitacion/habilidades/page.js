@@ -2,6 +2,8 @@
 
 import { useState, useEffect, useMemo } from 'react';
 import ProfileDropdown from '@/components/ProfileDropdown/ProfileDropdown';
+import { useAuth } from '@/contexts/AuthContext';
+import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { Card, CardContent } from '@/components/ui/Card/Card';
 import { Skeleton } from '@/components/ui/Skeleton/Skeleton';
@@ -10,27 +12,38 @@ import { collection, getDocs, query, orderBy } from 'firebase/firestore';
 import styles from './page.module.css';
 
 export default function HabilidadesPage() {
+    const { user, loading: authLoading } = useAuth();
+    const router = useRouter();
     const [selectedDepartment, setSelectedDepartment] = useState('');
     const [loading, setLoading] = useState(true);
     const [positions, setPositions] = useState([]);
 
     useEffect(() => {
-        const fetchPositions = async () => {
-            setLoading(true);
-            try {
-                const q = query(collection(db, 'positions'), orderBy('name'));
-                const snapshot = await getDocs(q);
-                const data = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-                setPositions(data);
-            } catch (error) {
-                console.error("Error fetching positions:", error);
-            } finally {
-                setLoading(false);
-            }
-        };
+        if (!authLoading && !user) {
+            router.push('/login');
+            return;
+        }
 
-        fetchPositions();
-    }, []);
+        if (user) {
+            const fetchPositions = async () => {
+                setLoading(true);
+                try {
+                    const q = query(collection(db, 'positions'), orderBy('name'));
+                    const snapshot = await getDocs(q);
+                    const data = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                    setPositions(data);
+                } catch (error) {
+                    console.error("Error fetching positions:", error);
+                } finally {
+                    setLoading(false);
+                }
+            };
+
+            fetchPositions();
+        }
+    }, [user, authLoading, router]);
+
+
 
     // Get unique departments from positions
     const departments = useMemo(() => {
@@ -75,6 +88,16 @@ export default function HabilidadesPage() {
         const courses = positionCoursesMap.get(posName);
         return courses ? courses.has(course) : false;
     };
+
+    if (authLoading || !user) {
+        return (
+            <div className={styles.main}>
+                <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', color: 'var(--text-primary)' }}>
+                    <div className="spinner"></div>
+                </div>
+            </div>
+        );
+    }
 
     return (
         <>

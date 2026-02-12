@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 
 import ProfileDropdown from '@/components/ProfileDropdown/ProfileDropdown';
 import { useAuth } from '@/contexts/AuthContext';
+import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { Card, CardContent } from '@/components/ui/Card/Card';
 import { Button } from '@/components/ui/Button/Button';
@@ -18,7 +19,8 @@ import styles from './page.module.css';
 import EmployeeSearchBar from '@/components/EmployeeSearchBar/EmployeeSearchBar';
 
 export default function EmpleadosPage() {
-    const { user, canWrite } = useAuth();
+    const { user, loading: authLoading, canWrite } = useAuth();
+    const router = useRouter();
     const { toast } = useToast();
     const [employees, setEmployees] = useState([]);
     const [filteredEmployees, setFilteredEmployees] = useState([]);
@@ -40,7 +42,18 @@ export default function EmpleadosPage() {
     const [viewingEmp, setViewingEmp] = useState(null); // Detail Mode
     const [isCreating, setIsCreating] = useState(false); // Create Mode
     const [previewImage, setPreviewImage] = useState(null); // Photo Lightbox Mode
+
+
     const [isDesktop, setIsDesktop] = useState(false); // Responsive Mode
+
+    // Auth Protection
+    useEffect(() => {
+        if (!authLoading && !user) {
+            router.push('/login');
+        }
+    }, [user, authLoading, router]);
+
+
 
     useEffect(() => {
         const checkDesktop = () => setIsDesktop(window.innerWidth >= 1024);
@@ -406,6 +419,16 @@ export default function EmpleadosPage() {
         if (!name) return '?';
         return name.split(' ').slice(0, 2).map(n => n[0]).join('').toUpperCase();
     };
+
+    if (authLoading || !user) {
+        return (
+            <div className={styles.main}>
+                <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', color: 'var(--text-primary)' }}>
+                    <div className="spinner"></div>
+                </div>
+            </div>
+        );
+    }
 
     return (
         <>

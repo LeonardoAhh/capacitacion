@@ -11,7 +11,7 @@ import styles from './page.module.css';
 import { useRouter } from 'next/navigation';
 
 export default function IluoManagerPage() {
-    const { user } = useAuth();
+    const { user, loading: authLoading } = useAuth();
     const router = useRouter(); // Hook de navegación
     const { toast } = useToast();
 
@@ -31,6 +31,11 @@ export default function IluoManagerPage() {
 
     // 1. Cargar Puestos (Scanner)
     useEffect(() => {
+        if (!authLoading && !user) {
+            router.push('/login');
+            return;
+        }
+
         if (user?.rol !== 'super_admin') {
             setLoading(false);
             return;
@@ -58,7 +63,7 @@ export default function IluoManagerPage() {
             }
         };
         fetchPositions();
-    }, [user, toast]);
+    }, [user, toast, authLoading, router]);
 
     // 2. Manejar Selección de Puesto
     const handleSelectPosition = (pos) => {
@@ -136,8 +141,18 @@ export default function IluoManagerPage() {
         return null; // Evitar renderizado mientras redirige
     }
 
+    if (authLoading) {
+        return (
+            <div className={styles.container}>
+                <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', color: 'var(--text-primary)' }}>
+                    <div className="spinner"></div>
+                </div>
+            </div>
+        );
+    }
+
     if (user?.rol !== 'super_admin') {
-        if (!user) return null;
+        if (!user) return null; // Should have been redirected
         return <AccessDenied />;
     }
 

@@ -3,6 +3,8 @@
 import { useState, useEffect, useCallback } from 'react';
 import { collection, doc, getDoc, getDocs, query, where } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
+import { useAuth } from '@/contexts/AuthContext';
+import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ArrowLeft, Search, GitCompareArrows, CheckCircle2, XCircle, Target } from 'lucide-react';
 import Link from 'next/link';
@@ -12,6 +14,8 @@ import { BackgroundLines } from '@/components/ui/BackgroundLines/BackgroundLines
 import styles from './page.module.css';
 
 export default function ComparacionPage() {
+    const { user, loading: authLoading } = useAuth();
+    const router = useRouter();
     const { toast } = useToast();
 
     // States
@@ -24,7 +28,16 @@ export default function ComparacionPage() {
     const [comparison, setComparison] = useState(null);
 
     // Load all positions on mount
+    // Auth Protection
     useEffect(() => {
+        if (!authLoading && !user) {
+            router.push('/login');
+        }
+    }, [user, authLoading, router]);
+
+    // Load all positions on mount
+    useEffect(() => {
+        if (!user) return;
         const loadPositions = async () => {
             try {
                 const snap = await getDocs(collection(db, 'positions'));
@@ -38,7 +51,9 @@ export default function ComparacionPage() {
             }
         };
         loadPositions();
-    }, []);
+    }, [user]);
+
+
 
     // Search employee
     const handleSearch = useCallback(async () => {
@@ -120,6 +135,14 @@ export default function ComparacionPage() {
 
         setComparison({ completed, missing, percentage, totalRequired: required.length });
     }, [employee, targetPosition, positions]);
+
+    if (authLoading || !user) {
+        return (
+            <div className={styles.pageWrapper} style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+                <div className="spinner"></div>
+            </div>
+        );
+    }
 
     return (
         <div className={styles.pageWrapper}>

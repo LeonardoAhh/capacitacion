@@ -20,6 +20,22 @@ export default function QuestionManager({ isOpen, onClose }) {
     const [formData, setFormData] = useState(initialFormState());
     const [saving, setSaving] = useState(false);
 
+    const loadQuestions = useCallback(async () => {
+        setLoading(true);
+        try {
+            // Fetch all questions - optimizations can be added later if list grows too large
+            const q = query(collection(db, 'exam_questions'), orderBy('question'));
+            const snap = await getDocs(q);
+            const data = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+            setQuestions(data);
+        } catch (error) {
+            console.error("Error loading questions", error);
+            toast.error("Error", "No se pudieron cargar las preguntas.");
+        } finally {
+            setLoading(false);
+        }
+    }, [toast]);
+
     useEffect(() => {
         if (isOpen) {
             loadQuestions();
@@ -36,21 +52,7 @@ export default function QuestionManager({ isOpen, onClose }) {
         };
     }
 
-    const loadQuestions = useCallback(async () => {
-        setLoading(true);
-        try {
-            // Fetch all questions - optimizations can be added later if list grows too large
-            const q = query(collection(db, 'exam_questions'), orderBy('question'));
-            const snap = await getDocs(q);
-            const data = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-            setQuestions(data);
-        } catch (error) {
-            console.error("Error loading questions", error);
-            toast.error("Error", "No se pudieron cargar las preguntas.");
-        } finally {
-            setLoading(false);
-        }
-    }, [toast]);
+
 
     const filteredQuestions = questions.filter(q =>
         q.question.toLowerCase().includes(searchTerm.toLowerCase()) ||

@@ -1,9 +1,11 @@
 ﻿'use client';
 
-import { useState, useCallback, useMemo } from 'react';
+import { useState, useCallback, useMemo, useEffect } from 'react';
 import Link from 'next/link';
 import { AnimatePresence } from 'framer-motion';
 import { Search, ArrowLeft } from 'lucide-react';
+import { useAuth } from '@/contexts/AuthContext';
+import { useRouter } from 'next/navigation';
 
 // Firebase
 import { db } from '@/lib/firebase';
@@ -39,8 +41,18 @@ export default function PerfilPage() {
     const [promotionRule, setPromotionRule] = useState(null);
     const [notFound, setNotFound] = useState(false);
 
+    // Auth
+    const { user, loading: authLoading } = useAuth();
+    const router = useRouter();
+
     // View state for slide navigation
     const [activeView, setActiveView] = useState('profile');
+
+    useEffect(() => {
+        if (!authLoading && !user) {
+            router.push('/login');
+        }
+    }, [authLoading, user, router]);
 
     const calculateSeniority = (startDate) => {
         if (!startDate) return { text: 'N/A', years: 0, months: 0 };
@@ -205,6 +217,18 @@ export default function PerfilPage() {
             : 0,
         [employee]
     );
+
+
+
+    if (authLoading || !user) {
+        return (
+            <div className={styles.main}>
+                <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', color: 'var(--text-primary)' }}>
+                    <div className="spinner"></div>
+                </div>
+            </div>
+        );
+    }
 
     return (
         <div className={styles.main}>

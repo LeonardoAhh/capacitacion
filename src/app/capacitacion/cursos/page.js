@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { Button } from '@/components/ui/Button/Button';
 import { useToast } from '@/components/ui/Toast/Toast';
 import { useAuth } from '@/contexts/AuthContext';
+import { useRouter } from 'next/navigation';
 import { Dialog, DialogHeader, DialogTitle, DialogBody, DialogFooter, DialogClose } from '@/components/ui/Dialog/Dialog';
 import { db } from '@/lib/firebase';
 import { collection, getDocs, addDoc, updateDoc, deleteDoc, doc, query, where } from 'firebase/firestore';
@@ -13,7 +14,8 @@ import { updateCourseValidity } from '@/lib/updateCourseValidity';
 import styles from './page.module.css';
 
 export default function CursosPage() {
-    const { canWrite } = useAuth();
+    const { user, loading: authLoading, canWrite } = useAuth();
+    const router = useRouter();
     const { toast } = useToast();
     const [courses, setCourses] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -56,8 +58,22 @@ export default function CursosPage() {
     }, [toast]);
 
     useEffect(() => {
-        loadCourses();
-    }, [loadCourses]);
+        if (!authLoading && !user) {
+            router.push('/login');
+        } else if (user) {
+            loadCourses();
+        }
+    }, [loadCourses, user, authLoading, router]);
+
+    if (authLoading || !user) {
+        return (
+            <div className={styles.main}>
+                <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', color: 'var(--text-primary)' }}>
+                    <div className="spinner"></div>
+                </div>
+            </div>
+        );
+    }
 
     const openCreateModal = () => {
         setFormData({ name: '', duration: '', instructor: '', validityYears: 0, category: 'GENERAL' });

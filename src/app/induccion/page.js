@@ -6,6 +6,7 @@ import { db } from '@/lib/firebase';
 import { uploadFile } from '@/lib/upload';
 import { collection, query, where, getDocs, addDoc, orderBy, onSnapshot, deleteDoc, doc, updateDoc } from 'firebase/firestore';
 import { useAuth } from '@/contexts/AuthContext';
+import { useRouter } from 'next/navigation';
 import { Avatar } from '@/components/ui/Avatar/Avatar';
 import { Button } from '@/components/ui/Button/Button';
 import { Combobox } from '@/components/ui/Combobox/Combobox';
@@ -76,7 +77,8 @@ const chunkArray = (array, size) => {
 
 // --- COMPONENTE PRINCIPAL ---
 export default function InductionPage() {
-    const { user, canWrite } = useAuth(); // Added canWrite for admin check
+    const { user, loading: authLoading, canWrite } = useAuth(); // Added canWrite for admin check
+    const router = useRouter();
     const { toast } = useToast();
 
     // UI States
@@ -143,6 +145,13 @@ export default function InductionPage() {
 
         loadInstructors();
     }, []);
+
+    // Auth Protection
+    useEffect(() => {
+        if (!authLoading && !user) {
+            router.push('/login');
+        }
+    }, [user, authLoading, router]);
 
     const handleMigrate = async () => {
         if (!confirm("¿Migrar instructores desde JSON local a Firebase?")) return;
@@ -431,6 +440,16 @@ export default function InductionPage() {
             toast.error("Error", "No se pudo guardar el resultado del examen");
         }
     };
+
+    if (authLoading || !user) {
+        return (
+            <div className={styles.main}>
+                <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', color: 'var(--text-primary)' }}>
+                    <div className="spinner"></div>
+                </div>
+            </div>
+        );
+    }
 
     return (
         <div className={styles.main}>
