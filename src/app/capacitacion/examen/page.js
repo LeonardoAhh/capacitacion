@@ -31,8 +31,15 @@ export default function ExamenPage() {
     const [searchTerm, setSearchTerm] = useState('');
     const [selectedEmployee, setSelectedEmployee] = useState(null);
     const [category, setCategory] = useState('D_C'); // D_C, C_B, B_A
-    const [department, setDepartment] = useState('Producción'); // [NEW]
+    const [department, setDepartment] = useState('Producción');
     const [loading, setLoading] = useState(false);
+
+    // Auto-update category when department changes
+    useEffect(() => {
+        if (department === 'Moldes') setCategory('E_D');
+        else if (department === 'Recursos Humanos') setCategory('RH_P1');
+        else setCategory('D_C');
+    }, [department]);
 
     // Exam State
     const [examData, setExamData] = useState(null);
@@ -100,6 +107,7 @@ export default function ExamenPage() {
             // FILTER BY DEPARTMENT
             // Normalize department check for questions that might be missing it (older ones default to Produccion)
             const deptQuestions = allQuestions.filter(q => (q.department || 'Producción') === department);
+            console.log(`[DEBUG] Department: ${department}, Questions Found: ${deptQuestions.length}`);
 
             // MOLDES LOGIC
             if (department === 'Moldes') {
@@ -173,6 +181,46 @@ export default function ExamenPage() {
                 return;
             }
 
+            // RECURSOS HUMANOS LOGIC
+            if (department === 'Recursos Humanos') {
+                let filtered = [];
+                let count = 15;
+
+                if (category === 'RH_P1') {
+                    // Sections 1-4
+                    const targetSections = ['SEC-01', 'SEC-02', 'SEC-03', 'SEC-04'];
+                    filtered = deptQuestions.filter(q => targetSections.includes(q.sectionId));
+                } else if (category === 'RH_P2') {
+                    // Sections 5-7
+                    const targetSections = ['SEC-05', 'SEC-06', 'SEC-07'];
+                    filtered = deptQuestions.filter(q => targetSections.includes(q.sectionId));
+                } else {
+                    filtered = deptQuestions;
+                }
+
+                if (filtered.length === 0) {
+                    toast.error("Error", `No se encontraron preguntas de RH. ¿Se importaron correctamente?`);
+                    setLoading(false);
+                    return;
+                }
+
+                // Shuffle
+                const shuffled = [...filtered].sort(() => 0.5 - Math.random());
+                const finalQuestions = shuffled.slice(0, count);
+
+                setExamData({
+                    employee: selectedEmployee,
+                    date: new Date().toLocaleDateString('es-MX', { year: 'numeric', month: 'long', day: 'numeric' }),
+                    categoryLabel: `${getCategoryLabel(category, 'Recursos Humanos')}`,
+                    questions: finalQuestions,
+                    isRH: true
+                });
+
+                toast.success("Éxito", "Examen RH generado correctamente.");
+                setLoading(false);
+                return;
+            }
+
             // STANDARD LOGIC (Produccion, Calidad)
             if (deptQuestions.length === 0) {
                 toast.error("Error", `No hay preguntas para el departamento: ${department}`);
@@ -221,6 +269,13 @@ export default function ExamenPage() {
                 case 'D_C': return 'Categoría D a C (Intermedio)';
                 case 'C_B': return 'Categoría C a B (Avanzado)';
                 case 'B_A': return 'Categoría B a A (Experto)';
+                default: return cat;
+            }
+        }
+        if (dept === 'Recursos Humanos') {
+            switch (cat) {
+                case 'RH_P1': return 'Parte 1 (Secciones 1-4)';
+                case 'RH_P2': return 'Parte 2 (Secciones 5-7)';
                 default: return cat;
             }
         }
@@ -404,6 +459,7 @@ export default function ExamenPage() {
                         <option value="Producción">Producción</option>
                         <option value="Calidad">Calidad</option>
                         <option value="Moldes">Moldes</option>
+                        <option value="Recursos Humanos">Recursos Humanos</option>
                     </select>
                 </div>
 
@@ -420,6 +476,11 @@ export default function ExamenPage() {
                                 <option value="D_C">Categoría D a C (20 preguntas)</option>
                                 <option value="C_B">Categoría C a B (20 preguntas)</option>
                                 <option value="B_A">Categoría B a A (Todas)</option>
+                            </>
+                        ) : department === 'Recursos Humanos' ? (
+                            <>
+                                <option value="RH_P1">Parte 1 (Secciones 1-4)</option>
+                                <option value="RH_P2">Parte 2 (Secciones 5-7)</option>
                             </>
                         ) : (
                             <>

@@ -4,10 +4,10 @@ import { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Search, Plus, Edit2, Trash2 } from 'lucide-react';
 import { db } from '@/lib/firebase';
-import { collection, getDocs, addDoc, updateDoc, deleteDoc, doc, query, orderBy, serverTimestamp } from 'firebase/firestore';
+import { collection, getDocs, addDoc, updateDoc, deleteDoc, doc, setDoc, query, orderBy, serverTimestamp } from 'firebase/firestore';
 import { useToast } from '@/components/ui/Toast/Toast';
 import { Button } from '@/components/ui/Button/Button';
-import { moldesData } from '@/data/moldes';
+
 import styles from './QuestionManager.module.css';
 
 export default function QuestionManager({ isOpen, onClose }) {
@@ -147,121 +147,9 @@ export default function QuestionManager({ isOpen, onClose }) {
         }
     };
 
-    const handleMigrateProduccion = async () => {
-        if (!confirm("Esto asignará 'Producción' a todas las preguntas que no tengan departamento. ¿Continuar?")) return;
-        setLoading(true);
-        try {
-            const batch = [];
-            questions.forEach(q => {
-                if (!q.department) {
-                    // Update doc
-                    const docRef = doc(db, 'exam_questions', q.id);
-                    batch.push(updateDoc(docRef, { department: 'Producción' }));
-                }
-            });
-            await Promise.all(batch);
-            toast.success("Éxito", `Se actualizaron ${batch.length} preguntas a Producción.`);
-            // Reload questions
-            const q = query(collection(db, 'exam_questions'), orderBy('question'));
-            const snap = await getDocs(q);
-            const data = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-            setQuestions(data);
-        } catch (e) {
-            console.error(e);
-            toast.error("Error", "Falló la migración.");
-        } finally {
-            setLoading(false);
-        }
-    };
 
-    const handleImportCalidad = async () => {
-        if (!confirm(`Se importarán ${calidadData.length} preguntas de Calidad. ¿Continuar?`)) return;
-        setLoading(true);
-        try {
-            let added = 0;
-            let skipped = 0;
-            // Iterate sequentially to avoid overwhelming
-            for (const item of calidadData) {
-                const exists = questions.some(q => q.question === item.question && q.department === 'Calidad');
-                if (exists) {
-                    skipped++;
-                    continue;
-                }
-                await addDoc(collection(db, 'exam_questions'), {
-                    ...item,
-                    createdAt: serverTimestamp()
-                });
-                added++;
-            }
-            toast.success("Éxito", `Importadas: ${added}. Omitidas: ${skipped}.`);
-            // Reload
-            const q = query(collection(db, 'exam_questions'), orderBy('question'));
-            const snap = await getDocs(q);
-            const data = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-            setQuestions(data);
-        } catch (e) {
-            console.error(e);
-            toast.error("Error", "Falló la importación.");
-        } finally {
-            setLoading(false);
-        }
-    };
 
-    const handleImportMoldes = async () => {
-        if (!confirm(`Se importarán ${moldesData.total_preguntas} preguntas de Moldes. Se omitirán las existentes. ¿Continuar?`)) return;
-        setLoading(true);
-        try {
-            let added = 0;
-            let skipped = 0;
 
-            // Flatten questions
-            const flatQuestions = [];
-            moldesData.secciones.forEach(sec => {
-                sec.preguntas.forEach(q => {
-                    flatQuestions.push({
-                        ...q,
-                        section: sec.titulo,
-                        sectionId: sec.id
-                    });
-                });
-            });
-
-            for (const item of flatQuestions) {
-                // Check dup by ID or Question text
-                const exists = questions.some(q => q.originalId === item.id || (q.question === item.pregunta && q.department === 'Moldes'));
-
-                if (exists) {
-                    skipped++;
-                    continue;
-                }
-
-                await addDoc(collection(db, 'exam_questions'), {
-                    department: 'Moldes',
-                    question: item.pregunta,
-                    type: 'Abierta', // All moldes questions seem to be open ended
-                    theme: item.tema,
-                    levels: item.nivel, // Array ["E", "D", ...]
-                    originalId: item.id,
-                    section: item.section,
-                    sectionId: item.sectionId,
-                    origin: item.origen,
-                    isFixed: false,
-                    options: null,
-                    correctAnswer: null,
-                    createdAt: serverTimestamp()
-                });
-                added++;
-            }
-            toast.success("Éxito", `Moldes: ${added} agregadas, ${skipped} omitidas.`);
-            // Reload
-            loadQuestions();
-        } catch (e) {
-            console.error(e);
-            toast.error("Error", "Falló la importación de Moldes.");
-        } finally {
-            setLoading(false);
-        }
-    };
 
     return (
         <AnimatePresence>
@@ -312,6 +200,7 @@ export default function QuestionManager({ isOpen, onClose }) {
                                             <option value="Producción">Producción</option>
                                             <option value="Calidad">Calidad</option>
                                             <option value="Moldes">Moldes</option>
+                                            <option value="Recursos Humanos">Recursos Humanos</option>
                                         </select>
                                     </div>
 
@@ -414,7 +303,7 @@ export default function QuestionManager({ isOpen, onClose }) {
                                         </div>
                                         <select
                                             className={styles.select}
-                                            style={{ width: '150px', marginLeft: '10px' }}
+                                            style={{ width: '220px', marginLeft: '10px' }}
                                             value={selectedDept}
                                             onChange={(e) => setSelectedDept(e.target.value)}
                                         >
@@ -422,6 +311,7 @@ export default function QuestionManager({ isOpen, onClose }) {
                                             <option value="Producción">Producción</option>
                                             <option value="Calidad">Calidad</option>
                                             <option value="Moldes">Moldes</option>
+                                            <option value="Recursos Humanos">Recursos Humanos</option>
                                         </select>
                                     </div>
 
@@ -429,6 +319,8 @@ export default function QuestionManager({ isOpen, onClose }) {
                                         <Plus size={18} style={{ marginRight: 8 }} />
                                         Nueva Pregunta
                                     </Button>
+
+
 
 
                                     {loading ? (
