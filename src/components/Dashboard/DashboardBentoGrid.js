@@ -11,6 +11,7 @@ import {
     TrendingUp,
     Award,
     GitCompareArrows,
+    ScrollText,
 } from "lucide-react";
 import { motion } from "framer-motion";
 import Link from "next/link";
@@ -331,6 +332,12 @@ export default function DashboardBentoGrid({ stats, evaluations }) {
                     <Link href="/capacitacion/comparacion" className={styles.actionCard} title="Comparación">
                         <div className={`${styles.actionIcon} ${styles.actionIconCyan}`}>
                             <GitCompareArrows className={styles.actionIconSvg} />
+                        </div>
+                    </Link>
+
+                    <Link href="/capacitacion/examen" className={styles.actionCard} title="Generador de Exámenes">
+                        <div className={`${styles.actionIcon} ${styles.actionIconOrange}`}>
+                            <ScrollText className={styles.actionIconSvg} />
                         </div>
                     </Link>
                 </div>
