@@ -594,13 +594,7 @@ export default function InductionPage() {
                                 {showCreateForm ? 'Cancelar' : '+ Nuevo Curso'}
                             </button>
                         )}
-                        <button
-                            className={styles.toggleBtn}
-                            style={{ background: 'var(--color-primary)', color: 'white', border: 'none', marginLeft: '12px' }}
-                            onClick={() => setShowExamModal(true)}
-                        >
-                            📝 Examen de Inducción
-                        </button>
+
                     </div>
 
                     {materialExpanded && (
@@ -779,10 +773,10 @@ export default function InductionPage() {
                                                         >
                                                             <input
                                                                 type="checkbox"
-                                                                checked={candidateFormData.puestosAplicables.includes(p.puesto)}
-                                                                onChange={() => handlePuestoToggle(p.puesto)}
+                                                                checked={candidateFormData.puestosAplicables.includes(p.positions)}
+                                                                onChange={() => handlePuestoToggle(p.positions)}
                                                             />
-                                                            <span>{p.puesto}</span>
+                                                            <span>{p.positions}</span>
                                                         </label>
                                                     ))}
                                                 </div>
