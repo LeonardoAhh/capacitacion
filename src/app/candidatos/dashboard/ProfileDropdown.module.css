@@ -8,10 +8,10 @@
     align-items: center;
     gap: 12px;
     padding: 6px 8px 6px 16px;
-    background: rgba(255, 255, 255, 0.8);
+    background: var(--popover-background);
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
-    border: 1px solid rgba(0, 0, 0, 0.08);
+    border: 1px solid var(--card-border);
     border-radius: 32px;
     cursor: pointer;
     transition: all 0.2s ease;
@@ -19,19 +19,14 @@
 }
 
 .triggerButton:hover {
-    background: rgba(255, 255, 255, 0.95);
+    background: var(--card-background);
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
     transform: translateY(-1px);
 }
 
 [data-theme="dark"] .triggerButton {
-    background: rgba(30, 30, 35, 0.6);
-    border-color: rgba(255, 255, 255, 0.1);
+    /* Variables handle colors */
     color: white;
-}
-
-[data-theme="dark"] .triggerButton:hover {
-    background: rgba(40, 40, 45, 0.8);
 }
 
 .userInfo {
@@ -72,17 +67,13 @@
 .userName {
     font-size: 14px;
     font-weight: 600;
-    color: #1c1c1e;
+    color: var(--text-primary);
     line-height: 1.2;
-}
-
-[data-theme="dark"] .userName {
-    color: #fff;
 }
 
 .userEmail {
     font-size: 11px;
-    color: #8e8e93;
+    color: var(--text-tertiary);
 }
 
 .avatarContainer {
@@ -91,7 +82,7 @@
     height: 40px;
     border-radius: 50%;
     padding: 2px;
-    background: linear-gradient(135deg, #007aff, #5856d6);
+    background: linear-gradient(135deg, var(--color-primary), var(--color-secondary));
 }
 
 .avatar {
@@ -112,7 +103,7 @@
 }
 
 .chevron {
-    color: #8e8e93;
+    color: var(--text-tertiary);
     transition: transform 0.2s;
 }
 
@@ -121,10 +112,10 @@
     top: calc(100% + 8px);
     right: 0;
     width: 240px;
-    background: rgba(255, 255, 255, 0.95);
+    background: var(--popover-background);
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
-    border: 1px solid rgba(0, 0, 0, 0.08);
+    border: 1px solid var(--card-border);
     border-radius: 20px;
     padding: 8px;
     box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
@@ -134,8 +125,7 @@
 }
 
 [data-theme="dark"] .dropdownMenu {
-    background: rgba(30, 30, 35, 0.95);
-    border-color: rgba(255, 255, 255, 0.1);
+    /* Handled by var */
     box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
 }
 
@@ -282,20 +272,99 @@
 
 /* ==================== TOUCH-FRIENDLY SIZING ==================== */
 
+/* ==================== BACKDROP & ANIMATIONS ==================== */
+.backdrop {
+    display: none;
+}
+
+@keyframes slideUp {
+    from {
+        transform: translateY(100%);
+    }
+
+    to {
+        transform: translateY(0);
+    }
+}
+
+/* ==================== TOUCH-FRIENDLY SIZING (BOTTOM SHEET) ==================== */
+
 @media (max-width: 640px) {
-    .menuItem {
-        min-height: 48px;
-        padding: 12px 16px;
+    .backdrop {
+        display: block;
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.4);
+        backdrop-filter: blur(4px);
+        z-index: 90;
+        animation: fadeIn 0.2s ease-out;
     }
 
     .dropdownMenu {
-        width: calc(100vw - 32px);
-        max-width: 280px;
+        position: fixed;
+        top: auto;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        width: 100%;
+        max-width: 100%;
+        border-radius: 20px 20px 0 0;
+        padding: 20px 16px 32px;
+        /* Safe area handling */
+        transform-origin: bottom center;
+        animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        z-index: 100;
+        border: none;
+        border-top: 1px solid var(--card-border);
+        box-shadow: 0 -4px 24px rgba(0, 0, 0, 0.15);
+    }
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+@media (max-width: 640px) {
+    .menuItem {
+        min-height: 56px;
+        /* Larger touch target */
+        padding: 0 16px;
+        font-size: 16px;
+        background: rgba(0, 0, 0, 0.03);
+        margin-bottom: 8px;
+        border-radius: 12px;
+    }
+
+    [data-theme="dark"] .menuItem {
+        background: rgba(255, 255, 255, 0.05);
     }
 
     .avatarContainer {
         width: 44px;
         height: 44px;
+    }
+
+    .mobileUserInfo {
+        text-align: center;
+        margin-bottom: 24px;
+        border-bottom: none;
+        padding: 0;
+    }
+
+    .mobileUserName {
+        font-size: 18px;
+        margin-bottom: 4px;
+    }
+
+    .mobileUserSubtitle {
+        font-size: 13px;
+        opacity: 0.7;
     }
 }
 

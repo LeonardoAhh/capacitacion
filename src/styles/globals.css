@@ -24,6 +24,11 @@
   --bg-secondary: #F2F2F7;
   --bg-tertiary: #FFFFFF;
 
+  --app-background: #F2F2F7;
+  --card-background: rgba(255, 255, 255, 0.7);
+  --card-border: rgba(255, 255, 255, 0.5);
+  --popover-background: rgba(255, 255, 255, 0.95);
+
   /* iOS Text Colors */
   --text-primary: #000000;
   --text-secondary: #3C3C43;
@@ -68,6 +73,11 @@
   --bg-primary: #000000;
   --bg-secondary: #1C1C1E;
   --bg-tertiary: #2C2C2E;
+
+  --app-background: #000000;
+  --card-background: rgba(28, 28, 30, 0.6);
+  --card-border: rgba(255, 255, 255, 0.1);
+  --popover-background: rgba(30, 30, 35, 0.95);
 
   /* iOS Dark Mode - Text Colors */
   --text-primary: #FFFFFF;
@@ -415,6 +425,11 @@ a:focus {
   --bg-secondary: #e2e8f0;
   --bg-tertiary: #cbd5e1;
 
+  --app-background: #f8fafc;
+  --card-background: rgba(255, 255, 255, 0.6);
+  --card-border: rgba(30, 58, 138, 0.1);
+  --popover-background: rgba(255, 255, 255, 0.95);
+
   --text-primary: #0f172a;
   --text-secondary: #334155;
   --text-tertiary: #64748b;
@@ -434,6 +449,11 @@ a:focus {
   --bg-primary: #f0fdf4;
   --bg-secondary: #dcfce7;
   --bg-tertiary: #bbf7d0;
+
+  --app-background: #f0fdf4;
+  --card-background: rgba(255, 255, 255, 0.6);
+  --card-border: rgba(21, 128, 61, 0.15);
+  --popover-background: rgba(255, 255, 255, 0.95);
 
   --text-primary: #052e16;
   --text-secondary: #14532d;
@@ -455,6 +475,11 @@ a:focus {
   --bg-secondary: #e0f2fe;
   --bg-tertiary: #bae6fd;
 
+  --app-background: #f0f9ff;
+  --card-background: rgba(255, 255, 255, 0.6);
+  --card-border: rgba(2, 132, 199, 0.15);
+  --popover-background: rgba(255, 255, 255, 0.95);
+
   --text-primary: #0c4a6e;
   --text-secondary: #075985;
   --text-tertiary: #0284c7;
@@ -475,6 +500,11 @@ a:focus {
   --bg-secondary: #ffedd5;
   --bg-tertiary: #fed7aa;
 
+  --app-background: #fff7ed;
+  --card-background: rgba(255, 255, 255, 0.6);
+  --card-border: rgba(234, 88, 12, 0.15);
+  --popover-background: rgba(255, 255, 255, 0.95);
+
   --text-primary: #431407;
   --text-secondary: #7c2d12;
   --text-tertiary: #9a3412;
@@ -483,4 +513,68 @@ a:focus {
   --shadow-sm: 0 1px 2px 0 rgb(234 88 12 / 0.05);
   --shadow-md: 0 4px 6px -1px rgb(234 88 12 / 0.1);
   --shadow-lg: 0 10px 15px -3px rgb(234 88 12 / 0.1);
+}
+
+/* --- Gradient Sunset Theme --- */
+[data-theme='gradient-sunset'] {
+  --color-primary: #ffffff;
+  --color-secondary: #fed7aa;
+  --color-accent: #fcd34d;
+
+  --bg-primary: #c2410c;
+  /* Fallback */
+  --bg-secondary: rgba(255, 255, 255, 0.15);
+  --bg-tertiary: rgba(255, 255, 255, 0.25);
+
+  --app-background: transparent;
+  /* Gradient is on body */
+  --card-background: rgba(0, 0, 0, 0.2);
+  /* Darker background for contrast */
+  --card-border: rgba(255, 255, 255, 0.2);
+  --popover-background: rgba(255, 255, 255, 0.9);
+
+  --text-primary: #ffffff;
+  --text-secondary: #ffedd5;
+  --text-tertiary: #fed7aa;
+
+  --border-color: rgba(255, 255, 255, 0.2);
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.1);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.2);
+  --shadow-lg: 0 10px 15px -3px rgb(255 255 255 / 0.2);
+}
+
+[data-theme='gradient-sunset'] body {
+  background: linear-gradient(135deg, #ff7e5f, #feb47b) fixed;
+}
+
+/* --- Gradient Ocean Theme --- */
+[data-theme='gradient-ocean'] {
+  --color-primary: #ffffff;
+  --color-secondary: #bae6fd;
+  --color-accent: #7dd3fc;
+
+  --bg-primary: #0369a1;
+  /* Fallback */
+  --bg-secondary: rgba(255, 255, 255, 0.15);
+  --bg-tertiary: rgba(255, 255, 255, 0.25);
+
+  --app-background: transparent;
+  /* Gradient is on body */
+  --card-background: rgba(0, 0, 0, 0.2);
+  /* Darker background for contrast */
+  --card-border: rgba(255, 255, 255, 0.2);
+  --popover-background: rgba(255, 255, 255, 0.9);
+
+  --text-primary: #ffffff;
+  --text-secondary: #e0f2fe;
+  --text-tertiary: #bae6fd;
+
+  --border-color: rgba(255, 255, 255, 0.2);
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.1);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.2);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.2);
+}
+
+[data-theme='gradient-ocean'] body {
+  background: linear-gradient(135deg, #2E3192, #1BFFFF) fixed;
 }

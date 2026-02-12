@@ -245,16 +245,7 @@ export default function CourseViewer({
                                             Descarga el examen y respóndelo para completar el curso, o realízalo digitalmente.
                                         </p>
 
-                                        {/* Digital Exam Option */}
-                                        {isInductionCourse && (
-                                            <button
-                                                className={styles.stepButtonPrimary}
-                                                onClick={onOpenExamModal}
-                                                style={{ marginBottom: '12px' }}
-                                            >
-                                                📝 Realizar Examen Digital
-                                            </button>
-                                        )}
+
 
                                         <button
                                             className={styles.stepButtonPrimary}

@@ -9,6 +9,10 @@ import { useTheme } from '@/contexts/ThemeContext';
 
 // Components
 import { BackgroundLines } from '@/components/ui/BackgroundLines/BackgroundLines';
+import SetupWizard from '@/components/SetupWizard/SetupWizard';
+import AvatarSelector from '@/components/AvatarSelector/AvatarSelector';
+import ThemeSelectorModal from '@/components/ThemeSelectorModal/ThemeSelectorModal';
+import PWAPrompt from '@/components/PWAPrompt/PWAPrompt';
 import WelcomeScreen from './components/WelcomeScreen';
 import ImportantInfoCards from './components/ImportantInfoCards';
 import RoadmapTimeline from './components/RoadmapTimeline';
@@ -19,28 +23,39 @@ import CoursesGrid from './components/CoursesGrid';
 import CourseViewer from './components/CourseViewer';
 import ExamModal from './components/ExamModal';
 import { DashboardSkeleton, useToast } from './components'; // Keep existing barrel export if valid, otherwise import direct
-import ProfileDropdown from './ProfileDropdown';
+import ModernPillNavbar from './components/ModernPillNavbar';
 import SupportButton from './components/SupportButton';
 
 // Hooks & Utils
 import { useCandidateSession, useCourseProgress } from './hooks';
+import { useCandidateData } from '@/hooks/useCandidateData';
 import { ONE_MINUTE_MS, FIVE_MINUTES_MS, TIMER_COLORS } from './config/constants'; // Adjusted path if needed, or use existing utils
+
 import { extractFirstName, getCandidatePhotoUrl } from './utils/helpers';
 import induccionEmpresaExam from '../../../../public/examenes/induccion_empresa.json';
 
+import { THEME_COLORS } from './config/themeColors';
 import styles from './page.module.css';
 
 export default function CandidatoDashboard() {
     const router = useRouter();
     const { toggleTheme } = useTheme();
-    const [loading, setLoading] = useState(true);
-    const [candidate, setCandidate] = useState(null);
+
+    // New Hook Integration
+    const { candidate, loading, setCandidate, updateTheme, updateAvatar, updateNickname } = useCandidateData();
+
+    // Local UI State
     const [courses, setCourses] = useState([]);
     const [selectedCourse, setSelectedCourse] = useState(null);
-    const [showWelcome, setShowWelcome] = useState(true);
+    const [showWelcome, setShowWelcome] = useState(false); // Changed default to false, controlled by logic below
     const [courseProgress, setCourseProgress] = useState({});
     const [showExamModal, setShowExamModal] = useState(false);
     const [examData, setExamData] = useState(induccionEmpresaExam);
+
+    // Customization UI State
+    const [showSetupWizard, setShowSetupWizard] = useState(false);
+    const [showAvatarSelector, setShowAvatarSelector] = useState(false);
+    const [showThemeSelector, setShowThemeSelector] = useState(false);
 
     // Session Timeout Logic
     const [timeLeft, setTimeLeft] = useState(2 * 60 * 60 * 1000); // 2 hours default
@@ -59,47 +74,50 @@ export default function CandidatoDashboard() {
         }
     }, [router]);
 
-    // Initialize Session
+    // Effect: Check for Setup Wizard / Welcome
     useEffect(() => {
-        const session = sessionStorage.getItem('candidate_session');
-        if (!session) {
-            router.push('/candidatos');
-            return;
-        }
+        if (candidate && !loading) {
+            const hasSeenSetup = sessionStorage.getItem(`candidate_setup_${candidate.id}`);
 
-        const candidateData = JSON.parse(session);
-        setCandidate(candidateData);
-
-        // Fetch Fresh Data
-        const fetchFreshData = async () => {
-            try {
-                const docRef = doc(db, 'employees', candidateData.id);
-                const docSnap = await getDoc(docRef);
-                if (docSnap.exists()) {
-                    const freshData = docSnap.data();
-                    setCandidate(prev => ({ ...prev, ...freshData }));
-                    if (freshData.coursesProgress) {
-                        setCourseProgress(freshData.coursesProgress);
-                    }
-                    // Update session storage
-                    const newSession = { ...candidateData, ...freshData };
-                    sessionStorage.setItem('candidate_session', JSON.stringify(newSession));
+            // If user has a nickname, assume setup is done (or if they've seen it)
+            if (candidate.nickname && candidate.nickname.trim() !== '') {
+                if (!hasSeenSetup) {
+                    sessionStorage.setItem(`candidate_setup_${candidate.id}`, 'true');
                 }
-            } catch (error) {
-                console.error("Error loading fresh data:", error);
+
+                // Show Welcome Screen if not seen in this session
+                // Using a session-based key for welcome screen to show it once per login
+                const hasSeenWelcome = sessionStorage.getItem(`candidate_welcome_${candidate.id}`);
+                if (!hasSeenWelcome) {
+                    setShowWelcome(true);
+                }
+            } else if (!hasSeenSetup) {
+                // No nickname and hasn't seen setup -> Show Wizard
+                setShowSetupWizard(true);
+            } else {
+                // Fallback
+                const hasSeenWelcome = sessionStorage.getItem(`candidate_welcome_${candidate.id}`);
+                if (!hasSeenWelcome) {
+                    setShowWelcome(true);
+                }
             }
-        };
-        fetchFreshData();
 
-        // Load Courses
-        const positionToLoad = candidateData.position || candidateData.puesto;
-        if (positionToLoad && positionToLoad !== 'N/A') {
-            loadCourses(positionToLoad);
-        } else {
-            setLoading(false);
+            // Load Courses logic moved here dependent on candidate
+            const positionToLoad = candidate.position || candidate.puesto;
+            if (positionToLoad && positionToLoad !== 'N/A') {
+                loadCourses(positionToLoad);
+            }
+
+            if (candidate.coursesProgress) {
+                setCourseProgress(candidate.coursesProgress);
+            }
         }
+    }, [candidate, loading]);
 
-        // Timer Logic
+    // Timer Logic Integration
+    useEffect(() => {
+        if (loading || !candidate) return;
+
         const TIMEOUT_DURATION = 2 * 60 * 60 * 1000;
         let intervalId;
 
@@ -136,7 +154,7 @@ export default function CandidatoDashboard() {
         return () => {
             if (intervalId) clearInterval(intervalId);
         };
-    }, [router, handleLogout]);
+    }, [router, handleLogout, loading, candidate]);
 
     const loadCourses = async (position) => {
         try {
@@ -209,10 +227,8 @@ export default function CandidatoDashboard() {
             }
 
             setCourses(coursesData);
-            setLoading(false);
         } catch (error) {
             console.error('Error loading courses:', error);
-            setLoading(false);
         }
     };
 
@@ -308,7 +324,12 @@ export default function CandidatoDashboard() {
         return (
             <WelcomeScreen
                 candidate={candidate}
-                onStart={() => setShowWelcome(false)}
+                onStart={() => {
+                    setShowWelcome(false);
+                    if (candidate?.id) {
+                        sessionStorage.setItem(`candidate_welcome_${candidate.id}`, 'true');
+                    }
+                }}
             />
         );
     }
@@ -318,16 +339,47 @@ export default function CandidatoDashboard() {
             <div className={styles.backgroundGradient} />
 
             <div className={styles.shapesContainer}>
-                <BackgroundLines />
+                <BackgroundLines colors={THEME_COLORS[candidate?.theme] || THEME_COLORS.light} />
             </div>
+
+            <AvatarSelector
+                isOpen={showAvatarSelector}
+                onClose={() => setShowAvatarSelector(false)}
+                onSave={updateAvatar}
+                userName={candidate?.nickname || candidate?.name} // Use nickname if available
+            />
+
+            <SetupWizard
+                isOpen={showSetupWizard}
+                onClose={() => {
+                    setShowSetupWizard(false);
+                    sessionStorage.setItem(`candidate_setup_${candidate.id}`, 'true');
+                    setShowWelcome(true);
+                }}
+                user={candidate}
+                onUpdateAvatar={updateAvatar}
+                onUpdateTheme={updateTheme}
+                onUpdateNickname={updateNickname}
+            />
+
+            <PWAPrompt />
+
+            <ThemeSelectorModal
+                isOpen={showThemeSelector}
+                onClose={() => setShowThemeSelector(false)}
+                currentTheme={candidate?.theme || 'light'}
+                onSelectTheme={updateTheme}
+            />
 
             <nav className={styles.navbar}>
                 <div className={styles.navActions}>
-                    <ProfileDropdown
+                    <ModernPillNavbar
                         candidate={candidate}
                         onLogout={handleLogout}
                         timeLeft={Math.floor(timeLeft / 1000)}
                         toggleTheme={toggleTheme}
+                        onAvatarClick={() => setShowAvatarSelector(true)}
+                        onThemeClick={() => setShowThemeSelector(true)}
                     />
                 </div>
             </nav>

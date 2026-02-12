@@ -66,10 +66,11 @@ service cloud.firestore {
                     && isValidString(request.resource.data.name)
                     && isValidString(request.resource.data.employeeId);
       
+      // FIX: Agregado avatar, theme, nickname a los campos permitidos para usuarios autenticados
       allow update: if hasAnyRole(['super_admin', 'rh']) ||
                        (isAuthenticated() && 
                         request.resource.data.diff(resource.data).affectedKeys()
-                          .hasOnly(['accessCodeUses', 'lastLoginCandidate', 'cursosCompletados', 'coursesProgress']));
+                          .hasOnly(['accessCodeUses', 'lastLoginCandidate', 'cursosCompletados', 'coursesProgress', 'avatar', 'theme', 'nickname']));
                           
       allow delete: if hasRole('super_admin');
     }

@@ -22,7 +22,7 @@ const MENU_ITEMS = {
  * @param {number} props.timeLeft - Session time remaining in seconds
  * @param {Function} props.toggleTheme - Theme toggle handler
  */
-export default function ProfileDropdown({ candidate, onLogout, timeLeft, toggleTheme }) {
+export default function ProfileDropdown({ candidate, onLogout, timeLeft, toggleTheme, onAvatarClick, onThemeClick }) {
     const [isOpen, setIsOpen] = useState(false);
     const [focusedIndex, setFocusedIndex] = useState(-1);
     const [imgError, setImgError] = useState(false);
@@ -134,9 +134,13 @@ export default function ProfileDropdown({ candidate, onLogout, timeLeft, toggleT
 
     // Handle menu item click
     const handleThemeClick = useCallback(() => {
-        toggleTheme();
+        if (onThemeClick) {
+            onThemeClick();
+        } else {
+            toggleTheme();
+        }
         closeDropdown();
-    }, [toggleTheme, closeDropdown]);
+    }, [toggleTheme, closeDropdown, onThemeClick]);
 
     const handleLogoutClick = useCallback(() => {
         onLogout();
@@ -170,7 +174,10 @@ export default function ProfileDropdown({ candidate, onLogout, timeLeft, toggleT
                     </span>
                 </div>
 
-                <div className={styles.avatarContainer}>
+                <div className={styles.avatarContainer} onClick={(e) => {
+                    e.stopPropagation();
+                    if (onAvatarClick) onAvatarClick();
+                }} style={{ cursor: onAvatarClick ? 'pointer' : 'default' }}>
                     <div className={styles.avatar}>
                         {photoUrl && !imgError ? (
                             // eslint-disable-next-line @next/next/no-img-element
@@ -196,58 +203,62 @@ export default function ProfileDropdown({ candidate, onLogout, timeLeft, toggleT
             </button>
 
             {isOpen && (
-                <div
-                    className={styles.dropdownMenu}
-                    role="menu"
-                    aria-label="Opciones de usuario"
-                >
-                    {/* Mobile user info */}
-                    <div className={styles.mobileUserInfo} aria-hidden="true">
-                        <div className={styles.mobileUserName}>{displayName}</div>
-                        <div className={styles.mobileUserSubtitle}>{displaySubtitle}</div>
-                    </div>
-
-                    {/* Timer display */}
-                    {formattedTime && (
-                        <div
-                            className={`${styles.menuItem} ${styles.timerItem}`}
-                            role="status"
-                            aria-live="polite"
-                            aria-label={`Tiempo restante: ${formattedTime}`}
-                        >
-                            <Clock size={16} aria-hidden="true" />
-                            <span>Tiempo: {formattedTime}</span>
+                <>
+                    <div className={styles.backdrop} onClick={closeDropdown} aria-hidden="true" />
+                    <div
+                        className={styles.dropdownMenu}
+                        role="menu"
+                        aria-label="Opciones de usuario"
+                        onClick={(e) => e.stopPropagation()} // Prevent closing when clicking menu
+                    >
+                        {/* Mobile user info */}
+                        <div className={styles.mobileUserInfo} aria-hidden="true">
+                            <div className={styles.mobileUserName}>{displayName}</div>
+                            <div className={styles.mobileUserSubtitle}>{displaySubtitle}</div>
                         </div>
-                    )}
 
-                    {/* Theme toggle */}
-                    <button
-                        ref={setMenuItemRef(0)}
-                        className={styles.menuItem}
-                        onClick={handleThemeClick}
-                        role="menuitem"
-                        tabIndex={focusedIndex === 0 ? 0 : -1}
-                        aria-label="Cambiar tema de color"
-                    >
-                        <Contrast size={16} aria-hidden="true" />
-                        <span>Cambiar Tema</span>
-                    </button>
+                        {/* Timer display */}
+                        {formattedTime && (
+                            <div
+                                className={`${styles.menuItem} ${styles.timerItem}`}
+                                role="status"
+                                aria-live="polite"
+                                aria-label={`Tiempo restante: ${formattedTime}`}
+                            >
+                                <Clock size={16} aria-hidden="true" />
+                                <span>Tiempo: {formattedTime}</span>
+                            </div>
+                        )}
 
-                    <div className={styles.separator} role="separator" aria-hidden="true" />
+                        {/* Theme toggle */}
+                        <button
+                            ref={setMenuItemRef(0)}
+                            className={styles.menuItem}
+                            onClick={handleThemeClick}
+                            role="menuitem"
+                            tabIndex={focusedIndex === 0 ? 0 : -1}
+                            aria-label="Cambiar tema de color"
+                        >
+                            <Contrast size={16} aria-hidden="true" />
+                            <span>Cambiar Tema</span>
+                        </button>
 
-                    {/* Logout button */}
-                    <button
-                        ref={setMenuItemRef(1)}
-                        className={`${styles.menuItem} ${styles.logoutButton}`}
-                        onClick={handleLogoutClick}
-                        role="menuitem"
-                        tabIndex={focusedIndex === 1 ? 0 : -1}
-                        aria-label="Cerrar sesión"
-                    >
-                        <LogOut size={16} aria-hidden="true" />
-                        <span>Cerrar Sesión</span>
-                    </button>
-                </div>
+                        <div className={styles.separator} role="separator" aria-hidden="true" />
+
+                        {/* Logout button */}
+                        <button
+                            ref={setMenuItemRef(1)}
+                            className={`${styles.menuItem} ${styles.logoutButton}`}
+                            onClick={handleLogoutClick}
+                            role="menuitem"
+                            tabIndex={focusedIndex === 1 ? 0 : -1}
+                            aria-label="Cerrar sesión"
+                        >
+                            <LogOut size={16} aria-hidden="true" />
+                            <span>Cerrar Sesión</span>
+                        </button>
+                    </div>
+                </>
             )}
         </div>
     );

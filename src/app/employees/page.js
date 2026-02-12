@@ -37,6 +37,19 @@ import { generateEmployeeTemplate, parseImportFile, validateEmployeeImportRecord
 const formatDate = (dateString) => {
     if (!dateString) return '—';
     try {
+        // Fix for Timezone Offset:
+        // If it's a YYYY-MM-DD string, parse it as LOCAL time to avoid UTC-based shift.
+        if (typeof dateString === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(dateString)) {
+            const [year, month, day] = dateString.split('-').map(Number);
+            // Month is 0-indexed in Date constructor
+            const date = new Date(year, month - 1, day);
+            return date.toLocaleDateString('es-MX', {
+                year: 'numeric',
+                month: 'short',
+                day: 'numeric'
+            });
+        }
+
         const date = typeof dateString === 'number' ? new Date(dateString) : new Date(dateString);
         return date.toLocaleDateString('es-MX', {
             year: 'numeric',

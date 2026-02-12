@@ -74,7 +74,7 @@ export function extractFirstName(fullName) {
  */
 export function getCandidatePhotoUrl(candidate) {
     if (!candidate) return null;
-    const url = candidate.photoUrl || candidate.photoURL || candidate.photo || candidate.foto || null;
+    const url = candidate.avatar || candidate.photoUrl || candidate.photoURL || candidate.photo || candidate.foto || null;
 
     if (!url) return null;
 

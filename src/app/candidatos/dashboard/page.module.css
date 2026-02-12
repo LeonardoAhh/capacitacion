@@ -17,16 +17,13 @@
     position: absolute;
     inset: 0;
     z-index: 0;
-    background:
-        radial-gradient(circle at 15% 50%, rgba(0, 122, 255, 0.08), transparent 25%),
-        radial-gradient(circle at 85% 30%, rgba(88, 86, 214, 0.08), transparent 25%);
+    background: var(--app-background, #f2f2f7);
     pointer-events: none;
+    transition: background 0.5s ease;
 }
 
 [data-theme="dark"] .backgroundGradient {
-    background:
-        radial-gradient(circle at 15% 50%, rgba(10, 132, 255, 0.1), transparent 25%),
-        radial-gradient(circle at 85% 30%, rgba(94, 92, 230, 0.1), transparent 25%);
+    background: var(--app-background, #000000);
 }
 
 .shapesContainer {
@@ -42,25 +39,37 @@
 /* ==================== NAVBAR ==================== */
 .navbar {
     position: fixed;
-    top: 0;
+    top: 20px;
+    /* Add some top spacing for floating effect */
     left: 0;
     right: 0;
-    height: 70px;
+    height: auto;
+    /* Let content define height */
     padding: 0 24px;
     display: flex;
     align-items: center;
-    justify-content: flex-end;
-    /* Align to right */
+    justify-content: center;
+    /* Center the pill */
     z-index: 100;
-    background: rgba(242, 242, 247, 0.7);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    background: transparent;
+    /* Remove container background */
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    border-bottom: none;
+    pointer-events: none;
+    /* Let clicks pass through empty space */
+}
+
+/* Allow clicks on the pill itself */
+.navActions {
+    pointer-events: auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 [data-theme="dark"] .navbar {
-    background: rgba(28, 28, 30, 0.7);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    border-bottom: none;
 }
 
 .navActions {
@@ -84,21 +93,19 @@
 }
 
 /* Scrollbar Styling */
+/* Scrollbar Styling - Hidden/Transparent */
+.scrollContent {
+    scrollbar-width: none;
+    /* Firefox */
+    -ms-overflow-style: none;
+    /* IE/Edge */
+}
+
 .scrollContent::-webkit-scrollbar {
-    width: 8px;
-}
-
-.scrollContent::-webkit-scrollbar-track {
+    display: none;
+    /* Chrome/Safari/Opera */
+    width: 0;
     background: transparent;
-}
-
-.scrollContent::-webkit-scrollbar-thumb {
-    background-color: rgba(0, 0, 0, 0.2);
-    border-radius: 4px;
-}
-
-[data-theme="dark"] .scrollContent::-webkit-scrollbar-thumb {
-    background-color: rgba(255, 255, 255, 0.2);
 }
 
 /* ==================== FOOTER ==================== */

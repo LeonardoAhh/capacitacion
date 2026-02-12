@@ -1,17 +1,17 @@
 /* ==================== IMPORTANT INFO GRID ==================== */
 .importantGrid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
     gap: 16px;
     margin-top: 16px;
 }
 
 .importantCard {
-    background: rgba(255, 255, 255, 0.6);
+    background: var(--card-background);
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
     border-radius: 16px;
-    border: 1px solid rgba(255, 255, 255, 0.2);
+    border: 1px solid var(--card-border);
     padding: 20px;
     display: flex;
     flex-direction: column;
@@ -27,8 +27,7 @@
 }
 
 [data-theme="dark"] .importantCard {
-    background: rgba(28, 28, 30, 0.6);
-    border-color: rgba(255, 255, 255, 0.15);
+    /* Variables handle this now */
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
 }
 
