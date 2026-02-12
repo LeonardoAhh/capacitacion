@@ -45,6 +45,7 @@ export default function QuestionManager({ isOpen, onClose }) {
     function initialFormState() {
         return {
             theme: '',
+            department: 'Producción',
             type: 'Múltiple', // 'Múltiple' or 'Abierta'
             question: '',
             options: { a: '', b: '', c: '' },
@@ -55,9 +56,12 @@ export default function QuestionManager({ isOpen, onClose }) {
 
 
 
+    const [selectedDept, setSelectedDept] = useState('Todos');
+
     const filteredQuestions = questions.filter(q =>
-        q.question.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        q.theme?.toLowerCase().includes(searchTerm.toLowerCase())
+        (selectedDept === 'Todos' || (q.department || 'Producción') === selectedDept) &&
+        (q.question.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            q.theme?.toLowerCase().includes(searchTerm.toLowerCase()))
     );
 
     const handleCreate = () => {
@@ -68,6 +72,7 @@ export default function QuestionManager({ isOpen, onClose }) {
     const handleEdit = (q) => {
         setFormData({
             theme: q.theme || '',
+            department: q.department || 'Producción',
             type: q.type || 'Múltiple',
             question: q.question || '',
             options: {
@@ -106,6 +111,7 @@ export default function QuestionManager({ isOpen, onClose }) {
         try {
             const payload = {
                 theme: formData.theme,
+                department: formData.department,
                 type: formData.type,
                 question: formData.question,
                 options: formData.type === 'Múltiple' ? formData.options : null,
@@ -137,6 +143,66 @@ export default function QuestionManager({ isOpen, onClose }) {
             toast.error("Error", "No se pudo guardar la pregunta.");
         } finally {
             setSaving(false);
+        }
+    };
+
+    const handleMigrateProduccion = async () => {
+        if (!confirm("Esto asignará 'Producción' a todas las preguntas que no tengan departamento. ¿Continuar?")) return;
+        setLoading(true);
+        try {
+            const batch = [];
+            questions.forEach(q => {
+                if (!q.department) {
+                    // Update doc
+                    const docRef = doc(db, 'exam_questions', q.id);
+                    batch.push(updateDoc(docRef, { department: 'Producción' }));
+                }
+            });
+            await Promise.all(batch);
+            toast.success("Éxito", `Se actualizaron ${batch.length} preguntas a Producción.`);
+            // Reload questions
+            const q = query(collection(db, 'exam_questions'), orderBy('question'));
+            const snap = await getDocs(q);
+            const data = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+            setQuestions(data);
+        } catch (e) {
+            console.error(e);
+            toast.error("Error", "Falló la migración.");
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const handleImportCalidad = async () => {
+        if (!confirm(`Se importarán ${calidadData.length} preguntas de Calidad. ¿Continuar?`)) return;
+        setLoading(true);
+        try {
+            let added = 0;
+            let skipped = 0;
+            // Iterate sequentially to avoid overwhelming
+            for (const item of calidadData) {
+                const exists = questions.some(q => q.question === item.question && q.department === 'Calidad');
+                if (exists) {
+                    skipped++;
+                    continue;
+                }
+                await addDoc(collection(db, 'exam_questions'), {
+                    ...item,
+                    createdAt: serverTimestamp()
+                });
+                added++;
+            }
+            toast.success("Éxito", `Importadas: ${added}. Omitidas: ${skipped}.`);
+            // Reload
+            const q = query(collection(db, 'exam_questions'), orderBy('question'));
+            const snap = await getDocs(q);
+            const data = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+            setQuestions(data);
+        } catch (e) {
+            console.error(e);
+            toast.error("Error", "Falló la importación.");
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -180,6 +246,18 @@ export default function QuestionManager({ isOpen, onClose }) {
                                     </div>
 
                                     <div className={styles.formGroup}>
+                                        <label>Departamento</label>
+                                        <select
+                                            className={styles.select}
+                                            value={formData.department}
+                                            onChange={e => setFormData({ ...formData, department: e.target.value })}
+                                        >
+                                            <option value="Producción">Producción</option>
+                                            <option value="Calidad">Calidad</option>
+                                        </select>
+                                    </div>
+
+                                    <div className={styles.formGroup}>
                                         <label>Tema</label>
                                         <input
                                             className={styles.input}
@@ -200,6 +278,8 @@ export default function QuestionManager({ isOpen, onClose }) {
                                             <option value="Abierta">Abierta</option>
                                         </select>
                                     </div>
+
+
 
                                     <div className={styles.formGroup} style={{ flexDirection: 'row', alignItems: 'center', gap: '10px' }}>
                                         <input
@@ -264,7 +344,7 @@ export default function QuestionManager({ isOpen, onClose }) {
                                 // ===== LIST VIEW =====
                                 <>
                                     <div className={styles.searchBar}>
-                                        <div style={{ position: 'relative' }}>
+                                        <div style={{ position: 'relative', flex: 1 }}>
                                             <Search size={18} style={{ position: 'absolute', left: 10, top: 12, color: 'gray' }} />
                                             <input
                                                 className={styles.searchInput}
@@ -274,6 +354,16 @@ export default function QuestionManager({ isOpen, onClose }) {
                                                 onChange={(e) => setSearchTerm(e.target.value)}
                                             />
                                         </div>
+                                        <select
+                                            className={styles.select}
+                                            style={{ width: '150px', marginLeft: '10px' }}
+                                            value={selectedDept}
+                                            onChange={(e) => setSelectedDept(e.target.value)}
+                                        >
+                                            <option value="Todos">Todos</option>
+                                            <option value="Producción">Producción</option>
+                                            <option value="Calidad">Calidad</option>
+                                        </select>
                                     </div>
 
                                     <Button onClick={handleCreate} className={styles.addButton}>
@@ -288,6 +378,7 @@ export default function QuestionManager({ isOpen, onClose }) {
                                             {filteredQuestions.map(q => (
                                                 <div key={q.id} className={styles.questionCard}>
                                                     <div className={styles.questionHeader}>
+                                                        <span className={styles.badge}>{q.department || 'Producción'}</span>
                                                         <span className={styles.badge}>{q.theme || 'General'}</span>
                                                         <span className={styles.badge}>{q.type}</span>
                                                         {q.isFixed && <span className={styles.badge} style={{ backgroundColor: '#ffd700', color: '#000' }}>★ Fija</span>}
@@ -308,6 +399,8 @@ export default function QuestionManager({ isOpen, onClose }) {
                                             )}
                                         </div>
                                     )}
+
+                                    {/* MIGRATION TOOLS (REMOVED) */}
                                 </>
                             )}
                         </div>

@@ -1,133 +1,224 @@
 .container {
+    min-height: calc(100vh - 80px);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
     padding: 2rem;
-    max-width: 800px;
-    margin: 0 auto;
+    /* Background removed to inherit from body (platform theme) */
 }
 
+/* Header Section */
 .header {
+    width: 100%;
+    max-width: 600px;
     margin-bottom: 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.titleRow {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.titleRow h1 {
+    font-size: 1.75rem;
+    font-weight: 700;
+    letter-spacing: -0.025em;
+    color: var(--text-primary);
+    margin: 0;
 }
 
 .backBtn {
-    display: inline-block;
-    margin-bottom: 1rem;
+    align-self: flex-start;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
     color: var(--text-secondary);
-    text-decoration: none;
     font-size: 0.9rem;
+    font-weight: 500;
+    padding: 0.5rem 0.75rem;
+    border-radius: var(--radius-md);
+    transition: all 0.2s ease;
 }
 
 .backBtn:hover {
-    color: var(--color-primary);
-}
-
-.configCard {
-    background: var(--bg-secondary);
-    /* Changed from white for dark mode */
-    padding: 2rem;
-    border-radius: var(--radius-lg);
-    /* Added rounded corners */
-    box-shadow: var(--shadow-md);
-    border: 1px solid var(--border-color);
-    /* Added border */
+    background: var(--bg-tertiary);
     color: var(--text-primary);
-    /* Ensure text color is correct */
 }
 
+/* Configuration Card - The main focus */
+.configCard {
+    width: 100%;
+    max-width: 600px;
+    background: var(--bg-primary);
+    border-radius: var(--radius-xl);
+    border: 1px solid var(--border-color);
+    box-shadow:
+        0 4px 6px -1px rgba(0, 0, 0, 0.05),
+        0 10px 15px -3px rgba(0, 0, 0, 0.05);
+    /* Soft, elevated shadow */
+    padding: 2.5rem;
+    position: relative;
+    overflow: hidden;
+}
+
+/* Form Styles refined */
 .formGroup {
-    margin-bottom: 1.5rem;
+    margin-bottom: 1.75rem;
 }
 
 .formGroup label {
     display: block;
-    margin-bottom: 0.5rem;
-    font-weight: 500;
-    color: var(--text-primary);
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+    margin-bottom: 0.75rem;
+    letter-spacing: 0.01em;
+    text-transform: uppercase;
+    /* Small caps style for labels */
 }
 
+/* Inputs with floating-like clean feel */
 .input,
 .select {
     width: 100%;
-    padding: 0.75rem;
+    padding: 0.875rem 1rem;
+    border-radius: var(--radius-lg);
     border: 1px solid var(--border-color);
-    border-radius: var(--radius-md);
-    font-size: 1rem;
-    background-color: var(--bg-primary);
-    /* Dark mode bg */
+    background-color: var(--bg-secondary);
+    /* Slight contrast from card bg */
     color: var(--text-primary);
-    /* Dark mode text */
-    transition: border-color 0.2s, box-shadow 0.2s;
+    font-size: 1rem;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .input:focus,
 .select:focus {
     outline: none;
     border-color: var(--color-primary);
-    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
-    /* Subtle ring */
+    box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
+    /* Focus ring */
+    background-color: var(--bg-primary);
 }
 
+/* Autocomplete specifics */
 .autocompleteWrapper {
     position: relative;
 }
 
 .suggestionsList {
     position: absolute;
-    top: 100%;
+    top: calc(100% + 8px);
     left: 0;
-    right: 0;
+    width: 100%;
     background: var(--bg-primary);
-    /* Dark mode bg */
     border: 1px solid var(--border-color);
-    border-radius: var(--radius-md);
-    margin-top: 5px;
+    border-radius: var(--radius-lg);
+    margin: 0;
+    padding: 0.5rem;
     list-style: none;
-    padding: 0;
-    max-height: 200px;
+    max-height: 240px;
     overflow-y: auto;
-    box-shadow: var(--shadow-lg);
+    box-shadow: var(--shadow-xl);
     z-index: 50;
+    animation: slideIn 0.2s ease-out;
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 .suggestionsList li {
-    padding: 0.75rem;
+    padding: 0.75rem 1rem;
+    border-radius: var(--radius-md);
     cursor: pointer;
-    border-bottom: 1px solid var(--border-color);
     color: var(--text-primary);
-}
-
-.suggestionsList li:last-child {
-    border-bottom: none;
+    font-size: 0.95rem;
+    transition: background 0.15s;
 }
 
 .suggestionsList li:hover {
-    background: var(--bg-tertiary);
-    /* Hover state */
+    background: var(--bg-secondary);
 }
 
 .selectedBadge {
-    margin-top: 0.5rem;
-    display: inline-block;
-    padding: 0.25rem 0.75rem;
+    margin-top: 1rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
     background: rgba(34, 197, 94, 0.1);
-    /* Translucent green */
     color: var(--color-success);
-    border: 1px solid var(--color-success);
-    border-radius: 99px;
+    border: 1px solid rgba(34, 197, 94, 0.2);
+    border-radius: var(--radius-full);
     font-size: 0.875rem;
     font-weight: 500;
+    animation: fadeIn 0.3s ease;
 }
 
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        scale: 0.95;
+    }
+
+    to {
+        opacity: 1;
+        scale: 1;
+    }
+}
+
+/* Action Button */
 .generateBtn {
     width: 100%;
     padding: 1rem;
-    font-size: 1.1rem;
-    margin-top: 1rem;
+    font-size: 1.05rem;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    border-radius: var(--radius-lg);
+    background: var(--color-primary);
+    color: white;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    transition: all 0.2s ease;
+    margin-top: 0.5rem;
 }
 
-/* ===== PRINT STYLES - FORCE WHITE BACKGROUND ===== */
+.generateBtn:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    filter: brightness(1.1);
+}
+
+.generateBtn:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+    transform: none;
+}
+
+/* Loading State for Full Page */
+.loadingContainer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 50vh;
+}
+
+
+/* ===== PRINT STYLES - Unchanged logic, just ensure safety ===== */
 .printContainer {
     background: var(--bg-secondary);
-    /* Dark mode preview background */
     min-height: 100vh;
     padding: 2rem;
 }
@@ -151,7 +242,6 @@
     box-shadow: var(--shadow-lg);
     font-family: 'Times New Roman', Times, serif;
     color: black;
-    /* Always black text for print */
 }
 
 .examHeader {
@@ -196,7 +286,6 @@
     padding: 1rem;
     margin-bottom: 1.5rem;
     background: #f9fafb;
-    /* Light gray box on paper is okay */
     color: black;
 }
 
@@ -259,7 +348,6 @@
 .openAnswerLine {
     margin-top: 1rem;
     color: #9ca3af;
-    /* Light gray for writing line is fine */
 }
 
 .signatures {
@@ -268,15 +356,14 @@
     justify-content: space-between;
     page-break-inside: avoid;
     color: black;
-    background-color: white;
-    /* Ensure transparency doesn't show dark body */
+    background-color: transparent;
 }
 
+.signatureBox,
+.scoreBox,
 .signatureBox p,
 .scoreBox p {
     color: black !important;
-    background-color: white;
-    /* Double safety */
 }
 
 .signatureBox {

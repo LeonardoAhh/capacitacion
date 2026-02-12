@@ -31,6 +31,7 @@ export default function ExamenPage() {
     const [searchTerm, setSearchTerm] = useState('');
     const [selectedEmployee, setSelectedEmployee] = useState(null);
     const [category, setCategory] = useState('D_C'); // D_C, C_B, B_A
+    const [department, setDepartment] = useState('Producción'); // [NEW]
     const [loading, setLoading] = useState(false);
 
     // Exam State
@@ -84,10 +85,9 @@ export default function ExamenPage() {
             if (category === 'C_B') count = 30;
             if (category === 'B_A') count = 40;
 
-            // 2. Fetch ALL questions (optimized: we only have ~260, so this is cheap)
-            // Ideally we'd cache this or use a more clever random query, but for <500 docs, reading all is fine.
+            // 2. Fetch ALL questions (optimized)
             const qSnap = await getDocs(collection(db, 'exam_questions'));
-            const allQuestions = qSnap.docs.map(d => d.data());
+            const allQuestions = qSnap.docs.map(d => ({ ...d.data(), id: d.id }));
 
             if (allQuestions.length === 0) {
                 toast.error("Error", "No hay preguntas en la base de datos.");
@@ -95,9 +95,18 @@ export default function ExamenPage() {
                 return;
             }
 
+            // FILTER BY DEPARTMENT
+            const deptQuestions = allQuestions.filter(q => (q.department || 'Producción') === department);
+
+            if (deptQuestions.length === 0) {
+                toast.error("Error", `No hay preguntas para el departamento: ${department}`);
+                setLoading(false);
+                return;
+            }
+
             // 3. Separate Fixed vs Pool
-            const fixedQuestions = allQuestions.filter(q => q.isFixed === true);
-            const otherQuestions = allQuestions.filter(q => q.isFixed !== true);
+            const fixedQuestions = deptQuestions.filter(q => q.isFixed === true);
+            const otherQuestions = deptQuestions.filter(q => q.isFixed !== true);
 
             // 4. Calculate slots
             const neededRandom = Math.max(0, count - fixedQuestions.length);
@@ -115,7 +124,7 @@ export default function ExamenPage() {
             setExamData({
                 employee: selectedEmployee,
                 date: new Date().toLocaleDateString('es-MX', { year: 'numeric', month: 'long', day: 'numeric' }),
-                categoryLabel: getCategoryLabel(category),
+                categoryLabel: `${getCategoryLabel(category)} - ${department}`,
                 questions: finalQuestions
             });
 
@@ -250,15 +259,15 @@ export default function ExamenPage() {
     return (
         <div className={styles.container}>
             <div className={styles.header}>
-                <Link href="/capacitacion" className={styles.backBtn}>
-                    ← Volver
-                </Link>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                    <h1>Generador de Exámenes</h1>
+                <div className={styles.titleRow}>
+                    <Link href="/capacitacion" className={styles.backBtn}>
+                        ← Volver
+                    </Link>
                     <Button variant="outline" size="sm" onClick={() => setShowQuestionManager(true)}>
                         Gestionar Preguntas
                     </Button>
                 </div>
+                <h1 style={{ textAlign: 'center', margin: '1rem 0', color: 'var(--text-primary)' }}>Generador de Exámenes</h1>
             </div>
 
             <QuestionManager
@@ -266,60 +275,70 @@ export default function ExamenPage() {
                 onClose={() => setShowQuestionManager(false)}
             />
 
-            <Card className={styles.configCard}>
-                <CardContent>
-                    <div className={styles.formGroup}>
-                        <label>1. Seleccionar Empleado</label>
-                        <div className={styles.autocompleteWrapper}>
-                            <input
-                                type="text"
-                                placeholder="Buscar por nombre..."
-                                className={styles.input}
-                                value={searchTerm}
-                                onChange={(e) => {
-                                    setSearchTerm(e.target.value);
-                                    if (selectedEmployee) setSelectedEmployee(null); // Reset selection on edit
-                                }}
-                            />
-                            {searchTerm && !selectedEmployee && filteredEmployees.length > 0 && (
-                                <ul className={styles.suggestionsList}>
-                                    {filteredEmployees.map(emp => (
-                                        <li key={emp.id} onClick={() => handleSelectEmployee(emp)}>
-                                            <strong>{emp.name}</strong> - {emp.position}
-                                        </li>
-                                    ))}
-                                </ul>
-                            )}
-                        </div>
-                        {selectedEmployee && (
-                            <div className={styles.selectedBadge}>
-                                ✓ Seleccionado: {selectedEmployee.name} ({selectedEmployee.department})
-                            </div>
+            <div className={styles.configCard}>
+                <div className={styles.formGroup}>
+                    <label>1. Seleccionar Empleado</label>
+                    <div className={styles.autocompleteWrapper}>
+                        <input
+                            type="text"
+                            placeholder="Buscar por nombre..."
+                            className={styles.input}
+                            value={searchTerm}
+                            onChange={(e) => {
+                                setSearchTerm(e.target.value);
+                                if (selectedEmployee) setSelectedEmployee(null); // Reset selection on edit
+                            }}
+                        />
+                        {searchTerm && !selectedEmployee && filteredEmployees.length > 0 && (
+                            <ul className={styles.suggestionsList}>
+                                {filteredEmployees.map(emp => (
+                                    <li key={emp.id} onClick={() => handleSelectEmployee(emp)}>
+                                        <strong>{emp.name}</strong> - {emp.position}
+                                    </li>
+                                ))}
+                            </ul>
                         )}
                     </div>
+                    {selectedEmployee && (
+                        <div className={styles.selectedBadge}>
+                            ✓ Seleccionado: {selectedEmployee.name} ({selectedEmployee.department})
+                        </div>
+                    )}
+                </div>
 
-                    <div className={styles.formGroup}>
-                        <label>2. Tipo de Promoción (Categoría)</label>
-                        <select
-                            className={styles.select}
-                            value={category}
-                            onChange={(e) => setCategory(e.target.value)}
-                        >
-                            <option value="D_C">Categoría D a C (20 Preguntas)</option>
-                            <option value="C_B">Categoría C a B (30 Preguntas)</option>
-                            <option value="B_A">Categoría B a A (40 Preguntas)</option>
-                        </select>
-                    </div>
-
-                    <Button
-                        onClick={handleGenerate}
-                        disabled={loading || !selectedEmployee}
-                        className={styles.generateBtn}
+                <div className={styles.formGroup}>
+                    <label>2. Departamento del Examen</label>
+                    <select
+                        className={styles.select}
+                        value={department}
+                        onChange={(e) => setDepartment(e.target.value)}
                     >
-                        {loading ? 'Generando...' : 'Generar Examen'}
-                    </Button>
-                </CardContent>
-            </Card>
+                        <option value="Producción">Producción</option>
+                        <option value="Calidad">Calidad</option>
+                    </select>
+                </div>
+
+                <div className={styles.formGroup}>
+                    <label>3. Tipo de Promoción (Categoría)</label>
+                    <select
+                        className={styles.select}
+                        value={category}
+                        onChange={(e) => setCategory(e.target.value)}
+                    >
+                        <option value="D_C">Categoría D a C (20 Preguntas)</option>
+                        <option value="C_B">Categoría C a B (30 Preguntas)</option>
+                        <option value="B_A">Categoría B a A (40 Preguntas)</option>
+                    </select>
+                </div>
+
+                <Button
+                    onClick={handleGenerate}
+                    disabled={loading || !selectedEmployee}
+                    className={styles.generateBtn}
+                >
+                    {loading ? 'Generando...' : 'Generar Examen'}
+                </Button>
+            </div>
         </div>
     );
 }
