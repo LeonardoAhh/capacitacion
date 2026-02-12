@@ -95,9 +95,85 @@ export default function ExamenPage() {
                 return;
             }
 
+
+
             // FILTER BY DEPARTMENT
+            // Normalize department check for questions that might be missing it (older ones default to Produccion)
             const deptQuestions = allQuestions.filter(q => (q.department || 'Producción') === department);
 
+            // MOLDES LOGIC
+            if (department === 'Moldes') {
+                let targetLevel = '';
+                let strictFilter = (q) => false;
+
+                // Define strategies
+                // E -> D: Target D. Strict: Has D, no E.
+                // D -> C: Target C. Strict: Has C, no D, no E.
+                // C -> B: Target B. Strict: Has B, no C, no D, no E.
+
+                if (category === 'E_D') {
+                    count = 20;
+                    targetLevel = 'D';
+                    strictFilter = q => q.levels?.includes('D') && !q.levels?.includes('E');
+                } else if (category === 'D_C') {
+                    count = 20;
+                    targetLevel = 'C';
+                    strictFilter = q => q.levels?.includes('C') && !q.levels?.includes('D') && !q.levels?.includes('E');
+                } else if (category === 'C_B') {
+                    count = 20;
+                    targetLevel = 'B';
+                    strictFilter = q => q.levels?.includes('B') && !q.levels?.includes('C') && !q.levels?.includes('D') && !q.levels?.includes('E');
+                } else if (category === 'B_A') {
+                    count = 9999;
+                    targetLevel = 'A';
+                    strictFilter = q => q.levels?.includes('A');
+                } else {
+                    // Fallback
+                    strictFilter = () => true;
+                }
+
+                // 1. Get Strict Questions
+                let selectedQuestions = deptQuestions.filter(strictFilter);
+
+                // 2. If not enough, fill with looser filter (Just includes target level, excluding already selected)
+                if (selectedQuestions.length < count && category !== 'B_A') {
+                    const needed = count - selectedQuestions.length;
+                    const usedIds = new Set(selectedQuestions.map(q => q.id));
+
+                    const pool = deptQuestions.filter(q =>
+                        q.levels?.includes(targetLevel) && !usedIds.has(q.id)
+                    );
+
+                    // Shuffle pool and take needed
+                    const shuffledPool = pool.sort(() => 0.5 - Math.random());
+                    const extra = shuffledPool.slice(0, needed);
+
+                    selectedQuestions = [...selectedQuestions, ...extra];
+                }
+
+                if (selectedQuestions.length === 0) {
+                    toast.error("Error", `No hay preguntas para el nivel seleccionado en Moldes.`);
+                    setLoading(false);
+                    return;
+                }
+
+                // Shuffle final result
+                const finalQuestions = selectedQuestions.sort(() => 0.5 - Math.random()).slice(0, count);
+
+                setExamData({
+                    employee: selectedEmployee,
+                    date: new Date().toLocaleDateString('es-MX', { year: 'numeric', month: 'long', day: 'numeric' }),
+                    categoryLabel: `${getCategoryLabel(category, 'Moldes')}`,
+                    questions: finalQuestions,
+                    isMoldes: true
+                });
+
+                toast.success("Éxito", "Examen Moldes generado correctamente.");
+                setLoading(false);
+                return;
+            }
+
+            // STANDARD LOGIC (Produccion, Calidad)
             if (deptQuestions.length === 0) {
                 toast.error("Error", `No hay preguntas para el departamento: ${department}`);
                 setLoading(false);
@@ -138,7 +214,16 @@ export default function ExamenPage() {
         }
     };
 
-    const getCategoryLabel = (cat) => {
+    const getCategoryLabel = (cat, dept) => {
+        if (dept === 'Moldes') {
+            switch (cat) {
+                case 'E_D': return 'Categoría E a D (Básico)';
+                case 'D_C': return 'Categoría D a C (Intermedio)';
+                case 'C_B': return 'Categoría C a B (Avanzado)';
+                case 'B_A': return 'Categoría B a A (Experto)';
+                default: return cat;
+            }
+        }
         switch (cat) {
             case 'D_C': return 'Categoría D a C';
             case 'C_B': return 'Categoría C a B';
@@ -202,10 +287,6 @@ export default function ExamenPage() {
                         </div>
                     </div>
 
-                    <div className={styles.instructions}>
-                        <p><strong>Instrucciones:</strong> Lea cuidadosamente cada pregunta y seleccione la respuesta correcta. Tienes un tiempo límite de 30 minutos.</p>
-                    </div>
-
                     <div className={styles.questionsList}>
                         {examData.questions.map((q, idx) => (
                             <div key={q.id} className={styles.questionItem}>
@@ -237,6 +318,13 @@ export default function ExamenPage() {
                             </div>
                         ))}
                     </div>
+
+                    {/* Pagination Styles for Moldes B->A if needed */}
+                    <style jsx global>{`
+                        @media print {
+                            .page-break { page-break-after: always; }
+                        }
+                    `}</style>
 
                     <div className={styles.signatures}>
                         <div className={styles.signatureBox}>
@@ -315,6 +403,7 @@ export default function ExamenPage() {
                     >
                         <option value="Producción">Producción</option>
                         <option value="Calidad">Calidad</option>
+                        <option value="Moldes">Moldes</option>
                     </select>
                 </div>
 
@@ -325,9 +414,20 @@ export default function ExamenPage() {
                         value={category}
                         onChange={(e) => setCategory(e.target.value)}
                     >
-                        <option value="D_C">Categoría D a C (20 Preguntas)</option>
-                        <option value="C_B">Categoría C a B (30 Preguntas)</option>
-                        <option value="B_A">Categoría B a A (40 Preguntas)</option>
+                        {department === 'Moldes' ? (
+                            <>
+                                <option value="E_D">Categoría E a D (20 preguntas)</option>
+                                <option value="D_C">Categoría D a C (20 preguntas)</option>
+                                <option value="C_B">Categoría C a B (20 preguntas)</option>
+                                <option value="B_A">Categoría B a A (Todas)</option>
+                            </>
+                        ) : (
+                            <>
+                                <option value="D_C">Categoría D a C (20 Preguntas)</option>
+                                <option value="C_B">Categoría C a B (30 Preguntas)</option>
+                                <option value="B_A">Categoría B a A (40 Preguntas)</option>
+                            </>
+                        )}
                     </select>
                 </div>
 

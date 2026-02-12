@@ -7,6 +7,7 @@ import { db } from '@/lib/firebase';
 import { collection, getDocs, addDoc, updateDoc, deleteDoc, doc, query, orderBy, serverTimestamp } from 'firebase/firestore';
 import { useToast } from '@/components/ui/Toast/Toast';
 import { Button } from '@/components/ui/Button/Button';
+import { moldesData } from '@/data/moldes';
 import styles from './QuestionManager.module.css';
 
 export default function QuestionManager({ isOpen, onClose }) {
@@ -206,6 +207,62 @@ export default function QuestionManager({ isOpen, onClose }) {
         }
     };
 
+    const handleImportMoldes = async () => {
+        if (!confirm(`Se importarán ${moldesData.total_preguntas} preguntas de Moldes. Se omitirán las existentes. ¿Continuar?`)) return;
+        setLoading(true);
+        try {
+            let added = 0;
+            let skipped = 0;
+
+            // Flatten questions
+            const flatQuestions = [];
+            moldesData.secciones.forEach(sec => {
+                sec.preguntas.forEach(q => {
+                    flatQuestions.push({
+                        ...q,
+                        section: sec.titulo,
+                        sectionId: sec.id
+                    });
+                });
+            });
+
+            for (const item of flatQuestions) {
+                // Check dup by ID or Question text
+                const exists = questions.some(q => q.originalId === item.id || (q.question === item.pregunta && q.department === 'Moldes'));
+
+                if (exists) {
+                    skipped++;
+                    continue;
+                }
+
+                await addDoc(collection(db, 'exam_questions'), {
+                    department: 'Moldes',
+                    question: item.pregunta,
+                    type: 'Abierta', // All moldes questions seem to be open ended
+                    theme: item.tema,
+                    levels: item.nivel, // Array ["E", "D", ...]
+                    originalId: item.id,
+                    section: item.section,
+                    sectionId: item.sectionId,
+                    origin: item.origen,
+                    isFixed: false,
+                    options: null,
+                    correctAnswer: null,
+                    createdAt: serverTimestamp()
+                });
+                added++;
+            }
+            toast.success("Éxito", `Moldes: ${added} agregadas, ${skipped} omitidas.`);
+            // Reload
+            loadQuestions();
+        } catch (e) {
+            console.error(e);
+            toast.error("Error", "Falló la importación de Moldes.");
+        } finally {
+            setLoading(false);
+        }
+    };
+
     return (
         <AnimatePresence>
             {isOpen && (
@@ -254,6 +311,7 @@ export default function QuestionManager({ isOpen, onClose }) {
                                         >
                                             <option value="Producción">Producción</option>
                                             <option value="Calidad">Calidad</option>
+                                            <option value="Moldes">Moldes</option>
                                         </select>
                                     </div>
 
@@ -363,6 +421,7 @@ export default function QuestionManager({ isOpen, onClose }) {
                                             <option value="Todos">Todos</option>
                                             <option value="Producción">Producción</option>
                                             <option value="Calidad">Calidad</option>
+                                            <option value="Moldes">Moldes</option>
                                         </select>
                                     </div>
 
@@ -370,6 +429,7 @@ export default function QuestionManager({ isOpen, onClose }) {
                                         <Plus size={18} style={{ marginRight: 8 }} />
                                         Nueva Pregunta
                                     </Button>
+
 
                                     {loading ? (
                                         <div className={styles.loading}>Cargando preguntas...</div>
