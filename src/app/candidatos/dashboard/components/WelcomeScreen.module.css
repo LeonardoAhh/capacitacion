@@ -1,6 +1,12 @@
-/* ==================== WELCOME SCREEN ==================== */
+/* ─────────────────────────────────────────────────────────────
+   WelcomeScreen — v2.0.0
+   Estilo: Glassmorphism refinado / iOS-inspired
+───────────────────────────────────────────────────────────── */
+
+/* ── Overlay ──────────────────────────────────────────────── */
+
 .welcomeOverlay {
-    min-height: 100vh;
+    min-height: 100dvh;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -14,13 +20,20 @@
     background: #000000;
 }
 
+/* ── Background gradient ──────────────────────────────────── */
+
 .backgroundGradient {
     position: absolute;
     inset: 0;
-    background: radial-gradient(ellipse at center, rgba(16, 185, 129, 0.05) 0%, transparent 60%, rgba(6, 182, 212, 0.05) 100%);
-    filter: blur(60px);
+    background:
+        radial-gradient(ellipse 70% 50% at 20% 20%, rgba(99, 102, 241, 0.07) 0%, transparent 60%),
+        radial-gradient(ellipse 60% 40% at 80% 80%, rgba(16, 185, 129, 0.06) 0%, transparent 60%),
+        radial-gradient(ellipse 50% 50% at 50% 50%, rgba(6, 182, 212, 0.04) 0%, transparent 70%);
+    filter: blur(40px);
     z-index: 0;
 }
+
+/* ── Background lines ─────────────────────────────────────── */
 
 .shapesContainer {
     position: absolute;
@@ -28,88 +41,103 @@
     overflow: hidden;
     pointer-events: none;
     z-index: 0;
+    opacity: 0.6;
 }
+
+/* ── Card ─────────────────────────────────────────────────── */
 
 .welcomeCard {
     position: relative;
     z-index: 10;
     width: 100%;
     max-width: 520px;
-    background: rgba(255, 255, 255, 0.6);
+    background: rgba(255, 255, 255, 0.65);
     backdrop-filter: blur(40px);
     -webkit-backdrop-filter: blur(40px);
     border-radius: 28px;
-    border: 1px solid rgba(255, 255, 255, 0.5);
-    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
-    padding: 48px 40px;
+    border: 1px solid rgba(255, 255, 255, 0.55);
+    box-shadow:
+        0 2px 0 rgba(255, 255, 255, 0.8) inset,
+        /* top highlight */
+        0 24px 64px rgba(0, 0, 0, 0.1),
+        0 4px 16px rgba(0, 0, 0, 0.06);
+    padding: 48px 40px 40px;
     text-align: center;
-    animation: fadeInUp 0.8s ease-out;
+    /* Framer handles entrance — no CSS animation here */
+    will-change: transform, opacity;
 }
 
 [data-theme="dark"] .welcomeCard {
-    background: rgba(28, 28, 30, 0.6);
-    border-color: rgba(255, 255, 255, 0.15);
-    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+    background: rgba(28, 28, 30, 0.7);
+    border-color: rgba(255, 255, 255, 0.1);
+    box-shadow:
+        0 1px 0 rgba(255, 255, 255, 0.06) inset,
+        0 24px 64px rgba(0, 0, 0, 0.45),
+        0 4px 16px rgba(0, 0, 0, 0.3);
 }
 
-@keyframes fadeInUp {
-    from {
-        opacity: 0;
-        transform: translateY(30px);
-    }
-
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
+/* ── Avatar ───────────────────────────────────────────────── */
 
 .welcomeHeader {
-    margin-bottom: 24px;
+    margin-bottom: 22px;
 }
 
 .welcomeAvatar {
-    width: 160px;
-    height: 160px;
+    width: 140px;
+    height: 140px;
     margin: 0 auto;
-    background: linear-gradient(135deg, #007aff 0%, #5856d6 100%);
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
     color: white;
-    box-shadow: 0 12px 32px rgba(0, 122, 255, 0.4);
-    animation: bounceIn 0.8s ease-out 0.2s backwards;
     overflow: hidden;
+    position: relative;
+    /* Gradient ring as background when no photo */
+    background: linear-gradient(135deg, #007aff 0%, #5856d6 100%);
+    box-shadow:
+        0 0 0 4px rgba(255, 255, 255, 0.9),
+        /* white ring */
+        0 0 0 6px rgba(0, 122, 255, 0.15),
+        /* color halo */
+        0 12px 32px rgba(0, 122, 255, 0.35);
 }
 
-@keyframes bounceIn {
-    0% {
-        transform: scale(0);
-    }
+[data-theme="dark"] .welcomeAvatar {
+    box-shadow:
+        0 0 0 4px rgba(44, 44, 46, 0.9),
+        0 0 0 6px rgba(10, 132, 255, 0.2),
+        0 12px 32px rgba(10, 132, 255, 0.3);
+}
 
-    50% {
-        transform: scale(1.1);
-    }
+.avatarImg {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 50%;
+    display: block;
+}
 
-    100% {
-        transform: scale(1);
-    }
+/* ── Title block ──────────────────────────────────────────── */
+
+.titleBlock {
+    margin-bottom: 24px;
 }
 
 .welcomeTitle {
-    font-size: clamp(24px, 5vw, 32px);
+    font-size: clamp(22px, 5vw, 30px);
     font-weight: 800;
     color: #1c1c1e;
-    margin: 0 0 8px 0;
-    letter-spacing: -0.5px;
+    margin: 0 0 6px 0;
+    letter-spacing: -0.04em;
+    line-height: 1.2;
 }
 
 [data-theme="dark"] .welcomeTitle {
     color: #ffffff;
 }
 
-.welcomeTitle span {
+.brand {
     background: linear-gradient(135deg, #007aff 0%, #5856d6 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
@@ -117,27 +145,50 @@
 }
 
 .welcomeSubtitle {
-    font-size: clamp(18px, 4vw, 24px);
-    font-weight: 500;
-    color: #636366;
-    margin: 8px 0 32px 0;
-    letter-spacing: -0.5px;
+    font-size: clamp(20px, 4.5vw, 26px);
+    font-weight: 700;
+    color: #3c3c43;
+    margin: 0;
+    letter-spacing: -0.03em;
+    line-height: 1.2;
+    /* Gradient text for the name — elegant touch */
+    background: linear-gradient(135deg, #1c1c1e 0%, #48484a 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
 }
 
 [data-theme="dark"] .welcomeSubtitle {
-    color: #a1a1a6;
+    background: linear-gradient(135deg, #ffffff 0%, #ebebf5 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
 }
+
+/* ── Message ──────────────────────────────────────────────── */
 
 .welcomeMessage {
     text-align: left;
-    margin-bottom: 28px;
+    margin-bottom: 24px;
+    padding: 20px;
+    background: rgba(0, 0, 0, 0.025);
+    border-radius: 16px;
+    border: 1px solid rgba(0, 0, 0, 0.04);
+}
+
+[data-theme="dark"] .welcomeMessage {
+    background: rgba(255, 255, 255, 0.04);
+    border-color: rgba(255, 255, 255, 0.06);
 }
 
 .welcomeMessage p {
-    font-size: 15px;
+    font-size: 14px;
     line-height: 1.7;
     color: #3c3c43;
-    margin: 0 0 12px 0;
+    margin: 0 0 10px 0;
+}
+
+.welcomeMessage p:last-child {
+    margin-bottom: 0;
 }
 
 [data-theme="dark"] .welcomeMessage p {
@@ -153,54 +204,69 @@
     color: #0a84ff;
 }
 
+/* ── Info grid ────────────────────────────────────────────── */
+
 .infoGrid {
     display: flex;
-    gap: 32px;
-    margin-bottom: 32px;
-    padding: 24px 0;
-    border-top: 1px solid rgba(60, 60, 67, 0.1);
-    border-bottom: 1px solid rgba(60, 60, 67, 0.1);
-    background: transparent;
-}
-
-[data-theme="dark"] .infoGrid {
-    border-color: rgba(84, 84, 88, 0.5);
-    background: transparent;
+    gap: 12px;
+    margin-bottom: 28px;
 }
 
 .infoItem {
     flex: 1;
     display: flex;
     flex-direction: column;
-    gap: 4px;
+    gap: 5px;
     align-items: flex-start;
+    padding: 16px 18px;
+    background: rgba(0, 122, 255, 0.05);
+    border-radius: 16px;
+    border: 1px solid rgba(0, 122, 255, 0.1);
+    transition: background 0.2s ease;
+}
+
+.infoItem:hover {
+    background: rgba(0, 122, 255, 0.08);
+}
+
+[data-theme="dark"] .infoItem {
+    background: rgba(10, 132, 255, 0.08);
+    border-color: rgba(10, 132, 255, 0.15);
 }
 
 .infoLabel {
-    font-size: 12px;
-    font-weight: 600;
-    color: #8e8e93;
+    font-size: 11px;
+    font-weight: 700;
+    color: #007aff;
     text-transform: uppercase;
-    letter-spacing: 0.5px;
+    letter-spacing: 0.06em;
+}
+
+[data-theme="dark"] .infoLabel {
+    color: #0a84ff;
 }
 
 .infoValue {
-    font-size: 15px;
+    font-size: 14px;
     font-weight: 600;
     color: #1c1c1e;
     text-align: left;
+    line-height: 1.3;
+    word-break: break-word;
 }
 
 [data-theme="dark"] .infoValue {
     color: #ffffff;
 }
 
+/* ── CTA Button ───────────────────────────────────────────── */
+
 .welcomeButton {
     width: 100%;
     padding: 16px 24px;
     background: linear-gradient(135deg, #007aff 0%, #5856d6 100%);
     border: none;
-    border-radius: 14px;
+    border-radius: 16px;
     color: white;
     font-size: 17px;
     font-weight: 700;
@@ -209,70 +275,198 @@
     align-items: center;
     justify-content: center;
     gap: 10px;
-    transition: all 0.3s ease;
-    box-shadow: 0 8px 24px rgba(0, 122, 255, 0.35);
+    /* Framer handles hover/tap — CSS only for base shadow */
+    box-shadow:
+        0 6px 20px rgba(0, 122, 255, 0.38),
+        0 2px 6px rgba(0, 0, 0, 0.15);
+    /* Shimmer on hover via ::after */
+    position: relative;
+    overflow: hidden;
+    isolation: isolate;
+    letter-spacing: 0.01em;
 }
 
-.welcomeButton:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 12px 32px rgba(0, 122, 255, 0.45);
+.welcomeButton::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(105deg,
+            transparent 30%,
+            rgba(255, 255, 255, 0.2) 50%,
+            transparent 70%);
+    transform: translateX(-100%);
+    transition: transform 0.5s ease;
 }
 
-.welcomeButton:active {
-    transform: translateY(0);
+.welcomeButton:hover::after {
+    transform: translateX(100%);
 }
 
 .welcomeButton:focus-visible {
-    outline: 3px solid #007aff;
+    outline: 2px solid #007aff;
     outline-offset: 3px;
-    box-shadow: 0 8px 24px rgba(0, 122, 255, 0.35), 0 0 0 6px rgba(0, 122, 255, 0.2);
+    box-shadow:
+        0 6px 20px rgba(0, 122, 255, 0.38),
+        0 0 0 5px rgba(0, 122, 255, 0.18);
 }
 
 [data-theme="dark"] .welcomeButton:focus-visible {
     outline-color: #0a84ff;
-    box-shadow: 0 8px 24px rgba(10, 132, 255, 0.35), 0 0 0 6px rgba(10, 132, 255, 0.3);
+    box-shadow:
+        0 6px 20px rgba(10, 132, 255, 0.38),
+        0 0 0 5px rgba(10, 132, 255, 0.25);
 }
 
-/* Shapes Positioning - REMOVED */
+/* ─────────────────────────────────────────────────────────────
+   Responsive
+───────────────────────────────────────────────────────────── */
 
-/* Responsive */
+/* Tablet */
+@media (max-width: 600px) {
+    .welcomeCard {
+        padding: 36px 24px 32px;
+        border-radius: 24px;
+    }
+
+    .welcomeAvatar {
+        width: 120px;
+        height: 120px;
+    }
+}
+
+/* Mobile */
 @media (max-width: 480px) {
     .welcomeOverlay {
         padding: 16px;
     }
 
     .welcomeCard {
-        padding: 28px 20px;
-        border-radius: 24px;
+        padding: 28px 18px 24px;
+        border-radius: 22px;
     }
 
     .welcomeAvatar {
         width: 100px;
         height: 100px;
-        margin-bottom: 20px;
     }
 
-    .welcomeTitle {
-        font-size: 24px;
+    .welcomeMessage {
+        padding: 16px;
     }
 
-    .welcomeSubtitle {
-        font-size: 18px;
-        margin-bottom: 24px;
+    .welcomeMessage p {
+        font-size: 13.5px;
     }
 
     .infoGrid {
-        gap: 12px;
-        flex-direction: column;
+        gap: 10px;
     }
 
     .infoItem {
-        align-items: center;
+        padding: 14px 14px;
+        border-radius: 14px;
     }
 
-    /* Center items on mobile if stacked? Or keep left aligned. Original was a bit flexy */
-    /* Original CSS had .welcomeInfo with flex-direction: column; gap 12px */
-    .shapesContainer {
-        opacity: 0.5;
+    .welcomeButton {
+        padding: 15px 20px;
+        font-size: 16px;
+        border-radius: 14px;
+    }
+}
+
+/* Very small */
+@media (max-width: 360px) {
+    .welcomeCard {
+        padding: 24px 14px 20px;
+    }
+
+    .welcomeAvatar {
+        width: 88px;
+        height: 88px;
+    }
+
+    .infoGrid {
+        flex-direction: column;
+    }
+}
+
+/* Landscape mobile — tighter vertical rhythm */
+@media (max-height: 600px) and (orientation: landscape) {
+    .welcomeOverlay {
+        align-items: flex-start;
+        padding: 12px;
+    }
+
+    .welcomeCard {
+        padding: 20px 28px;
+    }
+
+    .welcomeAvatar {
+        width: 72px;
+        height: 72px;
+    }
+
+    .welcomeHeader {
+        margin-bottom: 12px;
+    }
+
+    .titleBlock {
+        margin-bottom: 14px;
+    }
+
+    .welcomeMessage {
+        margin-bottom: 14px;
+    }
+
+    .welcomeMessage p+p {
+        display: none;
+    }
+
+    /* hide extra paragraphs */
+
+    .infoGrid {
+        margin-bottom: 16px;
+    }
+}
+
+/* PWA safe area */
+@media (display-mode: standalone) {
+    .welcomeOverlay {
+        padding-bottom: max(24px, env(safe-area-inset-bottom));
+    }
+}
+
+/* ─────────────────────────────────────────────────────────────
+   Reduced motion
+───────────────────────────────────────────────────────────── */
+
+@media (prefers-reduced-motion: reduce) {
+
+    .welcomeButton,
+    .infoItem {
+        transition: none;
+    }
+
+    .welcomeButton::after {
+        display: none;
+    }
+}
+
+/* ─────────────────────────────────────────────────────────────
+   High contrast
+───────────────────────────────────────────────────────────── */
+
+@media (prefers-contrast: high) {
+    .welcomeCard {
+        border-width: 2px;
+        border-color: rgba(0, 0, 0, 0.3);
+    }
+
+    .infoItem {
+        border-width: 2px;
+    }
+
+    .welcomeButton {
+        border: 2px solid white;
     }
 }

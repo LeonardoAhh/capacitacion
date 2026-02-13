@@ -46,8 +46,8 @@ export function useCourseProgress({ candidate, setCourseProgress, setCandidate }
 
             await setDoc(employeeRef, updatePayload, { merge: true });
 
-            // Special handling for completion
-            if (step === 'examDownloaded') {
+            // Special handling for completion - NOW AFTER PRESENTATION
+            if (step === 'presentationCompleted') {
                 await updateDoc(employeeRef, {
                     cursosCompletados: arrayUnion(courseId)
                 });
@@ -149,10 +149,6 @@ export function useCourseProgress({ candidate, setCourseProgress, setCandidate }
                 return true;
             case 'presentation':
                 return progress.step1Completed;
-            case 'step2':
-                return progress.presentationCompleted;
-            case 'exam':
-                return progress.step2Completed;
             default:
                 return false;
         }
@@ -165,9 +161,7 @@ export function useCourseProgress({ candidate, setCourseProgress, setCandidate }
         const progress = courseProgress[courseId] || {};
         if (!progress.step1Completed) return 1;
         if (!progress.presentationCompleted) return 2;
-        if (!progress.step2Completed) return 3;
-        if (!progress.examDownloaded) return 4;
-        return 4;
+        return 2;
     }, []);
 
     /**

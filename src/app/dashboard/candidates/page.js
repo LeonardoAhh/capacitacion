@@ -124,7 +124,6 @@ function useDataFetching() {
                 // Calculate activity metrics
                 const progressMap = c.coursesProgress || {};
                 const presentationsViewed = Object.values(progressMap).filter(p => p.presentationCompleted).length;
-                const examsDownloaded = Object.values(progressMap).filter(p => p.examDownloaded).length;
 
                 // Determine status
                 const daysIdle = calculateDaysSinceLastLogin(c.lastLoginCandidate);
@@ -153,7 +152,6 @@ function useDataFetching() {
                     completedCount: completedRequiredCount,
                     progress: progress,
                     presentationsViewed,
-                    examsDownloaded,
                     status: status,
                     daysSinceLastLogin: daysIdle,
                     lastLogin: lastLoginDisplay,
@@ -580,10 +578,6 @@ export default function CandidateMonitoringPage() {
                                                         <FileText size={14} />
                                                         {candidate.presentationsViewed} Vistas
                                                     </div>
-                                                    <div className={styles.activityItem} title="Exámenes Descargados">
-                                                        <FileCheck size={14} />
-                                                        {candidate.examsDownloaded} Descargas
-                                                    </div>
                                                 </div>
                                                 <div className={styles.accessCodeInfo} title={`Expira el: ${candidate.accessCodeExpires}`}>
                                                     <Key size={14} />
@@ -683,10 +677,6 @@ export default function CandidateMonitoringPage() {
                                         <div className={styles.activityItem}>
                                             <FileText size={14} />
                                             <span>{candidate.presentationsViewed} Presentaciones vistas</span>
-                                        </div>
-                                        <div className={styles.activityItem}>
-                                            <FileCheck size={14} />
-                                            <span>{candidate.examsDownloaded} Exámenes descargados</span>
                                         </div>
                                         <div className={styles.accessCodeItem}>
                                             <Key size={14} />

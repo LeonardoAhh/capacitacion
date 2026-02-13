@@ -198,7 +198,7 @@ export default function CandidateDrawer({
                                             // Status Logic by ID (Direct & Robust)
                                             const isCompleted = completedIds.includes(courseId);
                                             const progress = candidate.coursesProgress?.[courseId] || null;
-                                            const hasProgress = progress?.presentationCompleted || progress?.examDownloaded;
+                                            const hasProgress = progress?.presentationCompleted;
 
                                             let status = 'notStarted';
                                             if (isCompleted) status = 'completed';
@@ -222,11 +222,6 @@ export default function CandidateDrawer({
                                                                 {progress?.presentationCompleted && (
                                                                     <span className={styles.courseDetail}>
                                                                         <FileText size={12} /> Presentación
-                                                                    </span>
-                                                                )}
-                                                                {progress?.examDownloaded && (
-                                                                    <span className={styles.courseDetail}>
-                                                                        <FileCheck size={12} /> Examen
                                                                     </span>
                                                                 )}
                                                             </div>

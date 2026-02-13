@@ -1,66 +1,98 @@
+/* ─────────────────────────────────────────────────────────────
+   ModernPillNavbar — v3.0.0
+   Dropdown se renderiza via portal en document.body,
+   por lo que nunca hay conflictos de posicionamiento.
+───────────────────────────────────────────────────────────── */
+
+/* ── Pill container ───────────────────────────────────────── */
+
 .navbarContainer {
     position: relative;
     display: inline-flex;
     align-items: center;
     background: var(--card-background);
-    backdrop-filter: blur(16px);
-    -webkit-backdrop-filter: blur(16px);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
     border: 1px solid var(--card-border);
     border-radius: 9999px;
-    /* Pill shape */
-    padding: 4px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
-    transition: box-shadow 0.3s cubic-bezier(0.25, 0.1, 0.25, 1);
+    padding: 5px;
+    gap: 2px;
+    box-shadow:
+        0 2px 8px rgba(0, 0, 0, 0.06),
+        0 0 0 1px rgba(255, 255, 255, 0.04) inset;
+    transition: box-shadow 0.3s ease;
 }
 
 .navbarContainer:hover {
-    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
-    /* Transform removed to avoid creating a new stacking context that breaks fixed positioning on mobile */
+    box-shadow:
+        0 6px 24px rgba(0, 0, 0, 0.1),
+        0 0 0 1px rgba(255, 255, 255, 0.06) inset;
 }
 
-/* User Info Section (Text) */
+/* ── User info — desktop only ─────────────────────────────── */
+
 .userInfo {
     display: flex;
     flex-direction: column;
     align-items: flex-end;
-    margin-right: 12px;
-    margin-left: 16px;
+    margin-left: 14px;
+    margin-right: 10px;
     text-align: right;
-}
-
-@media (max-width: 640px) {
-    .userInfo {
-        display: none;
-    }
+    min-width: 0;
 }
 
 .userName {
-    font-size: 14px;
-    font-weight: 600;
+    font-size: 13px;
+    font-weight: 700;
     color: var(--text-primary);
     line-height: 1.1;
+    letter-spacing: 0.01em;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 180px;
 }
 
 .userRole {
-    font-size: 11px;
+    font-size: 10px;
+    font-weight: 500;
     color: var(--text-tertiary);
     margin-top: 2px;
+    letter-spacing: 0.04em;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 180px;
 }
 
-/* Avatar Section */
+/* ── Avatar ───────────────────────────────────────────────── */
+
 .avatarWrapper {
     position: relative;
-    width: 40px;
-    height: 40px;
+    width: 38px;
+    height: 38px;
     border-radius: 50%;
     padding: 2px;
-    background: linear-gradient(135deg, var(--color-primary), var(--color-secondary));
+    background: linear-gradient(135deg,
+            var(--color-primary, #6366f1),
+            var(--color-secondary, #ec4899));
     cursor: pointer;
-    transition: transform 0.2s;
+    border: none;
+    flex-shrink: 0;
+    transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
 .avatarWrapper:hover {
-    transform: scale(1.05);
+    transform: scale(1.07);
+}
+
+.avatarWrapper:active {
+    transform: scale(0.96);
+}
+
+.avatarWrapper:focus-visible {
+    outline: 2px solid var(--color-primary, #6366f1);
+    outline-offset: 3px;
 }
 
 .avatar {
@@ -68,37 +100,63 @@
     height: 100%;
     border-radius: 50%;
     overflow: hidden;
-    background: white;
+    background: var(--card-background, white);
     display: flex;
     align-items: center;
     justify-content: center;
+    color: var(--text-primary);
 }
 
 .avatarImg {
     width: 100%;
     height: 100%;
     object-fit: cover;
+    display: block;
 }
 
-/* Menu Trigger (Chevron) */
+.onlineDot {
+    position: absolute;
+    bottom: 1px;
+    right: 1px;
+    width: 9px;
+    height: 9px;
+    background: #34c759;
+    border-radius: 50%;
+    border: 2px solid var(--card-background, white);
+    animation: pulse 2.5s ease-in-out infinite;
+}
+
+@keyframes pulse {
+
+    0%,
+    100% {
+        box-shadow: 0 0 0 0 rgba(52, 199, 89, 0.45);
+    }
+
+    50% {
+        box-shadow: 0 0 0 4px rgba(52, 199, 89, 0);
+    }
+}
+
+/* ── Chevron ──────────────────────────────────────────────── */
+
 .menuTrigger {
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 28px;
-    height: 28px;
+    width: 26px;
+    height: 26px;
     border-radius: 50%;
     border: none;
     background: transparent;
     color: var(--text-tertiary);
     cursor: pointer;
-    margin-left: 4px;
-    margin-right: 4px;
-    transition: all 0.2s;
+    margin-right: 2px;
+    transition: background 0.2s ease, color 0.2s ease;
 }
 
 .menuTrigger:hover {
-    background: rgba(0, 0, 0, 0.05);
+    background: rgba(0, 0, 0, 0.06);
     color: var(--text-primary);
 }
 
@@ -106,120 +164,256 @@
     background: rgba(255, 255, 255, 0.1);
 }
 
-/* Dropdown Menu */
+/* ─────────────────────────────────────────────────────────────
+   Portal backdrop — catches outside clicks
+   (rendered at body level, under the dropdown)
+───────────────────────────────────────────────────────────── */
+
+.portalBackdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 20009;
+    /* Transparent — just for click capture */
+}
+
+/* ─────────────────────────────────────────────────────────────
+   Dropdown menu
+   position: fixed + top/right set via inline style from JS
+   — so no CSS positioning needed here at all.
+───────────────────────────────────────────────────────────── */
+
 .dropdownMenu {
-    position: absolute;
-    top: calc(100% + 12px);
-    right: 0;
-    width: 220px;
-    background: var(--popover-background);
-    backdrop-filter: blur(24px);
-    -webkit-backdrop-filter: blur(24px);
+    /* position: fixed is applied inline by DropdownPortal */
+    width: 230px;
+    background: var(--popover-background, rgba(255, 255, 255, 0.94));
+    backdrop-filter: blur(28px);
+    -webkit-backdrop-filter: blur(28px);
     border: 1px solid var(--card-border);
-    border-radius: 24px;
-    /* Very rounded corners, no square borders */
+    border-radius: 22px;
     padding: 8px;
-    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.12);
-    z-index: 100;
-    transform-origin: top right;
-    animation: scaleIn 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    box-shadow:
+        0 12px 44px rgba(0, 0, 0, 0.14),
+        0 2px 8px rgba(0, 0, 0, 0.08);
+    z-index: 20010;
     overflow: hidden;
+    /* transform-origin matches top-right for scale animation */
+    transform-origin: top right;
 }
 
-@keyframes scaleIn {
-    from {
-        opacity: 0;
-        transform: scale(0.95) translateY(-10px);
-    }
-
-    to {
-        opacity: 1;
-        transform: scale(1) translateY(0);
-    }
+[data-theme="dark"] .dropdownMenu {
+    background: rgba(28, 28, 30, 0.94);
+    box-shadow:
+        0 12px 44px rgba(0, 0, 0, 0.45),
+        0 2px 8px rgba(0, 0, 0, 0.3);
 }
 
-/* Menu Items */
+/* ── Menu header ──────────────────────────────────────────── */
+
+.menuHeader {
+    display: flex;
+    flex-direction: column;
+    padding: 10px 14px 12px;
+    gap: 2px;
+    border-bottom: 1px solid var(--card-border);
+    margin-bottom: 6px;
+}
+
+.menuHeaderName {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text-primary);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.menuHeaderRole {
+    font-size: 11px;
+    color: var(--text-tertiary);
+    letter-spacing: 0.03em;
+}
+
+/* ── Menu items ───────────────────────────────────────────── */
+
 .menuItem {
     display: flex;
     align-items: center;
-    gap: 12px;
+    gap: 11px;
     width: 100%;
-    padding: 12px 16px;
+    padding: 11px 14px;
     border: none;
     background: transparent;
     color: var(--text-primary);
     font-size: 14px;
     font-weight: 500;
-    border-radius: 16px;
+    border-radius: 14px;
     cursor: pointer;
-    transition: all 0.2s;
+    transition: background 0.18s ease;
     text-align: left;
-    margin-bottom: 2px;
 }
 
 .menuItem:hover {
-    background: rgba(0, 0, 0, 0.04);
-    transform: translateX(2px);
+    background: rgba(0, 0, 0, 0.05);
 }
 
 [data-theme="dark"] .menuItem:hover {
     background: rgba(255, 255, 255, 0.08);
 }
 
-.menuItem:last-child {
-    margin-bottom: 0;
-}
-
 .menuItemIcon {
-    opacity: 0.7;
-    transition: opacity 0.2s;
+    opacity: 0.65;
+    flex-shrink: 0;
+    transition: opacity 0.18s ease;
 }
 
 .menuItem:hover .menuItemIcon {
     opacity: 1;
 }
 
-/* Specific Items */
-.logoutItem {
-    color: #ff3b30;
-    margin-top: 4px;
-}
-
-.logoutItem:hover {
-    background: rgba(255, 59, 48, 0.08);
-}
-
+/* Timer */
 .timerItem {
-    background: rgba(0, 122, 255, 0.05);
-    border: 1px solid rgba(0, 122, 255, 0.1);
-    color: var(--color-primary);
-    cursor: default;
+    background: rgba(0, 122, 255, 0.07);
+    border: 1px solid rgba(0, 122, 255, 0.12);
+    color: var(--color-primary, #007aff);
     justify-content: center;
-    font-weight: 600;
+    font-weight: 700;
+    font-size: 16px;
+    letter-spacing: 0.04em;
+    pointer-events: none;
+    margin-bottom: 2px;
 }
 
 .timerItem:hover {
-    background: rgba(0, 122, 255, 0.05);
-    transform: none;
+    background: rgba(0, 122, 255, 0.07);
+}
+
+.timerLow {
+    background: rgba(255, 59, 48, 0.08);
+    border-color: rgba(255, 59, 48, 0.2);
+    color: #ff3b30;
+    animation: timerPulse 1s ease-in-out infinite;
+}
+
+@keyframes timerPulse {
+
+    0%,
+    100% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0.7;
+    }
+}
+
+/* Logout */
+.logoutItem {
+    color: #ff3b30;
+}
+
+.logoutItem:hover {
+    background: rgba(255, 59, 48, 0.08) !important;
 }
 
 /* Separator */
 .separator {
     height: 1px;
-    background: var(--border-color);
-    margin: 6px 12px;
-    opacity: 0.5;
+    background: var(--border-color, rgba(60, 60, 67, 0.12));
+    margin: 5px 10px;
 }
 
-/* Mobile adjustments for dropdown */
-@media (max-width: 640px) {
-    .dropdownMenu {
-        width: 200px;
-        right: 0;
-        z-index: 20006;
+[data-theme="dark"] .separator {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+/* ─────────────────────────────────────────────────────────────
+   Responsive — pill only (dropdown handled by JS portal)
+───────────────────────────────────────────────────────────── */
+
+/* Tablet — hide name/role text */
+@media (max-width: 768px) {
+    .userInfo {
+        display: none;
     }
 
     .navbarContainer {
-        padding: 4px 8px;
+        padding: 4px 6px 4px 4px;
+    }
+}
+
+/* Mobile — smaller avatar */
+@media (max-width: 640px) {
+    .avatarWrapper {
+        width: 34px;
+        height: 34px;
+    }
+
+    /* Dropdown width adapts to viewport on mobile */
+    .dropdownMenu {
+        width: min(300px, calc(100vw - 24px));
+    }
+}
+
+/* Very small */
+@media (max-width: 360px) {
+    .avatarWrapper {
+        width: 32px;
+        height: 32px;
+    }
+
+    .menuTrigger {
+        width: 22px;
+        height: 22px;
+    }
+
+    .dropdownMenu {
+        width: calc(100vw - 16px);
+    }
+}
+
+/* PWA safe area */
+@media (display-mode: standalone) {
+    .dropdownMenu {
+        padding-bottom: max(8px, env(safe-area-inset-bottom));
+    }
+}
+
+/* Landscape — scrollable dropdown if too tall */
+@media (max-height: 500px) and (orientation: landscape) {
+    .dropdownMenu {
+        max-height: 72dvh;
+        overflow-y: auto;
+        overscroll-behavior: contain;
+    }
+}
+
+/* ─────────────────────────────────────────────────────────────
+   Accessibility
+───────────────────────────────────────────────────────────── */
+
+@media (prefers-reduced-motion: reduce) {
+
+    .avatarWrapper,
+    .menuTrigger,
+    .menuItem {
+        transition: none;
+    }
+
+    .onlineDot {
+        animation: none;
+    }
+
+    .timerLow {
+        animation: none;
+    }
+}
+
+@media (prefers-contrast: high) {
+    .navbarContainer {
+        border-width: 2px;
+    }
+
+    .dropdownMenu {
+        border-width: 2px;
     }
 }
