@@ -1,6 +1,11 @@
+/* ─────────────────────────────────────────────
+   DynamicCredits — v2.0.0
+   Estilo: Minimalista refinado
+───────────────────────────────────────────── */
+
 .creditsContainer {
     position: fixed;
-    bottom: 1.5rem;
+    bottom: 1.75rem;
     left: 0;
     right: 0;
     z-index: 10;
@@ -8,51 +13,135 @@
     pointer-events: none;
 }
 
+/* ── Ambient glow — very subtle, minimalista ── */
+.ambientGlow {
+    position: absolute;
+    bottom: -0.5rem;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 280px;
+    height: 48px;
+    background: radial-gradient(ellipse at center,
+            rgba(255, 255, 255, 0.06) 0%,
+            transparent 70%);
+    pointer-events: none;
+    filter: blur(8px);
+}
+
+/* ── Wrapper ── */
 .creditsWrapper {
     position: relative;
-    display: inline-block;
-    min-height: 24px;
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    min-height: 28px;
     pointer-events: auto;
-    max-width: 90vw;
-    /* Prevent overflow on small screens */
-    white-space: normal;
-    /* Allow wrapping */
+    max-width: 92vw;
 }
 
+/* ── Text row ── */
 .creditText {
-    font-size: 0.875rem;
+    display: flex;
+    align-items: baseline;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.28em;
+    font-size: 0.8125rem;
+    /* 13px — slightly tighter than before */
     font-weight: 400;
-    letter-spacing: 0.5px;
-    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
-    transition: opacity 0.3s ease;
-}
-
-.label {
+    letter-spacing: 0.3px;
+    line-height: 1.4;
     color: var(--text-primary);
-    opacity: 1;
+    text-shadow: 0 1px 4px rgba(0, 0, 0, 0.25);
+
+    /* Hardware-accelerate the whole row */
+    will-change: opacity, transform;
 }
 
+/* ── Word atoms ── */
+.word {
+    color: var(--text-primary);
+    opacity: 0.75;
+    will-change: transform, opacity, filter;
+}
+
+/* ── Separator dot ── */
+.separator {
+    color: var(--text-primary);
+    opacity: 0.3;
+    font-weight: 300;
+    font-size: 1em;
+    margin: 0 0.05em;
+    will-change: transform, opacity, filter;
+}
+
+/* ── Author — the focal point ── */
 .author {
-    font-weight: 700;
+    font-weight: 600;
+    letter-spacing: 0.01em;
     color: var(--text-primary);
     opacity: 1;
+    will-change: transform, opacity, filter;
 }
 
-.creditsContainer:hover .label {
+/* ── Progress dots ── */
+.progressDots {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.dot {
+    appearance: none;
+    border: none;
+    background: var(--text-primary);
+    opacity: 0.2;
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    padding: 0;
+    cursor: pointer;
+    pointer-events: auto;
+    transition: opacity 0.3s ease, transform 0.3s ease, width 0.35s ease;
+}
+
+.dot:hover {
+    opacity: 0.5;
+}
+
+.dotActive {
+    opacity: 0.7;
+    width: 14px;
+    /* pill shape when active */
+    border-radius: 2px;
+    transform: none;
+}
+
+/* ── Hover: pause & slight lift ── */
+.creditsWrapper:hover .word {
     opacity: 0.9;
 }
 
-.creditsContainer:hover .author {
+.creditsWrapper:hover .author {
     opacity: 1;
 }
 
-/* Mobile adjustments */
+/* ─────────────────────────────────────────────
+   Mobile
+───────────────────────────────────────────── */
 @media (max-width: 768px) {
     .creditsContainer {
         bottom: 1rem;
     }
 
     .creditText {
-        font-size: 0.75rem;
+        font-size: 0.6875rem;
+        /* 11px */
+        gap: 0.24em;
+    }
+
+    .ambientGlow {
+        width: 200px;
     }
 }
