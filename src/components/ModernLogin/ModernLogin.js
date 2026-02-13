@@ -8,6 +8,8 @@ import AILoadingState from '../ui/AILoadingState/AILoadingState';
 
 
 
+import { BackgroundLines } from '../ui/BackgroundLines/BackgroundLines';
+
 export default function ModernLogin({
     email,
     setEmail,
@@ -33,7 +35,11 @@ export default function ModernLogin({
 
     return (
         <div className={styles.container}>
-            <div className={styles.backgroundGradient} />
+            <BackgroundLines
+                colors={["#6366f1", "#8b5cf6", "#4f46e5", "#7c3aed"]}
+                style={{ position: 'absolute', inset: 0, zIndex: 0, opacity: 0.5 }}
+                svgOptions={{ duration: 10 }}
+            />
 
             {/* Card de Login */}
             <motion.div

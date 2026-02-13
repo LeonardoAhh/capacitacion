@@ -8,6 +8,8 @@ import AILoadingState from '../ui/AILoadingState/AILoadingState';
 
 
 
+import { BackgroundLines } from '../ui/BackgroundLines/BackgroundLines';
+
 export default function TrainingLogin({
     employeeId,
     setEmployeeId,
@@ -33,7 +35,11 @@ export default function TrainingLogin({
 
     return (
         <div className={styles.container}>
-            <div className={styles.backgroundGradient} />
+            <BackgroundLines
+                colors={["#ec4899", "#d946ef", "#8b5cf6", "#a855f7"]}
+                style={{ position: 'absolute', inset: 0, zIndex: 0, opacity: 0.5 }}
+                svgOptions={{ duration: 10 }}
+            />
 
 
             {/* Card de Login */}

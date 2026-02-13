@@ -5,28 +5,9 @@ import { motion } from "framer-motion";
 import { User, IdCard, Key, UserPlus, AlertCircle } from "lucide-react";
 import styles from './CandidateLogin.module.css';
 import AILoadingState from '../ui/AILoadingState/AILoadingState';
-
-// ==================== CONSTANTS ====================
-const ANIMATION_CONFIG = {
-    duration: 2.4,
-    ease: [0.23, 0.86, 0.39, 0.96],
-    opacityDuration: 1.2,
-    floatDuration: 12
-};
-
-const SHAPE_CONFIG = [
-    { className: 'shape1', delay: 0.2, width: 250, height: 400, rotate: -12, color: "#10b981", borderRadius: 20 },
-    { className: 'shape2', delay: 0.4, width: 350, height: 150, rotate: 18, color: "#14b8a6", borderRadius: 16 },
-    { className: 'shape3', delay: 0.3, width: 200, height: 200, rotate: -25, color: "#06b6d4", borderRadius: 24 },
-    { className: 'shape4', delay: 0.5, width: 300, height: 120, rotate: 15, color: "#3b82f6", borderRadius: 12 }
-];
+import { BackgroundLines } from '../ui/BackgroundLines/BackgroundLines';
 
 // ==================== SUB-COMPONENTS ====================
-
-/**
- * Animated decorative shape component
- */
-
 
 /**
  * Input field with icon and accessibility
@@ -125,19 +106,13 @@ export default function CandidateLogin({
         return Math.ceil(blockTimeRemaining / 60);
     }, [blockTimeRemaining]);
 
-    // Handle keyboard submit
-    const handleKeyDown = useCallback((e) => {
-        if (e.key === 'Enter' && !loading && !isBlocked) {
-            onSubmit(e);
-        }
-    }, [onSubmit, loading, isBlocked]);
-
     return (
         <div className={styles.container}>
-            <div className={styles.backgroundGradient} aria-hidden="true" />
-
-            <div className={styles.backgroundGradient} aria-hidden="true" />
-
+            <BackgroundLines
+                colors={["#10b981", "#14b8a6", "#059669", "#0d9488"]}
+                style={{ position: 'absolute', inset: 0, zIndex: 0, opacity: 0.5 }}
+                svgOptions={{ duration: 10 }}
+            />
 
             {/* Login Card */}
             <motion.div
@@ -161,6 +136,7 @@ export default function CandidateLogin({
                         aria-label="Inicio de sesión exitoso, redirigiendo al dashboard"
                     >
                         <AILoadingState />
+                        {/* Success Message or Spinner already in AILoadingState? */}
                     </motion.div>
                 ) : (
                     <>

@@ -9,6 +9,7 @@ import DynamicCredits from './DynamicCredits/DynamicCredits';
 import styles from './ShapeHero.module.css';
 
 import SwitchButton from './ui/SwitchButton/SwitchButton';
+import { BackgroundLines } from './ui/BackgroundLines/BackgroundLines';
 
 // ==================== FONT CONFIG ====================
 const pacifico = Pacifico({
@@ -96,7 +97,11 @@ function ShapeHeroComponent() {
             </div>
 
             {/* Background gradient - decorative */}
-            <div className={styles.backgroundGradient} aria-hidden="true" />
+            <BackgroundLines
+                colors={["#6366f1", "#10b981", "#ec4899", "#8b5cf6"]}
+                style={{ position: 'absolute', inset: 0, zIndex: 0, opacity: 0.5 }}
+                svgOptions={{ duration: 12 }}
+            />
 
             {/* Main content */}
             <div className={styles.content} id="main-content">
