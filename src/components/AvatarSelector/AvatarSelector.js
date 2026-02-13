@@ -88,6 +88,16 @@ export default function AvatarSelector({ isOpen, onClose, currentAvatar, onSave,
                                 <RefreshCw size={16} />
                                 Generar Aleatorio
                             </button>
+                            <p style={{
+                                fontSize: '16px',
+                                color: 'var(--text-tertiary, #8e8e93)',
+                                marginTop: '6px',
+                                textAlign: 'center',
+                                fontWeight: 400,
+                                letterSpacing: '0.01em'
+                            }}>
+                                Haz clic arriba para probar diferentes estilos
+                            </p>
                         </div>
 
                         <div className={styles.stylesGrid}>

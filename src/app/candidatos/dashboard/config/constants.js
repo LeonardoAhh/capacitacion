@@ -59,7 +59,7 @@ export const DATA_CENTER_ITEMS = [
     },
     {
         id: 'rules',
-        title: 'Reglamento Interior',
+        title: 'Reglamento De Seguridad y Calidad',
         icon: <FileText size={24} />,
         desc: 'Políticas internas y normas de convivencia.',
         content: (

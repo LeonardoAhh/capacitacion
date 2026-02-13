@@ -157,7 +157,7 @@ export default function CourseViewer({
     const presentationUnlocked = isStepUnlocked(courseProgress, selectedCourse.id, 'presentation');
     const currentStep = getCurrentStepNumber(courseProgress, selectedCourse.id);
     const courseTitle = selectedCourse.title || selectedCourse.nombre;
-    const candidateName = candidate?.name || candidate?.nombre || 'Candidato';
+    const candidateName = candidate?.nickname?.trim() || candidate?.name || candidate?.nombre || 'Candidato';
 
     return (
         <AnimatePresence>

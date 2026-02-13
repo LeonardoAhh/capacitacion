@@ -24,7 +24,7 @@ export default function ImportantInfoCards({ className }) {
                         <FileText size={20} />
                     </div>
                     <p className={styles.importantCardText}>
-                        Tienes que entregar tus respuestas en <span style={{ fontWeight: 700 }}>max 1 semana</span> despues de tu fecha de ingreso.
+                        Tienes que entregar tus respuestas en <span style={{ fontWeight: 700 }}>max 4 días</span> despues de tu fecha de ingreso.
                     </p>
                 </div>
                 {/* Card 4 */}

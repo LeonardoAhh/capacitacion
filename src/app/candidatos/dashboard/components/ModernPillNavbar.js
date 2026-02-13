@@ -160,13 +160,18 @@ export default function ModernPillNavbar({
 
     // ── Derived values ──
     const displayName = useMemo(() => {
+        // Prefer nickname for a personalized experience
+        if (candidate?.nickname?.trim()) {
+            return candidate.nickname.trim().toUpperCase();
+        }
+
         const fullName = candidate?.name || candidate?.nombre;
         if (!fullName) return DEFAULT_NAME;
         const firstName = extractFirstName(fullName);
         const parts = fullName.trim().split(/\s+/);
         const lastName = parts[0] || '';
         return `${firstName} ${lastName}`.toUpperCase();
-    }, [candidate?.name, candidate?.nombre]);
+    }, [candidate?.nickname, candidate?.name, candidate?.nombre]);
 
     const displayRole = useMemo(() =>
         candidate?.position || candidate?.puesto || DEFAULT_ROLE,

@@ -63,7 +63,7 @@ const GRID_ITEM_VARIANTS = {
 export default function WelcomeScreen({ candidate, onStart }) {
     const [imgError, setImgError] = useState(false);
 
-    const firstName = extractFirstName(candidate?.name || candidate?.nombre);
+    const firstName = candidate?.nickname?.trim() || extractFirstName(candidate?.name || candidate?.nombre);
     const photoUrl = getCandidatePhotoUrl(candidate);
     const position = candidate?.position || candidate?.puesto || 'Por asignar';
     const area = candidate?.area || 'Por asignar';
