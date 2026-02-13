@@ -40,6 +40,49 @@ const themeLineColors = {
     sunset: ["#fed7aa", "#fdba74", "#fb923c"],
 };
 
+// ─── Animation Variants ──────────────────────────────────────
+const FADE_UP = {
+    hidden: { opacity: 0, y: 18, filter: 'blur(4px)' },
+    visible: (i = 0) => ({
+        opacity: 1, y: 0, filter: 'blur(0px)',
+        transition: { duration: 0.45, delay: i * 0.08, ease: [0.22, 1, 0.36, 1] },
+    }),
+};
+
+const STAGGER_CONTAINER = {
+    hidden: { opacity: 0 },
+    visible: {
+        opacity: 1,
+        transition: { staggerChildren: 0.06, delayChildren: 0.1 },
+    },
+};
+
+const STAGGER_ITEM = {
+    hidden: { opacity: 0, y: 14, filter: 'blur(3px)' },
+    visible: {
+        opacity: 1, y: 0, filter: 'blur(0px)',
+        transition: { duration: 0.4, ease: [0.22, 1, 0.36, 1] },
+    },
+};
+
+const MODAL_OVERLAY = {
+    hidden: { opacity: 0 },
+    visible: { opacity: 1, transition: { duration: 0.2 } },
+    exit: { opacity: 0, transition: { duration: 0.15, delay: 0.05 } },
+};
+
+const MODAL_CONTENT = {
+    hidden: { opacity: 0, scale: 0.92, filter: 'blur(6px)' },
+    visible: {
+        opacity: 1, scale: 1, filter: 'blur(0px)',
+        transition: { duration: 0.3, ease: [0.22, 1, 0.36, 1] },
+    },
+    exit: {
+        opacity: 0, scale: 0.94, filter: 'blur(4px)',
+        transition: { duration: 0.2, ease: [0.22, 1, 0.36, 1] },
+    },
+};
+
 export default function TrainingDashboard() {
     const { user, courses, loading, stats, markAsViewed, markAsCompleted, updateTheme, updateAvatar, updateNickname, logout } = useTrainingData();
     const { theme, setTheme, availableThemes } = useTheme();
@@ -243,7 +286,13 @@ export default function TrainingDashboard() {
             <main className={styles.main} style={{ position: 'relative', zIndex: 1 }}>
 
                 {/* GAMIFICATION: Level Progress */}
-                <div style={{ marginBottom: '2rem' }}>
+                <motion.div
+                    style={{ marginBottom: '2rem' }}
+                    variants={FADE_UP}
+                    initial="hidden"
+                    animate="visible"
+                    custom={0}
+                >
                     <LevelProgress
                         level={gamification.level}
                         rank={gamification.rank}
@@ -253,67 +302,79 @@ export default function TrainingDashboard() {
                         earnedBadges={gamification.earnedBadgesCount}
                         totalBadges={gamification.badges.length}
                     />
-                </div>
+                </motion.div>
 
                 {/* Stats Cards */}
                 {/* Stats Overview */}
                 <motion.div
                     className={styles.statsOverview}
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.5 }}
+                    variants={STAGGER_CONTAINER}
+                    initial="hidden"
+                    animate="visible"
                 >
-                    <div className={styles.statItem}>
+                    <motion.div className={styles.statItem} variants={STAGGER_ITEM}>
                         <div className={styles.statIconWrapper} style={{ background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)' }}>
-                            <BookOpen size={24} />
+                            <BookOpen size={22} />
                         </div>
                         <div className={styles.statContent}>
                             <span className={styles.statLabel}>Cursos Totales</span>
                             <span className={styles.statNumber}>{stats.total}</span>
                         </div>
-                    </div>
+                    </motion.div>
 
-                    <div className={styles.statItem}>
+                    <motion.div className={styles.statItem} variants={STAGGER_ITEM}>
                         <div className={styles.statIconWrapper} style={{ background: 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)' }}>
-                            <Clock size={24} />
+                            <Clock size={22} />
                         </div>
                         <div className={styles.statContent}>
                             <span className={styles.statLabel}>En Progreso</span>
                             <span className={styles.statNumber}>{stats.inProgress}</span>
                         </div>
-                    </div>
+                    </motion.div>
 
-                    <div className={styles.statItem}>
+                    <motion.div className={styles.statItem} variants={STAGGER_ITEM}>
                         <div className={styles.statIconWrapper} style={{ background: 'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)' }}>
-                            <CheckCircle size={24} />
+                            <CheckCircle size={22} />
                         </div>
                         <div className={styles.statContent}>
                             <span className={styles.statLabel}>Completados</span>
                             <span className={styles.statNumber}>{stats.completed}</span>
                         </div>
-                    </div>
+                    </motion.div>
 
-                    <div className={styles.statItem}>
+                    <motion.div className={styles.statItem} variants={STAGGER_ITEM}>
                         <div className={styles.statIconWrapper} style={{ background: 'linear-gradient(135deg, #fa709a 0%, #fee140 100%)' }}>
-                            <AlertCircle size={24} />
+                            <AlertCircle size={22} />
                         </div>
                         <div className={styles.statContent}>
                             <span className={styles.statLabel}>Pendientes</span>
                             <span className={styles.statNumber}>{stats.pending}</span>
                         </div>
-                    </div>
+                    </motion.div>
                 </motion.div>
 
                 {/* Header */}
-                <div className={styles.header}>
+                <motion.div
+                    className={styles.header}
+                    variants={FADE_UP}
+                    initial="hidden"
+                    animate="visible"
+                    custom={1}
+                >
                     <h1 className={styles.pageTitle}>Mis Cursos Asignados</h1>
                     <p className={styles.pageSubtitle}>
                         Gestiona tu avance y completa las capacitaciones programadas.
                     </p>
-                </div>
+                </motion.div>
 
                 {/* Controls */}
-                <div className={styles.controls}>
+                <motion.div
+                    className={styles.controls}
+                    variants={FADE_UP}
+                    initial="hidden"
+                    animate="visible"
+                    custom={2}
+                >
                     <div className={styles.searchWrapper}>
                         <Search className={styles.searchIcon} />
                         <input
@@ -324,7 +385,7 @@ export default function TrainingDashboard() {
                             onChange={(e) => setSearchQuery(e.target.value)}
                         />
                     </div>
-                </div>
+                </motion.div>
 
                 {/* Courses Grid */}
                 {loading ? (
@@ -344,34 +405,32 @@ export default function TrainingDashboard() {
                 ) : (
                     <motion.div
                         className={styles.coursesGrid}
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        transition={{ duration: 0.3 }}
+                        variants={STAGGER_CONTAINER}
+                        initial="hidden"
+                        animate="visible"
                     >
-                        {filteredCourses.map((course, index) => (
+                        {filteredCourses.map((course) => (
                             <motion.button
                                 key={course.id}
                                 className={styles.courseCard}
-                                initial={{ opacity: 0, y: 20 }}
-                                animate={{ opacity: 1, y: 0 }}
-                                transition={{ delay: index * 0.05 }}
+                                variants={STAGGER_ITEM}
                                 onClick={() => handleCourseClick(course)}
-                                whileHover={{ y: -8 }}
+                                whileHover={{ y: -6, transition: { duration: 0.25 } }}
                                 whileTap={{ scale: 0.98 }}
                             >
                                 <div className={styles.courseHeader}>
                                     <div className={styles.courseIconWrapper}>
-                                        <BookOpen size={24} />
+                                        <BookOpen size={22} />
                                     </div>
                                     {course.status === 'completed' && (
                                         <div className={styles.courseBadge}>
-                                            <CheckCircle size={14} />
+                                            <CheckCircle size={12} />
                                             Completado
                                         </div>
                                     )}
                                     {course.status === 'viewed' && (
                                         <div className={styles.courseBadgeProgress}>
-                                            <Clock size={14} />
+                                            <Clock size={12} />
                                             En progreso
                                         </div>
                                     )}
@@ -393,7 +452,7 @@ export default function TrainingDashboard() {
                                             }) || 'Sin fecha'}
                                         </span>
                                     </div>
-                                    <ChevronRight size={18} className={styles.courseArrow} />
+                                    <ChevronRight size={16} className={styles.courseArrow} />
                                 </div>
                             </motion.button>
                         ))}
@@ -409,16 +468,18 @@ export default function TrainingDashboard() {
                 {selectedCourse && (
                     <motion.div
                         className={styles.modalOverlay}
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        exit={{ opacity: 0 }}
+                        variants={MODAL_OVERLAY}
+                        initial="hidden"
+                        animate="visible"
+                        exit="exit"
                         onClick={() => setSelectedCourse(null)}
                     >
                         <motion.div
                             className={styles.modalContent}
-                            initial={{ scale: 0.95, opacity: 0 }}
-                            animate={{ scale: 1, opacity: 1 }}
-                            exit={{ scale: 0.95, opacity: 0 }}
+                            variants={MODAL_CONTENT}
+                            initial="hidden"
+                            animate="visible"
+                            exit="exit"
                             onClick={(e) => e.stopPropagation()}
                         >
                             <div className={styles.modalHeader}>
