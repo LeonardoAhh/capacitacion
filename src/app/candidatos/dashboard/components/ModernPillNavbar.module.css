@@ -211,71 +211,15 @@
     opacity: 0.5;
 }
 
-/* Backdrop for Mobile */
-.backdrop {
-    position: fixed;
-    inset: 0;
-    z-index: 90;
-    /* Invisible on desktop, handled by click outside */
-    display: none;
-}
-
+/* Mobile adjustments for dropdown */
 @media (max-width: 640px) {
-    .backdrop {
-        display: block;
-        background: rgba(0, 0, 0, 0.2);
-        backdrop-filter: blur(2px);
-    }
-
-    /* Mobile Bottom Sheet Style for Menu */
     .dropdownMenu {
-        position: fixed;
-        top: auto;
-        bottom: 24px;
-        left: 24px;
-        right: 24px;
-        width: auto;
-        transform-origin: bottom center;
-        animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-        border: 1px solid var(--card-border);
-        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
-    }
-
-    @keyframes slideUp {
-        from {
-            opacity: 0;
-            transform: translateY(20px) scale(0.95);
-        }
-
-        to {
-            opacity: 1;
-            transform: translateY(0) scale(1);
-        }
+        width: 200px;
+        right: 0;
+        z-index: 20006;
     }
 
     .navbarContainer {
         padding: 4px 8px;
-    }
-}
-
-/* Hybrid Rendering Utils */
-.desktopMenu {
-    display: block;
-}
-
-.mobilePortal {
-    display: none;
-    position: fixed;
-    inset: 0;
-    z-index: 9999;
-}
-
-@media (max-width: 640px) {
-    .desktopMenu {
-        display: none;
-    }
-
-    .mobilePortal {
-        display: block;
     }
 }

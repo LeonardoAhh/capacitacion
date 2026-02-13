@@ -1,6 +1,7 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import Image from 'next/image';
 import { X, RefreshCw, Check } from 'lucide-react';
@@ -25,7 +26,12 @@ const AVATAR_STYLES = [
 export default function AvatarSelector({ isOpen, onClose, currentAvatar, onSave, userName }) {
     const [selectedStyle, setSelectedStyle] = useState('initials');
     const [seed, setSeed] = useState(userName || 'seed');
-    const [loading, setLoading] = useState(false);
+    const [mounted, setMounted] = useState(false);
+
+    useEffect(() => {
+        setMounted(true);
+        return () => setMounted(false);
+    }, []);
 
     const generateAvatarUrl = (style, seedStr) => {
         return `https://api.dicebear.com/7.x/${style}/svg?seed=${encodeURIComponent(seedStr)}`;
@@ -41,71 +47,74 @@ export default function AvatarSelector({ isOpen, onClose, currentAvatar, onSave,
         onClose();
     };
 
-    if (!isOpen) return null;
+    if (!mounted) return null;
 
-    return (
+    return createPortal(
         <AnimatePresence>
-            <motion.div
-                className={styles.overlay}
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                onClick={onClose}
-            >
+            {isOpen && (
                 <motion.div
-                    className={styles.modal}
-                    initial={{ scale: 0.95, opacity: 0 }}
-                    animate={{ scale: 1, opacity: 1 }}
-                    exit={{ scale: 0.95, opacity: 0 }}
-                    onClick={(e) => e.stopPropagation()}
+                    className={styles.overlay}
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    onClick={onClose}
                 >
-                    <div className={styles.header}>
-                        <h3>Personaliza tu Avatar</h3>
-                        <button onClick={onClose} className={styles.closeBtn}>
-                            <X size={20} />
-                        </button>
-                    </div>
-
-                    <div className={styles.previewSection}>
-                        <div className={styles.avatarPreview} style={{ position: 'relative', width: '150px', height: '150px' }}>
-                            <Image
-                                src={generateAvatarUrl(selectedStyle, seed)}
-                                alt="Avatar Preview"
-                                fill
-                                sizes="150px"
-                                style={{ objectFit: 'contain' }}
-                                unoptimized // DiceBear returns SVGs, often better unoptimized or handled directly
-                            />
-                        </div>
-                        <button onClick={handleRandomize} className={styles.randomizeBtn}>
-                            <RefreshCw size={16} />
-                            Generar Aleatorio
-                        </button>
-                    </div>
-
-                    <div className={styles.stylesGrid}>
-                        {AVATAR_STYLES.map((style) => (
-                            <button
-                                key={style.id}
-                                className={`${styles.styleOption} ${selectedStyle === style.id ? styles.selected : ''}`}
-                                onClick={() => setSelectedStyle(style.id)}
-                            >
-                                <span className={styles.styleName}>{style.name}</span>
+                    <motion.div
+                        className={styles.modal}
+                        initial={{ scale: 0.95, opacity: 0 }}
+                        animate={{ scale: 1, opacity: 1 }}
+                        exit={{ scale: 0.95, opacity: 0 }}
+                        onClick={(e) => e.stopPropagation()}
+                    >
+                        <div className={styles.header}>
+                            <h3>Personaliza tu Avatar</h3>
+                            <button onClick={onClose} className={styles.closeBtn}>
+                                <X size={20} />
                             </button>
-                        ))}
-                    </div>
+                        </div>
 
-                    <div className={styles.footer}>
-                        <button onClick={onClose} className={styles.cancelBtn}>
-                            Cancelar
-                        </button>
-                        <button onClick={handleSave} className={styles.saveBtn}>
-                            <Check size={18} />
-                            Guardar Avatar
-                        </button>
-                    </div>
+                        <div className={styles.previewSection}>
+                            <div className={styles.avatarPreview} style={{ position: 'relative', width: '150px', height: '150px' }}>
+                                <Image
+                                    src={generateAvatarUrl(selectedStyle, seed)}
+                                    alt="Avatar Preview"
+                                    fill
+                                    sizes="150px"
+                                    style={{ objectFit: 'contain' }}
+                                    unoptimized
+                                />
+                            </div>
+                            <button onClick={handleRandomize} className={styles.randomizeBtn}>
+                                <RefreshCw size={16} />
+                                Generar Aleatorio
+                            </button>
+                        </div>
+
+                        <div className={styles.stylesGrid}>
+                            {AVATAR_STYLES.map((style) => (
+                                <button
+                                    key={style.id}
+                                    className={`${styles.styleOption} ${selectedStyle === style.id ? styles.selected : ''}`}
+                                    onClick={() => setSelectedStyle(style.id)}
+                                >
+                                    <span className={styles.styleName}>{style.name}</span>
+                                </button>
+                            ))}
+                        </div>
+
+                        <div className={styles.footer}>
+                            <button onClick={onClose} className={styles.cancelBtn}>
+                                Cancelar
+                            </button>
+                            <button onClick={handleSave} className={styles.saveBtn}>
+                                <Check size={18} />
+                                Guardar Avatar
+                            </button>
+                        </div>
+                    </motion.div>
                 </motion.div>
-            </motion.div>
-        </AnimatePresence>
+            )}
+        </AnimatePresence>,
+        document.body
     );
 }

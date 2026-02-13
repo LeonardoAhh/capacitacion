@@ -1,7 +1,6 @@
 'use client';
 
 import { useState, useRef, useEffect, useMemo } from 'react';
-import { createPortal } from 'react-dom';
 import { User, LogOut, ChevronDown, Clock, Contrast, Camera } from 'lucide-react';
 import styles from './ModernPillNavbar.module.css';
 import { extractFirstName, getCandidatePhotoUrl } from '../utils/helpers';
@@ -90,87 +89,45 @@ export default function ModernPillNavbar({
 
             {/* Dropdown Menu */}
             {/* Shared Menu Content to avoid duplication */}
+            {/* Dropdown Menu - Unified for both mobile and desktop */}
             {isOpen && (
-                <>
-                    {/* Desktop Menu (Inline) */}
-                    <div className={styles.desktopMenu}>
-                        <div className={styles.dropdownMenu} onClick={(e) => e.stopPropagation()}>
-                            {/* Timer */}
-                            {formattedTime && (
-                                <div className={`${styles.menuItem} ${styles.timerItem}`}>
-                                    <Clock size={16} />
-                                    <span>{formattedTime}</span>
-                                </div>
-                            )}
-                            <div className={styles.separator} />
-
-                            <button className={styles.menuItem} onClick={() => {
-                                onAvatarClick && onAvatarClick();
-                                setIsOpen(false);
-                            }}>
-                                <Camera size={18} className={styles.menuItemIcon} />
-                                <span>Cambiar Avatar</span>
-                            </button>
-                            <button className={styles.menuItem} onClick={() => {
-                                onThemeClick && onThemeClick();
-                                setIsOpen(false);
-                            }}>
-                                <Contrast size={18} className={styles.menuItemIcon} />
-                                <span>Cambiar Tema</span>
-                            </button>
-                            <div className={styles.separator} />
-                            <button className={`${styles.menuItem} ${styles.logoutItem}`} onClick={() => {
-                                onLogout && onLogout();
-                                setIsOpen(false);
-                            }}>
-                                <LogOut size={18} className={styles.menuItemIcon} />
-                                <span>Cerrar Sesión</span>
-                            </button>
+                <div className={styles.dropdownMenu} onClick={(e) => e.stopPropagation()}>
+                    {/* Timer */}
+                    {formattedTime && (
+                        <div className={`${styles.menuItem} ${styles.timerItem}`}>
+                            <Clock size={16} />
+                            <span>{formattedTime}</span>
                         </div>
-                    </div>
-
-                    {/* Mobile Menu (Portal) */}
-                    {createPortal(
-                        <div className={styles.mobilePortal}>
-                            <div className={styles.backdrop} onClick={() => setIsOpen(false)} />
-                            <div className={styles.dropdownMenu} onClick={(e) => e.stopPropagation()}>
-                                {/* Timer */}
-                                {formattedTime && (
-                                    <div className={`${styles.menuItem} ${styles.timerItem}`}>
-                                        <Clock size={16} />
-                                        <span>{formattedTime}</span>
-                                    </div>
-                                )}
-                                <div className={styles.separator} />
-
-                                <button className={styles.menuItem} onClick={() => {
-                                    onAvatarClick && onAvatarClick();
-                                    setIsOpen(false);
-                                }}>
-                                    <Camera size={18} className={styles.menuItemIcon} />
-                                    <span>Cambiar Avatar</span>
-                                </button>
-                                <button className={styles.menuItem} onClick={() => {
-                                    onThemeClick && onThemeClick();
-                                    setIsOpen(false);
-                                }}>
-                                    <Contrast size={18} className={styles.menuItemIcon} />
-                                    <span>Cambiar Tema</span>
-                                </button>
-                                <div className={styles.separator} />
-                                <button className={`${styles.menuItem} ${styles.logoutItem}`} onClick={() => {
-                                    onLogout && onLogout();
-                                    setIsOpen(false);
-                                }}>
-                                    <LogOut size={18} className={styles.menuItemIcon} />
-                                    <span>Cerrar Sesión</span>
-                                </button>
-                            </div>
-                        </div>,
-                        document.body
                     )}
-                </>
+                    <div className={styles.separator} />
+
+                    <button className={styles.menuItem} onClick={() => {
+                        console.log('Botón Cambiar Avatar clickeado');
+                        onAvatarClick && onAvatarClick();
+                        setIsOpen(false);
+                    }}>
+                        <Camera size={18} className={styles.menuItemIcon} />
+                        <span>Cambiar Avatar</span>
+                    </button>
+                    <button className={styles.menuItem} onClick={() => {
+                        console.log('Botón Cambiar Tema clickeado');
+                        onThemeClick && onThemeClick();
+                        setIsOpen(false);
+                    }}>
+                        <Contrast size={18} className={styles.menuItemIcon} />
+                        <span>Cambiar Tema</span>
+                    </button>
+                    <div className={styles.separator} />
+                    <button className={`${styles.menuItem} ${styles.logoutItem}`} onClick={() => {
+                        console.log('Botón Cerrar Sesión clickeado');
+                        onLogout && onLogout();
+                        setIsOpen(false);
+                    }}>
+                        <LogOut size={18} className={styles.menuItemIcon} />
+                        <span>Cerrar Sesión</span>
+                    </button>
+                </div>
             )}
-        </div>
+        </div >
     );
 }
