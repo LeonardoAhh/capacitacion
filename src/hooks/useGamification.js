@@ -1,6 +1,10 @@
 
-import { useState, useEffect, useMemo } from 'react';
-import { BADGES, calculateLevel, getRankCurrent, getNextRank, XP_PER_COURSE, XP_PER_LOGIN } from '@/utils/gamificationConfig';
+import { useState, useEffect } from 'react';
+import {
+    BADGES, CERTIFICATES,
+    calculateLevel, getRankCurrent, getNextRank,
+    XP_PER_COURSE
+} from '@/utils/gamificationConfig';
 
 export function useGamification(user, courses, stats) {
     const [gamificationState, setGamificationState] = useState({
@@ -11,14 +15,15 @@ export function useGamification(user, courses, stats) {
         nextLevelXp: 0,
         progress: 0,
         badges: [],
-        earnedBadgesCount: 0
+        earnedBadgesCount: 0,
+        certificates: [],
+        earnedCertificatesCount: 0
     });
 
     useEffect(() => {
         if (!user || !courses) return;
 
-        // 1. Calculate XP (Simulated based on stats for now)
-        // Real implementation would store XP in DB, here we derive it to be retroactive
+        // 1. Calculate XP
         let calculatedXP = 0;
 
         // XP from Courses
@@ -29,20 +34,26 @@ export function useGamification(user, courses, stats) {
         if (user.nickname) calculatedXP += 50;
         if (user.theme && user.theme !== 'light') calculatedXP += 50;
 
-        // XP from Logins (Estimate or use session count if available, defaulting to 10 logins for demo)
-        calculatedXP += 100; // Base XP for being here
+        // Base XP
+        calculatedXP += 100;
 
         // 2. Determine Level and Ranks
         const currentLevel = calculateLevel(calculatedXP);
         const currentRank = getRankCurrent(currentLevel);
         const nextRankObj = getNextRank(currentLevel);
 
-        // 3. Evaluate Badges
-        // Build a stats object for the condition checkers
+        // 3. Derived stats for evaluation
+        const totalCourses = courses.length;
+        const completedCount = stats.completed || 0;
+        const viewedCount = courses.filter(c => c.status === 'viewed' || c.status === 'completed').length;
+        const allViewed = totalCourses > 0 && viewedCount >= totalCourses;
+        const allCompleted = totalCourses > 0 && completedCount >= totalCourses;
+
+        // 4. Evaluate Badges (first pass — without earnedBadges count)
         const evaluationStats = {
-            completed: stats.completed || 0,
-            hasPerfectScore: false, // Need to implement quiz score tracking
-            streak: 1, // Placeholder
+            completed: completedCount,
+            hasPerfectScore: false,
+            streak: 1,
             hasEarlyLogin: new Date().getHours() < 8,
             hasLateLogin: new Date().getHours() > 20,
             hasWeekendLogin: [0, 6].includes(new Date().getDay()),
@@ -50,20 +61,41 @@ export function useGamification(user, courses, stats) {
             hasCustomAvatar: !!user.avatar,
             hasNickname: !!user.nickname,
             level: currentLevel,
-            loginCount: 5, // Placeholder
-            hasSafetyCourse: courses.some(c => c.title.toLowerCase().includes('seguridad') && c.status === 'completed'),
-            hasQualityCourse: courses.some(c => c.title.toLowerCase().includes('calidad') && c.status === 'completed'),
+            loginCount: 5,
+            hasSafetyCourse: courses.some(c => c.title?.toLowerCase().includes('seguridad') && c.status === 'completed'),
+            hasQualityCourse: courses.some(c => c.title?.toLowerCase().includes('calidad') && c.status === 'completed'),
+            allViewed,
+            allCompleted,
+            earnedBadges: 0, // Placeholder, recalculated below
         };
 
+        // First pass: evaluate badges without self-referential count
+        const firstPassBadges = BADGES.map(badge => ({
+            ...badge,
+            unlocked: badge.condition(evaluationStats)
+        }));
+        const firstPassEarned = firstPassBadges.filter(b => b.unlocked).length;
+
+        // Second pass: re-evaluate with actual earned count (for Collector/Completist badges)
+        evaluationStats.earnedBadges = firstPassEarned;
         const unlockedBadges = BADGES.map(badge => ({
             ...badge,
             unlocked: badge.condition(evaluationStats)
         }));
+        const earnedBadgesCount = unlockedBadges.filter(b => b.unlocked).length;
 
-        // 4. Progress to next level/rank
-        // Simplify: Level progress is just mod 200 since formula is linear
+        // Update earnedBadges if changed after second pass
+        evaluationStats.earnedBadges = earnedBadgesCount;
+
+        // 5. Evaluate Certificates
+        const unlockedCertificates = CERTIFICATES.map(cert => ({
+            ...cert,
+            unlocked: cert.condition(evaluationStats)
+        }));
+        const earnedCertificatesCount = unlockedCertificates.filter(c => c.unlocked).length;
+
+        // 6. Progress to next level
         const xpForCurrentLevel = (currentLevel - 1) * 200;
-        const xpForNextLevel = currentLevel * 200;
         const xpInCurrentLevel = calculatedXP - xpForCurrentLevel;
         const levelProgress = (xpInCurrentLevel / 200) * 100;
 
@@ -72,10 +104,12 @@ export function useGamification(user, courses, stats) {
             rank: currentRank,
             nextRank: nextRankObj,
             xp: calculatedXP,
-            nextLevelXp: xpForNextLevel,
+            nextLevelXp: currentLevel * 200,
             progress: levelProgress,
             badges: unlockedBadges,
-            earnedBadgesCount: unlockedBadges.filter(b => b.unlocked).length
+            earnedBadgesCount,
+            certificates: unlockedCertificates,
+            earnedCertificatesCount,
         });
 
     }, [user, courses, stats]);

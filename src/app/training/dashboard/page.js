@@ -17,6 +17,7 @@ import UserMenu from '@/components/UserMenu/UserMenu';
 import { useGamification } from '@/hooks/useGamification';
 import LevelProgress from '@/components/Gamification/LevelProgress';
 import BadgesGallery from '@/components/Gamification/BadgesGallery';
+import CertificateCard from '@/components/Gamification/CertificateCard';
 import { formatDisplayName } from '@/utils/nameUtils';
 import {
     Drawer,
@@ -285,9 +286,9 @@ export default function TrainingDashboard() {
             {/* Main Content */}
             <main className={styles.main} style={{ position: 'relative', zIndex: 1 }}>
 
-                {/* GAMIFICATION: Level Progress */}
+                {/* 1. GAMIFICATION: Level Progress (Tu Rango Actual) */}
                 <motion.div
-                    style={{ marginBottom: '2rem' }}
+                    style={{ marginBottom: '1.5rem' }}
                     variants={FADE_UP}
                     initial="hidden"
                     animate="visible"
@@ -304,62 +305,36 @@ export default function TrainingDashboard() {
                     />
                 </motion.div>
 
-                {/* Stats Cards */}
-                {/* Stats Overview */}
+                {/* 2. Badges Gallery (Medallas y Logros) */}
                 <motion.div
-                    className={styles.statsOverview}
-                    variants={STAGGER_CONTAINER}
+                    variants={FADE_UP}
                     initial="hidden"
                     animate="visible"
+                    custom={1}
                 >
-                    <motion.div className={styles.statItem} variants={STAGGER_ITEM}>
-                        <div className={styles.statIconWrapper} style={{ background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)' }}>
-                            <BookOpen size={22} />
-                        </div>
-                        <div className={styles.statContent}>
-                            <span className={styles.statLabel}>Cursos Totales</span>
-                            <span className={styles.statNumber}>{stats.total}</span>
-                        </div>
-                    </motion.div>
-
-                    <motion.div className={styles.statItem} variants={STAGGER_ITEM}>
-                        <div className={styles.statIconWrapper} style={{ background: 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)' }}>
-                            <Clock size={22} />
-                        </div>
-                        <div className={styles.statContent}>
-                            <span className={styles.statLabel}>En Progreso</span>
-                            <span className={styles.statNumber}>{stats.inProgress}</span>
-                        </div>
-                    </motion.div>
-
-                    <motion.div className={styles.statItem} variants={STAGGER_ITEM}>
-                        <div className={styles.statIconWrapper} style={{ background: 'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)' }}>
-                            <CheckCircle size={22} />
-                        </div>
-                        <div className={styles.statContent}>
-                            <span className={styles.statLabel}>Completados</span>
-                            <span className={styles.statNumber}>{stats.completed}</span>
-                        </div>
-                    </motion.div>
-
-                    <motion.div className={styles.statItem} variants={STAGGER_ITEM}>
-                        <div className={styles.statIconWrapper} style={{ background: 'linear-gradient(135deg, #fa709a 0%, #fee140 100%)' }}>
-                            <AlertCircle size={22} />
-                        </div>
-                        <div className={styles.statContent}>
-                            <span className={styles.statLabel}>Pendientes</span>
-                            <span className={styles.statNumber}>{stats.pending}</span>
-                        </div>
-                    </motion.div>
+                    <BadgesGallery badges={gamification.badges} />
                 </motion.div>
 
-                {/* Header */}
+                {/* 3. Certificates Gallery (Mis Certificados) */}
+                <motion.div
+                    variants={FADE_UP}
+                    initial="hidden"
+                    animate="visible"
+                    custom={2}
+                >
+                    <CertificateCard
+                        certificates={gamification.certificates}
+                        userName={user.name?.trim().split(/\s+/).map(w => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase()).join(' ') || ''}
+                    />
+                </motion.div>
+
+                {/* 4. Mis Cursos Asignados */}
                 <motion.div
                     className={styles.header}
                     variants={FADE_UP}
                     initial="hidden"
                     animate="visible"
-                    custom={1}
+                    custom={3}
                 >
                     <h1 className={styles.pageTitle}>Mis Cursos Asignados</h1>
                     <p className={styles.pageSubtitle}>
@@ -373,7 +348,7 @@ export default function TrainingDashboard() {
                     variants={FADE_UP}
                     initial="hidden"
                     animate="visible"
-                    custom={2}
+                    custom={4}
                 >
                     <div className={styles.searchWrapper}>
                         <Search className={styles.searchIcon} />
@@ -458,8 +433,6 @@ export default function TrainingDashboard() {
                         ))}
                     </motion.div>
                 )}
-                {/* Badges Gallery at Bottom */}
-                <BadgesGallery badges={gamification.badges} />
 
             </main>
 

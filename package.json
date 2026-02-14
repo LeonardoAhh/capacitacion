@@ -17,6 +17,7 @@
         "framer-motion": "^12.29.0",
         "googleapis": "^170.1.0",
         "hi-base32": "^0.5.1",
+        "html2canvas": "^1.4.1",
         "jsotp": "^1.0.4",
         "jspdf": "^4.0.0",
         "jspdf-autotable": "^5.0.7",
