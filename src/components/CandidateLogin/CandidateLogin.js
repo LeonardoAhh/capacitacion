@@ -1,11 +1,16 @@
 "use client";
 
-import { useId, useCallback, useMemo } from "react";
-import { motion } from "framer-motion";
+import { useId, useMemo } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import { User, IdCard, Key, UserPlus, AlertCircle } from "lucide-react";
-import styles from './CandidateLogin.module.css';
+import baseStyles from '../ui/LoginBase/LoginBase.module.css';
+import componentStyles from './CandidateLogin.module.css';
+import { mergeStyles } from '../ui/LoginBase/mergeStyles';
 import AILoadingState from '../ui/AILoadingState/AILoadingState';
 import { BackgroundLines } from '../ui/BackgroundLines/BackgroundLines';
+import { FADE_UP_LOGIN, CARD_ENTER, ERROR_VARIANTS, SUCCESS_ENTER } from '../ui/LoginBase/loginAnimations';
+
+const styles = mergeStyles(baseStyles, componentStyles);
 
 // ==================== SUB-COMPONENTS ====================
 
@@ -63,10 +68,6 @@ function InputField({
 
 // ==================== MAIN COMPONENT ====================
 
-/**
- * CandidateLogin Component
- * Login form for candidate onboarding portal
- */
 export default function CandidateLogin({
     employeeId,
     onEmployeeIdChange,
@@ -84,24 +85,12 @@ export default function CandidateLogin({
     isSuccess,
     isFormValid
 }) {
-    // Generate unique IDs for accessibility
     const baseId = useId();
     const employeeIdInputId = `${baseId}-employeeId`;
     const curpInputId = `${baseId}-curp`;
     const accessCodeInputId = `${baseId}-accessCode`;
     const errorAlertId = `${baseId}-error`;
 
-    // Memoized animation variants
-    const fadeUpVariants = useMemo(() => ({
-        hidden: { opacity: 0, y: 30 },
-        visible: (i) => ({
-            opacity: 1,
-            y: 0,
-            transition: { duration: 0.8, delay: 0.2 + i * 0.1, ease: [0.25, 0.4, 0.25, 1] },
-        }),
-    }), []);
-
-    // Format block time for display
     const formattedBlockTime = useMemo(() => {
         return Math.ceil(blockTimeRemaining / 60);
     }, [blockTimeRemaining]);
@@ -117,31 +106,26 @@ export default function CandidateLogin({
             {/* Login Card */}
             <motion.div
                 className={styles.loginCard}
+                variants={CARD_ENTER}
                 initial="hidden"
                 animate="visible"
-                variants={{
-                    visible: { transition: { staggerChildren: 0.1, delayChildren: 0.3 } },
-                }}
                 role="main"
                 aria-labelledby="login-title"
             >
                 {isSuccess ? (
                     <motion.div
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        transition={{ duration: 0.5 }}
                         className={styles.successContainer}
+                        {...SUCCESS_ENTER}
                         role="status"
                         aria-live="polite"
                         aria-label="Inicio de sesión exitoso, redirigiendo al dashboard"
                     >
                         <AILoadingState />
-                        {/* Success Message or Spinner already in AILoadingState? */}
                     </motion.div>
                 ) : (
                     <>
                         {/* Header */}
-                        <motion.header variants={fadeUpVariants} custom={0} className={styles.header}>
+                        <motion.header variants={FADE_UP_LOGIN} custom={0} className={styles.header}>
                             <div className={styles.iconWrapper} aria-hidden="true">
                                 <UserPlus className={styles.icon} />
                             </div>
@@ -154,32 +138,42 @@ export default function CandidateLogin({
                         </motion.header>
 
                         {/* Error Message */}
-                        {error && (
-                            <motion.div
-                                initial={{ opacity: 0, y: -10 }}
-                                animate={{ opacity: 1, y: 0 }}
-                                className={styles.errorMessage}
-                                role="alert"
-                                aria-live="assertive"
-                                id={errorAlertId}
-                            >
-                                <AlertCircle size={18} aria-hidden="true" />
-                                <span>{error}</span>
-                            </motion.div>
-                        )}
+                        <AnimatePresence mode="wait">
+                            {error && (
+                                <motion.div
+                                    key="error-msg"
+                                    variants={ERROR_VARIANTS}
+                                    initial="initial"
+                                    animate="animate"
+                                    exit="exit"
+                                    className={styles.errorMessage}
+                                    role="alert"
+                                    aria-live="assertive"
+                                    id={errorAlertId}
+                                >
+                                    <AlertCircle size={18} aria-hidden="true" />
+                                    <span>{error}</span>
+                                </motion.div>
+                            )}
+                        </AnimatePresence>
 
                         {/* Blocked Message */}
-                        {isBlocked && (
-                            <motion.div
-                                initial={{ opacity: 0, y: -10 }}
-                                animate={{ opacity: 1, y: 0 }}
-                                className={styles.blockedMessage}
-                                role="alert"
-                                aria-live="assertive"
-                            >
-                                Demasiados intentos fallidos. Espera {formattedBlockTime} minutos.
-                            </motion.div>
-                        )}
+                        <AnimatePresence mode="wait">
+                            {isBlocked && (
+                                <motion.div
+                                    key="blocked-msg"
+                                    variants={ERROR_VARIANTS}
+                                    initial="initial"
+                                    animate="animate"
+                                    exit="exit"
+                                    className={styles.blockedMessage}
+                                    role="alert"
+                                    aria-live="assertive"
+                                >
+                                    Demasiados intentos fallidos. Espera {formattedBlockTime} minutos.
+                                </motion.div>
+                            )}
+                        </AnimatePresence>
 
                         {/* Login Form */}
                         <form
@@ -188,7 +182,7 @@ export default function CandidateLogin({
                             noValidate
                             aria-describedby={error ? errorAlertId : undefined}
                         >
-                            <motion.div variants={fadeUpVariants} custom={1}>
+                            <motion.div variants={FADE_UP_LOGIN} custom={1}>
                                 <InputField
                                     id={employeeIdInputId}
                                     label="ID de Empleado"
@@ -204,7 +198,7 @@ export default function CandidateLogin({
                                 />
                             </motion.div>
 
-                            <motion.div variants={fadeUpVariants} custom={2}>
+                            <motion.div variants={FADE_UP_LOGIN} custom={2}>
                                 <InputField
                                     id={curpInputId}
                                     label="CURP"
@@ -220,7 +214,7 @@ export default function CandidateLogin({
                                 />
                             </motion.div>
 
-                            <motion.div variants={fadeUpVariants} custom={3}>
+                            <motion.div variants={FADE_UP_LOGIN} custom={3}>
                                 <InputField
                                     id={accessCodeInputId}
                                     label="Código de Acceso"
@@ -236,7 +230,7 @@ export default function CandidateLogin({
                             </motion.div>
 
                             <motion.button
-                                variants={fadeUpVariants}
+                                variants={FADE_UP_LOGIN}
                                 custom={4}
                                 type="submit"
                                 className={styles.submitButton}
@@ -256,7 +250,7 @@ export default function CandidateLogin({
                         </form>
 
                         {/* Footer */}
-                        <motion.footer variants={fadeUpVariants} custom={5} className={styles.footer}>
+                        <motion.footer variants={FADE_UP_LOGIN} custom={5} className={styles.footer}>
                             <p className={styles.footerText}>
                                 ¿Problemas para acceder?
                             </p>

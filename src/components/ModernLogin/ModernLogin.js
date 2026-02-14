@@ -1,14 +1,16 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { Mail, Lock, Shield } from "lucide-react";
 import { useId } from "react";
-import styles from './ModernLogin.module.css';
+import baseStyles from '../ui/LoginBase/LoginBase.module.css';
+import componentStyles from './ModernLogin.module.css';
+import { mergeStyles } from '../ui/LoginBase/mergeStyles';
 import AILoadingState from '../ui/AILoadingState/AILoadingState';
-
-
-
 import { BackgroundLines } from '../ui/BackgroundLines/BackgroundLines';
+import { FADE_UP_LOGIN, CARD_ENTER, ERROR_VARIANTS, SUCCESS_ENTER } from '../ui/LoginBase/loginAnimations';
+
+const styles = mergeStyles(baseStyles, componentStyles);
 
 export default function ModernLogin({
     email,
@@ -21,15 +23,6 @@ export default function ModernLogin({
     onGoogleSignIn,
     isSuccess
 }) {
-    const fadeUpVariants = {
-        hidden: { opacity: 0, y: 30 },
-        visible: (i) => ({
-            opacity: 1,
-            y: 0,
-            transition: { duration: 0.8, delay: 0.2 + i * 0.1, ease: [0.25, 0.4, 0.25, 1] },
-        }),
-    };
-
     const emailId = useId();
     const passwordId = useId();
 
@@ -44,22 +37,14 @@ export default function ModernLogin({
             {/* Card de Login */}
             <motion.div
                 className={styles.loginCard}
+                variants={CARD_ENTER}
                 initial="hidden"
                 animate="visible"
             >
                 {isSuccess ? (
                     <motion.div
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        transition={{ duration: 0.5 }}
-                        style={{
-                            padding: '40px 20px',
-                            minHeight: '400px',
-                            display: 'flex',
-                            flexDirection: 'column',
-                            alignItems: 'center',
-                            justifyContent: 'center'
-                        }}
+                        className={styles.successContainer}
+                        {...SUCCESS_ENTER}
                     >
                         <AILoadingState
                             interval={1000}
@@ -74,7 +59,7 @@ export default function ModernLogin({
                     </motion.div>
                 ) : (
                     <>
-                        <motion.div variants={fadeUpVariants} custom={0} className={styles.header}>
+                        <motion.div variants={FADE_UP_LOGIN} custom={0} className={styles.header}>
                             <div className={styles.iconWrapper}>
                                 <Shield className={styles.icon} />
                             </div>
@@ -82,18 +67,23 @@ export default function ModernLogin({
                             <p className={styles.subtitle}>Acceso empleados</p>
                         </motion.div>
 
-                        {error && (
-                            <motion.div
-                                initial={{ opacity: 0, y: -10 }}
-                                animate={{ opacity: 1, y: 0 }}
-                                className={styles.errorMessage}
-                            >
-                                {error}
-                            </motion.div>
-                        )}
+                        <AnimatePresence mode="wait">
+                            {error && (
+                                <motion.div
+                                    key="error-msg"
+                                    variants={ERROR_VARIANTS}
+                                    initial="initial"
+                                    animate="animate"
+                                    exit="exit"
+                                    className={styles.errorMessage}
+                                >
+                                    {error}
+                                </motion.div>
+                            )}
+                        </AnimatePresence>
 
                         <form onSubmit={onSubmit} className={styles.form}>
-                            <motion.div variants={fadeUpVariants} custom={1} className={styles.inputGroup}>
+                            <motion.div variants={FADE_UP_LOGIN} custom={1} className={styles.inputGroup}>
                                 <label htmlFor={emailId} className={styles.label}>Correo Electrónico</label>
                                 <div className={styles.inputWrapper}>
                                     <Mail className={styles.inputIcon} aria-hidden="true" />
@@ -112,7 +102,7 @@ export default function ModernLogin({
                                 </div>
                             </motion.div>
 
-                            <motion.div variants={fadeUpVariants} custom={2} className={styles.inputGroup}>
+                            <motion.div variants={FADE_UP_LOGIN} custom={2} className={styles.inputGroup}>
                                 <label htmlFor={passwordId} className={styles.label}>Contraseña</label>
                                 <div className={styles.inputWrapper}>
                                     <Lock className={styles.inputIcon} aria-hidden="true" />
@@ -132,7 +122,7 @@ export default function ModernLogin({
                             </motion.div>
 
                             <motion.button
-                                variants={fadeUpVariants}
+                                variants={FADE_UP_LOGIN}
                                 custom={3}
                                 type="submit"
                                 className={styles.submitButton}
@@ -149,7 +139,7 @@ export default function ModernLogin({
                             </motion.button>
 
                             <motion.div
-                                variants={fadeUpVariants}
+                                variants={FADE_UP_LOGIN}
                                 custom={4}
                                 className={styles.divider}
                             >
@@ -157,7 +147,7 @@ export default function ModernLogin({
                             </motion.div>
 
                             <motion.button
-                                variants={fadeUpVariants}
+                                variants={FADE_UP_LOGIN}
                                 custom={5}
                                 type="button"
                                 onClick={onGoogleSignIn}

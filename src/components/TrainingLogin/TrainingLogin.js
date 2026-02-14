@@ -1,14 +1,16 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { User, Lock, GraduationCap } from "lucide-react";
 import { useId } from "react";
-import styles from './TrainingLogin.module.css';
+import baseStyles from '../ui/LoginBase/LoginBase.module.css';
+import componentStyles from './TrainingLogin.module.css';
+import { mergeStyles } from '../ui/LoginBase/mergeStyles';
 import AILoadingState from '../ui/AILoadingState/AILoadingState';
-
-
-
 import { BackgroundLines } from '../ui/BackgroundLines/BackgroundLines';
+import { FADE_UP_LOGIN, CARD_ENTER, ERROR_VARIANTS, SUCCESS_ENTER } from '../ui/LoginBase/loginAnimations';
+
+const styles = mergeStyles(baseStyles, componentStyles);
 
 export default function TrainingLogin({
     employeeId,
@@ -21,15 +23,6 @@ export default function TrainingLogin({
     onSubmit,
     isSuccess
 }) {
-    const fadeUpVariants = {
-        hidden: { opacity: 0, y: 30 },
-        visible: (i) => ({
-            opacity: 1,
-            y: 0,
-            transition: { duration: 0.8, delay: 0.2 + i * 0.1, ease: [0.25, 0.4, 0.25, 1] },
-        }),
-    };
-
     const employeeIdInputId = useId();
     const passwordInputId = useId();
 
@@ -41,26 +34,17 @@ export default function TrainingLogin({
                 svgOptions={{ duration: 10 }}
             />
 
-
             {/* Card de Login */}
             <motion.div
                 className={styles.loginCard}
+                variants={CARD_ENTER}
                 initial="hidden"
                 animate="visible"
             >
                 {isSuccess ? (
                     <motion.div
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        transition={{ duration: 0.5 }}
-                        style={{
-                            padding: '40px 20px',
-                            minHeight: '400px',
-                            display: 'flex',
-                            flexDirection: 'column',
-                            alignItems: 'center',
-                            justifyContent: 'center'
-                        }}
+                        className={styles.successContainer}
+                        {...SUCCESS_ENTER}
                     >
                         <AILoadingState />
                         <motion.p
@@ -75,7 +59,7 @@ export default function TrainingLogin({
                     </motion.div>
                 ) : (
                     <>
-                        <motion.div variants={fadeUpVariants} custom={0} className={styles.header}>
+                        <motion.div variants={FADE_UP_LOGIN} custom={0} className={styles.header}>
                             <div className={styles.iconWrapper}>
                                 <GraduationCap className={styles.icon} />
                             </div>
@@ -83,18 +67,23 @@ export default function TrainingLogin({
                             <p className={styles.subtitle}>Portal de formación administrativa</p>
                         </motion.div>
 
-                        {error && (
-                            <motion.div
-                                initial={{ opacity: 0, y: -10 }}
-                                animate={{ opacity: 1, y: 0 }}
-                                className={styles.errorMessage}
-                            >
-                                {error}
-                            </motion.div>
-                        )}
+                        <AnimatePresence mode="wait">
+                            {error && (
+                                <motion.div
+                                    key="error-msg"
+                                    variants={ERROR_VARIANTS}
+                                    initial="initial"
+                                    animate="animate"
+                                    exit="exit"
+                                    className={styles.errorMessage}
+                                >
+                                    {error}
+                                </motion.div>
+                            )}
+                        </AnimatePresence>
 
                         <form onSubmit={onSubmit} className={styles.form}>
-                            <motion.div variants={fadeUpVariants} custom={1} className={styles.inputGroup}>
+                            <motion.div variants={FADE_UP_LOGIN} custom={1} className={styles.inputGroup}>
                                 <label htmlFor={employeeIdInputId} className={styles.label}>ID de Empleado</label>
                                 <div className={styles.inputWrapper}>
                                     <User className={styles.inputIcon} aria-hidden="true" />
@@ -114,7 +103,7 @@ export default function TrainingLogin({
                                 </div>
                             </motion.div>
 
-                            <motion.div variants={fadeUpVariants} custom={2} className={styles.inputGroup}>
+                            <motion.div variants={FADE_UP_LOGIN} custom={2} className={styles.inputGroup}>
                                 <label htmlFor={passwordInputId} className={styles.label}>Contraseña / Código</label>
                                 <div className={styles.inputWrapper}>
                                     <Lock className={styles.inputIcon} aria-hidden="true" />
@@ -133,8 +122,8 @@ export default function TrainingLogin({
                             </motion.div>
 
                             <motion.button
-                                variants={fadeUpVariants}
-                                custom={4}
+                                variants={FADE_UP_LOGIN}
+                                custom={3}
                                 type="submit"
                                 className={styles.submitButton}
                                 disabled={loading}
@@ -150,7 +139,7 @@ export default function TrainingLogin({
                             </motion.button>
                         </form>
 
-                        <motion.div variants={fadeUpVariants} custom={5} className={styles.footer}>
+                        <motion.div variants={FADE_UP_LOGIN} custom={4} className={styles.footer}>
                             <p className={styles.footerText}>
                                 Innovando para tu crecimiento<br />
                                 <span style={{ opacity: 0.7, fontSize: '0.8rem' }}>Sistema Vertx</span>
