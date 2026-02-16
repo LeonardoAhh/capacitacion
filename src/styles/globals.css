@@ -23,6 +23,7 @@
   --bg-primary: #FFFFFF;
   --bg-secondary: #F2F2F7;
   --bg-tertiary: #FFFFFF;
+  --bg-primary-rgb: 255, 255, 255;
 
   --app-background: #F2F2F7;
   --card-background: rgba(255, 255, 255, 0.7);
@@ -36,6 +37,7 @@
 
   /* iOS Separator */
   --border-color: rgba(60, 60, 67, 0.12);
+  --border-color-rgb: 60, 60, 67;
 
   /* iOS Shadows - Subtle and clean */
   --shadow-sm: 0 1px 3px rgb(0 0 0 / 0.04);
@@ -72,7 +74,9 @@
   /* iOS Dark Mode - System Backgrounds */
   --bg-primary: #000000;
   --bg-secondary: #1C1C1E;
+  --bg-secondary: #1C1C1E;
   --bg-tertiary: #2C2C2E;
+  --bg-primary-rgb: 0, 0, 0;
 
   --app-background: #000000;
   --card-background: rgba(28, 28, 30, 0.6);
@@ -86,6 +90,7 @@
 
   /* iOS Dark Mode - Separator */
   --border-color: rgba(84, 84, 88, 0.65);
+  --border-color-rgb: 84, 84, 88;
 
   /* iOS Dark Mode - Shadows */
   --shadow-sm: 0 1px 3px rgb(0 0 0 / 0.3);

@@ -176,6 +176,12 @@ service cloud.firestore {
       allow write: if hasAnyRole(['super_admin', 'rh']);
     }
 
+    // REGLAS DE PROMOCIÓN
+    match /promotion_rules/{docId} {
+      allow read: if true;
+      allow write: if hasAnyRole(['super_admin', 'rh']);
+    }
+
     // CONFIGURACIÓN DEL SISTEMA: Solo super_admin
     match /system_config/{docId} {
       allow read, write: if hasRole('super_admin');

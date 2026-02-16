@@ -18,6 +18,7 @@ import { useGamification } from '@/hooks/useGamification';
 import LevelProgress from '@/components/Gamification/LevelProgress';
 import BadgesGallery from '@/components/Gamification/BadgesGallery';
 import CertificateCard from '@/components/Gamification/CertificateCard';
+import TrainingCompliance from '@/components/Gamification/TrainingCompliance';
 import { formatDisplayName } from '@/utils/nameUtils';
 import {
     Drawer,
@@ -326,6 +327,16 @@ export default function TrainingDashboard() {
                         certificates={gamification.certificates}
                         userName={user.name?.trim().split(/\s+/).map(w => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase()).join(' ') || ''}
                     />
+                </motion.div>
+
+                {/* New Section: Compliance (Cumplimiento de Capacitación) */}
+                <motion.div
+                    variants={FADE_UP}
+                    initial="hidden"
+                    animate="visible"
+                    custom={2.5}
+                >
+                    <TrainingCompliance user={user} />
                 </motion.div>
 
                 {/* 4. Mis Cursos Asignados */}
