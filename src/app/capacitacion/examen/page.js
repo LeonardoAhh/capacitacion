@@ -37,7 +37,7 @@ export default function ExamenPage() {
     // Auto-update category when department changes
     useEffect(() => {
         if (department === 'Moldes') setCategory('E_D');
-        else if (department === 'Recursos Humanos') setCategory('RH_P1');
+        else if (department === 'Recursos Humanos') setCategory('RH_ALL');
         else setCategory('D_C');
     }, [department]);
 
@@ -181,42 +181,26 @@ export default function ExamenPage() {
                 return;
             }
 
-            // RECURSOS HUMANOS LOGIC
+            // RECURSOS HUMANOS LOGIC — todas las preguntas cargadas
             if (department === 'Recursos Humanos') {
-                let filtered = [];
-                let count = 15;
-
-                if (category === 'RH_P1') {
-                    // Sections 1-4
-                    const targetSections = ['SEC-01', 'SEC-02', 'SEC-03', 'SEC-04'];
-                    filtered = deptQuestions.filter(q => targetSections.includes(q.sectionId));
-                } else if (category === 'RH_P2') {
-                    // Sections 5-7
-                    const targetSections = ['SEC-05', 'SEC-06', 'SEC-07'];
-                    filtered = deptQuestions.filter(q => targetSections.includes(q.sectionId));
-                } else {
-                    filtered = deptQuestions;
-                }
-
-                if (filtered.length === 0) {
+                if (deptQuestions.length === 0) {
                     toast.error("Error", `No se encontraron preguntas de RH. ¿Se importaron correctamente?`);
                     setLoading(false);
                     return;
                 }
 
-                // Shuffle
-                const shuffled = [...filtered].sort(() => 0.5 - Math.random());
-                const finalQuestions = shuffled.slice(0, count);
+                // Shuffle all RH questions
+                const finalQuestions = [...deptQuestions].sort(() => 0.5 - Math.random());
 
                 setExamData({
                     employee: selectedEmployee,
                     date: new Date().toLocaleDateString('es-MX', { year: 'numeric', month: 'long', day: 'numeric' }),
-                    categoryLabel: `${getCategoryLabel(category, 'Recursos Humanos')}`,
+                    categoryLabel: 'Recursos Humanos — Examen Completo',
                     questions: finalQuestions,
                     isRH: true
                 });
 
-                toast.success("Éxito", "Examen RH generado correctamente.");
+                toast.success("Éxito", `Examen RH generado con ${finalQuestions.length} preguntas.`);
                 setLoading(false);
                 return;
             }
@@ -273,11 +257,7 @@ export default function ExamenPage() {
             }
         }
         if (dept === 'Recursos Humanos') {
-            switch (cat) {
-                case 'RH_P1': return 'Parte 1 (Secciones 1-4)';
-                case 'RH_P2': return 'Parte 2 (Secciones 5-7)';
-                default: return cat;
-            }
+            return 'Examen Completo';
         }
         switch (cat) {
             case 'D_C': return 'Categoría D a C';
@@ -479,8 +459,7 @@ export default function ExamenPage() {
                             </>
                         ) : department === 'Recursos Humanos' ? (
                             <>
-                                <option value="RH_P1">Parte 1 (Secciones 1-4)</option>
-                                <option value="RH_P2">Parte 2 (Secciones 5-7)</option>
+                                <option value="RH_ALL">Examen Completo (Todas las preguntas)</option>
                             </>
                         ) : (
                             <>
