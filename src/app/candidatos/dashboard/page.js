@@ -170,13 +170,23 @@ export default function CandidatoDashboard() {
 
                 if (requiredCourses.length > 0) {
                     const inductionRef = collection(db, 'induction_courses');
-                    const coursesQuery = query(inductionRef, where('title', 'in', requiredCourses));
-                    const coursesSnapshot = await getDocs(coursesQuery);
 
-                    coursesData = coursesSnapshot.docs.map(doc => ({
-                        id: doc.id,
-                        ...doc.data()
-                    }));
+                    // Firestore 'in' supports max 30 values — split into chunks
+                    const chunkSize = 30;
+                    const chunks = [];
+                    for (let i = 0; i < requiredCourses.length; i += chunkSize) {
+                        chunks.push(requiredCourses.slice(i, i + chunkSize));
+                    }
+
+                    const allResults = await Promise.all(
+                        chunks.map(chunk =>
+                            getDocs(query(inductionRef, where('title', 'in', chunk)))
+                        )
+                    );
+
+                    coursesData = allResults.flatMap(snapshot =>
+                        snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }))
+                    );
 
                     // Sort by requiredCourses order
                     coursesData = requiredCourses
