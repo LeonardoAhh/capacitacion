@@ -656,37 +656,20 @@ export default function EmployeesPage() {
                         </p>
                     </div>
 
-
-
-                    {/* Stats Cards */}
-                    <div className={styles.statsGrid}>
-                        <div className={styles.statCard}>
-                            <div className={styles.statIcon} style={{ background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)' }}>
-                                <Users size={20} />
-                            </div>
-                            <div className={styles.statContent}>
-                                <div className={styles.statValue}>{stats.total}</div>
-                                <div className={styles.statLabel}>Total</div>
-                            </div>
-                        </div>
-                        <div className={styles.statCard}>
-                            <div className={styles.statIcon} style={{ background: 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)' }}>
-                                <UserCheck size={20} />
-                            </div>
-                            <div className={styles.statContent}>
-                                <div className={styles.statValue}>{stats.active}</div>
-                                <div className={styles.statLabel}>Activos</div>
-                            </div>
-                        </div>
-                        <div className={styles.statCard}>
-                            <div className={styles.statIcon} style={{ background: 'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)' }}>
-                                <UserPlus size={20} />
-                            </div>
-                            <div className={styles.statContent}>
-                                <div className={styles.statValue}>{stats.candidates}</div>
-                                <div className={styles.statLabel}>Candidatos</div>
-                            </div>
-                        </div>
+                    {/* Header Meta — resumen compacto */}
+                    <div className={styles.headerMeta}>
+                        <span className={styles.metaBadge}>
+                            <Users size={14} />
+                            <strong>{stats.total}</strong> empleados
+                        </span>
+                        <span className={`${styles.metaBadge} ${styles.metaBadgeActive}`}>
+                            <UserCheck size={14} />
+                            <strong>{stats.active}</strong> activos
+                        </span>
+                        <span className={`${styles.metaBadge} ${styles.metaBadgeCandidates}`}>
+                            <UserPlus size={14} />
+                            <strong>{stats.candidates}</strong> candidatos
+                        </span>
                     </div>
 
                     {/* Search Bar */}
@@ -1013,9 +996,9 @@ export default function EmployeesPage() {
                                         </div>
 
                                         {selectedEmployee.cursosCompletados && selectedEmployee.cursosCompletados.length > 0 && (
-                                            <div style={{ marginTop: '24px' }}>
-                                                <h4 style={{ marginBottom: '12px', color: 'var(--text-primary)' }}>Cursos Completados</h4>
-                                                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
+                                            <div className={styles.coursesSection}>
+                                                <h4 className={styles.coursesTitle}>Cursos Completados</h4>
+                                                <div className={styles.coursesBadgeContainer}>
                                                     {selectedEmployee.cursosCompletados.map((courseId, idx) => (
                                                         <span key={idx} className={styles.courseBadge}>
                                                             {courseId.substring(0, 12)}...
@@ -1026,8 +1009,8 @@ export default function EmployeesPage() {
                                         )}
 
                                         {selectedEmployee.coursesProgress && Object.keys(selectedEmployee.coursesProgress).length > 0 && (
-                                            <div style={{ marginTop: '24px' }}>
-                                                <h4 style={{ marginBottom: '12px', color: 'var(--text-primary)' }}>Progreso de Cursos</h4>
+                                            <div className={styles.coursesSection}>
+                                                <h4 className={styles.coursesTitle}>Progreso de Cursos</h4>
                                                 {Object.entries(selectedEmployee.coursesProgress).map(([courseId, progress]) => (
                                                     <div key={courseId} className={styles.progressItem}>
                                                         <span className={styles.courseId}>{courseId.substring(0, 12)}...</span>

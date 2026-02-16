@@ -97,11 +97,13 @@
     max-width: 1400px;
     margin: 0 auto;
     padding: 100px 24px 40px;
+    padding-bottom: calc(40px + env(safe-area-inset-bottom));
 }
 
 @media (max-width: 768px) {
     .container {
-        padding: 80px 16px 32px;
+        padding: 80px 16px 24px;
+        padding-bottom: calc(24px + env(safe-area-inset-bottom));
     }
 }
 
@@ -142,76 +144,78 @@
     }
 }
 
-/* === STATS GRID === */
-.statsGrid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 16px;
-    margin-top: 24px;
-}
-
-.statCard {
-    background: rgba(255, 255, 255, 0.6);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-    border-radius: 24px;
-    padding: 24px;
+/* === HEADER META — resumen compacto === */
+.headerMeta {
     display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 16px;
+}
+
+.metaBadge {
+    display: inline-flex;
     align-items: center;
-    gap: 16px;
-    border: 1px solid rgba(255, 255, 255, 0.4);
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.02);
-    transition: all 0.3s ease;
+    gap: 6px;
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 500;
+    color: #4a5568;
+    background: rgba(255, 255, 255, 0.7);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(226, 232, 240, 0.6);
+    transition: all 0.2s ease;
 }
 
-[data-theme="dark"] .statCard {
-    background: rgba(30, 30, 35, 0.6);
-    border-color: rgba(255, 255, 255, 0.08);
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
-}
-
-.statCard:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.05);
-}
-
-.statIcon {
-    width: 52px;
-    height: 52px;
-    border-radius: 12px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: white;
-    flex-shrink: 0;
-}
-
-.statContent {
-    flex: 1;
-}
-
-.statValue {
-    font-size: 28px;
+.metaBadge strong {
     font-weight: 700;
     color: #1a202c;
-    line-height: 1;
 }
 
-[data-theme="dark"] .statValue {
-    color: #ffffff;
-}
-
-.statLabel {
-    font-size: 13px;
-    color: #718096;
-    margin-top: 4px;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    font-weight: 600;
-}
-
-[data-theme="dark"] .statLabel {
+[data-theme="dark"] .metaBadge {
+    background: rgba(255, 255, 255, 0.06);
+    border-color: rgba(255, 255, 255, 0.1);
     color: #a0aec0;
+}
+
+[data-theme="dark"] .metaBadge strong {
+    color: #e2e8f0;
+}
+
+.metaBadgeActive {
+    background: rgba(52, 199, 89, 0.1);
+    border-color: rgba(52, 199, 89, 0.25);
+    color: #22543d;
+}
+
+[data-theme="dark"] .metaBadgeActive {
+    background: rgba(52, 199, 89, 0.12);
+    border-color: rgba(52, 199, 89, 0.2);
+    color: #9ae6b4;
+}
+
+.metaBadgeCandidates {
+    background: rgba(66, 153, 225, 0.1);
+    border-color: rgba(66, 153, 225, 0.25);
+    color: #2c5282;
+}
+
+[data-theme="dark"] .metaBadgeCandidates {
+    background: rgba(66, 153, 225, 0.12);
+    border-color: rgba(66, 153, 225, 0.2);
+    color: #90cdf4;
+}
+
+@media (max-width: 480px) {
+    .headerMeta {
+        gap: 8px;
+    }
+
+    .metaBadge {
+        font-size: 12px;
+        padding: 5px 10px;
+    }
 }
 
 /* === SEARCH SECTION === */
@@ -838,105 +842,76 @@
     font-weight: 500;
 }
 
-/* === RESPONSIVE === */
+/* === RESPONSIVE — Detail View === */
 @media (max-width: 768px) {
     .detailView {
-        padding: 20px;
+        padding: 16px;
+        border-radius: 16px;
     }
 
     .detailHeader {
         flex-direction: column;
         text-align: center;
+        gap: 16px;
+    }
+
+    .avatarLarge {
+        width: 72px;
+        height: 72px;
+        font-size: 28px;
+        border-radius: 16px;
     }
 
     .detailName {
-        font-size: 24px;
+        font-size: 22px;
+    }
+
+    .detailId {
+        font-size: 13px;
     }
 
     .tabsNav {
         padding: 4px;
+        gap: 4px;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none;
+    }
+
+    .tabsNav::-webkit-scrollbar {
+        display: none;
     }
 
     .tabButton {
-        padding: 10px 16px;
+        padding: 10px 14px;
         font-size: 13px;
+        min-width: max-content;
     }
 
     .infoGrid {
         grid-template-columns: 1fr;
+        gap: 14px;
     }
 }
 
-/* === ACTION BUTTONS === */
-.addButton {
-    padding: 12px 24px;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white;
-    border: none;
-    border-radius: 12px;
-    font-weight: 600;
-    cursor: pointer;
+/* === COURSES SECTION (migrado de inline) === */
+.coursesSection {
+    margin-top: 24px;
+}
+
+.coursesTitle {
+    margin: 0 0 12px 0;
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--text-primary);
+}
+
+.coursesBadgeContainer {
     display: flex;
-    align-items: center;
+    flex-wrap: wrap;
     gap: 8px;
-    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
-    transition: all 0.3s;
-    white-space: nowrap;
 }
 
-.addButton:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
-}
-
-.actionButtons {
-    display: flex;
-    gap: 12px;
-    margin-left: auto;
-}
-
-.editButton,
-.deleteButton {
-    padding: 10px 20px;
-    border-radius: 10px;
-    border: none;
-    font-weight: 600;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    transition: all 0.2s;
-}
-
-.editButton {
-    background: rgba(102, 126, 234, 0.1);
-    color: #667eea;
-}
-
-.editButton:hover {
-    background: rgba(102, 126, 234, 0.2);
-    transform: translateY(-2px);
-}
-
-[data-theme="dark"] .editButton {
-    background: rgba(102, 126, 234, 0.2);
-    color: #a3bffa;
-}
-
-.deleteButton {
-    background: rgba(245, 101, 101, 0.1);
-    color: #f56565;
-}
-
-.deleteButton:hover {
-    background: rgba(245, 101, 101, 0.2);
-    transform: translateY(-2px);
-}
-
-[data-theme="dark"] .deleteButton {
-    background: rgba(245, 101, 101, 0.2);
-    color: #fc8181;
-}
+/* (action button styles consolidated below in section 1470+) */
 
 /* === FORM STYLES (for shadcn Drawer) === */
 .drawerContentScroll {
@@ -1866,24 +1841,12 @@
     .employeeGrid {
         grid-template-columns: repeat(2, 1fr);
     }
-
-    .statsGrid {
-        grid-template-columns: repeat(3, 1fr);
-    }
 }
 
 /* Mobile landscape mode */
 @media (max-width: 896px) and (orientation: landscape) {
     .header {
         padding: 12px 0;
-    }
-
-    .statsGrid {
-        grid-template-columns: repeat(3, 1fr);
-    }
-
-    .statCard {
-        padding: 12px;
     }
 }
 

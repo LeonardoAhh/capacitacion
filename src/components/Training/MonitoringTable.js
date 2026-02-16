@@ -1,47 +1,61 @@
-import { useState, useEffect } from 'react';
-import { Search, Filter, Download, CheckCircle, Clock, Eye, RefreshCw } from 'lucide-react';
+'use client';
+
+import { useState, useEffect, useMemo, useCallback } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Search, CheckCircle, Clock, Eye, RefreshCw, BookOpen, Calendar, Inbox } from 'lucide-react';
 import { db } from '@/lib/firebase';
-import { collection, getDocs, doc, getDoc } from 'firebase/firestore';
+import { collection, getDocs } from 'firebase/firestore';
+import useIsMobile from '@/hooks/useIsMobile';
+import styles from './MonitoringTable.module.css';
+
+// ─── Animation variants ───────────────────────────────────────────────────────
+
+const FADE_IN = {
+    hidden: { opacity: 0, y: 10 },
+    visible: (i = 0) => ({
+        opacity: 1, y: 0,
+        transition: { duration: 0.3, delay: i * 0.03, ease: [0.22, 1, 0.36, 1] },
+    }),
+};
+
+const FILTER_ITEMS = [
+    { key: 'all', label: 'Todos' },
+    { key: 'pending', label: 'Pendientes' },
+    { key: 'assigned', label: 'Asignados' },
+    { key: 'viewed', label: 'En Progreso' },
+    { key: 'completed', label: 'Completados' },
+];
+
+// ─── MonitoringTable ──────────────────────────────────────────────────────────
 
 export default function MonitoringTable() {
+    const { isMobile } = useIsMobile(768);
     const [assignments, setAssignments] = useState([]);
     const [loading, setLoading] = useState(true);
     const [refreshing, setRefreshing] = useState(false);
-    const [filter, setFilter] = useState('all'); // all, pending, viewed, completed
+    const [filter, setFilter] = useState('all');
     const [searchTerm, setSearchTerm] = useState('');
 
-    useEffect(() => {
-        fetchData();
+    // ── Fetch data ────────────────────────────────────────────────────────────
 
-        // Auto-refresh every 30 seconds
-        const interval = setInterval(() => {
-            fetchData(true); // Silent refresh
-        }, 30000);
-
-        return () => clearInterval(interval);
-    }, []);
-
-    const fetchData = async (silent = false) => {
+    const fetchData = useCallback(async (silent = false) => {
         if (!silent) setLoading(true);
         setRefreshing(true);
         try {
-            // 1. Fetch all assignments
-            const progSnap = await getDocs(collection(db, 'programacion'));
-            const progList = progSnap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+            const [progSnap, empSnap, courseSnap] = await Promise.all([
+                getDocs(collection(db, 'programacion')),
+                getDocs(collection(db, 'employees_programacion')),
+                getDocs(collection(db, 'cursos_induccion')),
+            ]);
 
-            // 2. Fetch all employees & courses to map names
-            // Optimization: In a real large app we would paginate or index.
-            // Here we fetch all for simplicity as requested.
-            const empSnap = await getDocs(collection(db, 'employees_programacion'));
             const employeesMap = {};
             empSnap.docs.forEach(d => { employeesMap[d.id] = d.data(); });
 
-            const courseSnap = await getDocs(collection(db, 'cursos_induccion'));
             const coursesMap = {};
             courseSnap.docs.forEach(d => { coursesMap[d.id] = d.data(); });
 
-            // 3. Merge data
-            const fullData = progList.map(item => {
+            const fullData = progSnap.docs.map(d => {
+                const item = { id: d.id, ...d.data() };
                 const emp = employeesMap[item.employeeId] || { name: 'Desconocido', area: '-' };
                 const course = coursesMap[item.courseId] || { nombre: 'Curso eliminado' };
 
@@ -49,7 +63,7 @@ export default function MonitoringTable() {
                     ...item,
                     employeeName: emp.name,
                     employeeArea: emp.area,
-                    courseTitle: course.nombre || course.title || 'Sin título'
+                    courseTitle: course.nombre || course.title || 'Sin título',
                 };
             });
 
@@ -60,149 +74,321 @@ export default function MonitoringTable() {
             if (!silent) setLoading(false);
             setRefreshing(false);
         }
-    };
+    }, []);
 
-    const filteredData = assignments.filter(item => {
-        const matchesSearch =
-            item.employeeName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            item.courseTitle?.toLowerCase().includes(searchTerm.toLowerCase());
-        const matchesFilter = filter === 'all' || item.status === filter;
+    useEffect(() => {
+        fetchData();
+        const interval = setInterval(() => fetchData(true), 30000);
+        return () => clearInterval(interval);
+    }, [fetchData]);
 
-        return matchesSearch && matchesFilter;
-    });
+    // ── Filtered data ─────────────────────────────────────────────────────────
 
-    const getStatusBadge = (status) => {
-        switch (status) {
-            case 'completed':
-                return <span style={{ color: '#16a34a', background: 'rgba(22, 163, 74, 0.1)', padding: '0.25rem 0.75rem', borderRadius: '99px', fontSize: '0.75rem', display: 'flex', alignItems: 'center', gap: '4px', width: 'fit-content', fontWeight: 600 }}><CheckCircle size={12} /> Completado</span>;
-            case 'viewed':
-                return <span style={{ color: '#f97316', background: 'rgba(249, 115, 22, 0.1)', padding: '0.25rem 0.75rem', borderRadius: '99px', fontSize: '0.75rem', display: 'flex', alignItems: 'center', gap: '4px', width: 'fit-content', fontWeight: 600 }}><Eye size={12} /> En Progreso</span>;
-            case 'assigned':
-            case 'pending':
-            default:
-                return <span style={{ color: '#64748b', background: 'rgba(100, 116, 139, 0.1)', padding: '0.25rem 0.75rem', borderRadius: '99px', fontSize: '0.75rem', display: 'flex', alignItems: 'center', gap: '4px', width: 'fit-content', fontWeight: 600 }}><Clock size={12} /> Pendiente</span>;
-        }
-    };
+    const filteredData = useMemo(() =>
+        assignments.filter(item => {
+            const matchesSearch =
+                item.employeeName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                item.courseTitle?.toLowerCase().includes(searchTerm.toLowerCase());
+            const matchesFilter = filter === 'all' || item.status === filter;
+            return matchesSearch && matchesFilter;
+        }),
+        [assignments, searchTerm, filter]
+    );
 
-    const formatDate = (timestamp) => {
+    // ── Stats counters ────────────────────────────────────────────────────────
+
+    const stats = useMemo(() => ({
+        pending: assignments.filter(a => a.status === 'pending' || a.status === 'assigned').length,
+        viewed: assignments.filter(a => a.status === 'viewed').length,
+        completed: assignments.filter(a => a.status === 'completed').length,
+    }), [assignments]);
+
+    // ── Helpers ────────────────────────────────────────────────────────────────
+
+    const formatDate = useCallback((timestamp) => {
         if (!timestamp) return '-';
         const date = timestamp.seconds ? new Date(timestamp.seconds * 1000) : new Date(timestamp);
         return date.toLocaleDateString('es-MX', {
             day: '2-digit',
             month: 'short',
-            year: 'numeric'
+            year: 'numeric',
         });
-    };
+    }, []);
+
+    const getStatusBadge = useCallback((status) => {
+        switch (status) {
+            case 'completed':
+                return (
+                    <span className={`${styles.badge} ${styles.badgeCompleted}`}>
+                        <CheckCircle size={12} /> Completado
+                    </span>
+                );
+            case 'viewed':
+                return (
+                    <span className={`${styles.badge} ${styles.badgeViewed}`}>
+                        <Eye size={12} /> En Progreso
+                    </span>
+                );
+            case 'assigned':
+            case 'pending':
+            default:
+                return (
+                    <span className={`${styles.badge} ${styles.badgePending}`}>
+                        <Clock size={12} /> Pendiente
+                    </span>
+                );
+        }
+    }, []);
+
+    const handleFilterClick = useCallback((key) => {
+        setFilter(prev => prev === key ? 'all' : key);
+    }, []);
+
+    const handleRefresh = useCallback(() => {
+        fetchData();
+    }, [fetchData]);
+
+    // ─────────────────────────────────────────────────────────────────────────
 
     return (
-        <div style={{ background: 'var(--bg-secondary)', borderRadius: '16px', border: '1px solid var(--border-color)', overflow: 'hidden' }}>
-            {/* Header / Controls */}
-            <div style={{ padding: '1.5rem', borderBottom: '1px solid var(--border-color)', display: 'flex', gap: '1rem', flexWrap: 'wrap', justifyContent: 'space-between', alignItems: 'center' }}>
-                <h2 style={{ fontSize: '1.25rem', fontWeight: 600 }}>Avance de Capacitación</h2>
-
-                <div style={{ display: 'flex', gap: '1rem', flex: 1, justifyContent: 'flex-end', alignItems: 'center' }}>
-                    <div style={{ position: 'relative', maxWidth: '300px', width: '100%' }}>
-                        <Search size={16} style={{ position: 'absolute', left: '1rem', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-secondary)' }} />
-                        <input
-                            placeholder="Buscar por empleado o curso..."
-                            value={searchTerm}
-                            onChange={(e) => setSearchTerm(e.target.value)}
-                            style={{
-                                width: '100%', padding: '0.6rem 1rem 0.6rem 2.5rem', borderRadius: '8px',
-                                border: '1px solid var(--border-color)', background: 'var(--bg-primary)', color: 'var(--text-primary)'
-                            }}
-                        />
-                    </div>
-
-                    <select
-                        value={filter}
-                        onChange={(e) => setFilter(e.target.value)}
-                        style={{
-                            padding: '0.6rem 2rem 0.6rem 1rem', borderRadius: '8px',
-                            border: '1px solid var(--border-color)', background: 'var(--bg-primary)', color: 'var(--text-primary)',
-                            cursor: 'pointer'
-                        }}
-                    >
-                        <option value="all">Todos los Estados</option>
-                        <option value="pending">Pendientes</option>
-                        <option value="assigned">Asignados</option>
-                        <option value="viewed">En Progreso</option>
-                        <option value="completed">Completados</option>
-                    </select>
-
-                    <button
-                        onClick={() => fetchData()}
-                        disabled={refreshing}
-                        style={{
-                            padding: '0.6rem 1rem',
-                            borderRadius: '8px',
-                            border: '1px solid var(--border-color)',
-                            background: 'var(--bg-primary)',
-                            color: 'var(--text-primary)',
-                            cursor: refreshing ? 'not-allowed' : 'pointer',
-                            display: 'flex',
-                            alignItems: 'center',
-                            gap: '0.5rem',
-                            fontWeight: 500,
-                            transition: 'all 0.2s'
-                        }}
-                        title="Actualizar datos"
-                    >
-                        <RefreshCw
-                            size={16}
-                            style={{
-                                animation: refreshing ? 'spin 1s linear infinite' : 'none'
-                            }}
-                        />
-                        Actualizar
-                    </button>
+        <div className={styles.container}>
+            {/* Header */}
+            <div className={styles.header}>
+                <h2 className={styles.title}>
+                    Avance de Capacitación
+                </h2>
+                <div className={styles.liveIndicator}>
+                    <span className={styles.liveDot} />
+                    En vivo
                 </div>
             </div>
 
-            <style jsx>{`
-                @keyframes spin {
-                    from { transform: rotate(0deg); }
-                    to { transform: rotate(360deg); }
-                }
-            `}</style>
+            {/* Stats row */}
+            <div className={styles.statsRow}>
+                <motion.div
+                    className={`${styles.statCard} ${filter === 'pending' ? styles.statCardActive : ''}`}
+                    onClick={() => handleFilterClick('pending')}
+                    whileTap={{ scale: 0.97 }}
+                    style={{ color: '#64748b' }}
+                >
+                    <div className={`${styles.statIconWrap} ${styles.statIconPending}`}>
+                        <Clock size={18} />
+                    </div>
+                    <div className={styles.statInfo}>
+                        <motion.span
+                            className={styles.statNumber}
+                            key={stats.pending}
+                            initial={{ scale: 0.8 }}
+                            animate={{ scale: 1 }}
+                            transition={{ type: 'spring', stiffness: 400, damping: 20 }}
+                        >
+                            {stats.pending}
+                        </motion.span>
+                        <span className={styles.statLabel}>Pendientes</span>
+                    </div>
+                </motion.div>
 
-            {/* Table */}
-            <div style={{ overflowX: 'auto' }}>
-                <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.875rem' }}>
-                    <thead style={{ background: 'var(--bg-tertiary)', color: 'var(--text-secondary)', textAlign: 'left' }}>
+                <motion.div
+                    className={`${styles.statCard} ${filter === 'viewed' ? styles.statCardActive : ''}`}
+                    onClick={() => handleFilterClick('viewed')}
+                    whileTap={{ scale: 0.97 }}
+                    style={{ color: '#f97316' }}
+                >
+                    <div className={`${styles.statIconWrap} ${styles.statIconViewed}`}>
+                        <Eye size={18} />
+                    </div>
+                    <div className={styles.statInfo}>
+                        <motion.span
+                            className={styles.statNumber}
+                            key={stats.viewed}
+                            initial={{ scale: 0.8 }}
+                            animate={{ scale: 1 }}
+                            transition={{ type: 'spring', stiffness: 400, damping: 20 }}
+                        >
+                            {stats.viewed}
+                        </motion.span>
+                        <span className={styles.statLabel}>En Progreso</span>
+                    </div>
+                </motion.div>
+
+                <motion.div
+                    className={`${styles.statCard} ${filter === 'completed' ? styles.statCardActive : ''}`}
+                    onClick={() => handleFilterClick('completed')}
+                    whileTap={{ scale: 0.97 }}
+                    style={{ color: '#22c55e' }}
+                >
+                    <div className={`${styles.statIconWrap} ${styles.statIconCompleted}`}>
+                        <CheckCircle size={18} />
+                    </div>
+                    <div className={styles.statInfo}>
+                        <motion.span
+                            className={styles.statNumber}
+                            key={stats.completed}
+                            initial={{ scale: 0.8 }}
+                            animate={{ scale: 1 }}
+                            transition={{ type: 'spring', stiffness: 400, damping: 20 }}
+                        >
+                            {stats.completed}
+                        </motion.span>
+                        <span className={styles.statLabel}>Completados</span>
+                    </div>
+                </motion.div>
+            </div>
+
+            {/* Controls row */}
+            <div className={styles.controlsRow}>
+                <div className={styles.searchWrap}>
+                    <Search size={16} className={styles.searchIcon} />
+                    <input
+                        type="text"
+                        placeholder="Buscar empleado o curso..."
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                        className={styles.searchInput}
+                    />
+                </div>
+
+                <div className={styles.filterPills}>
+                    {FILTER_ITEMS.map(({ key, label }) => (
+                        <button
+                            key={key}
+                            className={`${styles.pill} ${filter === key ? styles.pillActive : ''}`}
+                            onClick={() => setFilter(key)}
+                            type="button"
+                        >
+                            {label}
+                        </button>
+                    ))}
+                </div>
+
+                <button
+                    className={styles.refreshBtn}
+                    onClick={handleRefresh}
+                    disabled={refreshing}
+                    type="button"
+                    title="Actualizar datos"
+                >
+                    <RefreshCw size={15} className={refreshing ? styles.refreshSpin : ''} />
+                    <span>Actualizar</span>
+                </button>
+            </div>
+
+            {/* ── Desktop table ── */}
+            <div className={styles.tableWrapper}>
+                <table className={styles.table}>
+                    <thead className={styles.thead}>
                         <tr>
-                            <th style={{ padding: '1rem' }}>Empleado</th>
-                            <th style={{ padding: '1rem' }}>Área</th>
-                            <th style={{ padding: '1rem' }}>Curso</th>
-                            <th style={{ padding: '1rem' }}>Estado</th>
-                            <th style={{ padding: '1rem' }}>Fecha Asignación</th>
-                            <th style={{ padding: '1rem' }}>Fecha Completado</th>
+                            <th className={styles.th}>Empleado</th>
+                            <th className={styles.th}>Área</th>
+                            <th className={styles.th}>Curso</th>
+                            <th className={styles.th}>Estado</th>
+                            <th className={styles.th}>Fecha Asignación</th>
+                            <th className={styles.th}>Fecha Completado</th>
                         </tr>
                     </thead>
                     <tbody>
                         {loading ? (
-                            <tr><td colSpan="6" style={{ padding: '2rem', textAlign: 'center' }}>Cargando datos...</td></tr>
+                            <tr>
+                                <td colSpan="6">
+                                    <div className={styles.loadingWrap}>
+                                        <span className={styles.loadingDot} />
+                                        <span className={styles.loadingDot} />
+                                        <span className={styles.loadingDot} />
+                                    </div>
+                                </td>
+                            </tr>
                         ) : filteredData.length === 0 ? (
-                            <tr><td colSpan="6" style={{ padding: '2rem', textAlign: 'center', color: 'var(--text-secondary)' }}>No se encontraron registros.</td></tr>
+                            <tr>
+                                <td colSpan="6">
+                                    <div className={styles.emptyWrap}>
+                                        <Inbox size={32} opacity={0.3} />
+                                        <span>No se encontraron registros</span>
+                                    </div>
+                                </td>
+                            </tr>
                         ) : (
-                            filteredData.map(item => (
-                                <tr key={item.id} style={{ borderBottom: '1px solid var(--border-color)' }}>
-                                    <td style={{ padding: '1rem', fontWeight: 500 }}>{item.employeeName}</td>
-                                    <td style={{ padding: '1rem', color: 'var(--text-secondary)' }}>{item.employeeArea}</td>
-                                    <td style={{ padding: '1rem' }}>{item.courseTitle}</td>
-                                    <td style={{ padding: '1rem' }}>
-                                        {getStatusBadge(item.status)}
-                                    </td>
-                                    <td style={{ padding: '1rem', color: 'var(--text-secondary)' }}>{formatDate(item.assignedAt)}</td>
-                                    <td style={{ padding: '1rem', color: 'var(--text-secondary)' }}>
+                            filteredData.map((item, i) => (
+                                <motion.tr
+                                    key={item.id}
+                                    className={styles.tr}
+                                    variants={FADE_IN}
+                                    custom={i}
+                                    initial="hidden"
+                                    animate="visible"
+                                >
+                                    <td className={`${styles.td} ${styles.tdName}`}>{item.employeeName}</td>
+                                    <td className={`${styles.td} ${styles.tdSecondary}`}>{item.employeeArea}</td>
+                                    <td className={styles.td}>{item.courseTitle}</td>
+                                    <td className={styles.td}>{getStatusBadge(item.status)}</td>
+                                    <td className={`${styles.td} ${styles.tdSecondary}`}>{formatDate(item.assignedAt)}</td>
+                                    <td className={`${styles.td} ${styles.tdSecondary}`}>
                                         {item.status === 'completed' ? formatDate(item.completedAt) : '-'}
                                     </td>
-                                </tr>
+                                </motion.tr>
                             ))
                         )}
                     </tbody>
                 </table>
             </div>
+
+            {/* ── Mobile card list ── */}
+            <div className={styles.cardList}>
+                {loading ? (
+                    <div className={styles.loadingWrap}>
+                        <span className={styles.loadingDot} />
+                        <span className={styles.loadingDot} />
+                        <span className={styles.loadingDot} />
+                    </div>
+                ) : filteredData.length === 0 ? (
+                    <div className={styles.emptyWrap}>
+                        <Inbox size={32} opacity={0.3} />
+                        <span>No se encontraron registros</span>
+                    </div>
+                ) : (
+                    <AnimatePresence>
+                        {filteredData.map((item, i) => (
+                            <motion.div
+                                key={item.id}
+                                className={styles.card}
+                                variants={FADE_IN}
+                                custom={i}
+                                initial="hidden"
+                                animate="visible"
+                                layout
+                            >
+                                <div className={styles.cardTop}>
+                                    <span className={styles.cardName}>{item.employeeName}</span>
+                                    {getStatusBadge(item.status)}
+                                </div>
+
+                                <div className={styles.cardCourse}>
+                                    <BookOpen size={14} />
+                                    {item.courseTitle}
+                                </div>
+
+                                <div className={styles.cardMeta}>
+                                    <span className={styles.cardMetaItem}>
+                                        <Calendar size={11} />
+                                        {formatDate(item.assignedAt)}
+                                    </span>
+                                    {item.employeeArea && item.employeeArea !== '-' && (
+                                        <span className={styles.cardMetaItem}>
+                                            {item.employeeArea}
+                                        </span>
+                                    )}
+                                </div>
+                            </motion.div>
+                        ))}
+                    </AnimatePresence>
+                )}
+            </div>
+
+            {/* Count badge */}
+            {!loading && filteredData.length > 0 && (
+                <div className={styles.countBadge}>
+                    Mostrando <strong>{filteredData.length}</strong> de <strong>{assignments.length}</strong> registros
+                </div>
+            )}
         </div>
     );
 }

@@ -237,7 +237,7 @@ export default function RegistroEmpleadosPage() {
                             <div className={styles.section}>
                                 <h3 className={styles.sectionTitle}>Credenciales de Acceso</h3>
                                 <div className={styles.accessCodeWrapper}>
-                                    <div className={styles.inputGroup} style={{ flex: 1 }}>
+                                    <div className={styles.inputGroup}>
                                         <label>Código de Acceso (Contraseña)</label>
                                         <input
                                             type="text"
