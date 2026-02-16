@@ -9,13 +9,16 @@
     border-radius: 20px;
     padding: 1.5rem;
     margin-top: 1.5rem;
+    transition: box-shadow 0.3s ease;
 }
 
 .header {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    gap: 1rem;
     margin-bottom: 1.5rem;
+    flex-wrap: wrap;
 }
 
 .header h3 {
@@ -35,6 +38,7 @@
 
 .headerIcon {
     color: #eab308;
+    flex-shrink: 0;
 }
 
 /* ─── Grid ──────────────────────────────────────────────────── */
@@ -55,14 +59,20 @@
     border-radius: 14px;
     cursor: pointer;
     text-align: left;
-    transition: box-shadow 0.25s ease, border-color 0.25s ease;
+    transition: box-shadow 0.25s ease, border-color 0.25s ease, transform 0.2s ease;
     font-family: inherit;
     color: inherit;
+    width: 100%;
 }
 
-.certCard:hover {
+.certCard:hover:not(.certCardLocked) {
     border-color: var(--cert-color, var(--border-color));
     box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+}
+
+.certCard:focus-visible {
+    outline: 2px solid var(--cert-color, #6366f1);
+    outline-offset: 2px;
 }
 
 .certCardIcon {
@@ -74,6 +84,16 @@
     align-items: center;
     justify-content: center;
     border: 2px solid;
+    transition: transform 0.2s ease;
+}
+
+.certCard:hover:not(.certCardLocked) .certCardIcon {
+    transform: scale(1.05);
+}
+
+.certCardInfo {
+    flex: 1;
+    min-width: 0;
 }
 
 .certCardInfo h4 {
@@ -81,6 +101,9 @@
     font-size: 0.9375rem;
     font-weight: 700;
     color: var(--text-primary);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 .certTierLabel {
@@ -94,11 +117,13 @@
 .certCardLocked {
     cursor: default;
     opacity: 0.55;
+    pointer-events: none;
 }
 
 .certCardLocked:hover {
     border-color: var(--border-color);
     box-shadow: none;
+    transform: none;
 }
 
 .certCardIconLocked {
@@ -154,6 +179,10 @@
     position: relative;
 }
 
+:global([data-theme="dark"]) .modalContent {
+    background: #1a1a2e;
+}
+
 .modalHeader {
     display: flex;
     justify-content: space-between;
@@ -163,11 +192,19 @@
     flex-shrink: 0;
 }
 
+:global([data-theme="dark"]) .modalHeader {
+    border-bottom-color: #2d3748;
+}
+
 .modalHeader h3 {
     margin: 0;
     font-size: 1.125rem;
     font-weight: 700;
     color: #1a1a2e;
+}
+
+:global([data-theme="dark"]) .modalHeader h3 {
+    color: #f3f4f6;
 }
 
 .modalClose {
@@ -181,12 +218,27 @@
     justify-content: center;
     cursor: pointer;
     color: #6b7280;
-    transition: background 0.2s ease;
+    transition: background 0.2s ease, transform 0.1s ease;
     flex-shrink: 0;
+}
+
+:global([data-theme="dark"]) .modalClose {
+    background: #2d3748;
+    border-color: #4a5568;
+    color: #a0aec0;
 }
 
 .modalClose:hover {
     background: #e5e7eb;
+    transform: scale(1.05);
+}
+
+:global([data-theme="dark"]) .modalClose:hover {
+    background: #4a5568;
+}
+
+.modalClose:active {
+    transform: scale(0.95);
 }
 
 .modalBody {
@@ -205,6 +257,10 @@
     display: flex;
     justify-content: center;
     flex-shrink: 0;
+}
+
+:global([data-theme="dark"]) .modalFooter {
+    border-top-color: #2d3748;
 }
 
 /* ─── Download Button ───────────────────────────────────────── */
@@ -230,9 +286,19 @@
     transform: translateY(-2px);
 }
 
+.downloadBtn:active:not(:disabled) {
+    transform: translateY(0);
+}
+
 .downloadBtn:disabled {
     opacity: 0.7;
     cursor: not-allowed;
+    transform: none;
+}
+
+.downloadBtn:focus-visible {
+    outline: 2px solid #6366f1;
+    outline-offset: 2px;
 }
 
 .spinner {
@@ -279,6 +345,7 @@
     height: 36px;
     border-style: solid;
     border-width: 0;
+    pointer-events: none;
 }
 
 .cornerTL {
@@ -382,6 +449,7 @@
     font-size: 1.375rem;
     font-weight: 700;
     font-family: 'Georgia', serif;
+    word-break: break-word;
 }
 
 .certDescription {
@@ -432,11 +500,18 @@
     justify-content: center;
     font-size: 1.25rem;
     line-height: 1;
+    flex-shrink: 0;
 }
 
 /* ═══════════════════════════════════════════════════════════════
    RESPONSIVE
    ═══════════════════════════════════════════════════════════════ */
+@media (max-width: 768px) {
+    .grid {
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    }
+}
+
 @media (max-width: 640px) {
     .grid {
         grid-template-columns: 1fr;
@@ -482,11 +557,21 @@
     .modalBody {
         padding: 1rem;
     }
+
+    .downloadBtn {
+        padding: 0.625rem 1.5rem;
+        font-size: 0.875rem;
+    }
 }
 
 @media (max-width: 480px) {
     .container {
-        padding: 1rem;
+        padding: 1.25rem;
+    }
+
+    .header {
+        flex-direction: column;
+        align-items: flex-start;
     }
 
     .certCard {
@@ -502,6 +587,19 @@
     .certCardInfo h4 {
         font-size: 0.875rem;
     }
+
+    .certTierLabel,
+    .certTierLocked {
+        font-size: 0.7rem;
+    }
+
+    .modalHeader {
+        padding: 1rem 1.25rem;
+    }
+
+    .modalFooter {
+        padding: 0.75rem 1.25rem;
+    }
 }
 
 /* ─── Reduced Motion ────────────────────────────────────────── */
@@ -509,11 +607,39 @@
 
     .certCard,
     .downloadBtn,
-    .modalClose {
+    .modalClose,
+    .certCardIcon {
         transition: none !important;
     }
 
     .downloadBtn:hover:not(:disabled) {
         transform: none;
     }
+
+    .spinner {
+        animation: none;
+        border-top-color: transparent;
+    }
+}
+
+/* ─── High Contrast Mode ────────────────────────────────────── */
+@media (prefers-contrast: high) {
+    .certCard {
+        border-width: 2px;
+    }
+
+    .modalContent {
+        border: 2px solid currentColor;
+    }
+
+    .certCardIconLocked {
+        border-width: 3px;
+    }
+}
+
+/* ─── Focus Styles ──────────────────────────────────────────── */
+.modalClose:focus-visible,
+.certCard:focus-visible {
+    outline: 2px solid #6366f1;
+    outline-offset: 2px;
 }

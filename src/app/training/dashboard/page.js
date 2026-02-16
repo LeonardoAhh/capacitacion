@@ -383,9 +383,13 @@ export default function TrainingDashboard() {
                 ) : filteredCourses.length === 0 ? (
                     <div className={styles.emptyState}>
                         <BookOpen size={64} className={styles.emptyIcon} />
-                        <h3 className={styles.emptyTitle}>No se encontraron cursos</h3>
+                        <h3 className={styles.emptyTitle}>
+                            {searchQuery ? 'No se encontraron cursos' : 'Sin cursos asignados'}
+                        </h3>
                         <p className={styles.emptyText}>
-                            {searchQuery ? 'Intenta con otro término de búsqueda' : 'No tienes cursos asignados en este momento'}
+                            {searchQuery
+                                ? 'Intenta con otro término de búsqueda'
+                                : 'Actualmente no tienes capacitaciones pendientes.'}
                         </p>
                     </div>
                 ) : (

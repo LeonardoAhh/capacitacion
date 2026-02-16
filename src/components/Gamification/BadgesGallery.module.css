@@ -1,16 +1,27 @@
+/* Container */
 .container {
     background: var(--bg-secondary);
     border: 1px solid var(--border-color);
     border-radius: 20px;
     padding: 1.5rem;
     margin-top: 1.5rem;
+    transition: box-shadow 0.3s ease;
 }
 
+/* Header Section */
 .header {
     display: flex;
     justify-content: space-between;
-    align-items: baseline;
+    align-items: center;
+    gap: 1rem;
     margin-bottom: 1.5rem;
+    flex-wrap: wrap;
+}
+
+.headerLeft {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
 }
 
 .header h3 {
@@ -28,20 +39,82 @@
     letter-spacing: 0.05em;
 }
 
+/* Stats Badge */
+.stats {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    background: var(--bg-primary);
+    padding: 0.5rem 0.75rem;
+    border-radius: 12px;
+    border: 1px solid var(--border-color);
+}
+
+.statsNumber {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    line-height: 1;
+}
+
+.statsLabel {
+    font-size: 0.65rem;
+    color: var(--text-tertiary);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    margin-top: 0.125rem;
+}
+
+/* Progress Bar */
+.progressContainer {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 1.5rem;
+}
+
+.progressBar {
+    flex: 1;
+    height: 6px;
+    background: var(--border-color);
+    border-radius: 3px;
+    overflow: hidden;
+}
+
+.progressFill {
+    height: 100%;
+    background: linear-gradient(90deg, #10b981 0%, #059669 100%);
+    border-radius: 3px;
+    box-shadow: 0 0 8px rgba(16, 185, 129, 0.4);
+}
+
+.progressText {
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--text-secondary);
+    min-width: 35px;
+    text-align: right;
+}
+
+/* Grid Layout */
 .grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(60px, 1fr));
-    gap: 1rem;
+    gap: 1.25rem;
 }
 
+/* Badge Card */
 .badgeCard {
     position: relative;
     display: flex;
     flex-direction: column;
     align-items: center;
-    cursor: default;
+    cursor: pointer;
+    user-select: none;
 }
 
+/* Icon Wrapper */
 .iconWrapper {
     width: 60px;
     height: 60px;
@@ -51,19 +124,40 @@
     justify-content: center;
     color: white;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-    transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+    transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    position: relative;
+    z-index: 1;
 }
 
-/* Tailwind utility simulation for gradients since we can't use full Tailwind here easily */
+.iconContent {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+}
+
+/* Unlocked State */
 .unlocked .iconWrapper {
-    /* Fallback if inline style fails */
-    background: linear-gradient(135deg, #667eea, #764ba2);
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
 }
 
-.badgeCard:hover .iconWrapper {
-    transform: scale(1.1);
+.unlocked .iconWrapper::after {
+    content: '';
+    position: absolute;
+    inset: -2px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, rgba(102, 126, 234, 0.3), rgba(118, 75, 162, 0.3));
+    z-index: -1;
+    opacity: 0;
+    transition: opacity 0.3s ease;
 }
 
+.unlocked:hover .iconWrapper::after {
+    opacity: 1;
+}
+
+/* Locked State */
 .locked .iconWrapper {
     background: var(--bg-primary);
     border: 2px dashed var(--border-color);
@@ -73,6 +167,29 @@
 
 .lockIcon {
     opacity: 0.5;
+}
+
+/* Unlock Indicator (checkmark or sparkle) */
+.unlockIndicator {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    width: 20px;
+    height: 20px;
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    border-radius: 50%;
+    border: 2px solid var(--bg-secondary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 2;
+}
+
+.unlockIndicator::before {
+    content: '✓';
+    color: white;
+    font-size: 0.7rem;
+    font-weight: 700;
 }
 
 /* Tooltip */
@@ -85,15 +202,25 @@
     border: 1px solid var(--border-color);
     padding: 0.75rem;
     border-radius: 12px;
-    width: 180px;
+    width: 200px;
     text-align: center;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
     opacity: 0;
     visibility: hidden;
     transition: all 0.2s ease;
-    z-index: 10;
+    z-index: 100;
     pointer-events: none;
     margin-bottom: 0.5rem;
+}
+
+.tooltip::after {
+    content: '';
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    border: 6px solid transparent;
+    border-top-color: var(--bg-primary);
 }
 
 .badgeCard:hover .tooltip {
@@ -113,7 +240,7 @@
     margin: 0;
     font-size: 0.75rem;
     color: var(--text-secondary);
-    line-height: 1.4;
+    line-height: 1.5;
 }
 
 .statusLabel {
@@ -123,4 +250,132 @@
     font-weight: 600;
     color: var(--text-tertiary);
     text-transform: uppercase;
+    letter-spacing: 0.03em;
+}
+
+.dateLabel {
+    display: block;
+    margin-top: 0.5rem;
+    font-size: 0.65rem;
+    color: #10b981;
+    font-weight: 500;
+}
+
+/* Empty State */
+.emptyState {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 3rem 1rem;
+    text-align: center;
+}
+
+.emptyIcon {
+    color: var(--text-tertiary);
+    opacity: 0.3;
+    margin-bottom: 1rem;
+}
+
+.emptyText {
+    margin: 0;
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .grid {
+        grid-template-columns: repeat(auto-fill, minmax(55px, 1fr));
+        gap: 1rem;
+    }
+
+    .iconWrapper {
+        width: 55px;
+        height: 55px;
+    }
+
+    .tooltip {
+        width: 180px;
+    }
+}
+
+@media (max-width: 480px) {
+    .container {
+        padding: 1.25rem;
+    }
+
+    .header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .stats {
+        align-self: stretch;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .statsLabel {
+        margin-top: 0;
+    }
+
+    .grid {
+        grid-template-columns: repeat(auto-fill, minmax(50px, 1fr));
+        gap: 0.875rem;
+    }
+
+    .iconWrapper {
+        width: 50px;
+        height: 50px;
+    }
+
+    .lockIcon {
+        width: 18px;
+        height: 18px;
+    }
+
+    .tooltip {
+        width: 160px;
+        padding: 0.625rem;
+    }
+
+    .badgeTitle {
+        font-size: 0.85rem;
+    }
+
+    .badgeDesc {
+        font-size: 0.7rem;
+    }
+}
+
+/* Dark mode enhancements */
+:global([data-theme="dark"]) .tooltip {
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+}
+
+:global([data-theme="dark"]) .unlocked .iconWrapper {
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+}
+
+/* Accessibility improvements */
+@media (prefers-reduced-motion: reduce) {
+
+    .iconWrapper,
+    .tooltip,
+    .progressFill {
+        transition: none;
+    }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+    .locked .iconWrapper {
+        border-width: 3px;
+    }
+
+    .tooltip {
+        border-width: 2px;
+    }
 }

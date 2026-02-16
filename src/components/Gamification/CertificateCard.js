@@ -1,6 +1,6 @@
 'use client';
 
-import { useRef, useState, useCallback } from 'react';
+import { useRef, useState, useCallback, useMemo } from 'react';
 import { createPortal } from 'react-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Download, X, Award } from 'lucide-react';
@@ -9,12 +9,18 @@ import styles from './CertificateCard.module.css';
 
 // ─── Certificate Preview (Downloadable) ─────────────────────
 function CertificatePreview({ certificate, userName, tier, certRef }) {
-    const tierData = CERTIFICATE_TIERS[tier] || CERTIFICATE_TIERS.bronze;
-    const today = new Date().toLocaleDateString('es-MX', {
-        day: '2-digit',
-        month: 'long',
-        year: 'numeric'
-    });
+    const tierData = useMemo(
+        () => CERTIFICATE_TIERS[tier] || CERTIFICATE_TIERS.bronze,
+        [tier]
+    );
+
+    const today = useMemo(() => {
+        return new Date().toLocaleDateString('es-MX', {
+            day: '2-digit',
+            month: 'long',
+            year: 'numeric'
+        });
+    }, []);
 
     return (
         <div
@@ -36,8 +42,8 @@ function CertificatePreview({ certificate, userName, tier, certRef }) {
                 {/* Header decorative line */}
                 <div className={styles.certHeaderLine} style={{ backgroundColor: tierData.borderColor }} />
 
-                {/* Use text/emoji instead of SVG for html2canvas compatibility */}
-                <div className={styles.certLogo} style={{ color: tierData.accentColor }}>
+                {/* Logo emoji */}
+                <div className={styles.certLogo} style={{ color: tierData.accentColor }} aria-hidden="true">
                     ✦
                 </div>
 
@@ -72,7 +78,11 @@ function CertificatePreview({ certificate, userName, tier, certRef }) {
                         <span className={styles.certFooterLabel}>Fecha</span>
                         <span className={styles.certFooterValue}>{today}</span>
                     </div>
-                    <div className={styles.certSeal} style={{ borderColor: tierData.borderColor, color: tierData.accentColor }}>
+                    <div
+                        className={styles.certSeal}
+                        style={{ borderColor: tierData.borderColor, color: tierData.accentColor }}
+                        aria-hidden="true"
+                    >
                         ★
                     </div>
                     <div className={styles.certFooterItem}>
@@ -112,18 +122,24 @@ function CertificateModal({ certificate, userName, onClose }) {
             });
 
             const link = document.createElement('a');
-            link.download = `certificado_${certificate.id}_${userName.replace(/\s+/g, '_')}.png`;
+            const fileName = `certificado_${certificate.id}_${userName.replace(/\s+/g, '_')}.png`;
+            link.download = fileName;
             link.href = canvas.toDataURL('image/png', 1.0);
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
         } catch (err) {
             console.error('Error al generar certificado:', err);
-            alert('Error al generar el certificado. Intenta de nuevo.');
+            alert('Error al generar el certificado. Por favor, intenta de nuevo.');
         } finally {
             setDownloading(false);
         }
-    }, [certificate, userName, downloading]);
+    }, [certificate.id, userName, downloading]);
+
+    // Prevenir cierre al hacer clic en el contenido del modal
+    const handleContentClick = useCallback((e) => {
+        e.stopPropagation();
+    }, []);
 
     return (
         <motion.div
@@ -132,6 +148,9 @@ function CertificateModal({ certificate, userName, onClose }) {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={onClose}
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="modal-title"
         >
             <motion.div
                 className={styles.modalContent}
@@ -139,11 +158,16 @@ function CertificateModal({ certificate, userName, onClose }) {
                 animate={{ opacity: 1, scale: 1, filter: 'blur(0px)' }}
                 exit={{ opacity: 0, scale: 0.95, filter: 'blur(4px)' }}
                 transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
-                onClick={(e) => e.stopPropagation()}
+                onClick={handleContentClick}
             >
                 <div className={styles.modalHeader}>
-                    <h3>{certificate.title}</h3>
-                    <button className={styles.modalClose} onClick={onClose}>
+                    <h3 id="modal-title">{certificate.title}</h3>
+                    <button
+                        className={styles.modalClose}
+                        onClick={onClose}
+                        aria-label="Cerrar modal"
+                        type="button"
+                    >
                         <X size={20} />
                     </button>
                 </div>
@@ -162,11 +186,13 @@ function CertificateModal({ certificate, userName, onClose }) {
                         className={styles.downloadBtn}
                         onClick={handleDownload}
                         disabled={downloading}
+                        type="button"
+                        aria-busy={downloading}
                     >
                         {downloading ? (
-                            <span className={styles.spinner} />
+                            <span className={styles.spinner} aria-hidden="true" />
                         ) : (
-                            <Download size={18} />
+                            <Download size={18} aria-hidden="true" />
                         )}
                         {downloading ? 'Generando...' : 'Descargar Certificado'}
                     </button>
@@ -177,13 +203,32 @@ function CertificateModal({ certificate, userName, onClose }) {
 }
 
 // ─── Main Export: Certificates Gallery ───────────────────────
-export default function CertificateCard({ certificates, userName }) {
+export default function CertificateCard({ certificates = [], userName = 'Usuario' }) {
     const [selectedCert, setSelectedCert] = useState(null);
 
-    const earned = certificates.filter(c => c.unlocked);
-    const locked = certificates.filter(c => !c.unlocked);
+    // Memoizar división de certificados
+    const { earned, locked } = useMemo(() => {
+        if (!certificates || certificates.length === 0) {
+            return { earned: [], locked: [] };
+        }
+        return {
+            earned: certificates.filter(c => c.unlocked),
+            locked: certificates.filter(c => !c.unlocked)
+        };
+    }, [certificates]);
 
-    if (!certificates || certificates.length === 0) return null;
+    // Handlers memoizados
+    const handleOpenCert = useCallback((cert) => {
+        setSelectedCert(cert);
+    }, []);
+
+    const handleCloseCert = useCallback(() => {
+        setSelectedCert(null);
+    }, []);
+
+    if (!certificates || certificates.length === 0) {
+        return null;
+    }
 
     return (
         <div className={styles.container}>
@@ -191,26 +236,35 @@ export default function CertificateCard({ certificates, userName }) {
                 <div>
                     <h3>Mis Certificados</h3>
                     <span className={styles.subtitle}>
-                        {earned.length} de {certificates.length} desbloqueados
+                        {earned.length} de {certificates.length} desbloqueado{certificates.length !== 1 ? 's' : ''}
                     </span>
                 </div>
-                <Award size={24} className={styles.headerIcon} />
+                <Award size={24} className={styles.headerIcon} aria-hidden="true" />
             </div>
 
             <div className={styles.grid}>
+                {/* Certificados desbloqueados */}
                 {earned.map((cert) => {
                     const tierData = CERTIFICATE_TIERS[cert.tier] || CERTIFICATE_TIERS.bronze;
                     return (
                         <motion.button
                             key={cert.id}
                             className={styles.certCard}
-                            onClick={() => setSelectedCert(cert)}
+                            onClick={() => handleOpenCert(cert)}
                             whileHover={{ y: -4, transition: { duration: 0.2 } }}
                             whileTap={{ scale: 0.97 }}
                             style={{ '--cert-color': tierData.borderColor }}
+                            type="button"
+                            aria-label={`Ver certificado ${cert.title}`}
                         >
-                            <div className={styles.certCardIcon} style={{ background: tierData.bgGradient, borderColor: tierData.borderColor }}>
-                                <Award size={24} style={{ color: tierData.accentColor }} />
+                            <div
+                                className={styles.certCardIcon}
+                                style={{
+                                    background: tierData.bgGradient,
+                                    borderColor: tierData.borderColor
+                                }}
+                            >
+                                <Award size={24} style={{ color: tierData.accentColor }} aria-hidden="true" />
                             </div>
                             <div className={styles.certCardInfo}>
                                 <h4>{cert.title}</h4>
@@ -222,10 +276,17 @@ export default function CertificateCard({ certificates, userName }) {
                     );
                 })}
 
+                {/* Certificados bloqueados */}
                 {locked.map((cert) => (
-                    <div key={cert.id} className={`${styles.certCard} ${styles.certCardLocked}`}>
+                    <div
+                        key={cert.id}
+                        className={`${styles.certCard} ${styles.certCardLocked}`}
+                        role="button"
+                        aria-disabled="true"
+                        aria-label={`Certificado ${cert.title} bloqueado`}
+                    >
                         <div className={styles.certCardIconLocked}>
-                            <Award size={24} />
+                            <Award size={24} aria-hidden="true" />
                         </div>
                         <div className={styles.certCardInfo}>
                             <h4>{cert.title}</h4>
@@ -242,7 +303,7 @@ export default function CertificateCard({ certificates, userName }) {
                         <CertificateModal
                             certificate={selectedCert}
                             userName={userName}
-                            onClose={() => setSelectedCert(null)}
+                            onClose={handleCloseCert}
                         />
                     )}
                 </AnimatePresence>,
