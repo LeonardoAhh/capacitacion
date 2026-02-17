@@ -1,7 +1,7 @@
 import { AuthProvider } from '@/contexts/AuthContext';
 import { ThemeProvider } from '@/contexts/ThemeContext';
 import { ToastProvider } from '@/components/ui/Toast/Toast';
-import { BackgroundLines } from '@/components/ui/BackgroundLines';
+import { OfflineIndicator, UpdatePrompt } from '@/components/pwa';
 import '@/styles/globals.css';
 import { Inter } from 'next/font/google';
 
@@ -55,8 +55,9 @@ export default function RootLayout({ children }) {
                 <ThemeProvider>
                     <AuthProvider>
                         <ToastProvider>
-                            {/* Background Lines - Removed to avoid duplication with Dashboard */}
-
+                            {/* PWA Components */}
+                            <OfflineIndicator />
+                            <UpdatePrompt />
 
                             {/* Main content */}
                             <div style={{ position: 'relative', zIndex: 10 }}>

@@ -1,64 +1,111 @@
-import { useState, useEffect } from 'react';
+'use client';
+
+import { useState, useEffect, useCallback } from 'react';
+
+const NOTIFICATION_STORAGE_KEY = 'pwa_notifications_enabled';
 
 export function useNotifications() {
     const [permission, setPermission] = useState('default');
     const [registration, setRegistration] = useState(null);
+    const [isSupported, setIsSupported] = useState(false);
 
     useEffect(() => {
-        if (typeof window !== 'undefined' && 'serviceWorker' in navigator && 'Notification' in window) {
-            // Register SW if not already (or just get reg)
-            navigator.serviceWorker.register('/sw.js')
-                .then(reg => {
-                    console.log('SW registred:', reg);
-                    setRegistration(reg);
-                })
-                .catch(err => console.error('SW reg failed:', err));
+        if (typeof window === 'undefined') return;
 
-            setPermission(Notification.permission);
-        }
+        const supported = 'serviceWorker' in navigator && 'Notification' in window;
+        setIsSupported(supported);
+
+        if (!supported) return;
+
+        setPermission(Notification.permission);
+
+        navigator.serviceWorker.ready
+            .then(reg => {
+                setRegistration(reg);
+            })
+            .catch(err => {
+                console.error('SW ready failed:', err);
+            });
     }, []);
 
-    const requestPermission = async () => {
-        if (!('Notification' in window)) {
+    const requestPermission = useCallback(async () => {
+        if (!isSupported) {
             console.warn('Notifications not supported');
             return false;
         }
 
-        const result = await Notification.requestPermission();
-        setPermission(result);
-        return result === 'granted';
-    };
+        try {
+            const result = await Notification.requestPermission();
+            setPermission(result);
 
-    const sendNotification = (title, options = {}) => {
-        if (permission !== 'granted') return;
+            if (result === 'granted') {
+                localStorage.setItem(NOTIFICATION_STORAGE_KEY, 'true');
+            }
 
-        // Try using SW registration first (for persistent notifications on mobile)
-        if (registration && registration.showNotification) {
-            registration.showNotification(title, {
-                icon: '/icon.svg',
-                badge: '/icon.svg',
-                vibrate: [200, 100, 200],
-                ...options
-            });
-        } else {
-            // Fallback to standard Notification API
-            // Filter out options not supported by standard Notification API
-            const { actions, vibrate, badge, renotify, tag, ...safeOptions } = options;
+            return result === 'granted';
+        } catch (error) {
+            console.error('Error requesting notification permission:', error);
+            return false;
+        }
+    }, [isSupported]);
 
+    const sendNotification = useCallback((title, options = {}) => {
+        if (permission !== 'granted') return null;
+
+        const defaultOptions = {
+            icon: '/web-app-manifest-192x192.png',
+            badge: '/web-app-manifest-192x192.png',
+            vibrate: [200, 100, 200],
+            requireInteraction: false,
+            silent: false,
+        };
+
+        const mergedOptions = { ...defaultOptions, ...options };
+
+        if (registration?.showNotification) {
             try {
-                new Notification(title, {
-                    icon: '/icon.svg',
-                    ...safeOptions
-                });
+                registration.showNotification(title, mergedOptions);
+                return true;
             } catch (error) {
-                console.warn('Notification fallback failed:', error);
+                console.warn('SW notification failed:', error);
             }
         }
-    };
+
+        try {
+            const { vibrate, requireInteraction, actions, ...safeOptions } = mergedOptions;
+            new Notification(title, safeOptions);
+            return true;
+        } catch (error) {
+            console.warn('Notification fallback failed:', error);
+            return false;
+        }
+    }, [permission, registration]);
+
+    const scheduleNotification = useCallback((title, options = {}, delayMs) => {
+        if (permission !== 'granted') return null;
+
+        const timeoutId = setTimeout(() => {
+            sendNotification(title, options);
+        }, delayMs);
+
+        return () => clearTimeout(timeoutId);
+    }, [permission, sendNotification]);
+
+    const isEnabled = useCallback(() => {
+        return permission === 'granted' && localStorage.getItem(NOTIFICATION_STORAGE_KEY) === 'true';
+    }, [permission]);
+
+    const disableNotifications = useCallback(() => {
+        localStorage.removeItem(NOTIFICATION_STORAGE_KEY);
+    }, []);
 
     return {
         permission,
+        isSupported,
         requestPermission,
-        sendNotification
+        sendNotification,
+        scheduleNotification,
+        isEnabled,
+        disableNotifications,
     };
 }

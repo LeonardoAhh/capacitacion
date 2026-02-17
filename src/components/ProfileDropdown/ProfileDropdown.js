@@ -60,7 +60,7 @@ export default function ProfileDropdown({ className = '', ...props }) {
             href: "/profile",
             icon: <User className={styles.menuItemIcon} />,
         },
-    ], [profileData.subscription]);
+    ], []);
 
     // No renderizar hasta que el componente esté montado (evitar hydration mismatch)
     if (!isMounted) {

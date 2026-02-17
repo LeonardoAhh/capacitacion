@@ -1,51 +1,77 @@
-import { useState, useCallback, useRef, useEffect } from 'react';
+'use client';
+
+import { useState, useCallback, useRef, useEffect, useMemo } from 'react';
 import { db } from '@/lib/firebase';
-import { collection, query, orderBy, limit, startAfter, getDocs } from 'firebase/firestore';
+import {
+    collection,
+    query,
+    orderBy,
+    limit,
+    startAfter,
+    getDocs,
+} from 'firebase/firestore';
 
-const DEFAULT_ITEMS_PER_PAGE = 4;
+const DEFAULT_ITEMS_PER_PAGE = 10;
+const MAX_SEARCH_RESULTS = 100;
 
-/**
- * Hook de paginación para empleados con cursores de Firestore.
- * Maneja navegación next/prev con stack de cursores.
- *
- * @param {number} itemsPerPage - Items por página
- * @returns {object} Estado de paginación y funciones de navegación
- */
 export function useEmployeePagination(itemsPerPage = DEFAULT_ITEMS_PER_PAGE) {
     const [employees, setEmployees] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [page, setPage] = useState(1);
     const [hasMore, setHasMore] = useState(true);
+    const [hasPrevious, setHasPrevious] = useState(false);
+    const [totalCount, setTotalCount] = useState(null);
 
-    // Cursors to track pagination
     const lastVisibleRef = useRef(null);
     const firstVisibleRef = useRef(null);
     const cursorsStackRef = useRef([]);
+    const abortControllerRef = useRef(null);
+    const itemsPerPageRef = useRef(itemsPerPage);
+
+    useEffect(() => {
+        itemsPerPageRef.current = itemsPerPage;
+    }, [itemsPerPage]);
 
     const loadEmployees = useCallback(async (direction = 'initial', searchTerm = '') => {
+        if (abortControllerRef.current) {
+            abortControllerRef.current.abort();
+        }
+
+        abortControllerRef.current = new AbortController();
+        const { signal } = abortControllerRef.current;
+        const currentItemsPerPage = itemsPerPageRef.current;
+
         setLoading(true);
         setError(null);
+
         try {
             const employeesRef = collection(db, 'employees');
             const baseConstraints = [orderBy('employeeId', 'asc')];
             let q;
 
             if (searchTerm) {
-                // Search: load more records and filter locally
                 const searchUpper = searchTerm.toUpperCase().trim();
-                const allDocsQuery = query(
+
+                if (!searchUpper) {
+                    loadEmployees('initial', '');
+                    return;
+                }
+
+                q = query(
                     employeesRef,
-                    orderBy('employeeId', 'asc'),
-                    limit(200)
+                    orderBy('name'),
+                    limit(MAX_SEARCH_RESULTS)
                 );
 
-                const allSnapshot = await getDocs(allDocsQuery);
+                const snapshot = await getDocs(q);
 
-                if (!allSnapshot.empty) {
-                    const allEmployees = allSnapshot.docs.map(d => ({
+                if (signal.aborted) return;
+
+                if (!snapshot.empty) {
+                    const allEmployees = snapshot.docs.map(d => ({
                         id: d.id,
-                        ...d.data()
+                        ...d.data(),
                     }));
 
                     const filtered = allEmployees.filter(emp => {
@@ -53,54 +79,88 @@ export function useEmployeePagination(itemsPerPage = DEFAULT_ITEMS_PER_PAGE) {
                         const empId = (emp.employeeId || '').toString().toUpperCase();
                         const position = (emp.position || '').toUpperCase();
                         const department = (emp.department || '').toUpperCase();
+                        const curp = (emp.curp || '').toUpperCase();
 
-                        return name.includes(searchUpper) ||
+                        return (
+                            name.includes(searchUpper) ||
                             empId.includes(searchUpper) ||
                             position.includes(searchUpper) ||
-                            department.includes(searchUpper);
+                            department.includes(searchUpper) ||
+                            curp.includes(searchUpper)
+                        );
                     });
 
-                    setEmployees(filtered.slice(0, itemsPerPage));
-                    setHasMore(filtered.length > itemsPerPage);
+                    setEmployees(filtered.slice(0, currentItemsPerPage));
+                    setHasMore(filtered.length > currentItemsPerPage);
+                    setHasPrevious(false);
                     setPage(1);
+                    setTotalCount(filtered.length);
                     cursorsStackRef.current = [];
+                    lastVisibleRef.current = null;
+                    firstVisibleRef.current = null;
                 } else {
                     setEmployees([]);
                     setHasMore(false);
+                    setHasPrevious(false);
                     setPage(1);
+                    setTotalCount(0);
                 }
+
                 setLoading(false);
                 return;
             }
 
-            // Pagination Logic
-            if (direction === 'next' && lastVisibleRef.current) {
-                q = query(employeesRef, ...baseConstraints, startAfter(lastVisibleRef.current), limit(itemsPerPage));
-            } else if (direction === 'prev' && cursorsStackRef.current.length > 1) {
-                cursorsStackRef.current.pop();
-                cursorsStackRef.current.pop();
+            switch (direction) {
+                case 'next':
+                    if (!lastVisibleRef.current) {
+                        q = query(employeesRef, ...baseConstraints, limit(currentItemsPerPage));
+                    } else {
+                        q = query(
+                            employeesRef,
+                            ...baseConstraints,
+                            startAfter(lastVisibleRef.current),
+                            limit(currentItemsPerPage)
+                        );
+                    }
+                    break;
 
-                const previousCursor = cursorsStackRef.current[cursorsStackRef.current.length - 1];
+                case 'prev':
+                    if (cursorsStackRef.current.length > 1) {
+                        cursorsStackRef.current.pop();
+                        const previousCursor = cursorsStackRef.current[cursorsStackRef.current.length - 1];
 
-                if (previousCursor) {
-                    q = query(employeesRef, ...baseConstraints, startAfter(previousCursor), limit(itemsPerPage));
-                } else {
-                    q = query(employeesRef, ...baseConstraints, limit(itemsPerPage));
-                }
-            } else {
-                // Initial load
-                q = query(employeesRef, ...baseConstraints, limit(itemsPerPage));
-                cursorsStackRef.current = [];
-                setPage(1);
+                        if (previousCursor) {
+                            q = query(
+                                employeesRef,
+                                ...baseConstraints,
+                                startAfter(previousCursor),
+                                limit(currentItemsPerPage)
+                            );
+                        } else {
+                            q = query(employeesRef, ...baseConstraints, limit(currentItemsPerPage));
+                        }
+                    } else {
+                        q = query(employeesRef, ...baseConstraints, limit(currentItemsPerPage));
+                    }
+                    break;
+
+                default:
+                    q = query(employeesRef, ...baseConstraints, limit(currentItemsPerPage));
+                    cursorsStackRef.current = [];
+                    setPage(1);
             }
 
             const snapshot = await getDocs(q);
 
+            if (signal.aborted) return;
+
             if (snapshot.empty) {
-                if (direction === 'initial' || direction === 'search') {
+                if (direction === 'initial') {
                     setEmployees([]);
                     setHasMore(false);
-                } else {
+                    setHasPrevious(false);
+                    setTotalCount(0);
+                } else if (direction === 'next') {
                     setHasMore(false);
                 }
                 setLoading(false);
@@ -110,51 +170,95 @@ export function useEmployeePagination(itemsPerPage = DEFAULT_ITEMS_PER_PAGE) {
             const firstDoc = snapshot.docs[0];
             const lastDoc = snapshot.docs[snapshot.docs.length - 1];
 
+            if (direction === 'next') {
+                cursorsStackRef.current.push(firstDoc);
+            }
+
             lastVisibleRef.current = lastDoc;
             firstVisibleRef.current = firstDoc;
 
-            setHasMore(snapshot.docs.length === itemsPerPage);
+            const hasMoreData = snapshot.docs.length === currentItemsPerPage;
+            setHasMore(hasMoreData);
+            setHasPrevious(cursorsStackRef.current.length > 0);
 
             const employeesList = snapshot.docs.map(d => ({
                 id: d.id,
-                ...d.data()
+                ...d.data(),
             }));
+
             setEmployees(employeesList);
 
-            if (direction === 'next') setPage(p => p + 1);
-            if (direction === 'prev') setPage(p => Math.max(1, p - 1));
+            if (direction === 'next') {
+                setPage(p => p + 1);
+            } else if (direction === 'prev') {
+                setPage(p => Math.max(1, p - 1));
+            }
 
         } catch (err) {
+            if (signal.aborted) return;
+
             console.error('Error loading employees:', err);
-            setError(err.message);
+            setError(err.message || 'Error al cargar empleados');
         } finally {
-            setLoading(false);
+            if (!signal.aborted) {
+                setLoading(false);
+            }
         }
-    }, [itemsPerPage]);
+    }, []);
 
     const nextPage = useCallback(() => {
-        if (!hasMore) return;
-        cursorsStackRef.current.push(lastVisibleRef.current);
-        loadEmployees('next');
-    }, [hasMore, loadEmployees]);
+        if (hasMore && !loading) {
+            loadEmployees('next');
+        }
+    }, [hasMore, loading, loadEmployees]);
 
     const prevPage = useCallback(() => {
-        if (page <= 1) return;
-        loadEmployees('prev');
-    }, [page, loadEmployees]);
+        if (!loading) {
+            loadEmployees('prev');
+        }
+    }, [loading, loadEmployees]);
+
+    const goToPage = useCallback((pageNumber) => {
+        if (pageNumber < 1 || loading) return;
+
+        if (pageNumber === 1) {
+            cursorsStackRef.current = [];
+            lastVisibleRef.current = null;
+            loadEmployees('initial');
+        } else {
+            setPage(pageNumber);
+            loadEmployees('next');
+        }
+    }, [loading, loadEmployees]);
 
     const refresh = useCallback(() => {
+        cursorsStackRef.current = [];
+        lastVisibleRef.current = null;
+        firstVisibleRef.current = null;
         loadEmployees('initial');
     }, [loadEmployees]);
 
-    // Reset pagination when itemsPerPage changes
     useEffect(() => {
-        setPage(1);
+        cursorsStackRef.current = [];
         lastVisibleRef.current = null;
         firstVisibleRef.current = null;
-        cursorsStackRef.current = [];
         loadEmployees('initial');
     }, [itemsPerPage, loadEmployees]);
+
+    useEffect(() => {
+        return () => {
+            if (abortControllerRef.current) {
+                abortControllerRef.current.abort();
+            }
+        };
+    }, []);
+
+    const paginationState = useMemo(() => ({
+        canGoNext: hasMore && !loading,
+        canGoPrev: cursorsStackRef.current.length > 0 && !loading,
+        isFirstPage: cursorsStackRef.current.length === 0,
+        isLastPage: !hasMore,
+    }), [hasMore, loading]);
 
     return {
         employees,
@@ -163,9 +267,13 @@ export function useEmployeePagination(itemsPerPage = DEFAULT_ITEMS_PER_PAGE) {
         error,
         page,
         hasMore,
+        hasPrevious,
+        totalCount,
         nextPage,
         prevPage,
+        goToPage,
         refresh,
         loadEmployees,
+        ...paginationState,
     };
 }

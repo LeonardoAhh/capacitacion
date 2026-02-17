@@ -1,7 +1,26 @@
 'use client';
 
-import { AlertTriangle } from 'lucide-react';
+import { useState, useEffect, useRef } from 'react';
+import { AlertTriangle, AlertCircle, Info, Trash2 } from 'lucide-react';
 import styles from './ConfirmDialog.module.css';
+
+const VARIANT_CONFIG = {
+    danger: {
+        Icon: Trash2,
+        iconColor: 'var(--color-danger)',
+        confirmClass: 'danger',
+    },
+    warning: {
+        Icon: AlertTriangle,
+        iconColor: 'var(--color-warning)',
+        confirmClass: 'warning',
+    },
+    info: {
+        Icon: Info,
+        iconColor: 'var(--color-info)',
+        confirmClass: 'info',
+    },
+};
 
 export default function ConfirmDialog({
     isOpen,
@@ -11,15 +30,49 @@ export default function ConfirmDialog({
     cancelText = 'Cancelar',
     onConfirm,
     onCancel,
-    variant = 'danger' // 'danger' | 'warning' | 'info'
+    variant = 'danger',
+    requireConfirmation = false,
+    confirmationText = '',
+    loading = false,
 }) {
-    if (!isOpen) return null;
+    const [confirmationInput, setConfirmationInput] = useState('');
+    const inputRef = useRef(null);
 
-    const handleKeyDown = (e) => {
-        if (e.key === 'Escape') {
-            onCancel();
+    const config = VARIANT_CONFIG[variant] || VARIANT_CONFIG.danger;
+    const Icon = config.Icon;
+
+    const canConfirm = requireConfirmation
+        ? confirmationInput === confirmationText
+        : true;
+
+    useEffect(() => {
+        if (isOpen && requireConfirmation && inputRef.current) {
+            inputRef.current.focus();
         }
-    };
+        if (!isOpen) {
+            setConfirmationInput('');
+        }
+    }, [isOpen, requireConfirmation]);
+
+    useEffect(() => {
+        const handleKeyDown = (e) => {
+            if (e.key === 'Escape' && isOpen) {
+                onCancel?.();
+            }
+        };
+
+        if (isOpen) {
+            document.addEventListener('keydown', handleKeyDown);
+            document.body.style.overflow = 'hidden';
+        }
+
+        return () => {
+            document.removeEventListener('keydown', handleKeyDown);
+            document.body.style.overflow = '';
+        };
+    }, [isOpen, onCancel]);
+
+    if (!isOpen) return null;
 
     return (
         <>
@@ -29,10 +82,10 @@ export default function ConfirmDialog({
                 role="alertdialog"
                 aria-labelledby="dialog-title"
                 aria-describedby="dialog-description"
-                onKeyDown={handleKeyDown}
+                aria-modal="true"
             >
                 <div className={`${styles.iconContainer} ${styles[variant]}`}>
-                    <AlertTriangle size={32} />
+                    <Icon size={32} style={{ color: config.iconColor }} />
                 </div>
 
                 <h2 id="dialog-title" className={styles.title}>
@@ -43,19 +96,42 @@ export default function ConfirmDialog({
                     {message}
                 </p>
 
+                {requireConfirmation && (
+                    <div className={styles.confirmationWrapper}>
+                        <p className={styles.confirmationHint}>
+                            Escribe <strong>{confirmationText}</strong> para confirmar:
+                        </p>
+                        <input
+                            ref={inputRef}
+                            type="text"
+                            value={confirmationInput}
+                            onChange={(e) => setConfirmationInput(e.target.value)}
+                            className={styles.confirmationInput}
+                            placeholder={confirmationText}
+                            autoComplete="off"
+                        />
+                    </div>
+                )}
+
                 <div className={styles.actions}>
                     <button
                         onClick={onCancel}
                         className={styles.cancelBtn}
-                        autoFocus
+                        disabled={loading}
                     >
                         {cancelText}
                     </button>
                     <button
                         onClick={onConfirm}
-                        className={`${styles.confirmBtn} ${styles[variant]}`}
+                        className={`${styles.confirmBtn} ${styles[config.confirmClass]}`}
+                        disabled={!canConfirm || loading}
+                        aria-busy={loading}
                     >
-                        {confirmText}
+                        {loading ? (
+                            <span className={styles.spinner} aria-hidden="true" />
+                        ) : (
+                            confirmText
+                        )}
                     </button>
                 </div>
             </div>
