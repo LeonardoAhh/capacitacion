@@ -74,7 +74,11 @@
             rgba(0, 0, 0, 0.45) 100%);
 }
 
-[data-theme="light"] .overlay {
+[data-theme="light"] .overlay,
+[data-theme="vinoplastic"] .overlay,
+[data-theme="forest"] .overlay,
+[data-theme="ocean"] .overlay,
+[data-theme="sunset"] .overlay {
     background: radial-gradient(ellipse 80% 80% at 50% 50%,
             transparent 30%,
             rgba(255, 255, 255, 0.25) 100%);
@@ -127,6 +131,7 @@
     font-size: clamp(2.75rem, 8.5vw, 5.5rem);
     font-weight: 900;
     letter-spacing: -0.06em;
+    padding-top: 0.1em;
     background: linear-gradient(160deg,
             #ffffff 0%,
             #ffffff 55%,
@@ -138,7 +143,11 @@
     will-change: clip-path, opacity;
 }
 
-[data-theme="light"] .mainTitle {
+[data-theme="light"] .mainTitle,
+[data-theme="vinoplastic"] .mainTitle,
+[data-theme="forest"] .mainTitle,
+[data-theme="ocean"] .mainTitle,
+[data-theme="sunset"] .mainTitle {
     background: linear-gradient(160deg, #0f172a 0%, #0f172a 50%, #475569 100%);
     -webkit-background-clip: text;
     background-clip: text;
@@ -290,7 +299,11 @@
         0 2px 6px rgba(0, 0, 0, 0.25);
 }
 
-[data-theme="light"] .secondaryButton {
+[data-theme="light"] .secondaryButton,
+[data-theme="vinoplastic"] .secondaryButton,
+[data-theme="forest"] .secondaryButton,
+[data-theme="ocean"] .secondaryButton,
+[data-theme="sunset"] .secondaryButton {
     background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
 }
 

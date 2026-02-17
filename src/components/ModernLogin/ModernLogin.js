@@ -1,7 +1,7 @@
 "use client";
 
 import { motion, AnimatePresence } from "framer-motion";
-import { Mail, Lock, Shield } from "lucide-react";
+import { Mail, Lock, Shield, AlertTriangle } from "lucide-react";
 import { useId } from "react";
 import baseStyles from '../ui/LoginBase/LoginBase.module.css';
 import componentStyles from './ModernLogin.module.css';
@@ -21,7 +21,9 @@ export default function ModernLogin({
     loading,
     onSubmit,
     onGoogleSignIn,
-    isSuccess
+    isSuccess,
+    onSuccessComplete,
+    rateLimitInfo,
 }) {
     const emailId = useId();
     const passwordId = useId();
@@ -55,6 +57,7 @@ export default function ModernLogin({
                                 "Preparando entorno...",
                                 "¡Bienvenido!"
                             ]}
+                            onComplete={onSuccessComplete}
                         />
                     </motion.div>
                 ) : (
@@ -82,6 +85,22 @@ export default function ModernLogin({
                             )}
                         </AnimatePresence>
 
+                        {rateLimitInfo?.isBlocked && (
+                            <motion.div
+                                className={styles.rateLimitBanner}
+                                initial={{ opacity: 0, y: -8 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                transition={{ duration: 0.3 }}
+                            >
+                                <AlertTriangle size={18} aria-hidden="true" />
+                                <span>
+                                    Demasiados intentos. Espera{' '}
+                                    <strong>{rateLimitInfo.remainingSeconds}s</strong>{' '}
+                                    para intentar de nuevo.
+                                </span>
+                            </motion.div>
+                        )}
+
                         <form onSubmit={onSubmit} className={styles.form}>
                             <motion.div variants={FADE_UP_LOGIN} custom={1} className={styles.inputGroup}>
                                 <label htmlFor={emailId} className={styles.label}>Correo Electrónico</label>
@@ -94,7 +113,7 @@ export default function ModernLogin({
                                         onChange={(e) => setEmail(e.target.value)}
                                         className={styles.input}
                                         required
-                                        disabled={loading}
+                                        disabled={loading || rateLimitInfo?.isBlocked}
                                         autoComplete="email"
                                         aria-label="Correo Electrónico"
                                         placeholder="correo@ejemplo.com"
@@ -113,7 +132,7 @@ export default function ModernLogin({
                                         onChange={(e) => setPassword(e.target.value)}
                                         className={styles.input}
                                         required
-                                        disabled={loading}
+                                        disabled={loading || rateLimitInfo?.isBlocked}
                                         autoComplete="current-password"
                                         aria-label="Contraseña"
                                         placeholder="••••••••"
@@ -126,7 +145,7 @@ export default function ModernLogin({
                                 custom={3}
                                 type="submit"
                                 className={styles.submitButton}
-                                disabled={loading}
+                                disabled={loading || rateLimitInfo?.isBlocked}
                                 whileHover={{ scale: 1.02 }}
                                 whileTap={{ scale: 0.98 }}
                                 aria-busy={loading}
@@ -152,7 +171,7 @@ export default function ModernLogin({
                                 type="button"
                                 onClick={onGoogleSignIn}
                                 className={styles.googleButton}
-                                disabled={loading}
+                                disabled={loading || rateLimitInfo?.isBlocked}
                                 whileHover={{ scale: 1.02 }}
                                 whileTap={{ scale: 0.98 }}
                             >

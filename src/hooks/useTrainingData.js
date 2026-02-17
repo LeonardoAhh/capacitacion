@@ -1,7 +1,9 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
-import { collection, query, where, getDocs, doc, getDoc, updateDoc } from 'firebase/firestore';
+import { doc, updateDoc } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
+import { fetchFreshProfile, fetchEmployeeCourses } from '@/lib/trainingDataService';
+import { destroySession } from '@/lib/sessionApi';
 
 export function useTrainingData() {
     const router = useRouter();
@@ -25,7 +27,7 @@ export function useTrainingData() {
     }, []);
 
     useEffect(() => {
-        const fetchData = async () => {
+        const loadData = async () => {
             if (typeof window === 'undefined') return;
 
             const session = sessionStorage.getItem('training_session');
@@ -34,66 +36,21 @@ export function useTrainingData() {
                 return;
             }
 
-            // 1. Initial Load from Session
             const userData = JSON.parse(session);
             setUser(userData);
 
             try {
-                // 2. Fetch fresh Profile Data (Avatar, Nickname, Theme)
-                // This ensures we have the latest data even if session is stale
-                const userDocRef = doc(db, 'employees_programacion', userData.id);
-                const userDocSnap = await getDoc(userDocRef);
+                // Fetch fresh profile from service
+                const currentProfile = await fetchFreshProfile(userData);
 
-                let currentProfile = { ...userData };
-
-                if (userDocSnap.exists()) {
-                    const freshData = userDocSnap.data();
-                    currentProfile = {
-                        ...currentProfile,
-                        nickname: freshData.nickname || currentProfile.nickname,
-                        avatar: freshData.avatar || currentProfile.avatar,
-                        theme: freshData.theme || currentProfile.theme
-                    };
-
-                    // Update local state and session if changed
-                    if (JSON.stringify(currentProfile) !== JSON.stringify(userData)) {
-                        setUser(currentProfile);
-                        sessionStorage.setItem('training_session', JSON.stringify(currentProfile));
-                    }
+                // Update local state and session if changed
+                if (JSON.stringify(currentProfile) !== JSON.stringify(userData)) {
+                    setUser(currentProfile);
+                    sessionStorage.setItem('training_session', JSON.stringify(currentProfile));
                 }
 
-                // 3. Fetch Courses using the (potentially updated) ID
-                const progRef = collection(db, 'programacion');
-                const q = query(progRef, where('employeeId', '==', currentProfile.id));
-                const progSnap = await getDocs(q);
-
-                if (progSnap.empty) {
-                    setCourses([]);
-                    setLoading(false);
-                    return;
-                }
-
-                // Optimization: In a real app with many courses, request only needed IDs or use limited batches.
-                // For now, keeping the Promise.all pattern but it's isolated here.
-                const coursesData = await Promise.all(progSnap.docs.map(async (pDoc) => {
-                    const progData = pDoc.data();
-                    // We could implement a cache here if needed, but for now direct fetch
-                    const courseDoc = await getDoc(doc(db, 'cursos_induccion', progData.courseId));
-                    const courseDetail = courseDoc.exists() ? courseDoc.data() : {
-                        nombre: 'Curso no encontrado',
-                        descripcion: ''
-                    };
-
-                    return {
-                        id: progData.courseId,
-                        assignmentId: pDoc.id,
-                        ...courseDetail,
-                        title: courseDetail.nombre || 'Sin Título',
-                        description: courseDetail.descripcion || '',
-                        ...progData
-                    };
-                }));
-
+                // Fetch courses from service
+                const coursesData = await fetchEmployeeCourses(currentProfile.id);
                 setCourses(coursesData);
                 setStats(calculateStats(coursesData));
             } catch (error) {
@@ -103,7 +60,7 @@ export function useTrainingData() {
             }
         };
 
-        fetchData();
+        loadData();
     }, [router, calculateStats]);
 
     const markAsViewed = useCallback(async (course) => {
@@ -126,7 +83,6 @@ export function useTrainingData() {
                 });
             } catch (error) {
                 console.error('Error updating status:', error);
-                // Revert optimistic update if needed, but for now keeping error log
             }
         }
     }, [calculateStats]);
@@ -158,16 +114,10 @@ export function useTrainingData() {
     const updateTheme = useCallback(async (newTheme) => {
         if (!user) return;
 
-        // Optimistic update handled by ThemeContext or local state if needed
         try {
-            // Check if user is in 'employees_programacion' or just session
-            // We assume 'employees_programacion' based on login logic
             const userRef = doc(db, 'employees_programacion', user.id);
-            await updateDoc(userRef, {
-                theme: newTheme
-            });
+            await updateDoc(userRef, { theme: newTheme });
 
-            // Update session storage to persist across reloads without refetching immediately
             const updatedUser = { ...user, theme: newTheme };
             setUser(updatedUser);
             sessionStorage.setItem('training_session', JSON.stringify(updatedUser));
@@ -181,9 +131,7 @@ export function useTrainingData() {
 
         try {
             const userRef = doc(db, 'employees_programacion', user.id);
-            await updateDoc(userRef, {
-                avatar: newAvatarUrl
-            });
+            await updateDoc(userRef, { avatar: newAvatarUrl });
 
             const updatedUser = { ...user, avatar: newAvatarUrl };
             setUser(updatedUser);
@@ -198,9 +146,7 @@ export function useTrainingData() {
 
         try {
             const userRef = doc(db, 'employees_programacion', user.id);
-            await updateDoc(userRef, {
-                nickname: newNickname
-            });
+            await updateDoc(userRef, { nickname: newNickname });
 
             const updatedUser = { ...user, nickname: newNickname };
             setUser(updatedUser);
@@ -210,8 +156,9 @@ export function useTrainingData() {
         }
     }, [user]);
 
-    const logout = useCallback(() => {
+    const logout = useCallback(async () => {
         if (typeof window !== 'undefined') {
+            await destroySession();
             sessionStorage.removeItem('training_session');
             router.push('/training/login');
         }

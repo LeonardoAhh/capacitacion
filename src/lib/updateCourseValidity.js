@@ -1,6 +1,6 @@
 import { db } from '@/lib/firebase';
 import { collection, getDocs, doc, writeBatch } from 'firebase/firestore';
-import courseRenewalData from '@/data/coursees.json';
+import courseRenewalData from '@/data/courses.json';
 
 // Normalize string for comparison
 const normalize = (str) => str?.trim().toUpperCase() || '';

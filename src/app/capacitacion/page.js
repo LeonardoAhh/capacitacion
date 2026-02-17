@@ -1,19 +1,19 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useEffect } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useRouter } from 'next/navigation';
 import ProfileDropdown from '@/components/ProfileDropdown/ProfileDropdown';
 import Link from 'next/link';
 import { useToast } from '@/components/ui/Toast/Toast';
-import { recalculateComplianceFromFirestore } from '@/lib/seedHistorial';
+import { useComplianceRecalc } from '@/hooks/useComplianceRecalc';
 import styles from './page.module.css';
 
 export default function CapacitacionPage() {
     const { user, loading: authLoading } = useAuth();
     const router = useRouter();
-    const [isRecalculating, setIsRecalculating] = useState(false);
     const { toast } = useToast();
+    const { isRecalculating, handleRecalculateCompliance } = useComplianceRecalc(toast);
 
     // Auth Protection
     useEffect(() => {
@@ -31,23 +31,6 @@ export default function CapacitacionPage() {
             </div>
         );
     }
-
-    // Function preserved for potential future administrative use
-    const handleRecalculateCompliance = async () => {
-        setIsRecalculating(true);
-        try {
-            const result = await recalculateComplianceFromFirestore();
-            if (result.success) {
-                toast.success('Cumplimiento Recalculado', `Se procesaron ${result.processed} empleados`);
-            } else {
-                toast.error('Error', result.error);
-            }
-        } catch (error) {
-            toast.error('Error', error.message);
-        } finally {
-            setIsRecalculating(false);
-        }
-    };
 
     const modules = [
         {

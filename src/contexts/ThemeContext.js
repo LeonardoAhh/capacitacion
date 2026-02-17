@@ -14,13 +14,17 @@ export const THEMES = {
     vinoplastic: { name: 'Blue', color: '#eef2ff', class: 'vinoplastic' },
     forest: { name: 'Forest', color: '#f0fdf4', class: 'forest' },
     ocean: { name: 'Ocean', color: '#f0f9ff', class: 'ocean' },
-    sunset: { name: 'Sunset', color: '#fff7ed', class: 'sunset' }
+    sunset: { name: 'Sunset', color: '#fff7ed', class: 'sunset' },
+    'gradient-sunset': { name: 'Sunset Gradient', color: '#ff6b35', class: 'gradient-sunset' },
+    'gradient-ocean': { name: 'Ocean Gradient', color: '#0ea5e9', class: 'gradient-ocean' },
 };
 
 export function ThemeProvider({ children }) {
     const [theme, setThemeState] = useState('light');
 
     const updateThemeColor = (newTheme) => {
+        if (typeof document === 'undefined') return;
+
         const themeConfig = THEMES[newTheme] || THEMES.light;
         const color = themeConfig.color;
 
@@ -37,14 +41,17 @@ export function ThemeProvider({ children }) {
         if (!THEMES[newTheme]) return;
 
         setThemeState(newTheme);
-        localStorage.setItem('theme', newTheme);
-        document.documentElement.setAttribute('data-theme', newTheme);
+        if (typeof window !== 'undefined') {
+            localStorage.setItem('theme', newTheme);
+            document.documentElement.setAttribute('data-theme', newTheme);
+        }
         updateThemeColor(newTheme);
     };
 
     useEffect(() => {
+        if (typeof window === 'undefined') return;
+
         const savedTheme = localStorage.getItem('theme') || 'light';
-        // Validate if saved theme exists, else fallback to light
         const effectiveTheme = THEMES[savedTheme] ? savedTheme : 'light';
 
         setThemeState(effectiveTheme);

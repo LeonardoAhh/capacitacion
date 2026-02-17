@@ -8,23 +8,14 @@ import { X, RefreshCw, Check } from 'lucide-react';
 import styles from './AvatarSelector.module.css';
 
 const AVATAR_STYLES = [
-    { id: 'initials', name: 'Iniciales' },
-    { id: 'adventurer', name: 'Aventurero' },
-    { id: 'avataaars', name: 'Caricatura' },
     { id: 'bottts', name: 'Robots' },
     { id: 'fun-emoji', name: 'Emojis' },
-    { id: 'lorelei', name: 'Lorelei' },
     { id: 'notionists', name: 'Notion' },
-    { id: 'open-peeps', name: 'Open Peeps' },
-    { id: 'micah', name: 'Micah' },
-    { id: 'personas', name: 'Personas' },
-    { id: 'pixel-art', name: 'Pixel Art' },
-    { id: 'miniavs', name: 'Miniavs' },
-    { id: 'identicon', name: 'Patrones' }
+    { id: 'pixel-art', name: 'Pixel Art' }
 ];
 
 export default function AvatarSelector({ isOpen, onClose, currentAvatar, onSave, userName }) {
-    const [selectedStyle, setSelectedStyle] = useState('initials');
+    const [selectedStyle, setSelectedStyle] = useState('bottts');
     const [seed, setSeed] = useState(userName || 'seed');
     const [mounted, setMounted] = useState(false);
 

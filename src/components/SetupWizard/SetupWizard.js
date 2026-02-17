@@ -12,19 +12,10 @@ import { useTheme } from '@/contexts/ThemeContext';
 import { formatDisplayName } from '@/utils/nameUtils';
 
 const AVATAR_STYLES = [
-    { id: 'initials', name: 'Iniciales' },
-    { id: 'adventurer', name: 'Aventurero' },
-    { id: 'avataaars', name: 'Caricatura' },
     { id: 'bottts', name: 'Robots' },
     { id: 'fun-emoji', name: 'Emojis' },
-    { id: 'lorelei', name: 'Lorelei' },
     { id: 'notionists', name: 'Notion' },
-    { id: 'open-peeps', name: 'Open Peeps' },
-    { id: 'micah', name: 'Micah' },
-    { id: 'personas', name: 'Personas' },
-    { id: 'pixel-art', name: 'Pixel Art' },
-    { id: 'miniavs', name: 'Miniavs' },
-    { id: 'identicon', name: 'Patrones' }
+    { id: 'pixel-art', name: 'Pixel Art' }
 ];
 
 export default function SetupWizard({ isOpen, onClose, user, onUpdateAvatar, onUpdateTheme, onUpdateNickname }) {
@@ -32,7 +23,7 @@ export default function SetupWizard({ isOpen, onClose, user, onUpdateAvatar, onU
     const [step, setStep] = useState(1);
 
     // Avatar state
-    const [selectedAvatarStyle, setSelectedAvatarStyle] = useState('initials');
+    const [selectedAvatarStyle, setSelectedAvatarStyle] = useState('bottts');
     const [avatarSeed, setAvatarSeed] = useState(user?.name || 'seed');
 
     // Theme state

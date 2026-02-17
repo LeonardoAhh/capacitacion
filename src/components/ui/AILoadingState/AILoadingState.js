@@ -12,7 +12,7 @@
 
 import { cn } from "@/lib/utils";
 import { motion, AnimatePresence } from "framer-motion";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef, useCallback } from "react";
 
 export default function AILoadingState({
     texts = [
@@ -24,16 +24,29 @@ export default function AILoadingState({
     ],
     className,
     interval = 1500,
+    onComplete,
 }) {
     const [currentTextIndex, setCurrentTextIndex] = useState(0);
+    const hasCalledComplete = useRef(false);
 
     useEffect(() => {
         const timer = setInterval(() => {
-            setCurrentTextIndex((prevIndex) => (prevIndex + 1) % texts.length);
+            setCurrentTextIndex((prevIndex) => {
+                const nextIndex = (prevIndex + 1) % texts.length;
+                // Si volvemos al inicio, significa que ya mostramos todos los textos
+                if (nextIndex === 0 && onComplete && !hasCalledComplete.current) {
+                    hasCalledComplete.current = true;
+                    // Dar tiempo al último texto para ser visible antes de navegar
+                    setTimeout(() => onComplete(), interval);
+                    clearInterval(timer);
+                    return prevIndex; // Mantener el último texto visible
+                }
+                return nextIndex;
+            });
         }, interval);
 
         return () => clearInterval(timer);
-    }, [interval, texts.length]);
+    }, [interval, texts.length, onComplete]);
 
     return (
         <div className="flex items-center justify-center p-8">

@@ -17,7 +17,11 @@
     padding-top: 1.5rem;
 }
 
-[data-theme="light"] .footer {
+[data-theme="light"] .footer,
+[data-theme="vinoplastic"] .footer,
+[data-theme="forest"] .footer,
+[data-theme="ocean"] .footer,
+[data-theme="sunset"] .footer {
     border-color: rgba(0, 0, 0, 0.08);
 }
 

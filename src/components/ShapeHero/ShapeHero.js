@@ -5,10 +5,10 @@ import { motion } from "framer-motion";
 import { Pacifico } from "next/font/google";
 import Link from "next/link";
 import { Users, UserPlus, GraduationCap } from "lucide-react";
-import DynamicCredits from './DynamicCredits/DynamicCredits';
+import DynamicCredits from '@/components/DynamicCredits/DynamicCredits';
 import styles from './ShapeHero.module.css';
-import SwitchButton from './ui/SwitchButton/SwitchButton';
-import { BackgroundLines } from './ui/BackgroundLines/BackgroundLines';
+import ThemeSelector from '@/components/ThemeSelector/ThemeSelector';
+import { BackgroundLines } from '@/components/ui/BackgroundLines/BackgroundLines';
 
 // ─── Font ─────────────────────────────────────────────────────────────────────
 
@@ -128,7 +128,7 @@ function ShapeHeroComponent() {
 
             {/* Theme toggle */}
             <div className={styles.topControls}>
-                <SwitchButton />
+                <ThemeSelector />
             </div>
 
             {/* Animated background lines */}

@@ -32,12 +32,24 @@
     padding: 0 1rem;
 }
 
-[data-theme="light"] .divider {
+[data-theme="light"] .divider,
+[data-theme="vinoplastic"] .divider,
+[data-theme="forest"] .divider,
+[data-theme="ocean"] .divider,
+[data-theme="sunset"] .divider {
     color: rgba(0, 0, 0, 0.4);
 }
 
 [data-theme="light"] .divider::before,
-[data-theme="light"] .divider::after {
+[data-theme="light"] .divider::after,
+[data-theme="vinoplastic"] .divider::before,
+[data-theme="vinoplastic"] .divider::after,
+[data-theme="forest"] .divider::before,
+[data-theme="forest"] .divider::after,
+[data-theme="ocean"] .divider::before,
+[data-theme="ocean"] .divider::after,
+[data-theme="sunset"] .divider::before,
+[data-theme="sunset"] .divider::after {
     border-bottom-color: rgba(0, 0, 0, 0.1);
 }
 
@@ -87,6 +99,31 @@
 
 [data-theme="dark"] .googleButton:hover:not(:disabled) {
     background: white;
+}
+
+/* ─── Rate Limit Banner ─────────────────────────────────────── */
+.rateLimitBanner {
+    display: flex;
+    align-items: center;
+    gap: 0.625rem;
+    padding: 0.75rem 1rem;
+    background: rgba(255, 149, 0, 0.12);
+    border: 1px solid rgba(255, 149, 0, 0.3);
+    border-radius: 0.75rem;
+    color: #cc7700;
+    font-size: 0.875rem;
+    font-weight: 500;
+    line-height: 1.4;
+}
+
+.rateLimitBanner strong {
+    font-variant-numeric: tabular-nums;
+}
+
+[data-theme="dark"] .rateLimitBanner {
+    background: rgba(255, 159, 10, 0.15);
+    border-color: rgba(255, 159, 10, 0.35);
+    color: #FF9F0A;
 }
 
 /* ─── Reduced Motion ────────────────────────────────────────── */

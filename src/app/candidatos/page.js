@@ -7,68 +7,18 @@ import { collection, query, where, getDocs, doc, updateDoc, increment } from 'fi
 import { signInAnonymously } from 'firebase/auth';
 import CandidateLogin from '@/components/CandidateLogin/CandidateLogin';
 import BackButton from '@/components/ui/BackButton/BackButton';
+import {
+    isBrowser,
+    safeGetLocalStorage,
+    safeSetLocalStorage,
+    safeRemoveLocalStorage,
+} from '@/utils/storage';
+import { formatBlockTime } from '@/utils/formatters';
+import { CANDIDATE_LOGIN_CONFIG } from '@/config/candidateLoginConfig';
+import { createSession } from '@/lib/sessionApi';
 
-// ==================== CONSTANTS ====================
-const LOGIN_CONSTANTS = {
-    MAX_ATTEMPTS: 10,
-    BLOCK_DURATION_MS: 15 * 60 * 1000, // 15 minutes
-    SUCCESS_REDIRECT_DELAY_MS: 2000, // 2 seconds (reduced from 15s for better UX)
-    MAX_CODE_USES: 10,
-    STORAGE_KEYS: {
-        BLOCK: 'candidate_login_blocked',
-        SESSION: 'candidate_session'
-    }
-};
-
-// ==================== HELPERS ====================
-/**
- * Check if running in browser environment (SSR safety)
- */
-const isBrowser = () => typeof window !== 'undefined';
-
-/**
- * Get item from localStorage with SSR safety
- */
-const safeGetLocalStorage = (key) => {
-    if (!isBrowser()) return null;
-    try {
-        return localStorage.getItem(key);
-    } catch {
-        return null;
-    }
-};
-
-/**
- * Set item in localStorage with SSR safety
- */
-const safeSetLocalStorage = (key, value) => {
-    if (!isBrowser()) return;
-    try {
-        localStorage.setItem(key, value);
-    } catch {
-        console.error('Failed to set localStorage:', key);
-    }
-};
-
-/**
- * Remove item from localStorage with SSR safety
- */
-const safeRemoveLocalStorage = (key) => {
-    if (!isBrowser()) return;
-    try {
-        localStorage.removeItem(key);
-    } catch {
-        console.error('Failed to remove localStorage:', key);
-    }
-};
-
-/**
- * Format remaining block time
- */
-const formatBlockTime = (seconds) => {
-    const mins = Math.ceil(seconds / 60);
-    return mins;
-};
+// Alias local para la constante por brevedad
+const CONFIG = CANDIDATE_LOGIN_CONFIG;
 
 // ==================== COMPONENT ====================
 
@@ -99,14 +49,14 @@ export default function CandidatosLoginPage() {
 
     // Check for existing block on mount
     useEffect(() => {
-        const blockData = safeGetLocalStorage(LOGIN_CONSTANTS.STORAGE_KEYS.BLOCK);
+        const blockData = safeGetLocalStorage(CONFIG.STORAGE_KEYS.BLOCK);
 
         if (!blockData) return;
 
         const blockUntil = parseInt(blockData, 10);
 
         if (isNaN(blockUntil) || blockUntil <= Date.now()) {
-            safeRemoveLocalStorage(LOGIN_CONSTANTS.STORAGE_KEYS.BLOCK);
+            safeRemoveLocalStorage(CONFIG.STORAGE_KEYS.BLOCK);
             return;
         }
 
@@ -119,7 +69,7 @@ export default function CandidatosLoginPage() {
             if (remaining <= 0) {
                 setIsBlocked(false);
                 setBlockTimeRemaining(0);
-                safeRemoveLocalStorage(LOGIN_CONSTANTS.STORAGE_KEYS.BLOCK);
+                safeRemoveLocalStorage(CONFIG.STORAGE_KEYS.BLOCK);
                 setLoginAttempts(0);
                 clearInterval(interval);
             } else {
@@ -135,11 +85,11 @@ export default function CandidatosLoginPage() {
         const newAttempts = loginAttempts + 1;
         setLoginAttempts(newAttempts);
 
-        if (newAttempts >= LOGIN_CONSTANTS.MAX_ATTEMPTS) {
-            const blockUntil = Date.now() + LOGIN_CONSTANTS.BLOCK_DURATION_MS;
-            safeSetLocalStorage(LOGIN_CONSTANTS.STORAGE_KEYS.BLOCK, blockUntil.toString());
+        if (newAttempts >= CONFIG.MAX_ATTEMPTS) {
+            const blockUntil = Date.now() + CONFIG.BLOCK_DURATION_MS;
+            safeSetLocalStorage(CONFIG.STORAGE_KEYS.BLOCK, blockUntil.toString());
             setIsBlocked(true);
-            setBlockTimeRemaining(LOGIN_CONSTANTS.BLOCK_DURATION_MS / 1000);
+            setBlockTimeRemaining(CONFIG.BLOCK_DURATION_MS / 1000);
         }
     }, [loginAttempts]);
 
@@ -180,7 +130,7 @@ export default function CandidatosLoginPage() {
             await signInAnonymously(auth);
 
             // Step 2: Check if blocked
-            const blockData = safeGetLocalStorage(LOGIN_CONSTANTS.STORAGE_KEYS.BLOCK);
+            const blockData = safeGetLocalStorage(CONFIG.STORAGE_KEYS.BLOCK);
             if (blockData) {
                 const blockUntil = parseInt(blockData, 10);
                 if (Date.now() < blockUntil) {
@@ -189,7 +139,7 @@ export default function CandidatosLoginPage() {
                     setLoading(false);
                     return;
                 }
-                safeRemoveLocalStorage(LOGIN_CONSTANTS.STORAGE_KEYS.BLOCK);
+                safeRemoveLocalStorage(CONFIG.STORAGE_KEYS.BLOCK);
             }
 
             // Step 3: Validate required fields
@@ -241,8 +191,8 @@ export default function CandidatosLoginPage() {
 
             // Step 8: Check usage limit
             const codeUses = data.accessCodeUses || 0;
-            if (codeUses >= LOGIN_CONSTANTS.MAX_CODE_USES) {
-                setError(`Este código ha alcanzado el límite de ${LOGIN_CONSTANTS.MAX_CODE_USES} inicios de sesión. Contacta a RH para un nuevo código.`);
+            if (codeUses >= CONFIG.MAX_CODE_USES) {
+                setError(`Este código ha alcanzado el límite de ${CONFIG.MAX_CODE_USES} inicios de sesión. Contacta a RH para un nuevo código.`);
                 setLoading(false);
                 return;
             }
@@ -270,12 +220,13 @@ export default function CandidatosLoginPage() {
             };
 
             if (isBrowser()) {
-                sessionStorage.setItem(LOGIN_CONSTANTS.STORAGE_KEYS.SESSION, JSON.stringify(sessionData));
+                sessionStorage.setItem(CONFIG.STORAGE_KEYS.SESSION, JSON.stringify(sessionData));
             }
 
-            // Step 11: Reset security state
+            // Step 11: Reset security state & set cookie
             setLoginAttempts(0);
-            safeRemoveLocalStorage(LOGIN_CONSTANTS.STORAGE_KEYS.BLOCK);
+            safeRemoveLocalStorage(CONFIG.STORAGE_KEYS.BLOCK);
+            await createSession('candidate');
 
             // Step 12: Show success and redirect
             setIsSuccess(true);
@@ -283,7 +234,7 @@ export default function CandidatosLoginPage() {
 
             setTimeout(() => {
                 router.push('/candidatos/dashboard');
-            }, LOGIN_CONSTANTS.SUCCESS_REDIRECT_DELAY_MS);
+            }, CONFIG.SUCCESS_REDIRECT_DELAY_MS);
 
         } catch (err) {
             console.error('Error en login de candidato:', err);

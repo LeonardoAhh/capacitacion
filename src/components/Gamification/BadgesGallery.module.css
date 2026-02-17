@@ -112,6 +112,11 @@
     align-items: center;
     cursor: pointer;
     user-select: none;
+    z-index: 1;
+}
+
+.badgeCard:hover {
+    z-index: 10;
 }
 
 /* Icon Wrapper */

@@ -60,13 +60,6 @@ export default function ProfileDropdown({ className = '', ...props }) {
             href: "/profile",
             icon: <User className={styles.menuItemIcon} />,
         },
-        {
-            label: "Rol",
-            value: profileData.subscription,
-            href: "/subscription",
-            icon: <CreditCard className={styles.menuItemIcon} />,
-            badgeType: "purple"
-        },
     ], [profileData.subscription]);
 
     // No renderizar hasta que el componente esté montado (evitar hydration mismatch)

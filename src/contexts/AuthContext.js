@@ -10,6 +10,7 @@ import {
 } from 'firebase/auth';
 import { auth, db } from '@/lib/firebase';
 import { doc, getDoc, updateDoc, setDoc } from 'firebase/firestore';
+import { destroySession } from '@/lib/sessionApi';
 
 const AuthContext = createContext({});
 
@@ -115,6 +116,7 @@ export function AuthProvider({ children }) {
     const signOut = async () => {
         try {
             sessionStorage.removeItem('mfa_verified');
+            await destroySession();
             await firebaseSignOut(auth);
             return { success: true };
         } catch (error) {

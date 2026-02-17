@@ -7,6 +7,7 @@ import TrainingLogin from '@/components/TrainingLogin/TrainingLogin';
 import { db } from '@/lib/firebase';
 import { collection, query, where, getDocs } from 'firebase/firestore';
 import BackButton from '@/components/ui/BackButton/BackButton';
+import { createSession } from '@/lib/sessionApi';
 
 export default function TrainingLoginPage() {
     const router = useRouter();
@@ -76,6 +77,7 @@ export default function TrainingLoginPage() {
             };
 
             sessionStorage.setItem('training_session', JSON.stringify(sessionData));
+            await createSession('training');
 
             // Trigger animación
             setLoading(false);

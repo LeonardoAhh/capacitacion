@@ -2,10 +2,11 @@
 
 import { useState, useEffect, useMemo, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Search, CheckCircle, Clock, Eye, RefreshCw, BookOpen, Calendar, Inbox } from 'lucide-react';
+import { CheckCircle, Clock, Eye, Inbox, BookOpen, Calendar } from 'lucide-react';
 import { db } from '@/lib/firebase';
 import { collection, getDocs } from 'firebase/firestore';
-import useIsMobile from '@/hooks/useIsMobile';
+import MonitoringStatsRow from './MonitoringStatsRow';
+import MonitoringControls from './MonitoringControls';
 import styles from './MonitoringTable.module.css';
 
 // ─── Animation variants ───────────────────────────────────────────────────────
@@ -18,18 +19,9 @@ const FADE_IN = {
     }),
 };
 
-const FILTER_ITEMS = [
-    { key: 'all', label: 'Todos' },
-    { key: 'pending', label: 'Pendientes' },
-    { key: 'assigned', label: 'Asignados' },
-    { key: 'viewed', label: 'En Progreso' },
-    { key: 'completed', label: 'Completados' },
-];
-
 // ─── MonitoringTable ──────────────────────────────────────────────────────────
 
 export default function MonitoringTable() {
-    const { isMobile } = useIsMobile(768);
     const [assignments, setAssignments] = useState([]);
     const [loading, setLoading] = useState(true);
     const [refreshing, setRefreshing] = useState(false);
@@ -154,126 +146,25 @@ export default function MonitoringTable() {
         <div className={styles.container}>
             {/* Header */}
             <div className={styles.header}>
-                <h2 className={styles.title}>
-                    Avance de Capacitación
-                </h2>
+                <h2 className={styles.title}>Avance de Capacitación</h2>
                 <div className={styles.liveIndicator}>
                     <span className={styles.liveDot} />
                     En vivo
                 </div>
             </div>
 
-            {/* Stats row */}
-            <div className={styles.statsRow}>
-                <motion.div
-                    className={`${styles.statCard} ${filter === 'pending' ? styles.statCardActive : ''}`}
-                    onClick={() => handleFilterClick('pending')}
-                    whileTap={{ scale: 0.97 }}
-                    style={{ color: '#64748b' }}
-                >
-                    <div className={`${styles.statIconWrap} ${styles.statIconPending}`}>
-                        <Clock size={18} />
-                    </div>
-                    <div className={styles.statInfo}>
-                        <motion.span
-                            className={styles.statNumber}
-                            key={stats.pending}
-                            initial={{ scale: 0.8 }}
-                            animate={{ scale: 1 }}
-                            transition={{ type: 'spring', stiffness: 400, damping: 20 }}
-                        >
-                            {stats.pending}
-                        </motion.span>
-                        <span className={styles.statLabel}>Pendientes</span>
-                    </div>
-                </motion.div>
+            {/* Extracted subcomponents */}
+            <MonitoringStatsRow stats={stats} filter={filter} onFilterClick={handleFilterClick} />
+            <MonitoringControls
+                searchTerm={searchTerm}
+                onSearchChange={setSearchTerm}
+                filter={filter}
+                onFilterChange={setFilter}
+                refreshing={refreshing}
+                onRefresh={handleRefresh}
+            />
 
-                <motion.div
-                    className={`${styles.statCard} ${filter === 'viewed' ? styles.statCardActive : ''}`}
-                    onClick={() => handleFilterClick('viewed')}
-                    whileTap={{ scale: 0.97 }}
-                    style={{ color: '#f97316' }}
-                >
-                    <div className={`${styles.statIconWrap} ${styles.statIconViewed}`}>
-                        <Eye size={18} />
-                    </div>
-                    <div className={styles.statInfo}>
-                        <motion.span
-                            className={styles.statNumber}
-                            key={stats.viewed}
-                            initial={{ scale: 0.8 }}
-                            animate={{ scale: 1 }}
-                            transition={{ type: 'spring', stiffness: 400, damping: 20 }}
-                        >
-                            {stats.viewed}
-                        </motion.span>
-                        <span className={styles.statLabel}>En Progreso</span>
-                    </div>
-                </motion.div>
-
-                <motion.div
-                    className={`${styles.statCard} ${filter === 'completed' ? styles.statCardActive : ''}`}
-                    onClick={() => handleFilterClick('completed')}
-                    whileTap={{ scale: 0.97 }}
-                    style={{ color: '#22c55e' }}
-                >
-                    <div className={`${styles.statIconWrap} ${styles.statIconCompleted}`}>
-                        <CheckCircle size={18} />
-                    </div>
-                    <div className={styles.statInfo}>
-                        <motion.span
-                            className={styles.statNumber}
-                            key={stats.completed}
-                            initial={{ scale: 0.8 }}
-                            animate={{ scale: 1 }}
-                            transition={{ type: 'spring', stiffness: 400, damping: 20 }}
-                        >
-                            {stats.completed}
-                        </motion.span>
-                        <span className={styles.statLabel}>Completados</span>
-                    </div>
-                </motion.div>
-            </div>
-
-            {/* Controls row */}
-            <div className={styles.controlsRow}>
-                <div className={styles.searchWrap}>
-                    <Search size={16} className={styles.searchIcon} />
-                    <input
-                        type="text"
-                        placeholder="Buscar empleado o curso..."
-                        value={searchTerm}
-                        onChange={(e) => setSearchTerm(e.target.value)}
-                        className={styles.searchInput}
-                    />
-                </div>
-
-                <div className={styles.filterPills}>
-                    {FILTER_ITEMS.map(({ key, label }) => (
-                        <button
-                            key={key}
-                            className={`${styles.pill} ${filter === key ? styles.pillActive : ''}`}
-                            onClick={() => setFilter(key)}
-                            type="button"
-                        >
-                            {label}
-                        </button>
-                    ))}
-                </div>
-
-                <button
-                    className={styles.refreshBtn}
-                    onClick={handleRefresh}
-                    disabled={refreshing}
-                    type="button"
-                    title="Actualizar datos"
-                >
-                    <RefreshCw size={15} className={refreshing ? styles.refreshSpin : ''} />
-                    <span>Actualizar</span>
-                </button>
-            </div>
-
-            {/* ── Desktop table ── */}
+            {/* Desktop table */}
             <div className={styles.tableWrapper}>
                 <table className={styles.table}>
                     <thead className={styles.thead}>
@@ -331,7 +222,7 @@ export default function MonitoringTable() {
                 </table>
             </div>
 
-            {/* ── Mobile card list ── */}
+            {/* Mobile card list */}
             <div className={styles.cardList}>
                 {loading ? (
                     <div className={styles.loadingWrap}>
