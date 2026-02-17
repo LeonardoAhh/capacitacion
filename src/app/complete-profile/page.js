@@ -73,7 +73,7 @@ export default function CompleteProfilePage() {
                 className={styles.card}
             >
                 <div className={styles.header}>
-                    <h1 className={styles.title}>Completa tu Perfil</h1>
+                    <h1 className={styles.title}>Completa tu perfil</h1>
                     <p className={styles.subtitle}>
                         Bienvenido {user?.email}. Por favor completa tu información.
                     </p>
