@@ -2,38 +2,26 @@
     position: fixed;
     inset: 0;
     background: rgba(0, 0, 0, 0.6);
-    backdrop-filter: blur(4px);
     display: flex;
+    align-items: center;
     justify-content: center;
     z-index: 10002;
     padding: 1rem;
 }
 
 .modal {
-    background: var(--bg-primary);
+    background: var(--bg-secondary);
     border: 1px solid var(--border-color);
-    border-radius: 20px;
+    border-radius: var(--radius-xl);
     width: 100%;
-    max-width: 480px;
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
-    overflow: hidden;
+    max-width: 400px;
     display: flex;
     flex-direction: column;
     max-height: 90vh;
-    /* Prevent overflowing screen */
-}
-
-@media (max-width: 640px) {
-    .modal {
-        max-height: 100vh;
-        border-radius: 0;
-        height: 100%;
-        border: none;
-    }
 }
 
 .header {
-    padding: 1.5rem;
+    padding: 1.25rem;
     border-bottom: 1px solid var(--border-color);
     display: flex;
     justify-content: space-between;
@@ -42,154 +30,163 @@
 
 .header h3 {
     margin: 0;
-    font-size: 1.25rem;
+    font-size: 1rem;
+    font-weight: 600;
     color: var(--text-primary);
-    font-weight: 700;
 }
 
 .closeBtn {
-    background: transparent;
+    background: var(--bg-tertiary);
     border: none;
+    border-radius: var(--radius-sm);
     color: var(--text-secondary);
     cursor: pointer;
-    padding: 0.5rem;
-    border-radius: 50%;
-    transition: all 0.2s;
+    padding: 0.375rem;
     display: flex;
     align-items: center;
     justify-content: center;
+    transition: all var(--transition-fast);
 }
 
 .closeBtn:hover {
-    background: var(--bg-secondary);
-    color: var(--text-primary);
+    background: rgba(239, 68, 68, 0.1);
+    color: var(--color-danger);
 }
 
 .previewSection {
-    padding: 2rem;
+    padding: 1.5rem;
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 1.5rem;
-    background: var(--bg-secondary);
+    gap: 1rem;
+    background: var(--bg-tertiary);
 }
 
 .avatarPreview {
-    width: 120px;
-    height: 120px;
+    width: 100px;
+    height: 100px;
     border-radius: 50%;
-    background: white;
-    border: 4px solid var(--bg-primary);
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+    background: var(--bg-secondary);
+    border: 2px solid var(--border-color);
     overflow: hidden;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.previewImage {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
+    position: relative;
 }
 
 .randomizeBtn {
     display: flex;
     align-items: center;
-    gap: 0.5rem;
-    padding: 0.625rem 1.25rem;
-    background: var(--bg-primary);
+    gap: 0.375rem;
+    padding: 0.5rem 1rem;
+    background: var(--bg-secondary);
     border: 1px solid var(--border-color);
-    border-radius: 12px;
+    border-radius: var(--radius-md);
     color: var(--text-primary);
-    font-weight: 600;
-    font-size: 0.9375rem;
+    font-weight: 500;
+    font-size: 0.8125rem;
     cursor: pointer;
-    transition: all 0.2s;
+    transition: all var(--transition-fast);
 }
 
 .randomizeBtn:hover {
-    border-color: #667eea;
-    color: #667eea;
-    transform: translateY(-2px);
+    border-color: var(--color-primary);
+    color: var(--color-primary);
 }
 
 .stylesGrid {
-    padding: 1.5rem;
+    padding: 1rem 1.25rem;
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
-    gap: 0.75rem;
-    overflow-y: auto;
-    /* Allow scrolling */
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.5rem;
     flex: 1;
-    /* Take remaining space */
 }
 
 .styleOption {
-    padding: 0.75rem;
-    background: var(--bg-secondary);
-    border: 2px solid transparent;
-    border-radius: 12px;
+    padding: 0.625rem;
+    background: var(--bg-tertiary);
+    border: 1px solid transparent;
+    border-radius: var(--radius-md);
     cursor: pointer;
-    transition: all 0.2s;
+    transition: all var(--transition-fast);
     text-align: center;
+    font-size: 0.8125rem;
+    font-weight: 500;
+    color: var(--text-primary);
 }
 
 .styleOption:hover {
-    border-color: var(--border-hover);
+    border-color: var(--border-color);
 }
 
 .styleOption.selected {
-    border-color: #667eea;
-    background: rgba(102, 126, 234, 0.05);
-    color: #667eea;
-}
-
-.styleName {
-    font-size: 0.875rem;
-    font-weight: 600;
+    border-color: var(--color-primary);
+    background: var(--bg-primary);
+    color: var(--color-primary);
 }
 
 .footer {
-    padding: 1.5rem;
+    padding: 1rem 1.25rem;
     border-top: 1px solid var(--border-color);
     display: flex;
     justify-content: flex-end;
-    gap: 1rem;
+    gap: 0.75rem;
 }
 
 .cancelBtn,
 .saveBtn {
-    padding: 0.875rem 1.5rem;
-    border-radius: 12px;
+    padding: 0.625rem 1.25rem;
+    border-radius: var(--radius-md);
     font-weight: 600;
-    font-size: 0.9375rem;
+    font-size: 0.875rem;
     cursor: pointer;
-    transition: all 0.2s;
+    transition: all var(--transition-fast);
 }
 
 .cancelBtn {
     background: transparent;
-    border: 1px solid transparent;
+    border: 1px solid var(--border-color);
     color: var(--text-secondary);
 }
 
 .cancelBtn:hover {
+    border-color: var(--text-primary);
     color: var(--text-primary);
-    background: var(--bg-secondary);
 }
 
 .saveBtn {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: var(--color-primary);
     color: white;
     border: none;
     display: flex;
     align-items: center;
-    gap: 0.5rem;
-    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+    gap: 0.375rem;
 }
 
 .saveBtn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+    filter: brightness(1.1);
+}
+
+@media (max-width: 640px) {
+    .modal {
+        max-height: 100vh;
+        border-radius: var(--radius-lg);
+    }
+
+    .previewSection {
+        padding: 1.25rem;
+    }
+
+    .avatarPreview {
+        width: 80px;
+        height: 80px;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .closeBtn,
+    .randomizeBtn,
+    .styleOption,
+    .cancelBtn,
+    .saveBtn {
+        transition: none;
+    }
 }

@@ -1,203 +1,159 @@
-/* ==================== COURSES GRID ==================== */
 .coursesGrid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-    gap: 16px;
-    margin-top: 16px;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1rem;
+    margin-top: 1rem;
 }
 
 .courseCard {
-    background: var(--card-background);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-    border-radius: 20px;
-    border: 1px solid var(--card-border);
-    padding: 20px;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-lg);
+    padding: 1.25rem;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    gap: 16px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+    gap: 1rem;
     cursor: pointer;
-    transition: all 0.2s ease;
-    height: 100%;
+    transition: all var(--transition-fast);
 }
 
 .courseCard:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.08);
+    border-color: var(--color-primary);
+    transform: translateY(-2px);
 }
 
-.courseCard:active {
-    transform: scale(0.98);
-}
-
-[data-theme="dark"] .courseCard {
-    /* Using variables now */
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+.courseCard:focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 2px;
 }
 
 .courseCardHeader {
     display: flex;
     align-items: flex-start;
-    gap: 16px;
+    gap: 0.875rem;
 }
 
 .courseIcon {
     width: 44px;
     height: 44px;
-    border-radius: 10px;
-    background: linear-gradient(135deg, #007aff 0%, #5856d6 100%);
+    border-radius: var(--radius-md);
+    background: var(--bg-tertiary);
+    border: 1px solid var(--border-color);
     display: flex;
     align-items: center;
     justify-content: center;
-    color: white;
+    color: var(--color-primary);
     flex-shrink: 0;
 }
 
 .courseIconCompleted {
-    background: linear-gradient(135deg, #34c759 0%, #30d158 100%);
-}
-
-/* [data-theme="dark"] .courseIcon {} - Removed empty rule */
-
-@media (min-width: 768px) {
-    .courseIcon {
-        width: 56px;
-        height: 56px;
-        border-radius: 14px;
-    }
+    background: rgba(34, 197, 94, 0.1);
+    border-color: var(--color-success);
+    color: var(--color-success);
 }
 
 .courseContent {
     flex: 1;
     min-width: 0;
-    display: flex;
-    flex-direction: column;
-    gap: 2px;
 }
 
 .courseCardTitle {
-    font-size: 16px;
-    font-weight: 700;
-    color: #1c1c1e;
+    font-size: 0.9375rem;
+    font-weight: 600;
+    color: var(--text-primary);
     line-height: 1.4;
-    white-space: normal;
-}
-
-[data-theme="dark"] .courseCardTitle {
-    color: #ffffff;
+    margin: 0;
 }
 
 .courseDuration {
-    font-size: 14px;
-    color: #8e8e93;
+    font-size: 0.75rem;
+    color: var(--text-tertiary);
+    margin-top: 0.25rem;
+    display: block;
 }
 
 .courseCardFooter {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-top: auto;
-    padding-top: 16px;
-    border-top: 1px solid rgba(0, 0, 0, 0.05);
-}
-
-[data-theme="dark"] .courseCardFooter {
-    border-top-color: rgba(255, 255, 255, 0.05);
+    padding-top: 0.875rem;
+    border-top: 1px solid var(--border-color);
 }
 
 .btnMarkComplete {
-    padding: 10px 16px;
+    padding: 0.5rem 0.875rem;
     background: transparent;
-    border: 1px solid #007AFF;
-    color: #007AFF;
-    border-radius: 20px;
-    font-size: 0.85rem;
+    border: 1px solid var(--color-primary);
+    color: var(--color-primary);
+    border-radius: var(--radius-full);
+    font-size: 0.75rem;
     font-weight: 600;
     cursor: pointer;
-    transition: all 0.2s;
-    white-space: nowrap;
-    min-height: 44px;
-    display: flex;
-    align-items: center;
+    transition: all var(--transition-fast);
 }
 
 .btnMarkComplete:hover {
-    background: rgba(0, 122, 255, 0.05);
+    background: rgba(59, 130, 246, 0.08);
 }
 
 .btnCompleted {
-    padding: 10px 16px;
-    background: rgba(52, 199, 89, 0.15);
-    color: #34C759;
+    padding: 0.5rem 0.875rem;
+    background: rgba(34, 197, 94, 0.1);
+    color: var(--color-success);
     border: 1px solid transparent;
-    border-radius: 20px;
-    font-size: 0.85rem;
+    border-radius: var(--radius-full);
+    font-size: 0.75rem;
     font-weight: 600;
     cursor: pointer;
-    transition: all 0.2s;
-    white-space: nowrap;
-    min-height: 44px;
-    display: flex;
-    align-items: center;
-}
-
-.btnCompleted:hover {
-    background: rgba(52, 199, 89, 0.25);
-    border-color: #34C759;
 }
 
 .chevron {
-    color: #c7c7cc;
-    flex-shrink: 0;
+    color: var(--text-tertiary);
 }
 
-[data-theme="dark"] .chevron {
-    color: #48484a;
+/* Section Header */
+.sectionHeaderContainer {
+    margin-bottom: 0.5rem;
+}
+
+.sectionHeader {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin: 0;
 }
 
 /* Empty State */
 .emptyState {
-    padding: 48px 24px;
+    padding: 2rem 1.5rem;
     text-align: center;
-    color: #8e8e93;
-    background: rgba(255, 255, 255, 0.6);
-    backdrop-filter: blur(20px);
-    border-radius: 12px;
+    color: var(--text-tertiary);
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-lg);
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: 12px;
-}
-
-[data-theme="dark"] .emptyState {
-    background: rgba(28, 28, 30, 0.4);
+    gap: 0.75rem;
 }
 
 .emptyState p {
     margin: 0;
-    font-size: 15px;
+    font-size: 0.875rem;
 }
 
-.sectionHeaderContainer {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 8px;
+
+
+@media (max-width: 480px) {
+    .coursesGrid {
+        grid-template-columns: 1fr;
+    }
 }
 
-.sectionHeader {
-    font-size: clamp(17px, 4vw, 19px);
-    font-weight: 700;
-    color: #1c1c1e;
-    margin: 0 0 16px 0;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-}
-
-[data-theme="dark"] .sectionHeader {
-    color: #ffffff;
+@media (min-width: 1024px) {
+    .coursesGrid {
+        grid-template-columns: repeat(3, 1fr);
+    }
 }

@@ -1,73 +1,50 @@
 .floatingButton {
     position: fixed;
-    bottom: 24px;
-    right: 24px;
-    width: 60px;
-    height: 60px;
+    bottom: 1.5rem;
+    right: 1.5rem;
+    width: 52px;
+    height: 52px;
     border-radius: 50%;
     background: #25D366;
-    /* WhatsApp Green */
     color: white;
     display: flex;
     align-items: center;
     justify-content: center;
-    border: none;
-    box-shadow: 0 4px 12px rgba(37, 211, 102, 0.4);
-    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(37, 211, 102, 0.3);
     z-index: 1000;
-    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    transition: transform var(--transition-fast);
     text-decoration: none;
 }
 
 .floatingButton:hover {
-    transform: scale(1.1);
-    box-shadow: 0 8px 24px rgba(37, 211, 102, 0.5);
+    transform: scale(1.08);
 }
 
 .floatingButton:active {
-    transform: scale(0.9);
+    transform: scale(0.95);
 }
 
 .icon {
-    width: 32px;
-    height: 32px;
+    width: 24px;
+    height: 24px;
 }
 
-/* Tooltip on hover */
-.floatingButton::before {
-    content: "Soporte TI/RH";
-    position: absolute;
-    right: 70px;
-    background: rgba(0, 0, 0, 0.8);
-    color: white;
-    padding: 6px 12px;
-    border-radius: 8px;
-    font-size: 14px;
-    font-weight: 500;
-    white-space: nowrap;
-    opacity: 0;
-    visibility: hidden;
-    transform: translateX(10px);
-    transition: all 0.2s ease;
-    pointer-events: none;
-}
-
-.floatingButton:hover::before {
-    opacity: 1;
-    visibility: visible;
-    transform: translateX(0);
-}
-
-[data-theme="dark"] .floatingButton::before {
-    background: rgba(255, 255, 255, 0.9);
-    color: black;
-}
-
-@media (max-width: 768px) {
+@media (max-width: 640px) {
     .floatingButton {
-        bottom: 20px;
-        right: 20px;
-        width: 56px;
-        height: 56px;
+        bottom: 1rem;
+        right: 1rem;
+        width: 48px;
+        height: 48px;
+    }
+
+    .icon {
+        width: 22px;
+        height: 22px;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .floatingButton {
+        transition: none;
     }
 }

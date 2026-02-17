@@ -1,167 +1,66 @@
-/* ==================== ROADMAP SECTION ==================== */
-.roadmapSection {
-    margin-bottom: 24px;
-    margin-top: 24px;
-}
-
 .timelineContainer {
-    position: relative;
-    padding-left: 24px;
-    margin-top: 16px;
-    border-left: 2px solid rgba(0, 122, 255, 0.15);
-}
-
-[data-theme="dark"] .timelineContainer {
-    border-color: rgba(10, 132, 255, 0.15);
+    display: grid;
+    gap: 0.75rem;
+    margin-top: 0.75rem;
 }
 
 .timelineItem {
     position: relative;
-    padding-bottom: 24px;
-    padding-left: 16px;
-}
-
-.timelineItem:last-child {
-    padding-bottom: 0;
-}
-
-.timelineDot {
-    position: absolute;
-    left: -32px;
-    top: 0;
-    width: 16px;
-    height: 16px;
-    border-radius: 50%;
-    background: #007aff;
-    border: 3px solid #f2f2f7;
-    z-index: 1;
-}
-
-[data-theme="dark"] .timelineDot {
-    border-color: #000;
-    background: #0a84ff;
 }
 
 .timelineContent {
-    background: rgba(255, 255, 255, 0.6);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-    padding: 16px;
-    border-radius: 16px;
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
-    height: 100%;
-    transition: transform 0.2s, box-shadow 0.2s;
-}
-
-.timelineContent:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.06);
-}
-
-[data-theme="dark"] .timelineContent {
-    background: rgba(28, 28, 30, 0.4);
-    border-color: rgba(255, 255, 255, 0.05);
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-lg);
+    padding: 1rem;
 }
 
 .timelineTitle {
-    font-size: 16px;
-    font-weight: 700;
-    color: #1c1c1e;
-    margin-bottom: 8px;
+    font-size: 0.9375rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 0.5rem;
     display: flex;
     align-items: center;
-    gap: 8px;
-}
-
-[data-theme="dark"] .timelineTitle {
-    color: #fff;
-}
-
-.timelineDesc {
-    font-size: 13px;
-    color: #8e8e93;
+    gap: 0.5rem;
 }
 
 .timelineList {
-    margin: 8px 0 0 0;
-    padding-left: 20px;
+    margin: 0;
+    padding-left: 1.25rem;
     list-style-type: disc;
 }
 
 .timelineList li {
-    font-size: 14px;
-    color: #3c3c43;
-    margin-bottom: 6px;
-    line-height: 1.4;
+    font-size: 0.8125rem;
+    color: var(--text-secondary);
+    margin-bottom: 0.375rem;
+    line-height: 1.5;
 }
 
-[data-theme="dark"] .timelineList li {
-    color: #ebebf5;
+.timelineList li:last-child {
+    margin-bottom: 0;
 }
 
-/* Reusing generic section header */
+.stepLabel {
+    font-size: 0.6875rem;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    color: var(--color-primary);
+    text-transform: uppercase;
+    margin-bottom: 0.375rem;
+}
+
 .sectionHeader {
-    font-size: 19px;
-    font-weight: 700;
-    color: #1c1c1e;
-    margin: 0 0 16px 0;
-    display: flex;
-    align-items: center;
-    gap: 8px;
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin: 0;
 }
 
-[data-theme="dark"] .sectionHeader {
-    color: #ffffff;
-}
-
-@media (max-width: 768px) {
-    .sectionHeader {
-        font-size: 17px;
-        margin-bottom: 12px;
-    }
-}
-
-/* DESKTOP GRID LAYOUT FOR ROADMAP */
+/* Desktop Grid */
 @media (min-width: 768px) {
     .timelineContainer {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-        gap: 20px;
-        border-left: none;
-        padding-left: 0;
-    }
-
-    .timelineItem {
-        padding: 0;
-    }
-
-    .timelineDot {
-        display: none;
-    }
-
-    /* CSS Counter for steps */
-    .timelineContainer {
-        counter-reset: step-counter;
-    }
-
-    .timelineItem {
-        counter-increment: step-counter;
-    }
-
-    .timelineContent::before {
-        content: "PASO " counter(step-counter);
-        display: block;
-        font-size: 11px;
-        font-weight: 800;
-        letter-spacing: 1px;
-        color: #007aff;
-        margin-bottom: 6px;
-        text-transform: uppercase;
-        opacity: 0.8;
-    }
-
-    [data-theme="dark"] .timelineContent::before {
-        color: #0a84ff;
+        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
     }
 }

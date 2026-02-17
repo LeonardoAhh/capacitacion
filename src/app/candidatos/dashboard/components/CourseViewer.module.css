@@ -1,35 +1,9 @@
-/* ─────────────────────────────────────────────────────────────
-   CourseViewer — v2.0.0
-   Estilo: iOS-inspired, refinado
-───────────────────────────────────────────────────────────── */
-
-/* ── Utilities ────────────────────────────────────────────── */
-
-.srOnly {
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    padding: 0;
-    margin: -1px;
-    overflow: hidden;
-    clip: rect(0, 0, 0, 0);
-    white-space: nowrap;
-    border-width: 0;
-}
-
-/* ── Backdrop ─────────────────────────────────────────────── */
-/*  Separated from .modal so each can animate independently    */
-
 .backdrop {
     position: fixed;
     inset: 0;
-    background: rgba(0, 0, 0, 0.45);
-    backdrop-filter: blur(2px);
-    -webkit-backdrop-filter: blur(2px);
+    background: rgba(0, 0, 0, 0.5);
     z-index: 999;
 }
-
-/* ── Modal (sheet) ────────────────────────────────────────── */
 
 .modal {
     position: fixed;
@@ -41,147 +15,63 @@
     flex-direction: column;
     width: 100%;
     max-height: 95dvh;
-    background: #f2f2f7;
-    border-radius: 20px 20px 0 0;
-    /* Subtle top border for depth */
-    box-shadow:
-        0 -1px 0 rgba(255, 255, 255, 0.08),
-        0 -8px 32px rgba(0, 0, 0, 0.18);
+    background: var(--bg-primary);
+    border-radius: var(--radius-xl) var(--radius-xl) 0 0;
     overflow: hidden;
 }
-
-[data-theme="dark"] .modal {
-    background: #1c1c1e;
-    box-shadow:
-        0 -1px 0 rgba(255, 255, 255, 0.06),
-        0 -8px 32px rgba(0, 0, 0, 0.45);
-}
-
-/* Desktop: centered dialog */
-@media (min-width: 768px) {
-    .modal {
-        /* Reset mobile sheet positioning */
-        bottom: unset;
-        left: 50%;
-        right: unset;
-        top: 50%;
-        /* Center — Framer animates translateY on top of this via CSS var trick,
-           so we use marginLeft/marginTop instead of translate() to avoid conflict */
-        margin-left: -430px;
-        /* half of max-width 860px */
-        margin-top: -45dvh;
-        /* half of max-height 90dvh */
-        width: min(860px, calc(100vw - 48px));
-        max-height: 90dvh;
-        border-radius: 20px;
-        box-shadow:
-            0 8px 40px rgba(0, 0, 0, 0.22),
-            0 2px 8px rgba(0, 0, 0, 0.12);
-    }
-
-    /* Clamp margin when viewport is narrower than 860px */
-    @supports (width: min(860px, 100vw)) {
-        .modal {
-            margin-left: calc(min(860px, calc(100vw - 48px)) / -2);
-        }
-    }
-}
-
-/* ── Modal Header ─────────────────────────────────────────── */
 
 .modalHeader {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 14px 16px;
-    border-bottom: 1px solid rgba(60, 60, 67, 0.1);
-    background: rgba(242, 242, 247, 0.85);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
+    padding: 1rem 1.25rem;
+    border-bottom: 1px solid var(--border-color);
+    background: var(--bg-secondary);
     flex-shrink: 0;
-    /* Prevent header from scrolling away */
-}
-
-[data-theme="dark"] .modalHeader {
-    background: rgba(28, 28, 30, 0.85);
-    border-bottom-color: rgba(84, 84, 88, 0.45);
 }
 
 .modalBack {
     display: inline-flex;
     align-items: center;
-    gap: 3px;
+    gap: 0.25rem;
     background: none;
     border: none;
-    color: #007aff;
-    font-size: 16px;
+    color: var(--color-primary);
+    font-size: 0.9375rem;
     font-weight: 500;
     cursor: pointer;
-    padding: 6px 4px;
-    border-radius: 8px;
-    transition: opacity 0.15s ease;
-    /* Min touch target */
-    min-height: 44px;
-    min-width: 44px;
+    padding: 0.5rem;
+    border-radius: var(--radius-sm);
+    min-width: 60px;
 }
 
 .modalBack:hover {
-    opacity: 0.7;
-}
-
-.modalBack:active {
-    opacity: 0.5;
-}
-
-[data-theme="dark"] .modalBack {
-    color: #0a84ff;
-}
-
-/* Spacer mirrors the back button width to keep title truly centered */
-.modalBackSpacer {
-    width: 72px;
-    flex-shrink: 0;
+    background: var(--bg-tertiary);
 }
 
 .modalTitle {
     flex: 1;
-    font-size: 17px;
+    font-size: 1rem;
     font-weight: 600;
-    color: #1c1c1e;
+    color: var(--text-primary);
     margin: 0;
     text-align: center;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
-    padding: 0 8px;
+    padding: 0 0.5rem;
 }
 
-[data-theme="dark"] .modalTitle {
-    color: #ffffff;
+.modalBackSpacer {
+    min-width: 60px;
 }
 
-@media (min-width: 768px) {
-    .modalHeader {
-        padding: 16px 24px;
-    }
-
-    .modalTitle {
-        font-size: 18px;
-    }
-}
-
-/* ── Progress Bar ─────────────────────────────────────────── */
-
+/* Progress Bar */
 .progressBar {
-    padding: 18px 20px 14px;
-    background: rgba(255, 255, 255, 0.6);
-    border-bottom: 1px solid rgba(60, 60, 67, 0.08);
+    padding: 1rem 1.25rem;
+    background: var(--bg-secondary);
+    border-bottom: 1px solid var(--border-color);
     flex-shrink: 0;
-}
-
-[data-theme="dark"] .progressBar {
-    background: rgba(44, 44, 46, 0.6);
-    border-bottom-color: rgba(84, 84, 88, 0.4);
 }
 
 .progressSteps {
@@ -189,7 +79,7 @@
     align-items: center;
     justify-content: center;
     gap: 0;
-    margin-bottom: 10px;
+    margin-bottom: 0.5rem;
 }
 
 .progressStep {
@@ -198,376 +88,206 @@
 }
 
 .progressDot {
-    width: 36px;
-    height: 36px;
+    width: 32px;
+    height: 32px;
     border-radius: 50%;
-    background: rgba(142, 142, 147, 0.15);
-    border: 2px solid rgba(142, 142, 147, 0.25);
+    background: var(--bg-tertiary);
+    border: 2px solid var(--border-color);
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 14px;
+    font-size: 0.8125rem;
     font-weight: 600;
-    color: #8e8e93;
-    /* will-change: transform handled by Framer */
+    color: var(--text-tertiary);
 }
 
 .progressDotActive {
-    background: #007aff;
-    border-color: #007aff;
+    background: var(--color-primary);
+    border-color: var(--color-primary);
     color: white;
-    box-shadow: 0 3px 10px rgba(0, 122, 255, 0.38);
-}
-
-[data-theme="dark"] .progressDotActive {
-    background: #0a84ff;
-    border-color: #0a84ff;
-    box-shadow: 0 3px 10px rgba(10, 132, 255, 0.38);
 }
 
 .progressDotCompleted {
-    background: #34c759;
-    border-color: #34c759;
+    background: var(--color-success);
+    border-color: var(--color-success);
     color: white;
 }
 
-[data-theme="dark"] .progressDotCompleted {
-    background: #30d158;
-    border-color: #30d158;
-}
-
-/* Animated line track + fill */
 .progressLineTrack {
-    width: 48px;
+    width: 40px;
     height: 3px;
     border-radius: 2px;
-    background: rgba(142, 142, 147, 0.2);
-    margin: 0 6px;
+    background: var(--bg-tertiary);
+    margin: 0 0.5rem;
     overflow: hidden;
-    position: relative;
 }
 
 .progressLineFill {
-    position: absolute;
-    inset: 0;
-    background: #34c759;
+    width: 100%;
+    height: 100%;
+    background: var(--color-success);
     border-radius: 2px;
-    transform-origin: left;
-}
-
-[data-theme="dark"] .progressLineFill {
-    background: #30d158;
 }
 
 .progressText {
     text-align: center;
-    font-size: 13px;
-    color: #8e8e93;
+    font-size: 0.75rem;
+    color: var(--text-tertiary);
     margin: 0;
 }
 
 .progressText strong {
-    color: #007aff;
+    color: var(--color-primary);
     font-weight: 600;
 }
 
-[data-theme="dark"] .progressText strong {
-    color: #0a84ff;
-}
-
-@media (max-width: 640px) {
-    .progressDot {
-        width: 32px;
-        height: 32px;
-        font-size: 12px;
-    }
-
-    .progressLineTrack {
-        width: 32px;
-    }
-}
-
-/* ── Steps Container ──────────────────────────────────────── */
-
+/* Steps Container */
 .stepsContainer {
     flex: 1;
     overflow-y: auto;
-    padding: 16px;
-    background: #f2f2f7;
-    -webkit-overflow-scrolling: touch;
-    overscroll-behavior: contain;
+    padding: 1rem 1.25rem;
+    background: var(--bg-primary);
 }
 
-[data-theme="dark"] .stepsContainer {
-    background: #000000;
-}
-
-.stepsContainer::-webkit-scrollbar {
-    width: 6px;
-}
-
-.stepsContainer::-webkit-scrollbar-track {
-    background: transparent;
-}
-
-.stepsContainer::-webkit-scrollbar-thumb {
-    background: rgba(0, 0, 0, 0.15);
-    border-radius: 3px;
-}
-
-[data-theme="dark"] .stepsContainer::-webkit-scrollbar-thumb {
-    background: rgba(255, 255, 255, 0.15);
-}
-
-/* ── Step Card ────────────────────────────────────────────── */
-
+/* Step Card */
 .stepCard {
-    background: white;
-    border-radius: 18px;
-    padding: 20px;
-    margin-bottom: 12px;
-    box-shadow:
-        0 1px 0 rgba(0, 0, 0, 0.04),
-        0 2px 10px rgba(0, 0, 0, 0.06);
-    /* No CSS animation — Framer handles entrance */
-    transition: box-shadow 0.2s ease;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-lg);
+    padding: 1.25rem;
+    margin-bottom: 0.75rem;
 }
 
 .stepCard:last-child {
     margin-bottom: 0;
 }
 
-[data-theme="dark"] .stepCard {
-    background: #1c1c1e;
-    box-shadow:
-        0 1px 0 rgba(255, 255, 255, 0.04),
-        0 2px 10px rgba(0, 0, 0, 0.25);
-}
-
 .stepLocked {
-    opacity: 0.55;
+    opacity: 0.5;
     pointer-events: none;
 }
-
-/* ── Step Header ──────────────────────────────────────────── */
 
 .stepHeader {
     display: flex;
     align-items: center;
-    gap: 14px;
-    margin-bottom: 16px;
+    gap: 0.875rem;
+    margin-bottom: 0.875rem;
 }
 
 .stepNumber {
-    width: 46px;
-    height: 46px;
-    border-radius: 13px;
-    background: linear-gradient(135deg, #007aff 0%, #5856d6 100%);
+    width: 40px;
+    height: 40px;
+    border-radius: var(--radius-md);
+    background: var(--color-primary);
     display: flex;
     align-items: center;
     justify-content: center;
     color: white;
-    font-size: 19px;
+    font-size: 1rem;
     font-weight: 700;
     flex-shrink: 0;
-    box-shadow: 0 3px 10px rgba(0, 122, 255, 0.28);
-    transition: background 0.25s ease, box-shadow 0.25s ease;
-}
-
-[data-theme="dark"] .stepNumber {
-    background: linear-gradient(135deg, #0a84ff 0%, #5e5ce6 100%);
 }
 
 .stepNumberDone {
-    background: linear-gradient(135deg, #34c759 0%, #30d158 100%);
-    box-shadow: 0 3px 10px rgba(52, 199, 89, 0.28);
+    background: var(--color-success);
 }
 
 .stepNumberLocked {
-    background: rgba(142, 142, 147, 0.25);
-    box-shadow: none;
+    background: var(--bg-tertiary);
+    color: var(--text-tertiary);
 }
 
 .stepTitle {
-    font-size: 17px;
+    font-size: 1rem;
     font-weight: 600;
-    color: #1c1c1e;
+    color: var(--text-primary);
     margin: 0;
     line-height: 1.3;
 }
 
-[data-theme="dark"] .stepTitle {
-    color: #ffffff;
-}
-
-/* ── Step Content ─────────────────────────────────────────── */
-
 .stepContent {
-    padding-left: 60px;
+    padding-left: 3.25rem;
 }
 
 .stepText {
-    font-size: 15px;
-    line-height: 1.65;
-    color: #3c3c43;
-    margin: 0 0 18px 0;
-}
-
-[data-theme="dark"] .stepText {
-    color: #ebebf5;
+    font-size: 0.875rem;
+    line-height: 1.6;
+    color: var(--text-secondary);
+    margin: 0 0 1rem 0;
 }
 
 .stepText strong {
-    color: #007aff;
+    color: var(--color-primary);
     font-weight: 600;
 }
 
-[data-theme="dark"] .stepText strong {
-    color: #0a84ff;
-}
-
 .stepLockedText {
-    font-size: 13px;
-    color: #8e8e93;
+    font-size: 0.75rem;
+    color: var(--text-tertiary);
     margin: 0;
-    padding-left: 60px;
-    font-style: italic;
+    padding-left: 3.25rem;
 }
 
-/* ── Buttons ──────────────────────────────────────────────── */
-
-.stepButton,
-.stepButtonPrimary {
+/* Buttons */
+.stepButton {
     width: 100%;
-    padding: 14px 20px;
-    border-radius: 13px;
-    font-size: 15px;
+    padding: 0.75rem;
+    background: rgba(59, 130, 246, 0.08);
+    color: var(--color-primary);
+    border: 1px solid transparent;
+    border-radius: var(--radius-md);
+    font-size: 0.875rem;
     font-weight: 600;
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 8px;
-    border: none;
-    min-height: 50px;
-    position: relative;
-    overflow: hidden;
-    isolation: isolate;
-    transition:
-        transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1),
-        box-shadow 0.25s ease,
-        opacity 0.15s ease;
-}
-
-/* Shimmer on hover */
-.stepButton::after,
-.stepButtonPrimary::after {
-    content: "";
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(105deg,
-            transparent 30%,
-            rgba(255, 255, 255, 0.2) 50%,
-            transparent 70%);
-    transform: translateX(-100%);
-    transition: transform 0.45s ease;
-}
-
-.stepButton:hover::after,
-.stepButtonPrimary:hover::after {
-    transform: translateX(100%);
-}
-
-.stepButton:hover,
-.stepButtonPrimary:hover {
-    transform: translateY(-2px);
-}
-
-.stepButton:active,
-.stepButtonPrimary:active {
-    transform: scale(0.98);
-    transition-duration: 0.08s;
-}
-
-/* Ghost variant */
-.stepButton {
-    background: rgba(0, 122, 255, 0.09);
-    color: #007aff;
+    gap: 0.5rem;
+    transition: all var(--transition-fast);
 }
 
 .stepButton:hover {
-    background: rgba(0, 122, 255, 0.14);
-    box-shadow: 0 4px 14px rgba(0, 122, 255, 0.15);
+    background: rgba(59, 130, 246, 0.15);
 }
 
-[data-theme="dark"] .stepButton {
-    background: rgba(10, 132, 255, 0.13);
-    color: #0a84ff;
-}
-
-/* Filled variant */
 .stepButtonPrimary {
-    background: linear-gradient(135deg, #007aff 0%, #5856d6 100%);
+    background: var(--color-primary);
     color: white;
-    box-shadow: 0 4px 14px rgba(0, 122, 255, 0.3);
+    border: none;
 }
 
 .stepButtonPrimary:hover {
-    box-shadow: 0 6px 20px rgba(0, 122, 255, 0.45);
+    filter: brightness(1.1);
 }
 
-[data-theme="dark"] .stepButtonPrimary {
-    background: linear-gradient(135deg, #0a84ff 0%, #5e5ce6 100%);
-    box-shadow: 0 4px 14px rgba(10, 132, 255, 0.3);
-}
-
-/* Completed badge */
 .stepCompleted {
     display: inline-flex;
     align-items: center;
-    gap: 8px;
-    padding: 11px 18px;
-    background: rgba(52, 199, 89, 0.1);
-    border-radius: 13px;
-    color: #34c759;
-    font-size: 14px;
+    gap: 0.5rem;
+    padding: 0.625rem 1rem;
+    background: rgba(34, 197, 94, 0.1);
+    border-radius: var(--radius-md);
+    color: var(--color-success);
+    font-size: 0.8125rem;
     font-weight: 600;
-    letter-spacing: 0.01em;
     width: 100%;
     justify-content: center;
 }
 
-[data-theme="dark"] .stepCompleted {
-    background: rgba(48, 209, 88, 0.12);
-    color: #30d158;
-}
-
-/* ── Iframe / Viewer ──────────────────────────────────────── */
-
+/* Iframe / Viewer */
 .viewerContainer {
-    margin-bottom: 18px;
-    border-radius: 14px;
+    margin-bottom: 1rem;
+    border-radius: var(--radius-md);
     overflow: hidden;
-    box-shadow:
-        0 0 0 1px rgba(0, 0, 0, 0.06),
-        0 4px 20px rgba(0, 0, 0, 0.1);
-    background: white;
-    /* Prevents iframe border flash */
-    isolation: isolate;
-}
-
-[data-theme="dark"] .viewerContainer {
-    box-shadow:
-        0 0 0 1px rgba(255, 255, 255, 0.06),
-        0 4px 20px rgba(0, 0, 0, 0.35);
-    background: #1c1c1e;
+    border: 1px solid var(--border-color);
+    background: var(--bg-tertiary);
 }
 
 .iframe {
     display: block;
     width: 100%;
-    height: 58vh;
-    min-height: 380px;
+    height: 50vh;
+    min-height: 300px;
     border: none;
     background: white;
 }
@@ -577,133 +297,68 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: 12px;
-    height: 260px;
-    color: #8e8e93;
-    font-size: 15px;
-    background: #f2f2f7;
+    gap: 0.75rem;
+    height: 200px;
+    color: var(--text-tertiary);
+    font-size: 0.875rem;
 }
 
 .noContentIcon {
-    opacity: 0.4;
-    color: #8e8e93;
+    opacity: 0.5;
 }
 
-[data-theme="dark"] .noContent {
-    background: #2c2c2e;
-}
-
-/* ─────────────────────────────────────────────────────────────
-   Responsive
-───────────────────────────────────────────────────────────── */
-
+/* Desktop */
 @media (min-width: 768px) {
+    .modal {
+        bottom: unset;
+        left: 50%;
+        right: unset;
+        top: 50%;
+        transform: translate(-50%, -50%);
+        width: min(600px, calc(100vw - 3rem));
+        max-height: 90dvh;
+        border-radius: var(--radius-xl);
+    }
+
     .stepsContainer {
-        padding: 24px;
+        padding: 1.25rem 1.5rem;
     }
 
     .stepCard {
-        padding: 26px;
-        border-radius: 20px;
-        margin-bottom: 14px;
+        padding: 1.5rem;
     }
 
     .stepNumber {
-        width: 52px;
-        height: 52px;
-        font-size: 22px;
-        border-radius: 14px;
-    }
-
-    .stepTitle {
-        font-size: 19px;
+        width: 48px;
+        height: 48px;
+        font-size: 1.125rem;
     }
 
     .stepContent {
-        padding-left: 66px;
-    }
-
-    .stepText {
-        font-size: 16px;
+        padding-left: 4rem;
     }
 
     .iframe {
-        height: 62vh;
-        min-height: 480px;
+        height: 55vh;
+        min-height: 400px;
     }
 }
 
 @media (max-width: 640px) {
     .stepContent {
         padding-left: 0;
+        margin-top: 0.5rem;
     }
 
     .stepLockedText {
         padding-left: 0;
-        margin-top: 6px;
-    }
-
-    .stepNumber {
-        width: 40px;
-        height: 40px;
-        font-size: 17px;
-        border-radius: 11px;
-    }
-
-    .iframe {
-        height: 50vh;
-        min-height: 280px;
     }
 }
-
-/* Mobile: full-screen sheet */
-@media (max-width: 767px) {
-    .modal {
-        max-height: 100dvh;
-        border-radius: 20px 20px 0 0;
-    }
-}
-
-/* ─────────────────────────────────────────────────────────────
-   Reduced motion
-───────────────────────────────────────────────────────────── */
 
 @media (prefers-reduced-motion: reduce) {
-
     .stepButton,
-    .stepButtonPrimary {
-        transition: opacity 0.15s ease;
-    }
-
-    .stepButton:hover,
-    .stepButtonPrimary:hover {
-        transform: none;
-    }
-
-    .stepButton::after,
-    .stepButtonPrimary::after {
-        display: none;
-    }
-
-    .progressLineFill {
+    .stepButtonPrimary,
+    .modalBack {
         transition: none;
-    }
-}
-
-/* ─────────────────────────────────────────────────────────────
-   High contrast
-───────────────────────────────────────────────────────────── */
-
-@media (prefers-contrast: high) {
-    .stepButton {
-        border: 2px solid #007aff;
-    }
-
-    .stepButtonPrimary {
-        border: 2px solid white;
-    }
-
-    .stepCard {
-        border: 1px solid rgba(0, 0, 0, 0.2);
     }
 }

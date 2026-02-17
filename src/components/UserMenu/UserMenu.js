@@ -1,9 +1,8 @@
 'use client';
 
 import { useState, useRef, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
 import Image from 'next/image';
-import { LogOut, ChevronDown, Check, User, Monitor, Moon, Sun } from 'lucide-react';
+import { LogOut, ChevronDown, Check, User } from 'lucide-react';
 import { useTheme } from '@/contexts/ThemeContext';
 import styles from './UserMenu.module.css';
 import { formatDisplayName } from '@/utils/nameUtils';
@@ -13,7 +12,6 @@ export default function UserMenu({ user, onLogout, onAvatarClick, onThemeChange 
     const [isOpen, setIsOpen] = useState(false);
     const containerRef = useRef(null);
 
-    // Close on click outside
     useEffect(() => {
         const handleClickOutside = (event) => {
             if (containerRef.current && !containerRef.current.contains(event.target)) {
@@ -46,7 +44,7 @@ export default function UserMenu({ user, onLogout, onAvatarClick, onThemeChange 
                             src={user.avatar}
                             alt="Avatar"
                             fill
-                            sizes="40px"
+                            sizes="36px"
                             style={{ objectFit: 'cover' }}
                             priority
                             unoptimized
@@ -63,66 +61,55 @@ export default function UserMenu({ user, onLogout, onAvatarClick, onThemeChange 
                     <span className={styles.userRole}>{user.position}</span>
                 </div>
 
-                <ChevronDown size={16} className={`${styles.chevron} ${isOpen ? styles.rotate : ''}`} />
+                <ChevronDown size={14} className={`${styles.chevron} ${isOpen ? styles.rotate : ''}`} />
             </button>
 
-            <AnimatePresence>
-                {isOpen && (
-                    <motion.div
-                        className={styles.dropdown}
-                        initial={{ opacity: 0, y: 10, scale: 0.95 }}
-                        animate={{ opacity: 1, y: 0, scale: 1 }}
-                        exit={{ opacity: 0, y: 10, scale: 0.95 }}
-                        transition={{ duration: 0.2, ease: 'easeOut' }}
-                    >
-                        {/* Mobile User Info visible only inside dropdown on small screens? 
-                            Actually, simpler to just have theme + logout for now. */}
+            {isOpen && (
+                <div className={styles.dropdown}>
+                    <div className={styles.menuSection}>
+                        <button
+                            onClick={() => {
+                                setIsOpen(false);
+                                if (onAvatarClick) onAvatarClick();
+                            }}
+                            className={styles.menuItem}
+                        >
+                            <User size={16} />
+                            <span>Cambiar Avatar</span>
+                        </button>
+                    </div>
 
-                        <div className={styles.menuSection}>
-                            <button
-                                onClick={() => {
-                                    setIsOpen(false);
-                                    if (onAvatarClick) onAvatarClick();
-                                }}
-                                className={styles.menuItem}
-                            >
-                                <User size={18} />
-                                <span>Cambiar Avatar</span>
-                            </button>
-                        </div>
-
-                        <div className={styles.menuSection}>
-                            <span className={styles.sectionTitle}>Apariencia</span>
-                            <div className={styles.themeGrid}>
-                                {Object.entries(availableThemes).map(([key, value]) => (
-                                    <button
-                                        key={key}
-                                        className={`${styles.themeOption} ${theme === key ? styles.active : ''}`}
-                                        onClick={() => handleThemeSelect(key)}
+                    <div className={styles.menuSection}>
+                        <span className={styles.sectionTitle}>Apariencia</span>
+                        <div className={styles.themeGrid}>
+                            {Object.entries(availableThemes).map(([key, value]) => (
+                                <button
+                                    key={key}
+                                    className={`${styles.themeOption} ${theme === key ? styles.active : ''}`}
+                                    onClick={() => handleThemeSelect(key)}
+                                >
+                                    <div
+                                        className={styles.colorPreview}
+                                        style={{ backgroundColor: value.color }}
                                     >
-                                        <div
-                                            className={styles.colorPreview}
-                                            style={{ backgroundColor: value.color }}
-                                        >
-                                            {theme === key && (
-                                                <Check size={14} strokeWidth={3} color={key === 'dark' ? '#fff' : '#000'} />
-                                            )}
-                                        </div>
-                                        <span className={styles.themeLabel}>{value.name}</span>
-                                    </button>
-                                ))}
-                            </div>
+                                        {theme === key && (
+                                            <Check size={12} strokeWidth={3} color={key === 'dark' ? '#fff' : '#000'} />
+                                        )}
+                                    </div>
+                                    <span className={styles.themeLabel}>{value.name}</span>
+                                </button>
+                            ))}
                         </div>
+                    </div>
 
-                        <div className={styles.menuSection}>
-                            <button onClick={onLogout} className={styles.logoutBtn}>
-                                <LogOut size={18} />
-                                <span>Cerrar Sesión</span>
-                            </button>
-                        </div>
-                    </motion.div>
-                )}
-            </AnimatePresence>
+                    <div className={styles.menuSection}>
+                        <button onClick={onLogout} className={styles.logoutBtn}>
+                            <LogOut size={16} />
+                            <span>Cerrar Sesión</span>
+                        </button>
+                    </div>
+                </div>
+            )}
         </div>
     );
 }

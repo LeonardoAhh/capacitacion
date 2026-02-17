@@ -1,36 +1,20 @@
-/* Skeleton Loading Styles */
-
 .skeleton {
     background: linear-gradient(90deg,
-            rgba(0, 0, 0, 0.06) 25%,
-            rgba(0, 0, 0, 0.1) 50%,
-            rgba(0, 0, 0, 0.06) 75%);
+        var(--bg-tertiary) 25%,
+        var(--bg-secondary) 50%,
+        var(--bg-tertiary) 75%);
     background-size: 200% 100%;
     animation: shimmer 1.5s infinite ease-in-out;
-    border-radius: 8px;
-}
-
-[data-theme="dark"] .skeleton {
-    background: linear-gradient(90deg,
-            rgba(255, 255, 255, 0.06) 25%,
-            rgba(255, 255, 255, 0.12) 50%,
-            rgba(255, 255, 255, 0.06) 75%);
-    background-size: 200% 100%;
+    border-radius: var(--radius-md);
 }
 
 @keyframes shimmer {
-    0% {
-        background-position: 200% 0;
-    }
-
-    100% {
-        background-position: -200% 0;
-    }
+    0% { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
 }
 
-/* Dashboard Skeleton Layout */
 .dashboardSkeleton {
-    padding: 16px;
+    padding: 1rem;
     max-width: 600px;
     margin: 0 auto;
 }
@@ -40,75 +24,67 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    padding: 32px 16px 40px;
-    gap: 12px;
+    padding: 2rem 1rem 2.5rem;
+    gap: 0.75rem;
 }
 
 .avatar {
-    width: 100px;
-    height: 100px;
+    width: 80px;
+    height: 80px;
     border-radius: 50%;
 }
 
 .profileName {
-    width: 180px;
-    height: 28px;
-    border-radius: 6px;
+    width: 160px;
+    height: 24px;
+    border-radius: var(--radius-sm);
 }
 
 .profilePosition {
-    width: 120px;
-    height: 18px;
-    border-radius: 4px;
+    width: 100px;
+    height: 16px;
+    border-radius: var(--radius-sm);
 }
 
 /* Section */
 .section {
-    margin-bottom: 24px;
+    margin-bottom: 1.5rem;
 }
 
 .sectionHeader {
-    width: 140px;
+    width: 120px;
     height: 14px;
-    border-radius: 4px;
-    margin-bottom: 12px;
+    border-radius: var(--radius-sm);
+    margin-bottom: 0.75rem;
 }
 
 /* Info Grid */
 .infoGrid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
-    gap: 12px;
+    gap: 0.75rem;
 }
 
 .infoCard {
-    height: 80px;
-    border-radius: 12px;
+    height: 72px;
+    border-radius: var(--radius-lg);
 }
 
 /* Menu Group */
 .menuGroup {
-    background: rgba(255, 255, 255, 0.6);
-    backdrop-filter: blur(20px);
-    border-radius: 12px;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-lg);
     overflow: hidden;
-}
-
-[data-theme="dark"] .menuGroup {
-    background: rgba(28, 28, 30, 0.4);
 }
 
 /* Course Item */
 .courseItem {
     display: flex;
     align-items: center;
-    gap: 12px;
-    padding: 12px 16px;
-    border-bottom: 1px solid rgba(60, 60, 67, 0.1);
-}
-
-[data-theme="dark"] .courseItem {
-    border-bottom-color: rgba(84, 84, 88, 0.5);
+    gap: 0.75rem;
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid var(--border-color);
 }
 
 .courseItem:last-child {
@@ -116,9 +92,9 @@
 }
 
 .courseIcon {
-    width: 44px;
-    height: 44px;
-    border-radius: 10px;
+    width: 40px;
+    height: 40px;
+    border-radius: var(--radius-md);
     flex-shrink: 0;
 }
 
@@ -126,24 +102,24 @@
     flex: 1;
     display: flex;
     flex-direction: column;
-    gap: 6px;
+    gap: 0.375rem;
 }
 
 .courseTitle {
     width: 70%;
-    height: 16px;
-    border-radius: 4px;
+    height: 14px;
+    border-radius: var(--radius-sm);
 }
 
 .courseDuration {
     width: 40%;
-    height: 12px;
-    border-radius: 3px;
+    height: 10px;
+    border-radius: var(--radius-sm);
 }
 
 .courseAction {
-    width: 24px;
-    height: 24px;
+    width: 20px;
+    height: 20px;
     border-radius: 50%;
 }
 
@@ -152,12 +128,8 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 12px 16px;
-    border-bottom: 1px solid rgba(60, 60, 67, 0.1);
-}
-
-[data-theme="dark"] .menuItem {
-    border-bottom-color: rgba(84, 84, 88, 0.5);
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid var(--border-color);
 }
 
 .menuItem:last-child {
@@ -165,13 +137,13 @@
 }
 
 .menuLabel {
-    width: 80px;
-    height: 16px;
-    border-radius: 4px;
+    width: 70px;
+    height: 14px;
+    border-radius: var(--radius-sm);
 }
 
 .menuValue {
-    width: 120px;
-    height: 16px;
-    border-radius: 4px;
+    width: 100px;
+    height: 14px;
+    border-radius: var(--radius-sm);
 }

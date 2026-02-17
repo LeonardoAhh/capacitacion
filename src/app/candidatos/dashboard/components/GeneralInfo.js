@@ -4,8 +4,8 @@ import styles from './GeneralInfo.module.css';
 
 export default function GeneralInfo({ candidate }) {
     return (
-        <section style={{ marginBottom: '24px' }}>
-            <h3 className={styles.sectionHeader}>📋 Datos Generales</h3>
+        <section>
+            <h3 className={styles.sectionHeader}>Datos Generales</h3>
             <div className={styles.infoGrid}>
                 <div className={styles.infoCard}>
                     <span className={styles.infoLabelSmall}>CURP</span>

@@ -1,36 +1,22 @@
-/* ─────────────────────────────────────────────────────────────
-   Training Dashboard — v2.0
-   Refactored: deduplicated, consolidated media queries,
-   improved animations, glassmorphism, shimmer effects.
-───────────────────────────────────────────────────────────── */
-
-/* ── Layout ───────────────────────────────────────────────── */
-
-.container {
-    min-height: 100dvh;
+.page {
+    min-height: 100vh;
     background: var(--bg-primary);
     color: var(--text-primary);
-    position: relative;
-    overflow-x: hidden;
 }
 
-/* ── Navbar ───────────────────────────────────────────────── */
-
+/* Navbar */
 .navbar {
     position: sticky;
     top: 0;
     z-index: 100;
-    background: rgba(var(--bg-primary-rgb, 255, 255, 255), 0.72);
-    backdrop-filter: blur(16px) saturate(180%);
-    -webkit-backdrop-filter: blur(16px) saturate(180%);
-    border-bottom: 1px solid rgba(var(--border-color-rgb, 0, 0, 0), 0.06);
-    transition: background 0.3s ease;
+    background: var(--bg-secondary);
+    border-bottom: 1px solid var(--border-color);
 }
 
 .navContent {
-    max-width: 1400px;
+    max-width: 1200px;
     margin: 0 auto;
-    padding: 0.625rem 1rem;
+    padding: 0.75rem 1rem;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -45,13 +31,13 @@
 .navIcon {
     width: 40px;
     height: 40px;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    border-radius: 12px;
+    background: var(--bg-tertiary);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
     display: flex;
     align-items: center;
     justify-content: center;
-    color: white;
-    box-shadow: 0 4px 14px rgba(102, 126, 234, 0.3);
+    color: var(--color-primary);
     flex-shrink: 0;
 }
 
@@ -61,17 +47,17 @@
 }
 
 .navTitle {
-    font-size: 1rem;
-    font-weight: 700;
+    font-size: 0.9375rem;
+    font-weight: 600;
     color: var(--text-primary);
     line-height: 1.2;
 }
 
 .navCompany {
     font-size: 0.6875rem;
-    font-weight: 600;
+    font-weight: 500;
     color: var(--text-tertiary);
-    letter-spacing: 0.06em;
+    letter-spacing: 0.05em;
     text-transform: uppercase;
 }
 
@@ -81,139 +67,60 @@
     gap: 0.5rem;
 }
 
-/* ── Main Content ─────────────────────────────────────────── */
-
+/* Main Content */
 .main {
-    max-width: 1400px;
+    max-width: 1200px;
     margin: 0 auto;
-    padding: 1.5rem 1rem 4rem;
+    padding: 1.5rem 1rem 3rem;
 }
 
-/* ── Stats Overview ───────────────────────────────────────── */
-
-.statsOverview {
-    background: var(--bg-secondary);
-    border: 1px solid var(--border-color);
-    border-radius: 20px;
-    padding: 1.25rem;
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 1rem;
-    margin-bottom: 2rem;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
-    transition: box-shadow 0.25s ease;
-}
-
-.statsOverview:hover {
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.07);
-}
-
-.statItem {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    padding: 0.75rem;
-    border-radius: 14px;
-    transition: background 0.2s ease;
-}
-
-.statItem:hover {
-    background: rgba(102, 126, 234, 0.04);
-}
-
-.statIconWrapper {
-    width: 46px;
-    height: 46px;
-    border-radius: 13px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: white;
-    flex-shrink: 0;
-    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.12);
-}
-
-.statContent {
-    display: flex;
-    flex-direction: column;
-}
-
-.statLabel {
-    font-size: 0.75rem;
-    color: var(--text-secondary);
-    font-weight: 600;
-    letter-spacing: 0.03em;
-    text-transform: uppercase;
-}
-
-.statNumber {
-    font-size: 1.625rem;
-    font-weight: 800;
-    color: var(--text-primary);
-    line-height: 1.2;
-    font-variant-numeric: tabular-nums;
-}
-
-/* ── Header ───────────────────────────────────────────────── */
-
+/* Header */
 .header {
-    margin-bottom: 2rem;
+    margin-bottom: 1.5rem;
 }
 
 .pageTitle {
-    font-size: 2rem;
-    font-weight: 800;
-    margin-bottom: 0.375rem;
-    background: linear-gradient(135deg, var(--text-primary) 0%, var(--text-secondary) 100%);
-    -webkit-background-clip: text;
-    background-clip: text;
-    -webkit-text-fill-color: transparent;
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-bottom: 0.25rem;
+    color: var(--text-primary);
 }
 
 .pageSubtitle {
-    font-size: 1rem;
+    font-size: 0.9375rem;
     color: var(--text-secondary);
-    max-width: 560px;
     line-height: 1.5;
 }
 
-/* ── Controls ─────────────────────────────────────────────── */
-
+/* Controls */
 .controls {
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-    margin-bottom: 2rem;
+    margin-bottom: 1.5rem;
 }
 
 .searchWrapper {
     position: relative;
-    flex: 1;
-    max-width: 420px;
+    max-width: 360px;
 }
 
 .searchIcon {
     position: absolute;
-    left: 1rem;
+    left: 0.875rem;
     top: 50%;
     transform: translateY(-50%);
     color: var(--text-tertiary);
-    width: 18px;
-    height: 18px;
     pointer-events: none;
-    transition: color 0.2s ease;
 }
 
 .searchInput {
     width: 100%;
-    padding: 0.8125rem 1rem 0.8125rem 2.875rem;
+    padding: 0.625rem 1rem 0.625rem 2.5rem;
     background: var(--bg-secondary);
-    border: 1.5px solid var(--border-color);
-    border-radius: 14px;
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
     color: var(--text-primary);
-    font-size: 0.9375rem;
+    font-size: 0.875rem;
     outline: none;
-    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    transition: border-color var(--transition-fast);
 }
 
 .searchInput::placeholder {
@@ -221,132 +128,50 @@
 }
 
 .searchInput:focus {
-    border-color: #667eea;
-    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.12);
+    border-color: var(--color-primary);
 }
 
-.searchInput:focus~.searchIcon {
-    color: #667eea;
-}
-
-/* Filter tabs (if used) */
-.filterTabs {
-    display: flex;
-    gap: 4px;
-    background: var(--bg-secondary);
-    padding: 4px;
-    border-radius: 12px;
-    border: 1px solid var(--border-color);
-}
-
-.filterTab {
-    padding: 0.625rem 1.25rem;
-    border: none;
-    background: transparent;
-    color: var(--text-secondary);
-    border-radius: 9px;
-    cursor: pointer;
-    font-size: 0.875rem;
-    font-weight: 600;
-    transition: all 0.2s ease;
-    white-space: nowrap;
-}
-
-.filterTab:hover {
-    color: var(--text-primary);
-    background: rgba(102, 126, 234, 0.05);
-}
-
-.filterTab.activeTab {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white;
-    box-shadow: 0 3px 10px rgba(102, 126, 234, 0.28);
-}
-
-/* ── Courses Grid ─────────────────────────────────────────── */
-
+/* Courses Grid */
 .coursesGrid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-    gap: 1.5rem;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1rem;
 }
 
 .courseCard {
     background: var(--bg-secondary);
-    border: 1.5px solid var(--border-color);
-    border-radius: 18px;
-    padding: 1.5rem;
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-lg);
+    padding: 1.25rem;
     cursor: pointer;
-    position: relative;
-    overflow: hidden;
-    width: 100%;
     text-align: left;
     font-family: inherit;
     color: inherit;
-    isolation: isolate;
-    transition: border-color 0.25s ease, box-shadow 0.25s ease;
-    will-change: transform;
-}
-
-/* Top gradient bar */
-.courseCard::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 3px;
-    background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
-    transform: scaleX(0);
-    transform-origin: left;
-    transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1);
-}
-
-/* Shimmer overlay on hover */
-.courseCard::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(105deg,
-            transparent 30%,
-            rgba(102, 126, 234, 0.06) 50%,
-            transparent 70%);
-    transform: translateX(-100%);
-    transition: transform 0.5s ease;
-    pointer-events: none;
-    z-index: -1;
-}
-
-.courseCard:hover::before {
-    transform: scaleX(1);
-}
-
-.courseCard:hover::after {
-    transform: translateX(100%);
+    transition: all var(--transition-fast);
 }
 
 .courseCard:hover {
-    border-color: rgba(102, 126, 234, 0.3);
-    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.1);
+    border-color: var(--color-primary);
+    transform: translateY(-2px);
 }
 
 .courseHeader {
     display: flex;
     justify-content: space-between;
     align-items: flex-start;
-    margin-bottom: 1rem;
+    margin-bottom: 0.75rem;
 }
 
 .courseIconWrapper {
-    width: 48px;
-    height: 48px;
-    border-radius: 13px;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    width: 40px;
+    height: 40px;
+    border-radius: var(--radius-md);
+    background: var(--bg-tertiary);
+    border: 1px solid var(--border-color);
     display: flex;
     align-items: center;
     justify-content: center;
-    color: white;
-    box-shadow: 0 3px 10px rgba(102, 126, 234, 0.25);
+    color: var(--color-primary);
     flex-shrink: 0;
 }
 
@@ -354,46 +179,42 @@
 .courseBadgeProgress {
     display: inline-flex;
     align-items: center;
-    gap: 5px;
-    padding: 4px 10px;
-    border-radius: 8px;
-    font-size: 0.7rem;
-    font-weight: 700;
-    letter-spacing: 0.02em;
+    gap: 0.25rem;
+    padding: 0.25rem 0.5rem;
+    border-radius: var(--radius-sm);
+    font-size: 0.6875rem;
+    font-weight: 600;
     text-transform: uppercase;
 }
 
 .courseBadge {
     background: rgba(34, 197, 94, 0.1);
-    border: 1px solid rgba(34, 197, 94, 0.2);
-    color: #22c55e;
+    color: var(--color-success);
 }
 
 .courseBadgeProgress {
     background: rgba(249, 115, 22, 0.1);
-    border: 1px solid rgba(249, 115, 22, 0.2);
-    color: #f97316;
+    color: var(--color-warning);
 }
 
 .courseTitle {
-    font-size: 1.125rem;
-    font-weight: 700;
+    font-size: 1rem;
+    font-weight: 600;
     color: var(--text-primary);
-    margin-bottom: 0.5rem;
-    line-height: 1.35;
-    overflow: hidden;
-    text-overflow: ellipsis;
+    margin-bottom: 0.375rem;
+    line-height: 1.3;
     display: -webkit-box;
     -webkit-line-clamp: 2;
     line-clamp: 2;
     -webkit-box-orient: vertical;
+    overflow: hidden;
 }
 
 .courseDescription {
-    font-size: 0.875rem;
+    font-size: 0.8125rem;
     color: var(--text-secondary);
-    line-height: 1.6;
-    margin-bottom: 1.25rem;
+    line-height: 1.5;
+    margin-bottom: 0.75rem;
     display: -webkit-box;
     -webkit-line-clamp: 2;
     line-clamp: 2;
@@ -405,35 +226,34 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding-top: 0.875rem;
+    padding-top: 0.75rem;
     border-top: 1px solid var(--border-color);
 }
 
 .courseDate {
     display: flex;
     align-items: center;
-    gap: 6px;
+    gap: 0.375rem;
     color: var(--text-tertiary);
-    font-size: 0.8125rem;
+    font-size: 0.75rem;
 }
 
 .courseArrow {
     color: var(--text-tertiary);
-    transition: transform 0.25s cubic-bezier(0.22, 1, 0.36, 1), color 0.2s ease;
+    transition: transform var(--transition-fast);
 }
 
 .courseCard:hover .courseArrow {
-    transform: translateX(5px);
-    color: #667eea;
+    transform: translateX(4px);
+    color: var(--color-primary);
 }
 
-/* ── Skeleton Loading ─────────────────────────────────────── */
-
+/* Skeleton Loading */
 .skeletonCard {
     background: var(--bg-secondary);
     border: 1px solid var(--border-color);
-    border-radius: 18px;
-    height: 260px;
+    border-radius: var(--radius-lg);
+    height: 200px;
     position: relative;
     overflow: hidden;
 }
@@ -442,221 +262,167 @@
     content: '';
     position: absolute;
     inset: 0;
-    background: linear-gradient(90deg,
-            transparent 0%,
-            rgba(102, 126, 234, 0.06) 50%,
-            transparent 100%);
-    animation: shimmer 1.8s ease-in-out infinite;
+    background: linear-gradient(90deg, transparent 0%, var(--bg-tertiary) 50%, transparent 100%);
+    animation: shimmer 1.5s ease-in-out infinite;
 }
 
 @keyframes shimmer {
-    0% {
-        transform: translateX(-100%);
-    }
-
-    100% {
-        transform: translateX(100%);
-    }
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(100%); }
 }
 
-/* ── Empty State ──────────────────────────────────────────── */
-
+/* Empty State */
 .emptyState {
     text-align: center;
-    padding: 4rem 2rem;
+    padding: 3rem 1.5rem;
 }
 
 .emptyIcon {
     color: var(--text-tertiary);
-    margin-bottom: 1.5rem;
-    opacity: 0.4;
+    margin-bottom: 1rem;
+    opacity: 0.5;
 }
 
 .emptyTitle {
-    font-size: 1.375rem;
-    font-weight: 700;
+    font-size: 1.125rem;
+    font-weight: 600;
     color: var(--text-primary);
-    margin-bottom: 0.5rem;
+    margin-bottom: 0.375rem;
 }
 
 .emptyText {
-    font-size: 1rem;
+    font-size: 0.9375rem;
     color: var(--text-secondary);
-    text-align: center;
-    max-width: 500px;
-    margin: 0 auto;
 }
 
-/* ── Welcome Drawer (Shadcn UI) ───────────────────────────── */
-
+/* Welcome Drawer */
 .welcomeDrawerContent {
-    max-width: 520px !important;
+    max-width: 420px !important;
     margin: 0 auto;
 }
 
 .welcomeDrawerHeader {
     text-align: center;
-    padding: 2.5rem 2rem 1rem !important;
+    padding: 1.5rem 1.5rem 0.75rem !important;
     border-bottom: none !important;
 }
 
 .welcomeAvatar {
-    width: 80px;
-    height: 80px;
+    width: 64px;
+    height: 64px;
     border-radius: 50%;
     overflow: hidden;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: var(--bg-tertiary);
     display: flex;
     align-items: center;
     justify-content: center;
-    margin: 0 auto 1.25rem;
-    color: white;
-    box-shadow: 0 8px 24px rgba(102, 126, 234, 0.35);
+    margin: 0 auto 1rem;
+    color: var(--text-secondary);
+    border: 1px solid var(--border-color);
     position: relative;
-    border: 3px solid rgba(255, 255, 255, 0.9);
 }
 
 .welcomeTitle {
-    font-size: 1.625rem;
+    font-size: 1.25rem;
     font-weight: 700;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    -webkit-background-clip: text;
-    background-clip: text;
-    -webkit-text-fill-color: transparent;
-    margin-bottom: 0.5rem !important;
+    color: var(--text-primary);
+    margin-bottom: 0.375rem !important;
     line-height: 1.3;
 }
 
 .welcomeText {
-    font-size: 1rem;
-    color: var(--text-secondary) !important;
-    line-height: 1.6;
+    font-size: 0.9375rem;
+    color: var(--text-secondary);
+    line-height: 1.5;
     margin-bottom: 0 !important;
 }
 
 .welcomeDrawerBody {
-    padding: 0 2rem 2rem !important;
+    padding: 0 1.5rem 1rem !important;
     display: flex;
     flex-direction: column;
-    gap: 1.25rem;
+    gap: 1rem;
 }
 
 .welcomeInfo {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
-    gap: 1rem;
+    gap: 0.75rem;
 }
 
 .infoItem {
     display: flex;
     align-items: center;
-    gap: 0.875rem;
-    padding: 1.125rem;
-    background: var(--bg-secondary);
-    border: 1px solid var(--border-color);
-    border-radius: 14px;
-    transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
-}
-
-.infoItem:hover {
-    border-color: rgba(102, 126, 234, 0.4);
-    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.12);
-    transform: translateY(-2px);
+    gap: 0.75rem;
+    padding: 0.875rem;
+    background: var(--bg-tertiary);
+    border-radius: var(--radius-md);
 }
 
 .infoItem svg {
-    color: #667eea;
+    color: var(--color-primary);
     flex-shrink: 0;
 }
 
-.infoItem>div {
+.infoItem > div {
     display: flex;
     flex-direction: column;
-    gap: 3px;
+    gap: 0.125rem;
 }
 
 .infoLabel {
-    display: block;
-    font-size: 0.75rem;
+    font-size: 0.6875rem;
     color: var(--text-tertiary);
     text-transform: uppercase;
-    letter-spacing: 0.04em;
-    font-weight: 600;
+    letter-spacing: 0.03em;
+    font-weight: 500;
 }
 
 .infoValue {
-    font-size: 1rem;
+    font-size: 0.875rem;
     color: var(--text-primary);
-    font-weight: 700;
+    font-weight: 600;
 }
 
 .welcomeSubtext {
     text-align: center;
-    font-size: 0.9375rem;
+    font-size: 0.875rem;
     color: var(--text-secondary);
-    line-height: 1.6;
+    line-height: 1.5;
     margin: 0;
 }
 
 .welcomeDrawerFooter {
-    padding: 1.25rem 2rem 2rem !important;
+    padding: 0.75rem 1.5rem 1.5rem !important;
     border-top: 1px solid var(--border-color);
 }
 
 .welcomeBtn {
     width: 100%;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: var(--color-primary);
     color: white;
     border: none;
-    padding: 0.9375rem 2rem;
-    border-radius: 14px;
-    font-size: 1rem;
-    font-weight: 700;
+    padding: 0.75rem 1.5rem;
+    border-radius: var(--radius-md);
+    font-size: 0.9375rem;
+    font-weight: 600;
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 0.625rem;
-    box-shadow: 0 4px 14px rgba(102, 126, 234, 0.32);
-    position: relative;
-    overflow: hidden;
-    isolation: isolate;
-    transition: box-shadow 0.25s ease;
-}
-
-/* Shimmer on CTA */
-.welcomeBtn::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(105deg,
-            transparent 30%,
-            rgba(255, 255, 255, 0.18) 50%,
-            transparent 70%);
-    transform: translateX(-100%);
-    transition: transform 0.45s ease;
-}
-
-.welcomeBtn:hover::after {
-    transform: translateX(100%);
+    gap: 0.5rem;
+    transition: filter var(--transition-fast);
 }
 
 .welcomeBtn:hover {
-    box-shadow: 0 8px 24px rgba(102, 126, 234, 0.45);
+    filter: brightness(1.1);
 }
 
-.welcomeBtn:active {
-    transform: scale(0.98);
-}
-
-/* ── Course Modal ─────────────────────────────────────────── */
-
+/* Course Modal */
 .modalOverlay {
     position: fixed;
     inset: 0;
-    background: rgba(0, 0, 0, 0.55);
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
+    background: rgba(0, 0, 0, 0.5);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -665,20 +431,19 @@
 }
 
 .modalContent {
-    background: var(--bg-primary);
+    background: var(--bg-secondary);
     border: 1px solid var(--border-color);
-    border-radius: 22px;
-    max-width: 720px;
+    border-radius: var(--radius-xl);
+    max-width: 560px;
     width: 100%;
     max-height: 90vh;
     overflow: hidden;
     display: flex;
     flex-direction: column;
-    box-shadow: 0 25px 60px -12px rgba(0, 0, 0, 0.28);
 }
 
 .modalHeader {
-    padding: 1.75rem 2rem;
+    padding: 1.25rem 1.5rem;
     border-bottom: 1px solid var(--border-color);
     display: flex;
     justify-content: space-between;
@@ -687,8 +452,8 @@
 }
 
 .modalHeader h2 {
-    font-size: 1.5rem;
-    font-weight: 700;
+    font-size: 1.125rem;
+    font-weight: 600;
     color: var(--text-primary);
     margin: 0;
     line-height: 1.3;
@@ -697,60 +462,44 @@
 .modalDuration {
     display: flex;
     align-items: center;
-    gap: 6px;
-    margin-top: 0.375rem;
+    gap: 0.375rem;
+    margin-top: 0.25rem;
     color: var(--text-secondary);
     font-size: 0.8125rem;
 }
 
 .modalClose {
-    width: 38px;
-    height: 38px;
-    border-radius: 10px;
-    background: var(--bg-secondary);
-    border: 1px solid var(--border-color);
+    width: 32px;
+    height: 32px;
+    border-radius: var(--radius-sm);
+    background: var(--bg-tertiary);
+    border: none;
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    font-size: 1.5rem;
+    font-size: 1.25rem;
     color: var(--text-secondary);
     flex-shrink: 0;
-    transition: all 0.18s ease;
+    transition: all var(--transition-fast);
     line-height: 1;
 }
 
 .modalClose:hover {
-    background: rgba(239, 68, 68, 0.08);
-    border-color: rgba(239, 68, 68, 0.3);
-    color: #ef4444;
+    background: rgba(239, 68, 68, 0.1);
+    color: var(--color-danger);
 }
 
 .modalBody {
-    padding: 2rem;
+    padding: 1.5rem;
     overflow-y: auto;
     flex: 1;
-    scrollbar-width: thin;
-    scrollbar-color: var(--border-color) transparent;
-}
-
-.modalBody::-webkit-scrollbar {
-    width: 5px;
-}
-
-.modalBody::-webkit-scrollbar-track {
-    background: transparent;
-}
-
-.modalBody::-webkit-scrollbar-thumb {
-    background: var(--border-color);
-    border-radius: 3px;
 }
 
 .statusBadgeWrapper {
     display: flex;
     justify-content: center;
-    margin-bottom: 1.5rem;
+    margin-bottom: 1rem;
 }
 
 .statusBadgeCompleted,
@@ -758,86 +507,82 @@
 .statusBadgePending {
     display: inline-flex;
     align-items: center;
-    gap: 7px;
-    padding: 0.5rem 1.125rem;
-    border-radius: 10px;
+    gap: 0.5rem;
+    padding: 0.375rem 0.75rem;
+    border-radius: var(--radius-md);
     font-size: 0.8125rem;
-    font-weight: 700;
+    font-weight: 600;
 }
 
 .statusBadgeCompleted {
     background: rgba(34, 197, 94, 0.1);
-    border: 1px solid rgba(34, 197, 94, 0.25);
-    color: #22c55e;
+    color: var(--color-success);
 }
 
 .statusBadgeViewed {
     background: rgba(249, 115, 22, 0.1);
-    border: 1px solid rgba(249, 115, 22, 0.25);
-    color: #f97316;
+    color: var(--color-warning);
 }
 
 .statusBadgePending {
     background: rgba(234, 179, 8, 0.1);
-    border: 1px solid rgba(234, 179, 8, 0.25);
-    color: #eab308;
+    color: var(--color-warning);
 }
 
 .modalDescription {
-    font-size: 1rem;
+    font-size: 0.9375rem;
     color: var(--text-secondary);
-    line-height: 1.7;
-    margin-bottom: 1.75rem;
+    line-height: 1.6;
+    margin-bottom: 1.25rem;
     text-align: center;
 }
 
 .courseDates {
     display: flex;
     flex-direction: column;
-    gap: 0.875rem;
-    margin-bottom: 1.75rem;
-    padding: 1.25rem;
-    background: var(--bg-secondary);
-    border-radius: 14px;
-    border: 1px solid var(--border-color);
+    gap: 0.625rem;
+    margin-bottom: 1.25rem;
+    padding: 1rem;
+    background: var(--bg-tertiary);
+    border-radius: var(--radius-md);
 }
 
 .dateItem {
     display: flex;
     align-items: center;
-    gap: 0.875rem;
+    gap: 0.75rem;
 }
 
 .dateItem svg {
-    color: #667eea;
+    color: var(--color-primary);
     flex-shrink: 0;
 }
 
-.dateItem>div {
+.dateItem > div {
     display: flex;
     flex-direction: column;
-    gap: 3px;
+    gap: 0.125rem;
 }
 
 .dateLabel {
-    font-size: 0.75rem;
+    font-size: 0.6875rem;
     color: var(--text-tertiary);
-    font-weight: 600;
+    font-weight: 500;
     text-transform: uppercase;
     letter-spacing: 0.03em;
 }
 
 .dateValue {
-    font-size: 0.9375rem;
+    font-size: 0.875rem;
     color: var(--text-primary);
-    font-weight: 600;
+    font-weight: 500;
 }
 
 .courseActions {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-    gap: 0.875rem;
-    margin-bottom: 1.25rem;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 0.75rem;
+    margin-bottom: 1rem;
 }
 
 .actionBtnPrimary,
@@ -846,52 +591,46 @@
     align-items: center;
     justify-content: center;
     gap: 0.5rem;
-    padding: 0.875rem 1.25rem;
-    border-radius: 12px;
-    font-size: 0.9375rem;
+    padding: 0.75rem 1rem;
+    border-radius: var(--radius-md);
+    font-size: 0.875rem;
     font-weight: 600;
     text-decoration: none;
     border: none;
     cursor: pointer;
-    transition: all 0.2s ease;
+    transition: all var(--transition-fast);
 }
 
 .actionBtnPrimary {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: var(--color-primary);
     color: white;
-    box-shadow: 0 3px 12px rgba(102, 126, 234, 0.28);
 }
 
 .actionBtnPrimary:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 18px rgba(102, 126, 234, 0.4);
+    filter: brightness(1.1);
 }
 
 .actionBtnSecondary {
-    background: var(--bg-secondary);
-    border: 1.5px solid var(--border-color);
+    background: var(--bg-primary);
+    border: 1px solid var(--border-color);
     color: var(--text-primary);
 }
 
 .actionBtnSecondary:hover {
-    border-color: #667eea;
-    color: #667eea;
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.12);
+    border-color: var(--color-primary);
 }
 
 .requiredBadge {
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 0.5rem;
-    padding: 0.625rem 1rem;
+    gap: 0.375rem;
+    padding: 0.5rem 0.75rem;
     background: rgba(234, 179, 8, 0.1);
-    border: 1px solid rgba(234, 179, 8, 0.25);
-    border-radius: 10px;
-    color: #eab308;
+    border-radius: var(--radius-md);
+    color: var(--color-warning);
     font-size: 0.8125rem;
-    font-weight: 700;
+    font-weight: 600;
 }
 
 .completedMessage {
@@ -899,186 +638,93 @@
     align-items: center;
     justify-content: center;
     gap: 0.5rem;
-    padding: 0.875rem;
+    padding: 0.75rem;
     background: rgba(34, 197, 94, 0.1);
-    border: 1px solid rgba(34, 197, 94, 0.25);
-    border-radius: 12px;
-    color: #22c55e;
-    font-size: 0.9375rem;
-    font-weight: 700;
+    border-radius: var(--radius-md);
+    color: var(--color-success);
+    font-size: 0.875rem;
+    font-weight: 600;
 }
 
 .modalFooter {
-    padding: 1.25rem 2rem;
+    padding: 1rem 1.5rem;
     border-top: 1px solid var(--border-color);
     display: flex;
-    gap: 0.875rem;
+    gap: 0.75rem;
     justify-content: flex-end;
 }
 
 .completeBtn {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: var(--color-primary);
     color: white;
     border: none;
-    padding: 0.8125rem 1.5rem;
-    border-radius: 12px;
-    font-size: 0.9375rem;
-    font-weight: 700;
+    padding: 0.625rem 1.25rem;
+    border-radius: var(--radius-md);
+    font-size: 0.875rem;
+    font-weight: 600;
     cursor: pointer;
     display: flex;
     align-items: center;
     gap: 0.5rem;
-    box-shadow: 0 3px 12px rgba(102, 126, 234, 0.28);
-    transition: all 0.2s ease;
+    transition: filter var(--transition-fast);
 }
 
 .completeBtn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 18px rgba(102, 126, 234, 0.4);
+    filter: brightness(1.1);
 }
 
 .cancelBtn {
-    background: var(--bg-secondary);
-    border: 1.5px solid var(--border-color);
+    background: var(--bg-primary);
+    border: 1px solid var(--border-color);
     color: var(--text-secondary);
-    padding: 0.8125rem 1.5rem;
-    border-radius: 12px;
-    font-size: 0.9375rem;
-    font-weight: 600;
+    padding: 0.625rem 1.25rem;
+    border-radius: var(--radius-md);
+    font-size: 0.875rem;
+    font-weight: 500;
     cursor: pointer;
-    transition: all 0.18s ease;
+    transition: all var(--transition-fast);
 }
 
 .cancelBtn:hover {
-    background: var(--bg-tertiary);
-    border-color: var(--border-hover);
+    border-color: var(--color-primary);
     color: var(--text-primary);
 }
 
-/* ─────────────────────────────────────────────────────────────
-   Responsive — Consolidated
-───────────────────────────────────────────────────────────── */
-
-/* ── ≥ 640px (Tablet small) ── */
-@media (min-width: 640px) {
-    .statsOverview {
-        grid-template-columns: repeat(2, 1fr);
-        gap: 1.25rem;
-        padding: 1.5rem;
-    }
-
-    .controls {
-        flex-direction: row;
-        align-items: center;
-    }
-}
-
-/* ── ≥ 768px (Tablet) ── */
-@media (min-width: 768px) {
-    .navContent {
-        padding: 0.75rem 2rem;
-    }
-
-    .navIcon {
-        width: 44px;
-        height: 44px;
-    }
-
-    .navTitle {
-        font-size: 1.0625rem;
-    }
-
-    .navActions {
-        gap: 1rem;
+/* Responsive */
+@media (max-width: 768px) {
+    .navTexts {
+        display: none;
     }
 
     .main {
-        padding: 2.5rem 2rem 4rem;
+        padding: 1rem 0.875rem 2rem;
     }
 
     .pageTitle {
-        font-size: 2.25rem;
-    }
-}
-
-/* ── ≥ 1024px (Desktop) ── */
-@media (min-width: 1024px) {
-    .statsOverview {
-        grid-template-columns: repeat(4, 1fr);
-        gap: 0;
-        padding: 0;
-        overflow: hidden;
-    }
-
-    .statItem {
-        padding: 1.75rem;
-        border-right: 1px solid var(--border-color);
-    }
-
-    .statItem:last-child {
-        border-right: none;
-    }
-
-    .statItem:hover {
-        background: rgba(102, 126, 234, 0.03);
-    }
-}
-
-/* ── ≤ 640px (Mobile) ── */
-@media (max-width: 640px) {
-    .main {
-        padding: 1.25rem 0.875rem 3rem;
-    }
-
-    .pageTitle {
-        font-size: 1.625rem;
-    }
-
-    .pageSubtitle {
-        font-size: 0.9375rem;
+        font-size: 1.25rem;
     }
 
     .coursesGrid {
         grid-template-columns: 1fr;
-        gap: 1rem;
-    }
-
-    .courseCard {
-        padding: 1.25rem;
-    }
-
-    .courseTitle {
-        font-size: 1.0625rem;
-    }
-
-    .courseDescription {
-        font-size: 0.8125rem;
-        margin-bottom: 1rem;
     }
 
     .modalContent {
-        width: 100%;
         max-width: 100%;
-        height: 100%;
         max-height: 100dvh;
         margin: 0;
         border-radius: 0;
     }
 
     .modalHeader {
-        padding: 1.25rem;
-    }
-
-    .modalHeader h2 {
-        font-size: 1.25rem;
+        padding: 1rem;
     }
 
     .modalBody {
-        padding: 1.25rem;
+        padding: 1rem;
     }
 
     .modalFooter {
-        padding: 1rem 1.25rem;
+        padding: 0.75rem 1rem;
         flex-direction: column;
     }
 
@@ -1092,133 +738,45 @@
         grid-template-columns: 1fr;
     }
 
-    .welcomeDrawerHeader {
-        padding: 2rem 1.25rem 0.75rem !important;
-    }
-
-    .welcomeDrawerBody {
-        padding: 0 1.25rem 1.25rem !important;
-    }
-
-    .welcomeDrawerFooter {
-        padding: 1rem 1.25rem 1.5rem !important;
-    }
-
-    .welcomeTitle {
-        font-size: 1.375rem;
-    }
-
     .welcomeInfo {
         grid-template-columns: 1fr;
     }
-
-    .controls {
-        flex-direction: column;
-        gap: 0.75rem;
-    }
-
-    .searchWrapper {
-        max-width: 100%;
-    }
 }
 
-/* ── ≤ 480px (Mobile small) ── */
 @media (max-width: 480px) {
-    .navTexts {
-        display: none;
-    }
-
     .navIcon {
         width: 36px;
         height: 36px;
-        border-radius: 10px;
-    }
-}
-
-/* ── ≤ 360px (Mobile tiny) ── */
-@media (max-width: 360px) {
-    .main {
-        padding: 1rem 0.75rem 3rem;
     }
 
     .courseCard {
         padding: 1rem;
-        border-radius: 14px;
     }
 }
 
-/* ── PWA safe areas ── */
-@media (display-mode: standalone) {
-    .navbar {
-        padding-top: max(0.625rem, env(safe-area-inset-top));
-    }
-
-    .main {
-        padding-bottom: max(4rem, calc(env(safe-area-inset-bottom) + 2rem));
-    }
-
-    .modalContent {
-        padding-bottom: env(safe-area-inset-bottom);
-    }
-}
-
-/* ── Landscape mobile ── */
-@media (max-width: 768px) and (orientation: landscape) {
-    .statsOverview {
-        grid-template-columns: repeat(4, 1fr);
-    }
-
-    .coursesGrid {
-        grid-template-columns: repeat(2, 1fr);
-    }
-
-    .modalContent {
-        max-height: 95vh;
-    }
-}
-
-/* ── Reduced motion ── */
+/* Reduced Motion */
 @media (prefers-reduced-motion: reduce) {
-
     .courseCard,
-    .courseCard::before,
-    .courseCard::after,
     .courseArrow,
     .welcomeBtn,
-    .welcomeBtn::after,
     .actionBtnPrimary,
     .actionBtnSecondary,
     .completeBtn,
     .cancelBtn,
-    .infoItem,
-    .statItem,
-    .searchInput,
-    .filterTab,
     .modalClose,
-    .navbar {
-        transition: none !important;
-    }
-
     .skeletonCard::after {
-        animation: none;
-    }
-
-    .courseCard::after {
-        display: none;
-    }
-
-    .welcomeBtn::after {
-        display: none;
+        transition: none !important;
+        animation: none !important;
     }
 }
 
-/* ── Dark mode refinements ── */
-@media (prefers-color-scheme: dark) {
-    .modalOverlay {
-        background: rgba(0, 0, 0, 0.75);
+/* PWA safe areas */
+@media (display-mode: standalone) {
+    .navbar {
+        padding-top: max(0.75rem, env(safe-area-inset-top));
     }
 
-    .courseCard:hover {
-        box-shadow: 0 12px 32px rgba(0, 0, 0, 0.35);
+    .main {
+        padding-bottom: max(3rem, calc(env(safe-area-inset-bottom) + 1rem));
     }
 }

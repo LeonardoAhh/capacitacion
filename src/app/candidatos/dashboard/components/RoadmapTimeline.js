@@ -6,12 +6,12 @@ import { ROADMAP_STEPS } from '../config/constants';
 export default function RoadmapTimeline() {
     return (
         <section className={styles.roadmapSection}>
-            <h3 className={styles.sectionHeader}>📅 Tu Primer Día</h3>
+            <h3 className={styles.sectionHeader}>Tu Primer Día</h3>
             <div className={styles.timelineContainer}>
-                {ROADMAP_STEPS.map((step) => (
+                {ROADMAP_STEPS.map((step, index) => (
                     <div key={step.id} className={styles.timelineItem}>
-                        <div className={styles.timelineDot} />
                         <div className={styles.timelineContent}>
+                            <span className={styles.stepLabel}>Paso {index + 1}</span>
                             <div className={styles.timelineTitle}>
                                 {step.icon}
                                 {step.title}

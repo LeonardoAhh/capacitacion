@@ -1,165 +1,75 @@
-/* ==================== GENERAL LAYOUT ==================== */
-.container {
-    position: relative;
+.page {
     min-height: 100vh;
-    width: 100%;
-    overflow: hidden;
-    background-color: #f2f2f7;
-    transition: background-color 0.3s ease;
+    background: var(--bg-primary);
 }
 
-[data-theme="dark"] .container {
-    background-color: #000000;
-}
-
-/* ==================== BACKGROUNDS ==================== */
-.backgroundGradient {
-    position: absolute;
-    inset: 0;
-    z-index: 0;
-    background: var(--app-background, #f2f2f7);
-    pointer-events: none;
-    transition: background 0.5s ease;
-}
-
-[data-theme="dark"] .backgroundGradient {
-    background: var(--app-background, #000000);
-}
-
-.shapesContainer {
-    position: absolute;
-    inset: 0;
-    z-index: 0;
-    overflow: hidden;
-    pointer-events: none;
-}
-
-/* Individual Shapes Positioning - REMOVED */
-
-/* ==================== NAVBAR ==================== */
-.navbar {
-    position: fixed;
-    top: 20px;
-    /* Add some top spacing for floating effect */
-    left: 0;
-    right: 0;
-    height: auto;
-    /* Let content define height */
-    padding: 0 24px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    /* Center the pill */
-    z-index: 100;
-    background: transparent;
-    /* Remove container background */
-    backdrop-filter: none;
-    -webkit-backdrop-filter: none;
-    border-bottom: none;
-    pointer-events: none;
-    /* Let clicks pass through empty space */
-}
-
-/* Allow clicks on the pill itself */
-.navActions {
-    pointer-events: auto;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-[data-theme="dark"] .navbar {
-    border-bottom: none;
-}
-
-.navActions {
-    display: flex;
-    align-items: center;
-    gap: 16px;
-}
-
-/* ==================== MAIN CONTENT AREA ==================== */
 .scrollContent {
     position: relative;
     z-index: 10;
-    height: 100vh;
-    overflow-y: auto;
-    overflow-x: hidden;
-    padding: 94px 20px 40px;
-    /* Top padding to account for fixed navbar */
+    min-height: 100vh;
+    padding: 5rem 1rem 2rem;
     max-width: 1200px;
     margin: 0 auto;
-    -webkit-overflow-scrolling: touch;
-}
-
-/* Scrollbar Styling */
-/* Scrollbar Styling - Hidden/Transparent */
-.scrollContent {
-    scrollbar-width: none;
-    /* Firefox */
-    -ms-overflow-style: none;
-    /* IE/Edge */
-}
-
-.scrollContent::-webkit-scrollbar {
-    display: none;
-    /* Chrome/Safari/Opera */
-    width: 0;
-    background: transparent;
-}
-
-/* ==================== FOOTER ==================== */
-.footer {
-    padding: 40px 0;
-    text-align: center;
-    color: #8e8e93;
-    font-size: 13px;
     display: flex;
     flex-direction: column;
-    align-items: center;
-    width: 100%;
-    gap: 8px;
-    margin-top: 60px;
+    gap: 1.5rem;
 }
 
-[data-theme="dark"] .footer {
-    color: #636366;
+.desktopGrid {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
 }
 
-/* ==================== MEDIA QUERIES ==================== */
+.mainColumn {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
 
-/* Tablet and Desktop Adjustments */
+.sideColumn {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.footer {
+    padding: 2rem 0;
+    text-align: center;
+    color: var(--text-tertiary);
+    font-size: 0.75rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    margin-top: 0.5rem;
+}
+
 @media (min-width: 768px) {
-    .navbar {
-        height: 80px;
-        padding: 0 40px;
-    }
-
     .scrollContent {
-        padding: 110px 40px 60px;
+        padding: 5rem 2rem 3rem;
     }
 }
 
-@media (min-width: 1200px) {
+@media (min-width: 1024px) {
     .scrollContent {
-        padding: 120px 64px 80px;
+        padding: 5rem 2.5rem 3rem;
+    }
+
+    .desktopGrid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1.5rem;
+        align-items: start;
+    }
+
+    .fullWidth {
+        grid-column: 1 / -1;
     }
 }
 
-/* Print Styles */
-@media print {
-
-    .navbar,
-    .backgroundGradient,
-    .shapesContainer,
-    .footer {
-        display: none !important;
-    }
-
-    .container,
-    .scrollContent {
-        background: white !important;
-        height: auto !important;
-        overflow: visible !important;
+@media (prefers-reduced-motion: reduce) {
+    .page {
+        transition-duration: 0.01ms !important;
+        animation-duration: 0.01ms !important;
     }
 }

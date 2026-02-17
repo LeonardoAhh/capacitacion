@@ -3,149 +3,17 @@
 import { useState, useRef, useEffect, useMemo, useCallback } from 'react';
 import { createPortal } from 'react-dom';
 import { User, LogOut, ChevronDown, Clock, Contrast, Camera } from 'lucide-react';
-import { AnimatePresence, motion } from 'framer-motion';
 import styles from './ModernPillNavbar.module.css';
 import { extractFirstName, getCandidatePhotoUrl } from '../utils/helpers';
 
-// ─── Constants ────────────────────────────────────────────────────────────────
-
-const DEFAULT_NAME = 'CANDIDATO';
-const DEFAULT_ROLE = 'PUESTO';
-
-// ─── Animation variants ───────────────────────────────────────────────────────
-
-const DROPDOWN_VARIANTS = {
-    hidden: { opacity: 0, scale: 0.94, y: -6, filter: 'blur(4px)' },
-    visible: {
-        opacity: 1, scale: 1, y: 0, filter: 'blur(0px)',
-        transition: {
-            duration: 0.22, ease: [0.22, 1, 0.36, 1],
-            staggerChildren: 0.04, delayChildren: 0.04,
-        },
-    },
-    exit: {
-        opacity: 0, scale: 0.96, y: -4, filter: 'blur(3px)',
-        transition: { duration: 0.15, ease: 'easeIn' },
-    },
-};
-
-const ITEM_VARIANTS = {
-    hidden: { opacity: 0, x: -5 },
-    visible: { opacity: 1, x: 0, transition: { duration: 0.18, ease: [0.22, 1, 0.36, 1] } },
-    exit: { opacity: 0 },
-};
-
-// ─── Helpers ──────────────────────────────────────────────────────────────────
+const DEFAULT_NAME = 'Candidato';
+const DEFAULT_ROLE = 'Puesto';
 
 function formatTime(seconds) {
     const m = Math.floor(seconds / 60);
     const s = seconds % 60;
     return `${m}:${s < 10 ? '0' : ''}${s}`;
 }
-
-// ─── MenuItem ─────────────────────────────────────────────────────────────────
-
-const MenuItem = ({ onClick, icon: Icon, label, variant }) => (
-    <motion.button
-        className={`${styles.menuItem} ${variant ? styles[variant] : ''}`}
-        variants={ITEM_VARIANTS}
-        onClick={onClick}
-        type="button"
-        whileTap={{ scale: 0.97 }}
-    >
-        <Icon size={17} className={styles.menuItemIcon} aria-hidden="true" />
-        <span>{label}</span>
-    </motion.button>
-);
-
-const Separator = () => (
-    <motion.div className={styles.separator} variants={ITEM_VARIANTS} />
-);
-
-// ─── DropdownPortal ───────────────────────────────────────────────────────────
-// Renders the dropdown at document.body level so it's never clipped
-// by any parent with overflow, transform, or stacking context issues.
-
-function DropdownPortal({ isOpen, anchorRef, onClose, children }) {
-    const [coords, setCoords] = useState({ top: 0, right: 0 });
-    const [mounted, setMounted] = useState(false);
-
-    // Only mount portal on client
-    useEffect(() => { setMounted(true); }, []);
-
-    // Recalculate position whenever dropdown opens
-    useEffect(() => {
-        if (!isOpen || !anchorRef.current) return;
-
-        function calculate() {
-            const rect = anchorRef.current.getBoundingClientRect();
-            const vw = window.innerWidth;
-            const MARGIN = 12; // minimum gap from viewport edges
-            const DROPDOWN_WIDTH = vw < 640 ? Math.min(300, vw - 24) : 230;
-
-            // Ideal: right-align dropdown with pill's right edge
-            let rightVal = vw - rect.right;
-
-            // Clamp so dropdown doesn't overflow past left edge
-            const maxRight = vw - DROPDOWN_WIDTH - MARGIN;
-            if (rightVal > maxRight) rightVal = maxRight;
-
-            // Also ensure it doesn't overflow past right edge
-            if (rightVal < MARGIN) rightVal = MARGIN;
-
-            setCoords({
-                top: rect.bottom + 8,
-                right: rightVal,
-            });
-        }
-
-        calculate();
-        // Recalculate on scroll or resize (e.g. PWA address bar hide/show)
-        window.addEventListener('resize', calculate);
-        window.addEventListener('scroll', calculate, true);
-        return () => {
-            window.removeEventListener('resize', calculate);
-            window.removeEventListener('scroll', calculate, true);
-        };
-    }, [isOpen, anchorRef]);
-
-    if (!mounted) return null;
-
-    return createPortal(
-        <AnimatePresence>
-            {isOpen && (
-                <>
-                    {/* Invisible full-screen overlay to catch outside clicks */}
-                    <div
-                        className={styles.portalBackdrop}
-                        onClick={onClose}
-                        aria-hidden="true"
-                    />
-                    <motion.div
-                        className={styles.dropdownMenu}
-                        role="menu"
-                        aria-label="Opciones de usuario"
-                        variants={DROPDOWN_VARIANTS}
-                        initial="hidden"
-                        animate="visible"
-                        exit="exit"
-                        style={{
-                            position: 'fixed',
-                            top: coords.top,
-                            right: coords.right,
-                        }}
-                        onClick={e => e.stopPropagation()}
-                    >
-                        {children}
-                    </motion.div>
-                </>
-            )}
-        </AnimatePresence>,
-        document.body
-    );
-}
-
-// ─── ModernPillNavbar ─────────────────────────────────────────────────────────
 
 export default function ModernPillNavbar({
     candidate,
@@ -156,21 +24,21 @@ export default function ModernPillNavbar({
 }) {
     const [isOpen, setIsOpen] = useState(false);
     const [imgError, setImgError] = useState(false);
+    const [coords, setCoords] = useState({ top: 0, right: 0 });
+    const [mounted, setMounted] = useState(false);
     const pillRef = useRef(null);
 
-    // ── Derived values ──
-    const displayName = useMemo(() => {
-        // Prefer nickname for a personalized experience
-        if (candidate?.nickname?.trim()) {
-            return candidate.nickname.trim().toUpperCase();
-        }
+    useEffect(() => {
+        setMounted(true);
+    }, []);
 
+    const displayName = useMemo(() => {
+        if (candidate?.nickname?.trim()) {
+            return candidate.nickname.trim();
+        }
         const fullName = candidate?.name || candidate?.nombre;
         if (!fullName) return DEFAULT_NAME;
-        const firstName = extractFirstName(fullName);
-        const parts = fullName.trim().split(/\s+/);
-        const lastName = parts[0] || '';
-        return `${firstName} ${lastName}`.toUpperCase();
+        return extractFirstName(fullName);
     }, [candidate?.nickname, candidate?.name, candidate?.nombre]);
 
     const displayRole = useMemo(() =>
@@ -185,11 +53,9 @@ export default function ModernPillNavbar({
     );
     const lowTime = timeLeft !== undefined && timeLeft < 60;
 
-    // ── Handlers ──
     const toggle = useCallback(() => setIsOpen(v => !v), []);
     const close = useCallback(() => setIsOpen(false), []);
 
-    // Escape key to close
     useEffect(() => {
         if (!isOpen) return;
         const onEsc = (e) => { if (e.key === 'Escape') close(); };
@@ -197,22 +63,46 @@ export default function ModernPillNavbar({
         return () => document.removeEventListener('keydown', onEsc);
     }, [isOpen, close]);
 
+    useEffect(() => {
+        if (!isOpen || !pillRef.current) return;
+
+        function calculate() {
+            const rect = pillRef.current.getBoundingClientRect();
+            const vw = window.innerWidth;
+            const DROPDOWN_WIDTH = vw < 640 ? Math.min(280, vw - 32) : 220;
+
+            let rightVal = vw - rect.right;
+            const maxRight = vw - DROPDOWN_WIDTH - 16;
+            if (rightVal > maxRight) rightVal = maxRight;
+            if (rightVal < 16) rightVal = 16;
+
+            setCoords({
+                top: rect.bottom + 8,
+                right: rightVal,
+            });
+        }
+
+        calculate();
+        window.addEventListener('resize', calculate);
+        window.addEventListener('scroll', calculate, true);
+        return () => {
+            window.removeEventListener('resize', calculate);
+            window.removeEventListener('scroll', calculate, true);
+        };
+    }, [isOpen]);
+
     const handleAvatar = useCallback(() => { onAvatarClick?.(); close(); }, [onAvatarClick, close]);
     const handleTheme = useCallback(() => { onThemeClick?.(); close(); }, [onThemeClick, close]);
     const handleLogout = useCallback(() => { onLogout?.(); close(); }, [onLogout, close]);
 
     return (
-        <>
-            {/* ── Pill ── */}
-            <div className={styles.navbarContainer} ref={pillRef}>
-
-                {/* User info — hidden on mobile via CSS */}
-                <div className={styles.userInfo} aria-hidden="true">
+        <nav className={styles.navbar}>
+            <div className={styles.pill} ref={pillRef}>
+                <div className={styles.userInfo}>
                     <span className={styles.userName}>{displayName}</span>
                     <span className={styles.userRole}>{displayRole}</span>
                 </div>
 
-                {/* Avatar button */}
                 <button
                     className={styles.avatarWrapper}
                     onClick={toggle}
@@ -223,7 +113,6 @@ export default function ModernPillNavbar({
                 >
                     <div className={styles.avatar}>
                         {photoUrl && !imgError ? (
-                            // eslint-disable-next-line @next/next/no-img-element
                             <img
                                 src={photoUrl}
                                 alt={displayName}
@@ -231,55 +120,84 @@ export default function ModernPillNavbar({
                                 onError={() => setImgError(true)}
                             />
                         ) : (
-                            <User size={19} aria-hidden="true" />
+                            <User size={18} />
                         )}
                     </div>
-                    <span className={styles.onlineDot} aria-hidden="true" />
+                    <span className={styles.onlineDot} />
                 </button>
 
-                {/* Chevron */}
-                <motion.button
-                    className={styles.menuTrigger}
+                <button
+                    className={styles.chevron}
                     onClick={toggle}
                     aria-hidden="true"
                     tabIndex={-1}
                     type="button"
-                    animate={{ rotate: isOpen ? 180 : 0 }}
-                    transition={{ duration: 0.2, ease: [0.22, 1, 0.36, 1] }}
                 >
-                    <ChevronDown size={16} />
-                </motion.button>
+                    <ChevronDown size={16} className={isOpen ? styles.chevronOpen : ''} />
+                </button>
             </div>
 
-            {/* ── Dropdown — rendered at body level via portal ── */}
-            <DropdownPortal isOpen={isOpen} anchorRef={pillRef} onClose={close}>
-
-                {/* Name + role summary */}
-                <motion.div className={styles.menuHeader} variants={ITEM_VARIANTS}>
-                    <span className={styles.menuHeaderName}>{displayName}</span>
-                    <span className={styles.menuHeaderRole}>{displayRole}</span>
-                </motion.div>
-
-                {/* Timer */}
-                {formattedTime && (
-                    <motion.div
-                        className={`${styles.menuItem} ${styles.timerItem} ${lowTime ? styles.timerLow : ''}`}
-                        variants={ITEM_VARIANTS}
-                        role="status"
-                        aria-live="polite"
+            {mounted && isOpen && createPortal(
+                <>
+                    <div className={styles.backdrop} onClick={close} aria-hidden="true" />
+                    <div
+                        className={styles.dropdown}
+                        role="menu"
+                        aria-label="Opciones de usuario"
+                        style={{ top: coords.top, right: coords.right }}
                     >
-                        <Clock size={15} aria-hidden="true" />
-                        <span>{formattedTime}</span>
-                    </motion.div>
-                )}
+                        <div className={styles.dropdownHeader}>
+                            <span className={styles.dropdownName}>{displayName}</span>
+                            <span className={styles.dropdownRole}>{displayRole}</span>
+                        </div>
 
-                <Separator />
-                <MenuItem onClick={handleAvatar} icon={Camera} label="Cambiar Avatar" />
-                <MenuItem onClick={handleTheme} icon={Contrast} label="Cambiar Tema" />
-                <Separator />
-                <MenuItem onClick={handleLogout} icon={LogOut} label="Cerrar Sesión" variant="logoutItem" />
+                        {formattedTime && (
+                            <div
+                                className={`${styles.menuItem} ${styles.timerItem} ${lowTime ? styles.timerLow : ''}`}
+                                role="status"
+                            >
+                                <Clock size={14} />
+                                <span>{formattedTime}</span>
+                            </div>
+                        )}
 
-            </DropdownPortal>
-        </>
+                        <div className={styles.separator} />
+
+                        <button
+                            type="button"
+                            onClick={handleAvatar}
+                            className={styles.menuItem}
+                            role="menuitem"
+                        >
+                            <Camera size={16} className={styles.menuItemIcon} />
+                            <span>Cambiar Avatar</span>
+                        </button>
+
+                        <button
+                            type="button"
+                            onClick={handleTheme}
+                            className={styles.menuItem}
+                            role="menuitem"
+                        >
+                            <Contrast size={16} className={styles.menuItemIcon} />
+                            <span>Cambiar Tema</span>
+                        </button>
+
+                        <div className={styles.separator} />
+
+                        <button
+                            type="button"
+                            onClick={handleLogout}
+                            className={`${styles.menuItem} ${styles.logoutItem}`}
+                            role="menuitem"
+                        >
+                            <LogOut size={16} />
+                            <span>Cerrar Sesión</span>
+                        </button>
+                    </div>
+                </>,
+                document.body
+            )}
+        </nav>
     );
 }

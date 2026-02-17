@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { LogOut, User, Moon, Sun, ChevronDown } from "lucide-react";
+import { LogOut, User, Moon, Sun, ChevronDown, ImagePlus } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useAuth } from "@/contexts/AuthContext";
@@ -9,7 +9,7 @@ import { useTheme } from "@/contexts/ThemeContext";
 import { useRouter } from "next/navigation";
 import styles from './ProfileDropdown.module.css';
 
-export default function ProfileDropdown({ className = '' }) {
+export default function ProfileDropdown({ className = '', onAvatarClick }) {
     const { user, signOut } = useAuth();
     const router = useRouter();
     const [isOpen, setIsOpen] = React.useState(false);
@@ -41,7 +41,7 @@ export default function ProfileDropdown({ className = '' }) {
     const profileData = React.useMemo(() => ({
         name: user?.name || user?.displayName || "Usuario",
         email: user?.email || "",
-        avatar: user?.photoURL || `https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(user?.email || 'default')}`,
+        avatar: user?.photoURL || user?.avatar || `https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(user?.email || 'default')}`,
         role: user?.rol === 'super_admin' ? 'Admin' : user?.rol === 'demo' ? 'Demo' : 'Usuario',
     }), [user]);
 
@@ -58,6 +58,13 @@ export default function ProfileDropdown({ className = '' }) {
             setIsSigningOut(false);
         }
     }, [signOut, router, isSigningOut]);
+
+    const handleAvatarClick = React.useCallback(() => {
+        setIsOpen(false);
+        if (onAvatarClick) {
+            onAvatarClick();
+        }
+    }, [onAvatarClick]);
 
     const getInitials = React.useCallback((name) => {
         if (!name) return 'U';
@@ -139,6 +146,18 @@ export default function ProfileDropdown({ className = '' }) {
                             <User size={16} />
                             <span>Perfil</span>
                         </Link>
+
+                        {onAvatarClick && (
+                            <button
+                                type="button"
+                                onClick={handleAvatarClick}
+                                className={styles.menuItem}
+                                role="menuitem"
+                            >
+                                <ImagePlus size={16} />
+                                <span>Cambiar Avatar</span>
+                            </button>
+                        )}
 
                         <button
                             type="button"

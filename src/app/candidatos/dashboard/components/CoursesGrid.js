@@ -20,14 +20,14 @@ const CourseCard = ({ course, isCompleted, onView, onToggle }) => {
         >
             <div className={styles.courseCardHeader}>
                 <div className={`${styles.courseIcon} ${isCompleted ? styles.courseIconCompleted : ''}`}>
-                    {isCompleted ? <CheckCircle size={24} /> : <BookOpen size={24} />}
+                    {isCompleted ? <CheckCircle size={20} /> : <BookOpen size={20} />}
                 </div>
                 <div className={styles.courseContent}>
-                    <span className={styles.courseCardTitle}>
+                    <h3 className={styles.courseCardTitle}>
                         {course.title || course.nombre}
-                    </span>
+                    </h3>
                     {course.duration && (
-                        <span className={styles.courseDuration} style={{ display: 'block', marginTop: '4px' }}>
+                        <span className={styles.courseDuration}>
                             {course.duration} min
                         </span>
                     )}
@@ -45,7 +45,7 @@ const CourseCard = ({ course, isCompleted, onView, onToggle }) => {
                 >
                     {isCompleted ? 'Completado' : 'Marcar Completado'}
                 </button>
-                <ChevronRight size={20} className={styles.chevron} />
+                <ChevronRight size={18} className={styles.chevron} />
             </div>
         </div>
     );
@@ -54,17 +54,22 @@ const CourseCard = ({ course, isCompleted, onView, onToggle }) => {
 export default function CoursesGrid({ courses, candidate, onViewCourse, onToggleCompletion }) {
     if (!courses || courses.length === 0) {
         return (
-            <div className={styles.emptyState}>
-                <BookOpen size={40} />
-                <p>No hay cursos asignados</p>
-            </div>
+            <section className={styles.menuSection}>
+                <div className={styles.sectionHeaderContainer}>
+                    <h3 className={styles.sectionHeader}>Cursos de Inducción</h3>
+                </div>
+                <div className={styles.emptyState}>
+                    <BookOpen size={32} />
+                    <p>No hay cursos asignados</p>
+                </div>
+            </section>
         );
     }
 
     return (
-        <section className={styles.menuSection} style={{ marginTop: '24px' }}>
+        <section className={styles.menuSection}>
             <div className={styles.sectionHeaderContainer}>
-                <h3 className={styles.sectionHeader}>📚 Cursos de Inducción</h3>
+                <h3 className={styles.sectionHeader}>Cursos de Inducción</h3>
             </div>
 
             <div className={styles.coursesGrid}>

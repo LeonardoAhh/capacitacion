@@ -1,15 +1,10 @@
-/* ═══════════════════════════════════════════════════════════════
-   CERTIFICATE CARD — Gallery + Modal + Diploma Preview
-   ═══════════════════════════════════════════════════════════════ */
-
-/* ─── Container ─────────────────────────────────────────────── */
+/* Container */
 .container {
     background: var(--bg-secondary);
     border: 1px solid var(--border-color);
-    border-radius: 20px;
-    padding: 1.5rem;
-    margin-top: 1.5rem;
-    transition: box-shadow 0.3s ease;
+    border-radius: var(--radius-xl);
+    padding: 1.25rem;
+    margin-bottom: 1.5rem;
 }
 
 .header {
@@ -17,78 +12,72 @@
     justify-content: space-between;
     align-items: center;
     gap: 1rem;
-    margin-bottom: 1.5rem;
+    margin-bottom: 1rem;
     flex-wrap: wrap;
 }
 
 .header h3 {
     margin: 0;
-    font-size: 1.25rem;
-    font-weight: 700;
+    font-size: 1rem;
+    font-weight: 600;
     color: var(--text-primary);
 }
 
 .subtitle {
     display: block;
-    font-size: 0.8rem;
+    font-size: 0.6875rem;
     color: var(--text-tertiary);
-    font-weight: 600;
+    font-weight: 500;
     margin-top: 0.125rem;
 }
 
 .headerIcon {
-    color: #eab308;
+    color: var(--color-warning);
     flex-shrink: 0;
 }
 
-/* ─── Grid ──────────────────────────────────────────────────── */
+/* Grid */
 .grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-    gap: 1rem;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 0.75rem;
 }
 
-/* ─── Certificate Card ──────────────────────────────────────── */
+/* Certificate Card */
 .certCard {
     display: flex;
     align-items: center;
-    gap: 1rem;
-    padding: 1rem;
+    gap: 0.75rem;
+    padding: 0.875rem;
     background: var(--bg-primary);
     border: 1px solid var(--border-color);
-    border-radius: 14px;
+    border-radius: var(--radius-md);
     cursor: pointer;
     text-align: left;
-    transition: box-shadow 0.25s ease, border-color 0.25s ease, transform 0.2s ease;
+    transition: border-color var(--transition-fast);
     font-family: inherit;
     color: inherit;
     width: 100%;
 }
 
 .certCard:hover:not(.certCardLocked) {
-    border-color: var(--cert-color, var(--border-color));
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+    border-color: var(--color-primary);
 }
 
 .certCard:focus-visible {
-    outline: 2px solid var(--cert-color, #6366f1);
+    outline: 2px solid var(--color-primary);
     outline-offset: 2px;
 }
 
 .certCardIcon {
     flex-shrink: 0;
-    width: 52px;
-    height: 52px;
-    border-radius: 14px;
+    width: 44px;
+    height: 44px;
+    border-radius: var(--radius-md);
     display: flex;
     align-items: center;
     justify-content: center;
     border: 2px solid;
-    transition: transform 0.2s ease;
-}
-
-.certCard:hover:not(.certCardLocked) .certCardIcon {
-    transform: scale(1.05);
 }
 
 .certCardInfo {
@@ -97,9 +86,9 @@
 }
 
 .certCardInfo h4 {
-    margin: 0 0 0.25rem 0;
-    font-size: 0.9375rem;
-    font-weight: 700;
+    margin: 0 0 0.125rem 0;
+    font-size: 0.875rem;
+    font-weight: 600;
     color: var(--text-primary);
     overflow: hidden;
     text-overflow: ellipsis;
@@ -107,49 +96,41 @@
 }
 
 .certTierLabel {
-    font-size: 0.75rem;
-    font-weight: 700;
+    font-size: 0.6875rem;
+    font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 0.05em;
 }
 
-/* ─── Locked Card ───────────────────────────────────────────── */
+/* Locked Card */
 .certCardLocked {
     cursor: default;
-    opacity: 0.55;
+    opacity: 0.5;
     pointer-events: none;
-}
-
-.certCardLocked:hover {
-    border-color: var(--border-color);
-    box-shadow: none;
-    transform: none;
 }
 
 .certCardIconLocked {
     flex-shrink: 0;
-    width: 52px;
-    height: 52px;
-    border-radius: 14px;
+    width: 44px;
+    height: 44px;
+    border-radius: var(--radius-md);
     display: flex;
     align-items: center;
     justify-content: center;
     background: var(--bg-secondary);
-    border: 2px dashed var(--border-color);
+    border: 1px dashed var(--border-color);
     color: var(--text-tertiary);
 }
 
 .certTierLocked {
-    font-size: 0.75rem;
-    font-weight: 600;
+    font-size: 0.6875rem;
+    font-weight: 500;
     color: var(--text-tertiary);
     text-transform: uppercase;
     letter-spacing: 0.05em;
 }
 
-/* ═══════════════════════════════════════════════════════════════
-   MODAL — Fixed fullscreen overlay
-   ═══════════════════════════════════════════════════════════════ */
+/* Modal */
 .modalOverlay {
     position: fixed;
     top: 0;
@@ -160,34 +141,30 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    background: rgba(0, 0, 0, 0.65);
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
-    padding: 1.5rem;
+    background: rgba(0, 0, 0, 0.6);
+    padding: 1rem;
     overflow-y: auto;
 }
 
 .modalContent {
     background: #ffffff;
-    border-radius: 20px;
+    border-radius: var(--radius-xl);
     width: 100%;
-    max-width: 640px;
+    max-width: 560px;
     max-height: 90vh;
     display: flex;
     flex-direction: column;
-    box-shadow: 0 24px 60px rgba(0, 0, 0, 0.35);
-    position: relative;
 }
 
 :global([data-theme="dark"]) .modalContent {
-    background: #1a1a2e;
+    background: #1e1e2e;
 }
 
 .modalHeader {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 1.25rem 1.5rem;
+    padding: 1rem 1.25rem;
     border-bottom: 1px solid #e5e7eb;
     flex-shrink: 0;
 }
@@ -198,8 +175,8 @@
 
 .modalHeader h3 {
     margin: 0;
-    font-size: 1.125rem;
-    font-weight: 700;
+    font-size: 1rem;
+    font-weight: 600;
     color: #1a1a2e;
 }
 
@@ -209,40 +186,34 @@
 
 .modalClose {
     background: #f3f4f6;
-    border: 1px solid #e5e7eb;
-    border-radius: 10px;
-    width: 36px;
-    height: 36px;
+    border: none;
+    border-radius: var(--radius-sm);
+    width: 32px;
+    height: 32px;
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
     color: #6b7280;
-    transition: background 0.2s ease, transform 0.1s ease;
+    transition: background var(--transition-fast);
     flex-shrink: 0;
 }
 
 :global([data-theme="dark"]) .modalClose {
     background: #2d3748;
-    border-color: #4a5568;
     color: #a0aec0;
 }
 
 .modalClose:hover {
     background: #e5e7eb;
-    transform: scale(1.05);
 }
 
 :global([data-theme="dark"]) .modalClose:hover {
     background: #4a5568;
 }
 
-.modalClose:active {
-    transform: scale(0.95);
-}
-
 .modalBody {
-    padding: 1.5rem;
+    padding: 1.25rem;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -252,7 +223,7 @@
 }
 
 .modalFooter {
-    padding: 1rem 1.5rem;
+    padding: 0.875rem 1.25rem;
     border-top: 1px solid #e5e7eb;
     display: flex;
     justify-content: center;
@@ -263,48 +234,36 @@
     border-top-color: #2d3748;
 }
 
-/* ─── Download Button ───────────────────────────────────────── */
+/* Download Button */
 .downloadBtn {
     display: flex;
     align-items: center;
     gap: 0.5rem;
-    padding: 0.75rem 2rem;
-    background: linear-gradient(135deg, #6366f1, #8b5cf6);
+    padding: 0.625rem 1.5rem;
+    background: var(--color-primary);
     color: white;
     border: none;
-    border-radius: 12px;
+    border-radius: var(--radius-md);
     font-weight: 600;
-    font-size: 0.9375rem;
+    font-size: 0.875rem;
     cursor: pointer;
-    transition: box-shadow 0.25s ease, transform 0.2s ease;
-    box-shadow: 0 4px 16px rgba(99, 102, 241, 0.3);
+    transition: filter var(--transition-fast);
     font-family: inherit;
 }
 
 .downloadBtn:hover:not(:disabled) {
-    box-shadow: 0 8px 28px rgba(99, 102, 241, 0.45);
-    transform: translateY(-2px);
-}
-
-.downloadBtn:active:not(:disabled) {
-    transform: translateY(0);
+    filter: brightness(1.1);
 }
 
 .downloadBtn:disabled {
     opacity: 0.7;
     cursor: not-allowed;
-    transform: none;
-}
-
-.downloadBtn:focus-visible {
-    outline: 2px solid #6366f1;
-    outline-offset: 2px;
 }
 
 .spinner {
     display: inline-block;
-    width: 18px;
-    height: 18px;
+    width: 16px;
+    height: 16px;
     border: 2px solid rgba(255, 255, 255, 0.3);
     border-top-color: white;
     border-radius: 50%;
@@ -317,72 +276,67 @@
     }
 }
 
-/* ═══════════════════════════════════════════════════════════════
-   CERTIFICATE PREVIEW (Diploma Design — html2canvas safe)
-   All styles use explicit colors, no CSS variables,
-   no SVG icons — only text/emoji for capture compatibility.
-   ═══════════════════════════════════════════════════════════════ */
+/* Certificate Preview */
 .certificatePreview {
     position: relative;
     width: 100%;
-    max-width: 560px;
+    max-width: 480px;
     aspect-ratio: 1.414 / 1;
-    border: 4px solid;
+    border: 3px solid;
     border-radius: 4px;
-    padding: 1.5rem;
+    padding: 1.25rem;
     font-family: 'Georgia', 'Times New Roman', serif;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
     color: #1a1a2e;
 }
 
-/* ─── Decorative Corners ────────────────────────────────────── */
+/* Decorative Corners */
 .cornerTL,
 .cornerTR,
 .cornerBL,
 .cornerBR {
     position: absolute;
-    width: 36px;
-    height: 36px;
+    width: 28px;
+    height: 28px;
     border-style: solid;
     border-width: 0;
     pointer-events: none;
 }
 
 .cornerTL {
-    top: 10px;
-    left: 10px;
-    border-top-width: 3px;
-    border-left-width: 3px;
+    top: 8px;
+    left: 8px;
+    border-top-width: 2px;
+    border-left-width: 2px;
 }
 
 .cornerTR {
-    top: 10px;
-    right: 10px;
-    border-top-width: 3px;
-    border-right-width: 3px;
+    top: 8px;
+    right: 8px;
+    border-top-width: 2px;
+    border-right-width: 2px;
 }
 
 .cornerBL {
-    bottom: 10px;
-    left: 10px;
-    border-bottom-width: 3px;
-    border-left-width: 3px;
+    bottom: 8px;
+    left: 8px;
+    border-bottom-width: 2px;
+    border-left-width: 2px;
 }
 
 .cornerBR {
-    bottom: 10px;
-    right: 10px;
-    border-bottom-width: 3px;
-    border-right-width: 3px;
+    bottom: 8px;
+    right: 8px;
+    border-bottom-width: 2px;
+    border-right-width: 2px;
 }
 
-/* ─── Inner Border ──────────────────────────────────────────── */
+/* Inner Border */
 .innerBorder {
     width: 100%;
     height: 100%;
     border: 1px solid;
     border-radius: 2px;
-    padding: 1rem 0.75rem;
+    padding: 0.75rem 0.5rem;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -391,82 +345,81 @@
     gap: 0.125rem;
 }
 
-/* ─── Certificate Content ───────────────────────────────────── */
+/* Certificate Content */
 .certHeaderLine,
 .certFooterLine {
-    width: 60%;
+    width: 50%;
     height: 2px;
     border-radius: 1px;
-    opacity: 0.5;
+    opacity: 0.4;
 }
 
 .certLogo {
-    font-size: 1.75rem;
+    font-size: 1.5rem;
     line-height: 1;
     margin-bottom: 0.125rem;
 }
 
 .certCompany {
     margin: 0;
-    font-size: 0.7rem;
+    font-size: 0.625rem;
     font-weight: 700;
-    letter-spacing: 0.3em;
+    letter-spacing: 0.25em;
     text-transform: uppercase;
 }
 
 .certTitle {
     margin: 0.125rem 0;
-    font-size: 1.5rem;
+    font-size: 1.25rem;
     font-weight: 400;
-    letter-spacing: 0.15em;
+    letter-spacing: 0.12em;
     color: #1a1a2e;
 }
 
 .certSubheading {
     margin: 0;
-    font-size: 0.7rem;
+    font-size: 0.625rem;
     font-style: italic;
     color: #555;
 }
 
 .certDivider {
-    width: 30%;
+    width: 25%;
     height: 1px;
-    margin: 0.375rem 0;
-    opacity: 0.4;
+    margin: 0.25rem 0;
+    opacity: 0.3;
 }
 
 .certAwardedTo {
     margin: 0;
-    font-size: 0.625rem;
+    font-size: 0.5625rem;
     color: #777;
     text-transform: uppercase;
-    letter-spacing: 0.15em;
+    letter-spacing: 0.12em;
 }
 
 .certName {
     margin: 0.125rem 0;
-    font-size: 1.375rem;
+    font-size: 1.125rem;
     font-weight: 700;
     font-family: 'Georgia', serif;
-    word-break: break-word;
 }
 
 .certDescription {
     margin: 0.125rem 0 0 0;
-    font-size: 0.65rem;
+    font-size: 0.5625rem;
     color: #555;
-    max-width: 380px;
-    line-height: 1.5;
+    max-width: 320px;
+    line-height: 1.4;
 }
 
-/* ─── Certificate Footer ───────────────────────────────────── */
+/* Certificate Footer */
 .certFooter {
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 1.5rem;
-    margin: 0.375rem 0;
+    gap: 1rem;
+    margin: 0.25rem 0;
     width: 100%;
 }
 
@@ -478,37 +431,35 @@
 }
 
 .certFooterLabel {
-    font-size: 0.55rem;
+    font-size: 0.5rem;
     color: #999;
     text-transform: uppercase;
-    letter-spacing: 0.1em;
+    letter-spacing: 0.08em;
 }
 
 .certFooterValue {
-    font-size: 0.7rem;
+    font-size: 0.625rem;
     font-weight: 600;
     color: #333;
 }
 
 .certSeal {
-    width: 40px;
-    height: 40px;
+    width: 32px;
+    height: 32px;
     border: 2px solid;
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 1.25rem;
+    font-size: 1rem;
     line-height: 1;
     flex-shrink: 0;
 }
 
-/* ═══════════════════════════════════════════════════════════════
-   RESPONSIVE
-   ═══════════════════════════════════════════════════════════════ */
+/* Responsive */
 @media (max-width: 768px) {
     .grid {
-        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
     }
 }
 
@@ -518,55 +469,36 @@
     }
 
     .modalOverlay {
-        padding: 0.75rem;
+        padding: 0.5rem;
     }
 
     .modalContent {
         max-height: 92vh;
-        border-radius: 16px;
+        border-radius: var(--radius-lg);
     }
 
     .certificatePreview {
         padding: 0.75rem;
         aspect-ratio: auto;
-        min-height: 340px;
+        min-height: 280px;
     }
 
     .certTitle {
-        font-size: 1.125rem;
+        font-size: 1rem;
     }
 
     .certName {
-        font-size: 1rem;
-    }
-
-    .innerBorder {
-        padding: 0.75rem 0.5rem;
-    }
-
-    .certFooter {
-        gap: 0.75rem;
-    }
-
-    .certSeal {
-        width: 32px;
-        height: 32px;
-        font-size: 1rem;
+        font-size: 0.9375rem;
     }
 
     .modalBody {
-        padding: 1rem;
-    }
-
-    .downloadBtn {
-        padding: 0.625rem 1.5rem;
-        font-size: 0.875rem;
+        padding: 0.875rem;
     }
 }
 
 @media (max-width: 480px) {
     .container {
-        padding: 1.25rem;
+        padding: 1rem;
     }
 
     .header {
@@ -580,66 +512,24 @@
 
     .certCardIcon,
     .certCardIconLocked {
-        width: 44px;
-        height: 44px;
+        width: 40px;
+        height: 40px;
     }
 
     .certCardInfo h4 {
-        font-size: 0.875rem;
-    }
-
-    .certTierLabel,
-    .certTierLocked {
-        font-size: 0.7rem;
-    }
-
-    .modalHeader {
-        padding: 1rem 1.25rem;
-    }
-
-    .modalFooter {
-        padding: 0.75rem 1.25rem;
+        font-size: 0.8125rem;
     }
 }
 
-/* ─── Reduced Motion ────────────────────────────────────────── */
+/* Reduced Motion */
 @media (prefers-reduced-motion: reduce) {
-
     .certCard,
     .downloadBtn,
-    .modalClose,
-    .certCardIcon {
+    .modalClose {
         transition: none !important;
-    }
-
-    .downloadBtn:hover:not(:disabled) {
-        transform: none;
     }
 
     .spinner {
         animation: none;
-        border-top-color: transparent;
     }
-}
-
-/* ─── High Contrast Mode ────────────────────────────────────── */
-@media (prefers-contrast: high) {
-    .certCard {
-        border-width: 2px;
-    }
-
-    .modalContent {
-        border: 2px solid currentColor;
-    }
-
-    .certCardIconLocked {
-        border-width: 3px;
-    }
-}
-
-/* ─── Focus Styles ──────────────────────────────────────────── */
-.modalClose:focus-visible,
-.certCard:focus-visible {
-    outline: 2px solid #6366f1;
-    outline-offset: 2px;
 }

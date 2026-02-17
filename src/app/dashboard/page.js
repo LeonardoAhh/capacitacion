@@ -5,6 +5,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import ProfileDropdown from '@/components/ProfileDropdown/ProfileDropdown';
+import AvatarSelector from '@/components/AvatarSelector/AvatarSelector';
 import { useNotifications } from '@/hooks/useNotifications';
 import { useDashboardStats } from '@/hooks/useDashboardStats';
 import {
@@ -14,11 +15,12 @@ import {
 import styles from './page.module.css';
 
 export default function DashboardPage() {
-    const { user, loading: authLoading } = useAuth();
+    const { user, loading: authLoading, updateUserProfile } = useAuth();
     const router = useRouter();
 
     const { stats, evaluations, expiringEmployees, loading } = useDashboardStats(user);
     const [showExpiringModal, setShowExpiringModal] = useState(false);
+    const [showAvatarSelector, setShowAvatarSelector] = useState(false);
     const { permission, requestPermission, sendNotification } = useNotifications();
 
     useEffect(() => {
@@ -62,6 +64,12 @@ export default function DashboardPage() {
         await requestPermission();
     }, [requestPermission]);
 
+    const handleAvatarSave = useCallback(async (avatarUrl) => {
+        if (user?.uid) {
+            await updateUserProfile(user.uid, { photoURL: avatarUrl, avatar: avatarUrl });
+        }
+    }, [user?.uid, updateUserProfile]);
+
     if (authLoading || !user) {
         return (
             <div className={styles.page}>
@@ -81,8 +89,15 @@ export default function DashboardPage() {
 
     return (
         <div className={styles.page}>
+            <AvatarSelector
+                isOpen={showAvatarSelector}
+                onClose={() => setShowAvatarSelector(false)}
+                onSave={handleAvatarSave}
+                userName={user?.name || user?.displayName || 'Usuario'}
+            />
+
             <div className={styles.profileContainer}>
-                <ProfileDropdown />
+                <ProfileDropdown onAvatarClick={() => setShowAvatarSelector(true)} />
             </div>
 
             <div className={styles.container}>

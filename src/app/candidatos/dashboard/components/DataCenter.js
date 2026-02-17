@@ -10,7 +10,7 @@ export default function DataCenter() {
 
     return (
         <section className={styles.dataCenterSection}>
-            <h3 className={styles.sectionHeader}>💡 Centro de Ayuda</h3>
+            <h3 className={styles.sectionHeader}>Centro de Ayuda</h3>
             <div className={styles.dataGrid}>
                 {DATA_CENTER_ITEMS.map((item) => (
                     <div
@@ -34,14 +34,16 @@ export default function DataCenter() {
                     <div className={styles.modalContent} onClick={(e) => e.stopPropagation()}>
                         <div className={styles.modalHeader}>
                             <h3 className={styles.modalTitle}>{selectedData.title}</h3>
-                            <button className={styles.closeButton} onClick={() => setSelectedData(null)}>
-                                <X size={16} />
+                            <button
+                                className={styles.closeButton}
+                                onClick={() => setSelectedData(null)}
+                                aria-label="Cerrar"
+                            >
+                                <X size={14} />
                             </button>
                         </div>
-                        <div style={{ color: 'var(--text-secondary, #8e8e93)', marginBottom: '16px' }}>
-                            {selectedData.desc}
-                        </div>
-                        <div style={{ color: 'var(--text-primary, #1c1c1e)' }}>
+                        <p className={styles.modalDesc}>{selectedData.desc}</p>
+                        <div className={styles.modalBody}>
                             {selectedData.content}
                         </div>
                     </div>

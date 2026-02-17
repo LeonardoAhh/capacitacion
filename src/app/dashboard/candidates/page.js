@@ -11,6 +11,7 @@ import { Search, ArrowLeft, Users, CheckCircle, Clock, FileText, FileCheck, Aler
 import { useTheme } from '@/contexts/ThemeContext';
 import CandidateDrawer from '@/components/Dashboard/CandidateDrawer';
 import ProfileDropdown from '@/components/ProfileDropdown/ProfileDropdown';
+import AvatarSelector from '@/components/AvatarSelector/AvatarSelector';
 
 // Custom hook for data fetching
 function useDataFetching() {
@@ -176,7 +177,7 @@ function useDataFetching() {
 }
 
 export default function CandidateMonitoringPage() {
-    const { user, loading: authLoading } = useAuth();
+    const { user, loading: authLoading, updateUserProfile } = useAuth();
     const router = useRouter();
     const { theme } = useTheme();
 
@@ -189,6 +190,7 @@ export default function CandidateMonitoringPage() {
     const [selectedCandidate, setSelectedCandidate] = useState(null);
     const [isDrawerOpen, setIsDrawerOpen] = useState(false);
     const [showMobileFilters, setShowMobileFilters] = useState(false);
+    const [showAvatarSelector, setShowAvatarSelector] = useState(false);
     const [whatsappModal, setWhatsappModal] = useState({
         isOpen: false,
         candidate: null
@@ -274,9 +276,6 @@ export default function CandidateMonitoringPage() {
                 archivedAt: !candidate.isArchived ? new Date().toISOString() : null
             });
 
-            // Optimistic update handled by fetch or real-time listener, but we can force refresh if needed
-            // For now, let's rely on data refetch or local state update if we had it.
-            // Since we use real-time listeners for some parts, or manual fetch for this page:
             fetchData();
             setIsDrawerOpen(false);
         } catch (error) {
@@ -284,6 +283,12 @@ export default function CandidateMonitoringPage() {
             alert('Error al actualizar el estado del candidato');
         }
     }, [fetchData]);
+
+    const handleAvatarSave = useCallback(async (avatarUrl) => {
+        if (user?.uid) {
+            await updateUserProfile(user.uid, { photoURL: avatarUrl, avatar: avatarUrl });
+        }
+    }, [user?.uid, updateUserProfile]);
 
     // Predefined WhatsApp message templates
     const messageTemplates = [
@@ -339,7 +344,7 @@ export default function CandidateMonitoringPage() {
     // Loading state
     if (loading) {
         return (
-            <div className={styles.container}>
+            <div className={styles.page}>
                 <div className={styles.loadingContainer}>
                     <div className={styles.spinner}></div>
                     <p>Cargando monitoreo de candidatos...</p>
@@ -351,7 +356,7 @@ export default function CandidateMonitoringPage() {
     // Error state
     if (error) {
         return (
-            <div className={styles.container}>
+            <div className={styles.page}>
                 <div className={styles.errorContainer}>
                     <AlertCircle size={48} className={styles.errorIcon} />
                     <h2>Error al cargar datos</h2>
@@ -368,7 +373,14 @@ export default function CandidateMonitoringPage() {
     }
 
     return (
-        <div className={styles.container}>
+        <div className={styles.page}>
+            <AvatarSelector
+                isOpen={showAvatarSelector}
+                onClose={() => setShowAvatarSelector(false)}
+                onSave={handleAvatarSave}
+                userName={user?.name || user?.displayName || 'Usuario'}
+            />
+
             <header className={styles.header}>
                 <div className={styles.headerContent}>
                     <div className={styles.headerLeft}>
@@ -381,7 +393,10 @@ export default function CandidateMonitoringPage() {
                         </div>
                     </div>
                     <div className={styles.headerActions}>
-                        <ProfileDropdown className={styles.profileDropdown} />
+                        <ProfileDropdown 
+                            className={styles.profileDropdown} 
+                            onAvatarClick={() => setShowAvatarSelector(true)}
+                        />
                     </div>
                 </div>
             </header>

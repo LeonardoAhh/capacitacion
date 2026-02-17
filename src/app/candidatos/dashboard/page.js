@@ -8,8 +8,6 @@ import { signOut } from 'firebase/auth';
 import { useTheme } from '@/contexts/ThemeContext';
 import { destroySession } from '@/lib/sessionApi';
 
-// Components
-import { BackgroundLines } from '@/components/ui/BackgroundLines/BackgroundLines';
 import SetupWizard from '@/components/SetupWizard/SetupWizard';
 import AvatarSelector from '@/components/AvatarSelector/AvatarSelector';
 import ThemeSelectorModal from '@/components/ThemeSelectorModal/ThemeSelectorModal';
@@ -27,36 +25,30 @@ import { DashboardSkeleton, useToast } from './components';
 import ModernPillNavbar from './components/ModernPillNavbar';
 import SupportButton from './components/SupportButton';
 
-// Hooks & Utils
 import { useCandidateSession, useCourseProgress, useSessionTimer } from './hooks';
 import { useCandidateData } from '@/hooks/useCandidateData';
 import { loadCoursesForPosition } from './services/courseService';
 import induccionEmpresaExam from '../../../../public/examenes/induccion_empresa.json';
 
-import { THEME_COLORS } from './config/themeColors';
 import styles from './page.module.css';
 
 export default function CandidatoDashboard() {
     const router = useRouter();
     const { toggleTheme } = useTheme();
 
-    // New Hook Integration
     const { candidate, loading, setCandidate, updateTheme, updateAvatar, updateNickname } = useCandidateData();
 
-    // Local UI State
     const [courses, setCourses] = useState([]);
     const [selectedCourse, setSelectedCourse] = useState(null);
-    const [showWelcome, setShowWelcome] = useState(false); // Changed default to false, controlled by logic below
+    const [showWelcome, setShowWelcome] = useState(false);
     const [courseProgress, setCourseProgress] = useState({});
     const [showExamModal, setShowExamModal] = useState(false);
     const [examData, setExamData] = useState(induccionEmpresaExam);
 
-    // Customization UI State
     const [showSetupWizard, setShowSetupWizard] = useState(false);
     const [showAvatarSelector, setShowAvatarSelector] = useState(false);
     const [showThemeSelector, setShowThemeSelector] = useState(false);
 
-    // Logout handler
     const handleLogout = useCallback(async () => {
         try {
             await destroySession();
@@ -71,13 +63,11 @@ export default function CandidatoDashboard() {
         }
     }, [router]);
 
-    // Session Timeout — extracted to useSessionTimer
     const { timeLeft } = useSessionTimer({
         enabled: !loading && !!candidate,
         onExpire: handleLogout,
     });
 
-    // Effect: Check for Setup Wizard / Welcome + Load Courses
     useEffect(() => {
         if (candidate && !loading) {
             const hasSeenSetup = sessionStorage.getItem(`candidate_setup_${candidate.id}`);
@@ -99,7 +89,6 @@ export default function CandidatoDashboard() {
                 }
             }
 
-            // Load Courses via extracted service
             const positionToLoad = candidate.position || candidate.puesto;
             if (positionToLoad && positionToLoad !== 'N/A') {
                 loadCoursesForPosition(positionToLoad)
@@ -113,23 +102,14 @@ export default function CandidatoDashboard() {
         }
     }, [candidate, loading]);
 
-    // loadCourses extracted to services/courseService.js
-
-    // Course Progress Hook
     const {
         markStepComplete,
         isStepUnlocked,
         getCurrentStepNumber,
-        handleExamSubmit: handleExamSubmitProgress // renamed to avoid conflict if any, or use directly
+        handleExamSubmit: handleExamSubmitProgress
     } = useCourseProgress({ candidate, setCourseProgress, setCandidate, courseProgress });
 
-    // Use the hook's handleExamSubmit directly? 
-    // Wait, useCourseProgress hook definition in my view (Step 98) showed handleExamSubmit taking `(courseId, courseName, finalScore, answers)`.
-    // The `ExamModal` onSubmit expects `(finalScore, answers)`.
-    // I need a wrapper.
-
     const handleExamModalSubmit = async (finalScore, answers) => {
-        // Find induction course ID
         const inductionCourse = courses.find(c =>
             c.title?.toUpperCase().includes('INDUCCIÓN A LA EMPRESA') ||
             c.nombre?.toUpperCase().includes('INDUCCIÓN A LA EMPRESA')
@@ -173,7 +153,6 @@ export default function CandidatoDashboard() {
             }
             await setDoc(employeeRef, updates, { merge: true });
 
-            // Session update
             const session = JSON.parse(sessionStorage.getItem('candidate_session') || '{}');
             session.cursosCompletados = newCompleted;
             sessionStorage.setItem('candidate_session', JSON.stringify(session));
@@ -196,8 +175,7 @@ export default function CandidatoDashboard() {
 
     if (loading) {
         return (
-            <div className={styles.container}>
-                <div className={styles.backgroundGradient} />
+            <div className={styles.page}>
                 <DashboardSkeleton />
             </div>
         );
@@ -218,18 +196,12 @@ export default function CandidatoDashboard() {
     }
 
     return (
-        <div className={styles.container}>
-            <div className={styles.backgroundGradient} />
-
-            <div className={styles.shapesContainer}>
-                <BackgroundLines colors={THEME_COLORS[candidate?.theme] || THEME_COLORS.light} />
-            </div>
-
+        <div className={styles.page}>
             <AvatarSelector
                 isOpen={showAvatarSelector}
                 onClose={() => setShowAvatarSelector(false)}
                 onSave={updateAvatar}
-                userName={candidate?.nickname || candidate?.name} // Use nickname if available
+                userName={candidate?.nickname || candidate?.name}
             />
 
             <SetupWizard
@@ -255,28 +227,29 @@ export default function CandidatoDashboard() {
             />
 
             <nav className={styles.navbar}>
-                <div className={styles.navActions}>
-                    <ModernPillNavbar
-                        candidate={candidate}
-                        onLogout={handleLogout}
-                        timeLeft={Math.floor(timeLeft / 1000)}
-                        toggleTheme={toggleTheme}
-                        onAvatarClick={() => setShowAvatarSelector(true)}
-                        onThemeClick={() => setShowThemeSelector(true)}
-                    />
-                </div>
+                <ModernPillNavbar
+                    candidate={candidate}
+                    onLogout={handleLogout}
+                    timeLeft={Math.floor(timeLeft / 1000)}
+                    toggleTheme={toggleTheme}
+                    onAvatarClick={() => setShowAvatarSelector(true)}
+                    onThemeClick={() => setShowThemeSelector(true)}
+                />
             </nav>
 
             <div className={styles.scrollContent}>
-                <ImportantInfoCards className={styles.importantCardsSpacing} />
+                <ImportantInfoCards />
 
-                <RoadmapTimeline />
-
-                <ContactInfo />
-
-                <DataCenter />
-
-                <GeneralInfo candidate={candidate} />
+                <div className={styles.desktopGrid}>
+                    <div className={styles.mainColumn}>
+                        <RoadmapTimeline />
+                        <ContactInfo />
+                    </div>
+                    <div className={styles.sideColumn}>
+                        <DataCenter />
+                        <GeneralInfo candidate={candidate} />
+                    </div>
+                </div>
 
                 <CoursesGrid
                     courses={courses}
@@ -287,18 +260,16 @@ export default function CandidatoDashboard() {
 
                 <footer className={styles.footer}>
                     <p>ViñoPlastic Inyección S.A. de C.V.</p>
-                    <p>Portal de Inducción v2.0</p>
+                    <p>Portal de Inducción</p>
                 </footer>
             </div>
 
-            {/* Modals */}
             {selectedCourse && (
                 <CourseViewer
                     selectedCourse={selectedCourse}
                     onClose={() => setSelectedCourse(null)}
                     candidate={candidate}
                     courseProgress={courseProgress}
-                    // Hooks methods passed down
                     isStepUnlocked={isStepUnlocked}
                     getCurrentStepNumber={getCurrentStepNumber}
                     markStepComplete={markStepComplete}
@@ -313,7 +284,6 @@ export default function CandidatoDashboard() {
                 examData={examData}
                 onSubmit={handleExamModalSubmit}
             />
-
 
             <SupportButton />
         </div>
