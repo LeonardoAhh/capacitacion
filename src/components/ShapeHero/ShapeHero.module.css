@@ -1,6 +1,8 @@
 /* ─────────────────────────────────────────────────────────────
-   ShapeHero — v2.0.0
-   Estilo: Minimalista industrial / refinado
+   ShapeHero — v3.0.0
+   Estética: Minimalismo tipográfico / arquitectónico
+   Concepto: "Editorial industrial" — letras como estructura,
+   espacio como diseño, detalles geométricos precisos.
 ───────────────────────────────────────────────────────────── */
 
 /* ── Top controls ─────────────────────────────────────────── */
@@ -23,7 +25,6 @@
     align-items: center;
     justify-content: center;
     background-color: transparent;
-    padding-top: 4rem;
 }
 
 /* ── Skip link (a11y) ─────────────────────────────────────── */
@@ -49,14 +50,13 @@
 }
 
 /* ── Noise texture overlay ────────────────────────────────── */
-/*  SVG noise via data URI — zero extra HTTP requests          */
 
 .noiseOverlay {
     position: absolute;
     inset: 0;
     z-index: 5;
     pointer-events: none;
-    opacity: 0.035;
+    opacity: 0.028;
     background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
     background-size: 200px 200px;
     mix-blend-mode: overlay;
@@ -69,9 +69,9 @@
     inset: 0;
     pointer-events: none;
     z-index: 15;
-    background: radial-gradient(ellipse 80% 80% at 50% 50%,
-            transparent 30%,
-            rgba(0, 0, 0, 0.45) 100%);
+    background: radial-gradient(ellipse 90% 80% at 50% 50%,
+            transparent 40%,
+            rgba(0, 0, 0, 0.38) 100%);
 }
 
 [data-theme="light"] .overlay,
@@ -79,17 +79,62 @@
 [data-theme="forest"] .overlay,
 [data-theme="ocean"] .overlay,
 [data-theme="sunset"] .overlay {
-    background: radial-gradient(ellipse 80% 80% at 50% 50%,
-            transparent 30%,
-            rgba(255, 255, 255, 0.25) 100%);
+    background: radial-gradient(ellipse 90% 80% at 50% 50%,
+            transparent 40%,
+            rgba(255, 255, 255, 0.2) 100%);
 }
 
 @media (prefers-color-scheme: light) {
     .overlay {
-        background: radial-gradient(ellipse 80% 80% at 50% 50%,
-                transparent 30%,
-                rgba(255, 255, 255, 0.25) 100%);
+        background: radial-gradient(ellipse 90% 80% at 50% 50%,
+                transparent 40%,
+                rgba(255, 255, 255, 0.2) 100%);
     }
+}
+
+/* ── Decorative horizontal rules ─────────────────────────── */
+/*  Two ultra-thin lines at top and bottom — framing the page  */
+
+.ruleTop,
+.ruleBottom {
+    position: absolute;
+    left: 2rem;
+    right: 2rem;
+    height: 1px;
+    z-index: 20;
+    pointer-events: none;
+    background: linear-gradient(90deg,
+            transparent 0%,
+            rgba(255, 255, 255, 0.08) 20%,
+            rgba(255, 255, 255, 0.14) 50%,
+            rgba(255, 255, 255, 0.08) 80%,
+            transparent 100%);
+}
+
+[data-theme="light"] .ruleTop,
+[data-theme="vinoplastic"] .ruleTop,
+[data-theme="forest"] .ruleTop,
+[data-theme="ocean"] .ruleTop,
+[data-theme="sunset"] .ruleTop,
+[data-theme="light"] .ruleBottom,
+[data-theme="vinoplastic"] .ruleBottom,
+[data-theme="forest"] .ruleBottom,
+[data-theme="ocean"] .ruleBottom,
+[data-theme="sunset"] .ruleBottom {
+    background: linear-gradient(90deg,
+            transparent 0%,
+            rgba(0, 0, 0, 0.06) 20%,
+            rgba(0, 0, 0, 0.12) 50%,
+            rgba(0, 0, 0, 0.06) 80%,
+            transparent 100%);
+}
+
+.ruleTop {
+    top: 3rem;
+}
+
+.ruleBottom {
+    bottom: 3rem;
 }
 
 /* ── Content ──────────────────────────────────────────────── */
@@ -98,7 +143,7 @@
     position: relative;
     z-index: 30;
     width: 100%;
-    max-width: 1200px;
+    max-width: 900px;
     padding: 2rem;
 }
 
@@ -110,16 +155,52 @@
     text-align: center;
 }
 
+/* ── Eyebrow ──────────────────────────────────────────────── */
+
+.eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.625rem;
+    margin-bottom: 1.75rem;
+    font-size: 0.6875rem;
+    font-weight: 600;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.35);
+}
+
+[data-theme="light"] .eyebrow,
+[data-theme="vinoplastic"] .eyebrow,
+[data-theme="forest"] .eyebrow,
+[data-theme="ocean"] .eyebrow,
+[data-theme="sunset"] .eyebrow {
+    color: rgba(0, 0, 0, 0.3);
+}
+
+@media (prefers-color-scheme: light) {
+    .eyebrow {
+        color: rgba(0, 0, 0, 0.3);
+    }
+}
+
+.eyebrowDot {
+    display: block;
+    width: 3px;
+    height: 3px;
+    border-radius: 50%;
+    background: currentColor;
+    opacity: 0.7;
+}
+
 /* ── Title ────────────────────────────────────────────────── */
 
 .titleWrapper {
-    margin-bottom: 2.5rem;
-    line-height: 1.05;
+    margin-bottom: 2rem;
+    line-height: 1.0;
 }
 
 /*
- * .titleLine wraps each animated span.
- * overflow: hidden is essential — it masks the clip-path reveal
+ * overflow: hidden is essential — masks the clip-path reveal
  * so text appears to rise from below the baseline.
  */
 .titleLine {
@@ -128,13 +209,13 @@
 }
 
 .mainTitle {
-    font-size: clamp(2.75rem, 8.5vw, 5.5rem);
+    font-size: clamp(3rem, 10vw, 7rem);
     font-weight: 900;
-    letter-spacing: -0.06em;
-    padding-top: 0.1em;
-    background: linear-gradient(160deg,
+    letter-spacing: -0.035em;
+    padding-top: 0.08em;
+    background: linear-gradient(170deg,
             #ffffff 0%,
-            #ffffff 55%,
+            #e2e8f0 60%,
             #94a3b8 100%);
     -webkit-background-clip: text;
     background-clip: text;
@@ -148,48 +229,122 @@
 [data-theme="forest"] .mainTitle,
 [data-theme="ocean"] .mainTitle,
 [data-theme="sunset"] .mainTitle {
-    background: linear-gradient(160deg, #0f172a 0%, #0f172a 50%, #475569 100%);
+    background: linear-gradient(170deg, #0f172a 0%, #1e293b 55%, #475569 100%);
     -webkit-background-clip: text;
     background-clip: text;
 }
 
 @media (prefers-color-scheme: light) {
     .mainTitle {
-        background: linear-gradient(160deg, #0f172a 0%, #0f172a 50%, #475569 100%);
+        background: linear-gradient(170deg, #0f172a 0%, #1e293b 55%, #475569 100%);
         -webkit-background-clip: text;
         background-clip: text;
     }
 }
 
 .subtitle {
-    font-size: clamp(2rem, 6.5vw, 4.25rem);
-    background: linear-gradient(135deg, #818cf8 0%, #ec4899 50%, #a78bfa 100%);
+    font-size: clamp(2.25rem, 7.5vw, 4.75rem);
+    background: linear-gradient(135deg, #818cf8 0%, #ec4899 55%, #a78bfa 100%);
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
     display: block;
     padding-bottom: 0.15em;
-    /* prevent descender clip */
-    line-height: 1.2;
+    line-height: 1.15;
     will-change: clip-path, opacity;
+}
+
+/* ── Divider ──────────────────────────────────────────────── */
+
+.divider {
+    display: flex;
+    align-items: center;
+    gap: 0.875rem;
+    margin-bottom: 2.25rem;
+    width: 100%;
+    max-width: 320px;
+}
+
+.dividerLine {
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(90deg,
+            transparent,
+            rgba(255, 255, 255, 0.15) 40%,
+            rgba(255, 255, 255, 0.22) 100%);
+}
+
+.dividerLine:last-child {
+    background: linear-gradient(270deg,
+            transparent,
+            rgba(255, 255, 255, 0.15) 40%,
+            rgba(255, 255, 255, 0.22) 100%);
+}
+
+[data-theme="light"] .dividerLine,
+[data-theme="vinoplastic"] .dividerLine,
+[data-theme="forest"] .dividerLine,
+[data-theme="ocean"] .dividerLine,
+[data-theme="sunset"] .dividerLine {
+    background: linear-gradient(90deg,
+            transparent,
+            rgba(0, 0, 0, 0.08) 40%,
+            rgba(0, 0, 0, 0.14) 100%);
+}
+
+[data-theme="light"] .dividerLine:last-child,
+[data-theme="vinoplastic"] .dividerLine:last-child,
+[data-theme="forest"] .dividerLine:last-child,
+[data-theme="ocean"] .dividerLine:last-child,
+[data-theme="sunset"] .dividerLine:last-child {
+    background: linear-gradient(270deg,
+            transparent,
+            rgba(0, 0, 0, 0.08) 40%,
+            rgba(0, 0, 0, 0.14) 100%);
+}
+
+@media (prefers-color-scheme: light) {
+    .dividerLine {
+        background: linear-gradient(90deg,
+                transparent,
+                rgba(0, 0, 0, 0.08) 40%,
+                rgba(0, 0, 0, 0.14) 100%);
+    }
+
+    .dividerLine:last-child {
+        background: linear-gradient(270deg,
+                transparent,
+                rgba(0, 0, 0, 0.08) 40%,
+                rgba(0, 0, 0, 0.14) 100%);
+    }
+}
+
+.dividerDiamond {
+    display: block;
+    width: 5px;
+    height: 5px;
+    border-radius: 1px;
+    transform: rotate(45deg);
+    background: rgba(129, 140, 248, 0.5);
+    flex-shrink: 0;
 }
 
 /* ── Buttons container ────────────────────────────────────── */
 
 .buttonsContainer {
     display: flex;
-    gap: 1rem;
-    margin-top: 0.5rem;
+    gap: 0.75rem;
     flex-wrap: wrap;
     justify-content: center;
     align-items: stretch;
 }
 
 .buttonIcon {
-    width: 18px;
-    height: 18px;
+    width: 15px;
+    height: 15px;
     flex-shrink: 0;
-    transition: transform 0.25s ease;
+    opacity: 0.85;
+    transition: transform 0.25s ease, opacity 0.25s ease;
 }
 
 /* ── Base button ──────────────────────────────────────────── */
@@ -199,56 +354,72 @@
 .tertiaryButton {
     display: inline-flex;
     align-items: center;
-    gap: 0.625rem;
-    padding: 0.875rem 1.75rem;
-    min-height: 48px;
-    border-radius: 9999px;
-    font-weight: 600;
-    font-size: 0.9375rem;
-    letter-spacing: 0.01em;
+    gap: 0.5rem;
+    padding: 0.6875rem 1.375rem;
+    min-height: 44px;
+    border-radius: 3px;
+    font-weight: 500;
+    font-size: 0.8125rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
     text-decoration: none;
     position: relative;
     overflow: hidden;
     isolation: isolate;
     transition:
-        transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1),
-        box-shadow 0.3s ease,
-        filter 0.3s ease;
+        transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1),
+        box-shadow 0.25s ease,
+        opacity 0.25s ease;
 }
 
-/* Shimmer sweep on hover */
-.primaryButton::after,
-.secondaryButton::after,
-.tertiaryButton::after {
+/* Left-edge accent bar */
+.primaryButton::before,
+.secondaryButton::before,
+.tertiaryButton::before {
     content: "";
     position: absolute;
-    inset: 0;
-    background: linear-gradient(105deg,
-            transparent 30%,
-            rgba(255, 255, 255, 0.18) 50%,
-            transparent 70%);
-    transform: translateX(-100%);
-    transition: transform 0.5s ease;
+    left: 0;
+    top: 20%;
+    bottom: 20%;
+    width: 2px;
+    border-radius: 0 2px 2px 0;
+    opacity: 0;
+    transition: opacity 0.25s ease, top 0.25s ease, bottom 0.25s ease;
 }
 
-.primaryButton:hover::after,
-.secondaryButton:hover::after,
-.tertiaryButton:hover::after {
-    transform: translateX(100%);
+.primaryButton::before {
+    background: #818cf8;
+}
+
+.secondaryButton::before {
+    background: #60a5fa;
+}
+
+.tertiaryButton::before {
+    background: #f472b6;
+}
+
+.primaryButton:hover::before,
+.secondaryButton:hover::before,
+.tertiaryButton:hover::before {
+    opacity: 1;
+    top: 10%;
+    bottom: 10%;
 }
 
 /* Lift on hover */
 .primaryButton:hover,
 .secondaryButton:hover,
 .tertiaryButton:hover {
-    transform: translateY(-3px);
+    transform: translateY(-2px);
 }
 
 /* Icon nudge on hover */
 .primaryButton:hover .buttonIcon,
 .secondaryButton:hover .buttonIcon,
 .tertiaryButton:hover .buttonIcon {
-    transform: scale(1.15);
+    transform: translateX(2px);
+    opacity: 1;
 }
 
 /* Press */
@@ -263,40 +434,74 @@
 .primaryButton:focus-visible,
 .secondaryButton:focus-visible,
 .tertiaryButton:focus-visible {
-    outline: 2px solid rgba(255, 255, 255, 0.7);
+    outline: 2px solid rgba(255, 255, 255, 0.6);
     outline-offset: 3px;
 }
 
 /* ── Primary ──────────────────────────────────────────────── */
 
 .primaryButton {
-    background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
-    color: white;
-    box-shadow:
-        0 4px 14px rgba(99, 102, 241, 0.35),
-        0 1px 3px rgba(0, 0, 0, 0.2);
+    background: rgba(99, 102, 241, 0.12);
+    color: #a5b4fc;
+    border: 1px solid rgba(99, 102, 241, 0.28);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
 }
 
 .primaryButton:hover {
+    background: rgba(99, 102, 241, 0.2);
+    border-color: rgba(99, 102, 241, 0.5);
     box-shadow:
-        0 8px 28px rgba(99, 102, 241, 0.55),
-        0 2px 6px rgba(0, 0, 0, 0.25);
+        inset 0 1px 0 rgba(255, 255, 255, 0.06),
+        0 4px 16px rgba(99, 102, 241, 0.2);
+}
+
+[data-theme="light"] .primaryButton,
+[data-theme="vinoplastic"] .primaryButton,
+[data-theme="forest"] .primaryButton,
+[data-theme="ocean"] .primaryButton,
+[data-theme="sunset"] .primaryButton {
+    background: rgba(99, 102, 241, 0.08);
+    color: #4f46e5;
+    border-color: rgba(99, 102, 241, 0.25);
+}
+
+[data-theme="light"] .primaryButton:hover,
+[data-theme="vinoplastic"] .primaryButton:hover,
+[data-theme="forest"] .primaryButton:hover,
+[data-theme="ocean"] .primaryButton:hover,
+[data-theme="sunset"] .primaryButton:hover {
+    background: rgba(99, 102, 241, 0.14);
+    border-color: rgba(99, 102, 241, 0.4);
+}
+
+@media (prefers-color-scheme: light) {
+    .primaryButton {
+        background: rgba(99, 102, 241, 0.08);
+        color: #4f46e5;
+        border-color: rgba(99, 102, 241, 0.25);
+    }
+
+    .primaryButton:hover {
+        background: rgba(99, 102, 241, 0.14);
+        border-color: rgba(99, 102, 241, 0.4);
+    }
 }
 
 /* ── Secondary ────────────────────────────────────────────── */
 
 .secondaryButton {
-    background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
-    color: white;
-    box-shadow:
-        0 4px 14px rgba(37, 99, 235, 0.35),
-        0 1px 3px rgba(0, 0, 0, 0.2);
+    background: rgba(37, 99, 235, 0.1);
+    color: #93c5fd;
+    border: 1px solid rgba(37, 99, 235, 0.28);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
 }
 
 .secondaryButton:hover {
+    background: rgba(37, 99, 235, 0.18);
+    border-color: rgba(59, 130, 246, 0.5);
     box-shadow:
-        0 8px 28px rgba(37, 99, 235, 0.55),
-        0 2px 6px rgba(0, 0, 0, 0.25);
+        inset 0 1px 0 rgba(255, 255, 255, 0.06),
+        0 4px 16px rgba(37, 99, 235, 0.2);
 }
 
 [data-theme="light"] .secondaryButton,
@@ -304,29 +509,80 @@
 [data-theme="forest"] .secondaryButton,
 [data-theme="ocean"] .secondaryButton,
 [data-theme="sunset"] .secondaryButton {
-    background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+    background: rgba(37, 99, 235, 0.07);
+    color: #1d4ed8;
+    border-color: rgba(37, 99, 235, 0.22);
+}
+
+[data-theme="light"] .secondaryButton:hover,
+[data-theme="vinoplastic"] .secondaryButton:hover,
+[data-theme="forest"] .secondaryButton:hover,
+[data-theme="ocean"] .secondaryButton:hover,
+[data-theme="sunset"] .secondaryButton:hover {
+    background: rgba(37, 99, 235, 0.13);
+    border-color: rgba(59, 130, 246, 0.38);
 }
 
 @media (prefers-color-scheme: light) {
     .secondaryButton {
-        background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+        background: rgba(37, 99, 235, 0.07);
+        color: #1d4ed8;
+        border-color: rgba(37, 99, 235, 0.22);
+    }
+
+    .secondaryButton:hover {
+        background: rgba(37, 99, 235, 0.13);
+        border-color: rgba(59, 130, 246, 0.38);
     }
 }
 
 /* ── Tertiary ─────────────────────────────────────────────── */
 
 .tertiaryButton {
-    background: linear-gradient(135deg, #ec4899 0%, #d946ef 100%);
-    color: white;
-    box-shadow:
-        0 4px 14px rgba(236, 72, 153, 0.35),
-        0 1px 3px rgba(0, 0, 0, 0.2);
+    background: rgba(236, 72, 153, 0.1);
+    color: #f9a8d4;
+    border: 1px solid rgba(236, 72, 153, 0.28);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
 }
 
 .tertiaryButton:hover {
+    background: rgba(236, 72, 153, 0.18);
+    border-color: rgba(236, 72, 153, 0.5);
     box-shadow:
-        0 8px 28px rgba(236, 72, 153, 0.55),
-        0 2px 6px rgba(0, 0, 0, 0.25);
+        inset 0 1px 0 rgba(255, 255, 255, 0.06),
+        0 4px 16px rgba(236, 72, 153, 0.2);
+}
+
+[data-theme="light"] .tertiaryButton,
+[data-theme="vinoplastic"] .tertiaryButton,
+[data-theme="forest"] .tertiaryButton,
+[data-theme="ocean"] .tertiaryButton,
+[data-theme="sunset"] .tertiaryButton {
+    background: rgba(236, 72, 153, 0.07);
+    color: #be185d;
+    border-color: rgba(236, 72, 153, 0.22);
+}
+
+[data-theme="light"] .tertiaryButton:hover,
+[data-theme="vinoplastic"] .tertiaryButton:hover,
+[data-theme="forest"] .tertiaryButton:hover,
+[data-theme="ocean"] .tertiaryButton:hover,
+[data-theme="sunset"] .tertiaryButton:hover {
+    background: rgba(236, 72, 153, 0.13);
+    border-color: rgba(236, 72, 153, 0.38);
+}
+
+@media (prefers-color-scheme: light) {
+    .tertiaryButton {
+        background: rgba(236, 72, 153, 0.07);
+        color: #be185d;
+        border-color: rgba(236, 72, 153, 0.22);
+    }
+
+    .tertiaryButton:hover {
+        background: rgba(236, 72, 153, 0.13);
+        border-color: rgba(236, 72, 153, 0.38);
+    }
 }
 
 /* ─────────────────────────────────────────────────────────────
@@ -337,7 +593,7 @@
     .buttonsContainer {
         flex-direction: column;
         width: 100%;
-        max-width: 300px;
+        max-width: 280px;
         align-items: stretch;
     }
 
@@ -355,19 +611,27 @@
     }
 
     .titleWrapper {
-        margin-bottom: 1.75rem;
+        margin-bottom: 1.5rem;
     }
 
     .buttonsContainer {
-        gap: 0.875rem;
-        margin-top: 1.75rem;
+        gap: 0.625rem;
     }
 
-    .primaryButton,
-    .secondaryButton,
-    .tertiaryButton {
-        padding: 0.8125rem 1.5rem;
-        font-size: 0.9rem;
+    .eyebrow {
+        margin-bottom: 1.25rem;
+    }
+
+    .ruleTop {
+        top: 1.5rem;
+        left: 1rem;
+        right: 1rem;
+    }
+
+    .ruleBottom {
+        bottom: 1.5rem;
+        left: 1rem;
+        right: 1rem;
     }
 }
 
@@ -377,7 +641,7 @@
     }
 
     .buttonsContainer {
-        max-width: 280px;
+        max-width: 260px;
     }
 }
 
@@ -390,8 +654,8 @@
     .primaryButton,
     .secondaryButton,
     .tertiaryButton {
-        padding: 0.75rem 1.25rem;
-        font-size: 0.875rem;
+        padding: 0.625rem 1rem;
+        font-size: 0.75rem;
     }
 }
 
@@ -403,29 +667,35 @@
     }
 
     .titleWrapper {
-        margin-bottom: 1rem;
+        margin-bottom: 0.875rem;
     }
 
     .mainTitle {
-        font-size: 2.5rem;
+        font-size: 2.75rem;
     }
 
     .subtitle {
-        font-size: 1.75rem;
+        font-size: 2rem;
+    }
+
+    .eyebrow {
+        margin-bottom: 0.875rem;
+    }
+
+    .divider {
+        margin-bottom: 1.25rem;
     }
 
     .buttonsContainer {
         flex-direction: row;
         max-width: none;
-        margin-top: 1.25rem;
-        gap: 0.875rem;
+        gap: 0.75rem;
     }
 
     .primaryButton,
     .secondaryButton,
     .tertiaryButton {
         width: auto;
-        padding: 0.75rem 1.5rem;
     }
 }
 
@@ -448,11 +718,10 @@
         transform: none;
     }
 
-    /* Disable shimmer sweep */
-    .primaryButton::after,
-    .secondaryButton::after,
-    .tertiaryButton::after {
-        display: none;
+    .primaryButton::before,
+    .secondaryButton::before,
+    .tertiaryButton::before {
+        transition: none;
     }
 }
 
@@ -465,7 +734,8 @@
     .primaryButton,
     .secondaryButton,
     .tertiaryButton {
-        border: 2px solid rgba(255, 255, 255, 0.9);
+        border-width: 2px;
+        border-color: currentColor;
     }
 
     .skipLink {

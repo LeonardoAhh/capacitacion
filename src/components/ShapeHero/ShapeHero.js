@@ -26,36 +26,33 @@ const BRAND = {
 };
 
 const NAV_LINKS = [
-    { href: "/login", label: "Empleados", ariaLabel: "Acceder al portal de empleados", icon: Users, variant: "primary" },
+    { href: "/login", label: "RRHH", ariaLabel: "Acceder al portal de empleados", icon: Users, variant: "primary" },
     { href: "/candidatos", label: "Candidatos", ariaLabel: "Acceder al portal de candidatos", icon: UserPlus, variant: "secondary" },
-    { href: "/training/login", label: "Capacitación", ariaLabel: "Acceder al módulo de capacitación", icon: GraduationCap, variant: "tertiary" },
+    { href: "/training/login", label: "Empleados", ariaLabel: "Acceder al módulo de capacitación", icon: GraduationCap, variant: "tertiary" },
 ];
 
 // ─── Animation variants ───────────────────────────────────────────────────────
 
-// Outer stagger: sequences title + nav in a single coordinated pass
 const PAGE_STAGGER = {
     hidden: {},
     visible: {
         transition: {
-            staggerChildren: 0.22,
-            delayChildren: 0.25,
+            staggerChildren: 0.18,
+            delayChildren: 0.2,
         },
     },
 };
 
-// Inner stagger for nav buttons
 const NAV_STAGGER = {
     hidden: {},
     visible: {
         transition: {
-            staggerChildren: 0.1,
+            staggerChildren: 0.08,
             delayChildren: 0,
         },
     },
 };
 
-// Clip-path reveal from bottom — used for title lines
 const LINE_REVEAL = {
     hidden: {
         clipPath: "inset(100% 0% 0% 0%)",
@@ -65,25 +62,24 @@ const LINE_REVEAL = {
         clipPath: "inset(0% 0% 0% 0%)",
         opacity: 1,
         transition: {
-            duration: 0.85,
+            duration: 0.9,
             ease: [0.22, 1, 0.36, 1],
         },
     },
 };
 
-// Blur + slide up — used for each button
 const ITEM_REVEAL = {
     hidden: {
         opacity: 0,
-        y: 20,
-        filter: "blur(5px)",
+        y: 16,
+        filter: "blur(4px)",
     },
     visible: {
         opacity: 1,
         y: 0,
         filter: "blur(0px)",
         transition: {
-            duration: 0.55,
+            duration: 0.6,
             ease: [0.22, 1, 0.36, 1],
         },
     },
@@ -134,17 +130,21 @@ function ShapeHeroComponent() {
             {/* Animated background lines */}
             <BackgroundLines
                 colors={["#6366f1", "#10b981", "#ec4899", "#8b5cf6"]}
-                style={{ position: "absolute", inset: 0, zIndex: 0, opacity: 0.5 }}
-                svgOptions={{ duration: 12 }}
+                style={{ position: "absolute", inset: 0, zIndex: 0, opacity: 0.18 }}
+                svgOptions={{ duration: 14 }}
             />
 
-            {/* Noise texture — subtle grain for depth */}
+            {/* Grain overlay */}
             <div className={styles.noiseOverlay} aria-hidden="true" />
 
-            {/* Vignette */}
+            {/* Subtle vignette */}
             <div className={styles.overlay} aria-hidden="true" />
 
-            {/* ── Main content — single coordinated entrance ── */}
+            {/* Decorative rule lines */}
+            <div className={styles.ruleTop} aria-hidden="true" />
+            <div className={styles.ruleBottom} aria-hidden="true" />
+
+            {/* ── Main content ── */}
             <motion.div
                 className={styles.content}
                 id="main-content"
@@ -154,7 +154,18 @@ function ShapeHeroComponent() {
             >
                 <div className={styles.textCenter}>
 
-                    {/* Title: each line clips up independently */}
+                    {/* Eyebrow tag */}
+                    <motion.div
+                        className={styles.eyebrow}
+                        variants={ITEM_REVEAL}
+                        aria-hidden="true"
+                    >
+                        <span className={styles.eyebrowDot} />
+                        Portal Corporativo
+                        <span className={styles.eyebrowDot} />
+                    </motion.div>
+
+                    {/* Title block */}
                     <div className={styles.titleWrapper} aria-label={`${BRAND.name} ${BRAND.location}`}>
                         <div className={styles.titleLine}>
                             <motion.span
@@ -175,6 +186,13 @@ function ShapeHeroComponent() {
                             </motion.span>
                         </div>
                     </div>
+
+                    {/* Divider */}
+                    <motion.div className={styles.divider} variants={ITEM_REVEAL} aria-hidden="true">
+                        <span className={styles.dividerLine} />
+                        <span className={styles.dividerDiamond} />
+                        <span className={styles.dividerLine} />
+                    </motion.div>
 
                     {/* Navigation buttons */}
                     <motion.nav
