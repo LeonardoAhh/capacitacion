@@ -2,6 +2,7 @@
 
 import { useState, useRef, useEffect, useMemo, useCallback } from 'react';
 import { createPortal } from 'react-dom';
+import Image from 'next/image';
 import { User, LogOut, ChevronDown, Clock, Contrast, Camera } from 'lucide-react';
 import styles from './ModernPillNavbar.module.css';
 import { extractFirstName, getCandidatePhotoUrl } from '../utils/helpers';
@@ -113,10 +114,13 @@ export default function ModernPillNavbar({
                 >
                     <div className={styles.avatar}>
                         {photoUrl && !imgError ? (
-                            <img
+                            <Image
                                 src={photoUrl}
                                 alt={displayName}
                                 className={styles.avatarImg}
+                                width={38}
+                                height={38}
+                                unoptimized
                                 onError={() => setImgError(true)}
                             />
                         ) : (

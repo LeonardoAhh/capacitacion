@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import Image from 'next/image';
 import { User, ArrowRight } from 'lucide-react';
 import styles from './WelcomeScreen.module.css';
 import { extractFirstName, getCandidatePhotoUrl } from '../utils/helpers';
@@ -18,10 +19,13 @@ export default function WelcomeScreen({ candidate, onStart }) {
             <div className={styles.card}>
                 <div className={styles.avatar}>
                     {photoUrl && !imgError ? (
-                        <img
+                        <Image
                             src={photoUrl}
                             alt={`Foto de ${firstName}`}
                             className={styles.avatarImg}
+                            width={80}
+                            height={80}
+                            unoptimized
                             onError={() => setImgError(true)}
                         />
                     ) : (
