@@ -2,7 +2,6 @@
 
 import { memo } from 'react';
 import Link from 'next/link';
-import { Users, UserPlus, GraduationCap, ChevronRight } from 'lucide-react';
 import DynamicCredits from '@/components/DynamicCredits/DynamicCredits';
 import ThemeSelector from '@/components/ThemeSelector/ThemeSelector';
 import styles from './ShapeHero.module.css';
@@ -12,19 +11,16 @@ const NAV_LINKS = [
         href: '/login',
         label: 'RRHH',
         ariaLabel: 'Acceder al portal de empleados',
-        icon: Users,
     },
     {
         href: '/candidatos',
         label: 'Candidatos',
         ariaLabel: 'Acceder al portal de candidatos',
-        icon: UserPlus,
     },
     {
         href: '/training/login',
         label: 'Empleados',
         ariaLabel: 'Acceder al módulo de capacitación',
-        icon: GraduationCap,
     },
 ];
 
@@ -58,13 +54,7 @@ function ShapeHeroComponent() {
                             className={styles.card}
                             aria-label={link.ariaLabel}
                         >
-                            <div className={styles.cardIcon}>
-                                <link.icon size={24} strokeWidth={1.5} />
-                            </div>
-                            <div className={styles.cardContent}>
-                                <span className={styles.cardLabel}>{link.label}</span>
-                                <ChevronRight size={16} className={styles.cardArrow} />
-                            </div>
+                            <span className={styles.cardLabel}>{link.label}</span>
                         </Link>
                     ))}
                 </nav>
@@ -85,3 +75,4 @@ function ShapeHeroComponent() {
 
 const ShapeHero = memo(ShapeHeroComponent);
 export default ShapeHero;
+

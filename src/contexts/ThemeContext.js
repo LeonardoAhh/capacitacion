@@ -15,8 +15,6 @@ export const THEMES = {
     forest: { name: 'Forest', color: '#f0fdf4', class: 'forest' },
     ocean: { name: 'Ocean', color: '#f0f9ff', class: 'ocean' },
     sunset: { name: 'Sunset', color: '#fff7ed', class: 'sunset' },
-    'gradient-sunset': { name: 'Sunset Gradient', color: '#ff6b35', class: 'gradient-sunset' },
-    'gradient-ocean': { name: 'Ocean Gradient', color: '#0ea5e9', class: 'gradient-ocean' },
 };
 
 export function ThemeProvider({ children }) {

@@ -17,10 +17,5 @@ export const THEME_COLORS = {
     sunset: [
         "#ea580c", "#c2410c", "#f97316", "#fb923c", "#fdba74" // Orange/Red
     ],
-    'gradient-sunset': [
-        "#7c2d12", "#c2410c", "#ea580c", "#fb923c", "#fcd34d" // Deep sunset
-    ],
-    'gradient-ocean': [
-        "#0c4a6e", "#0369a1", "#0284c7", "#0ea5e9", "#bae6fd" // Deep ocean
-    ]
 };
+

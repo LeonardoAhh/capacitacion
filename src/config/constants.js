@@ -57,7 +57,7 @@ export const ROUTES = {
 
 export const THEME_CONFIG = {
     DEFAULT: 'light',
-    AVAILABLE: ['light', 'dark', 'vinoplastic', 'forest', 'ocean', 'sunset', 'gradient-sunset', 'gradient-ocean'],
+    AVAILABLE: ['light', 'dark', 'vinoplastic', 'forest', 'ocean', 'sunset'],
 };
 
 export const RATE_LIMITS = {
