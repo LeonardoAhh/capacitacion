@@ -4,10 +4,8 @@ import { useReducer, useEffect, useCallback, useRef } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useRouter } from 'next/navigation';
 import { createSession } from '@/lib/sessionApi';
-import ModernLogin from '@/components/ModernLogin/ModernLogin';
-import BackButton from '@/components/ui/BackButton/BackButton';
+import UnifiedLogin from '@/components/ui/UnifiedLogin';
 
-// ==================== CONSTANTES ====================
 const RATE_LIMIT = {
     MAX_ATTEMPTS: 5,
     BLOCK_DURATION_S: 30,
@@ -16,16 +14,14 @@ const RATE_LIMIT = {
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-// ==================== REDUCER ====================
 const initialLoginState = {
     email: '',
     password: '',
     error: '',
     loading: false,
     isSuccess: false,
-    // Rate limiting
     failedAttempts: 0,
-    blockedUntil: null, // timestamp en ms
+    blockedUntil: null,
     remainingSeconds: 0,
 };
 
@@ -33,13 +29,10 @@ function loginReducer(state, action) {
     switch (action.type) {
         case 'SET_FIELD':
             return { ...state, [action.field]: action.value, error: '' };
-
         case 'LOGIN_START':
             return { ...state, error: '', loading: true };
-
         case 'LOGIN_SUCCESS':
             return { ...state, loading: false, isSuccess: true, failedAttempts: 0, blockedUntil: null };
-
         case 'LOGIN_ERROR':
             return {
                 ...state,
@@ -47,7 +40,6 @@ function loginReducer(state, action) {
                 error: action.error,
                 failedAttempts: state.failedAttempts + 1,
             };
-
         case 'RATE_LIMIT_HIT': {
             const blockedUntil = Date.now() + RATE_LIMIT.BLOCK_DURATION_S * 1000;
             return {
@@ -58,21 +50,15 @@ function loginReducer(state, action) {
                 error: `Demasiados intentos fallidos. Espera ${RATE_LIMIT.BLOCK_DURATION_S} segundos.`,
             };
         }
-
         case 'RATE_LIMIT_TICK':
             return { ...state, remainingSeconds: action.seconds };
-
         case 'RATE_LIMIT_CLEAR':
             return { ...state, failedAttempts: 0, blockedUntil: null, remainingSeconds: 0, error: '' };
-
         default:
             return state;
     }
 }
 
-// ==================== HELPERS ====================
-
-/** Lee el estado de rate limit de localStorage */
 function loadRateLimitState() {
     if (typeof window === 'undefined') return null;
     try {
@@ -84,47 +70,28 @@ function loadRateLimitState() {
     }
 }
 
-/** Persiste estado de rate limit en localStorage */
 function saveRateLimitState(failedAttempts, blockedUntil) {
     if (typeof window === 'undefined') return;
     try {
-        localStorage.setItem(
-            RATE_LIMIT.STORAGE_KEY,
-            JSON.stringify({ failedAttempts, blockedUntil })
-        );
-    } catch {
-        // Silenciar errores de storage
-    }
+        localStorage.setItem(RATE_LIMIT.STORAGE_KEY, JSON.stringify({ failedAttempts, blockedUntil }));
+    } catch { }
 }
 
-/** Limpia el rate limit de localStorage */
 function clearRateLimitStorage() {
     if (typeof window === 'undefined') return;
     try {
         localStorage.removeItem(RATE_LIMIT.STORAGE_KEY);
-    } catch {
-        // Silenciar errores de storage
-    }
+    } catch { }
 }
 
-/** Valida email y password antes de enviar a Firebase */
 function validateLoginFields(email, password) {
-    if (!email.trim()) {
-        return 'El correo electrónico es requerido.';
-    }
-    if (!EMAIL_REGEX.test(email)) {
-        return 'El formato del correo electrónico no es válido.';
-    }
-    if (!password) {
-        return 'La contraseña es requerida.';
-    }
-    if (password.length < 6) {
-        return 'La contraseña debe tener al menos 6 caracteres.';
-    }
+    if (!email.trim()) return 'El correo electrónico es requerido.';
+    if (!EMAIL_REGEX.test(email)) return 'El formato del correo electrónico no es válido.';
+    if (!password) return 'La contraseña es requerida.';
+    if (password.length < 6) return 'La contraseña debe tener al menos 6 caracteres.';
     return null;
 }
 
-// ==================== COMPONENTE ====================
 export default function LoginPage() {
     const [state, dispatch] = useReducer(loginReducer, initialLoginState);
     const { signIn, signInWithGoogle } = useAuth();
@@ -134,7 +101,6 @@ export default function LoginPage() {
     const { email, password, error, loading, isSuccess, failedAttempts, blockedUntil, remainingSeconds } = state;
     const isBlocked = blockedUntil !== null && Date.now() < blockedUntil;
 
-    // --- Restaurar rate limit de localStorage al montar ---
     useEffect(() => {
         const stored = loadRateLimitState();
         if (!stored) return;
@@ -142,24 +108,19 @@ export default function LoginPage() {
         const { failedAttempts: storedAttempts, blockedUntil: storedBlockedUntil } = stored;
 
         if (storedBlockedUntil && Date.now() < storedBlockedUntil) {
-            // Aún está bloqueado
             const remaining = Math.ceil((storedBlockedUntil - Date.now()) / 1000);
             dispatch({ type: 'RATE_LIMIT_HIT' });
             dispatch({ type: 'RATE_LIMIT_TICK', seconds: remaining });
         } else if (storedAttempts >= RATE_LIMIT.MAX_ATTEMPTS) {
-            // Se venció el bloqueo, limpiar
             clearRateLimitStorage();
         } else if (storedAttempts > 0) {
-            // Hay intentos fallidos acumulados pero no está bloqueado
             for (let i = 0; i < storedAttempts; i++) {
                 dispatch({ type: 'LOGIN_ERROR', error: '' });
             }
-            // Limpiar el error visual que se generó por los dispatches
             dispatch({ type: 'SET_FIELD', field: 'error', value: '' });
         }
     }, []);
 
-    // --- Temporizador de cuenta regresiva ---
     useEffect(() => {
         if (!blockedUntil) return;
 
@@ -174,7 +135,7 @@ export default function LoginPage() {
             }
         };
 
-        tick(); // Ejecutar inmediatamente
+        tick();
         timerRef.current = setInterval(tick, 1000);
 
         return () => {
@@ -182,34 +143,26 @@ export default function LoginPage() {
         };
     }, [blockedUntil]);
 
-    // --- Persistir cambios de rate limit ---
     useEffect(() => {
         if (failedAttempts > 0 || blockedUntil) {
             saveRateLimitState(failedAttempts, blockedUntil);
         }
     }, [failedAttempts, blockedUntil]);
 
-    // --- Verificar rate limit antes de cada intento ---
     const checkRateLimit = useCallback(() => {
         if (isBlocked) return false;
-
-        // Si acaba de alcanzar el límite de intentos, bloquear
         if (failedAttempts >= RATE_LIMIT.MAX_ATTEMPTS) {
             dispatch({ type: 'RATE_LIMIT_HIT' });
             return false;
         }
-
         return true;
     }, [isBlocked, failedAttempts]);
 
-    // --- Handler: Login con email/password ---
     const handleEmployeeSubmit = useCallback(async (e) => {
         e.preventDefault();
 
-        // Verificar rate limit
         if (!checkRateLimit()) return;
 
-        // Validar campos antes de enviar a Firebase
         const validationError = validateLoginFields(email, password);
         if (validationError) {
             dispatch({ type: 'LOGIN_ERROR', error: validationError });
@@ -227,17 +180,13 @@ export default function LoginPage() {
             clearRateLimitStorage();
         } else {
             dispatch({ type: 'LOGIN_ERROR', error: result.error });
-
-            // Verificar si con este error se alcanzó el límite
             if (failedAttempts + 1 >= RATE_LIMIT.MAX_ATTEMPTS) {
                 dispatch({ type: 'RATE_LIMIT_HIT' });
             }
         }
     }, [email, password, signIn, checkRateLimit, failedAttempts]);
 
-    // --- Handler: Login con Google ---
     const handleGoogleSignIn = useCallback(async () => {
-        // Verificar rate limit
         if (!checkRateLimit()) return;
 
         dispatch({ type: 'LOGIN_START' });
@@ -251,39 +200,62 @@ export default function LoginPage() {
             clearRateLimitStorage();
         } else {
             dispatch({ type: 'LOGIN_ERROR', error: result.error || 'Error al iniciar sesión con Google' });
-
             if (failedAttempts + 1 >= RATE_LIMIT.MAX_ATTEMPTS) {
                 dispatch({ type: 'RATE_LIMIT_HIT' });
             }
         }
     }, [signInWithGoogle, checkRateLimit, failedAttempts]);
 
-    // --- Callback: Animación de éxito completada → navegar ---
     const handleSuccessComplete = useCallback(() => {
         router.push('/modulos');
     }, [router]);
 
-    // --- Info de rate limit para ModernLogin ---
-    const rateLimitInfo = isBlocked
-        ? { isBlocked: true, remainingSeconds }
-        : null;
+    useEffect(() => {
+        if (isSuccess) {
+            const timer = setTimeout(handleSuccessComplete, 1500);
+            return () => clearTimeout(timer);
+        }
+    }, [isSuccess, handleSuccessComplete]);
+
+    const fields = [
+        {
+            id: 'email',
+            label: 'Correo Electrónico',
+            type: 'email',
+            value: email,
+            onChange: (e) => dispatch({ type: 'SET_FIELD', field: 'email', value: e.target.value }),
+            placeholder: '••••••••',
+            autoComplete: 'email',
+        },
+        {
+            id: 'password',
+            label: 'Contraseña',
+            type: 'password',
+            value: password,
+            onChange: (e) => dispatch({ type: 'SET_FIELD', field: 'password', value: e.target.value }),
+            placeholder: '••••••••',
+            autoComplete: 'current-password',
+        },
+    ];
 
     return (
-        <>
-            <BackButton />
-            <ModernLogin
-                email={email}
-                setEmail={(value) => dispatch({ type: 'SET_FIELD', field: 'email', value })}
-                password={password}
-                setPassword={(value) => dispatch({ type: 'SET_FIELD', field: 'password', value })}
-                error={error}
-                loading={loading}
-                onSubmit={handleEmployeeSubmit}
-                onGoogleSignIn={handleGoogleSignIn}
-                isSuccess={isSuccess}
-                onSuccessComplete={handleSuccessComplete}
-                rateLimitInfo={rateLimitInfo}
-            />
-        </>
+        <UnifiedLogin
+            portal="Portal RRHH"
+            title="Bienvenido"
+            subtitle="Acceso al sistema de RRHH"
+            fields={fields}
+            error={error}
+            loading={loading}
+            blocked={isBlocked}
+            blockedMessage={isBlocked ? `Espera ${remainingSeconds}s para intentar de nuevo` : null}
+            onSubmit={handleEmployeeSubmit}
+            submitText="Iniciar Sesión"
+            isSuccess={isSuccess}
+            showGoogle
+            onGoogleSignIn={handleGoogleSignIn}
+            googleLoading={loading}
+            backHref="/"
+            backLabel="Inicio"
+        />
     );
 }

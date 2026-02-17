@@ -3,34 +3,24 @@
 import { useEffect, useState, useCallback } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useRouter } from 'next/navigation';
-import ProfileDropdown from '@/components/ProfileDropdown/ProfileDropdown';
 import Link from 'next/link';
+import ProfileDropdown from '@/components/ProfileDropdown/ProfileDropdown';
 import { useNotifications } from '@/hooks/useNotifications';
 import { useDashboardStats } from '@/hooks/useDashboardStats';
-import DashboardBentoGrid from '@/components/Dashboard/DashboardBentoGrid';
-import NotificationBanner from './components/NotificationBanner';
-import ExpiringContractsDialog from './components/ExpiringContractsDialog';
+import {
+    Users, FileText, Clock, AlertCircle, Calendar,
+    TrendingUp, Award, GitCompareArrows, ChevronRight
+} from 'lucide-react';
 import styles from './page.module.css';
 
 export default function DashboardPage() {
     const { user, loading: authLoading } = useAuth();
     const router = useRouter();
 
-    // Data — hook centralizado
-    const {
-        stats,
-        evaluations,
-        expiringEmployees,
-        loading,
-    } = useDashboardStats(user);
-
-    // UI States
+    const { stats, evaluations, expiringEmployees, loading } = useDashboardStats(user);
     const [showExpiringModal, setShowExpiringModal] = useState(false);
-
-    // Notifications
     const { permission, requestPermission, sendNotification } = useNotifications();
 
-    // ─── Protección: Redirigir candidatos a su dashboard ────────
     useEffect(() => {
         const candidateSession = sessionStorage.getItem('candidate_session');
         if (candidateSession) {
@@ -38,7 +28,6 @@ export default function DashboardPage() {
         }
     }, [router]);
 
-    // ─── Redirigir si no está autenticado o es demo ─────────────
     useEffect(() => {
         if (!authLoading) {
             if (!user) {
@@ -51,7 +40,6 @@ export default function DashboardPage() {
         }
     }, [user, authLoading, router]);
 
-    // ─── Notificaciones push automáticas ────────────────────────
     useEffect(() => {
         if (loading || (stats.expiringContracts === 0 && evaluations.overdue.length === 0)) return;
 
@@ -60,87 +48,173 @@ export default function DashboardPage() {
 
         if (lastNotif !== today && permission === 'granted') {
             if (stats.expiringContracts > 0) {
-                sendNotification('⚠️ Contratos por Vencer', {
-                    body: `Tienes ${stats.expiringContracts} contrato(s) próximo(s) a vencer. Revisa el dashboard para más detalles.`,
-                    icon: '/icon.svg',
+                sendNotification('Contratos por Vencer', {
+                    body: `Tienes ${stats.expiringContracts} contrato(s) próximo(s) a vencer.`,
+                    icon: '/web-app-manifest-192x192.png',
                     tag: 'expiring-contracts',
-                    requireInteraction: true,
                 });
-            }
-
-            if (evaluations.overdue.length > 0) {
-                setTimeout(() => {
-                    sendNotification('🚨 Evaluaciones Vencidas', {
-                        body: `Hay ${evaluations.overdue.length} evaluación(es) con retraso.`,
-                        icon: '/icon.svg',
-                        tag: 'overdue-evals',
-                        requireInteraction: true,
-                    });
-                }, 5000);
             }
             localStorage.setItem('last_notification_date', today);
         }
     }, [loading, stats, evaluations, permission, sendNotification]);
 
-    // ─── Handlers ───────────────────────────────────────────────
     const handleEnableNotifications = useCallback(async () => {
-        const granted = await requestPermission();
-        if (granted) {
-            sendNotification('🔔 Notificaciones Activadas', {
-                body: 'Ahora recibirás alertas sobre contratos y evaluaciones.',
-                icon: '/icon.svg'
-            });
-        }
-    }, [requestPermission, sendNotification]);
+        await requestPermission();
+    }, [requestPermission]);
 
-    // ─── Loading state ──────────────────────────────────────────
     if (authLoading || !user) {
         return (
-            <div className={styles.loadingContainer}>
-                <div className="spinner"></div>
+            <div className={styles.page}>
+                <div className={styles.loading}>Cargando...</div>
             </div>
         );
     }
 
+    const quickActions = [
+        { href: '/dashboard/candidates', title: 'Candidatos', icon: Users },
+        { href: '/dashboard/programacion', title: 'Programación', icon: FileText },
+        { href: '/capacitacion', title: 'Capacitación', icon: Award },
+        { href: '/reports', title: 'Reportes', icon: TrendingUp },
+        { href: '/capacitacion/comparacion', title: 'Comparación', icon: GitCompareArrows },
+        { href: '/capacitacion/examen', title: 'Generador Exámenes', icon: Calendar },
+    ];
+
     return (
-        <div className={styles.main}>
+        <div className={styles.page}>
             <div className={styles.profileContainer}>
                 <ProfileDropdown />
             </div>
 
-            <div className={styles.bgDecoration}>
-                <div className={`${styles.blob} ${styles.blob1}`}></div>
-                <div className={`${styles.blob} ${styles.blob2}`}></div>
-            </div>
-
             <div className={styles.container}>
-                {/* Back Link */}
                 <Link href="/modulos" className={styles.backLink}>
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                        <path d="M19 12H5" />
-                        <path d="M12 19l-7-7 7-7" />
-                    </svg>
-                    Volver
+                    <ChevronRight size={16} style={{ transform: 'rotate(180deg)' }} />
+                    Módulos
                 </Link>
 
-                {/* Notification Banner */}
+                <header className={styles.header}>
+                    <span className={styles.portal}>Dashboard</span>
+                    <h1 className={styles.title}>Gestión de Talento</h1>
+                    <p className={styles.subtitle}>Resumen de empleados y contratos</p>
+                </header>
+
+                <div className={styles.statsGrid}>
+                    <Link href="/employees" className={styles.statCard}>
+                        <div className={`${styles.statIcon} ${styles.primary}`}>
+                            <Users size={20} />
+                        </div>
+                        <span className={styles.statValue}>{stats.totalEmployees}</span>
+                        <span className={styles.statLabel}>Empleados</span>
+                    </Link>
+
+                    <Link href="/employees" className={styles.statCard}>
+                        <div className={`${styles.statIcon} ${styles.success}`}>
+                            <FileText size={20} />
+                        </div>
+                        <span className={styles.statValue}>{stats.activeContracts}</span>
+                        <span className={styles.statLabel}>Contratos Vigentes</span>
+                    </Link>
+
+                    <div className={`${styles.statCard} ${stats.expiringContracts > 0 ? styles.clickable : ''}`}>
+                        <div className={`${styles.statIcon} ${styles.warning}`}>
+                            <Clock size={20} />
+                        </div>
+                        <span className={styles.statValue}>{stats.expiringContracts}</span>
+                        <span className={styles.statLabel}>Por Vencer</span>
+                    </div>
+                </div>
+
                 {permission === 'default' && (
-                    <NotificationBanner onEnable={handleEnableNotifications} />
+                    <div className={styles.notificationBanner}>
+                        <span>Activa las notificaciones para recibir alertas</span>
+                        <button onClick={handleEnableNotifications} className={styles.notificationBtn}>
+                            Activar
+                        </button>
+                    </div>
                 )}
 
-                {/* Modern Bento Grid Dashboard */}
-                <DashboardBentoGrid
-                    stats={stats}
-                    evaluations={evaluations}
-                />
-            </div>
+                {(evaluations.overdue.length > 0 || evaluations.upcoming.length > 0) && (
+                    <section className={styles.section}>
+                        <div className={styles.sectionHeader}>
+                            <h2 className={styles.sectionTitle}>Evaluaciones</h2>
+                            {evaluations.overdue.length > 0 && (
+                                <span className={`${styles.sectionBadge} ${styles.danger}`}>
+                                    {evaluations.overdue.length} vencida{evaluations.overdue.length > 1 ? 's' : ''}
+                                </span>
+                            )}
+                        </div>
+                        <div className={styles.alertList}>
+                            {evaluations.overdue.slice(0, 3).map((ev, i) => (
+                                <div key={`overdue-${i}`} className={styles.alertItem}>
+                                    <div className={`${styles.alertIcon} ${styles.danger}`}>
+                                        <AlertCircle size={16} />
+                                    </div>
+                                    <div className={styles.alertContent}>
+                                        <span className={styles.alertTitle}>{ev.employeeName}</span>
+                                        <span className={styles.alertMeta}>
+                                            {ev.evaluationType} · Vencida hace <strong>{ev.daysOverdue}d</strong>
+                                        </span>
+                                    </div>
+                                </div>
+                            ))}
+                            {evaluations.upcoming.slice(0, 2).map((ev, i) => (
+                                <div key={`upcoming-${i}`} className={styles.alertItem}>
+                                    <div className={`${styles.alertIcon} ${styles.warning}`}>
+                                        <Calendar size={16} />
+                                    </div>
+                                    <div className={styles.alertContent}>
+                                        <span className={styles.alertTitle}>{ev.employeeName}</span>
+                                        <span className={styles.alertMeta}>
+                                            {ev.evaluationType} · En <strong>{ev.daysUntil}d</strong>
+                                        </span>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    </section>
+                )}
 
-            {/* Expiring Contracts Modal */}
-            <ExpiringContractsDialog
-                open={showExpiringModal}
-                onOpenChange={setShowExpiringModal}
-                employees={expiringEmployees}
-            />
+                {stats.expiringContracts > 0 && (
+                    <section className={styles.section}>
+                        <div className={styles.sectionHeader}>
+                            <h2 className={styles.sectionTitle}>Contratos Próximos a Vencer</h2>
+                            <span className={`${styles.sectionBadge} ${styles.warning}`}>
+                                {stats.expiringContracts}
+                            </span>
+                        </div>
+                        <div className={styles.alertList}>
+                            {expiringEmployees.slice(0, 3).map((emp, i) => (
+                                <div key={i} className={styles.alertItem}>
+                                    <div className={`${styles.alertIcon} ${styles.warning}`}>
+                                        <Clock size={16} />
+                                    </div>
+                                    <div className={styles.alertContent}>
+                                        <span className={styles.alertTitle}>{emp.name}</span>
+                                        <span className={styles.alertMeta}>
+                                            {emp.position} · Vence en <strong>{emp.daysUntilExpiry}d</strong>
+                                        </span>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    </section>
+                )}
+
+                <section className={styles.section}>
+                    <div className={styles.sectionHeader}>
+                        <h2 className={styles.sectionTitle}>Accesos Rápidos</h2>
+                    </div>
+                    <div className={styles.actionsGrid}>
+                        {quickActions.map((action) => (
+                            <Link key={action.href} href={action.href} className={styles.actionBtn}>
+                                <div className={styles.actionIcon}>
+                                    <action.icon size={18} />
+                                </div>
+                                <span className={styles.actionText}>{action.title}</span>
+                            </Link>
+                        ))}
+                    </div>
+                </section>
+            </div>
         </div>
     );
 }

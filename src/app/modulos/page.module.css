@@ -1,306 +1,154 @@
-/* ==================== MODULES PAGE - MODERN REDESIGN ==================== */
-
-.container {
-    --module-transition: cubic-bezier(0.4, 0, 0.2, 1);
-    --module-blue: #007AFF;
-    --module-purple: #5856D6;
-
+.page {
+    min-height: 100dvh;
     min-height: 100vh;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    background: transparent;
+    padding: 2rem;
+    background: var(--bg-primary);
     position: relative;
-    overflow: hidden;
-    color: var(--text-primary);
-    padding: var(--spacing-lg);
-    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
 }
 
-:global([data-theme="light"]) .container {
-    background: transparent;
-}
-
-/* ==================== ACCESSIBILITY ==================== */
 .skipLink {
     position: absolute;
-    top: -100px;
-    left: 0;
-    background: var(--module-blue);
+    top: -100%;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 0.75rem 1.5rem;
+    background: var(--color-primary);
     color: white;
-    padding: 12px 24px;
-    text-decoration: none;
+    border-radius: 0 0 8px 8px;
     font-weight: 600;
-    border-radius: 0 0 8px 0;
-    z-index: 10000;
-    transition: top 0.2s;
+    font-size: 0.875rem;
+    text-decoration: none;
+    z-index: 100;
+    transition: top 0.2s ease;
 }
 
 .skipLink:focus {
     top: 0;
-    outline: 3px solid #FFD60A;
-    outline-offset: 2px;
 }
 
-/* Reduced motion support for module elements */
-@media (prefers-reduced-motion: reduce) {
-    .blob {
-        animation: none !important;
-    }
-
-    .gridItem,
-    .header,
-    .footer {
-        animation: none !important;
-    }
-}
-
-/* ==================== PROFILE DROPDOWN ==================== */
 .profileContainer {
     position: fixed;
-    top: 20px;
-    right: 20px;
-    z-index: 9999;
+    top: 1rem;
+    right: 1rem;
+    z-index: 50;
 }
 
-/* ==================== BACKGROUND EFFECTS ==================== */
-.bgDecoration {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    z-index: 0;
-    pointer-events: none;
-    overflow: hidden;
-}
-
-.blob {
-    position: absolute;
-    filter: blur(140px);
-    opacity: 0.3;
-    animation: float 30s infinite ease-in-out alternate;
-    border-radius: 50%;
-}
-
-:global([data-theme="light"]) .blob {
-    opacity: 0.15;
-    filter: blur(120px);
-}
-
-.blob1 {
-    top: -15%;
-    left: 15%;
-    width: 800px;
-    height: 800px;
-    background: radial-gradient(circle, rgba(0, 122, 255, 0.9) 0%, transparent 70%);
-}
-
-.blob2 {
-    bottom: -15%;
-    right: 10%;
-    width: 700px;
-    height: 700px;
-    background: radial-gradient(circle, rgba(88, 86, 214, 0.9) 0%, transparent 70%);
-    animation-delay: -8s;
-}
-
-.blob3 {
-    top: 50%;
-    left: -10%;
-    width: 600px;
-    height: 600px;
-    background: radial-gradient(circle, rgba(255, 45, 85, 0.6) 0%, transparent 70%);
-    animation-delay: -15s;
-}
-
-@keyframes float {
-    0% {
-        transform: translate(0, 0) scale(1);
-    }
-
-    50% {
-        transform: translate(50px, 50px) scale(1.1);
-    }
-
-    100% {
-        transform: translate(-30px, 30px) scale(0.9);
-    }
-}
-
-/* ==================== CONTENT LAYOUT ==================== */
 .content {
     position: relative;
     z-index: 10;
     width: 100%;
-    max-width: 1200px;
-    display: flex;
-    flex-direction: column;
-    gap: var(--spacing-2xl);
-    padding-top: 40px;
+    max-width: 480px;
 }
 
-/* ==================== HEADER ==================== */
 .header {
     text-align: center;
-    animation: fadeInDown 0.6s var(--module-transition);
+    margin-bottom: 2.5rem;
+}
+
+.portal {
+    display: block;
+    font-size: 0.6875rem;
+    font-weight: 500;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--text-tertiary);
+    margin-bottom: 0.75rem;
 }
 
 .title {
-    font-size: 3rem;
+    font-size: 1.75rem;
     font-weight: 700;
-    letter-spacing: -1px;
-    margin: 0;
     color: var(--text-primary);
-    line-height: 1.1;
+    margin: 0 0 0.5rem;
+    letter-spacing: -0.02em;
 }
 
 .userName {
-    background: linear-gradient(135deg, var(--module-blue) 0%, var(--module-purple) 100%);
-    -webkit-background-clip: text;
-    background-clip: text;
-    -webkit-text-fill-color: transparent;
-    display: inline-block;
+    color: var(--color-primary);
 }
 
 .subtitle {
-    font-size: 1.125rem;
+    font-size: 0.9375rem;
     color: var(--text-secondary);
-    margin: 12px 0 0;
-    font-weight: 400;
-    opacity: 0.85;
-}
-
-/* ==================== BENTO GRID ==================== */
-.bentoGrid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-    gap: 24px;
-    width: 100%;
-    margin-top: 20px;
-}
-
-.gridItem {
-    animation: fadeInUp 0.6s var(--module-transition) backwards;
-}
-
-/* ==================== FOOTER ==================== */
-.footer {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding-top: var(--spacing-xl);
-    margin-top: var(--spacing-lg);
-    border-top: 1px solid rgba(255, 255, 255, 0.08);
-    animation: fadeInUp 0.6s var(--module-transition) 0.4s backwards;
-}
-
-:global([data-theme="light"]) .footer {
-    border-color: rgba(0, 0, 0, 0.08);
-}
-
-.copyright {
-    font-size: 0.875rem;
-    color: var(--text-tertiary);
-    opacity: 0.5;
-    font-weight: 400;
     margin: 0;
 }
 
-/* ==================== ANIMATIONS ==================== */
-@keyframes fadeInDown {
-    from {
-        opacity: 0;
-        transform: translateY(-30px);
-    }
-
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
+.modulesList {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
 }
 
-@keyframes fadeInUp {
-    from {
-        opacity: 0;
-        transform: translateY(30px);
-    }
-
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
+.footer {
+    text-align: center;
+    margin-top: 2rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--border-color);
 }
 
-/* ==================== RESPONSIVE ==================== */
-@media (max-width: 1024px) {
-    .bentoGrid {
-        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-        gap: 20px;
-    }
-
-    .title {
-        font-size: 2.5rem;
-    }
+.copyright {
+    font-size: 0.75rem;
+    color: var(--text-tertiary);
+    margin: 0;
 }
 
-@media (max-width: 768px) {
-    .container {
-        padding: var(--spacing-md);
-    }
-
+/* Responsive */
+@media (min-width: 640px) {
     .content {
-        gap: var(--spacing-xl);
-        padding-top: 70px;
+        max-width: 500px;
+    }
+
+    .modulesList {
+        gap: 1rem;
+    }
+}
+
+@media (min-width: 1024px) {
+    .content {
+        max-width: 600px;
     }
 
     .title {
         font-size: 2rem;
     }
-
-    .subtitle {
-        font-size: 1rem;
-    }
-
-    .bentoGrid {
-        grid-template-columns: 1fr;
-        gap: 16px;
-    }
-
-    .profileContainer {
-        top: 16px;
-        right: 16px;
-    }
 }
 
 @media (max-width: 480px) {
-    .container {
-        padding: 16px;
+    .page {
+        padding: 1.5rem;
     }
 
-    .content {
-        padding-top: 60px;
+    .header {
+        margin-bottom: 2rem;
     }
 
     .title {
-        font-size: 1.75rem;
-        letter-spacing: -0.5px;
+        font-size: 1.5rem;
     }
 
-    .subtitle {
-        font-size: 0.9375rem;
-    }
-
-    .bentoGrid {
-        gap: 14px;
+    .profileContainer {
+        top: 0.75rem;
+        right: 0.75rem;
     }
 }
 
-/* ==================== DARK MODE OVERRIDES ==================== */
-:global([data-theme="light"]) .userName {
-    background: linear-gradient(135deg, #0051D5 0%, #4338CA 100%);
-    -webkit-background-clip: text;
-    background-clip: text;
-    -webkit-text-fill-color: transparent;
+/* Landscape Mobile */
+@media (max-height: 600px) and (orientation: landscape) {
+    .page {
+        padding: 1rem 2rem;
+        justify-content: flex-start;
+        padding-top: 4rem;
+    }
+
+    .header {
+        margin-bottom: 1.5rem;
+    }
+
+    .modulesList {
+        gap: 0.5rem;
+    }
 }

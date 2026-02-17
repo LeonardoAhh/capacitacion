@@ -2,491 +2,326 @@
     position: relative;
 }
 
-.triggerButton {
+.skeleton {
+    width: 160px;
+    height: 40px;
+    background: var(--bg-secondary);
+    border-radius: var(--radius-lg);
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+}
+
+/* Trigger Button */
+.trigger {
     display: flex;
     align-items: center;
-    gap: 16px;
-    padding: 12px 16px;
-    border-radius: 16px;
-    background: rgba(255, 255, 255, 0.9);
-    border: 1px solid rgba(0, 0, 0, 0.1);
+    gap: 0.75rem;
+    padding: 0.5rem 0.75rem;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-lg);
     cursor: pointer;
-    transition: all 0.2s;
-}
-
-.triggerButton:hover {
-    background: rgba(255, 255, 255, 1);
-    border-color: rgba(0, 0, 0, 0.15);
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-}
-
-.triggerButton:focus {
-    outline: none;
-}
-
-[data-theme="dark"] .triggerButton {
-    background: rgba(30, 30, 35, 0.9);
-    border-color: rgba(255, 255, 255, 0.1);
-}
-
-[data-theme="dark"] .triggerButton:hover {
-    background: rgba(40, 40, 45, 0.95);
-    border-color: rgba(255, 255, 255, 0.15);
-}
-
-.userInfo {
-    text-align: left;
-    flex: 1;
-    min-width: 0;
-}
-
-.userName {
-    font-size: 14px;
-    font-weight: 600;
-    color: var(--text-primary);
-    margin: 0;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-
-.userEmail {
-    font-size: 12px;
-    color: var(--text-secondary);
-    margin: 0;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-
-.avatarContainer {
-    position: relative;
-    flex-shrink: 0;
-}
-
-.avatarRing {
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    background: linear-gradient(135deg, #8B5CF6 0%, #EC4899 50%, #F97316 100%);
-    padding: 2px;
-}
-
-.avatarInner {
+    transition: all var(--transition-fast);
     width: 100%;
-    height: 100%;
+    max-width: 180px;
+}
+
+.trigger:hover {
+    background: var(--bg-tertiary);
+    border-color: var(--color-primary);
+}
+
+.trigger:focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 2px;
+}
+
+/* Avatar */
+.avatar {
+    position: relative;
+    width: 32px;
+    height: 32px;
     border-radius: 50%;
     overflow: hidden;
-    background: var(--bg-primary);
+    background: var(--bg-tertiary);
+    flex-shrink: 0;
 }
 
 .avatarImage {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    border-radius: 50%;
+    position: relative;
+    z-index: 1;
 }
 
-.indicator {
+.avatarFallback {
     position: absolute;
-    right: -12px;
-    top: 50%;
-    transform: translateY(-50%);
-    transition: all 0.2s;
-    opacity: 0.6;
-}
-
-.triggerButton:hover .indicator {
-    opacity: 1;
-}
-
-.indicatorOpen {
-    opacity: 1;
-}
-
-.indicatorIcon {
-    width: 12px;
-    height: 24px;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.75rem;
+    font-weight: 600;
     color: var(--text-secondary);
-    transition: all 0.2s;
+    background: var(--bg-tertiary);
 }
 
-.indicatorIconOpen {
-    color: var(--color-primary);
-    transform: scale(1.1);
+/* User Info */
+.userInfo {
+    flex: 1;
+    min-width: 0;
+    text-align: left;
 }
 
-.menuContent {
-    min-width: 256px;
-    padding: 8px;
-    background: rgba(255, 255, 255, 0.95);
-    backdrop-filter: blur(12px);
-    border: 1px solid rgba(0, 0, 0, 0.1);
-    border-radius: 16px;
-    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
-    animation: slideIn 0.2s ease-out;
-    z-index: 10000;
+.userName {
+    display: block;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
-[data-theme="dark"] .menuContent {
-    background: rgba(30, 30, 35, 0.95);
-    border-color: rgba(255, 255, 255, 0.1);
-    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+.userRole {
+    display: block;
+    font-size: 0.6875rem;
+    color: var(--text-tertiary);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
 }
 
-@keyframes slideIn {
+/* Chevron */
+.chevron {
+    color: var(--text-tertiary);
+    transition: transform var(--transition-fast);
+    flex-shrink: 0;
+}
+
+.chevronOpen {
+    transform: rotate(180deg);
+}
+
+/* Dropdown */
+.dropdown {
+    position: absolute;
+    top: calc(100% + 0.5rem);
+    right: 0;
+    min-width: 240px;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-xl);
+    padding: 0.5rem;
+    box-shadow: var(--shadow-lg);
+    z-index: 1000;
+    animation: dropdownIn 0.15s ease-out;
+}
+
+@keyframes dropdownIn {
     from {
         opacity: 0;
-        transform: translateY(-8px);
+        transform: translateY(-4px);
     }
-
     to {
         opacity: 1;
         transform: translateY(0);
     }
 }
 
-.menuItems {
+/* Dropdown Header */
+.dropdownHeader {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem;
+}
+
+.headerAvatar {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    overflow: hidden;
+    background: var(--bg-tertiary);
+    flex-shrink: 0;
+}
+
+.headerAvatarImage {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.headerInfo {
+    flex: 1;
+    min-width: 0;
+}
+
+.headerName {
+    display: block;
+    font-size: 0.9375rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.headerEmail {
+    display: block;
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* Divider */
+.divider {
+    height: 1px;
+    background: var(--border-color);
+    margin: 0.25rem 0.5rem;
+}
+
+/* Menu */
+.menu {
     display: flex;
     flex-direction: column;
-    gap: 4px;
+    gap: 0.25rem;
 }
 
 .menuItem {
     display: flex;
     align-items: center;
-    padding: 12px;
-    border-radius: 12px;
-    text-decoration: none;
+    gap: 0.75rem;
+    padding: 0.625rem 0.75rem;
+    border-radius: var(--radius-md);
+    font-size: 0.875rem;
+    font-weight: 500;
     color: var(--text-primary);
-    transition: all 0.2s;
-    border: 1px solid transparent;
+    text-decoration: none;
+    background: transparent;
+    border: none;
     cursor: pointer;
+    transition: all var(--transition-fast);
+    width: 100%;
+    text-align: left;
 }
 
 .menuItem:hover {
-    background: rgba(0, 0, 0, 0.05);
-    border-color: rgba(0, 0, 0, 0.05);
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    background: var(--bg-tertiary);
 }
 
-[data-theme="dark"] .menuItem:hover {
-    background: rgba(255, 255, 255, 0.05);
-    border-color: rgba(255, 255, 255, 0.05);
+.menuItem:focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: -2px;
 }
 
-.menuItemContent {
+.menuItem svg {
+    flex-shrink: 0;
+    color: var(--text-secondary);
+}
+
+.themeBadge {
+    margin-left: auto;
+    font-size: 0.6875rem;
+    font-weight: 500;
+    color: var(--text-tertiary);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+/* Sign Out */
+.signOut {
     display: flex;
     align-items: center;
-    gap: 8px;
-    flex: 1;
+    gap: 0.75rem;
+    padding: 0.625rem 0.75rem;
+    border-radius: var(--radius-md);
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--color-danger);
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+    width: 100%;
+    text-align: left;
 }
 
-.menuItemIcon {
-    width: 16px;
-    height: 16px;
+.signOut:hover {
+    background: rgba(239, 68, 68, 0.1);
+}
+
+.signOut:focus-visible {
+    outline: 2px solid var(--color-danger);
+    outline-offset: -2px;
+}
+
+.signOut:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.signOut svg {
     flex-shrink: 0;
 }
 
-.menuItemLabel {
-    font-size: 14px;
-    font-weight: 500;
-    white-space: nowrap;
-}
-
-.menuItemBadge {
-    margin-left: auto;
-    font-size: 11px;
-    font-weight: 600;
-    padding: 4px 8px;
-    border-radius: 6px;
-    white-space: nowrap;
-}
-
-.badgeBlue {
-    color: #2563EB;
-    background: rgba(37, 99, 235, 0.1);
-    border: 1px solid rgba(37, 99, 235, 0.2);
-}
-
-[data-theme="dark"] .badgeBlue {
-    color: #60A5FA;
-    background: rgba(96, 165, 250, 0.1);
-}
-
-.badgePurple {
-    color: #7C3AED;
-    background: rgba(124, 58, 237, 0.1);
-    border: 1px solid rgba(124, 58, 237, 0.2);
-}
-
-[data-theme="dark"] .badgePurple {
-    color: #A78BFA;
-    background: rgba(167, 139, 250, 0.1);
-}
-
-.separator {
-    height: 1px;
-    margin: 12px 0;
-    background: linear-gradient(to right,
-            transparent,
-            rgba(0, 0, 0, 0.1) 50%,
-            transparent);
-}
-
-[data-theme="dark"] .separator {
-    background: linear-gradient(to right,
-            transparent,
-            rgba(255, 255, 255, 0.1) 50%,
-            transparent);
-}
-
-.signOutButton {
-    width: 100%;
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    padding: 12px;
-    border-radius: 12px;
-    background: rgba(239, 68, 68, 0.1);
-    border: 1px solid transparent;
-    transition: all 0.2s;
-    cursor: pointer;
-}
-
-.signOutButton:hover {
-    background: rgba(239, 68, 68, 0.15);
-    border-color: rgba(239, 68, 68, 0.3);
-    box-shadow: 0 2px 4px rgba(239, 68, 68, 0.1);
-}
-
-.signOutIcon {
-    width: 16px;
-    height: 16px;
-    color: #EF4444;
-}
-
-.signOutButton:hover .signOutIcon {
-    color: #DC2626;
-}
-
-.signOutText {
-    font-size: 14px;
-    font-weight: 500;
-    color: #EF4444;
-}
-
-.signOutButton:hover .signOutText {
-    color: #DC2626;
-}
-
-/* ==================== RESPONSIVE DESIGN ==================== */
-
-/* Tablets and small laptops */
-@media (max-width: 1024px) {
-    .triggerButton {
-        gap: 12px;
-        padding: 10px 14px;
-    }
-
-    .menuContent {
-        min-width: 240px;
-    }
-}
-
-/* Mobile devices */
+/* Responsive */
 @media (max-width: 768px) {
-    .triggerButton {
-        gap: 8px;
-        padding: 8px 12px;
-        border-radius: 12px;
-    }
-
-    .userInfo {
-        max-width: 120px;
+    .trigger {
+        max-width: 160px;
     }
 
     .userName {
-        font-size: 13px;
+        font-size: 0.8125rem;
     }
 
-    .userEmail {
-        font-size: 11px;
-    }
-
-    .avatarRing {
-        width: 36px;
-        height: 36px;
-    }
-
-    .indicator {
-        right: -10px;
-    }
-
-    .menuContent {
+    .dropdown {
         min-width: 220px;
-        max-width: calc(100vw - 40px);
-        padding: 6px;
-    }
-
-    .menuItem {
-        padding: 10px;
-    }
-
-    .menuItemLabel {
-        font-size: 13px;
-    }
-
-    .menuItemBadge {
-        font-size: 10px;
-        padding: 3px 6px;
-    }
-
-    .signOutButton {
-        padding: 10px;
-    }
-
-    .signOutText {
-        font-size: 13px;
+        right: -0.5rem;
     }
 }
 
-/* Small mobile devices */
 @media (max-width: 480px) {
-    .triggerButton {
-        gap: 6px;
-        padding: 6px 10px;
+    .trigger {
+        max-width: 44px;
+        padding: 0.375rem;
+        justify-content: center;
     }
 
-    .userInfo {
-        max-width: 100px;
-    }
-
-    .userName {
-        font-size: 12px;
-    }
-
-    /* Hide email on very small screens */
-    .userEmail {
+    .userInfo,
+    .chevron {
         display: none;
     }
 
-    .avatarRing {
-        width: 32px;
-        height: 32px;
+    .avatar {
+        width: 28px;
+        height: 28px;
     }
 
-    .menuContent {
-        min-width: 200px;
-        max-width: calc(100vw - 32px);
-    }
-
-    .menuItem {
-        padding: 8px;
-        gap: 6px;
-    }
-
-    .menuItemIcon {
-        width: 14px;
-        height: 14px;
-    }
-
-    .menuItemLabel {
-        font-size: 12px;
-    }
-
-    .menuItemBadge {
-        font-size: 9px;
-        padding: 2px 5px;
+    .dropdown {
+        position: fixed;
+        top: auto;
+        bottom: 1rem;
+        right: 1rem;
+        left: 1rem;
+        min-width: auto;
     }
 }
 
-/* === THEME TOGGLE BUTTON === */
-.themeToggle {
-    width: 100%;
-    padding: 10px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    background: transparent;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: background 0.2s;
-}
-
-.themeToggle:hover {
-    background: rgba(0, 0, 0, 0.04);
-}
-
-:global([data-theme="dark"]) .themeToggle:hover {
-    background: rgba(255, 255, 255, 0.06);
-}
-
-/* Theme toggle text color */
-.themeToggle .menuItemLabel {
-    color: #1c1c1e;
-    /* Black in light mode */
-}
-
-:global([data-theme="dark"]) .themeToggle .menuItemLabel {
-    color: #ffffff;
-    /* White in dark mode */
-}
-
-.themeToggle .menuItemIcon {
-    color: #1c1c1e;
-    /* Black in light mode */
-}
-
-:global([data-theme="dark"]) .themeToggle .menuItemIcon {
-    color: #ffffff;
-    /* White in dark mode */
-}
-
-.themeIndicator {
-    display: flex;
-    align-items: center;
-}
-
-.themeToggleSwitch {
-    position: relative;
-    width: 44px;
-    height: 24px;
-    background: rgba(0, 0, 0, 0.1);
-    border-radius: 12px;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    flex-shrink: 0;
-}
-
-:global([data-theme="dark"]) .themeToggleSwitch {
-    background: rgba(255, 255, 255, 0.1);
-}
-
-.themeDark {
-    background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
-}
-
-.themeLight {
-    background: linear-gradient(90deg, #FFB84D 0%, #FF9500 100%);
-}
-
-.themeToggleThumb {
-    position: absolute;
-    top: 2px;
-    left: 2px;
-    width: 20px;
-    height: 20px;
-    background: white;
-    border-radius: 50%;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.themeDark .themeToggleThumb {
-    transform: translateX(20px);
-}
-
-.themeLight .themeToggleThumb {
-    transform: translateX(0);
+/* Reduced Motion */
+@media (prefers-reduced-motion: reduce) {
+    .trigger,
+    .menuItem,
+    .signOut,
+    .chevron,
+    .dropdown {
+        transition: none;
+        animation: none;
+    }
 }

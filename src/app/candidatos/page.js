@@ -5,49 +5,42 @@ import { useRouter } from 'next/navigation';
 import { db, auth } from '@/lib/firebase';
 import { collection, query, where, getDocs, doc, updateDoc, increment } from 'firebase/firestore';
 import { signInAnonymously } from 'firebase/auth';
-import CandidateLogin from '@/components/CandidateLogin/CandidateLogin';
-import BackButton from '@/components/ui/BackButton/BackButton';
-import {
-    isBrowser,
-    safeGetLocalStorage,
-    safeSetLocalStorage,
-    safeRemoveLocalStorage,
-} from '@/utils/storage';
-import { formatBlockTime } from '@/utils/formatters';
-import { CANDIDATE_LOGIN_CONFIG } from '@/config/candidateLoginConfig';
+import UnifiedLogin from '@/components/ui/UnifiedLogin';
+import { safeGetLocalStorage, safeSetLocalStorage, safeRemoveLocalStorage } from '@/utils/storage';
 import { createSession } from '@/lib/sessionApi';
 
-// Alias local para la constante por brevedad
-const CONFIG = CANDIDATE_LOGIN_CONFIG;
-
-// ==================== COMPONENT ====================
+const CONFIG = {
+    MAX_ATTEMPTS: 5,
+    BLOCK_DURATION_MS: 30 * 1000,
+    STORAGE_KEYS: {
+        BLOCK: 'candidate_login_block',
+        SESSION: 'candidate_session',
+    },
+    MAX_CODE_USES: 5,
+    SUCCESS_REDIRECT_DELAY_MS: 1500,
+};
 
 export default function CandidatosLoginPage() {
     const router = useRouter();
 
-    // Form state
     const [employeeId, setEmployeeId] = useState('');
     const [curp, setCurp] = useState('');
     const [accessCode, setAccessCode] = useState('');
 
-    // UI state
     const [loading, setLoading] = useState(false);
     const [isSuccess, setIsSuccess] = useState(false);
     const [error, setError] = useState('');
 
-    // Security state
     const [loginAttempts, setLoginAttempts] = useState(0);
     const [isBlocked, setIsBlocked] = useState(false);
     const [blockTimeRemaining, setBlockTimeRemaining] = useState(0);
 
-    // Memoized check for form validity
     const isFormValid = useMemo(() => {
         return employeeId.trim() !== '' &&
             curp.trim().length === 18 &&
             accessCode.trim() !== '';
     }, [employeeId, curp, accessCode]);
 
-    // Check for existing block on mount
     useEffect(() => {
         const blockData = safeGetLocalStorage(CONFIG.STORAGE_KEYS.BLOCK);
 
@@ -80,7 +73,6 @@ export default function CandidatosLoginPage() {
         return () => clearInterval(interval);
     }, []);
 
-    // Handle failed login attempt
     const handleFailedAttempt = useCallback(() => {
         const newAttempts = loginAttempts + 1;
         setLoginAttempts(newAttempts);
@@ -93,63 +85,31 @@ export default function CandidatosLoginPage() {
         }
     }, [loginAttempts]);
 
-    // Clear error when user modifies input
-    const handleEmployeeIdChange = useCallback((e) => {
-        setError('');
-        setEmployeeId(e.target.value);
-    }, []);
-
-    const handleCurpChange = useCallback((e) => {
-        setError('');
-        setCurp(e.target.value);
-    }, []);
-
-    // Handle access code change (no uppercase)
-    const handleAccessCodeChange = useCallback((e) => {
-        setError('');
-        setAccessCode(e.target.value);
-    }, []);
-
-    // Convert to uppercase on blur (prevents input lag on mobile)
-    const handleEmployeeIdBlur = useCallback(() => {
-        setEmployeeId(prev => prev.toUpperCase());
-    }, []);
-
-    const handleCurpBlur = useCallback(() => {
-        setCurp(prev => prev.toUpperCase());
-    }, []);
-
-    // Form submission handler
     const handleSubmit = useCallback(async (e) => {
         e.preventDefault();
         setError('');
         setLoading(true);
 
         try {
-            // Step 1: Anonymous Firebase Auth
             await signInAnonymously(auth);
 
-            // Step 2: Check if blocked
             const blockData = safeGetLocalStorage(CONFIG.STORAGE_KEYS.BLOCK);
             if (blockData) {
                 const blockUntil = parseInt(blockData, 10);
                 if (Date.now() < blockUntil) {
-                    const remainingMins = formatBlockTime((blockUntil - Date.now()) / 1000);
-                    setError(`Demasiados intentos fallidos. Espera ${remainingMins} minutos.`);
+                    setError(`Demasiados intentos fallidos. Espera ${Math.ceil((blockUntil - Date.now()) / 1000)}s.`);
                     setLoading(false);
                     return;
                 }
                 safeRemoveLocalStorage(CONFIG.STORAGE_KEYS.BLOCK);
             }
 
-            // Step 3: Validate required fields
             if (!employeeId.trim() || !curp.trim() || !accessCode.trim()) {
                 setError('Por favor completa todos los campos');
                 setLoading(false);
                 return;
             }
 
-            // Step 4: Query employee by ID
             const employeesRef = collection(db, 'employees');
             const q = query(employeesRef, where('employeeId', '==', employeeId.trim()));
             const querySnapshot = await getDocs(q);
@@ -165,7 +125,6 @@ export default function CandidatosLoginPage() {
             const data = docSnapshot.data();
             const candidateDocId = docSnapshot.id;
 
-            // Step 5: Validate CURP
             const candidateCurp = data.curp || data.CURP || '';
             if (!candidateCurp || candidateCurp.toUpperCase() !== curp.toUpperCase()) {
                 setError('CURP incorrecto');
@@ -174,7 +133,6 @@ export default function CandidatosLoginPage() {
                 return;
             }
 
-            // Step 6: Validate access code
             if (!data.accessCode || data.accessCode !== accessCode) {
                 setError('Código de acceso incorrecto');
                 handleFailedAttempt();
@@ -182,29 +140,25 @@ export default function CandidatosLoginPage() {
                 return;
             }
 
-            // Step 7: Check code expiration
             if (!data.accessCodeExpires || Date.now() > data.accessCodeExpires) {
                 setError('Código de acceso expirado. Contacta a Recursos Humanos.');
                 setLoading(false);
                 return;
             }
 
-            // Step 8: Check usage limit
             const codeUses = data.accessCodeUses || 0;
             if (codeUses >= CONFIG.MAX_CODE_USES) {
-                setError(`Este código ha alcanzado el límite de ${CONFIG.MAX_CODE_USES} inicios de sesión. Contacta a RH para un nuevo código.`);
+                setError(`Este código ha alcanzado el límite de ${CONFIG.MAX_CODE_USES} inicios de sesión.`);
                 setLoading(false);
                 return;
             }
 
-            // Step 9: Update usage count (using updateDoc instead of setDoc)
             const employeeRef = doc(db, 'employees', candidateDocId);
             await updateDoc(employeeRef, {
                 accessCodeUses: increment(1),
                 lastLoginCandidate: new Date().toISOString()
             });
 
-            // Step 10: Create session
             const sessionData = {
                 id: candidateDocId,
                 employeeId: data.employeeId || employeeId,
@@ -219,16 +173,12 @@ export default function CandidatosLoginPage() {
                 photoUrl: data.photoUrl || data.photoURL || data.photo || data.foto || null
             };
 
-            if (isBrowser()) {
-                sessionStorage.setItem(CONFIG.STORAGE_KEYS.SESSION, JSON.stringify(sessionData));
-            }
+            sessionStorage.setItem(CONFIG.STORAGE_KEYS.SESSION, JSON.stringify(sessionData));
 
-            // Step 11: Reset security state & set cookie
             setLoginAttempts(0);
             safeRemoveLocalStorage(CONFIG.STORAGE_KEYS.BLOCK);
             await createSession('candidate');
 
-            // Step 12: Show success and redirect
             setIsSuccess(true);
             setLoading(false);
 
@@ -239,7 +189,6 @@ export default function CandidatosLoginPage() {
         } catch (err) {
             console.error('Error en login de candidato:', err);
 
-            // More specific error messages
             if (err.code === 'permission-denied') {
                 setError('Error de permisos. Contacta al administrador.');
             } else if (err.code === 'unavailable') {
@@ -252,26 +201,77 @@ export default function CandidatosLoginPage() {
         }
     }, [employeeId, curp, accessCode, handleFailedAttempt, router]);
 
-    return (
+    const fields = [
+        {
+            id: 'employeeId',
+            label: 'ID de Empleado',
+            value: employeeId,
+            onChange: (e) => { setError(''); setEmployeeId(e.target.value); },
+            onBlur: () => setEmployeeId(prev => prev.toUpperCase()),
+            placeholder: 'Ej: 3204',
+            inputMode: 'numeric',
+        },
+        {
+            id: 'curp',
+            label: 'CURP',
+            value: curp,
+            onChange: (e) => { setError(''); setCurp(e.target.value); },
+            onBlur: () => setCurp(prev => prev.toUpperCase()),
+            placeholder: '18 caracteres',
+            maxLength: 18,
+        },
+        {
+            id: 'accessCode',
+            label: 'Código de Acceso',
+            value: accessCode,
+            onChange: (e) => { setError(''); setAccessCode(e.target.value); },
+            placeholder: '6 dígitos',
+            maxLength: 6,
+            helperText: 'Proporcionado por Recursos Humanos',
+        },
+    ];
+
+    const footerContent = (
         <>
-            <BackButton />
-            <CandidateLogin
-                employeeId={employeeId}
-                onEmployeeIdChange={handleEmployeeIdChange}
-                onEmployeeIdBlur={handleEmployeeIdBlur}
-                curp={curp}
-                onCurpChange={handleCurpChange}
-                onCurpBlur={handleCurpBlur}
-                accessCode={accessCode}
-                onAccessCodeChange={handleAccessCodeChange}
-                error={error}
-                loading={loading}
-                isBlocked={isBlocked}
-                blockTimeRemaining={blockTimeRemaining}
-                onSubmit={handleSubmit}
-                isSuccess={isSuccess}
-                isFormValid={isFormValid}
-            />
+            <p className="footer-text">¿Problemas para acceder?</p>
+            <a
+                href="https://wa.me/524211265940"
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '0.5rem',
+                    fontSize: '0.8125rem',
+                    color: 'var(--color-primary)',
+                    textDecoration: 'none',
+                    fontWeight: 500,
+                }}
+            >
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <path d="M3 21l1.65-3.8a9 9 0 1 1 3.4 2.9L3 21" />
+                </svg>
+                WhatsApp
+            </a>
         </>
+    );
+
+    return (
+        <UnifiedLogin
+            portal="Portal de Candidatos"
+            title="Bienvenido"
+            subtitle="Proceso de inducción"
+            fields={fields}
+            error={error}
+            loading={loading}
+            blocked={isBlocked}
+            blockedMessage={isBlocked ? `Espera ${blockTimeRemaining}s para intentar de nuevo` : null}
+            onSubmit={handleSubmit}
+            submitText="Acceder"
+            isSuccess={isSuccess}
+            footerContent={footerContent}
+            backHref="/"
+            backLabel="Inicio"
+        />
     );
 }

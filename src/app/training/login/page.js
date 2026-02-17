@@ -1,12 +1,10 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
-import { useAuth } from '@/contexts/AuthContext';
-import TrainingLogin from '@/components/TrainingLogin/TrainingLogin';
 import { db } from '@/lib/firebase';
 import { collection, query, where, getDocs } from 'firebase/firestore';
-import BackButton from '@/components/ui/BackButton/BackButton';
+import UnifiedLogin from '@/components/ui/UnifiedLogin';
 import { createSession } from '@/lib/sessionApi';
 
 export default function TrainingLoginPage() {
@@ -17,19 +15,8 @@ export default function TrainingLoginPage() {
     const [loading, setLoading] = useState(false);
     const [isSuccess, setIsSuccess] = useState(false);
 
-    // Optimized handlers to prevent input lag on mobile
-    const handleEmployeeIdChange = (value) => {
-        setEmployeeId(value);
-        setError('');
-    };
-
     const handleEmployeeIdBlur = () => {
         setEmployeeId(prev => prev.toUpperCase());
-    };
-
-    const handlePasswordChange = (value) => {
-        setPassword(value);
-        setError('');
     };
 
     const handleSubmit = async (e) => {
@@ -38,8 +25,6 @@ export default function TrainingLoginPage() {
         setLoading(true);
 
         try {
-            // Lógica simple de verificación
-            // 1. Buscar empleado
             const employeesRef = collection(db, 'employees_programacion');
             const q = query(employeesRef, where('employeeId', '==', employeeId));
             const querySnapshot = await getDocs(q);
@@ -53,17 +38,12 @@ export default function TrainingLoginPage() {
             const employeeDoc = querySnapshot.docs[0];
             const employeeData = employeeDoc.data();
 
-            // 2. Verificar "password" (usaremos accessCode como contraseña temporalmente o implementaremos una real después)
-            // Si el input 'password' coincide con el accessCode del empleado
             if (employeeData.accessCode !== password) {
-                // Si no coincide, y tampoco es una contraseña maestra (opcional para pruebas)
                 setError('Contraseña incorrecta');
                 setLoading(false);
                 return;
             }
 
-            // 3. Éxito
-            // Guardar sesión específica de capacitación
             const sessionData = {
                 id: employeeDoc.id,
                 employeeId: employeeData.employeeId,
@@ -79,12 +59,12 @@ export default function TrainingLoginPage() {
             sessionStorage.setItem('training_session', JSON.stringify(sessionData));
             await createSession('training');
 
-            // Trigger animación
             setLoading(false);
             setIsSuccess(true);
+
             setTimeout(() => {
                 router.push('/training/dashboard');
-            }, 2000); // Reduced to 2s for better UX
+            }, 1500);
 
         } catch (err) {
             console.error('Error login training:', err);
@@ -93,20 +73,40 @@ export default function TrainingLoginPage() {
         }
     };
 
+    const fields = [
+        {
+            id: 'employeeId',
+            label: 'ID de Empleado',
+            value: employeeId,
+            onChange: (e) => { setError(''); setEmployeeId(e.target.value); },
+            onBlur: handleEmployeeIdBlur,
+            placeholder: 'Tu ID de empleado',
+            inputMode: 'numeric',
+        },
+        {
+            id: 'password',
+            label: 'Contraseña',
+            type: 'password',
+            value: password,
+            onChange: (e) => { setError(''); setPassword(e.target.value); },
+            placeholder: '••••••••',
+            autoComplete: 'current-password',
+        },
+    ];
+
     return (
-        <>
-            <BackButton />
-            <TrainingLogin
-                employeeId={employeeId}
-                setEmployeeId={handleEmployeeIdChange}
-                onBlurEmployeeId={handleEmployeeIdBlur}
-                password={password}
-                setPassword={handlePasswordChange}
-                error={error}
-                loading={loading}
-                onSubmit={handleSubmit}
-                isSuccess={isSuccess}
-            />
-        </>
+        <UnifiedLogin
+            portal="Portal de Capacitación"
+            title="Bienvenido"
+            subtitle="Módulo de entrenamiento"
+            fields={fields}
+            error={error}
+            loading={loading}
+            onSubmit={handleSubmit}
+            submitText="Iniciar Sesión"
+            isSuccess={isSuccess}
+            backHref="/"
+            backLabel="Inicio"
+        />
     );
 }
