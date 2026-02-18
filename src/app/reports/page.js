@@ -6,7 +6,7 @@ import { useRouter } from 'next/navigation';
 import { collection, getDocs } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import ProfileDropdown from '@/components/ProfileDropdown/ProfileDropdown';
-import Link from 'next/link';
+import BackButton from '@/components/ui/BackButton/BackButton';
 import styles from './page.module.css';
 
 // UI Components
@@ -477,13 +477,7 @@ export default function ReportsPage() {
                 <div className={styles.container}>
                     <div className={styles.header}>
                         <div className={styles.headerLeft}>
-                            <Link href="/dashboard" className={styles.backBtn}>
-                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                    <path d="M19 12H5" />
-                                    <polyline points="12 19 5 12 12 5" />
-                                </svg>
-                                Volver
-                            </Link>
+                            <BackButton href="/dashboard" />
                             <h1>Cumplimiento Plan de Formación</h1>
                         </div>
                         <div className={styles.yearSelector}>

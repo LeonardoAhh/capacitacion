@@ -6,6 +6,7 @@ import ProfileDropdown from '@/components/ProfileDropdown/ProfileDropdown';
 import { useAuth } from '@/contexts/AuthContext';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import BackButton from '@/components/ui/BackButton/BackButton';
 import { Card, CardContent } from '@/components/ui/Card/Card';
 import { Button } from '@/components/ui/Button/Button';
 import { useToast } from '@/components/ui/Toast/Toast';
@@ -446,12 +447,7 @@ export default function EmpleadosPage() {
                     {/* Header */}
                     <div className={styles.header}>
                         <div className={styles.headerLeft}>
-                            <Link href="/capacitacion" className={styles.backBtn}>
-                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                    <path d="M19 12H5" /><path d="M12 19l-7-7 7-7" />
-                                </svg>
-                                Volver
-                            </Link>
+                            <BackButton href="/capacitacion" />
                             <div className={styles.headerContent}>
                                 <h1>Gestión de Empleados</h1>
                                 <p>Administración de personal y datos maestros</p>

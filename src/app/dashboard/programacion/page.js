@@ -7,6 +7,7 @@ import { collection, getDocs, addDoc, query, where, Timestamp } from 'firebase/f
 import ProfileDropdown from '@/components/ProfileDropdown/ProfileDropdown';
 import { Users, BookOpen, CheckCircle, ChevronLeft, Edit2, FileText, LayoutGrid, Activity, Search, ChevronRight, RefreshCw, ArrowLeft, UserPlus } from 'lucide-react';
 import Link from 'next/link';
+import BackButton from '@/components/ui/BackButton/BackButton';
 import { motion, AnimatePresence, useMotionValue, useTransform, animate } from 'framer-motion';
 import EditEmployeeModal from '@/components/Training/EditEmployeeModal';
 import EmployeeAssignmentsModal from '@/components/Training/EmployeeAssignmentsModal';
@@ -891,10 +892,7 @@ export default function ProgramacionPage() {
 
             <main className={styles.main}>
                 {/* Back link */}
-                <Link href="/dashboard" className={styles.backLink}>
-                    <ChevronLeft size={18} aria-hidden="true" />
-                    <span>Volver al Dashboard</span>
-                </Link>
+                <BackButton href="/dashboard" />
 
                 {isMobile ? renderMobileView() : renderDesktopView()}
             </main>

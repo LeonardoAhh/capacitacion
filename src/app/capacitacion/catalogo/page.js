@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import Navbar from '@/components/Navbar/Navbar';
-import Link from 'next/link';
+import BackButton from '@/components/ui/BackButton/BackButton';
 import { useAuth } from '@/contexts/AuthContext';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/Button/Button';
@@ -188,13 +188,7 @@ export default function CatalogPage() {
                 <div className={styles.container}>
                     <div className={styles.header}>
                         <div className={styles.headerLeft}>
-                            <Link href="/capacitacion" className={styles.backBtn}>
-                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                    <path d="M19 12H5" />
-                                    <polyline points="12 19 5 12 12 5" />
-                                </svg>
-                                Volver
-                            </Link>
+                            <BackButton href="/capacitacion" />
                             <h1>Catálogo de Cursos</h1>
                         </div>
                         <div className={styles.headerRight}>

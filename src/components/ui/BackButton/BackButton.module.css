@@ -1,0 +1,35 @@
+.backButton {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 18px;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--text-secondary);
+    text-decoration: none;
+    border-radius: 50px;
+    background: rgba(255, 255, 255, 0.5);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    transition: all 0.2s;
+    width: fit-content;
+    cursor: pointer;
+    font-family: inherit;
+    line-height: 1;
+}
+
+[data-theme="dark"] .backButton {
+    background: rgba(40, 40, 45, 0.5);
+    border-color: rgba(255, 255, 255, 0.06);
+}
+
+.backButton:hover {
+    color: var(--text-primary);
+    background: var(--bg-secondary);
+    transform: translateX(-4px);
+}
+
+[data-theme="dark"] .backButton:hover {
+    background: rgba(55, 55, 60, 0.7);
+}

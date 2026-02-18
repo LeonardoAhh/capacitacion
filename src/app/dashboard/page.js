@@ -4,6 +4,7 @@ import { useEffect, useState, useCallback } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import BackButton from '@/components/ui/BackButton/BackButton';
 import ProfileDropdown from '@/components/ProfileDropdown/ProfileDropdown';
 import AvatarSelector from '@/components/AvatarSelector/AvatarSelector';
 import { useNotifications } from '@/hooks/useNotifications';
@@ -101,10 +102,7 @@ export default function DashboardPage() {
             </div>
 
             <div className={styles.container}>
-                <Link href="/modulos" className={styles.backLink}>
-                    <ChevronRight size={16} style={{ transform: 'rotate(180deg)' }} />
-                    Módulos
-                </Link>
+                <BackButton href="/modulos" />
 
                 <header className={styles.header}>
                     <span className={styles.portal}>Dashboard</span>

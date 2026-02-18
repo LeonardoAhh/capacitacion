@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import BackButton from '@/components/ui/BackButton/BackButton';
 import { db } from '@/lib/firebase';
 import { collection, query, getDocs, doc, setDoc, updateDoc, arrayUnion } from 'firebase/firestore';
 import { useAuth } from '@/contexts/AuthContext';
@@ -212,14 +213,7 @@ export default function IluoManagerPage() {
                 </div>
 
                 <div className={styles.sidebarFooter}>
-                    <Link href="/modulos">
-                        <button className={styles.backButton}>
-                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                <path d="M19 12H5M12 19l-7-7 7-7" />
-                            </svg>
-                            Volver al Menu
-                        </button>
-                    </Link>
+                    <BackButton href="/modulos" />
                 </div>
             </aside>
 

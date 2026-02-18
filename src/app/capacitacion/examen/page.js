@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import Link from 'next/link';
+import BackButton from '@/components/ui/BackButton/BackButton';
 import { db } from '@/lib/firebase';
 import { collection, getDocs, query, orderBy, where } from 'firebase/firestore';
 import { Button } from '@/components/ui/Button/Button';
@@ -383,9 +383,7 @@ export default function ExamenPage() {
         <div className={styles.container}>
             <div className={styles.header}>
                 <div className={styles.titleRow}>
-                    <Link href="/capacitacion" className={styles.backBtn}>
-                        ← Volver
-                    </Link>
+                    <BackButton href="/capacitacion" />
                     <Button variant="outline" size="sm" onClick={() => setShowQuestionManager(true)}>
                         Gestionar Preguntas
                     </Button>

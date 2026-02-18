@@ -4,8 +4,8 @@ import { useState } from 'react';
 import { db } from '@/lib/firebase';
 import { collection, addDoc, query, where, getDocs, Timestamp } from 'firebase/firestore';
 import Navbar from '@/components/Navbar/Navbar';
-import { UserPlus, Save, AlertCircle, CheckCircle, ChevronLeft } from 'lucide-react';
-import Link from 'next/link';
+import { UserPlus, Save, AlertCircle, CheckCircle } from 'lucide-react';
+import BackButton from '@/components/ui/BackButton/BackButton';
 import styles from './page.module.css';
 
 export default function RegistroEmpleadosPage() {
@@ -124,10 +124,7 @@ export default function RegistroEmpleadosPage() {
 
             <main className={styles.main}>
                 <div className={styles.headerWrapper}>
-                    <Link href="/dashboard/programacion" className={styles.backLink}>
-                        <ChevronLeft size={20} />
-                        Volver a Programación
-                    </Link>
+                    <BackButton href="/dashboard/programacion" />
                     <div className={styles.header}>
                         <h1 className={styles.title}>Registro de Personal</h1>
                         <p className={styles.subtitle}>Alta rápida de empleados para plataforma de capacitación.</p>

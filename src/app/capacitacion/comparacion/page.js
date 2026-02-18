@@ -7,7 +7,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ArrowLeft, Search, GitCompareArrows, CheckCircle2, XCircle, Target } from 'lucide-react';
-import Link from 'next/link';
+import BackButton from '@/components/ui/BackButton/BackButton';
 import ProfileDropdown from '@/components/ProfileDropdown/ProfileDropdown';
 import { useToast } from '@/components/ui/Toast/Toast';
 import { BackgroundLines } from '@/components/ui/BackgroundLines/BackgroundLines';
@@ -154,10 +154,7 @@ export default function ComparacionPage() {
             {/* Top Bar */}
             <div className={styles.topBar}>
                 <div className={styles.topBarLeft}>
-                    <Link href="/dashboard" className={styles.backButton}>
-                        <ArrowLeft size={18} />
-                        Dashboard
-                    </Link>
+                    <BackButton href="/dashboard" />
                     <h1 className={styles.pageTitle}>Comparación</h1>
                 </div>
                 <ProfileDropdown />

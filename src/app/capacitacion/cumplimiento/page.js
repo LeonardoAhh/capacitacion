@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useMemo, useCallback } from 'react';
 import ProfileDropdown from '@/components/ProfileDropdown/ProfileDropdown';
-import Link from 'next/link';
+import BackButton from '@/components/ui/BackButton/BackButton';
 import { useAuth } from '@/contexts/AuthContext';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/Button/Button';
@@ -243,13 +243,7 @@ export default function CumplimientoPage() {
                 <div className={styles.container}>
                     <div className={styles.header}>
                         <div className={styles.headerLeft}>
-                            <Link href="/capacitacion" className={styles.backBtn}>
-                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                    <path d="M19 12H5" />
-                                    <polyline points="12 19 5 12 12 5" />
-                                </svg>
-                                Volver
-                            </Link>
+                            <BackButton href="/capacitacion" />
                             <h1>Cumplimiento por Curso</h1>
                             <p className={styles.subtitle}>Visualiza el progreso de capacitación por cada curso</p>
                         </div>

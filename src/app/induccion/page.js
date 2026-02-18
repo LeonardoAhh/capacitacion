@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useMemo } from 'react';
 import Link from 'next/link';
+import BackButton from '@/components/ui/BackButton/BackButton';
 import { db } from '@/lib/firebase';
 import { uploadFile } from '@/lib/upload';
 import { collection, query, where, getDocs, addDoc, orderBy, onSnapshot, deleteDoc, doc, updateDoc } from 'firebase/firestore';
@@ -464,13 +465,7 @@ export default function InductionPage() {
 
             <div className={styles.container}>
                 {/* Back Link */}
-                <Link href="/modulos" className={styles.backLink}>
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                        <path d="M19 12H5" />
-                        <path d="M12 19l-7-7 7-7" />
-                    </svg>
-                    Volver
-                </Link>
+                <BackButton href="/modulos" />
 
                 {/* Header */}
                 <header className={styles.header}>

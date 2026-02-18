@@ -1,5 +1,6 @@
 import { motion } from 'framer-motion';
 import { TrendingUp, ArrowRight, AlertCircle } from 'lucide-react';
+import BackButton from '@/components/ui/BackButton/BackButton';
 import styles from './PromotionView.module.css';
 
 export default function PromotionView({ employee, promotionRule, promotionInfo, monthsInPosition, onBack }) {
@@ -25,16 +26,7 @@ export default function PromotionView({ employee, promotionRule, promotionInfo, 
                 animate={{ opacity: 1 }}
             >
                 <div className={styles.headerRow}>
-                    <button
-                        onClick={onBack}
-                        className={styles.backBtn}
-                    >
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                            <path d="M19 12H5" />
-                            <polyline points="12 19 5 12 12 5" />
-                        </svg>
-                        Volver al Perfil
-                    </button>
+                    <BackButton onClick={onBack} />
                     <h2 className={styles.viewTitle}>Promoción</h2>
                 </div>
                 <AlertCircle size={48} style={{ marginBottom: '1rem', color: '#94a3b8' }} />
@@ -53,16 +45,7 @@ export default function PromotionView({ employee, promotionRule, promotionInfo, 
             exit="hidden"
         >
             <div className={styles.headerRow}>
-                <button
-                    onClick={onBack}
-                    className={styles.backBtn}
-                >
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                        <path d="M19 12H5" />
-                        <polyline points="12 19 5 12 12 5" />
-                    </svg>
-                    Volver al Perfil
-                </button>
+                <BackButton onClick={onBack} />
                 <h2 className={styles.viewTitle}>Plan de Promoción</h2>
             </div>
 

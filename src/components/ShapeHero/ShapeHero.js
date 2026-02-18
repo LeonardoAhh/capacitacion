@@ -61,9 +61,7 @@ function ShapeHeroComponent() {
 
                 <DynamicCredits />
 
-                <Link href="/features" className={styles.featuresLink}>
-                    Features
-                </Link>
+
             </div>
 
             <div className={styles.footer}>

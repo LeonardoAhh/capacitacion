@@ -4,7 +4,7 @@ import { useState, useEffect, useMemo } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useRouter } from 'next/navigation';
 import ProfileDropdown from '@/components/ProfileDropdown/ProfileDropdown';
-import Link from 'next/link';
+import BackButton from '@/components/ui/BackButton/BackButton';
 import { Button } from '@/components/ui/Button/Button';
 import { db } from '@/lib/firebase';
 import { collection, getDocs, addDoc, deleteDoc, doc } from 'firebase/firestore';
@@ -239,13 +239,7 @@ export default function CalendarPage() {
                 <div className={styles.container}>
                     {/* Header */}
                     <div className={styles.headerSection}>
-                        <Link href="/capacitacion" className={styles.backBtn}>
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                <path d="M19 12H5" />
-                                <polyline points="12 19 5 12 12 5" />
-                            </svg>
-                            Volver
-                        </Link>
+                        <BackButton href="/capacitacion" />
                         <div className={styles.header}>
                             <div className={styles.titleGroup}>
                                 <h1>Calendario de Capacitación</h1>

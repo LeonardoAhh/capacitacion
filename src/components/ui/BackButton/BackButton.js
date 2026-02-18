@@ -1,32 +1,35 @@
 import Link from 'next/link';
 import { ArrowLeft } from 'lucide-react';
+import styles from './BackButton.module.css';
 
-export default function BackButton({ href = "/", label = "Volver" }) {
+/**
+ * Componente reutilizable de botón "Volver".
+ * - Si recibe `href`, renderiza un `<Link>`.
+ * - Si recibe `onClick`, renderiza un `<button>`.
+ *
+ * @param {string}   [href]      - Ruta destino (usa Link internamente)
+ * @param {function} [onClick]   - Callback alternativo (usa button internamente)
+ * @param {string}   [label]     - Texto del botón (default: "Volver")
+ * @param {string}   [className] - Clase CSS adicional
+ */
+export default function BackButton({ href, onClick, label = "Volver", className }) {
+    const combinedClassName = className
+        ? `${styles.backButton} ${className}`
+        : styles.backButton;
+
+    if (href) {
+        return (
+            <Link href={href} className={combinedClassName}>
+                <ArrowLeft size={18} />
+                <span>{label}</span>
+            </Link>
+        );
+    }
+
     return (
-        <Link href={href} style={{
-            position: 'fixed',
-            top: '20px',
-            left: '20px',
-            zIndex: 50,
-            display: 'flex',
-            alignItems: 'center',
-            gap: '8px',
-            padding: '10px 16px',
-            background: 'var(--card-background)',
-            backdropFilter: 'blur(12px)',
-            WebkitBackdropFilter: 'blur(12px)',
-            borderRadius: '50px',
-            border: '1px solid var(--border-color)',
-            boxShadow: 'var(--shadow-md)',
-            textDecoration: 'none',
-            color: 'var(--text-primary)',
-            fontWeight: '500',
-            fontSize: '14px',
-            transition: 'all 0.2s ease',
-            cursor: 'pointer'
-        }}>
+        <button type="button" onClick={onClick} className={combinedClassName}>
             <ArrowLeft size={18} />
             <span>{label}</span>
-        </Link>
+        </button>
     );
 }

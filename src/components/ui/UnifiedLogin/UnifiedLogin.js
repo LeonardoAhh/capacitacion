@@ -2,8 +2,8 @@
 
 import { useId } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ArrowLeft, AlertCircle, Loader2 } from 'lucide-react';
-import Link from 'next/link';
+import { AlertCircle, Loader2 } from 'lucide-react';
+import BackButton from '@/components/ui/BackButton/BackButton';
 import styles from './UnifiedLogin.module.css';
 
 const ANIMATION_VARIANTS = {
@@ -86,10 +86,7 @@ export default function UnifiedLogin({
 
     return (
         <div className={styles.loginPage}>
-            <Link href={backHref} className={styles.backButton}>
-                <ArrowLeft size={16} />
-                {backLabel}
-            </Link>
+            <BackButton href={backHref} label={backLabel} />
 
             <div className={styles.loginCard}>
                 {isSuccess ? (

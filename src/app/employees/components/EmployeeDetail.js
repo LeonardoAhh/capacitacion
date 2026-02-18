@@ -3,9 +3,10 @@
 import { memo, useState, useCallback } from 'react';
 import Image from 'next/image';
 import {
-    User, Briefcase, Activity, FileText, ArrowLeft,
+    User, Briefcase, Activity, FileText,
     Edit, Trash2, Phone, Loader2, Download
 } from 'lucide-react';
+import BackButton from '@/components/ui/BackButton/BackButton';
 import styles from '../../page.module.css';
 
 const getInitials = (name) => {
@@ -54,10 +55,7 @@ function EmployeeDetailComponent({
 
     return (
         <div className={styles.detailView}>
-            <button onClick={onBack} className={styles.backButton}>
-                <ArrowLeft size={18} />
-                Volver a la lista
-            </button>
+            <BackButton onClick={onBack} label="Volver a la lista" />
 
             <div className={styles.detailHeader}>
                 <div className={styles.avatarLarge}>

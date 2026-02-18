@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import ProfileDropdown from '@/components/ProfileDropdown/ProfileDropdown';
-import Link from 'next/link';
+import BackButton from '@/components/ui/BackButton/BackButton';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card/Card';
 import { Button } from '@/components/ui/Button/Button';
 import { useToast } from '@/components/ui/Toast/Toast';
@@ -237,13 +237,7 @@ export default function MatrizPage() {
                 <div className={styles.container}>
                     <div className={styles.header}>
                         <div className={styles.headerLeft}>
-                            <Link href="/capacitacion" className={styles.backBtn}>
-                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                    <path d="M19 12H5" />
-                                    <polyline points="12 19 5 12 12 5" />
-                                </svg>
-                                Volver
-                            </Link>
+                            <BackButton href="/capacitacion" />
                             <h1>Matriz de Capacitación</h1>
                         </div>
 

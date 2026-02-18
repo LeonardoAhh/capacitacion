@@ -10,6 +10,7 @@ import {
 } from 'lucide-react';
 import Image from 'next/image';
 import styles from './page.module.css';
+import BackButton from '@/components/ui/BackButton/BackButton';
 import { useEmployees } from '@/hooks/useEmployees';
 import EmployeeSearchBar from '@/components/EmployeeSearchBar/EmployeeSearchBar';
 import {
@@ -638,14 +639,7 @@ export default function EmployeesPage() {
                 {/* Header Section */}
                 <div className={styles.header}>
                     <div className={styles.headerContent}>
-                        <button
-                            onClick={() => router.push('/dashboard')}
-                            className={styles.backButton}
-                            title="Volver al Dashboard"
-                        >
-                            <ArrowLeft size={20} />
-                            <span className={styles.backButtonText}>Dashboard</span>
-                        </button>
+                        <BackButton onClick={() => router.push('/dashboard')} />
 
                         <h1 className={styles.pageTitle}>
                             <Users size={32} style={{ marginRight: '12px' }} />
@@ -811,10 +805,7 @@ export default function EmployeesPage() {
                     ) : (
                         /* DETAIL VIEW */
                         <div className={styles.detailView}>
-                            <button onClick={handleBackToList} className={styles.backButton}>
-                                <ArrowLeft size={18} />
-                                Volver a la lista
-                            </button>
+                            <BackButton onClick={handleBackToList} label="Volver a la lista" />
 
                             {/* Employee Header */}
                             <div className={styles.detailHeader}>

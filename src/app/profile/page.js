@@ -6,7 +6,8 @@ import ProfileDropdown from '@/components/ProfileDropdown/ProfileDropdown';
 import styles from './page.module.css';
 import { createAvatar } from '@dicebear/core';
 import { lorelei } from '@dicebear/collection';
-import { Eye, EyeOff, ArrowLeft } from 'lucide-react';
+import { Eye, EyeOff } from 'lucide-react';
+import BackButton from '@/components/ui/BackButton/BackButton';
 
 export default function ProfilePage() {
     const { user, loading, updateUserProfile } = useAuth();
@@ -66,13 +67,7 @@ export default function ProfilePage() {
 
             <main className={styles.container}>
 
-                <button
-                    onClick={() => router.back()}
-                    className={styles.backButton}
-                >
-                    <ArrowLeft size={18} />
-                    <span>Volver</span>
-                </button>
+                <BackButton onClick={() => router.back()} />
 
                 {/* Header Card (Avatar + Info) */}
                 <div className={styles.headerCard}>

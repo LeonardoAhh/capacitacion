@@ -7,6 +7,7 @@ import { db } from '@/lib/firebase';
 import { useAuth } from '@/contexts/AuthContext';
 import styles from './page.module.css';
 import Link from 'next/link';
+import BackButton from '@/components/ui/BackButton/BackButton';
 import { Search, ArrowLeft, Users, CheckCircle, Clock, FileText, FileCheck, AlertCircle, Bell, MessageCircle, Key, Filter, X } from 'lucide-react';
 import { useTheme } from '@/contexts/ThemeContext';
 import CandidateDrawer from '@/components/Dashboard/CandidateDrawer';
@@ -384,17 +385,15 @@ export default function CandidateMonitoringPage() {
             <header className={styles.header}>
                 <div className={styles.headerContent}>
                     <div className={styles.headerLeft}>
-                        <Link href="/dashboard" className={styles.backButton} aria-label="Volver al Dashboard">
-                            <ArrowLeft size={20} />
-                        </Link>
+                        <BackButton href="/dashboard" />
                         <div className={styles.title}>
                             <h1>Monitoreo de Candidatos</h1>
                             <p className={styles.subtitle}>Supervisa el avance de inducción en tiempo real</p>
                         </div>
                     </div>
                     <div className={styles.headerActions}>
-                        <ProfileDropdown 
-                            className={styles.profileDropdown} 
+                        <ProfileDropdown
+                            className={styles.profileDropdown}
                             onAvatarClick={() => setShowAvatarSelector(true)}
                         />
                     </div>
