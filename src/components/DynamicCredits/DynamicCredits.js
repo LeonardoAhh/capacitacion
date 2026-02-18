@@ -28,19 +28,21 @@ const DynamicCredits = () => {
 
     return (
         <div className={styles.credits} aria-live="polite" aria-atomic="true">
-            <AnimatePresence mode="wait">
-                <motion.div
-                    key={currentIndex}
-                    initial={{ opacity: 0, y: 8 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -8 }}
-                    transition={{ duration: 0.4, ease: 'easeOut' }}
-                    className={styles.text}
-                >
-                    <span className={styles.label}>{current.text}</span>
-                    <span className={styles.author}>{current.author}</span>
-                </motion.div>
-            </AnimatePresence>
+            <div className={styles.pill}>
+                <AnimatePresence mode="wait">
+                    <motion.div
+                        key={currentIndex}
+                        initial={{ opacity: 0, filter: 'blur(4px)', y: 6 }}
+                        animate={{ opacity: 1, filter: 'blur(0px)', y: 0 }}
+                        exit={{ opacity: 0, filter: 'blur(4px)', y: -6 }}
+                        transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
+                        className={styles.text}
+                    >
+                        <span className={styles.label}>{current.text}</span>
+                        <span className={styles.author}>{current.author}</span>
+                    </motion.div>
+                </AnimatePresence>
+            </div>
 
             <div className={styles.dots} aria-hidden="true">
                 {creditVariations.map((_, i) => (

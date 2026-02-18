@@ -1,8 +1,11 @@
+/* ─── Overlay ───────────────────────────────────────────── */
+
 .overlay {
     position: fixed;
     inset: 0;
-    background: rgba(0, 0, 0, 0.4);
-    backdrop-filter: blur(4px);
+    background: color-mix(in srgb, var(--bg-primary, #000) 40%, transparent);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
     z-index: 10002;
     display: flex;
     align-items: center;
@@ -10,162 +13,277 @@
     padding: 24px;
 }
 
+/* ─── Modal shell ───────────────────────────────────────── */
+
 .modal {
-    background: rgba(255, 255, 255, 0.9);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-    border: 1px solid rgba(255, 255, 255, 0.2);
+    background: var(--bg-primary);
+    border: 1px solid var(--border-color);
     border-radius: 24px;
     width: 100%;
-    max-width: 480px;
-    padding: 24px;
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+    max-width: 460px;
     max-height: 90vh;
     overflow-y: auto;
     display: flex;
     flex-direction: column;
+    box-shadow:
+        0 0 0 1px color-mix(in srgb, var(--color-primary) 14%, transparent),
+        0 24px 48px color-mix(in srgb, var(--bg-primary) 20%, #00000055);
+    position: relative;
+    overflow: hidden;
 }
 
-@media (max-width: 640px) {
-    .modal {
-        max-height: 85vh;
-        /* Leave room for bottom sheet if needed, or just safe area */
-        position: fixed;
-        bottom: 0;
-        left: 0;
-        right: 0;
-        max-width: 100%;
-        border-radius: 24px 24px 0 0;
-        margin: 0;
-        padding-bottom: 40px;
-        /* Safe area */
-    }
+/* Ambient top glow inside modal */
+.modal::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 10%;
+    width: 80%;
+    height: 1px;
+    background: linear-gradient(90deg,
+            transparent,
+            color-mix(in srgb, var(--color-primary) 60%, transparent),
+            transparent);
+    pointer-events: none;
 }
 
-[data-theme="dark"] .modal {
-    background: rgba(30, 30, 35, 0.9);
-    border-color: rgba(255, 255, 255, 0.1);
+/* ─── Scrollable inner ──────────────────────────────────── */
+
+.modal>* {
+    flex-shrink: 0;
 }
+
+/* ─── Header ────────────────────────────────────────────── */
 
 .header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 20px;
+    padding: 20px 20px 0;
 }
 
 .titleRow {
     display: flex;
     align-items: center;
-    gap: 12px;
+    gap: 10px;
+}
+
+.iconWrap {
+    width: 30px;
+    height: 30px;
+    border-radius: 8px;
+    background: color-mix(in srgb, var(--color-primary) 14%, transparent);
+    border: 1px solid color-mix(in srgb, var(--color-primary) 24%, transparent);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--color-primary);
+    flex-shrink: 0;
 }
 
 .titleRow h3 {
     margin: 0;
-    font-size: 18px;
+    font-size: 16px;
     font-weight: 700;
-    color: #1c1c1e;
-}
-
-[data-theme="dark"] .titleRow h3 {
-    color: #fff;
-}
-
-.icon {
-    color: #007AFF;
+    color: var(--text-primary);
+    letter-spacing: -0.01em;
 }
 
 .closeBtn {
-    background: rgba(142, 142, 147, 0.1);
-    border: none;
-    width: 32px;
-    height: 32px;
+    background: color-mix(in srgb, var(--text-primary) 8%, transparent);
+    border: 1px solid var(--border-color);
+    width: 30px;
+    height: 30px;
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
-    color: #8e8e93;
+    color: var(--text-secondary);
     cursor: pointer;
-    transition: all 0.2s;
+    transition: all 0.2s ease;
+    flex-shrink: 0;
 }
 
 .closeBtn:hover {
-    background: rgba(142, 142, 147, 0.2);
-    color: #1c1c1e;
+    background: color-mix(in srgb, var(--text-primary) 14%, transparent);
+    color: var(--text-primary);
 }
 
-[data-theme="dark"] .closeBtn:hover {
-    color: #fff;
+.closeBtn:focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 2px;
+}
+
+/* ─── Divider ───────────────────────────────────────────── */
+
+.divider {
+    height: 1px;
+    background: var(--border-color);
+    margin: 16px 20px 0;
+    opacity: 0.6;
+}
+
+/* ─── Content ───────────────────────────────────────────── */
+
+.content {
+    padding: 16px 20px 24px;
+    overflow-y: auto;
 }
 
 .description {
-    font-size: 14px;
-    color: #8e8e93;
-    margin-bottom: 24px;
-    line-height: 1.5;
+    font-size: 13px;
+    color: var(--text-tertiary);
+    margin: 0 0 20px;
+    line-height: 1.55;
 }
+
+/* ─── Grid ──────────────────────────────────────────────── */
 
 .themesGrid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
-    gap: 16px;
+    grid-template-columns: repeat(auto-fill, minmax(88px, 1fr));
+    gap: 10px;
 }
+
+/* ─── Theme option ──────────────────────────────────────── */
 
 .themeOption {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 8px;
+    gap: 7px;
     background: transparent;
-    border: none;
+    border: 1px solid transparent;
     cursor: pointer;
     padding: 8px;
-    border-radius: 16px;
-    transition: background 0.2s;
+    border-radius: 14px;
+    transition: background 0.2s ease, border-color 0.2s ease;
 }
 
 .themeOption:hover {
-    background: rgba(0, 0, 0, 0.05);
+    background: color-mix(in srgb, var(--text-primary) 6%, transparent);
+    border-color: var(--border-color);
 }
 
-[data-theme="dark"] .themeOption:hover {
-    background: rgba(255, 255, 255, 0.1);
+.themeOption:focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 2px;
 }
 
 .themeOption.selected {
-    background: rgba(0, 122, 255, 0.1);
+    background: color-mix(in srgb, var(--color-primary) 10%, transparent);
+    border-color: color-mix(in srgb, var(--color-primary) 35%, transparent);
 }
+
+/* ─── Color swatch ──────────────────────────────────────── */
 
 .colorPreview {
     width: 100%;
     aspect-ratio: 1;
-    border-radius: 12px;
-    border: 1px solid rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+    border: 1px solid color-mix(in srgb, var(--text-primary) 10%, transparent);
     position: relative;
     display: flex;
     align-items: center;
     justify-content: center;
     background-color: var(--theme-color);
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+    box-shadow: 0 3px 10px color-mix(in srgb, var(--theme-color, #000) 30%, transparent);
+    transition: box-shadow 0.2s ease;
 }
 
+.themeOption:hover .colorPreview {
+    box-shadow: 0 5px 16px color-mix(in srgb, var(--theme-color, #000) 45%, transparent);
+}
+
+/* ─── Check badge ───────────────────────────────────────── */
+
 .checkBadge {
-    background: #007AFF;
-    width: 24px;
-    height: 24px;
+    width: 22px;
+    height: 22px;
     border-radius: 50%;
+    background: color-mix(in srgb, #000 25%, var(--theme-color, #007aff));
     display: flex;
     align-items: center;
     justify-content: center;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+    border: 1.5px solid rgba(255, 255, 255, 0.35);
 }
+
+/* ─── Theme label ───────────────────────────────────────── */
 
 .themeName {
-    font-size: 13px;
+    font-size: 11.5px;
     font-weight: 500;
-    color: #1c1c1e;
+    color: var(--text-secondary);
+    text-align: center;
+    line-height: 1.2;
+    transition: color 0.2s ease;
 }
 
-[data-theme="dark"] .themeName {
-    color: #fff;
+.themeOption.selected .themeName {
+    color: var(--color-primary);
+    font-weight: 600;
+}
+
+/* ─── Mobile bottom sheet ───────────────────────────────── */
+
+@media (max-width: 640px) {
+    .overlay {
+        align-items: flex-end;
+        padding: 0;
+    }
+
+    .modal {
+        max-width: 100%;
+        border-radius: 24px 24px 0 0;
+        max-height: 85vh;
+        padding-bottom: env(safe-area-inset-bottom, 16px);
+    }
+
+    /* Drag handle */
+    .modal::after {
+        content: '';
+        position: absolute;
+        top: 10px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 36px;
+        height: 4px;
+        border-radius: 2px;
+        background: var(--border-color);
+        pointer-events: none;
+    }
+
+    .header {
+        padding-top: 28px;
+    }
+
+    .themesGrid {
+        grid-template-columns: repeat(auto-fill, minmax(76px, 1fr));
+        gap: 8px;
+    }
+}
+
+/* ─── Reduced Motion ────────────────────────────────────── */
+
+@media (prefers-reduced-motion: reduce) {
+
+    .closeBtn,
+    .themeOption,
+    .colorPreview,
+    .themeName {
+        transition: none;
+    }
+}
+
+/* ─── High Contrast ─────────────────────────────────────── */
+
+@media (prefers-contrast: high) {
+    .modal {
+        border-width: 2px;
+    }
+
+    .themeOption.selected {
+        border-width: 2px;
+    }
 }

@@ -1,89 +1,61 @@
 .toggle {
-    /* Layout y tamaño */
-    width: 44px;
-    height: 44px;
+    width: 38px;
+    height: 38px;
     position: relative;
     display: flex;
     align-items: center;
     justify-content: center;
 
-    /* Estética */
-    background-color: var(--bg-tertiary);
-    border: 1px solid var(--border-color);
+    background: color-mix(in srgb, var(--color-primary) 8%, transparent);
+    border: 1px solid color-mix(in srgb, var(--color-primary) 22%, transparent);
     border-radius: var(--radius-full);
-    color: var(--text-primary);
+    color: var(--color-primary);
     cursor: pointer;
-
-    /* Animaciones */
-    transition: all var(--transition-base, 0.3s ease);
-    overflow: hidden;
-
-    /* Reset de botón */
     padding: 0;
     margin: 0;
+    overflow: hidden;
+
+    /* Ambient top line */
+    box-shadow:
+        inset 0 1px 0 color-mix(in srgb, var(--color-primary) 20%, transparent);
+
+    transition:
+        background var(--transition-fast),
+        border-color var(--transition-fast),
+        box-shadow var(--transition-fast);
 }
 
-/* Estado de carga (Placeholder) */
 .togglePlaceholder {
-    width: 44px;
-    height: 44px;
+    width: 38px;
+    height: 38px;
     border-radius: var(--radius-full);
-    background-color: var(--bg-tertiary);
+    background: color-mix(in srgb, var(--color-primary) 8%, transparent);
+    border: 1px solid color-mix(in srgb, var(--color-primary) 14%, transparent);
     opacity: 0.5;
 }
 
-/* Efecto de fondo (Glow) */
-.toggle::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(135deg, var(--color-primary), var(--color-accent));
-    opacity: 0;
-    transition: opacity var(--transition-base, 0.3s ease);
-    z-index: 0;
-}
-
-.toggle:hover::before {
-    opacity: 0.1;
-}
-
 .toggle:hover {
-    transform: translateY(-2px);
-    /* Pequeña elevación es mejor que scale global */
-    border-color: var(--color-primary);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    background: color-mix(in srgb, var(--color-primary) 15%, transparent);
+    border-color: color-mix(in srgb, var(--color-primary) 45%, transparent);
+    box-shadow:
+        inset 0 1px 0 color-mix(in srgb, var(--color-primary) 30%, transparent),
+        0 4px 14px color-mix(in srgb, var(--color-primary) 20%, transparent);
 }
 
-.toggle:active {
-    transform: translateY(0);
-}
-
-/* Accesibilidad: Focus visible (teclado) */
 .toggle:focus-visible {
     outline: 2px solid var(--color-primary);
     outline-offset: 2px;
 }
 
-/* --- Gestión de Iconos --- */
-
 .iconWrapper {
-    position: absolute;
-    /* Para que estén uno encima del otro */
     display: flex;
     align-items: center;
     justify-content: center;
-    z-index: 1;
-    transition: transform 0.5s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.3s ease;
+    position: absolute;
 }
 
-/* Cuando el icono debe mostrarse */
-.show {
-    opacity: 1;
-    transform: rotate(0deg) scale(1);
-}
-
-/* Cuando el icono debe ocultarse (rota y se achica) */
-.hide {
-    opacity: 0;
-    transform: rotate(90deg) scale(0);
+@media (prefers-reduced-motion: reduce) {
+    .toggle {
+        transition: none;
+    }
 }
