@@ -1,6 +1,19 @@
-.infoGrid {
+.infoSection {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.infoPrimary {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    margin-top: 0.75rem;
+}
+
+.infoSecondary {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    grid-template-columns: repeat(2, 1fr);
     gap: 0.75rem;
     margin-top: 0.75rem;
 }
@@ -13,6 +26,16 @@
     display: flex;
     flex-direction: column;
     gap: 0.25rem;
+}
+
+.infoCardSmall {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    padding: 0.625rem 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.125rem;
 }
 
 .infoLabelSmall {
@@ -30,6 +53,12 @@
     word-break: break-word;
 }
 
+.infoValueSmall {
+    font-size: 0.8125rem;
+    color: var(--text-primary);
+    font-weight: 600;
+}
+
 .sectionHeader {
     font-size: 1rem;
     font-weight: 600;
@@ -38,7 +67,9 @@
 }
 
 @media (max-width: 480px) {
-    .infoGrid {
+
+    .infoPrimary,
+    .infoSecondary {
         grid-template-columns: 1fr;
     }
 }

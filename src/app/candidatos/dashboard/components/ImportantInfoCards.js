@@ -13,7 +13,7 @@ export default function ImportantInfoCards({ className }) {
                         <User size={18} />
                     </div>
                     <p className={styles.importantCardText}>
-                        Solo tienes <span>10 inicios de sesión</span> disponibles.
+                        Solo tienes <span>5 oportunidades</span> disponibles para iniciar sesión.
                     </p>
                 </div>
 
@@ -22,7 +22,7 @@ export default function ImportantInfoCards({ className }) {
                         <FileText size={18} />
                     </div>
                     <p className={styles.importantCardText}>
-                        Entrega tus respuestas en <span>máx. 4 días</span> después de tu ingreso.
+                        Entrega tus evaluaciones en los <span>próximos 7 días</span> después de tu ingreso.
                     </p>
                 </div>
 
@@ -31,7 +31,11 @@ export default function ImportantInfoCards({ className }) {
                         <Phone size={18} />
                     </div>
                     <p className={styles.importantCardText}>
-                        Si agotaste tus oportunidades, contacta a <span>RH</span> para un nuevo código.
+                        Si agotaste tus oportunidades, contacta a{' '}
+                        <a href="https://wa.me/524211265940" target="_blank" rel="noopener noreferrer" className={styles.importantCardLink}>
+                            Soporte
+                        </a>{' '}
+                        para un nuevo código.
                     </p>
                 </div>
             </div>

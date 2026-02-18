@@ -14,14 +14,14 @@ import ThemeSelectorModal from '@/components/ThemeSelectorModal/ThemeSelectorMod
 import PWAPrompt from '@/components/PWAPrompt/PWAPrompt';
 import WelcomeScreen from './components/WelcomeScreen';
 import ImportantInfoCards from './components/ImportantInfoCards';
-import RoadmapTimeline from './components/RoadmapTimeline';
+// import RoadmapTimeline from './components/RoadmapTimeline'; // Oculto temporalmente
 import ContactInfo from './components/ContactInfo';
 import DataCenter from './components/DataCenter';
 import GeneralInfo from './components/GeneralInfo';
 import CoursesGrid from './components/CoursesGrid';
 import CourseViewer from './components/CourseViewer';
 import ExamModal from './components/ExamModal';
-import { DashboardSkeleton, useToast } from './components';
+import { DashboardSkeleton, useToast, CourseDeadlineTimer } from './components';
 import ModernPillNavbar from './components/ModernPillNavbar';
 import SupportButton from './components/SupportButton';
 
@@ -238,17 +238,17 @@ export default function CandidatoDashboard() {
             </nav>
 
             <div className={styles.scrollContent}>
+                <CourseDeadlineTimer
+                    startDate={candidate?.startDate}
+                    courses={courses}
+                    completedCourses={candidate?.cursosCompletados || []}
+                />
                 <ImportantInfoCards />
 
-                <div className={styles.desktopGrid}>
-                    <div className={styles.mainColumn}>
-                        <RoadmapTimeline />
-                        <ContactInfo />
-                    </div>
-                    <div className={styles.sideColumn}>
-                        <DataCenter />
-                        <GeneralInfo candidate={candidate} />
-                    </div>
+                <div className={styles.infoColumns}>
+                    <ContactInfo />
+                    <DataCenter />
+                    <GeneralInfo candidate={candidate} />
                 </div>
 
                 <CoursesGrid

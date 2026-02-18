@@ -86,8 +86,7 @@ export const HR_CONTACT_INFO = [
         schedule: [
             'Lunes a Viernes: 8:00 - 18:00',
             'Sábados: 8:00 - 11:00'
-        ],
-        phones: ['55 1406 3167', '55 1525 4782', '442 509 5534', '55 6326 5881']
+        ]
     },
     {
         id: 'third_shift',
@@ -95,10 +94,11 @@ export const HR_CONTACT_INFO = [
         icon: <Calendar size={20} color="#5856d6" />,
         schedule: [
             'Lunes a Viernes: 22:00 - 6:00'
-        ],
-        phones: []
+        ]
     }
 ];
+
+export const HR_PHONES = ['55 1406 3167', '55 1525 4782', '442 509 5534', '55 6326 5881'];
 
 // Exam Configuration
 export const EXAM_CONFIG = {

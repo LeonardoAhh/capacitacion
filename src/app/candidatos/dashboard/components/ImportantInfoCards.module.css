@@ -45,6 +45,18 @@
     font-weight: 700;
 }
 
+.importantCardLink {
+    color: var(--color-primary);
+    font-weight: 700;
+    text-decoration: underline;
+    text-underline-offset: 2px;
+    transition: opacity var(--transition-fast);
+}
+
+.importantCardLink:hover {
+    opacity: 0.8;
+}
+
 .sectionHeader {
     font-size: 1rem;
     font-weight: 600;
