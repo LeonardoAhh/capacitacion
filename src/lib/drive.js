@@ -78,6 +78,18 @@ export async function uploadFile(buffer, name, mimeType, folderId = null) {
         };
     } catch (error) {
         console.error('Error subiendo archivo a Drive (OAuth):', error);
+
+        // Detectar errores de autenticación y dar mensaje claro
+        if (error.message?.includes('invalid_grant') || error.code === 'invalid_grant') {
+            const authError = new Error(
+                'El token de acceso a Google Drive ha expirado. ' +
+                'Es necesario generar un nuevo Refresh Token en OAuth Playground ' +
+                'y actualizar la variable GOOGLE_REFRESH_TOKEN en las variables de entorno (Vercel/env.local).'
+            );
+            authError.code = 'DRIVE_TOKEN_EXPIRED';
+            throw authError;
+        }
+
         throw error;
     }
 }

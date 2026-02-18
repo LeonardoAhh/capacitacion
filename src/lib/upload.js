@@ -47,14 +47,20 @@ export async function uploadFile(file, options = {}) {
         const result = await response.json();
 
         if (!response.ok) {
-            console.error('[Upload Debug] Error API:', result); // Log full response including debug info
+            console.error('[Upload Debug] Error API:', result);
             if (result.debug) console.warn('[Upload Debug] Info:', result.debug);
+
+            // Mensaje amigable según el tipo de error
+            let userMessage = result.message || result.error || 'Error al subir archivo';
+            if (result.code === 'DRIVE_TOKEN_EXPIRED') {
+                userMessage = 'El servicio de almacenamiento de fotos no está disponible temporalmente. Contacta al administrador del sistema.';
+            }
 
             return {
                 success: false,
-                error: result.message || result.error || 'Error al subir archivo',
+                error: userMessage,
                 code: result.code,
-                debug: result.debug // Pass debug info up
+                debug: result.debug
             };
         }
 

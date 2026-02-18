@@ -157,6 +157,18 @@ export async function POST(request) {
     } catch (error) {
         console.error('Error en API upload (FULL DETAILS):', error);
 
+        // Detectar error de token expirado y dar mensaje claro al usuario
+        if (error.code === 'DRIVE_TOKEN_EXPIRED' || error.message?.includes('invalid_grant')) {
+            return NextResponse.json(
+                {
+                    error: 'Token de Google Drive expirado',
+                    message: 'La conexión con Google Drive ha expirado. Contacta al administrador para renovar el acceso.',
+                    code: 'DRIVE_TOKEN_EXPIRED'
+                },
+                { status: 503 }
+            );
+        }
+
         // Debug: Check if Env Vars are missing
         const missingVars = [];
         if (!process.env.GOOGLE_CLIENT_ID) missingVars.push('GOOGLE_CLIENT_ID');
@@ -173,7 +185,7 @@ export async function POST(request) {
         return NextResponse.json(
             {
                 error: 'Error interno al procesar la subida',
-                message: error.message || 'Error desconocido', // Always show message for debugging
+                message: error.message || 'Error desconocido',
                 debug: debugInfo
             },
             { status: 500 }
