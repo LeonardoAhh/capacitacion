@@ -17,13 +17,6 @@ export const TIMER_COLORS = {
     DEFAULT: 'inherit'
 };
 
-// ==================== COURSE STATUS ====================
-export const COURSE_STATUS = {
-    COMPLETED: 'completed',
-    IN_PROGRESS: 'inProgress',
-    NOT_STARTED: 'notStarted'
-};
-
 // ==================== SESSION KEYS ====================
 export const SESSION_KEYS = {
     CANDIDATE_SESSION: 'candidate_session',

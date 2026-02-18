@@ -171,5 +171,4 @@ export function useCandidateSession() {
         setLoading
     };
 }
-
-export default useCandidateSession;
+

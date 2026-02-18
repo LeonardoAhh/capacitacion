@@ -2,41 +2,7 @@
  * Constants and Configuration for Candidate Dashboard
  */
 
-import { Smile, BookOpen, MapPin, Clock, UserCheck, User, FileText, Calendar } from 'lucide-react';
-
-// Roadmap Steps Configuration
-export const ROADMAP_STEPS = [
-    {
-        id: 1,
-        title: 'Bienvenida RH',
-        icon: <Smile size={20} />,
-        details: ['Prueba de Antidoping', 'Firma de contratos', 'Entrega de EPP']
-    },
-    {
-        id: 2,
-        title: 'Capacitación',
-        icon: <BookOpen size={20} />,
-        details: ['Dudas', 'Información general']
-    },
-    {
-        id: 3,
-        title: 'Recorrido Planta',
-        icon: <MapPin size={20} />,
-        details: ['Conoce las instalaciones y salidas de emergencia']
-    },
-    {
-        id: 4,
-        title: 'Horario de Comida',
-        icon: <Clock size={20} />,
-        details: ['Consumo de alimentos']
-    },
-    {
-        id: 5,
-        title: 'Incorporación al área',
-        icon: <UserCheck size={20} />,
-        details: ['Presentación con tu jefe inmediato y equipo']
-    }
-];
+import { User, FileText, Calendar } from 'lucide-react';
 
 // Data Center Items Configuration
 export const DATA_CENTER_ITEMS = [
@@ -99,29 +65,3 @@ export const HR_CONTACT_INFO = [
 ];
 
 export const HR_PHONES = ['55 1406 3167', '55 1525 4782', '442 509 5534', '55 6326 5881'];
-
-// Exam Configuration
-export const EXAM_CONFIG = {
-    PASSING_SCORE: 70,
-    INDUCTION_COURSE_NAME: 'INDUCCIÓN A LA EMPRESA'
-};
-
-// Session Configuration,
-export const SESSION_CONFIG = {
-    TIMEOUT_DURATION_MS: 2 * 60 * 60 * 1000, // 2 hours
-    ONE_MINUTE_MS: 60 * 1000,
-    FIVE_MINUTES_MS: 5 * 60 * 1000,
-    TIMER_COLORS: {
-        DANGER: 'text-red-500 font-bold animate-pulse',
-        WARNING: 'text-yellow-500 font-semibold',
-        DEFAULT: 'text-gray-600 dark:text-gray-300'
-    },
-    SESSION_KEYS: {
-        CANDIDATE_SESSION: 'candidate_session',
-        SESSION_EXPIRY: 'candidate_session_expiry'
-    },
-    ROUTES: {
-        HOME: '/',
-        CANDIDATES_LOGIN: '/candidatos'
-    }
-};

@@ -11,7 +11,7 @@ import { useMemo } from 'react';
  * @param {Object} courseProgress - Progress tracking for courses
  * @returns {Object} Memoized course lists and stats
  */
-export function useCourseFilters(courses, candidate, courseProgress) {
+function useCourseFilters(courses, candidate, courseProgress) {
 
     // Memoized completed courses list
     const completedCourses = useMemo(() => {
@@ -85,5 +85,4 @@ export function useCourseFilters(courses, candidate, courseProgress) {
         getCourseProgressPercentage
     };
 }
-
-export default useCourseFilters;
+

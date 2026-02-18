@@ -9,12 +9,12 @@ import styles from './Skeleton.module.css';
  */
 
 // Base skeleton element with shimmer animation
-export function SkeletonPulse({ className = '', style = {} }) {
+function SkeletonPulse({ className = '', style = {} }) {
     return <div className={`${styles.skeleton} ${className}`} style={style} />;
 }
 
 // Course item skeleton
-export function CourseItemSkeleton() {
+function CourseItemSkeleton() {
     return (
         <div className={styles.courseItem}>
             <SkeletonPulse className={styles.courseIcon} />
@@ -28,7 +28,7 @@ export function CourseItemSkeleton() {
 }
 
 // Profile section skeleton
-export function ProfileSkeleton() {
+function ProfileSkeleton() {
     return (
         <div className={styles.profileSection}>
             <SkeletonPulse className={styles.avatar} />
@@ -39,7 +39,7 @@ export function ProfileSkeleton() {
 }
 
 // Menu item skeleton
-export function MenuItemSkeleton() {
+function MenuItemSkeleton() {
     return (
         <div className={styles.menuItem}>
             <SkeletonPulse className={styles.menuLabel} />
@@ -77,5 +77,4 @@ export function DashboardSkeleton() {
         </div>
     );
 }
-
-export default DashboardSkeleton;
+

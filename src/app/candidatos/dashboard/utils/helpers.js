@@ -88,13 +88,3 @@ export function getCandidatePhotoUrl(candidate) {
 
     return url;
 }
-
-/**
- * Format position or area for display
- * Returns 'N/A' if not available
- * @param {string} value - Position or area value
- * @returns {string} Formatted value
- */
-export function formatDisplayValue(value) {
-    return value && value !== 'N/A' ? value : 'N/A';
-}

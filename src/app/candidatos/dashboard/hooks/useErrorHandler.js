@@ -9,7 +9,7 @@ import { useToast } from '../components';
  * 
  * @returns {Object} Error handling utilities
  */
-export function useErrorHandler() {
+function useErrorHandler() {
     const toast = useToast();
 
     /**
@@ -103,5 +103,4 @@ export function useErrorHandler() {
         toast
     };
 }
-
-export default useErrorHandler;
+

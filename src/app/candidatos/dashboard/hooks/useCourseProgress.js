@@ -181,5 +181,4 @@ export function useCourseProgress({ candidate, setCourseProgress, setCandidate }
         PASSING_SCORE
     };
 }
-
-export default useCourseProgress;
+
