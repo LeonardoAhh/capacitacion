@@ -3,7 +3,7 @@ import { NextResponse } from 'next/server';
 // ─── Configuración de rutas ────────────────────────────────────────────────────
 
 /** Rutas públicas — accesibles sin cookie de sesión */
-const PUBLIC_ROUTES = ['/', '/login', '/candidatos', '/training/login'];
+const PUBLIC_ROUTES = ['/', '/login', '/candidatos', '/training/login', '/organigrama'];
 
 /** Rutas que requieren sesión tipo 'admin' */
 const ADMIN_ROUTES = [
