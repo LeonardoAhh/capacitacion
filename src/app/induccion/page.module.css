@@ -1,506 +1,322 @@
-/* ==================== INDUCCION MODULE MINIMALIST ==================== */
+/* ==================== INDUCCION - MINIMALIST REDESIGN ==================== */
 
 .main {
     min-height: 100vh;
-    background: transparent;
+    background: var(--bg-primary);
     position: relative;
     overflow-x: hidden;
 }
 
-/* ==================== BACKGROUND EFFECTS ==================== */
+.profileContainer {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 9999;
+}
+
+/* ==================== SUBTLE BACKGROUND ==================== */
 .bgDecoration {
     position: fixed;
     top: 0;
     left: 0;
-    width: 100vw;
-    height: 100vh;
+    width: 100%;
+    height: 100%;
     z-index: 0;
     pointer-events: none;
+    background: 
+        radial-gradient(ellipse 80% 50% at 50% -20%, rgba(var(--color-primary-rgb), 0.03) 0%, transparent 50%);
 }
 
-.blob {
-    position: absolute;
-    filter: blur(90px);
-    opacity: 0.4;
-    animation: float 25s infinite alternate;
+[data-theme="dark"] .bgDecoration {
+    background: 
+        radial-gradient(ellipse 80% 50% at 50% -20%, rgba(var(--color-primary-rgb), 0.05) 0%, transparent 50%);
 }
 
-[data-theme="dark"] .blob {
-    opacity: 0.15;
-}
-
-.blob1 {
-    top: -10%;
-    left: 20%;
-    width: 600px;
-    height: 600px;
-    background: radial-gradient(circle, var(--color-primary) 0%, transparent 70%);
-}
-
-.blob2 {
-    bottom: -10%;
-    right: 10%;
-    width: 500px;
-    height: 500px;
-    background: radial-gradient(circle, var(--color-secondary) 0%, transparent 70%);
-    animation-delay: -5s;
-}
-
-@keyframes float {
-    0% {
-        transform: translate(0, 0) rotate(0deg);
-    }
-
-    100% {
-        transform: translate(30px, 30px) rotate(5deg);
-    }
-}
-
-/* ==================== CONTAINER & LAYOUT ==================== */
+/* ==================== CONTAINER ==================== */
 .container {
     position: relative;
     z-index: 10;
     max-width: 1200px;
     margin: 0 auto;
-    padding: var(--spacing-xl);
+    padding: 100px var(--spacing-lg) var(--spacing-xl);
     display: flex;
     flex-direction: column;
-    gap: 40px;
-}
-
-/* ==================== NAVIGATION ==================== */
-.backLink {
-    align-self: flex-start;
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    padding: 8px 16px;
-    margin-bottom: 8px;
-
-    background: rgba(255, 255, 255, 0.4);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    border-radius: 50px;
-
-    color: var(--text-secondary);
-    text-decoration: none;
-    font-weight: 500;
-    font-size: 0.85rem;
-
-    transition: all 0.2s cubic-bezier(0.2, 0.8, 0.2, 1);
-    backdrop-filter: blur(8px);
-}
-
-[data-theme="dark"] .backLink {
-    background: rgba(40, 40, 45, 0.4);
-    border-color: rgba(255, 255, 255, 0.05);
-}
-
-.backLink:hover {
-    background: var(--bg-secondary);
-    color: var(--text-primary);
-    transform: translateX(-4px);
-    border-color: var(--border-color);
+    gap: 24px;
 }
 
 /* ==================== HEADER ==================== */
 .header {
     display: flex;
-    justify-content: space-between;
-    align-items: flex-end;
-    margin-bottom: var(--spacing-md);
-    animation: fadeInDown 0.8s ease-out;
+    flex-direction: column;
+    gap: 4px;
+    animation: fadeIn 0.5s ease-out;
+    margin-bottom: 8px;
 }
 
 .titleSection h1 {
-    font-size: 2.5rem;
+    font-size: 1.75rem;
     font-weight: 700;
     color: var(--text-primary);
     margin: 0;
     line-height: 1.2;
-    background: linear-gradient(135deg, var(--text-primary), var(--text-secondary));
-    -webkit-background-clip: text;
-    background-clip: text;
-    -webkit-text-fill-color: transparent;
+    letter-spacing: -0.02em;
 }
 
 .titleSection p {
-    font-size: 1.1rem;
-    color: var(--text-secondary);
-    margin: 8px 0 0;
+    font-size: 0.9rem;
+    color: var(--text-tertiary);
+    margin: 0;
     font-weight: 400;
 }
 
-.headerActions {
-    display: flex;
-    align-items: center;
-    gap: 16px;
+/* ==================== TWO COLUMN LAYOUT ==================== */
+.columnsContainer {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 32px;
+    align-items: start;
 }
 
-.backBtn {
+.columnSection {
     display: flex;
-    align-items: center;
-    gap: 8px;
-    padding: 8px 16px;
-    background: var(--bg-secondary);
-    border-radius: 50px;
-    color: var(--text-secondary);
-    text-decoration: none;
-    font-size: 0.9rem;
-    font-weight: 500;
-    transition: all 0.2s ease;
-    border: 1px solid var(--border-color);
-}
-
-.backBtn:hover {
-    background: var(--bg-tertiary);
-    color: var(--text-primary);
-    transform: translateX(-4px);
+    flex-direction: column;
+    min-height: 0;
 }
 
 /* ==================== SECTIONS ==================== */
 .sectionTitle {
-    font-size: 1.5rem;
-    font-weight: 700;
-    color: var(--text-primary);
-    margin-bottom: 24px;
-    display: inline-block;
-}
-
-/* ==================== TABS ==================== */
-.tabsContainer {
-    display: flex;
-    gap: 8px;
-    background: var(--bg-secondary);
-    padding: 6px;
-    border-radius: 16px;
-    width: fit-content;
-    margin-bottom: 32px;
-}
-
-.tabBtn {
-    padding: 10px 20px;
-    border-radius: 12px;
-    border: none;
-    background: transparent;
-    color: var(--text-secondary);
-    font-weight: 600;
-    font-size: 0.9rem;
-    cursor: pointer;
-    transition: all 0.2s ease;
-}
-
-.tabBtn:hover {
-    color: var(--text-primary);
-    background: rgba(0, 0, 0, 0.05);
-}
-
-[data-theme="dark"] .tabBtn:hover {
-    background: rgba(255, 255, 255, 0.05);
-}
-
-.activeTab {
-    background: var(--bg-primary) !important;
-    color: var(--color-primary) !important;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-}
-
-/* ==================== ORG CHART ==================== */
-.orgChart {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 40px;
-    animation: fadeInUp 0.6s ease-out;
-}
-
-.levelRow {
-    display: flex;
-    justify-content: center;
-    flex-wrap: wrap;
-    gap: 24px;
-    position: relative;
-    z-index: 2;
-}
-
-.levelSpacing {
-    width: 2px;
-    height: 30px;
-    background: var(--border-color);
-}
-
-.instructorsGrid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-    gap: 20px;
-    width: 100%;
-    margin-top: 20px;
-}
-
-.teamDivider {
-    grid-column: 1 / -1;
-    display: flex;
-    align-items: center;
-    gap: 16px;
-    color: var(--text-tertiary);
-    font-size: 0.85rem;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    margin: 20px 0 10px;
-}
-
-.teamDivider::before,
-.teamDivider::after {
-    content: '';
-    flex: 1;
-    height: 1px;
-    background: var(--border-color);
-}
-
-/* ORG CARD */
-.orgCard {
-    background: rgba(255, 255, 255, 0.7);
-    backdrop-filter: blur(15px);
-    -webkit-backdrop-filter: blur(15px);
-    border: 1px solid var(--border-color);
-    border-radius: 20px;
-    padding: 20px;
-    width: 260px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
-    transition: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
-    cursor: pointer;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.02);
-}
-
-[data-theme="dark"] .orgCard {
-    background: rgba(30, 30, 35, 0.7);
-}
-
-.orgCard:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.08);
-    border-color: var(--color-primary);
-}
-
-.orgAvatar {
-    margin-bottom: 12px;
-    border-radius: 50%;
-    padding: 3px;
-    background: var(--bg-primary);
-    border: 1px solid var(--border-color);
-}
-
-.orgName {
     font-size: 1rem;
-    font-weight: 700;
-    color: var(--text-primary);
-    margin: 0 0 4px 0;
-}
-
-.orgRole {
-    font-size: 0.85rem;
-    color: var(--text-secondary);
-    margin-bottom: 8px;
-}
-
-.roleBadge {
-    font-size: 0.7rem;
-    padding: 2px 8px;
-    border-radius: 12px;
-    background: var(--bg-tertiary);
-    color: var(--text-tertiary);
     font-weight: 600;
+    color: var(--text-primary);
+    margin: 0;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    letter-spacing: -0.01em;
 }
 
-/* Role Specific Styles */
-.cardBoss {
-    border-top: 4px solid #AF52DE;
-}
-
-.cardCoord {
-    border-top: 4px solid #007AFF;
-}
-
-.cardAnalyst {
-    border-top: 4px solid #34C759;
-}
-
-.cardInstructor {
-    border-top: 4px solid #FF9500;
-}
-
-/* Instructor Subjects */
-.instructorSubjects {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 4px;
-    margin-top: 12px;
-}
-
-.subjectBadge {
+.sectionCount {
     font-size: 0.7rem;
+    font-weight: 500;
+    color: var(--text-tertiary);
+    background: var(--bg-secondary);
     padding: 2px 8px;
-    background: var(--bg-tertiary);
-    border-radius: 6px;
-    color: var(--text-secondary);
+    border-radius: 20px;
 }
 
-/* ==================== COURSES SECTION ==================== */
+/* ==================== COURSES HEADER ==================== */
 .coursesHeader {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 24px;
+    margin-bottom: 16px;
+    gap: 12px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--border-color);
 }
 
-.toggleBtn {
-    background: var(--bg-secondary);
+.coursesHeader .sectionTitle {
+    cursor: pointer;
+    transition: color 0.2s ease;
+}
+
+.coursesHeader .sectionTitle:hover {
     color: var(--color-primary);
-    border: 1px solid var(--border-color);
-    padding: 8px 16px;
-    border-radius: 12px;
-    font-weight: 600;
+}
+
+.chevronIcon {
+    transition: transform 0.2s ease;
+    color: var(--text-tertiary);
+}
+
+.chevronIcon.expanded {
+    transform: rotate(90deg);
+}
+
+/* ==================== TOGGLE BUTTON ==================== */
+.toggleBtn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: transparent;
+    color: var(--text-secondary);
+    border: none;
+    padding: 6px 10px;
+    border-radius: 8px;
+    font-size: 0.8rem;
+    font-weight: 500;
     cursor: pointer;
     transition: all 0.2s ease;
+    white-space: nowrap;
 }
 
 .toggleBtn:hover {
-    background: var(--bg-tertiary);
+    background: var(--bg-secondary);
+    color: var(--color-primary);
 }
 
+/* ==================== CREATE COURSE FORM ==================== */
 .createCourseContainer {
     background: var(--bg-secondary);
-    padding: 24px;
-    border-radius: 20px;
-    margin-bottom: 32px;
+    padding: 20px;
+    border-radius: 14px;
+    margin-bottom: 16px;
     border: 1px solid var(--border-color);
-    animation: fadeInDown 0.3s ease-out;
+    animation: slideDown 0.25s ease-out;
+}
+
+.createCourseContainer h3 {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin: 0 0 16px 0;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--border-color);
 }
 
 .createCourseForm {
     display: flex;
     flex-direction: column;
-    gap: 16px;
+    gap: 14px;
 }
 
 .inputGroup {
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: 5px;
+}
+
+.inputGroup label {
+    font-size: 0.75rem;
+    font-weight: 500;
+    color: var(--text-tertiary);
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
 }
 
 .input {
-    padding: 12px;
-    border-radius: 12px;
+    padding: 10px 12px;
+    border-radius: 8px;
     border: 1px solid var(--border-color);
     background: var(--bg-primary);
     color: var(--text-primary);
+    font-size: 0.85rem;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.input:focus {
+    outline: none;
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 2px rgba(var(--color-primary-rgb), 0.08);
+}
+
+.input::placeholder {
+    color: var(--text-tertiary);
+}
+
+textarea.input {
+    resize: vertical;
+    min-height: 60px;
+    font-family: inherit;
 }
 
 .fileBtn {
-    padding: 10px 20px;
-    background: var(--bg-tertiary);
-    border-radius: 12px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 10px 14px;
+    background: var(--bg-primary);
+    border-radius: 8px;
     cursor: pointer;
-    font-size: 0.9rem;
-    font-weight: 600;
-    color: var(--text-primary);
+    font-size: 0.8rem;
+    font-weight: 500;
+    color: var(--text-secondary);
     border: 1px solid var(--border-color);
+    transition: all 0.2s ease;
 }
 
-/* Puestos Checkbox Container */
+.fileBtn:hover {
+    background: var(--bg-tertiary);
+    color: var(--text-primary);
+}
+
+.fileBtnActive {
+    border-color: #22c55e;
+    color: #22c55e;
+    background: rgba(34, 197, 94, 0.08);
+}
+
+/* ==================== FORM ACTIONS ==================== */
+.formActions {
+    display: flex;
+    gap: 8px;
+    padding-top: 8px;
+    margin-top: 4px;
+}
+
+.formActions .toggleBtn {
+    background: var(--bg-primary);
+    border: 1px solid var(--border-color);
+    padding: 8px 12px;
+}
+
+/* ==================== PUESTOS CHECKBOX ==================== */
 .puestosCheckboxContainer {
-    max-height: 200px;
+    max-height: 140px;
     overflow-y: auto;
     border: 1px solid var(--border-color);
-    border-radius: 12px;
-    padding: 12px;
+    border-radius: 8px;
+    padding: 10px;
     background: var(--bg-primary);
 }
 
-[data-theme="dark"] .puestosCheckboxContainer {
-    background: rgba(20, 20, 25, 0.6);
+.puestosCheckboxContainer label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 5px 0;
+    cursor: pointer;
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    transition: color 0.15s ease;
 }
 
-/* Checkbox Styling */
+.puestosCheckboxContainer label:hover {
+    color: var(--text-primary);
+}
+
 .puestosCheckboxContainer input[type="checkbox"] {
-    width: 18px;
-    height: 18px;
+    width: 14px;
+    height: 14px;
     cursor: pointer;
     accent-color: var(--color-primary);
 }
 
-.puestosCheckboxContainer label {
-    color: var(--text-primary);
-}
-
-/* Scrollbar Styling */
 .puestosCheckboxContainer::-webkit-scrollbar {
-    width: 8px;
+    width: 5px;
 }
 
 .puestosCheckboxContainer::-webkit-scrollbar-track {
-    background: var(--bg-secondary);
-    border-radius: 10px;
+    background: transparent;
 }
 
 .puestosCheckboxContainer::-webkit-scrollbar-thumb {
-    background: var(--text-tertiary);
+    background: var(--border-color);
     border-radius: 10px;
 }
 
-.puestosCheckboxContainer::-webkit-scrollbar-thumb:hover {
-    background: var(--text-secondary);
-}
-
-[data-theme="dark"] .puestosCheckboxContainer::-webkit-scrollbar-track {
-    background: rgba(40, 40, 45, 0.5);
-}
-
-[data-theme="dark"] .puestosCheckboxContainer::-webkit-scrollbar-thumb {
-    background: rgba(255, 255, 255, 0.2);
-}
-
-[data-theme="dark"] .puestosCheckboxContainer::-webkit-scrollbar-thumb:hover {
-    background: rgba(255, 255, 255, 0.3);
-}
-
-/* Courses Grid - More Compact */
+/* ==================== COURSES GRID ==================== */
 .coursesGrid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-    gap: 12px;
-    max-height: 400px;
-    overflow-y: auto;
-    padding-right: 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
 }
 
-/* Scrollbar for courses grid */
-.coursesGrid::-webkit-scrollbar {
-    width: 6px;
-}
-
-.coursesGrid::-webkit-scrollbar-track {
-    background: var(--bg-secondary);
-    border-radius: 10px;
-}
-
-.coursesGrid::-webkit-scrollbar-thumb {
-    background: var(--text-tertiary);
-    border-radius: 10px;
-}
-
+/* ==================== COURSE CARD ==================== */
 .courseCard {
-    background: rgba(255, 255, 255, 0.6);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
+    background: var(--bg-secondary);
     border: 1px solid var(--border-color);
     border-radius: 12px;
-    padding: 0;
     overflow: hidden;
     cursor: pointer;
     transition: all 0.2s ease;
@@ -509,56 +325,82 @@
     flex-direction: column;
 }
 
-[data-theme="dark"] .courseCard {
-    background: rgba(30, 30, 35, 0.6);
-}
-
 .courseCard:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.06);
+    border-color: rgba(var(--color-primary-rgb), 0.25);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
 }
 
 .cardTopColor {
-    height: 4px;
+    height: 3px;
     width: 100%;
 }
 
 .cardContent {
-    padding: 12px;
+    padding: 14px;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
     flex-grow: 1;
+    gap: 10px;
 }
 
 .courseTitle {
-    font-size: 0.9rem;
+    font-size: 0.85rem;
     font-weight: 600;
     color: var(--text-primary);
-    margin: 0 0 6px 0;
-    line-height: 1.3;
+    margin: 0;
+    line-height: 1.4;
 }
 
 .courseTypeBadge {
-    display: inline-block;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
     font-size: 0.7rem;
-    padding: 2px 8px;
-    border-radius: 6px;
+    padding: 3px 8px;
+    border-radius: 5px;
     background: var(--bg-tertiary);
     color: var(--text-secondary);
     width: fit-content;
+    font-weight: 500;
 }
 
+.cardAction {
+    display: flex;
+    justify-content: flex-end;
+    color: var(--color-primary);
+    opacity: 0.5;
+    transition: opacity 0.2s ease;
+}
+
+.courseCard:hover .cardAction {
+    opacity: 1;
+}
+
+.cardMeta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+.cardDescription {
+    font-size: 0.75rem;
+    color: var(--text-tertiary);
+    margin: 0;
+    line-height: 1.4;
+}
+
+/* ==================== DELETE BUTTON ==================== */
 .deleteBtn {
     position: absolute;
     top: 10px;
     right: 10px;
-    width: 28px;
-    height: 28px;
-    border-radius: 50%;
-    background: rgba(255, 59, 48, 0.1);
-    color: #FF3B30;
-    border: none;
+    width: 26px;
+    height: 26px;
+    border-radius: 6px;
+    background: var(--bg-primary);
+    color: var(--text-tertiary);
+    border: 1px solid var(--border-color);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -571,224 +413,245 @@
     opacity: 1;
 }
 
-/* ==================== MODALS ==================== */
+.deleteBtn:hover {
+    background: #fef2f2;
+    color: #dc2626;
+    border-color: #fecaca;
+}
+
+[data-theme="dark"] .deleteBtn:hover {
+    background: rgba(220, 38, 38, 0.12);
+    border-color: rgba(220, 38, 38, 0.25);
+}
+
+/* ==================== EDIT BUTTON ==================== */
+.editBtn {
+    background: var(--bg-primary);
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    width: 26px;
+    height: 26px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color: var(--text-tertiary);
+    transition: all 0.2s ease;
+}
+
+.editBtn:hover {
+    background: var(--bg-secondary);
+    color: var(--color-primary);
+    border-color: rgba(var(--color-primary-rgb), 0.25);
+}
+
+/* ==================== CARD ACTIONS ROW ==================== */
+.cardActionsRow {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    display: flex;
+    gap: 6px;
+    z-index: 5;
+}
+
+.cardActionsRow .deleteBtn,
+.cardActionsRow .editBtn {
+    position: static;
+    opacity: 1;
+}
+
+/* ==================== MODAL ==================== */
 .modalBackdrop {
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(0, 0, 0, 0.6);
-    backdrop-filter: blur(5px);
-    -webkit-backdrop-filter: blur(5px);
+    background: rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(3px);
+    -webkit-backdrop-filter: blur(3px);
     display: flex;
     align-items: center;
     justify-content: center;
     z-index: 9999;
-    /* Increased z-index */
     animation: fadeIn 0.2s ease-out;
     padding: 20px;
-    /* Prevent touching edges on mobile */
 }
 
 .modalContent {
     background: var(--bg-primary);
     width: 100%;
-    max-width: 500px;
-    border-radius: 24px;
-    padding: 32px;
+    max-width: 380px;
+    border-radius: 16px;
+    padding: 24px;
     position: relative;
-    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
-    animation: scaleIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    box-shadow: 0 20px 40px -12px rgba(0, 0, 0, 0.15);
+    animation: scaleIn 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     text-align: center;
     max-height: 90vh;
-    /* Ensure it fits on screen */
     overflow-y: auto;
-    /* Scroll if content is too long */
     margin: auto;
 }
 
 .closeModalBtn {
     position: absolute;
-    top: 20px;
-    right: 20px;
-    background: transparent;
+    top: 12px;
+    right: 12px;
+    background: var(--bg-secondary);
     border: none;
-    font-size: 1.2rem;
+    border-radius: 6px;
+    width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     color: var(--text-secondary);
     cursor: pointer;
+    transition: all 0.2s ease;
 }
 
-.modalImage {
-    width: 120px;
-    height: 120px;
-    border-radius: 50%;
-    object-fit: cover;
-    margin-bottom: 20px;
-    border: 4px solid var(--bg-secondary);
+.closeModalBtn:hover {
+    background: var(--bg-tertiary);
+    color: var(--text-primary);
+}
+
+.modalContent h2 {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin: 0 0 16px 0;
+    padding-right: 30px;
+}
+
+/* ==================== EMPTY STATE ==================== */
+.emptyState {
+    text-align: center;
+    padding: 32px 16px;
+    color: var(--text-tertiary);
+    background: var(--bg-secondary);
+    border-radius: 12px;
+    border: 1px dashed var(--border-color);
+}
+
+.emptyState p {
+    margin: 0;
+    font-size: 0.8rem;
 }
 
 /* ==================== ANIMATIONS ==================== */
-@keyframes fadeInDown {
-    from {
-        opacity: 0;
-        transform: translateY(-20px);
-    }
-
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-@keyframes fadeInUp {
-    from {
-        opacity: 0;
-        transform: translateY(20px);
-    }
-
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
 @keyframes fadeIn {
-    from {
-        opacity: 0;
-    }
-
-    to {
-        opacity: 1;
-    }
+    from { opacity: 0; }
+    to { opacity: 1; }
 }
 
 @keyframes scaleIn {
     from {
-        transform: scale(0.9);
+        transform: scale(0.96);
         opacity: 0;
     }
-
     to {
         transform: scale(1);
         opacity: 1;
     }
 }
 
-/* ==================== RESPONSIVE ==================== */
-
-/* Tablet (max-width: 1024px) */
-@media (max-width: 1024px) {
-    .container {
-        padding: var(--spacing-lg);
-        gap: 32px;
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-8px);
     }
-
-    .titleSection h1 {
-        font-size: 2rem;
-    }
-
-    .instructorsGrid {
-        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-        gap: 16px;
-    }
-
-    .orgCard {
-        width: 220px;
-        padding: 16px;
-    }
-
-    .coursesGrid {
-        grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-        gap: 10px;
-        max-height: 350px;
+    to {
+        opacity: 1;
+        transform: translateY(0);
     }
 }
 
-/* Mobile (max-width: 768px) */
-@media (max-width: 768px) {
+/* ==================== RESPONSIVE ==================== */
+
+@media (max-width: 1024px) {
     .container {
-        padding: var(--spacing-md);
-        gap: 24px;
+        padding: 90px var(--spacing-md) var(--spacing-lg);
     }
 
-    .header,
-    .coursesHeader {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 12px;
+    .columnsContainer {
+        gap: 24px;
     }
 
     .titleSection h1 {
-        font-size: 1.75rem;
+        font-size: 1.5rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .container {
+        padding: 80px var(--spacing-sm) var(--spacing-md);
+        gap: 20px;
+    }
+
+    .columnsContainer {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+
+    .header {
+        gap: 4px;
+        margin-bottom: 4px;
+    }
+
+    .titleSection h1 {
+        font-size: 1.35rem;
     }
 
     .titleSection p {
-        font-size: 0.95rem;
-    }
-
-    .tabsContainer {
-        width: 100%;
-        overflow-x: auto;
-        -ms-overflow-style: none;
-        scrollbar-width: none;
-        white-space: nowrap;
-        justify-content: flex-start;
-        padding: 4px;
-    }
-
-    .tabsContainer::-webkit-scrollbar {
-        display: none;
-    }
-
-    .tabBtn {
-        padding: 8px 14px;
         font-size: 0.85rem;
     }
 
-    /* Org Chart Mobile */
-    .orgChart {
-        gap: 24px;
+    .coursesHeader {
+        margin-bottom: 12px;
+        padding-bottom: 10px;
     }
 
-    .levelRow {
-        flex-direction: column;
-        align-items: center;
-        gap: 12px;
-    }
-
-    .orgCard {
-        width: 100%;
-        max-width: 300px;
-        padding: 14px;
-    }
-
-    .orgAvatar {
-        margin-bottom: 8px;
-    }
-
-    .orgName {
+    .sectionTitle {
         font-size: 0.9rem;
     }
 
-    .orgRole {
-        font-size: 0.8rem;
+    .toggleBtn {
+        font-size: 0.75rem;
+        padding: 5px 8px;
     }
 
-    .instructorsGrid {
-        grid-template-columns: 1fr;
+    .createCourseContainer {
+        padding: 14px;
+        border-radius: 10px;
+        margin-bottom: 12px;
+    }
+
+    .createCourseContainer h3 {
+        font-size: 0.85rem;
+        margin-bottom: 12px;
+        padding-bottom: 10px;
+    }
+
+    .createCourseForm {
         gap: 12px;
     }
 
-    /* Courses Mobile */
-    .sectionTitle {
-        font-size: 1.2rem;
+    .inputGroup label {
+        font-size: 0.7rem;
+    }
+
+    .input {
+        padding: 9px 10px;
+        font-size: 0.8rem;
+    }
+
+    textarea.input {
+        min-height: 50px;
     }
 
     .coursesGrid {
-        grid-template-columns: repeat(2, 1fr);
         gap: 8px;
-        max-height: 300px;
     }
 
     .courseCard {
@@ -796,12 +659,11 @@
     }
 
     .cardContent {
-        padding: 10px;
+        padding: 12px;
     }
 
     .courseTitle {
         font-size: 0.8rem;
-        margin-bottom: 4px;
     }
 
     .courseTypeBadge {
@@ -809,84 +671,58 @@
         padding: 2px 6px;
     }
 
-    /* Form Mobile */
-    .createCourseContainer {
-        padding: 16px;
-        border-radius: 16px;
+    .deleteBtn,
+    .editBtn {
+        width: 24px;
+        height: 24px;
+        opacity: 1;
     }
 
-    .createCourseForm {
-        gap: 12px;
+    .cardActionsRow {
+        top: 8px;
+        right: 8px;
+        gap: 4px;
     }
 
-    .input {
-        padding: 10px;
-        font-size: 0.9rem;
-    }
-
-    .toggleBtn {
-        padding: 6px 12px;
-        font-size: 0.85rem;
-    }
-
-    /* Modal Mobile */
     .modalContent {
-        padding: 20px;
-        border-radius: 20px;
-        max-width: 95%;
+        padding: 18px;
+        border-radius: 14px;
     }
 
-    .modalImage {
-        width: 80px;
-        height: 80px;
-    }
-}
-
-/* Small Mobile (max-width: 480px) */
-@media (max-width: 480px) {
-    .container {
-        padding: var(--spacing-sm);
-        gap: 20px;
-    }
-
-    .titleSection h1 {
-        font-size: 1.5rem;
-    }
-
-    .tabBtn {
-        padding: 6px 10px;
-        font-size: 0.8rem;
-    }
-
-    .orgCard {
-        max-width: 100%;
-        padding: 12px;
-    }
-
-    .orgName {
-        font-size: 0.85rem;
-    }
-
-    .coursesGrid {
-        grid-template-columns: 1fr;
-        max-height: 280px;
-    }
-
-    .courseTitle {
-        font-size: 0.75rem;
-    }
-
-    .sectionTitle {
-        font-size: 1.1rem;
+    .modalContent h2 {
+        font-size: 1rem;
     }
 
     .puestosCheckboxContainer {
-        max-height: 150px;
+        max-height: 120px;
+        padding: 8px;
     }
 
-    .deleteBtn {
-        width: 24px;
-        height: 24px;
-        font-size: 0.8rem;
+    .puestosCheckboxContainer label {
+        font-size: 0.75rem;
+        padding: 4px 0;
+    }
+
+    .emptyState {
+        padding: 24px 12px;
+    }
+
+    .emptyState p {
+        font-size: 0.75rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .container {
+        padding: 70px var(--spacing-xs) var(--spacing-sm);
+    }
+
+    .titleSection h1 {
+        font-size: 1.25rem;
+    }
+
+    .coursesHeader {
+        flex-direction: row;
+        flex-wrap: wrap;
     }
 }
