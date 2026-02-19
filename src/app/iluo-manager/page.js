@@ -3,9 +3,9 @@
 import { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
-import { 
-    Menu, X, Plus, Trash2, Search, ChevronRight, 
-    Settings2, Users, Filter, Check, Sparkles 
+import {
+    Menu, X, Plus, Trash2, Search, ChevronRight,
+    Settings2, Users, Filter, Check, Sparkles, Download
 } from 'lucide-react';
 import { db } from '@/lib/firebase';
 import { collection, query, getDocs, doc, updateDoc, arrayUnion } from 'firebase/firestore';
@@ -136,10 +136,10 @@ export default function IluoManagerPage() {
 
     const groupedSkills = useMemo(() => {
         const groups = {};
-        const filtered = activeFilter === 'Todos' 
-            ? skills 
+        const filtered = activeFilter === 'Todos'
+            ? skills
             : skills.filter(s => s.category === activeFilter);
-        
+
         filtered.forEach(skill => {
             const group = skill.group || 'General';
             if (!groups[group]) groups[group] = [];
@@ -148,10 +148,29 @@ export default function IluoManagerPage() {
         return groups;
     }, [skills, activeFilter]);
 
-    const filteredPositions = useMemo(() => 
-        positionsList.filter(p => 
+    const filteredPositions = useMemo(() =>
+        positionsList.filter(p =>
             p.name.toLowerCase().includes(searchTerm.toLowerCase())
         ), [positionsList, searchTerm]);
+
+    /** Exporta solo los nombres de puestos visibles a CSV */
+    const handleExportExcel = useCallback(() => {
+        const rows = [['Puesto'], ...filteredPositions.map(pos => [pos.name])];
+
+        const csvContent = rows
+            .map(row => row.map(cell => `"${String(cell).replace(/"/g, '""')}"`).join(';'))
+            .join('\n');
+
+        const blob = new Blob(['\uFEFF' + csvContent], { type: 'text/csv;charset=utf-8;' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        const fecha = new Date().toLocaleDateString('es-MX', { day: '2-digit', month: '2-digit', year: 'numeric' }).replace(/\//g, '-');
+        a.download = `Puestos_${fecha}.csv`;
+        a.click();
+        URL.revokeObjectURL(url);
+        toast.success('Descargado', `${filteredPositions.length} puestos exportados`);
+    }, [filteredPositions, toast]);
 
     const totalSkills = skills.length;
 
@@ -165,14 +184,14 @@ export default function IluoManagerPage() {
     return (
         <div className={styles.container}>
             <header className={styles.topBar}>
-                <button 
+                <button
                     className={styles.menuBtn}
                     onClick={() => setIsDrawerOpen(!isDrawerOpen)}
                     aria-label={isDrawerOpen ? 'Cerrar menú' : 'Abrir menú'}
                 >
                     {isDrawerOpen ? <X size={22} /> : <Menu size={22} />}
                 </button>
-                
+
                 <div className={styles.topBarTitle}>
                     <Settings2 size={20} />
                     <span>ILUO Manager</span>
@@ -194,7 +213,17 @@ export default function IluoManagerPage() {
                             <div className={styles.drawerContent}>
                                 <div className={styles.drawerHeader}>
                                     <h2>Puestos</h2>
-                                    <span className={styles.count}>{positionsList.length}</span>
+                                    <div className={styles.drawerHeaderActions}>
+                                        <span className={styles.count}>{filteredPositions.length}</span>
+                                        <button
+                                            className={styles.exportBtn}
+                                            onClick={handleExportExcel}
+                                            title="Descargar como Excel"
+                                            aria-label="Exportar puestos a Excel"
+                                        >
+                                            <Download size={16} />
+                                        </button>
+                                    </div>
                                 </div>
 
                                 <div className={styles.searchBox}>
@@ -259,7 +288,7 @@ export default function IluoManagerPage() {
                             </header>
 
                             <div className={styles.filterBar}>
-                                <button 
+                                <button
                                     className={`${styles.filterToggle} ${isFilterOpen ? styles.active : ''}`}
                                     onClick={() => setIsFilterOpen(!isFilterOpen)}
                                 >
@@ -269,10 +298,10 @@ export default function IluoManagerPage() {
                                         <span className={styles.filterBadge}>1</span>
                                     )}
                                 </button>
-                                
+
                                 <AnimatePresence>
                                     {isFilterOpen && (
-                                        <motion.div 
+                                        <motion.div
                                             className={styles.filterChips}
                                             initial={{ height: 0, opacity: 0 }}
                                             animate={{ height: 'auto', opacity: 1 }}
@@ -366,7 +395,7 @@ export default function IluoManagerPage() {
                     <Modal onClose={() => setIsModalOpen(false)}>
                         <div className={styles.modalContent}>
                             <h2>Nueva Competencia</h2>
-                            
+
                             <div className={styles.formGroup}>
                                 <label>Cliente</label>
                                 <div className={styles.selectWrapper}>

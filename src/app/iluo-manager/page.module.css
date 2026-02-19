@@ -7,7 +7,7 @@
     --outline: var(--border-color);
     --primary: var(--color-primary);
     --error: #FF3B30;
-    
+
     min-height: 100dvh;
     background: var(--surface-1);
     color: var(--on-surface);
@@ -816,7 +816,9 @@
 }
 
 @keyframes spin {
-    to { transform: rotate(360deg); }
+    to {
+        transform: rotate(360deg);
+    }
 }
 
 .loadingDots {
@@ -879,26 +881,26 @@
     .topBar {
         padding: 10px 16px;
     }
-    
+
     .main {
         padding: 16px;
     }
-    
+
     .contentHeader {
         flex-direction: column;
         align-items: flex-start;
     }
-    
+
     .statsCard {
         align-self: flex-start;
         padding: 12px 20px;
     }
-    
+
     .fab {
         bottom: 20px;
         right: 20px;
     }
-    
+
     .categoryGrid {
         grid-template-columns: 1fr 1fr;
     }
@@ -908,12 +910,44 @@
     .drawerContent {
         width: 280px;
     }
-    
+
     .contentHeader h1 {
         font-size: 1.5rem;
     }
-    
+
     .categoryGrid {
         grid-template-columns: 1fr;
     }
+}
+
+/* ── Exportar Excel ── */
+.drawerHeaderActions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.exportBtn {
+    width: 32px;
+    height: 32px;
+    border-radius: 16px;
+    border: none;
+    background: transparent;
+    color: var(--on-surface-variant);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background 0.2s, color 0.2s;
+    flex-shrink: 0;
+}
+
+.exportBtn:hover {
+    background: rgba(52, 199, 89, 0.12);
+    color: #34C759;
+}
+
+[data-theme="dark"] .exportBtn:hover {
+    background: rgba(48, 209, 88, 0.15);
+    color: #30D158;
 }
