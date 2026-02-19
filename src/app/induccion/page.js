@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { db } from '@/lib/firebase';
 import { uploadFile } from '@/lib/upload';
 import { collection, query, getDocs, addDoc, orderBy, onSnapshot, deleteDoc, doc, updateDoc } from 'firebase/firestore';
@@ -9,9 +9,21 @@ import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/Button/Button';
 import { Combobox } from '@/components/ui/Combobox/Combobox';
 import { useToast } from '@/components/ui/Toast/Toast';
-import { ChevronRight, Plus, FileText, Link2, Trash2, Edit3, ExternalLink, X, Check } from 'lucide-react';
+import {
+    ChevronRight, Plus, FileText, Link2, Trash2, Edit3,
+    ExternalLink, X, Check, BookOpen, Upload, Play,
+    Zap
+} from 'lucide-react';
 import ProfileDropdown from '@/components/ProfileDropdown/ProfileDropdown';
 import BackButton from '@/components/ui/BackButton/BackButton';
+import CoursePlayer from '@/components/Courses/CoursePlayer';
+import {
+    importCourseFromJSON,
+    getAllCourses,
+    getCourseWithSlides,
+    deleteCourse,
+    togglePublish,
+} from '@/lib/courseService';
 
 import puestosData from '../../../puestos.json';
 import styles from './page.module.css';
@@ -20,14 +32,26 @@ export default function InductionPage() {
     const { user, loading: authLoading } = useAuth();
     const router = useRouter();
     const { toast } = useToast();
+    const fileInputRef = useRef(null);
 
+    // ── Colecciones existentes ──
     const [courses, setCourses] = useState([]);
     const [candidateCourses, setCandidateCourses] = useState([]);
     const [availableCourseTitles, setAvailableCourseTitles] = useState([]);
 
+    // ── Cursos nativos (colección `cursos`) ──
+    const [nativeCourses, setNativeCourses] = useState([]);
+    const [nativeLoading, setNativeLoading] = useState(true);
+    const [importing, setImporting] = useState(false);
+    const [importAlert, setImportAlert] = useState(null);
+
+    // ── Player de cursos interactivos ──
+    const [playerData, setPlayerData] = useState(null);
+
+    // ── UI state ──
     const [showCreateForm, setShowCreateForm] = useState(false);
     const [showCandidateForm, setShowCandidateForm] = useState(false);
-    const [previewCourse, setPreviewCourse] = useState(null);
+    const [showNativeSection, setShowNativeSection] = useState(true);
 
     const [materialExpanded, setMaterialExpanded] = useState(true);
     const [candidatosExpanded, setCandidatosExpanded] = useState(true);
@@ -40,7 +64,9 @@ export default function InductionPage() {
         puestosAplicables: [],
         duracionEstimada: 30,
         obligatorio: true,
-        orden: 1
+        orden: 1,
+        nativeCourseId: '',
+        tipo: 'link', // 'link' | 'file' | 'native'
     });
 
     const [newCourseName, setNewCourseName] = useState('');
@@ -51,33 +77,113 @@ export default function InductionPage() {
 
     const canEdit = user?.rol === 'super_admin';
 
+    // ── Auth guard ──
     useEffect(() => {
         if (!authLoading && !user) router.push('/login');
     }, [user, authLoading, router]);
 
+    // ── Cargar colecciones existentes ──
     useEffect(() => {
         const q = query(collection(db, 'induction_courses'), orderBy('createdAt', 'desc'));
-        const unsubscribe = onSnapshot(q, (snapshot) => {
-            const coursesData = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-            setCourses(coursesData);
-            setAvailableCourseTitles(coursesData.map(c => c.title).filter(Boolean).sort());
+        const unsub = onSnapshot(q, (snap) => {
+            const data = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+            setCourses(data);
+            setAvailableCourseTitles(data.map(c => c.title).filter(Boolean).sort());
         });
-        return () => unsubscribe();
+        return () => unsub();
     }, []);
 
     useEffect(() => {
         const q = query(collection(db, 'cursos_induccion'), orderBy('orden', 'asc'));
-        const unsubscribe = onSnapshot(q, (snapshot) => {
-            setCandidateCourses(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
+        const unsub = onSnapshot(q, (snap) => {
+            setCandidateCourses(snap.docs.map(d => ({ id: d.id, ...d.data() })));
         });
-        return () => unsubscribe();
+        return () => unsub();
     }, []);
 
+    // ── Cargar cursos nativos ──
+    const loadNativeCourses = useCallback(async () => {
+        setNativeLoading(true);
+        const result = await getAllCourses();
+        if (result.success) setNativeCourses(result.data);
+        setNativeLoading(false);
+    }, []);
+
+    useEffect(() => {
+        loadNativeCourses();
+    }, [loadNativeCourses]);
+
+    // Auto-ocultar alerta import
+    useEffect(() => {
+        if (!importAlert) return;
+        const t = setTimeout(() => setImportAlert(null), 5000);
+        return () => clearTimeout(t);
+    }, [importAlert]);
+
+    // ── Abrir CoursePlayer ──
+    const handlePlayNative = useCallback(async (courseId) => {
+        const result = await getCourseWithSlides(courseId);
+        if (result.success) {
+            setPlayerData(result.data);
+        } else {
+            toast.error('Error', 'No se pudo cargar el curso interactivo.');
+        }
+    }, [toast]);
+
+    // ── Importar JSON (admin) ──
+    const handleImport = useCallback(async () => {
+        const f = fileInputRef.current?.files?.[0];
+        if (!f) {
+            setImportAlert({ type: 'error', message: 'Selecciona un archivo JSON.' });
+            return;
+        }
+        setImporting(true);
+        try {
+            const text = await f.text();
+            const jsonData = JSON.parse(text);
+            const result = await importCourseFromJSON(jsonData, user?.uid || 'admin');
+            if (result.success) {
+                setImportAlert({ type: 'success', message: `Curso importado (ID: ${result.courseId})` });
+                if (fileInputRef.current) fileInputRef.current.value = '';
+                await loadNativeCourses();
+            } else {
+                setImportAlert({ type: 'error', message: result.error });
+            }
+        } catch (err) {
+            setImportAlert({ type: 'error', message: `Error al parsear JSON: ${err.message}` });
+        }
+        setImporting(false);
+    }, [loadNativeCourses, user?.uid]);
+
+    // ── Toggle publicar curso nativo ──
+    const handleTogglePublish = useCallback(async (courseId, currentPublished) => {
+        const result = await togglePublish(courseId, !currentPublished);
+        if (result.success) {
+            toast.success('Actualizado', `Curso ${!currentPublished ? 'publicado' : 'despublicado'}.`);
+            await loadNativeCourses();
+        } else {
+            toast.error('Error', result.error);
+        }
+    }, [toast, loadNativeCourses]);
+
+    // ── Eliminar curso nativo ──
+    const handleDeleteNative = useCallback(async (e, courseId) => {
+        e.stopPropagation();
+        if (!window.confirm('¿Eliminar este curso y todos sus slides?')) return;
+        const result = await deleteCourse(courseId);
+        if (result.success) {
+            toast.success('Eliminado', 'Curso eliminado.');
+            await loadNativeCourses();
+        } else {
+            toast.error('Error', result.error);
+        }
+    }, [toast, loadNativeCourses]);
+
+    // ── Material de empleados ──
     const handleCreateCourse = async (e) => {
         e.preventDefault();
         if (!canEdit) return;
         if (!newCourseName.trim()) return toast.warning('Atención', 'Nombre requerido');
-
         setUploading(true);
         try {
             let fileData = null;
@@ -94,10 +200,7 @@ export default function InductionPage() {
                 createdAt: new Date().toISOString()
             });
             toast.success('Éxito', 'Material creado');
-            setNewCourseName('');
-            setFile(null);
-            setPresentationLink('');
-            setShowCreateForm(false);
+            setNewCourseName(''); setFile(null); setPresentationLink(''); setShowCreateForm(false);
         } catch (error) {
             toast.error('Error', error.message);
         } finally {
@@ -114,22 +217,20 @@ export default function InductionPage() {
         }
     };
 
+    // ── Candidatos ──
     const handleCandidateFormChange = async (field, value) => {
         setCandidateFormData(prev => ({ ...prev, [field]: value }));
         if (field === 'nombre' && value) {
             try {
-                const positionsRef = collection(db, 'positions');
-                const positionsSnapshot = await getDocs(positionsRef);
-                const matchingPositions = [];
-                positionsSnapshot.docs.forEach(doc => {
-                    const positionData = doc.data();
-                    if (positionData.requiredCourses && positionData.requiredCourses.includes(value)) {
-                        matchingPositions.push(positionData.name);
-                    }
+                const positionsSnapshot = await getDocs(collection(db, 'positions'));
+                const matching = [];
+                positionsSnapshot.docs.forEach(d => {
+                    const pd = d.data();
+                    if (pd.requiredCourses?.includes(value)) matching.push(pd.name);
                 });
-                if (matchingPositions.length > 0) {
-                    setCandidateFormData(prev => ({ ...prev, nombre: value, puestosAplicables: matchingPositions }));
-                    toast.success('Auto-asignado', `${matchingPositions.length} puesto(s)`);
+                if (matching.length > 0) {
+                    setCandidateFormData(prev => ({ ...prev, nombre: value, puestosAplicables: matching }));
+                    toast.success('Auto-asignado', `${matching.length} puesto(s)`);
                 }
             } catch (error) {
                 console.error('Error fetching positions:', error);
@@ -150,40 +251,48 @@ export default function InductionPage() {
         e.preventDefault();
         if (!canEdit) return;
         if (!candidateFormData.nombre.trim()) return toast.warning('Atención', 'El nombre es obligatorio');
-        if (!candidateFormData.contenidoUrl.trim()) return toast.warning('Atención', 'La URL es obligatoria');
-        if (candidateFormData.puestosAplicables.length === 0) return toast.warning('Atención', 'Selecciona al menos un puesto');
+        if (candidateFormData.tipo !== 'native' && !candidateFormData.contenidoUrl.trim())
+            return toast.warning('Atención', 'La URL es obligatoria');
+        if (candidateFormData.tipo === 'native' && !candidateFormData.nativeCourseId)
+            return toast.warning('Atención', 'Selecciona un curso interactivo');
+        if (candidateFormData.puestosAplicables.length === 0)
+            return toast.warning('Atención', 'Selecciona al menos un puesto');
 
         setUploading(true);
         try {
+            const dataToSave = {
+                nombre: candidateFormData.nombre,
+                descripcion: candidateFormData.descripcion,
+                duracionEstimada: candidateFormData.duracionEstimada,
+                obligatorio: candidateFormData.obligatorio,
+                orden: candidateFormData.orden,
+                puestosAplicables: candidateFormData.puestosAplicables,
+                tipo: candidateFormData.tipo,
+                contenidoUrl: candidateFormData.tipo !== 'native' ? candidateFormData.contenidoUrl : '',
+                examenUrl: candidateFormData.examenUrl,
+                nativeCourseId: candidateFormData.tipo === 'native' ? candidateFormData.nativeCourseId : '',
+            };
+
             if (editingCandidateCourse) {
                 await updateDoc(doc(db, 'cursos_induccion', editingCandidateCourse.id), {
-                    ...candidateFormData,
-                    updatedAt: new Date().toISOString()
+                    ...dataToSave, updatedAt: new Date().toISOString()
                 });
                 toast.success('Actualizado', 'Curso actualizado');
             } else {
                 await addDoc(collection(db, 'cursos_induccion'), {
-                    ...candidateFormData,
-                    activo: true,
-                    creadoPor: user?.uid || 'unknown',
-                    createdAt: new Date().toISOString()
+                    ...dataToSave, activo: true, creadoPor: user?.uid || 'unknown', createdAt: new Date().toISOString()
                 });
                 toast.success('Creado', 'Curso creado');
             }
             setShowCandidateForm(false);
             setEditingCandidateCourse(null);
             setCandidateFormData({
-                nombre: '',
-                descripcion: '',
-                contenidoUrl: '',
-                examenUrl: '',
-                puestosAplicables: [],
-                duracionEstimada: 30,
-                obligatorio: true,
-                orden: candidateCourses.length + 1
+                nombre: '', descripcion: '', contenidoUrl: '', examenUrl: '',
+                puestosAplicables: [], duracionEstimada: 30, obligatorio: true,
+                orden: candidateCourses.length + 1, nativeCourseId: '', tipo: 'link',
             });
         } catch (error) {
-            console.error('Error saving candidate course:', error);
+            console.error('Error:', error);
             toast.error('Error', error.message);
         } finally {
             setUploading(false);
@@ -201,7 +310,9 @@ export default function InductionPage() {
             puestosAplicables: course.puestosAplicables || [],
             duracionEstimada: course.duracionEstimada || 30,
             obligatorio: course.obligatorio !== undefined ? course.obligatorio : true,
-            orden: course.orden || 1
+            orden: course.orden || 1,
+            nativeCourseId: course.nativeCourseId || '',
+            tipo: course.tipo || (course.nativeCourseId ? 'native' : 'link'),
         });
         setShowCandidateForm(true);
     };
@@ -225,6 +336,17 @@ export default function InductionPage() {
         }
     };
 
+    // ── Click en tarjeta candidato ──
+    const handleCandidateCardClick = useCallback(async (course) => {
+        if (course.nativeCourseId || course.tipo === 'native') {
+            const id = course.nativeCourseId;
+            if (id) await handlePlayNative(id);
+        } else if (course.contenidoUrl) {
+            window.open(course.contenidoUrl, '_blank');
+        }
+    }, [handlePlayNative]);
+
+    // ── Loading/Auth guard ──
     if (authLoading || !user) {
         return (
             <div className={styles.main}>
@@ -234,6 +356,20 @@ export default function InductionPage() {
             </div>
         );
     }
+
+    // ── Si el player está abierto, solo renderizar el player ──
+    if (playerData) {
+        return (
+            <CoursePlayer
+                course={playerData.course}
+                slides={playerData.slides}
+                onClose={() => setPlayerData(null)}
+            />
+        );
+    }
+
+    // ── Nombre del curso nativo seleccionado ──
+    const selectedNativeCourse = nativeCourses.find(c => c.id === candidateFormData.nativeCourseId);
 
     return (
         <div className={styles.main}>
@@ -248,10 +384,112 @@ export default function InductionPage() {
                 <header className={styles.header}>
                     <div className={styles.titleSection}>
                         <h1>Inducción</h1>
-                        <p>Material y cursos de bienvenida</p>
+                        <p>Material y cursos de bienvenida para empleados y candidatos</p>
                     </div>
                 </header>
 
+                {/* ==================== CURSOS INTERACTIVOS (solo admin) ==================== */}
+                {canEdit && (
+                    <section className={styles.nativeSection}>
+                        <div className={styles.coursesHeader}>
+                            <h2
+                                className={styles.sectionTitle}
+                                onClick={() => setShowNativeSection(!showNativeSection)}
+                            >
+                                <ChevronRight
+                                    size={16}
+                                    className={`${styles.chevronIcon} ${showNativeSection ? styles.expanded : ''}`}
+                                />
+                                <Zap size={14} style={{ color: '#e8742a', flexShrink: 0 }} />
+                                Cursos Interactivos
+                                <span className={styles.sectionCount}>{nativeCourses.length}</span>
+                            </h2>
+
+                            <div className={styles.nativeActions}>
+                                <label className={styles.importJsonBtn}>
+                                    <input
+                                        ref={fileInputRef}
+                                        type="file"
+                                        accept=".json"
+                                        style={{ display: 'none' }}
+                                        onChange={() => { }}
+                                    />
+                                    <FileText size={13} />
+                                    <span>JSON</span>
+                                </label>
+                                <button
+                                    className={styles.importBtn}
+                                    onClick={handleImport}
+                                    disabled={importing}
+                                >
+                                    <Upload size={13} />
+                                    {importing ? 'Importando…' : 'Importar'}
+                                </button>
+                            </div>
+                        </div>
+
+                        {importAlert && (
+                            <div className={`${styles.importAlert} ${importAlert.type === 'success' ? styles.importAlertSuccess : styles.importAlertError}`}>
+                                {importAlert.message}
+                            </div>
+                        )}
+
+                        {showNativeSection && (
+                            <div className={styles.nativeGrid}>
+                                {nativeLoading ? (
+                                    <div className={styles.emptyState}><p>Cargando cursos…</p></div>
+                                ) : nativeCourses.length === 0 ? (
+                                    <div className={styles.emptyState}>
+                                        <p>No hay cursos interactivos. Importa un JSON para comenzar.</p>
+                                    </div>
+                                ) : (
+                                    nativeCourses.map(course => (
+                                        <div key={course.id} className={styles.nativeCard}>
+                                            <div className={styles.nativeCardLeft}>
+                                                <div className={styles.nativeIcon}>
+                                                    <BookOpen size={16} />
+                                                </div>
+                                                <div className={styles.nativeInfo}>
+                                                    <span className={styles.nativeTitle}>{course.title}</span>
+                                                    <div className={styles.nativeMeta}>
+                                                        {course.category && <span>{course.category}</span>}
+                                                        {course.slideCount && <span>{course.slideCount} slides</span>}
+                                                        {course.duration && <span>{course.duration}</span>}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div className={styles.nativeCardRight}>
+                                                <span
+                                                    className={`${styles.publishBadge} ${course.published ? styles.publishedBadge : styles.draftBadge}`}
+                                                    onClick={() => handleTogglePublish(course.id, course.published)}
+                                                    title="Click para cambiar estado"
+                                                >
+                                                    {course.published ? 'Publicado' : 'Borrador'}
+                                                </span>
+                                                <button
+                                                    className={styles.playBtn}
+                                                    onClick={() => handlePlayNative(course.id)}
+                                                    title="Reproducir"
+                                                >
+                                                    <Play size={13} />
+                                                </button>
+                                                <button
+                                                    className={styles.nativeDeleteBtn}
+                                                    onClick={(e) => handleDeleteNative(e, course.id)}
+                                                    title="Eliminar"
+                                                >
+                                                    <Trash2 size={13} />
+                                                </button>
+                                            </div>
+                                        </div>
+                                    ))
+                                )}
+                            </div>
+                        )}
+                    </section>
+                )}
+
+                {/* ==================== DOS COLUMNAS (existentes) ==================== */}
                 <div className={styles.columnsContainer}>
                     {/* COLUMNA IZQUIERDA - Cursos de Candidatos */}
                     {canEdit && (
@@ -275,7 +513,8 @@ export default function InductionPage() {
                                         setEditingCandidateCourse(null);
                                         setCandidateFormData({
                                             nombre: '', descripcion: '', contenidoUrl: '', examenUrl: '',
-                                            puestosAplicables: [], duracionEstimada: 30, obligatorio: true, orden: 1
+                                            puestosAplicables: [], duracionEstimada: 30, obligatorio: true,
+                                            orden: 1, nativeCourseId: '', tipo: 'link',
                                         });
                                     }}
                                 >
@@ -312,15 +551,49 @@ export default function InductionPage() {
                                                     />
                                                 </div>
 
+                                                {/* Selector de tipo de contenido */}
                                                 <div className={styles.inputGroup}>
-                                                    <label>URL de presentación</label>
-                                                    <input
-                                                        className={styles.input}
-                                                        value={candidateFormData.contenidoUrl}
-                                                        onChange={e => handleCandidateFormChange('contenidoUrl', e.target.value)}
-                                                        placeholder="https://drive.google.com/..."
-                                                    />
+                                                    <label>Tipo de contenido</label>
+                                                    <div className={styles.tipoSelector}>
+                                                        {['link', 'native'].map(tipo => (
+                                                            <button
+                                                                key={tipo}
+                                                                type="button"
+                                                                className={`${styles.tipoBtn} ${candidateFormData.tipo === tipo ? styles.tipoBtnActive : ''}`}
+                                                                onClick={() => handleCandidateFormChange('tipo', tipo)}
+                                                            >
+                                                                {tipo === 'link' && <><Link2 size={12} /> Enlace</>}
+                                                                {tipo === 'native' && <><Zap size={12} /> Interactivo</>}
+                                                            </button>
+                                                        ))}
+                                                    </div>
                                                 </div>
+
+                                                {candidateFormData.tipo === 'native' ? (
+                                                    <div className={styles.inputGroup}>
+                                                        <label>Curso interactivo</label>
+                                                        <select
+                                                            className={styles.input}
+                                                            value={candidateFormData.nativeCourseId}
+                                                            onChange={e => handleCandidateFormChange('nativeCourseId', e.target.value)}
+                                                        >
+                                                            <option value="">— Seleccionar curso —</option>
+                                                            {nativeCourses.map(c => (
+                                                                <option key={c.id} value={c.id}>{c.title}</option>
+                                                            ))}
+                                                        </select>
+                                                    </div>
+                                                ) : (
+                                                    <div className={styles.inputGroup}>
+                                                        <label>URL de presentación</label>
+                                                        <input
+                                                            className={styles.input}
+                                                            value={candidateFormData.contenidoUrl}
+                                                            onChange={e => handleCandidateFormChange('contenidoUrl', e.target.value)}
+                                                            placeholder="https://drive.google.com/..."
+                                                        />
+                                                    </div>
+                                                )}
 
                                                 <div className={styles.inputGroup}>
                                                     <label>URL de examen (opcional)</label>
@@ -379,10 +652,7 @@ export default function InductionPage() {
                                                         <button
                                                             type="button"
                                                             className={styles.toggleBtn}
-                                                            onClick={() => {
-                                                                setEditingCandidateCourse(null);
-                                                                setShowCandidateForm(false);
-                                                            }}
+                                                            onClick={() => { setEditingCandidateCourse(null); setShowCandidateForm(false); }}
                                                         >
                                                             Cancelar
                                                         </button>
@@ -394,59 +664,67 @@ export default function InductionPage() {
 
                                     <div className={styles.coursesGrid}>
                                         {candidateCourses.length === 0 ? (
-                                            <div className={styles.emptyState}>
-                                                <p>No hay cursos de candidatos</p>
-                                            </div>
+                                            <div className={styles.emptyState}><p>No hay cursos de candidatos</p></div>
                                         ) : (
-                                            candidateCourses.map(course => (
-                                                <div key={course.id} className={styles.courseCard}>
+                                            candidateCourses.map(course => {
+                                                const isNative = course.tipo === 'native' || !!course.nativeCourseId;
+                                                return (
                                                     <div
-                                                        className={styles.cardTopColor}
-                                                        style={{ background: course.activo ? '#22c55e' : '#94a3b8' }}
-                                                    />
-                                                    <div className={styles.cardActionsRow}>
-                                                        <button
-                                                            className={styles.editBtn}
-                                                            onClick={(e) => handleEditCandidateCourse(e, course)}
-                                                        >
-                                                            <Edit3 size={12} />
-                                                        </button>
-                                                        <button
-                                                            className={styles.deleteBtn}
-                                                            onClick={(e) => handleDeleteCandidateCourse(e, course.id)}
-                                                        >
-                                                            <Trash2 size={12} />
-                                                        </button>
-                                                    </div>
-                                                    <div className={styles.cardContent}>
-                                                        <div>
-                                                            <h3 className={styles.courseTitle}>{course.nombre}</h3>
-                                                            {course.descripcion && (
-                                                                <p className={styles.cardDescription}>
-                                                                    {course.descripcion.length > 60 
-                                                                        ? course.descripcion.substring(0, 60) + '...' 
-                                                                        : course.descripcion}
-                                                                </p>
-                                                            )}
-                                                        </div>
-                                                        <div className={styles.cardMeta}>
-                                                            <span className={styles.courseTypeBadge}>
-                                                                {course.puestosAplicables?.length || 0} puestos
-                                                            </span>
-                                                            <span className={styles.courseTypeBadge}>
-                                                                {course.duracionEstimada} min
-                                                            </span>
-                                                            <button
-                                                                className={styles.toggleBtn}
-                                                                onClick={() => handleToggleCourseActive(course.id, course.activo)}
-                                                                style={{ marginLeft: 'auto' }}
-                                                            >
-                                                                {course.activo ? 'Desactivar' : 'Activar'}
+                                                        key={course.id}
+                                                        className={styles.courseCard}
+                                                        onClick={() => handleCandidateCardClick(course)}
+                                                    >
+                                                        <div
+                                                            className={styles.cardTopColor}
+                                                            style={{ background: course.activo ? '#22c55e' : '#94a3b8' }}
+                                                        />
+                                                        <div className={styles.cardActionsRow}>
+                                                            <button className={styles.editBtn} onClick={(e) => handleEditCandidateCourse(e, course)}>
+                                                                <Edit3 size={12} />
+                                                            </button>
+                                                            <button className={styles.deleteBtn} onClick={(e) => handleDeleteCandidateCourse(e, course.id)}>
+                                                                <Trash2 size={12} />
                                                             </button>
                                                         </div>
+                                                        <div className={styles.cardContent}>
+                                                            <div>
+                                                                <h3 className={styles.courseTitle}>{course.nombre}</h3>
+                                                                {course.descripcion && (
+                                                                    <p className={styles.cardDescription}>
+                                                                        {course.descripcion.length > 60
+                                                                            ? course.descripcion.substring(0, 60) + '...'
+                                                                            : course.descripcion}
+                                                                    </p>
+                                                                )}
+                                                            </div>
+                                                            <div className={styles.cardMeta}>
+                                                                {isNative ? (
+                                                                    <span className={`${styles.courseTypeBadge} ${styles.nativeBadge}`}>
+                                                                        <Zap size={9} /> Interactivo
+                                                                    </span>
+                                                                ) : (
+                                                                    <span className={styles.courseTypeBadge}>
+                                                                        <Link2 size={9} /> Enlace
+                                                                    </span>
+                                                                )}
+                                                                <span className={styles.courseTypeBadge}>
+                                                                    {course.puestosAplicables?.length || 0} puestos
+                                                                </span>
+                                                                <span className={styles.courseTypeBadge}>
+                                                                    {course.duracionEstimada} min
+                                                                </span>
+                                                                <button
+                                                                    className={styles.toggleBtn}
+                                                                    onClick={(e) => { e.stopPropagation(); handleToggleCourseActive(course.id, course.activo); }}
+                                                                    style={{ marginLeft: 'auto' }}
+                                                                >
+                                                                    {course.activo ? 'Desactivar' : 'Activar'}
+                                                                </button>
+                                                            </div>
+                                                        </div>
                                                     </div>
-                                                </div>
-                                            ))
+                                                );
+                                            })
                                         )}
                                     </div>
                                 </>
@@ -495,8 +773,8 @@ export default function InductionPage() {
                                                 <label>Archivo o enlace</label>
                                                 <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                                                     <input type="file" onChange={e => setFile(e.target.files[0])} style={{ display: 'none' }} id="fileUpload" />
-                                                    <label 
-                                                        htmlFor="fileUpload" 
+                                                    <label
+                                                        htmlFor="fileUpload"
                                                         className={`${styles.fileBtn} ${file ? styles.fileBtnActive : ''}`}
                                                     >
                                                         {file ? <Check size={14} /> : <FileText size={14} />}
@@ -523,25 +801,20 @@ export default function InductionPage() {
 
                                 <div className={styles.coursesGrid}>
                                     {courses.length === 0 ? (
-                                        <div className={styles.emptyState}>
-                                            <p>No hay material de inducción</p>
-                                        </div>
+                                        <div className={styles.emptyState}><p>No hay material de inducción</p></div>
                                     ) : (
                                         courses.map(course => (
                                             <div
                                                 key={course.id}
                                                 className={styles.courseCard}
-                                                onClick={() => setPreviewCourse(course)}
+                                                onClick={() => window.open(course.material?.url, '_blank')}
                                             >
                                                 <div
                                                     className={styles.cardTopColor}
                                                     style={{ background: course.material?.type === 'link' ? '#f59e0b' : '#ef4444' }}
                                                 />
                                                 {canEdit && (
-                                                    <button
-                                                        className={styles.deleteBtn}
-                                                        onClick={(e) => handleDeleteCourse(e, course.id)}
-                                                    >
+                                                    <button className={styles.deleteBtn} onClick={(e) => handleDeleteCourse(e, course.id)}>
                                                         <Trash2 size={12} />
                                                     </button>
                                                 )}
@@ -569,21 +842,6 @@ export default function InductionPage() {
                     </section>
                 </div>
             </div>
-
-            {previewCourse && (
-                <div className={styles.modalBackdrop} onClick={() => setPreviewCourse(null)}>
-                    <div className={styles.modalContent} onClick={e => e.stopPropagation()}>
-                        <button className={styles.closeModalBtn} onClick={() => setPreviewCourse(null)}>
-                            <X size={14} />
-                        </button>
-                        <h2>{previewCourse.title}</h2>
-                        <Button onClick={() => window.open(previewCourse.material?.url, '_blank')}>
-                            <ExternalLink size={14} style={{ marginRight: 6 }} />
-                            {previewCourse.material?.type === 'link' ? 'Abrir enlace' : 'Ver documento'}
-                        </Button>
-                    </div>
-                </div>
-            )}
         </div>
     );
 }

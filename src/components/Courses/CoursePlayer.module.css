@@ -1,0 +1,294 @@
+/* ==========================================
+   COURSE PLAYER — PREMIUM PRESENTATION UI
+   Dark chrome • Dot nav • Progress inline
+   ========================================== */
+
+/* ── Overlay ── */
+.overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    transition: background 0.5s ease;
+}
+
+.overlayDark {
+    background: linear-gradient(145deg, #0f1a2e 0%, #1a2d4d 50%, #1e3355 100%);
+}
+
+.overlayLight {
+    background: #f5efe6;
+}
+
+/* ── Header ── */
+.header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.7rem 1.25rem;
+    padding-top: max(0.7rem, env(safe-area-inset-top));
+    background: #0f1a2e;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    z-index: 10;
+    flex-shrink: 0;
+}
+
+.exitBtn {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.4rem 0.9rem;
+    border-radius: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    background: rgba(255, 255, 255, 0.06);
+    color: rgba(255, 255, 255, 0.92);
+    font-size: 0.82rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+}
+
+.exitBtn:hover {
+    background: rgba(255, 255, 255, 0.12);
+    border-color: rgba(255, 255, 255, 0.2);
+}
+
+.headerTitle {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: rgba(255, 255, 255, 0.92);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width: 40%;
+    text-align: center;
+}
+
+.headerRight {
+    display: flex;
+    align-items: center;
+    gap: 0.65rem;
+}
+
+.counter {
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.45);
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+}
+
+.progressTrack {
+    width: 80px;
+    height: 4px;
+    border-radius: 2px;
+    background: rgba(255, 255, 255, 0.1);
+    overflow: hidden;
+}
+
+.progressFill {
+    height: 100%;
+    background: #e8742a;
+    border-radius: 2px;
+    transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ── Content ── */
+.content {
+    flex: 1;
+    overflow-y: auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+    -webkit-overflow-scrolling: touch;
+}
+
+/* ── Navigation ── */
+.nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.75rem 1.25rem;
+    padding-bottom: max(0.75rem, env(safe-area-inset-bottom));
+    background: #0f1a2e;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+    flex-shrink: 0;
+    gap: 0.75rem;
+}
+
+.navBtn {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.55rem 1.25rem;
+    border-radius: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    background: rgba(255, 255, 255, 0.06);
+    color: rgba(255, 255, 255, 0.92);
+    font-weight: 600;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+}
+
+.navBtn:hover:not(:disabled) {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.18);
+}
+
+.navBtn:active:not(:disabled) {
+    transform: scale(0.97);
+}
+
+.navBtn:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+}
+
+.navBtnPrimary {
+    background: #e8742a;
+    border-color: #e8742a;
+    color: white;
+}
+
+.navBtnPrimary:hover:not(:disabled) {
+    filter: brightness(1.15);
+    background: #e8742a;
+    border-color: #e8742a;
+}
+
+/* ── Dots ── */
+.dots {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    border: none;
+    padding: 0;
+    background: rgba(255, 255, 255, 0.2);
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.dot:hover {
+    background: rgba(255, 255, 255, 0.45);
+    transform: scale(1.3);
+}
+
+.dotVisited {
+    background: rgba(255, 255, 255, 0.35);
+}
+
+.dotActive {
+    width: 24px;
+    border-radius: 4px;
+    background: #e8742a;
+}
+
+/* ── Empty ── */
+.emptyMsg {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    color: rgba(255, 255, 255, 0.45);
+    font-size: 1rem;
+}
+
+/* ==========================================
+   RESPONSIVE — TABLET
+   ========================================== */
+@media (max-width: 1024px) {
+    .headerTitle {
+        font-size: 0.88rem;
+        max-width: 35%;
+    }
+
+    .progressTrack {
+        width: 60px;
+    }
+}
+
+/* ==========================================
+   RESPONSIVE — MOBILE
+   ========================================== */
+@media (max-width: 767px) {
+    .header {
+        padding: 0.55rem 0.75rem;
+        padding-top: max(0.55rem, env(safe-area-inset-top));
+    }
+
+    .exitBtn {
+        padding: 0.35rem 0.65rem;
+        font-size: 0.78rem;
+    }
+
+    .headerTitle {
+        font-size: 0.82rem;
+        max-width: 30%;
+    }
+
+    .progressTrack {
+        width: 50px;
+    }
+
+    .content {
+        padding: 0.5rem;
+    }
+
+    .nav {
+        padding: 0.6rem 0.75rem;
+        padding-bottom: max(0.6rem, env(safe-area-inset-bottom));
+    }
+
+    .navBtn {
+        padding: 0.5rem 0.85rem;
+        font-size: 0.78rem;
+    }
+
+    .dots {
+        gap: 4px;
+    }
+
+    .dot {
+        width: 6px;
+        height: 6px;
+    }
+
+    .dotActive {
+        width: 18px;
+    }
+}
+
+/* ==========================================
+   RESPONSIVE — SMALL PHONES
+   ========================================== */
+@media (max-width: 379px) {
+    .exitBtn span {
+        display: none;
+    }
+
+    .headerTitle {
+        max-width: 40%;
+    }
+
+    .navBtn span {
+        display: none;
+    }
+
+    .navBtn {
+        padding: 0.5rem;
+    }
+}

@@ -23,12 +23,12 @@
     height: 100%;
     z-index: 0;
     pointer-events: none;
-    background: 
+    background:
         radial-gradient(ellipse 80% 50% at 50% -20%, rgba(var(--color-primary-rgb), 0.03) 0%, transparent 50%);
 }
 
 [data-theme="dark"] .bgDecoration {
-    background: 
+    background:
         radial-gradient(ellipse 80% 50% at 50% -20%, rgba(var(--color-primary-rgb), 0.05) 0%, transparent 50%);
 }
 
@@ -541,8 +541,13 @@ textarea.input {
 
 /* ==================== ANIMATIONS ==================== */
 @keyframes fadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
 }
 
 @keyframes scaleIn {
@@ -550,6 +555,7 @@ textarea.input {
         transform: scale(0.96);
         opacity: 0;
     }
+
     to {
         transform: scale(1);
         opacity: 1;
@@ -561,10 +567,285 @@ textarea.input {
         opacity: 0;
         transform: translateY(-8px);
     }
+
     to {
         opacity: 1;
         transform: translateY(0);
     }
+}
+
+/* ==================== NATIVE COURSES SECTION ==================== */
+.nativeSection {
+    border: 1px solid var(--border-color);
+    border-radius: 14px;
+    padding: 16px 18px;
+    background: var(--bg-secondary);
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.nativeGrid {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.nativeCard {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 10px 12px;
+    border-radius: 10px;
+    background: var(--bg-primary);
+    border: 1px solid var(--border-color);
+    transition: all 0.2s ease;
+}
+
+.nativeCard:hover {
+    border-color: rgba(var(--color-primary-rgb), 0.25);
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
+}
+
+.nativeCardLeft {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex: 1;
+    min-width: 0;
+}
+
+.nativeIcon {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    background: rgba(232, 116, 42, 0.1);
+    color: #e8742a;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.nativeInfo {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    min-width: 0;
+}
+
+.nativeTitle {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.nativeMeta {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.nativeMeta span {
+    font-size: 0.7rem;
+    color: var(--text-tertiary);
+    font-weight: 400;
+}
+
+.nativeCardRight {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-shrink: 0;
+}
+
+/* Publish badge (clickable) */
+.publishBadge {
+    font-size: 0.7rem;
+    font-weight: 600;
+    padding: 3px 9px;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+}
+
+.publishedBadge {
+    background: rgba(34, 197, 94, 0.1);
+    color: #16a34a;
+    border: 1px solid rgba(34, 197, 94, 0.2);
+}
+
+.publishedBadge:hover {
+    background: rgba(34, 197, 94, 0.18);
+}
+
+.draftBadge {
+    background: var(--bg-tertiary);
+    color: var(--text-tertiary);
+    border: 1px solid var(--border-color);
+}
+
+.draftBadge:hover {
+    background: rgba(232, 116, 42, 0.08);
+    color: #e8742a;
+    border-color: rgba(232, 116, 42, 0.25);
+}
+
+/* Play button */
+.playBtn {
+    width: 28px;
+    height: 28px;
+    border-radius: 7px;
+    background: rgba(232, 116, 42, 0.1);
+    color: #e8742a;
+    border: 1px solid rgba(232, 116, 42, 0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.playBtn:hover {
+    background: #e8742a;
+    color: white;
+    border-color: #e8742a;
+}
+
+/* Native delete button */
+.nativeDeleteBtn {
+    width: 28px;
+    height: 28px;
+    border-radius: 7px;
+    background: transparent;
+    color: var(--text-tertiary);
+    border: 1px solid var(--border-color);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.nativeDeleteBtn:hover {
+    background: rgba(220, 38, 38, 0.08);
+    color: #dc2626;
+    border-color: rgba(220, 38, 38, 0.2);
+}
+
+/* Import actions */
+.nativeActions {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.importJsonBtn {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    background: transparent;
+    color: var(--text-secondary);
+    border: 1px solid var(--border-color);
+    padding: 5px 10px;
+    border-radius: 7px;
+    font-size: 0.78rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.importJsonBtn:hover {
+    background: var(--bg-primary);
+    color: var(--text-primary);
+}
+
+.importBtn {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    background: #e8742a;
+    color: white;
+    border: none;
+    padding: 5px 12px;
+    border-radius: 7px;
+    font-size: 0.78rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.importBtn:hover:not(:disabled) {
+    filter: brightness(1.1);
+}
+
+.importBtn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* Import alerts */
+.importAlert {
+    padding: 8px 12px;
+    border-radius: 8px;
+    font-size: 0.8rem;
+    font-weight: 500;
+    animation: slideDown 0.25s ease-out;
+}
+
+.importAlertSuccess {
+    background: rgba(34, 197, 94, 0.08);
+    color: #16a34a;
+    border: 1px solid rgba(34, 197, 94, 0.2);
+}
+
+.importAlertError {
+    background: rgba(220, 38, 38, 0.08);
+    color: #dc2626;
+    border: 1px solid rgba(220, 38, 38, 0.2);
+}
+
+/* Tipo selector (link / interactivo) */
+.tipoSelector {
+    display: flex;
+    gap: 6px;
+}
+
+.tipoBtn {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 7px 14px;
+    border-radius: 8px;
+    font-size: 0.8rem;
+    font-weight: 500;
+    border: 1px solid var(--border-color);
+    background: transparent;
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.tipoBtn:hover {
+    background: var(--bg-primary);
+    color: var(--text-primary);
+}
+
+.tipoBtnActive {
+    background: rgba(var(--color-primary-rgb), 0.08);
+    border-color: var(--color-primary);
+    color: var(--color-primary);
+}
+
+/* Badge nativo en tarjetas */
+.nativeBadge {
+    background: rgba(232, 116, 42, 0.1) !important;
+    color: #e8742a !important;
 }
 
 /* ==================== RESPONSIVE ==================== */

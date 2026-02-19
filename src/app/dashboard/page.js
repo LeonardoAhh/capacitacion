@@ -11,7 +11,7 @@ import { useNotifications } from '@/hooks/useNotifications';
 import { useDashboardStats } from '@/hooks/useDashboardStats';
 import {
     Users, FileText, Clock, AlertCircle, Calendar,
-    TrendingUp, Award, GitCompareArrows, ChevronRight
+    TrendingUp, Award, GitCompareArrows, ChevronRight, FlaskConical
 } from 'lucide-react';
 import styles from './page.module.css';
 
@@ -86,6 +86,7 @@ export default function DashboardPage() {
         { href: '/reports', title: 'Reportes', icon: TrendingUp },
         { href: '/capacitacion/comparacion', title: 'Comparación', icon: GitCompareArrows },
         { href: '/capacitacion/examen', title: 'Generador Exámenes', icon: Calendar },
+        { href: '/test', title: 'Test Page', icon: FlaskConical },
     ];
 
     return (

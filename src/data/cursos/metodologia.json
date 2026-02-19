@@ -1,0 +1,324 @@
+{
+    "course": {
+        "id": "metodologia-5s",
+        "title": "Metodología 5S",
+        "description": "Aprende los principios del método Kaizen para mejorar las condiciones de trabajo, aumentar la productividad y reducir desperdicios.",
+        "category": "Calidad",
+        "duration": "25 min",
+        "published": true,
+        "instructor": "Lic. Hernandez Herrera Leonardo A.",
+        "instructorRole": "Analista de Capacitación Planta Querétaro",
+        "company": "ViñoPlastic Inyección S.A de C.V",
+        "year": "2025",
+        "createdAt": "SERVER_TIMESTAMP"
+    },
+    "slides": [
+        {
+            "id": "slide-01",
+            "order": 1,
+            "type": "title",
+            "data": {
+                "title": "Metodología 5S",
+                "subtitle": "ViñoPlastic Inyección S.A de C.V",
+                "year": "2025",
+                "tags": [
+                    "Japonés",
+                    "Kaizen",
+                    "Mejora Continua"
+                ]
+            }
+        },
+        {
+            "id": "slide-02",
+            "order": 2,
+            "type": "objective",
+            "data": {
+                "heading": "Objetivo General",
+                "body": "Establecer un sistema por el cual se mejoren las condiciones de trabajo, de modo que se beneficie a las personas y a la propia organización.",
+                "badge": "KAIZEN",
+                "badgeSubtitle": "改善 = Cambio + Mejor = Mejora Continua"
+            }
+        },
+        {
+            "id": "slide-03",
+            "order": 3,
+            "type": "definition",
+            "data": {
+                "heading": "¿Qué es la Metodología 5S?",
+                "body": "Las 5´S es una metodología de trabajo originaria de Japón. Se basa en los principios de aumento de la productividad, reducir el consumo de materiales y los tiempos de trabajo.",
+                "highlights": [
+                    "Productividad ↑",
+                    "Menos desperdicios",
+                    "Tiempos optimizados"
+                ]
+            }
+        },
+        {
+            "id": "slide-04",
+            "order": 4,
+            "type": "icon_grid",
+            "data": {
+                "heading": "Las 5 pilares del método",
+                "items": [
+                    {
+                        "icon": "🗂️",
+                        "label": "Seiri",
+                        "sublabel": "Seleccionar",
+                        "color": "#E07B39"
+                    },
+                    {
+                        "icon": "📐",
+                        "label": "Seiton",
+                        "sublabel": "Organizar",
+                        "color": "#2B7A78"
+                    },
+                    {
+                        "icon": "🧹",
+                        "label": "Seiso",
+                        "sublabel": "Limpiar",
+                        "color": "#6B4E9B"
+                    },
+                    {
+                        "icon": "📋",
+                        "label": "Seiketsu",
+                        "sublabel": "Estandarizar",
+                        "color": "#1A6B4A"
+                    },
+                    {
+                        "icon": "🎯",
+                        "label": "Shitsuke",
+                        "sublabel": "Disciplina",
+                        "color": "#C0392B"
+                    }
+                ]
+            }
+        },
+        {
+            "id": "slide-05",
+            "order": 5,
+            "type": "content",
+            "data": {
+                "tag": "1ª S",
+                "heading": "Seiri — Seleccionar",
+                "body": "Significa eliminar o descartar del área de trabajo todos aquellos elementos innecesarios que no se utilizarán para trabajar. Selecciona y clasifica lo necesario de lo innecesario. Mantén lo que se necesita y retira todo aquello que sea excesivo y ocupe espacio de trabajo.",
+                "accent": "#E07B39",
+                "bullets": [
+                    "Seleccionar y clasificar lo necesario e innecesario",
+                    "Mantener lo que se necesita y retirar lo excesivo",
+                    "Separar elementos por frecuencia de uso, seguridad y naturaleza"
+                ]
+            }
+        },
+        {
+            "id": "slide-06",
+            "order": 6,
+            "type": "benefits",
+            "data": {
+                "tag": "Beneficios — Seiri",
+                "heading": "Beneficios de Seleccionar",
+                "accent": "#E07B39",
+                "items": [
+                    {
+                        "icon": "⏱️",
+                        "text": "Reducir los tiempos de búsqueda de herramientas y documentos"
+                    },
+                    {
+                        "icon": "❌",
+                        "text": "Eliminación de pérdidas por errores"
+                    },
+                    {
+                        "icon": "👁️",
+                        "text": "Control visual que identifique herramientas y materiales"
+                    },
+                    {
+                        "icon": "✨",
+                        "text": "Mejora la presentación y estética de las instalaciones, comunicando orden, responsabilidad y compromiso con el trabajo"
+                    }
+                ]
+            }
+        },
+        {
+            "id": "slide-07",
+            "order": 7,
+            "type": "content",
+            "data": {
+                "tag": "2ª S",
+                "heading": "Seiton — Organizar",
+                "body": "Un lugar para cada cosa y cada cosa en su lugar. Organiza los elementos necesarios de modo que sean de fácil uso y acceso. Identifica claramente cada ubicación para evitar tiempos perdidos en búsqueda de herramientas o materiales.",
+                "accent": "#2B7A78",
+                "bullets": [
+                    "Organizar los elementos por frecuencia y facilidad de uso",
+                    "Definir un lugar fijo para cada herramienta o material",
+                    "Etiquetar y señalizar visualmente cada ubicación"
+                ]
+            }
+        },
+        {
+            "id": "slide-08",
+            "order": 8,
+            "type": "content",
+            "data": {
+                "tag": "3ª S",
+                "heading": "Seiso — Limpiar",
+                "body": "Limpiar para eliminar polvo, suciedad y cualquier contaminante de los elementos del área y de la propia área de trabajo. No consiste solo en limpiar, sino también en eliminar la causa raíz de cualquier tipo de fuente de contaminación.",
+                "accent": "#6B4E9B",
+                "bullets": [
+                    "Eliminar la causa raíz de cualquier fuente de contaminación",
+                    "Integrar la limpieza como parte del trabajo cotidiano",
+                    "Mantener equipos e instalaciones en óptimas condiciones"
+                ]
+            }
+        },
+        {
+            "id": "slide-09",
+            "order": 9,
+            "type": "benefits",
+            "data": {
+                "tag": "Beneficios — Seiso",
+                "heading": "Beneficios de Limpiar",
+                "accent": "#6B4E9B",
+                "items": [
+                    {
+                        "icon": "🏭",
+                        "text": "Disponer de un área de trabajo organizada y limpia"
+                    },
+                    {
+                        "icon": "🔧",
+                        "text": "Prolongar la vida útil de instalaciones y equipos"
+                    },
+                    {
+                        "icon": "🛡️",
+                        "text": "Prevenir contaminación de los procesos productivos"
+                    }
+                ]
+            }
+        },
+        {
+            "id": "slide-10",
+            "order": 10,
+            "type": "content",
+            "data": {
+                "tag": "4ª S",
+                "heading": "Seiketsu — Estandarizar",
+                "body": "Es la acción que permite mantener los logros alcanzados con la aplicación de las tres primeras S. Establece prácticas, condiciones e información comprensible para quienes se desempeñan en el mismo entorno de trabajo.",
+                "accent": "#1A6B4A",
+                "bullets": [
+                    "Mantener el grado de limpieza y organización logrado",
+                    "Establecer respeto de normas y estándares para el área",
+                    "Promover la identificación visual de información, equipo, herramienta y material"
+                ]
+            }
+        },
+        {
+            "id": "slide-11",
+            "order": 11,
+            "type": "benefits",
+            "data": {
+                "tag": "Beneficios — Seiketsu",
+                "heading": "Beneficios de Estandarizar",
+                "accent": "#1A6B4A",
+                "items": [
+                    {
+                        "icon": "📈",
+                        "text": "Incrementa la productividad al reducir tiempos de búsqueda"
+                    },
+                    {
+                        "icon": "🔄",
+                        "text": "Mejoran los tiempos de intervención en procesos"
+                    },
+                    {
+                        "icon": "✅",
+                        "text": "Crea el hábito de conservar impecable el área de trabajo de forma permanente"
+                    }
+                ]
+            }
+        },
+        {
+            "id": "slide-12",
+            "order": 12,
+            "type": "content",
+            "data": {
+                "tag": "5ª S",
+                "heading": "Shitsuke — Disciplina",
+                "body": "Convertir en hábito el empleo y utilización de los métodos establecidos y estandarizados para la limpieza en el lugar de trabajo. Trabajar permanentemente de acuerdo con las normas establecidas, asumiendo el compromiso de mantener y mejorar el nivel de aplicación de las 5S.",
+                "accent": "#C0392B",
+                "bullets": [
+                    "Convertir en hábito el uso de los métodos estandarizados",
+                    "Trabajar conforme a las normas establecidas en las fases anteriores",
+                    "Asumir el compromiso de mejora continua"
+                ]
+            }
+        },
+        {
+            "id": "slide-13",
+            "order": 13,
+            "type": "quiz",
+            "data": {
+                "heading": "Evaluación Final — Metodología 5S",
+                "passingScore": 70,
+                "questions": [
+                    {
+                        "q": "¿Qué significa 'Seiri' en la metodología 5S?",
+                        "options": [
+                            "Organizar cada elemento en su lugar",
+                            "Seleccionar y clasificar lo necesario de lo innecesario",
+                            "Limpiar para eliminar contaminantes",
+                            "Estandarizar las prácticas de trabajo"
+                        ],
+                        "correct": 1
+                    },
+                    {
+                        "q": "¿Cuál es el objetivo principal de 'Seiso'?",
+                        "options": [
+                            "Solo barrer y trapear el piso del área",
+                            "Eliminar elementos innecesarios del área",
+                            "Limpiar y eliminar la causa raíz de cualquier fuente de contaminación",
+                            "Crear hábitos de disciplina laboral"
+                        ],
+                        "correct": 2
+                    },
+                    {
+                        "q": "La 4ª S 'Seiketsu' significa:",
+                        "options": [
+                            "Seleccionar lo necesario",
+                            "Limpiar el área de trabajo",
+                            "Disciplina y hábito continuo",
+                            "Estandarizar para mantener logros de las 3 primeras S"
+                        ],
+                        "correct": 3
+                    },
+                    {
+                        "q": "¿Cuál es un beneficio directo de aplicar 'Seiton' (Organizar)?",
+                        "options": [
+                            "Eliminar fuentes de contaminación",
+                            "Reducir tiempos de búsqueda de herramientas y materiales",
+                            "Crear estándares documentados",
+                            "Incrementar la disciplina del personal"
+                        ],
+                        "correct": 1
+                    },
+                    {
+                        "q": "'Shitsuke' representa la 5ª S. ¿Qué implica correctamente?",
+                        "options": [
+                            "Limpiar el área una vez por semana",
+                            "Organizar herramientas por tamaño",
+                            "Convertir en hábito permanente el cumplimiento de las normas establecidas",
+                            "Seleccionar el equipo necesario para trabajar"
+                        ],
+                        "correct": 2
+                    },
+                    {
+                        "q": "¿Qué significa la palabra 'Kaizen'?",
+                        "options": [
+                            "Orden y limpieza",
+                            "Cambio mejor = Mejora continua",
+                            "Disciplina japonesa",
+                            "Sistema de producción eficiente"
+                        ],
+                        "correct": 1
+                    }
+                ]
+            }
+        }
+    ]
+}

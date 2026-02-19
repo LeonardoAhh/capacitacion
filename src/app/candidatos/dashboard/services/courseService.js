@@ -83,8 +83,13 @@ async function enrichWithLegacyData(coursesData, position) {
 
         return coursesData.map(course => {
             const legacyCourse = legacyCourseMap[course.title];
-            if (legacyCourse?.examenUrl) {
-                return { ...course, examenUrl: legacyCourse.examenUrl };
+            if (legacyCourse) {
+                return {
+                    ...course,
+                    ...(legacyCourse.examenUrl && { examenUrl: legacyCourse.examenUrl }),
+                    ...(legacyCourse.nativeCourseId && { nativeCourseId: legacyCourse.nativeCourseId }),
+                    ...(legacyCourse.tipo && { tipo: legacyCourse.tipo }),
+                };
             }
             return course;
         });

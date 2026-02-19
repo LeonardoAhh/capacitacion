@@ -1,4 +1,4 @@
-import { ChevronLeft, CheckCircle, BookOpen, Lock } from 'lucide-react';
+import { ChevronLeft, CheckCircle, BookOpen, Lock, Zap } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import styles from './CourseViewer.module.css';
 import LazyIframe from '@/components/ui/LazyIframe/LazyIframe';
@@ -66,6 +66,22 @@ const ProgressBar = ({ currentStep, totalSteps = 2 }) => (
     </div>
 );
 
+/** Convierte a Title Case: "SERRANO" → "Serrano" */
+const toTitle = (str) => str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
+
+/**
+ * Retorna nickname si existe, o "Nombre Apellido" (1+1) del nombre completo.
+ * Formato almacenado: "APELLIDO_PAT APELLIDO_MAT NOMBRE1 NOMBRE2..."
+ */
+function getDisplayName(c) {
+    if (c?.nickname?.trim()) return c.nickname.trim();
+    const full = (c?.name || c?.nombre || '').trim();
+    if (!full) return 'Colaborador';
+    const parts = full.split(/\s+/);
+    if (parts.length >= 3) return `${toTitle(parts[2])} ${toTitle(parts[0])}`;
+    return parts.slice(0, 2).map(toTitle).join(' ');
+}
+
 export default function CourseViewer({
     selectedCourse,
     onClose,
@@ -76,13 +92,14 @@ export default function CourseViewer({
     markStepComplete,
     onOpenExamModal,
     onDownloadExam,
+    onPlayNative,
 }) {
     const progress = courseProgress[selectedCourse.id] || {};
     const step1Unlocked = true;
     const presentationUnlocked = isStepUnlocked(courseProgress, selectedCourse.id, 'presentation');
     const currentStep = getCurrentStepNumber(courseProgress, selectedCourse.id);
     const courseTitle = selectedCourse.title || selectedCourse.nombre;
-    const candidateName = candidate?.nickname?.trim() || candidate?.name || candidate?.nombre || 'Candidato';
+    const candidateName = getDisplayName(candidate);
 
     return (
         <>
@@ -144,7 +161,23 @@ export default function CourseViewer({
                         isLocked={!presentationUnlocked}
                     >
                         <div className={styles.viewerContainer}>
-                            {selectedCourse.material || selectedCourse.contenidoUrl ? (
+                            {(selectedCourse.nativeCourseId || selectedCourse.tipo === 'native') ? (
+                                /* Curso interactivo → abrir CoursePlayer */
+                                <div className={styles.noContent}>
+                                    <Zap size={32} style={{ color: '#e8742a', marginBottom: 12 }} />
+                                    <p style={{ marginBottom: 16, color: 'var(--text-secondary)' }}>
+                                        Este es un curso interactivo con diapositivas animadas.
+                                    </p>
+                                    <button
+                                        className={styles.stepButton}
+                                        style={{ background: '#e8742a', color: '#fff', border: 'none', gap: 8 }}
+                                        onClick={() => onPlayNative && onPlayNative(selectedCourse.nativeCourseId)}
+                                    >
+                                        <Zap size={16} />
+                                        Abrir Curso Interactivo
+                                    </button>
+                                </div>
+                            ) : selectedCourse.material || selectedCourse.contenidoUrl ? (
                                 <LazyIframe
                                     src={convertDriveUrl(selectedCourse) || selectedCourse.contenidoUrl}
                                     title={courseTitle}

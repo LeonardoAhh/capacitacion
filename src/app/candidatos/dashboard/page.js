@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { doc, setDoc, arrayUnion, arrayRemove } from 'firebase/firestore';
 import { db, auth } from '@/lib/firebase';
@@ -28,6 +28,8 @@ import SupportButton from './components/SupportButton';
 import { useCandidateSession, useCourseProgress, useSessionTimer } from './hooks';
 import { useCandidateData } from '@/hooks/useCandidateData';
 import { loadCoursesForPosition } from './services/courseService';
+import { getCourseWithSlides } from '@/lib/courseService';
+import CoursePlayer from '@/components/Courses/CoursePlayer';
 import induccionEmpresaExam from '../../../../public/examenes/induccion_empresa.json';
 
 import styles from './page.module.css';
@@ -44,6 +46,7 @@ export default function CandidatoDashboard() {
     const [courseProgress, setCourseProgress] = useState({});
     const [showExamModal, setShowExamModal] = useState(false);
     const [examData, setExamData] = useState(induccionEmpresaExam);
+    const [playerData, setPlayerData] = useState(null);
 
     const [showSetupWizard, setShowSetupWizard] = useState(false);
     const [showAvatarSelector, setShowAvatarSelector] = useState(false);
@@ -173,11 +176,30 @@ export default function CandidatoDashboard() {
         }
     };
 
+    const handlePlayNative = useCallback(async (courseId) => {
+        if (!courseId) return;
+        const result = await getCourseWithSlides(courseId);
+        if (result.success) {
+            setSelectedCourse(null);
+            setPlayerData(result.data);
+        }
+    }, []);
+
     if (loading) {
         return (
             <div className={styles.page}>
                 <DashboardSkeleton />
             </div>
+        );
+    }
+
+    if (playerData) {
+        return (
+            <CoursePlayer
+                course={playerData.course}
+                slides={playerData.slides}
+                onClose={() => setPlayerData(null)}
+            />
         );
     }
 
@@ -275,6 +297,7 @@ export default function CandidatoDashboard() {
                     markStepComplete={markStepComplete}
                     onOpenExamModal={() => setShowExamModal(true)}
                     onDownloadExam={downloadExam}
+                    onPlayNative={handlePlayNative}
                 />
             )}
 

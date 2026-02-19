@@ -1,11 +1,11 @@
 'use client';
 
-import { useEffect, useState, useMemo } from 'react';
+import { useEffect, useState, useMemo, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import {
     BookOpen, LogOut, Search, GraduationCap, Clock, Award,
-    User, Calendar, CheckCircle, AlertCircle, ChevronRight
+    User, Calendar, CheckCircle, AlertCircle, ChevronRight, Zap
 } from 'lucide-react';
 import { useTrainingData } from '@/hooks/useTrainingData';
 import { useTheme } from '@/contexts/ThemeContext';
@@ -18,6 +18,8 @@ import BadgesGallery from '@/components/Gamification/BadgesGallery';
 import CertificateCard from '@/components/Gamification/CertificateCard';
 import TrainingCompliance from '@/components/Gamification/TrainingCompliance';
 import { formatDisplayName } from '@/utils/nameUtils';
+import CoursePlayer from '@/components/Courses/CoursePlayer';
+import { getCourseWithSlides } from '@/lib/courseService';
 import {
     Drawer,
     DrawerClose,
@@ -40,6 +42,7 @@ export default function TrainingDashboard() {
 
     const [selectedCourse, setSelectedCourse] = useState(null);
     const [searchQuery, setSearchQuery] = useState('');
+    const [playerData, setPlayerData] = useState(null);
 
     useEffect(() => {
         if (user && typeof window !== 'undefined') {
@@ -92,10 +95,27 @@ export default function TrainingDashboard() {
         await updateAvatar(newUrl);
     };
 
-    const handleCourseClick = (course) => {
+    const handleCourseClick = useCallback(async (course) => {
+        // Si es curso interactivo, abrir el CoursePlayer directamente
+        if (course.nativeCourseId || course.tipo === 'native') {
+            markAsViewed(course);
+            const result = await getCourseWithSlides(course.nativeCourseId);
+            if (result.success) {
+                setPlayerData(result.data);
+            }
+            return;
+        }
         setSelectedCourse(course);
         markAsViewed(course);
-    };
+    }, [markAsViewed]);
+
+    const handlePlayNativeFromModal = useCallback(async (courseId) => {
+        const result = await getCourseWithSlides(courseId);
+        if (result.success) {
+            setSelectedCourse(null);
+            setPlayerData(result.data);
+        }
+    }, []);
 
     const handleMarkComplete = async (assignmentId) => {
         const success = await markAsCompleted(assignmentId);
@@ -114,6 +134,17 @@ export default function TrainingDashboard() {
     }, [courses, searchQuery]);
 
     if (!user) return null;
+
+    // Si el CoursePlayer está activo, renderizar solo él
+    if (playerData) {
+        return (
+            <CoursePlayer
+                course={playerData.course}
+                slides={playerData.slides}
+                onClose={() => setPlayerData(null)}
+            />
+        );
+    }
 
     return (
         <div className={styles.page}>
@@ -437,7 +468,17 @@ export default function TrainingDashboard() {
                             </div>
 
                             <div className={styles.courseActions}>
-                                {selectedCourse.contenidoUrl && (
+                                {/* Curso interactivo nativo */}
+                                {(selectedCourse.nativeCourseId || selectedCourse.tipo === 'native') ? (
+                                    <button
+                                        className={styles.actionBtnPrimary}
+                                        style={{ border: 'none', cursor: 'pointer' }}
+                                        onClick={() => handlePlayNativeFromModal(selectedCourse.nativeCourseId)}
+                                    >
+                                        <Zap size={16} />
+                                        Abrir Curso Interactivo
+                                    </button>
+                                ) : selectedCourse.contenidoUrl ? (
                                     <a
                                         href={selectedCourse.contenidoUrl}
                                         target="_blank"
@@ -447,7 +488,7 @@ export default function TrainingDashboard() {
                                         <BookOpen size={16} />
                                         Ver Presentación
                                     </a>
-                                )}
+                                ) : null}
 
                                 {selectedCourse.examenUrl && (
                                     <a

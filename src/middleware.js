@@ -16,6 +16,7 @@ const ADMIN_ROUTES = [
     '/iluo-manager',
     '/induccion',
     '/complete-profile',
+    '/test',
 ];
 
 /** Rutas que requieren sesión tipo 'candidate' */

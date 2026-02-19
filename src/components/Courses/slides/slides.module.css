@@ -1,0 +1,663 @@
+/* ==========================================
+   SLIDE COMPONENTS — PREMIUM PRESENTATION
+   Dark/Light variants • Responsive
+   ========================================== */
+
+/* ── Base ── */
+.slide {
+    width: 100%;
+    max-width: 900px;
+    margin: 0 auto;
+    min-height: 65vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 3rem 3.5rem;
+    animation: fadeSlide 0.45s cubic-bezier(0.25, 0.1, 0.25, 1);
+}
+
+@keyframes fadeSlide {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* ── Shared: slide label (naranja) ── */
+.slideLabel {
+    display: inline-block;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: #e8742a;
+    margin-bottom: 0.35rem;
+}
+
+/* ==========================================
+   TITLE SLIDE (DARK)
+   ========================================== */
+.titleSlide {
+    align-items: center;
+    text-align: center;
+    gap: 1rem;
+    justify-content: center;
+}
+
+.categoryBadge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.4rem 1.1rem;
+    border-radius: 20px;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    color: rgba(255, 255, 255, 0.92);
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+}
+
+.categoryDot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: #e8742a;
+}
+
+.titleSlide h1 {
+    font-size: clamp(2.5rem, 7vw, 4.5rem);
+    font-weight: 800;
+    color: white;
+    letter-spacing: -0.03em;
+    line-height: 1.05;
+    margin-top: 0.5rem;
+}
+
+.titleSubtitle {
+    font-size: 1rem;
+    color: rgba(255, 255, 255, 0.55);
+    font-weight: 400;
+    margin-top: 0.25rem;
+}
+
+.tagsContainer {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin-top: 1rem;
+}
+
+.tag {
+    padding: 0.4rem 1rem;
+    border-radius: 6px;
+    background: transparent;
+    color: rgba(255, 255, 255, 0.55);
+    font-size: 0.82rem;
+    font-weight: 500;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    transition: all 0.2s ease;
+}
+
+.tag:hover {
+    border-color: rgba(255, 255, 255, 0.3);
+    color: rgba(255, 255, 255, 0.92);
+}
+
+/* ==========================================
+   OBJECTIVE SLIDE (LIGHT)
+   ========================================== */
+.objectiveSlide {
+    gap: 1rem;
+    align-items: flex-start;
+    text-align: left;
+}
+
+.objectiveSlide h2 {
+    font-size: clamp(1.8rem, 5vw, 2.75rem);
+    font-weight: 800;
+    color: #1a1a2e;
+    letter-spacing: -0.02em;
+    line-height: 1.1;
+}
+
+.objectiveBody {
+    font-size: 1.05rem;
+    line-height: 1.7;
+    color: #5a5a6e;
+    max-width: 600px;
+}
+
+.badgeRow {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-top: 0.5rem;
+}
+
+.badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.5rem 1.5rem;
+    background: #e8742a;
+    color: white;
+    border-radius: 10px;
+    font-weight: 800;
+    font-size: 1rem;
+    letter-spacing: 0.05em;
+}
+
+.badgeSubtitle {
+    font-size: 0.85rem;
+    color: #5a5a6e;
+    font-weight: 400;
+}
+
+/* ==========================================
+   DEFINITION SLIDE (LIGHT)
+   ========================================== */
+.definitionSlide {
+    gap: 1.25rem;
+    align-items: flex-start;
+}
+
+.definitionSlide h2 {
+    font-size: clamp(1.6rem, 4vw, 2.5rem);
+    font-weight: 800;
+    color: #1a1a2e;
+    letter-spacing: -0.02em;
+}
+
+.definitionBody {
+    font-size: 1.05rem;
+    line-height: 1.8;
+    color: #5a5a6e;
+    max-width: 700px;
+}
+
+.highlights {
+    display: flex;
+    gap: 0.6rem;
+    flex-wrap: wrap;
+    margin-top: 0.5rem;
+}
+
+.highlight {
+    padding: 0.55rem 1.25rem;
+    border-radius: 8px;
+    background: rgba(0, 0, 0, 0.04);
+    color: #1a1a2e;
+    font-weight: 600;
+    font-size: 0.88rem;
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    transition: all 0.2s ease;
+}
+
+.highlight:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+}
+
+/* ==========================================
+   CONTENT SLIDE (LIGHT)
+   ========================================== */
+.contentSlide {
+    gap: 1.25rem;
+    position: relative;
+    align-items: flex-start;
+    padding-left: 4.5rem;
+}
+
+.contentSlide h2 {
+    font-size: clamp(1.5rem, 3.5vw, 2.25rem);
+    font-weight: 800;
+    color: #1a1a2e;
+    letter-spacing: -0.02em;
+}
+
+.contentBody {
+    font-size: 1rem;
+    line-height: 1.8;
+    color: #5a5a6e;
+    max-width: 700px;
+}
+
+.bulletList {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+    padding: 0;
+}
+
+.bulletItem {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    font-size: 0.95rem;
+    color: #5a5a6e;
+    line-height: 1.6;
+}
+
+.bulletDot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    margin-top: 0.5rem;
+}
+
+.accentBar {
+    position: absolute;
+    left: 3rem;
+    top: 3rem;
+    bottom: 3rem;
+    width: 3px;
+    border-radius: 3px;
+    opacity: 0.7;
+}
+
+/* ==========================================
+   ICON GRID SLIDE (DARK)
+   ========================================== */
+.iconGridSlide {
+    gap: 2rem;
+    align-items: center;
+    text-align: center;
+}
+
+.iconGridSlide h2 {
+    font-size: clamp(1.5rem, 4vw, 2.25rem);
+    font-weight: 700;
+    font-style: italic;
+    color: rgba(255, 255, 255, 0.92);
+}
+
+.iconGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+    gap: 0.85rem;
+    width: 100%;
+    max-width: 750px;
+}
+
+.iconCard {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 1.4rem 1rem;
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    transition: all 0.3s cubic-bezier(0.25, 0.1, 0.25, 1);
+    cursor: default;
+}
+
+.iconCard:hover {
+    transform: translateY(-6px);
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.2);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+}
+
+.iconEmoji {
+    font-size: 2.5rem;
+    line-height: 1;
+}
+
+.iconLabel {
+    font-size: 0.95rem;
+    font-weight: 700;
+}
+
+.iconSublabel {
+    font-size: 0.78rem;
+    color: rgba(255, 255, 255, 0.55);
+    font-weight: 400;
+}
+
+/* ==========================================
+   BENEFITS SLIDE (LIGHT)
+   ========================================== */
+.benefitsSlide {
+    gap: 1.25rem;
+    position: relative;
+    align-items: flex-start;
+    padding-left: 4.5rem;
+}
+
+.benefitsSlide h2 {
+    font-size: clamp(1.4rem, 3.5vw, 2.25rem);
+    font-weight: 800;
+    color: #1a1a2e;
+}
+
+.benefitsList {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.benefitItem {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.85rem;
+    padding: 0.85rem 1.1rem;
+    border-radius: 10px;
+    background: rgba(0, 0, 0, 0.03);
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    transition: all 0.2s ease;
+}
+
+.benefitItem:hover {
+    transform: translateX(6px);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    border-color: #e8742a;
+}
+
+.benefitIcon {
+    font-size: 1.4rem;
+    flex-shrink: 0;
+    line-height: 1;
+    margin-top: 0.1rem;
+}
+
+.benefitText {
+    font-size: 0.92rem;
+    color: #5a5a6e;
+    line-height: 1.6;
+}
+
+/* ==========================================
+   QUIZ SLIDE (LIGHT)
+   ========================================== */
+.quizSlide {
+    gap: 1.5rem;
+    align-items: flex-start;
+}
+
+.quizSlide h2 {
+    font-size: clamp(1.6rem, 4vw, 2.5rem);
+    font-weight: 800;
+    color: #1a1a2e;
+    letter-spacing: -0.02em;
+}
+
+.questionCard {
+    width: 100%;
+    max-width: 800px;
+    padding: 1.25rem 1.5rem;
+    border-radius: 14px;
+    background: rgba(255, 255, 255, 0.85);
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    display: flex;
+    flex-direction: column;
+    gap: 0.85rem;
+}
+
+.questionText {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: #1a1a2e;
+    line-height: 1.5;
+}
+
+.optionsGrid {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+}
+
+.optionBtn {
+    display: flex;
+    align-items: center;
+    gap: 0.65rem;
+    padding: 0.7rem 1rem;
+    border-radius: 10px;
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    background: transparent;
+    color: #1a1a2e;
+    font-size: 0.88rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-align: left;
+    width: 100%;
+}
+
+.optionBtn:hover:not(.optionSelected) {
+    background: rgba(0, 0, 0, 0.04);
+    border-color: #e8742a;
+}
+
+.optionSelected {
+    background: rgba(0, 0, 0, 0.04);
+    border-color: #e8742a;
+}
+
+.optionCorrect {
+    border-color: #34c759 !important;
+    background: rgba(52, 199, 89, 0.08) !important;
+    color: #2d8a47;
+}
+
+.optionIncorrect {
+    border-color: #ff3b30 !important;
+    background: rgba(255, 59, 48, 0.08) !important;
+    color: #cc2f27;
+}
+
+.optionLetter {
+    font-weight: 600;
+    font-size: 0.88rem;
+    color: #5a5a6e;
+    min-width: 20px;
+}
+
+.optionCorrect .optionLetter {
+    color: #2d8a47;
+}
+
+.optionIncorrect .optionLetter {
+    color: #cc2f27;
+}
+
+/* Quiz Submit */
+.quizSubmitBtn {
+    padding: 0.7rem 2rem;
+    border-radius: 10px;
+    background: #e8742a;
+    color: white;
+    font-weight: 700;
+    font-size: 0.95rem;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    margin-top: 0.5rem;
+}
+
+.quizSubmitBtn:hover:not(:disabled) {
+    filter: brightness(1.1);
+    transform: translateY(-2px);
+}
+
+.quizSubmitBtn:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+    transform: none;
+}
+
+/* Quiz Result */
+.quizResult {
+    width: 100%;
+    max-width: 800px;
+    padding: 2rem;
+    border-radius: 14px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.quizResultPassed {
+    background: rgba(52, 199, 89, 0.08);
+    border: 2px solid rgba(52, 199, 89, 0.25);
+}
+
+.quizResultFailed {
+    background: rgba(255, 59, 48, 0.08);
+    border: 2px solid rgba(255, 59, 48, 0.25);
+}
+
+.quizScore {
+    font-size: 3rem;
+    font-weight: 800;
+    line-height: 1;
+}
+
+.quizResultPassed .quizScore {
+    color: #34c759;
+}
+
+.quizResultFailed .quizScore {
+    color: #ff3b30;
+}
+
+.quizResultLabel {
+    font-size: 1rem;
+    color: #5a5a6e;
+    font-weight: 500;
+}
+
+/* ==========================================
+   RESPONSIVE — TABLET (≤ 1024px)
+   ========================================== */
+@media (max-width: 1024px) {
+    .slide {
+        max-width: 750px;
+        padding: 2.5rem 2.5rem;
+    }
+
+    .contentSlide,
+    .benefitsSlide {
+        padding-left: 3.5rem;
+    }
+
+    .accentBar {
+        left: 2rem;
+    }
+}
+
+/* ==========================================
+   RESPONSIVE — MOBILE (≤ 767px)
+   ========================================== */
+@media (max-width: 767px) {
+    .slide {
+        padding: 2rem 1.25rem;
+        min-height: 50vh;
+    }
+
+    .titleSlide h1 {
+        font-size: clamp(1.75rem, 9vw, 3rem);
+    }
+
+    .objectiveSlide h2,
+    .definitionSlide h2,
+    .contentSlide h2,
+    .quizSlide h2 {
+        font-size: clamp(1.3rem, 6vw, 2rem);
+    }
+
+    .contentSlide,
+    .benefitsSlide {
+        padding-left: 1.25rem;
+    }
+
+    .accentBar {
+        display: none;
+    }
+
+    .iconGrid {
+        grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+        gap: 0.6rem;
+    }
+
+    .iconCard {
+        padding: 1rem 0.75rem;
+    }
+
+    .iconEmoji {
+        font-size: 2rem;
+    }
+
+    .iconLabel {
+        font-size: 0.82rem;
+    }
+
+    .questionCard {
+        padding: 1rem;
+    }
+
+    .optionBtn {
+        padding: 0.6rem 0.75rem;
+        font-size: 0.82rem;
+    }
+
+    .quizSubmitBtn {
+        width: 100%;
+    }
+
+    .badge {
+        padding: 0.4rem 1.1rem;
+        font-size: 0.88rem;
+    }
+
+    .badgeRow {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.4rem;
+    }
+
+    .benefitItem {
+        padding: 0.7rem 0.85rem;
+    }
+
+    .highlights {
+        gap: 0.4rem;
+    }
+
+    .highlight {
+        padding: 0.4rem 0.9rem;
+        font-size: 0.82rem;
+    }
+}
+
+/* ==========================================
+   RESPONSIVE — SMALL PHONES (≤ 379px)
+   ========================================== */
+@media (max-width: 379px) {
+    .slide {
+        padding: 1.5rem 1rem;
+    }
+
+    .titleSlide h1 {
+        font-size: 1.5rem;
+    }
+
+    .iconGrid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .categoryBadge {
+        font-size: 0.65rem;
+        padding: 0.3rem 0.8rem;
+    }
+}

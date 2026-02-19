@@ -1,0 +1,383 @@
+/* ==========================================
+   TEST PAGE — COURSE MANAGER PANEL
+   Theme-Aware • Responsive • PWA-Ready
+   ========================================== */
+
+.page {
+    background: var(--app-background);
+    min-height: 100vh;
+    padding-bottom: var(--spacing-xl, 2rem);
+}
+
+.container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: var(--spacing-lg, 1.5rem) var(--spacing-lg, 1.25rem);
+}
+
+/* Header */
+.header {
+    margin-bottom: var(--spacing-xl, 2rem);
+}
+
+.portal {
+    display: block;
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--color-primary);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-bottom: 0.25rem;
+}
+
+.title {
+    font-size: clamp(1.75rem, 5vw, 2.5rem);
+    font-weight: 800;
+    color: var(--text-primary);
+    letter-spacing: -0.02em;
+}
+
+.subtitle {
+    font-size: 0.95rem;
+    color: var(--text-tertiary);
+    margin-top: 0.25rem;
+}
+
+/* Import Section */
+.importSection {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-md, 1rem);
+    margin-bottom: var(--spacing-xl, 2rem);
+    padding: var(--spacing-lg, 1.5rem);
+    border-radius: var(--radius-lg, 14px);
+    background: var(--card-background);
+    border: 1px solid var(--border-color);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    box-shadow: var(--shadow-sm);
+}
+
+.importLabel {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.importRow {
+    display: flex;
+    gap: 0.75rem;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.fileInput {
+    flex: 1;
+    min-width: 200px;
+}
+
+.fileInput input[type="file"] {
+    width: 100%;
+    padding: var(--spacing-sm, 0.5rem);
+    font-size: 0.85rem;
+    border: 2px dashed var(--border-color);
+    border-radius: var(--radius-md, 10px);
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    cursor: pointer;
+    transition: border-color var(--transition-fast, 200ms ease);
+}
+
+.fileInput input[type="file"]:hover {
+    border-color: var(--color-primary);
+}
+
+.importBtn {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--spacing-sm, 0.5rem);
+    padding: 0.6rem var(--spacing-lg, 1.25rem);
+    border-radius: var(--radius-md, 10px);
+    background: linear-gradient(135deg, var(--color-primary), var(--color-accent, var(--color-secondary)));
+    color: white;
+    font-weight: 600;
+    font-size: 0.9rem;
+    border: none;
+    cursor: pointer;
+    transition: all var(--transition-fast, 200ms ease);
+    white-space: nowrap;
+    box-shadow: var(--shadow-sm);
+}
+
+.importBtn:hover:not(:disabled) {
+    filter: brightness(1.1);
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-md);
+}
+
+.importBtn:active:not(:disabled) {
+    transform: scale(0.97);
+}
+
+.importBtn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* Alert */
+.alert {
+    padding: 0.75rem 1rem;
+    border-radius: var(--radius-md, 10px);
+    font-size: 0.85rem;
+    font-weight: 500;
+    margin-bottom: var(--spacing-lg, 1.5rem);
+    animation: slideIn 0.3s var(--ease-spring, ease);
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-8px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.alertSuccess {
+    background: color-mix(in srgb, var(--color-success, #34c759) 12%, var(--bg-primary));
+    color: var(--color-success, #34c759);
+    border: 1px solid color-mix(in srgb, var(--color-success, #34c759) 25%, transparent);
+}
+
+.alertError {
+    background: color-mix(in srgb, var(--color-danger, #ff3b30) 12%, var(--bg-primary));
+    color: var(--color-danger, #ff3b30);
+    border: 1px solid color-mix(in srgb, var(--color-danger, #ff3b30) 25%, transparent);
+}
+
+/* Course Grid */
+.sectionTitle {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: var(--spacing-md, 1rem);
+}
+
+.courseGrid {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.courseCard {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-md, 1rem);
+    padding: var(--spacing-md, 1rem) var(--spacing-lg, 1.25rem);
+    border-radius: var(--radius-lg, 14px);
+    background: var(--card-background);
+    border: 1px solid var(--border-color);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    cursor: pointer;
+    transition: all 0.2s var(--ease-spring, ease);
+    box-shadow: var(--shadow-sm);
+}
+
+.courseCard:hover {
+    box-shadow: var(--shadow-md);
+    transform: translateY(-2px);
+    border-color: var(--color-primary);
+}
+
+.courseCard:active {
+    transform: scale(0.98);
+}
+
+.courseIcon {
+    width: 48px;
+    height: 48px;
+    border-radius: var(--radius-md, 10px);
+    background: linear-gradient(135deg, var(--color-primary), var(--color-accent, var(--color-secondary)));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    flex-shrink: 0;
+}
+
+.courseInfo {
+    flex: 1;
+    min-width: 0;
+}
+
+.courseTitle {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.courseMeta {
+    display: flex;
+    gap: 0.75rem;
+    align-items: center;
+    flex-wrap: wrap;
+    margin-top: 0.25rem;
+}
+
+.courseMetaItem {
+    font-size: 0.8rem;
+    color: var(--text-tertiary);
+    font-weight: 500;
+}
+
+.courseActions {
+    display: flex;
+    gap: var(--spacing-sm, 0.5rem);
+    flex-shrink: 0;
+    align-items: center;
+}
+
+.statusBadge {
+    padding: 0.25rem 0.65rem;
+    border-radius: var(--radius-full, 9999px);
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.statusPublished {
+    background: color-mix(in srgb, var(--color-success, #34c759) 15%, var(--bg-primary));
+    color: var(--color-success, #34c759);
+}
+
+.statusDraft {
+    background: color-mix(in srgb, var(--color-warning, #ff9500) 15%, var(--bg-primary));
+    color: var(--color-warning, #ff9500);
+}
+
+.deleteBtn {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    border: none;
+    background: color-mix(in srgb, var(--color-danger, #ff3b30) 10%, var(--bg-secondary));
+    color: var(--color-danger, #ff3b30);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all var(--transition-fast, 200ms ease);
+}
+
+.deleteBtn:hover {
+    background: color-mix(in srgb, var(--color-danger, #ff3b30) 20%, var(--bg-secondary));
+    transform: scale(1.1);
+}
+
+/* Empty State */
+.emptyState {
+    text-align: center;
+    padding: var(--spacing-3xl, 4rem) var(--spacing-md, 1rem);
+    color: var(--text-tertiary);
+}
+
+.emptyIcon {
+    font-size: 3rem;
+    margin-bottom: var(--spacing-md, 1rem);
+    opacity: 0.5;
+}
+
+.emptyText {
+    font-size: 0.95rem;
+    font-weight: 500;
+}
+
+/* Loading */
+.loading {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 50vh;
+    color: var(--text-tertiary);
+    font-size: 1rem;
+}
+
+/* ==========================================
+   RESPONSIVE — TABLET
+   ========================================== */
+@media (max-width: 1024px) {
+    .container {
+        max-width: 700px;
+    }
+}
+
+/* ==========================================
+   RESPONSIVE — MOBILE
+   ========================================== */
+@media (max-width: 767px) {
+    .container {
+        padding: var(--spacing-md, 1rem);
+    }
+
+    .header {
+        margin-bottom: var(--spacing-lg, 1.5rem);
+    }
+
+    .importSection {
+        padding: var(--spacing-md, 1rem);
+    }
+
+    .courseCard {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.75rem;
+    }
+
+    .courseIcon {
+        width: 40px;
+        height: 40px;
+    }
+
+    .courseActions {
+        align-self: flex-end;
+    }
+
+    .importRow {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .fileInput {
+        width: 100%;
+        min-width: unset;
+    }
+
+    .importBtn {
+        justify-content: center;
+    }
+}
+
+/* ==========================================
+   RESPONSIVE — SMALL PHONES
+   ========================================== */
+@media (max-width: 379px) {
+    .container {
+        padding: var(--spacing-sm, 0.5rem);
+    }
+
+    .courseTitle {
+        font-size: 0.9rem;
+    }
+
+    .courseMetaItem {
+        font-size: 0.75rem;
+    }
+}
