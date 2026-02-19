@@ -110,6 +110,11 @@
     -webkit-overflow-scrolling: touch;
 }
 
+/* En cualquier pantalla donde el slide no quepa: scroll desde arriba */
+.content>* {
+    margin: auto;
+}
+
 /* ── Navigation ── */
 .nav {
     display: flex;
@@ -272,6 +277,16 @@
 
     .dotActive {
         width: 18px;
+    }
+
+    /* Fix scroll: en móvil el contenido empieza desde arriba */
+    .content {
+        align-items: flex-start;
+        padding: 0.5rem;
+    }
+
+    .content>* {
+        margin: 0 auto;
     }
 }
 
