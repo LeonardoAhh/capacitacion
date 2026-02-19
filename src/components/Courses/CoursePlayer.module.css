@@ -20,6 +20,9 @@
 
 .overlayLight {
     background: #f5efe6;
+    /* Fuerza texto oscuro siempre, sin importar el tema global del sistema */
+    color: #1a1a2e;
+    color-scheme: light;
 }
 
 /* ── Header ── */
