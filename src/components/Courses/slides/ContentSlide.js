@@ -4,7 +4,7 @@ export default function ContentSlide({ data, accentColor }) {
     const { heading, body, bullets, image, tag } = data;
 
     return (
-        <article 
+        <article
             className={`${styles.slide} ${styles.contentSlide}`}
             style={{ flexDirection: image ? 'row' : 'column', gap: image ? '3rem' : '1rem', alignItems: 'center' }}
             role="region"
@@ -12,10 +12,10 @@ export default function ContentSlide({ data, accentColor }) {
         >
             <div style={{ flex: 1, width: '100%' }}>
                 {accentColor && (
-                    <div 
-                        className={styles.accentBar} 
+                    <div
+                        className={styles.accentBar}
                         style={{ backgroundColor: accentColor }}
-                        aria-hidden="true" 
+                        aria-hidden="true"
                     />
                 )}
 
@@ -37,10 +37,10 @@ export default function ContentSlide({ data, accentColor }) {
                     <ul className={styles.bulletList} role="list">
                         {bullets.map((bullet, i) => (
                             <li key={i} className={styles.bulletItem}>
-                                <span 
-                                    className={styles.bulletDot} 
+                                <span
+                                    className={styles.bulletDot}
                                     style={{ backgroundColor: accentColor || 'var(--course-accent)' }}
-                                    aria-hidden="true" 
+                                    aria-hidden="true"
                                 />
                                 <span>{bullet}</span>
                             </li>
@@ -51,9 +51,10 @@ export default function ContentSlide({ data, accentColor }) {
 
             {image && (
                 <div className={styles.slideImageContainer}>
-                    <img 
-                        src={image} 
-                        alt={heading || 'Imagen del contenido'} 
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                        src={image}
+                        alt={heading || 'Imagen del contenido'}
                         className={styles.slideImage}
                         loading="lazy"
                     />

@@ -86,7 +86,6 @@ export default function DashboardPage() {
         { href: '/reports', title: 'Reportes', icon: TrendingUp },
         { href: '/capacitacion/comparacion', title: 'Comparación', icon: GitCompareArrows },
         { href: '/capacitacion/examen', title: 'Generador Exámenes', icon: Calendar },
-        { href: '/test', title: 'Test Page', icon: FlaskConical },
     ];
 
     return (

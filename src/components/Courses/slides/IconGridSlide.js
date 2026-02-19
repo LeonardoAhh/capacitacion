@@ -5,7 +5,7 @@ export default function IconGridSlide({ data }) {
     const { heading, description, items } = data;
 
     return (
-        <article 
+        <article
             className={`${styles.slide} ${styles.iconGridSlide}`}
             role="region"
             aria-label={heading || 'Iconos del contenido'}
@@ -18,13 +18,14 @@ export default function IconGridSlide({ data }) {
                     const IconComponent = LucideIcons[item.icon] || LucideIcons.Circle;
 
                     return (
-                        <div 
-                            key={idx} 
+                        <div
+                            key={idx}
                             className={styles.gridItem}
                             role="listitem"
                         >
                             <div className={styles.iconWrapper} aria-hidden="true">
                                 {item.image ? (
+                                    // eslint-disable-next-line @next/next/no-img-element
                                     <img
                                         src={item.image}
                                         alt=""

@@ -65,6 +65,7 @@ export default function ImageUploader({ currentImage, onImageChange, label = "Im
                     border: '1px solid var(--border-color)',
                     background: 'var(--bg-secondary)'
                 }}>
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img
                         src={currentImage}
                         alt="Preview"

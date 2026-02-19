@@ -152,6 +152,7 @@ const EmployeeCard = ({ data, onClick, isExpanded }) => {
                             : '0 2px 8px rgba(0, 0, 0, 0.1)'
                     }}
                 >
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img src={data.image} alt={data.name} className={styles.avatarImg} />
                 </motion.div>
 
