@@ -34,17 +34,29 @@ export default function QuizSlide({ data }) {
     const letters = ['A', 'B', 'C', 'D', 'E', 'F'];
 
     return (
-        <div className={`${styles.slide} ${styles.quizSlide}`}>
-            {/* Label */}
+        <article 
+            className={`${styles.slide} ${styles.quizSlide}`}
+            role="region"
+            aria-label="Evaluación final"
+        >
             <span className={styles.slideLabel}>Evaluación Final</span>
             <h2>{data.heading}</h2>
 
             {questions.map((q, qi) => (
-                <div key={qi} className={styles.questionCard}>
-                    <p className={styles.questionText}>
+                <div 
+                    key={qi} 
+                    className={styles.questionCard}
+                    role="group"
+                    aria-labelledby={`question-${qi}`}
+                >
+                    <p className={styles.questionText} id={`question-${qi}`}>
                         {qi + 1}. {q.q}
                     </p>
-                    <div className={styles.optionsGrid}>
+                    <div 
+                        className={styles.optionsGrid}
+                        role="radiogroup"
+                        aria-label={`Pregunta ${qi + 1}`}
+                    >
                         {q.options.map((option, oi) => {
                             const isSelected = answers[qi] === oi;
                             const isCorrect = q.correct === oi;
@@ -65,8 +77,11 @@ export default function QuizSlide({ data }) {
                                     className={cls}
                                     onClick={() => handleSelect(qi, oi)}
                                     disabled={submitted}
+                                    role="radio"
+                                    aria-checked={isSelected}
+                                    aria-label={`${letters[oi]}. ${option}`}
                                 >
-                                    <span className={styles.optionLetter}>{letters[oi]}.</span>
+                                    <span className={styles.optionLetter} aria-hidden="true">{letters[oi]}.</span>
                                     <span>{option}</span>
                                 </button>
                             );
@@ -80,19 +95,30 @@ export default function QuizSlide({ data }) {
                     className={styles.quizSubmitBtn}
                     onClick={handleSubmit}
                     disabled={!allAnswered}
+                    aria-disabled={!allAnswered}
                 >
-                    {allAnswered ? 'Enviar Respuestas' : `Responde todas (${Object.keys(answers).length}/${questions.length})`}
+                    {allAnswered 
+                        ? 'Enviar Respuestas' 
+                        : `Responde todas (${Object.keys(answers).length}/${questions.length})`
+                    }
                 </button>
             )}
 
             {submitted && (
-                <div className={`${styles.quizResult} ${passed ? styles.quizResultPassed : styles.quizResultFailed}`}>
+                <div 
+                    className={`${styles.quizResult} ${passed ? styles.quizResultPassed : styles.quizResultFailed}`}
+                    role="alert"
+                    aria-live="polite"
+                >
                     <span className={styles.quizScore}>{score}%</span>
                     <span className={styles.quizResultLabel}>
-                        {passed ? '¡Felicidades! Aprobaste la evaluación.' : `No alcanzaste el puntaje mínimo (${passingScore}%).`}
+                        {passed 
+                            ? '¡Felicidades! Aprobaste la evaluación.' 
+                            : `No alcanzaste el puntaje mínimo (${passingScore}%).`
+                        }
                     </span>
                 </div>
             )}
-        </div>
+        </article>
     );
 }

@@ -2,8 +2,11 @@ import styles from './slides.module.css';
 
 export default function ObjectiveSlide({ data }) {
     return (
-        <div className={`${styles.slide} ${styles.objectiveSlide}`}>
-            {/* Label superior */}
+        <article 
+            className={`${styles.slide} ${styles.objectiveSlide}`}
+            role="region"
+            aria-label="Objetivo del curso"
+        >
             <span className={styles.slideLabel}>Objetivo General</span>
 
             <h2>{data.heading}</h2>
@@ -18,6 +21,6 @@ export default function ObjectiveSlide({ data }) {
                     )}
                 </div>
             )}
-        </div>
+        </article>
     );
 }

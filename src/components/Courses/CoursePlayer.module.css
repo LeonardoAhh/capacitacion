@@ -1,28 +1,19 @@
 /* ==========================================
    COURSE PLAYER — PREMIUM PRESENTATION UI
-   Dark chrome • Dot nav • Progress inline
+   CSS Puro • Multi-tema • PWA • Accesible
    ========================================== */
 
 /* ── Overlay ── */
 .overlay {
     position: fixed;
     inset: 0;
-    z-index: 1000;
+    z-index: var(--z-course-overlay);
     display: flex;
     flex-direction: column;
     overflow: hidden;
-    transition: background 0.5s ease;
-}
-
-.overlayDark {
-    background: linear-gradient(145deg, #0f1a2e 0%, #1a2d4d 50%, #1e3355 100%);
-}
-
-.overlayLight {
-    background: #f5efe6;
-    /* Fuerza texto oscuro siempre, sin importar el tema global del sistema */
-    color: #1a1a2e;
-    color-scheme: light;
+    background: var(--course-overlay-bg);
+    color: var(--course-slide-text);
+    transition: background var(--course-transition-slow);
 }
 
 /* ── Header ── */
@@ -30,39 +21,44 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 0.7rem 1.25rem;
-    padding-top: max(0.7rem, env(safe-area-inset-top));
-    background: #0f1a2e;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-    z-index: 10;
+    padding: var(--course-spacing-sm) var(--course-spacing-md);
+    padding-top: max(var(--course-spacing-sm), env(safe-area-inset-top));
+    background: var(--course-header-bg);
+    border-bottom: 1px solid var(--course-header-border);
+    z-index: var(--z-course-header);
     flex-shrink: 0;
 }
 
 .exitBtn {
     display: flex;
     align-items: center;
-    gap: 0.4rem;
-    padding: 0.4rem 0.9rem;
-    border-radius: 8px;
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    background: rgba(255, 255, 255, 0.06);
-    color: rgba(255, 255, 255, 0.92);
-    font-size: 0.82rem;
+    gap: var(--course-spacing-xs);
+    padding: var(--course-spacing-xs) var(--course-spacing-sm);
+    border-radius: var(--course-radius-sm);
+    border: 1px solid var(--course-btn-border);
+    background: var(--course-btn-bg);
+    color: var(--course-btn-text);
+    font-size: var(--course-font-sm);
     font-weight: 600;
     cursor: pointer;
-    transition: all 0.2s ease;
+    transition: all var(--course-transition-fast);
     white-space: nowrap;
 }
 
 .exitBtn:hover {
-    background: rgba(255, 255, 255, 0.12);
-    border-color: rgba(255, 255, 255, 0.2);
+    background: var(--course-btn-hover-bg);
+    border-color: var(--course-accent);
+}
+
+.exitBtn:focus-visible {
+    outline: 2px solid var(--course-accent);
+    outline-offset: 2px;
 }
 
 .headerTitle {
-    font-size: 0.95rem;
+    font-size: var(--course-font-sm);
     font-weight: 700;
-    color: rgba(255, 255, 255, 0.92);
+    color: var(--course-header-text);
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
@@ -73,13 +69,13 @@
 .headerRight {
     display: flex;
     align-items: center;
-    gap: 0.65rem;
+    gap: var(--course-spacing-sm);
 }
 
 .counter {
-    font-size: 0.82rem;
+    font-size: var(--course-font-sm);
     font-weight: 600;
-    color: rgba(255, 255, 255, 0.45);
+    color: var(--course-slide-text-muted);
     font-variant-numeric: tabular-nums;
     white-space: nowrap;
 }
@@ -88,15 +84,15 @@
     width: 80px;
     height: 4px;
     border-radius: 2px;
-    background: rgba(255, 255, 255, 0.1);
+    background: var(--course-progress-bg);
     overflow: hidden;
 }
 
 .progressFill {
     height: 100%;
-    background: #e8742a;
+    background: var(--course-progress-fill);
     border-radius: 2px;
-    transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: width var(--course-duration-slow) var(--course-ease-in-out);
 }
 
 /* ── Content ── */
@@ -106,12 +102,12 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 1rem;
+    padding: var(--course-spacing-md);
     -webkit-overflow-scrolling: touch;
+    background: var(--course-content-bg);
 }
 
-/* En cualquier pantalla donde el slide no quepa: scroll desde arriba */
-.content>* {
+.content > * {
     margin: auto;
 }
 
@@ -120,33 +116,33 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 0.75rem 1.25rem;
-    padding-bottom: max(0.75rem, env(safe-area-inset-bottom));
-    background: #0f1a2e;
-    border-top: 1px solid rgba(255, 255, 255, 0.08);
+    padding: var(--course-spacing-sm) var(--course-spacing-md);
+    padding-bottom: max(var(--course-spacing-sm), env(safe-area-inset-bottom));
+    background: var(--course-nav-bg);
+    border-top: 1px solid var(--course-nav-border);
     flex-shrink: 0;
-    gap: 0.75rem;
+    gap: var(--course-spacing-sm);
 }
 
 .navBtn {
     display: flex;
     align-items: center;
-    gap: 0.4rem;
-    padding: 0.55rem 1.25rem;
-    border-radius: 8px;
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    background: rgba(255, 255, 255, 0.06);
-    color: rgba(255, 255, 255, 0.92);
+    gap: var(--course-spacing-xs);
+    padding: var(--course-spacing-sm) var(--course-spacing-md);
+    border-radius: var(--course-radius-sm);
+    border: 1px solid var(--course-btn-border);
+    background: var(--course-btn-bg);
+    color: var(--course-btn-text);
     font-weight: 600;
-    font-size: 0.85rem;
+    font-size: var(--course-font-sm);
     cursor: pointer;
-    transition: all 0.2s ease;
+    transition: all var(--course-transition-fast);
     white-space: nowrap;
 }
 
 .navBtn:hover:not(:disabled) {
-    background: rgba(255, 255, 255, 0.1);
-    border-color: rgba(255, 255, 255, 0.18);
+    background: var(--course-btn-hover-bg);
+    border-color: var(--course-accent);
 }
 
 .navBtn:active:not(:disabled) {
@@ -154,23 +150,28 @@
 }
 
 .navBtn:disabled {
-    opacity: 0.3;
+    opacity: 0.35;
     cursor: not-allowed;
 }
 
+.navBtn:focus-visible {
+    outline: 2px solid var(--course-accent);
+    outline-offset: 2px;
+}
+
 .navBtnPrimary {
-    background: #e8742a;
-    border-color: #e8742a;
-    color: white;
+    background: var(--course-btn-primary-bg);
+    border-color: var(--course-btn-primary-bg);
+    color: var(--course-btn-primary-text);
 }
 
 .navBtnPrimary:hover:not(:disabled) {
-    filter: brightness(1.15);
-    background: #e8742a;
-    border-color: #e8742a;
+    filter: brightness(1.1);
+    background: var(--course-btn-primary-bg);
+    border-color: var(--course-btn-primary-bg);
 }
 
-/* ── Dots ── */
+/* ── Dots Navigation ── */
 .dots {
     display: flex;
     align-items: center;
@@ -185,34 +186,39 @@
     border-radius: 50%;
     border: none;
     padding: 0;
-    background: rgba(255, 255, 255, 0.2);
+    background: var(--course-dot-bg);
     cursor: pointer;
-    transition: all 0.3s ease;
+    transition: all var(--course-transition-base);
 }
 
 .dot:hover {
-    background: rgba(255, 255, 255, 0.45);
+    background: var(--course-dot-visited);
     transform: scale(1.3);
 }
 
+.dot:focus-visible {
+    outline: 2px solid var(--course-accent);
+    outline-offset: 2px;
+}
+
 .dotVisited {
-    background: rgba(255, 255, 255, 0.35);
+    background: var(--course-dot-visited);
 }
 
 .dotActive {
     width: 24px;
     border-radius: 4px;
-    background: #e8742a;
+    background: var(--course-dot-active);
 }
 
-/* ── Empty ── */
+/* ── Empty State ── */
 .emptyMsg {
     display: flex;
     align-items: center;
     justify-content: center;
     height: 100%;
-    color: rgba(255, 255, 255, 0.45);
-    font-size: 1rem;
+    color: var(--course-slide-text-muted);
+    font-size: var(--course-font-base);
 }
 
 /* ==========================================
@@ -220,7 +226,7 @@
    ========================================== */
 @media (max-width: 1024px) {
     .headerTitle {
-        font-size: 0.88rem;
+        font-size: var(--course-font-sm);
         max-width: 35%;
     }
 
@@ -234,17 +240,17 @@
    ========================================== */
 @media (max-width: 767px) {
     .header {
-        padding: 0.55rem 0.75rem;
-        padding-top: max(0.55rem, env(safe-area-inset-top));
+        padding: var(--course-spacing-xs) var(--course-spacing-sm);
+        padding-top: max(var(--course-spacing-xs), env(safe-area-inset-top));
     }
 
     .exitBtn {
-        padding: 0.35rem 0.65rem;
-        font-size: 0.78rem;
+        padding: var(--course-spacing-xs) var(--course-spacing-sm);
+        font-size: var(--course-font-xs);
     }
 
     .headerTitle {
-        font-size: 0.82rem;
+        font-size: var(--course-font-xs);
         max-width: 30%;
     }
 
@@ -253,17 +259,22 @@
     }
 
     .content {
-        padding: 0.5rem;
+        padding: var(--course-spacing-xs);
+        align-items: flex-start;
+    }
+
+    .content > * {
+        margin: 0 auto;
     }
 
     .nav {
-        padding: 0.6rem 0.75rem;
-        padding-bottom: max(0.6rem, env(safe-area-inset-bottom));
+        padding: var(--course-spacing-xs) var(--course-spacing-sm);
+        padding-bottom: max(var(--course-spacing-xs), env(safe-area-inset-bottom));
     }
 
     .navBtn {
-        padding: 0.5rem 0.85rem;
-        font-size: 0.78rem;
+        padding: var(--course-spacing-xs) var(--course-spacing-sm);
+        font-size: var(--course-font-xs);
     }
 
     .dots {
@@ -277,16 +288,6 @@
 
     .dotActive {
         width: 18px;
-    }
-
-    /* Fix scroll: en móvil el contenido empieza desde arriba */
-    .content {
-        align-items: flex-start;
-        padding: 0.5rem;
-    }
-
-    .content>* {
-        margin: 0 auto;
     }
 }
 
@@ -307,6 +308,41 @@
     }
 
     .navBtn {
-        padding: 0.5rem;
+        padding: var(--course-spacing-xs);
+    }
+}
+
+/* ==========================================
+   ACCESSIBILITY — REDUCED MOTION
+   ========================================== */
+@media (prefers-reduced-motion: reduce) {
+    .overlay,
+    .exitBtn,
+    .navBtn,
+    .dot,
+    .progressFill {
+        transition: none;
+    }
+
+    .navBtn:active:not(:disabled) {
+        transform: none;
+    }
+
+    .dot:hover {
+        transform: none;
+    }
+}
+
+/* ==========================================
+   ACCESSIBILITY — HIGH CONTRAST
+   ========================================== */
+@media (prefers-contrast: high) {
+    .exitBtn,
+    .navBtn {
+        border-width: 2px;
+    }
+
+    .progressTrack {
+        border: 1px solid currentColor;
     }
 }

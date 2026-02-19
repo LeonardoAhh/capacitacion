@@ -2,7 +2,11 @@ import styles from './slides.module.css';
 
 export default function DefinitionSlide({ data }) {
     return (
-        <div className={`${styles.slide} ${styles.definitionSlide}`}>
+        <article 
+            className={`${styles.slide} ${styles.definitionSlide}`}
+            role="region"
+            aria-label={data.heading || 'Definición'}
+        >
             {data.label && (
                 <span className={styles.slideLabel}>{data.label}</span>
             )}
@@ -12,12 +16,12 @@ export default function DefinitionSlide({ data }) {
             <p className={styles.definitionBody}>{data.body}</p>
 
             {data.highlights && data.highlights.length > 0 && (
-                <div className={styles.highlights}>
+                <div className={styles.highlights} role="list">
                     {data.highlights.map((h, i) => (
-                        <span key={i} className={styles.highlight}>{h}</span>
+                        <span key={i} className={styles.highlight} role="listitem">{h}</span>
                     ))}
                 </div>
             )}
-        </div>
+        </article>
     );
 }

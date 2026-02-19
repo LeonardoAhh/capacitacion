@@ -1,30 +1,35 @@
+/* ==========================================
+   COURSES GRID
+   CSS Puro • Multi-tema • PWA • Accesible
+   ========================================== */
+
 .coursesGrid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-    gap: 1rem;
-    margin-top: 1rem;
+    gap: var(--course-spacing-md);
+    margin-top: var(--course-spacing-md);
 }
 
 .courseCard {
-    background: var(--bg-secondary);
-    border: 1px solid var(--border-color);
-    border-radius: var(--radius-lg);
+    background: var(--course-card-bg);
+    border: 1px solid var(--course-card-border);
+    border-radius: var(--course-radius-md);
     padding: 1.25rem;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    gap: 1rem;
+    gap: var(--course-spacing-md);
     cursor: pointer;
-    transition: all var(--transition-fast);
+    transition: all var(--course-transition-fast);
 }
 
 .courseCard:hover {
-    border-color: var(--color-primary);
+    border-color: var(--course-accent);
     transform: translateY(-2px);
 }
 
 .courseCard:focus-visible {
-    outline: 2px solid var(--color-primary);
+    outline: 2px solid var(--course-accent);
     outline-offset: 2px;
 }
 
@@ -43,14 +48,19 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    color: var(--color-primary);
+    color: var(--course-accent);
     flex-shrink: 0;
+    transition: all var(--course-transition-fast);
+}
+
+.courseCard:hover .courseIcon {
+    border-color: var(--course-accent);
 }
 
 .courseIconCompleted {
     background: rgba(34, 197, 94, 0.1);
-    border-color: var(--color-success);
-    color: var(--color-success);
+    border-color: var(--course-success);
+    color: var(--course-success);
 }
 
 .courseContent {
@@ -59,7 +69,7 @@
 }
 
 .courseCardTitle {
-    font-size: 0.9375rem;
+    font-size: var(--course-font-sm);
     font-weight: 600;
     color: var(--text-primary);
     line-height: 1.4;
@@ -67,9 +77,9 @@
 }
 
 .courseDuration {
-    font-size: 0.75rem;
+    font-size: var(--course-font-xs);
     color: var(--text-tertiary);
-    margin-top: 0.25rem;
+    margin-top: var(--course-spacing-xs);
     display: block;
 }
 
@@ -82,70 +92,77 @@
 }
 
 .btnMarkComplete {
-    padding: 0.5rem 0.875rem;
+    padding: var(--course-spacing-sm) 0.875rem;
     background: transparent;
-    border: 1px solid var(--color-primary);
-    color: var(--color-primary);
-    border-radius: var(--radius-full);
-    font-size: 0.75rem;
+    border: 1px solid var(--course-accent);
+    color: var(--course-accent);
+    border-radius: var(--course-radius-full);
+    font-size: var(--course-font-xs);
     font-weight: 600;
     cursor: pointer;
-    transition: all var(--transition-fast);
+    transition: all var(--course-transition-fast);
 }
 
 .btnMarkComplete:hover {
     background: rgba(59, 130, 246, 0.08);
 }
 
+.btnMarkComplete:focus-visible {
+    outline: 2px solid var(--course-accent);
+    outline-offset: 2px;
+}
+
 .btnCompleted {
-    padding: 0.5rem 0.875rem;
+    padding: var(--course-spacing-sm) 0.875rem;
     background: rgba(34, 197, 94, 0.1);
-    color: var(--color-success);
+    color: var(--course-success);
     border: 1px solid transparent;
-    border-radius: var(--radius-full);
-    font-size: 0.75rem;
+    border-radius: var(--course-radius-full);
+    font-size: var(--course-font-xs);
     font-weight: 600;
-    cursor: pointer;
+    cursor: default;
 }
 
 .chevron {
     color: var(--text-tertiary);
+    transition: transform var(--course-transition-fast);
 }
 
-/* Section Header */
+.courseCard:hover .chevron {
+    transform: translateX(4px);
+}
+
 .sectionHeaderContainer {
-    margin-bottom: 0.5rem;
+    margin-bottom: var(--course-spacing-sm);
 }
 
 .sectionHeader {
-    font-size: 1rem;
+    font-size: var(--course-font-base);
     font-weight: 600;
     color: var(--text-primary);
     margin: 0;
 }
 
-/* Empty State */
 .emptyState {
-    padding: 2rem 1.5rem;
+    padding: var(--course-spacing-xl) 1.5rem;
     text-align: center;
     color: var(--text-tertiary);
-    background: var(--bg-secondary);
+    background: var(--course-card-bg);
     border: 1px solid var(--border-color);
-    border-radius: var(--radius-lg);
+    border-radius: var(--course-radius-md);
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: 0.75rem;
+    gap: var(--course-spacing-sm);
 }
 
 .emptyState p {
     margin: 0;
-    font-size: 0.875rem;
+    font-size: var(--course-font-sm);
 }
 
-
-
+/* Responsive */
 @media (max-width: 480px) {
     .coursesGrid {
         grid-template-columns: 1fr;
@@ -155,5 +172,30 @@
 @media (min-width: 1024px) {
     .coursesGrid {
         grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+/* Accessibility */
+@media (prefers-reduced-motion: reduce) {
+    .courseCard,
+    .courseIcon,
+    .btnMarkComplete,
+    .chevron {
+        transition: none;
+    }
+
+    .courseCard:hover {
+        transform: none;
+    }
+
+    .courseCard:hover .chevron {
+        transform: none;
+    }
+}
+
+@media (prefers-contrast: high) {
+    .courseCard,
+    .courseIcon {
+        border-width: 2px;
     }
 }

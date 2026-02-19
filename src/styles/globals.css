@@ -1,5 +1,8 @@
 /* Tailwind directives removed - Using Pure CSS */
 
+/* Import Course Design System */
+@import './courses.css';
+
 :root {
   /* --- iOS System Colors (Light Mode) --- */
   --blue-500: #007AFF;

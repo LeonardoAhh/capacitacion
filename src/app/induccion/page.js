@@ -12,8 +12,9 @@ import { useToast } from '@/components/ui/Toast/Toast';
 import {
     ChevronRight, Plus, FileText, Link2, Trash2, Edit3,
     ExternalLink, X, Check, BookOpen, Upload, Play,
-    Zap
+    Zap, Settings2
 } from 'lucide-react';
+import Link from 'next/link';
 import ProfileDropdown from '@/components/ProfileDropdown/ProfileDropdown';
 import BackButton from '@/components/ui/BackButton/BackButton';
 import CoursePlayer from '@/components/Courses/CoursePlayer';
@@ -23,6 +24,7 @@ import {
     getCourseWithSlides,
     deleteCourse,
     togglePublish,
+    renameCourse,
 } from '@/lib/courseService';
 
 import puestosData from '../../../puestos.json';
@@ -47,6 +49,10 @@ export default function InductionPage() {
 
     // ── Player de cursos interactivos ──
     const [playerData, setPlayerData] = useState(null);
+
+    // ── Rename inline ──
+    const [renamingId, setRenamingId] = useState(null);
+    const [renameValue, setRenameValue] = useState('');
 
     // ── UI state ──
     const [showCreateForm, setShowCreateForm] = useState(false);
@@ -178,6 +184,32 @@ export default function InductionPage() {
             toast.error('Error', result.error);
         }
     }, [toast, loadNativeCourses]);
+
+    // ── Rename inline ──
+    const handleStartRename = useCallback((e, course) => {
+        e.stopPropagation();
+        setRenamingId(course.id);
+        setRenameValue(course.title);
+    }, []);
+
+    const handleConfirmRename = useCallback(async (courseId) => {
+        const trimmed = renameValue.trim();
+        if (!trimmed) { setRenamingId(null); return; }
+        const result = await renameCourse(courseId, trimmed);
+        if (result.success) {
+            toast.success('Renombrado', 'Nombre actualizado.');
+            await loadNativeCourses();
+        } else {
+            toast.error('Error', result.error);
+        }
+        setRenamingId(null);
+    }, [renameValue, toast, loadNativeCourses]);
+
+    const handleRenameKeyDown = useCallback((e, courseId) => {
+        if (e.key === 'Enter') handleConfirmRename(courseId);
+        if (e.key === 'Escape') setRenamingId(null);
+    }, [handleConfirmRename]);
+
 
     // ── Material de empleados ──
     const handleCreateCourse = async (e) => {
@@ -450,7 +482,19 @@ export default function InductionPage() {
                                                     <BookOpen size={16} />
                                                 </div>
                                                 <div className={styles.nativeInfo}>
-                                                    <span className={styles.nativeTitle}>{course.title}</span>
+                                                    {renamingId === course.id ? (
+                                                        <input
+                                                            className={styles.renameInput}
+                                                            value={renameValue}
+                                                            autoFocus
+                                                            onChange={e => setRenameValue(e.target.value)}
+                                                            onBlur={() => handleConfirmRename(course.id)}
+                                                            onKeyDown={e => handleRenameKeyDown(e, course.id)}
+                                                            onClick={e => e.stopPropagation()}
+                                                        />
+                                                    ) : (
+                                                        <span className={styles.nativeTitle}>{course.title}</span>
+                                                    )}
                                                     <div className={styles.nativeMeta}>
                                                         {course.category && <span>{course.category}</span>}
                                                         {course.slideCount && <span>{course.slideCount} slides</span>}
@@ -466,6 +510,20 @@ export default function InductionPage() {
                                                 >
                                                     {course.published ? 'Publicado' : 'Borrador'}
                                                 </span>
+                                                <button
+                                                    className={styles.editBtn}
+                                                    onClick={(e) => handleStartRename(e, course)}
+                                                    title="Renombrar curso"
+                                                >
+                                                    <Edit3 size={13} />
+                                                </button>
+                                                <Link
+                                                    href={`/induccion/cursos/${course.id}/editar`}
+                                                    className={styles.editBtn}
+                                                    title="Editar slides y contenido"
+                                                >
+                                                    <Settings2 size={13} />
+                                                </Link>
                                                 <button
                                                     className={styles.playBtn}
                                                     onClick={() => handlePlayNative(course.id)}

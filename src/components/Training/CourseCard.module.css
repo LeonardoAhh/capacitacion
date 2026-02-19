@@ -1,10 +1,15 @@
+/* ==========================================
+   COURSE CARD
+   CSS Puro • Multi-tema • PWA • Accesible
+   ========================================== */
+
 .card {
-    background: var(--bg-secondary);
-    border: 1px solid var(--border-color);
-    border-radius: 16px;
+    background: var(--course-card-bg);
+    border: 1px solid var(--course-card-border);
+    border-radius: var(--course-radius-md);
     overflow: hidden;
     cursor: pointer;
-    transition: all 0.3s ease;
+    transition: all var(--course-transition-base);
     display: flex;
     flex-direction: column;
 }
@@ -12,8 +17,12 @@
 .card:hover {
     transform: translateY(-5px);
     box-shadow: var(--shadow-lg);
-    border-color: rgba(236, 72, 153, 0.3);
-    /* Keep pink accent on hover */
+    border-color: var(--course-accent);
+}
+
+.card:focus-visible {
+    outline: 2px solid var(--course-accent);
+    outline-offset: 2px;
 }
 
 .imageContainer {
@@ -27,20 +36,20 @@
     width: 100%;
     height: 100%;
     object-fit: cover;
-    transition: transform 0.3s ease;
+    transition: transform var(--course-transition-base);
 }
 
 .placeholderImage {
     width: 100%;
     height: 100%;
-    /* Subtle gradient using semantic colors or defaults */
-    background: linear-gradient(135deg, rgba(236, 72, 153, 0.1), rgba(139, 92, 246, 0.1));
+    background: linear-gradient(135deg, 
+        rgba(var(--bg-primary-rgb), 0.1), 
+        rgba(var(--bg-primary-rgb), 0.05)
+    );
     display: flex;
     align-items: center;
     justify-content: center;
 }
-
-/* Make placeholder background adapt slightly if needed, but the transparent gradient usually works on both if the container bg is set. */
 
 .card:hover .image {
     transform: scale(1.05);
@@ -49,19 +58,19 @@
 .placeholderIcon {
     width: 48px;
     height: 48px;
-    color: rgba(236, 72, 153, 0.4);
+    color: var(--course-accent);
+    opacity: 0.4;
 }
 
 .overlay {
     position: absolute;
     inset: 0;
     background: rgba(0, 0, 0, 0.3);
-    /* Always dark overlay for play icon visibility */
     display: flex;
     align-items: center;
     justify-content: center;
     opacity: 0;
-    transition: opacity 0.3s ease;
+    transition: opacity var(--course-transition-base);
 }
 
 .card:hover .overlay {
@@ -72,7 +81,6 @@
     width: 48px;
     height: 48px;
     color: white;
-    /* Always white on dark overlay */
     filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.5));
 }
 
@@ -87,60 +95,48 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 0.75rem;
+    margin-bottom: var(--course-spacing-sm);
 }
 
 .status {
-    font-size: 0.75rem;
+    font-size: var(--course-font-xs);
     font-weight: 600;
-    padding: 0.25rem 0.75rem;
-    border-radius: 9999px;
+    padding: var(--course-spacing-xs) var(--course-spacing-sm);
+    border-radius: var(--course-radius-full);
     text-transform: uppercase;
     letter-spacing: 0.05em;
 }
 
 .status.pending {
     background: rgba(234, 179, 8, 0.15);
-    color: #f59e0b;
-    /* Amber 500 */
+    color: var(--color-warning);
     border: 1px solid rgba(234, 179, 8, 0.2);
-}
-
-[data-theme='dark'] .status.pending {
-    color: #fbbf24;
-    /* Amber 400 for better dark contrast */
 }
 
 .status.completed {
     background: rgba(34, 197, 94, 0.15);
-    color: #16a34a;
-    /* Green 600 */
+    color: var(--course-success);
     border: 1px solid rgba(34, 197, 94, 0.2);
-}
-
-[data-theme='dark'] .status.completed {
-    color: #4ade80;
-    /* Green 400 */
 }
 
 .duration {
     display: flex;
     align-items: center;
-    gap: 0.25rem;
-    font-size: 0.75rem;
+    gap: var(--course-spacing-xs);
+    font-size: var(--course-font-xs);
     color: var(--text-tertiary);
 }
 
 .title {
-    font-size: 1.125rem;
+    font-size: var(--course-font-lg);
     font-weight: 600;
     color: var(--text-primary);
-    margin: 0 0 0.5rem 0;
+    margin: 0 0 var(--course-spacing-xs) 0;
     line-height: 1.4;
 }
 
 .description {
-    font-size: 0.875rem;
+    font-size: var(--course-font-sm);
     color: var(--text-secondary);
     line-height: 1.5;
     margin: 0;
@@ -152,10 +148,35 @@
 
 .completedBadge {
     margin-top: auto;
-    padding-top: 1rem;
+    padding-top: var(--course-spacing-md);
     display: flex;
     align-items: center;
-    gap: 0.5rem;
-    font-size: 0.75rem;
-    color: var(--color-success);
+    gap: var(--course-spacing-sm);
+    font-size: var(--course-font-xs);
+    color: var(--course-success);
+}
+
+/* Reduced Motion */
+@media (prefers-reduced-motion: reduce) {
+    .card,
+    .image,
+    .overlay {
+        transition: none;
+    }
+
+    .card:hover {
+        transform: none;
+    }
+
+    .card:hover .image {
+        transform: none;
+    }
+}
+
+/* High Contrast */
+@media (prefers-contrast: high) {
+    .card,
+    .status {
+        border-width: 2px;
+    }
 }

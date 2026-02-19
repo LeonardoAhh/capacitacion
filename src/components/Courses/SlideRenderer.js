@@ -14,25 +14,27 @@ const SLIDE_COMPONENTS = {
     icon_grid: IconGridSlide,
     benefits: BenefitsSlide,
     comparison: ComparisonSlide,
-    // quiz: removido — los exámenes son en papel
 };
 
-/**
- * Router de slides: mapea slide.type al componente correcto.
- * Pasa isDark para que los slides dark apliquen texto blanco.
- */
-export default function SlideRenderer({ slide, isDark }) {
+export default function SlideRenderer({ slide }) {
     if (!slide) return null;
 
     const Component = SLIDE_COMPONENTS[slide.type];
 
     if (!Component) {
         return (
-            <div style={{ padding: '2rem', textAlign: 'center', color: isDark ? 'rgba(255,255,255,0.4)' : 'var(--text-tertiary)' }}>
+            <div 
+                style={{ 
+                    padding: '2rem', 
+                    textAlign: 'center', 
+                    color: 'var(--text-tertiary)' 
+                }}
+                role="alert"
+            >
                 <p>Tipo de slide no soportado: <strong>{slide.type}</strong></p>
             </div>
         );
     }
 
-    return <Component data={slide.data} isDark={isDark} />;
+    return <Component data={slide.data} />;
 }

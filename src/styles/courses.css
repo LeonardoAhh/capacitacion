@@ -1,0 +1,208 @@
+/* ==========================================
+   COURSES — UNIFIED DESIGN SYSTEM
+   CSS Puro • Multi-tema • PWA Ready
+   ========================================== */
+
+/* ── Z-Index Scale ── */
+:root {
+    --z-course-backdrop: 999;
+    --z-course-overlay: 1000;
+    --z-course-header: 10;
+    --z-course-nav: 10;
+    --z-course-content: 1;
+}
+
+/* ── Course Color Tokens ── */
+:root {
+    --course-accent: var(--color-primary);
+    --course-accent-hover: color-mix(in srgb, var(--color-primary) 85%, white);
+    
+    --course-header-bg: var(--bg-secondary);
+    --course-header-border: var(--border-color);
+    --course-header-text: var(--text-primary);
+    
+    --course-nav-bg: var(--bg-secondary);
+    --course-nav-border: var(--border-color);
+    
+    --course-slide-bg: var(--bg-primary);
+    --course-slide-text: var(--text-primary);
+    --course-slide-text-secondary: var(--text-secondary);
+    --course-slide-text-muted: var(--text-tertiary);
+    
+    --course-overlay-bg: var(--bg-primary);
+    --course-content-bg: var(--bg-secondary);
+    
+    --course-card-bg: var(--bg-secondary);
+    --course-card-border: var(--border-color);
+    --course-card-hover-border: var(--color-primary);
+    
+    --course-btn-bg: var(--bg-tertiary);
+    --course-btn-border: var(--border-color);
+    --course-btn-text: var(--text-primary);
+    --course-btn-hover-bg: var(--bg-secondary);
+    
+    --course-btn-primary-bg: var(--color-primary);
+    --course-btn-primary-text: #ffffff;
+    
+    --course-success: var(--color-success);
+    --course-danger: var(--color-danger);
+    --course-warning: var(--color-warning);
+    
+    --course-dot-bg: var(--border-color);
+    --course-dot-active: var(--color-primary);
+    --course-dot-visited: var(--text-tertiary);
+    
+    --course-progress-bg: var(--border-color);
+    --course-progress-fill: var(--color-primary);
+}
+
+/* Dark Theme Overrides */
+[data-theme="dark"] {
+    --course-header-bg: #1C1C1E;
+    --course-nav-bg: #1C1C1E;
+    --course-slide-bg: #000000;
+    --course-overlay-bg: #000000;
+    --course-content-bg: #1C1C1E;
+    --course-card-bg: #1C1C1E;
+    --course-btn-bg: #2C2C2E;
+    --course-btn-hover-bg: #3C3C3E;
+}
+
+/* ── Animation Tokens ── */
+:root {
+    --course-ease-spring: cubic-bezier(0.25, 0.1, 0.25, 1);
+    --course-ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+    --course-ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
+    
+    --course-duration-fast: 150ms;
+    --course-duration-base: 250ms;
+    --course-duration-slow: 400ms;
+    
+    --course-transition-fast: var(--course-duration-fast) var(--course-ease-spring);
+    --course-transition-base: var(--course-duration-base) var(--course-ease-spring);
+    --course-transition-slow: var(--course-duration-slow) var(--course-ease-out);
+}
+
+/* ── Spacing Tokens for Courses ── */
+:root {
+    --course-spacing-xs: 0.25rem;
+    --course-spacing-sm: 0.5rem;
+    --course-spacing-md: 1rem;
+    --course-spacing-lg: 1.5rem;
+    --course-spacing-xl: 2rem;
+    --course-spacing-2xl: 3rem;
+}
+
+/* ── Border Radius for Courses ── */
+:root {
+    --course-radius-sm: 6px;
+    --course-radius-md: 10px;
+    --course-radius-lg: 14px;
+    --course-radius-xl: 20px;
+    --course-radius-full: 9999px;
+}
+
+/* ── Typography Scale for Courses ── */
+:root {
+    --course-font-xs: 0.75rem;
+    --course-font-sm: 0.875rem;
+    --course-font-base: 1rem;
+    --course-font-lg: 1.125rem;
+    --course-font-xl: 1.25rem;
+    --course-font-2xl: 1.5rem;
+    --course-font-3xl: 2rem;
+    --course-font-4xl: 2.5rem;
+}
+
+/* ── Shared Course Animations ── */
+@keyframes courseFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(16px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes courseSlideIn {
+    from {
+        opacity: 0;
+        transform: translateX(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes courseScaleIn {
+    from {
+        opacity: 0;
+        transform: scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+@keyframes coursePulse {
+    0%, 100% {
+        box-shadow: 0 0 0 0 rgba(var(--bg-primary-rgb), 0.4);
+    }
+    50% {
+        box-shadow: 0 0 0 8px rgba(var(--bg-primary-rgb), 0);
+    }
+}
+
+/* Reduced Motion */
+@media (prefers-reduced-motion: reduce) {
+    :root {
+        --course-duration-fast: 0ms;
+        --course-duration-base: 0ms;
+        --course-duration-slow: 0ms;
+    }
+    
+    @keyframes courseFadeIn {
+        from, to {
+            opacity: 1;
+            transform: none;
+        }
+    }
+    
+    @keyframes courseSlideIn {
+        from, to {
+            opacity: 1;
+            transform: none;
+        }
+    }
+    
+    @keyframes courseScaleIn {
+        from, to {
+            opacity: 1;
+            transform: none;
+        }
+    }
+}
+
+/* ── Focus States for Accessibility ── */
+.course-focus-visible:focus-visible {
+    outline: 2px solid var(--course-accent);
+    outline-offset: 2px;
+}
+
+.course-focus-visible:focus:not(:focus-visible) {
+    outline: none;
+}
+
+/* ── High Contrast Mode ── */
+@media (prefers-contrast: high) {
+    :root {
+        --course-btn-border: currentColor;
+        --course-card-border: currentColor;
+        --course-header-border: currentColor;
+        --course-nav-border: currentColor;
+    }
+}

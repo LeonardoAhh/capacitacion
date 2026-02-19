@@ -1,9 +1,9 @@
 /* ==========================================
    SLIDE COMPONENTS — PREMIUM PRESENTATION
-   Dark/Light variants • Responsive
+   CSS Puro • Multi-tema • PWA • Accesible
    ========================================== */
 
-/* ── Base ── */
+/* ── Base Slide ── */
 .slide {
     width: 100%;
     max-width: 900px;
@@ -12,53 +12,49 @@
     display: flex;
     flex-direction: column;
     justify-content: center;
-    padding: 3rem 3.5rem;
-    animation: fadeSlide 0.45s cubic-bezier(0.25, 0.1, 0.25, 1);
+    padding: var(--course-spacing-2xl) 3.5rem;
+    animation: courseFadeIn var(--course-duration-slow) var(--course-ease-out);
+    background: var(--course-slide-bg);
+    color: var(--course-slide-text);
 }
 
-@keyframes fadeSlide {
-    from {
-        opacity: 0;
-        transform: translateY(20px);
-    }
-
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
+.slide,
+.slide * {
+    color: inherit;
 }
 
-/* ── Shared: slide label (naranja) ── */
+/* ── Shared: Slide Label ── */
 .slideLabel {
     display: inline-block;
-    font-size: 0.72rem;
+    font-size: var(--course-font-xs);
     font-weight: 700;
     letter-spacing: 0.15em;
     text-transform: uppercase;
-    color: #e8742a;
-    margin-bottom: 0.35rem;
+    color: var(--course-accent);
+    margin-bottom: var(--course-spacing-xs);
 }
 
 /* ==========================================
-   TITLE SLIDE (DARK)
+   TITLE SLIDE
    ========================================== */
 .titleSlide {
     align-items: center;
     text-align: center;
-    gap: 1rem;
+    gap: var(--course-spacing-md);
     justify-content: center;
+    background: var(--bg-secondary);
 }
 
 .categoryBadge {
     display: inline-flex;
     align-items: center;
-    gap: 0.4rem;
-    padding: 0.4rem 1.1rem;
+    gap: var(--course-spacing-xs);
+    padding: var(--course-spacing-xs) 1.1rem;
     border-radius: 20px;
-    background: rgba(255, 255, 255, 0.08);
-    border: 1px solid rgba(255, 255, 255, 0.12);
-    color: rgba(255, 255, 255, 0.92);
-    font-size: 0.72rem;
+    background: var(--bg-tertiary);
+    border: 1px solid var(--border-color);
+    color: var(--text-primary);
+    font-size: var(--course-font-xs);
     font-weight: 700;
     letter-spacing: 0.12em;
     text-transform: uppercase;
@@ -68,62 +64,62 @@
     width: 7px;
     height: 7px;
     border-radius: 50%;
-    background: #e8742a;
+    background: var(--course-accent);
 }
 
 .titleSlide h1 {
     font-size: clamp(2.5rem, 7vw, 4.5rem);
     font-weight: 800;
-    color: white;
+    color: var(--course-slide-text);
     letter-spacing: -0.03em;
     line-height: 1.05;
-    margin-top: 0.5rem;
+    margin-top: var(--course-spacing-xs);
 }
 
 .titleSubtitle {
-    font-size: 1rem;
-    color: rgba(255, 255, 255, 0.55);
+    font-size: var(--course-font-base);
+    color: var(--course-slide-text-secondary);
     font-weight: 400;
     margin-top: 0.25rem;
 }
 
+.titleSubtitle p {
+    color: inherit;
+}
+
 .tagsContainer {
     display: flex;
-    gap: 0.5rem;
+    gap: var(--course-spacing-sm);
     flex-wrap: wrap;
     justify-content: center;
-    margin-top: 1rem;
+    margin-top: var(--course-spacing-md);
 }
 
 .tag {
-    padding: 0.4rem 1rem;
-    border-radius: 6px;
-    background: transparent;
-    color: rgba(255, 255, 255, 0.55);
-    font-size: 0.82rem;
+    padding: var(--course-spacing-xs) var(--course-spacing-md);
+    border-radius: var(--course-radius-sm);
+    background: var(--bg-tertiary);
+    color: var(--course-slide-text-secondary);
+    font-size: var(--course-font-sm);
     font-weight: 500;
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    transition: all 0.2s ease;
-}
-
-.tag:hover {
-    border-color: rgba(255, 255, 255, 0.3);
-    color: rgba(255, 255, 255, 0.92);
+    border: 1px solid var(--border-color);
+    transition: all var(--course-transition-fast);
 }
 
 /* ==========================================
-   OBJECTIVE SLIDE (LIGHT)
+   OBJECTIVE SLIDE
    ========================================== */
 .objectiveSlide {
-    gap: 1rem;
+    gap: var(--course-spacing-md);
     align-items: flex-start;
     text-align: left;
+    background: var(--course-slide-bg);
 }
 
 .objectiveSlide h2 {
     font-size: clamp(1.8rem, 5vw, 2.75rem);
     font-weight: 800;
-    color: #1a1a2e;
+    color: var(--course-slide-text);
     letter-spacing: -0.02em;
     line-height: 1.1;
 }
@@ -131,118 +127,157 @@
 .objectiveBody {
     font-size: 1.05rem;
     line-height: 1.7;
-    color: #5a5a6e;
+    color: var(--course-slide-text-secondary);
     max-width: 600px;
+}
+
+.objectiveBody p {
+    color: inherit;
 }
 
 .badgeRow {
     display: flex;
     align-items: center;
-    gap: 0.75rem;
-    margin-top: 0.5rem;
+    gap: var(--course-spacing-sm);
+    margin-top: var(--course-spacing-sm);
 }
 
 .badge {
     display: inline-flex;
     align-items: center;
-    padding: 0.5rem 1.5rem;
-    background: #e8742a;
-    color: white;
-    border-radius: 10px;
+    padding: var(--course-spacing-sm) var(--course-spacing-lg);
+    background: var(--course-accent);
+    color: #ffffff;
+    border-radius: var(--course-radius-md);
     font-weight: 800;
-    font-size: 1rem;
+    font-size: var(--course-font-base);
     letter-spacing: 0.05em;
 }
 
 .badgeSubtitle {
-    font-size: 0.85rem;
-    color: #5a5a6e;
+    font-size: var(--course-font-sm);
+    color: var(--course-slide-text-secondary);
     font-weight: 400;
 }
 
+.badgeSubtitle p {
+    color: inherit;
+}
+
 /* ==========================================
-   DEFINITION SLIDE (LIGHT)
+   DEFINITION SLIDE
    ========================================== */
 .definitionSlide {
     gap: 1.25rem;
     align-items: flex-start;
+    background: var(--course-slide-bg);
 }
 
 .definitionSlide h2 {
     font-size: clamp(1.6rem, 4vw, 2.5rem);
     font-weight: 800;
-    color: #1a1a2e;
+    color: var(--course-slide-text);
     letter-spacing: -0.02em;
 }
 
 .definitionBody {
     font-size: 1.05rem;
     line-height: 1.8;
-    color: #5a5a6e;
+    color: var(--course-slide-text-secondary);
     max-width: 700px;
+}
+
+.definitionBody p {
+    color: inherit;
 }
 
 .highlights {
     display: flex;
-    gap: 0.6rem;
+    gap: var(--course-spacing-sm);
     flex-wrap: wrap;
-    margin-top: 0.5rem;
+    margin-top: var(--course-spacing-sm);
 }
 
 .highlight {
     padding: 0.55rem 1.25rem;
-    border-radius: 8px;
-    background: rgba(0, 0, 0, 0.04);
-    color: #1a1a2e;
+    border-radius: var(--course-radius-md);
+    background: var(--bg-tertiary);
+    color: var(--course-slide-text);
     font-weight: 600;
-    font-size: 0.88rem;
-    border: 1px solid rgba(0, 0, 0, 0.08);
-    transition: all 0.2s ease;
+    font-size: var(--course-font-sm);
+    border: 1px solid var(--border-color);
+    transition: all var(--course-transition-fast);
 }
 
 .highlight:hover {
     transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+    box-shadow: var(--shadow-md);
+    border-color: var(--course-accent);
 }
 
 /* ==========================================
-   CONTENT SLIDE (LIGHT)
+   CONTENT SLIDE
    ========================================== */
 .contentSlide {
+    align-items: flex-start;
+    text-align: left;
+    max-width: 1000px;
     gap: 1.25rem;
     position: relative;
-    align-items: flex-start;
     padding-left: 4.5rem;
+    background: var(--course-slide-bg);
+}
+
+.slideImageContainer {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+    min-height: 300px;
+}
+
+.slideImage {
+    max-width: 100%;
+    max-height: 500px;
+    object-fit: contain;
+    border-radius: var(--course-radius-md);
+    box-shadow: var(--shadow-lg);
 }
 
 .contentSlide h2 {
     font-size: clamp(1.5rem, 3.5vw, 2.25rem);
     font-weight: 800;
-    color: #1a1a2e;
+    color: var(--course-slide-text);
     letter-spacing: -0.02em;
 }
 
 .contentBody {
-    font-size: 1rem;
+    font-size: var(--course-font-base);
     line-height: 1.8;
-    color: #5a5a6e;
+    color: var(--course-slide-text-secondary);
     max-width: 700px;
+}
+
+.contentBody p {
+    color: inherit;
 }
 
 .bulletList {
     list-style: none;
     display: flex;
     flex-direction: column;
-    gap: 0.6rem;
+    gap: var(--course-spacing-sm);
     padding: 0;
 }
 
 .bulletItem {
     display: flex;
     align-items: flex-start;
-    gap: 0.75rem;
-    font-size: 0.95rem;
-    color: #5a5a6e;
+    gap: var(--course-spacing-sm);
+    font-size: var(--course-font-sm);
+    color: var(--course-slide-text-secondary);
     line-height: 1.6;
 }
 
@@ -252,6 +287,7 @@
     border-radius: 50%;
     flex-shrink: 0;
     margin-top: 0.5rem;
+    background: var(--course-accent);
 }
 
 .accentBar {
@@ -262,50 +298,103 @@
     width: 3px;
     border-radius: 3px;
     opacity: 0.7;
+    background: var(--course-accent);
 }
 
 /* ==========================================
-   ICON GRID SLIDE (DARK)
+   ICON GRID SLIDE
    ========================================== */
 .iconGridSlide {
-    gap: 2rem;
+    gap: var(--course-spacing-xl);
     align-items: center;
     text-align: center;
+    background: var(--bg-secondary);
+    color: var(--course-slide-text);
 }
 
 .iconGridSlide h2 {
     font-size: clamp(1.5rem, 4vw, 2.25rem);
     font-weight: 700;
     font-style: italic;
-    color: rgba(255, 255, 255, 0.92);
+    color: var(--course-slide-text);
+}
+
+.slideTitle {
+    font-size: clamp(1.5rem, 4vw, 2.25rem);
+    font-weight: 700;
+    color: var(--course-slide-text);
+    margin: 0;
+}
+
+.slideDescription {
+    font-size: var(--course-font-base);
+    color: var(--course-slide-text-secondary);
+    margin: 0 0 var(--course-spacing-md) 0;
 }
 
 .iconGrid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
-    gap: 0.85rem;
+    gap: var(--course-spacing-sm);
     width: 100%;
     max-width: 750px;
 }
 
-.iconCard {
+.gridItem {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 0.5rem;
-    padding: 1.4rem 1rem;
-    border-radius: 12px;
-    background: rgba(255, 255, 255, 0.06);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    transition: all 0.3s cubic-bezier(0.25, 0.1, 0.25, 1);
-    cursor: default;
+    gap: var(--course-spacing-sm);
+    padding: 1.4rem var(--course-spacing-md);
+    border-radius: var(--course-radius-md);
+    background: var(--course-slide-bg);
+    border: 1px solid var(--border-color);
+    box-shadow: var(--shadow-sm);
+    transition: all var(--course-transition-base);
 }
 
-.iconCard:hover {
+.gridItem:hover {
     transform: translateY(-6px);
-    background: rgba(255, 255, 255, 0.1);
-    border-color: rgba(255, 255, 255, 0.2);
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+    border-color: var(--course-accent);
+    box-shadow: var(--shadow-lg);
+}
+
+.iconWrapper {
+    width: 64px;
+    height: 64px;
+    border-radius: var(--course-radius-md);
+    background: var(--bg-tertiary);
+    color: var(--course-accent);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all var(--course-transition-base);
+    overflow: hidden;
+}
+
+.gridItemImage {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.iconLabel {
+    font-size: var(--course-font-sm);
+    font-weight: 700;
+    color: var(--course-slide-text);
+    margin: 0;
+}
+
+.iconSublabel {
+    font-size: var(--course-font-xs);
+    color: var(--course-slide-text-secondary);
+    font-weight: 400;
+    margin: 0;
+}
+
+.iconSublabel p,
+.iconSublabel span {
+    color: inherit;
 }
 
 .iconEmoji {
@@ -313,54 +402,44 @@
     line-height: 1;
 }
 
-.iconLabel {
-    font-size: 0.95rem;
-    font-weight: 700;
-}
-
-.iconSublabel {
-    font-size: 0.78rem;
-    color: rgba(255, 255, 255, 0.55);
-    font-weight: 400;
-}
-
 /* ==========================================
-   BENEFITS SLIDE (LIGHT)
+   BENEFITS SLIDE
    ========================================== */
 .benefitsSlide {
     gap: 1.25rem;
     position: relative;
     align-items: flex-start;
     padding-left: 4.5rem;
+    background: var(--course-slide-bg);
 }
 
 .benefitsSlide h2 {
     font-size: clamp(1.4rem, 3.5vw, 2.25rem);
     font-weight: 800;
-    color: #1a1a2e;
+    color: var(--course-slide-text);
 }
 
 .benefitsList {
     display: flex;
     flex-direction: column;
-    gap: 0.75rem;
+    gap: var(--course-spacing-sm);
 }
 
 .benefitItem {
     display: flex;
     align-items: flex-start;
-    gap: 0.85rem;
-    padding: 0.85rem 1.1rem;
-    border-radius: 10px;
-    background: rgba(0, 0, 0, 0.03);
-    border: 1px solid rgba(0, 0, 0, 0.08);
-    transition: all 0.2s ease;
+    gap: var(--course-spacing-sm);
+    padding: var(--course-spacing-sm) 1.1rem;
+    border-radius: var(--course-radius-md);
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    transition: all var(--course-transition-fast);
 }
 
 .benefitItem:hover {
     transform: translateX(6px);
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-    border-color: #e8742a;
+    box-shadow: var(--shadow-sm);
+    border-color: var(--course-accent);
 }
 
 .benefitIcon {
@@ -371,23 +450,29 @@
 }
 
 .benefitText {
-    font-size: 0.92rem;
-    color: #5a5a6e;
+    font-size: var(--course-font-sm);
+    color: var(--course-slide-text-secondary);
     line-height: 1.6;
 }
 
+.benefitText p,
+.benefitText span {
+    color: inherit;
+}
+
 /* ==========================================
-   QUIZ SLIDE (LIGHT)
+   QUIZ SLIDE
    ========================================== */
 .quizSlide {
     gap: 1.5rem;
     align-items: flex-start;
+    background: var(--course-slide-bg);
 }
 
 .quizSlide h2 {
     font-size: clamp(1.6rem, 4vw, 2.5rem);
     font-weight: 800;
-    color: #1a1a2e;
+    color: var(--course-slide-text);
     letter-spacing: -0.02em;
 }
 
@@ -395,92 +480,96 @@
     width: 100%;
     max-width: 800px;
     padding: 1.25rem 1.5rem;
-    border-radius: 14px;
-    background: rgba(255, 255, 255, 0.85);
-    border: 1px solid rgba(0, 0, 0, 0.08);
+    border-radius: var(--course-radius-md);
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
     display: flex;
     flex-direction: column;
-    gap: 0.85rem;
+    gap: var(--course-spacing-sm);
 }
 
 .questionText {
-    font-size: 0.95rem;
+    font-size: var(--course-font-sm);
     font-weight: 700;
-    color: #1a1a2e;
+    color: var(--course-slide-text);
     line-height: 1.5;
 }
 
 .optionsGrid {
     display: flex;
     flex-direction: column;
-    gap: 0.4rem;
+    gap: var(--course-spacing-xs);
 }
 
 .optionBtn {
     display: flex;
     align-items: center;
-    gap: 0.65rem;
-    padding: 0.7rem 1rem;
-    border-radius: 10px;
-    border: 1px solid rgba(0, 0, 0, 0.08);
+    gap: var(--course-spacing-sm);
+    padding: var(--course-spacing-sm) var(--course-spacing-md);
+    border-radius: var(--course-radius-md);
+    border: 1px solid var(--border-color);
     background: transparent;
-    color: #1a1a2e;
-    font-size: 0.88rem;
+    color: var(--course-slide-text);
+    font-size: var(--course-font-sm);
     cursor: pointer;
-    transition: all 0.2s ease;
+    transition: all var(--course-transition-fast);
     text-align: left;
     width: 100%;
 }
 
 .optionBtn:hover:not(.optionSelected) {
-    background: rgba(0, 0, 0, 0.04);
-    border-color: #e8742a;
+    background: var(--bg-tertiary);
+    border-color: var(--course-accent);
+}
+
+.optionBtn:focus-visible {
+    outline: 2px solid var(--course-accent);
+    outline-offset: 2px;
 }
 
 .optionSelected {
-    background: rgba(0, 0, 0, 0.04);
-    border-color: #e8742a;
+    background: var(--bg-tertiary);
+    border-color: var(--course-accent);
 }
 
 .optionCorrect {
-    border-color: #34c759 !important;
-    background: rgba(52, 199, 89, 0.08) !important;
-    color: #2d8a47;
+    border-color: var(--course-success) !important;
+    background: rgba(34, 197, 94, 0.08) !important;
+    color: var(--course-success);
 }
 
 .optionIncorrect {
-    border-color: #ff3b30 !important;
-    background: rgba(255, 59, 48, 0.08) !important;
-    color: #cc2f27;
+    border-color: var(--course-danger) !important;
+    background: rgba(239, 68, 68, 0.08) !important;
+    color: var(--course-danger);
 }
 
 .optionLetter {
     font-weight: 600;
-    font-size: 0.88rem;
-    color: #5a5a6e;
+    font-size: var(--course-font-sm);
+    color: var(--course-slide-text-secondary);
     min-width: 20px;
 }
 
 .optionCorrect .optionLetter {
-    color: #2d8a47;
+    color: var(--course-success);
 }
 
 .optionIncorrect .optionLetter {
-    color: #cc2f27;
+    color: var(--course-danger);
 }
 
-/* Quiz Submit */
 .quizSubmitBtn {
-    padding: 0.7rem 2rem;
-    border-radius: 10px;
-    background: #e8742a;
-    color: white;
+    padding: var(--course-spacing-sm) var(--course-spacing-xl);
+    border-radius: var(--course-radius-md);
+    background: var(--course-accent);
+    color: #ffffff;
     font-weight: 700;
-    font-size: 0.95rem;
+    font-size: var(--course-font-sm);
     border: none;
     cursor: pointer;
-    transition: all 0.2s ease;
-    margin-top: 0.5rem;
+    transition: all var(--course-transition-fast);
+    margin-top: var(--course-spacing-sm);
 }
 
 .quizSubmitBtn:hover:not(:disabled) {
@@ -494,27 +583,31 @@
     transform: none;
 }
 
-/* Quiz Result */
+.quizSubmitBtn:focus-visible {
+    outline: 2px solid var(--course-accent);
+    outline-offset: 2px;
+}
+
 .quizResult {
     width: 100%;
     max-width: 800px;
-    padding: 2rem;
-    border-radius: 14px;
+    padding: var(--course-spacing-xl);
+    border-radius: var(--course-radius-md);
     text-align: center;
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 0.75rem;
+    gap: var(--course-spacing-sm);
 }
 
 .quizResultPassed {
-    background: rgba(52, 199, 89, 0.08);
-    border: 2px solid rgba(52, 199, 89, 0.25);
+    background: rgba(34, 197, 94, 0.08);
+    border: 2px solid rgba(34, 197, 94, 0.25);
 }
 
 .quizResultFailed {
-    background: rgba(255, 59, 48, 0.08);
-    border: 2px solid rgba(255, 59, 48, 0.25);
+    background: rgba(239, 68, 68, 0.08);
+    border: 2px solid rgba(239, 68, 68, 0.25);
 }
 
 .quizScore {
@@ -524,17 +617,147 @@
 }
 
 .quizResultPassed .quizScore {
-    color: #34c759;
+    color: var(--course-success);
 }
 
 .quizResultFailed .quizScore {
-    color: #ff3b30;
+    color: var(--course-danger);
 }
 
 .quizResultLabel {
-    font-size: 1rem;
-    color: #5a5a6e;
+    font-size: var(--course-font-base);
+    color: var(--course-slide-text-secondary);
     font-weight: 500;
+}
+
+/* ==========================================
+   COMPARISON SLIDE
+   ========================================== */
+.comparisonSlide {
+    justify-content: flex-start;
+    gap: 1.25rem;
+    background: var(--course-slide-bg);
+}
+
+.comparisonHeading {
+    font-size: 1.6rem;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    margin: 0 0 0.25rem;
+    color: var(--course-slide-text);
+}
+
+.comparisonDesc {
+    font-size: var(--course-font-base);
+    color: var(--course-slide-text-secondary);
+    margin: 0 0 var(--course-spacing-sm);
+    line-height: 1.6;
+}
+
+.comparisonDesc p {
+    color: inherit;
+}
+
+.comparisonGrid {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    gap: var(--course-spacing-md);
+    align-items: stretch;
+}
+
+.comparisonCol {
+    border-radius: var(--course-radius-md);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+.comparisonLeft {
+    border: 2px solid rgba(239, 68, 68, 0.35);
+    background: rgba(239, 68, 68, 0.05);
+}
+
+.comparisonRight {
+    border: 2px solid rgba(34, 197, 94, 0.35);
+    background: rgba(34, 197, 94, 0.05);
+}
+
+.comparisonColHeader {
+    padding: var(--course-spacing-sm) var(--course-spacing-md);
+    display: flex;
+    align-items: center;
+}
+
+.comparisonLeft .comparisonColHeader {
+    background: rgba(239, 68, 68, 0.12);
+    border-bottom: 1px solid rgba(239, 68, 68, 0.2);
+}
+
+.comparisonRight .comparisonColHeader {
+    background: rgba(34, 197, 94, 0.12);
+    border-bottom: 1px solid rgba(34, 197, 94, 0.2);
+}
+
+.comparisonColLabel {
+    font-size: var(--course-font-xs);
+    font-weight: 700;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+}
+
+.comparisonLeft .comparisonColLabel {
+    color: var(--course-danger);
+}
+
+.comparisonRight .comparisonColLabel {
+    color: var(--course-success);
+}
+
+.comparisonColBody {
+    padding: var(--course-spacing-sm) var(--course-spacing-md);
+    flex: 1;
+}
+
+.comparisonList {
+    margin: 0;
+    padding: 0 0 0 1.1rem;
+    display: flex;
+    flex-direction: column;
+    gap: var(--course-spacing-sm);
+    list-style: disc;
+}
+
+.comparisonList li {
+    font-size: var(--course-font-sm);
+    line-height: 1.5;
+    color: var(--course-slide-text-secondary);
+}
+
+.comparisonList li p {
+    color: inherit;
+}
+
+.comparisonColDesc {
+    font-size: var(--course-font-sm);
+    line-height: 1.6;
+    color: var(--course-slide-text-secondary);
+    margin: 0;
+}
+
+.comparisonColDesc p {
+    color: inherit;
+}
+
+.comparisonDivider {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: var(--course-font-xs);
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    color: var(--course-slide-text-muted);
+    padding: 0 0.25rem;
+    align-self: center;
 }
 
 /* ==========================================
@@ -561,7 +784,7 @@
    ========================================== */
 @media (max-width: 767px) {
     .slide {
-        padding: 2rem 1.25rem;
+        padding: var(--course-spacing-xl) var(--course-spacing-md);
         min-height: 50vh;
     }
 
@@ -578,7 +801,7 @@
 
     .contentSlide,
     .benefitsSlide {
-        padding-left: 1.25rem;
+        padding-left: var(--course-spacing-md);
     }
 
     .accentBar {
@@ -587,11 +810,11 @@
 
     .iconGrid {
         grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
-        gap: 0.6rem;
+        gap: var(--course-spacing-sm);
     }
 
-    .iconCard {
-        padding: 1rem 0.75rem;
+    .gridItem {
+        padding: var(--course-spacing-md) var(--course-spacing-sm);
     }
 
     .iconEmoji {
@@ -599,16 +822,16 @@
     }
 
     .iconLabel {
-        font-size: 0.82rem;
+        font-size: var(--course-font-xs);
     }
 
     .questionCard {
-        padding: 1rem;
+        padding: var(--course-spacing-md);
     }
 
     .optionBtn {
-        padding: 0.6rem 0.75rem;
-        font-size: 0.82rem;
+        padding: var(--course-spacing-sm) var(--course-spacing-sm);
+        font-size: var(--course-font-xs);
     }
 
     .quizSubmitBtn {
@@ -616,27 +839,27 @@
     }
 
     .badge {
-        padding: 0.4rem 1.1rem;
-        font-size: 0.88rem;
+        padding: var(--course-spacing-xs) 1.1rem;
+        font-size: var(--course-font-sm);
     }
 
     .badgeRow {
         flex-direction: column;
         align-items: flex-start;
-        gap: 0.4rem;
+        gap: var(--course-spacing-xs);
     }
 
     .benefitItem {
-        padding: 0.7rem 0.85rem;
+        padding: var(--course-spacing-sm) var(--course-spacing-sm);
     }
 
     .highlights {
-        gap: 0.4rem;
+        gap: var(--course-spacing-xs);
     }
 
     .highlight {
-        padding: 0.4rem 0.9rem;
-        font-size: 0.82rem;
+        padding: var(--course-spacing-xs) var(--course-spacing-sm);
+        font-size: var(--course-font-xs);
     }
 }
 
@@ -645,7 +868,7 @@
    ========================================== */
 @media (max-width: 379px) {
     .slide {
-        padding: 1.5rem 1rem;
+        padding: 1.5rem var(--course-spacing-md);
     }
 
     .titleSlide h1 {
@@ -660,124 +883,6 @@
         font-size: 0.65rem;
         padding: 0.3rem 0.8rem;
     }
-}
-
-/* ==========================================
-   COMPARISON SLIDE
-   ========================================== */
-.comparisonSlide {
-    justify-content: flex-start;
-    gap: 1.25rem;
-}
-
-.comparisonHeading {
-    font-size: 1.6rem;
-    font-weight: 700;
-    letter-spacing: -0.02em;
-    margin: 0 0 0.25rem;
-    color: var(--player-text, inherit);
-}
-
-.comparisonDesc {
-    font-size: 1rem;
-    color: var(--player-text-secondary, var(--text-secondary));
-    margin: 0 0 0.5rem;
-    line-height: 1.6;
-}
-
-.comparisonGrid {
-    display: grid;
-    grid-template-columns: 1fr auto 1fr;
-    gap: 1rem;
-    align-items: stretch;
-}
-
-.comparisonCol {
-    border-radius: 16px;
-    overflow: hidden;
-    display: flex;
-    flex-direction: column;
-}
-
-.comparisonLeft {
-    border: 2px solid rgba(255, 59, 48, 0.35);
-    background: rgba(255, 59, 48, 0.05);
-}
-
-.comparisonRight {
-    border: 2px solid rgba(52, 199, 89, 0.35);
-    background: rgba(52, 199, 89, 0.05);
-}
-
-.comparisonColHeader {
-    padding: 0.65rem 1rem;
-    display: flex;
-    align-items: center;
-}
-
-.comparisonLeft .comparisonColHeader {
-    background: rgba(255, 59, 48, 0.12);
-    border-bottom: 1px solid rgba(255, 59, 48, 0.2);
-}
-
-.comparisonRight .comparisonColHeader {
-    background: rgba(52, 199, 89, 0.12);
-    border-bottom: 1px solid rgba(52, 199, 89, 0.2);
-}
-
-.comparisonColLabel {
-    font-size: 0.8rem;
-    font-weight: 700;
-    letter-spacing: 0.03em;
-    text-transform: uppercase;
-}
-
-.comparisonLeft .comparisonColLabel {
-    color: #FF3B30;
-}
-
-.comparisonRight .comparisonColLabel {
-    color: #34C759;
-}
-
-.comparisonColBody {
-    padding: 0.85rem 1rem;
-    flex: 1;
-}
-
-.comparisonList {
-    margin: 0;
-    padding: 0 0 0 1.1rem;
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-    list-style: disc;
-}
-
-.comparisonList li {
-    font-size: 0.9rem;
-    line-height: 1.5;
-    color: var(--player-text, inherit);
-}
-
-.comparisonColDesc {
-    font-size: 0.9rem;
-    line-height: 1.6;
-    color: var(--player-text, inherit);
-    margin: 0;
-}
-
-.comparisonDivider {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 0.7rem;
-    font-weight: 800;
-    letter-spacing: 0.08em;
-    color: var(--player-text-secondary, var(--text-secondary));
-    opacity: 0.5;
-    padding: 0 0.25rem;
-    align-self: center;
 }
 
 /* Responsive comparison */
@@ -795,5 +900,74 @@
 
     .comparisonHeading {
         font-size: 1.25rem;
+    }
+}
+
+/* ==========================================
+   ACCESSIBILITY — REDUCED MOTION
+   ========================================== */
+@media (prefers-reduced-motion: reduce) {
+    .slide {
+        animation: none;
+    }
+
+    .highlight,
+    .gridItem,
+    .benefitItem,
+    .optionBtn,
+    .quizSubmitBtn {
+        transition: none;
+    }
+
+    .highlight:hover,
+    .gridItem:hover,
+    .benefitItem:hover {
+        transform: none;
+    }
+
+    .quizSubmitBtn:hover:not(:disabled) {
+        transform: none;
+    }
+}
+
+/* ==========================================
+   ACCESSIBILITY — HIGH CONTRAST
+   ========================================== */
+@media (prefers-contrast: high) {
+    .tag,
+    .highlight,
+    .gridItem,
+    .benefitItem,
+    .questionCard,
+    .optionBtn {
+        border-width: 2px;
+    }
+
+    .comparisonLeft,
+    .comparisonRight {
+        border-width: 3px;
+    }
+}
+
+/* ==========================================
+   PRINT STYLES
+   ========================================== */
+@media print {
+    .slide {
+        page-break-inside: avoid;
+        min-height: auto;
+        padding: var(--course-spacing-lg);
+        background: white !important;
+        color: black !important;
+    }
+
+    .accentBar {
+        display: none;
+    }
+
+    .highlight:hover,
+    .gridItem:hover,
+    .benefitItem:hover {
+        transform: none;
     }
 }

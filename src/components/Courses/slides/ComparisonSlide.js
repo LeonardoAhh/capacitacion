@@ -1,19 +1,12 @@
 import styles from './slides.module.css';
 
-/**
- * ComparisonSlide — Slide de dos columnas comparativas.
- *
- * Estructura del data esperada:
- * {
- *   heading: string,
- *   description?: string,
- *   left:  { label: string, items?: string[], description?: string },
- *   right: { label: string, items?: string[], description?: string }
- * }
- */
-export default function ComparisonSlide({ data, isDark }) {
+export default function ComparisonSlide({ data }) {
     return (
-        <div className={`${styles.slide} ${styles.comparisonSlide}`}>
+        <article 
+            className={`${styles.slide} ${styles.comparisonSlide}`}
+            role="region"
+            aria-label={data.heading || 'Comparación'}
+        >
             {data.heading && (
                 <h2 className={styles.comparisonHeading}>{data.heading}</h2>
             )}
@@ -21,9 +14,12 @@ export default function ComparisonSlide({ data, isDark }) {
                 <p className={styles.comparisonDesc}>{data.description}</p>
             )}
 
-            <div className={styles.comparisonGrid}>
-                {/* Columna izquierda */}
-                <div className={`${styles.comparisonCol} ${styles.comparisonLeft}`}>
+            <div className={styles.comparisonGrid} role="list">
+                <div 
+                    className={`${styles.comparisonCol} ${styles.comparisonLeft}`}
+                    role="listitem"
+                    aria-label={data.left?.label || 'Opción 1'}
+                >
                     <div className={styles.comparisonColHeader}>
                         <span className={styles.comparisonColLabel}>{data.left?.label}</span>
                     </div>
@@ -41,11 +37,13 @@ export default function ComparisonSlide({ data, isDark }) {
                     </div>
                 </div>
 
-                {/* Divider */}
                 <div className={styles.comparisonDivider} aria-hidden="true">VS</div>
 
-                {/* Columna derecha */}
-                <div className={`${styles.comparisonCol} ${styles.comparisonRight}`}>
+                <div 
+                    className={`${styles.comparisonCol} ${styles.comparisonRight}`}
+                    role="listitem"
+                    aria-label={data.right?.label || 'Opción 2'}
+                >
                     <div className={styles.comparisonColHeader}>
                         <span className={styles.comparisonColLabel}>{data.right?.label}</span>
                     </div>
@@ -63,6 +61,6 @@ export default function ComparisonSlide({ data, isDark }) {
                     </div>
                 </div>
             </div>
-        </div>
+        </article>
     );
 }

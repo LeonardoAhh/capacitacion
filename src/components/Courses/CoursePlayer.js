@@ -5,16 +5,9 @@ import { ArrowLeft, ArrowRight } from 'lucide-react';
 import SlideRenderer from './SlideRenderer';
 import styles from './CoursePlayer.module.css';
 
-/** Tipos de slide que usan fondo oscuro */
-const DARK_SLIDE_TYPES = ['title', 'icon_grid'];
-
-/**
- * Reproductor premium fullscreen de slides.
- */
 export default function CoursePlayer({ course, slides, onClose }) {
     const [current, setCurrent] = useState(0);
 
-    // Excluir slides de tipo quiz (exámenes en papel)
     const filteredSlides = (slides || []).filter(s => s.type !== 'quiz');
     const total = filteredSlides.length;
     const isFirst = current === 0;
@@ -22,7 +15,6 @@ export default function CoursePlayer({ course, slides, onClose }) {
     const progress = total > 0 ? ((current + 1) / total) * 100 : 0;
 
     const currentSlide = filteredSlides[current];
-    const isDark = currentSlide && DARK_SLIDE_TYPES.includes(currentSlide.type);
 
     const goNext = useCallback(() => {
         if (!isLast) setCurrent((c) => c + 1);
@@ -34,9 +26,17 @@ export default function CoursePlayer({ course, slides, onClose }) {
 
     useEffect(() => {
         const handleKey = (e) => {
-            if (e.key === 'ArrowRight' || e.key === ' ') { e.preventDefault(); goNext(); }
-            else if (e.key === 'ArrowLeft') { e.preventDefault(); goPrev(); }
-            else if (e.key === 'Escape') { onClose(); }
+            if (e.key === 'ArrowRight' || e.key === ' ') { 
+                e.preventDefault(); 
+                goNext(); 
+            }
+            else if (e.key === 'ArrowLeft') { 
+                e.preventDefault(); 
+                goPrev(); 
+            }
+            else if (e.key === 'Escape') { 
+                onClose(); 
+            }
         };
         window.addEventListener('keydown', handleKey);
         return () => window.removeEventListener('keydown', handleKey);
@@ -44,51 +44,79 @@ export default function CoursePlayer({ course, slides, onClose }) {
 
     if (!filteredSlides || total === 0) {
         return (
-            <div className={styles.overlay}>
+            <div 
+                className={styles.overlay}
+                role="dialog"
+                aria-modal="true"
+                aria-label="Reproductor de curso"
+            >
                 <div className={styles.emptyMsg}>Sin slides para mostrar.</div>
             </div>
         );
     }
 
     return (
-        <div className={`${styles.overlay} ${isDark ? styles.overlayDark : styles.overlayLight}`}>
-            {/* ── Header ── */}
+        <div 
+            className={styles.overlay}
+            role="dialog"
+            aria-modal="true"
+            aria-label={`Reproductor de curso: ${course?.title || 'Curso'}`}
+        >
             <header className={styles.header}>
-                <button className={styles.exitBtn} onClick={onClose}>
-                    <ArrowLeft size={16} />
+                <button 
+                    className={styles.exitBtn} 
+                    onClick={onClose}
+                    aria-label="Cerrar curso y volver"
+                >
+                    <ArrowLeft size={16} aria-hidden="true" />
                     <span>Salir</span>
                 </button>
 
                 <span className={styles.headerTitle}>{course?.title || 'Curso'}</span>
 
                 <div className={styles.headerRight}>
-                    <span className={styles.counter}>{current + 1} / {total}</span>
-                    <div className={styles.progressTrack}>
+                    <span className={styles.counter} aria-label={`Slide ${current + 1} de ${total}`}>
+                        {current + 1} / {total}
+                    </span>
+                    <div 
+                        className={styles.progressTrack}
+                        role="progressbar"
+                        aria-valuenow={progress}
+                        aria-valuemin={0}
+                        aria-valuemax={100}
+                        aria-label={`Progreso: ${Math.round(progress)}%`}
+                    >
                         <div className={styles.progressFill} style={{ width: `${progress}%` }} />
                     </div>
                 </div>
             </header>
 
-            {/* ── Slide Content ── */}
-            <main className={styles.content}>
-                <SlideRenderer slide={currentSlide} isDark={isDark} />
+            <main className={styles.content} aria-live="polite">
+                <SlideRenderer slide={currentSlide} />
             </main>
 
-            {/* ── Navigation ── */}
-            <nav className={styles.nav}>
-                <button className={styles.navBtn} onClick={goPrev} disabled={isFirst}>
-                    <ArrowLeft size={16} />
+            <nav className={styles.nav} aria-label="Navegación de slides">
+                <button 
+                    className={styles.navBtn} 
+                    onClick={goPrev} 
+                    disabled={isFirst}
+                    aria-label="Slide anterior"
+                    aria-disabled={isFirst}
+                >
+                    <ArrowLeft size={16} aria-hidden="true" />
                     <span>Anterior</span>
                 </button>
 
-                {/* Dots */}
-                <div className={styles.dots}>
-                    {filteredSlides.map((_, i) => (
+                <div className={styles.dots} role="tablist" aria-label="Slides del curso">
+                    {filteredSlides.map((slide, i) => (
                         <button
                             key={i}
                             className={`${styles.dot} ${i === current ? styles.dotActive : ''} ${i < current ? styles.dotVisited : ''}`}
                             onClick={() => setCurrent(i)}
-                            aria-label={`Slide ${i + 1}`}
+                            role="tab"
+                            aria-selected={i === current}
+                            aria-label={`Ir a slide ${i + 1}: ${slide.data?.heading || slide.type}`}
+                            tabIndex={i === current ? 0 : -1}
                         />
                     ))}
                 </div>
@@ -96,9 +124,10 @@ export default function CoursePlayer({ course, slides, onClose }) {
                 <button
                     className={`${styles.navBtn} ${styles.navBtnPrimary}`}
                     onClick={isLast ? onClose : goNext}
+                    aria-label={isLast ? 'Finalizar curso' : 'Siguiente slide'}
                 >
                     <span>{isLast ? 'Finalizar' : 'Siguiente'}</span>
-                    <ArrowRight size={16} />
+                    <ArrowRight size={16} aria-hidden="true" />
                 </button>
             </nav>
         </div>

@@ -644,6 +644,25 @@ textarea.input {
     white-space: nowrap;
 }
 
+.renameInput {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    background: var(--bg-primary);
+    border: 1px solid var(--color-primary);
+    border-radius: 4px;
+    padding: 0 4px;
+    margin: -1px 0;
+    width: 100%;
+    min-width: 150px;
+    font-family: inherit;
+}
+
+.renameInput:focus {
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(var(--color-primary-rgb), 0.1);
+}
+
 .nativeMeta {
     display: flex;
     gap: 8px;

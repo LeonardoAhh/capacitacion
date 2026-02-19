@@ -10,6 +10,7 @@ import {
     orderBy,
     serverTimestamp,
     writeBatch,
+    addDoc,
 } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 
@@ -171,6 +172,92 @@ export async function deleteCourse(courseId) {
         return { success: true };
     } catch (error) {
         console.error('Error eliminando curso:', error);
+        return { success: false, error: error.message };
+    }
+}
+
+/**
+ * Renombra un curso nativo.
+ * @param {string} courseId
+ * @param {string} newTitle
+ */
+export async function renameCourse(courseId, newTitle) {
+    try {
+        const courseRef = doc(db, COURSES_COLLECTION, courseId);
+        await updateDoc(courseRef, { title: newTitle.trim(), updatedAt: serverTimestamp() });
+        return { success: true };
+    } catch (error) {
+        console.error('Error renombrando curso:', error);
+        return { success: false, error: error.message };
+    }
+}
+
+/**
+ * Actualiza los campos de metadatos de un curso (title, category, description, etc.)
+ * Sin tocar los slides.
+ * @param {string} courseId
+ * @param {Object} fields - campos a actualizar
+ */
+export async function updateCourseFields(courseId, fields) {
+    try {
+        const courseRef = doc(db, COURSES_COLLECTION, courseId);
+        await updateDoc(courseRef, { ...fields, updatedAt: serverTimestamp() });
+        return { success: true };
+    } catch (error) {
+        console.error('Error actualizando curso:', error);
+        return { success: false, error: error.message };
+    }
+}
+
+/**
+ * Actualiza el data de un slide individual.
+ * @param {string} courseId
+ * @param {string} slideId
+ * @param {Object} slideData - campos a actualizar en el slide
+ */
+export async function updateSlide(courseId, slideId, slideData) {
+    try {
+        const slideRef = doc(db, COURSES_COLLECTION, courseId, SLIDES_SUBCOLLECTION, slideId);
+        await updateDoc(slideRef, slideData);
+        return { success: true };
+    } catch (error) {
+        console.error('Error actualizando slide:', error);
+        return { success: false, error: error.message };
+    }
+}
+
+/**
+ * Agrega un nuevo slide al curso.
+ * @param {string} courseId
+ * @param {Object} slideData - { type, data, order }
+ */
+export async function addSlide(courseId, slideData) {
+    try {
+        const slidesRef = collection(db, COURSES_COLLECTION, courseId, SLIDES_SUBCOLLECTION);
+
+        // Si no viene order, buscamos el último
+        let order = slideData.order;
+        if (!order) {
+            const q = query(slidesRef, orderBy('order', 'desc'));
+            const snap = await getDocs(q);
+            if (!snap.empty) {
+                const lastSlide = snap.docs[0].data();
+                order = (lastSlide.order || 0) + 1;
+            } else {
+                order = 1;
+            }
+        }
+
+        const newSlideData = {
+            ...slideData,
+            order,
+            createdAt: serverTimestamp()
+        };
+
+        const docRef = await addDoc(slidesRef, newSlideData);
+        return { success: true, id: docRef.id, ...newSlideData };
+    } catch (error) {
+        console.error('Error agregando slide:', error);
         return { success: false, error: error.message };
     }
 }

@@ -2,10 +2,13 @@ import styles from './slides.module.css';
 
 export default function TitleSlide({ data }) {
     return (
-        <div className={`${styles.slide} ${styles.titleSlide}`}>
-            {/* Badge de categoría */}
+        <article 
+            className={`${styles.slide} ${styles.titleSlide}`}
+            role="region"
+            aria-label={`Título del curso: ${data.title}`}
+        >
             <span className={styles.categoryBadge}>
-                <span className={styles.categoryDot} />
+                <span className={styles.categoryDot} aria-hidden="true" />
                 Capacitación
             </span>
 
@@ -16,12 +19,12 @@ export default function TitleSlide({ data }) {
             )}
 
             {data.tags && data.tags.length > 0 && (
-                <div className={styles.tagsContainer}>
+                <div className={styles.tagsContainer} role="list">
                     {data.tags.map((tag, i) => (
-                        <span key={i} className={styles.tag}>{tag}</span>
+                        <span key={i} className={styles.tag} role="listitem">{tag}</span>
                     ))}
                 </div>
             )}
-        </div>
+        </article>
     );
 }
