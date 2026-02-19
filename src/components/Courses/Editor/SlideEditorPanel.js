@@ -386,10 +386,156 @@ export default function SlideEditorPanel({ slide, onSave }) {
                         </div>
                     </>
                 );
+            case 'group_dynamic':
+            case 'dynamic':
+                return renderDynamicSlide();
+            case 'group_quiz':
+            case 'quiz':
+                return renderQuizSlide();
             default:
                 return <p>Editor no disponible para tipo: {slide.type}</p>;
         }
     };
+
+    // ── Editores Específicos Nuevos ──
+
+    const renderDynamicSlide = () => (
+        <>
+            <div className={styles.formGroup}>
+                <label className={styles.label}>Título (Heading)</label>
+                <input
+                    className={styles.input}
+                    value={formData.heading || ''}
+                    onChange={e => handleChange('heading', e.target.value)}
+                />
+            </div>
+            <div className={styles.formGroup}>
+                <label className={styles.label}>Instrucciones</label>
+                <textarea
+                    className={styles.textarea}
+                    placeholder="Instrucciones para el facilitador..."
+                    value={formData.instructions || ''}
+                    onChange={e => handleChange('instructions', e.target.value)}
+                />
+            </div>
+            <div className={styles.formGroup}>
+                <div style={{ display: 'flex', gap: 10 }}>
+                    <div style={{ flex: 1 }}>
+                        <label className={styles.label}>Tipo</label>
+                        <input
+                            className={styles.input}
+                            placeholder="Ej. Roleplay, Debate"
+                            value={formData.type || ''}
+                            onChange={e => handleChange('type', e.target.value)}
+                        />
+                    </div>
+                    <div style={{ flex: 1 }}>
+                        <label className={styles.label}>Duración</label>
+                        <input
+                            className={styles.input}
+                            placeholder="Ej. 15 min"
+                            value={formData.duration || ''}
+                            onChange={e => handleChange('duration', e.target.value)}
+                        />
+                    </div>
+                </div>
+            </div>
+            <div className={styles.formGroup}>
+                <label className={styles.label}>Escenario (Opcional)</label>
+                <textarea
+                    className={styles.textarea}
+                    placeholder="Descripción del caso o escenario..."
+                    value={formData.scenario || ''}
+                    onChange={e => handleChange('scenario', e.target.value)}
+                />
+            </div>
+            <div className={styles.formGroup}>
+                <label className={styles.label}>Reflexión (Debrief)</label>
+                <textarea
+                    className={styles.textarea}
+                    placeholder="Preguntas para el cierre..."
+                    value={formData.debrief || ''}
+                    onChange={e => handleChange('debrief', e.target.value)}
+                />
+            </div>
+        </>
+    );
+
+    const renderQuizSlide = () => (
+        <>
+            <div className={styles.formGroup}>
+                <label className={styles.label}>Pregunta</label>
+                <input
+                    className={styles.input}
+                    value={formData.question || ''}
+                    onChange={e => handleChange('question', e.target.value)}
+                />
+            </div>
+            <div className={styles.formGroup}>
+                <label className={styles.label}>Explicación (Feedback)</label>
+                <textarea
+                    className={styles.textarea}
+                    placeholder="Explicación que aparece al responder..."
+                    value={formData.explanation || ''}
+                    onChange={e => handleChange('explanation', e.target.value)}
+                />
+            </div>
+
+            <div className={styles.formGroup}>
+                <label className={styles.label}>Opciones</label>
+                <div className={styles.itemsList}>
+                    {formData.options?.map((opt, idx) => {
+                        const isCorrect = formData.correctOptionId === opt.id;
+                        return (
+                            <div key={idx} className={styles.itemRow} style={{ alignItems: 'center' }}>
+                                <input
+                                    type="radio"
+                                    name="correctOption"
+                                    checked={isCorrect}
+                                    onChange={() => handleChange('correctOptionId', opt.id)}
+                                    style={{ marginRight: 8, cursor: 'pointer', accentColor: '#22c55e' }}
+                                    title="Marcar como correcta"
+                                />
+                                <input
+                                    className={styles.input}
+                                    value={opt.text || ''}
+                                    onChange={e => {
+                                        const newOptions = [...formData.options];
+                                        newOptions[idx] = { ...opt, text: e.target.value };
+                                        handleChange('options', newOptions);
+                                    }}
+                                    placeholder={`Opción ${idx + 1}`}
+                                />
+                                <button
+                                    className={styles.removeBtn}
+                                    onClick={() => {
+                                        const newOptions = formData.options.filter((_, i) => i !== idx);
+                                        handleChange('options', newOptions);
+                                        // Si borramos la correcta, resetear
+                                        if (isCorrect) handleChange('correctOptionId', '');
+                                    }}
+                                >
+                                    <Trash2 size={16} />
+                                </button>
+                            </div>
+                        );
+                    })}
+                    <button
+                        className={styles.addItemBtn}
+                        onClick={() => {
+                            const newId = `opt-${Date.now()}`;
+                            handleChange('options', [...(formData.options || []), { id: newId, text: '' }]);
+                        }}
+                    >
+                        <Plus size={14} /> Agregar Opción
+                    </button>
+                </div>
+                {!formData.correctOptionId && formData.options?.length > 0 && (
+                    <p style={{ color: '#ef4444', fontSize: '0.8rem', marginTop: 5 }}>⚠ Debes seleccionar una respuesta correcta</p>
+                )}
+            </div>
+        </>
+    );
 
     return (
         <div className={styles.formContainer}>

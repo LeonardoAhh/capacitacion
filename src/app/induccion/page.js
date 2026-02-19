@@ -136,6 +136,10 @@ export default function InductionPage() {
         }
     }, [toast]);
 
+    // ── Configuración de Importación ──
+    const [includeDynamics, setIncludeDynamics] = useState(true);
+    const [includeQuizzes, setIncludeQuizzes] = useState(true);
+
     // ── Importar JSON (admin) ──
     const handleImport = useCallback(async () => {
         const f = fileInputRef.current?.files?.[0];
@@ -147,19 +151,67 @@ export default function InductionPage() {
         try {
             const text = await f.text();
             const jsonData = JSON.parse(text);
-            const result = await importCourseFromJSON(jsonData, user?.uid || 'admin');
-            if (result.success) {
-                setImportAlert({ type: 'success', message: `Curso importado (ID: ${result.courseId})` });
+
+            // Detectar si es un array de cursos (estructura mandosmedios.json)
+            const coursesToImport = jsonData.courses || [jsonData];
+
+            let successCount = 0;
+            let errorMsg = '';
+
+            for (const courseItem of coursesToImport) {
+                // Estructura esperada por importCourseFromJSON: { course, slides }
+                // Si viene como mandosmedios.json, "courseItem" tiene todo junto.
+                // Adaptamos la estructura:
+                const courseData = { ...courseItem };
+                delete courseData.slides; // Separamos slides del objeto curso
+
+                const slidesData = courseItem.slides || [];
+
+                // Filtrar slides según configuración
+                const filteredSlides = slidesData.filter(slide => {
+                    const isDynamic = slide.type === 'group_dynamic' || slide.type === 'dynamic';
+                    const isQuiz = slide.type === 'group_quiz' || slide.type === 'quiz';
+
+                    if (isDynamic && !includeDynamics) return false;
+                    if (isQuiz && !includeQuizzes) return false;
+
+                    return true;
+                });
+
+                // Re-enumerar
+                const reorderedSlides = filteredSlides.map((slide, index) => ({
+                    ...slide,
+                    order: index + 1
+                }));
+
+                // Construir objeto para importCourseFromJSON
+                const importPayload = {
+                    course: courseData,
+                    slides: reorderedSlides
+                };
+
+                const result = await importCourseFromJSON(importPayload, user?.uid || 'admin');
+                if (result.success) {
+                    successCount++;
+                } else {
+                    errorMsg = result.error;
+                }
+            }
+
+            if (successCount > 0) {
+                setImportAlert({ type: 'success', message: `${successCount} curso(s) importado(s) correctamente.` });
                 if (fileInputRef.current) fileInputRef.current.value = '';
                 await loadNativeCourses();
             } else {
-                setImportAlert({ type: 'error', message: result.error });
+                setImportAlert({ type: 'error', message: errorMsg || 'No se pudieron importar los cursos.' });
             }
+
         } catch (err) {
+            console.error(err);
             setImportAlert({ type: 'error', message: `Error al parsear JSON: ${err.message}` });
         }
         setImporting(false);
-    }, [loadNativeCourses, user?.uid]);
+    }, [loadNativeCourses, user?.uid, includeDynamics, includeQuizzes]);
 
     // ── Toggle publicar curso nativo ──
     const handleTogglePublish = useCallback(async (courseId, currentPublished) => {
@@ -438,6 +490,25 @@ export default function InductionPage() {
                             </h2>
 
                             <div className={styles.nativeActions}>
+                                <div className={styles.importOptions}>
+                                    <label title="Incluir dinámicas grupales">
+                                        <input
+                                            type="checkbox"
+                                            checked={includeDynamics}
+                                            onChange={(e) => setIncludeDynamics(e.target.checked)}
+                                        />
+                                        <span style={{ fontSize: '0.8rem', marginLeft: 4 }}>Dinámicas</span>
+                                    </label>
+                                    <label title="Incluir quizzes grupales">
+                                        <input
+                                            type="checkbox"
+                                            checked={includeQuizzes}
+                                            onChange={(e) => setIncludeQuizzes(e.target.checked)}
+                                        />
+                                        <span style={{ fontSize: '0.8rem', marginLeft: 4 }}>Quizzes</span>
+                                    </label>
+                                </div>
+
                                 <label className={styles.importJsonBtn}>
                                     <input
                                         ref={fileInputRef}
