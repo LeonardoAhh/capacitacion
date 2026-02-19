@@ -4,6 +4,7 @@ import DefinitionSlide from './slides/DefinitionSlide';
 import ContentSlide from './slides/ContentSlide';
 import IconGridSlide from './slides/IconGridSlide';
 import BenefitsSlide from './slides/BenefitsSlide';
+import ComparisonSlide from './slides/ComparisonSlide';
 
 const SLIDE_COMPONENTS = {
     title: TitleSlide,
@@ -12,6 +13,7 @@ const SLIDE_COMPONENTS = {
     content: ContentSlide,
     icon_grid: IconGridSlide,
     benefits: BenefitsSlide,
+    comparison: ComparisonSlide,
     // quiz: removido — los exámenes son en papel
 };
 

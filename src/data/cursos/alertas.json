@@ -1,0 +1,749 @@
+{
+    "course": {
+        "id": "ALERTAS-CALIDAD-CATALOGO-FALLAS",
+        "version": "RG-ADM-064 Rev.0",
+        "date": "18/12/2023",
+        "company": "Viñoplastic Inyección S.A de C.V",
+        "process": "Sistema de Gestión Integral",
+        "instructors": [
+            {
+                "name": "Lizbeth Aguillón",
+                "role": "Coordinador SGI"
+            },
+            {
+                "name": "Guadalupe Perfecto",
+                "role": "Auxiliar SGI"
+            }
+        ]
+    },
+    "slides": [
+        {
+            "id": 1,
+            "type": "title",
+            "data": {
+                "title": "Alertas de Calidad y Catálogo de Fallas",
+                "process": "Sistema de Gestión Integral",
+                "instructors": "Lizbeth Aguillón / Guadalupe Perfecto",
+                "roles": "Coordinador SGI / Auxiliar SGI",
+                "logo": "Viñoplastic Inyección S.A de C.V"
+            }
+        },
+        {
+            "id": 2,
+            "type": "objective",
+            "data": {
+                "heading": "Objetivo",
+                "body": "Conocer que elementos contiene la alerta de calidad y el catálogo de fallas, con el propósito de comprender su función y su impacto en los procesos internos de Viñoplastic Inyección."
+            }
+        },
+        {
+            "id": 3,
+            "type": "content",
+            "data": {
+                "heading": "Temario",
+                "sections": [
+                    {
+                        "label": "a) Conceptos"
+                    },
+                    {
+                        "label": "b) Alerta de Calidad",
+                        "items": [
+                            "¿Qué es y para qué sirve?",
+                            "1. Encabezado",
+                            "2. Descripción del problema",
+                            "3. Descripción gráfica del problema (imágenes)",
+                            "3.1 Marca de punto limpio",
+                            "4. Acciones de contención",
+                            "5. Lotes de vigencia de alerta de calidad",
+                            "6. Comunicación del defecto (firmas)"
+                        ]
+                    },
+                    {
+                        "label": "c) Catálogo de Fallas",
+                        "items": [
+                            "¿Qué es? / Funciones",
+                            "1. Estructura del catálogo de fallas",
+                            "2. Datos del catálogo de fallas",
+                            "3. Registro de fallas",
+                            "4. Responsable del documento",
+                            "5. Dónde consultar un catálogo"
+                        ]
+                    }
+                ]
+            }
+        },
+        {
+            "id": 4,
+            "type": "content",
+            "data": {
+                "heading": "a) Conceptos — Producto",
+                "term": "Producto",
+                "definition": "Un producto, bien o servicio es el resultado de un proceso dado en la organización.",
+                "highlight_terms": [
+                    "resultado de",
+                    "proceso"
+                ],
+                "context": "Proceso de inyección de plástico: Inicio → Tolva de resina → Cierre de molde → Inyección → Apertura de molde → Fin → Producto"
+            }
+        },
+        {
+            "id": 5,
+            "type": "content",
+            "data": {
+                "heading": "a) Conceptos — Calidad",
+                "term": "Calidad",
+                "definition": "La calidad es el grado en que un conjunto de características cumple un requisito.",
+                "highlight_terms": [
+                    "grado",
+                    "cumple",
+                    "requisito"
+                ]
+            }
+        },
+        {
+            "id": 6,
+            "type": "content",
+            "data": {
+                "heading": "a) Conceptos — Defecto",
+                "term": "Defecto",
+                "definition": "Incumplimiento (no conformidad) de los requisitos de calidad que puede provocar la insatisfacción del cliente.",
+                "highlight_terms": [
+                    "Incumplimiento",
+                    "requisitos de calidad"
+                ],
+                "example": "Guía de luz con tonalidad amarilla"
+            }
+        },
+        {
+            "id": 7,
+            "type": "content",
+            "data": {
+                "heading": "a) Conceptos — Reclamo de cliente",
+                "term": "Reclamo de cliente",
+                "definition": "Expresión de insatisfacción que se hace a una organización con relación directa con el producto o servicio que ofrece. Es decir, cuando no se cumple con el compromiso establecido con el cliente.",
+                "highlight_terms": [
+                    "insatisfacción",
+                    "producto",
+                    "cliente"
+                ]
+            }
+        },
+        {
+            "id": 8,
+            "type": "content",
+            "data": {
+                "heading": "a) Conceptos — Producto no conforme",
+                "term": "Producto no conforme",
+                "definition": "Es el bien o servicio, resultante de un proceso, que no cumple con los requisitos."
+            }
+        },
+        {
+            "id": 9,
+            "type": "content",
+            "data": {
+                "heading": "a) Conceptos — Costos de no calidad",
+                "term": "Costos de no calidad",
+                "definition": "Gastos que se tienen que realizar por parte de la organización cuando no se cumplen los requisitos de calidad o los requisitos exigidos por el cliente y, por lo tanto, sería necesario volver a procesar el producto para corregirlo.",
+                "highlight_terms": [
+                    "cuando no se cumplen los requisitos de calidad",
+                    "requisitos exigidos",
+                    "cliente"
+                ]
+            }
+        },
+        {
+            "id": 10,
+            "type": "comparison",
+            "data": {
+                "heading": "Impacto de la no calidad",
+                "left": {
+                    "label": "VIÑOPLASTIC — Costos de no calidad",
+                    "items": [
+                        "Mano de obra",
+                        "Consumo de energía / electricidad",
+                        "Tiempo muerto",
+                        "Sorteo de material",
+                        "Re inspección",
+                        "Retrabajos",
+                        "Alto porcentaje de SCRAP",
+                        "Multas por parte del cliente"
+                    ]
+                },
+                "right": {
+                    "label": "CLIENTE — Falta de credibilidad",
+                    "items": [
+                        "Marcas de certificación",
+                        "Leyendas adicionales",
+                        "Generar evidencias en registros",
+                        "Contenciones (cs1, cs2, cs3)",
+                        "Calificación de proveedor baja",
+                        "No asignación de nuevos proyectos",
+                        "Retiro de proyectos"
+                    ]
+                }
+            }
+        },
+        {
+            "id": 11,
+            "type": "content",
+            "data": {
+                "heading": "b) ¿Qué es y para qué sirve una Alerta de Calidad?",
+                "document_code": "RG-ASC-070",
+                "definition": "El registro RG-ASC-070 Alerta de Calidad es un documento que describe un problema de calidad del producto. Su principal función es notificar y prevenir el defecto.",
+                "highlight_terms": [
+                    "notificar",
+                    "prevenir el defecto"
+                ]
+            }
+        },
+        {
+            "id": 12,
+            "type": "icon_grid",
+            "data": {
+                "heading": "Estructura de la Alerta de Calidad",
+                "description": "La alerta (RG-ASC-070) está conformada por 6 secciones numeradas:",
+                "items": [
+                    {
+                        "number": 1,
+                        "label": "Encabezado",
+                        "description": "Identificación del incidente: tipo (cliente/interno), responsable, número y fecha de alerta."
+                    },
+                    {
+                        "number": 2,
+                        "label": "Descripción del problema",
+                        "description": "Breve texto: quién reporta, número de parte, condición del defecto y cantidad."
+                    },
+                    {
+                        "number": 3,
+                        "label": "Descripción gráfica",
+                        "description": "Imágenes del producto en condición NO aceptable y condición ACEPTABLE."
+                    },
+                    {
+                        "number": 4,
+                        "label": "Acciones de contención",
+                        "description": "Tabla con actividades, responsables, marca de garantía y fecha compromiso."
+                    },
+                    {
+                        "number": 5,
+                        "label": "Lotes de vigencia",
+                        "description": "Hasta 5 lotes máximo (a menos que haya recurrencia), con número de lote y fecha."
+                    },
+                    {
+                        "number": 6,
+                        "label": "Comunicación / firmas",
+                        "description": "Firmas de todas las áreas internas involucradas para acusar recibo del defecto."
+                    }
+                ]
+            }
+        },
+        {
+            "id": 13,
+            "type": "content",
+            "data": {
+                "heading": "1. Encabezado",
+                "fields": [
+                    {
+                        "label": "Notificación interna/externa",
+                        "description": "Indica si el incidente fue reportado por el cliente (NOCC) o de forma interna (NOCI)."
+                    },
+                    {
+                        "label": "Número consecutivo de reclamo",
+                        "description": "Folio único de la alerta. Formato: PREFIJO-AÑO-CONSECUTIVO. Ejemplo: NOCC00282 o NOCI00065."
+                    },
+                    {
+                        "label": "Fecha de notificación",
+                        "description": "Fecha en que se emite la alerta."
+                    }
+                ],
+                "note": "Prefijos de clientes: HE = HELLA | BO = BOS | GR = GRAMMER | VS = VALEO | IN = INALFA | BCS = BCS AUTOMOTIVE | ST = STANT"
+            }
+        },
+        {
+            "id": 14,
+            "type": "content",
+            "data": {
+                "heading": "2. Descripción del problema",
+                "description": "Texto breve que responde las siguientes preguntas:",
+                "questions": [
+                    "¿Quién lo reporta?",
+                    "¿Qué número de parte reporta?",
+                    "¿Qué condición reporta?",
+                    "¿Qué cantidad reporta?"
+                ],
+                "example": "El cliente HELLA PL7, reporta material 251.907-02 AWL BEZEL SAE BLK INJ RH VW416 PA2 con ráfaga. Cantidad: 52 piezas."
+            }
+        },
+        {
+            "id": 15,
+            "type": "comparison",
+            "data": {
+                "heading": "3. Descripción gráfica del problema",
+                "description": "De manera visual, se presentan 2 imágenes del producto:",
+                "left": {
+                    "label": "❌ Condición NO aceptable",
+                    "description": "Imagen del producto con el defecto claramente marcado (generalmente con recuadro rojo)."
+                },
+                "right": {
+                    "label": "✅ Condición ACEPTABLE",
+                    "description": "Imagen del producto correcto, con la marca de punto limpio y descripción de la condición esperada."
+                }
+            }
+        },
+        {
+            "id": 16,
+            "type": "content",
+            "data": {
+                "heading": "3.1 Marca de punto limpio",
+                "term": "¿Qué es el punto limpio?",
+                "definition": "Es una etiqueta que garantiza que el material ya fue revisado y que es aceptable, no lleva ningún defecto.",
+                "label_examples": [
+                    "TONALIDAD OK",
+                    "CANTIDAD OK"
+                ],
+                "note": "Se coloca en la caja/empaque del lote inspeccionado, junto con el sello del analista (GP12) que realizó la revisión."
+            }
+        },
+        {
+            "id": 17,
+            "type": "content",
+            "data": {
+                "heading": "4. Acciones de contención",
+                "description": "Se presentan las actividades para contener el problema. Cada acción incluye:",
+                "columns": [
+                    {
+                        "label": "Detalle de la actividad",
+                        "description": "Qué se debe hacer (ej: Revisar material en inventarios, Inspección 100%, Embarque con punto limpio)."
+                    },
+                    {
+                        "label": "Responsable",
+                        "description": "Quién ejecuta la acción."
+                    },
+                    {
+                        "label": "Marca de garantía",
+                        "description": "Condición que garantiza la pieza buena (ej: SIN RÁFAGA)."
+                    },
+                    {
+                        "label": "Fecha compromiso",
+                        "description": "Fecha o evento límite de cumplimiento (ej: 27/06/2023, Siguiente corrida, Próximo embarque)."
+                    }
+                ]
+            }
+        },
+        {
+            "id": 18,
+            "type": "content",
+            "data": {
+                "heading": "5. Lotes de vigencia de alerta de calidad",
+                "description": "Registra los lotes de producción bajo los cuales aplica la alerta. Máximo 5 lotes, a menos que haya recurrencia.",
+                "lot_structure": {
+                    "format": "PREFIJO – AÑO – CONSECUTIVO",
+                    "example": "HE – 2023 – 1012",
+                    "components": [
+                        {
+                            "part": "HE",
+                            "meaning": "Cliente (HELLA)"
+                        },
+                        {
+                            "part": "2023",
+                            "meaning": "Año de producción"
+                        },
+                        {
+                            "part": "1012",
+                            "meaning": "Número consecutivo del lote"
+                        }
+                    ]
+                },
+                "how_to_read_label": "En la etiqueta verde del producto: campo LOTE = número de lote | campo MFG DATE = fecha de producción.",
+                "client_prefixes": [
+                    {
+                        "code": "HE",
+                        "client": "HELLA"
+                    },
+                    {
+                        "code": "BO",
+                        "client": "BOS"
+                    },
+                    {
+                        "code": "GR",
+                        "client": "GRAMMER"
+                    },
+                    {
+                        "code": "VS",
+                        "client": "VALEO"
+                    },
+                    {
+                        "code": "IN",
+                        "client": "INALFA"
+                    },
+                    {
+                        "code": "BCS",
+                        "client": "BCS AUTOMOTIVE"
+                    },
+                    {
+                        "code": "ST",
+                        "client": "STANT"
+                    }
+                ]
+            }
+        },
+        {
+            "id": 19,
+            "type": "content",
+            "data": {
+                "heading": "6. Comunicación (firmas)",
+                "description": "La alerta se difunde a todas las áreas internas de la organización mediante dos canales:",
+                "channels": [
+                    {
+                        "channel": "Firmas físicas en el documento",
+                        "areas": [
+                            "Aseguramiento de la calidad",
+                            "Producción",
+                            "Almacén",
+                            "GP12",
+                            "Metrología",
+                            "Taller de moldes",
+                            "Mantenimiento",
+                            "Proyectos",
+                            "Inspección recibo",
+                            "SGI"
+                        ]
+                    },
+                    {
+                        "channel": "Correo electrónico",
+                        "description": "Enviado por el Auxiliar SGI a todas las áreas internas, con el documento adjunto en PDF."
+                    }
+                ]
+            }
+        },
+        {
+            "id": 20,
+            "type": "content",
+            "data": {
+                "heading": "c) ¿Qué es un Catálogo de Fallas?",
+                "definition": "Es un documento que ayuda a conservar un histórico de todos los defectos que se han presentado en un producto.",
+                "document_code": "RG-ASC-110"
+            }
+        },
+        {
+            "id": 21,
+            "type": "benefits",
+            "data": {
+                "heading": "Función del Catálogo de Fallas",
+                "benefits": [
+                    {
+                        "number": 1,
+                        "icon": "search",
+                        "text": "Apoyar al usuario para identificar los principales defectos que se han presentado en el producto."
+                    },
+                    {
+                        "number": 2,
+                        "icon": "shield",
+                        "text": "Prevenir que el material llegue a cliente en caso de volver a presentarse el defecto."
+                    },
+                    {
+                        "number": 3,
+                        "icon": "trending-down",
+                        "text": "Evitar incrementos de scrap, reclamos de cliente y costos de no calidad."
+                    }
+                ]
+            }
+        },
+        {
+            "id": 22,
+            "type": "content",
+            "data": {
+                "heading": "Estructura del Catálogo de Fallas",
+                "fields": [
+                    {
+                        "number": 1,
+                        "label": "Título",
+                        "description": "\"CATÁLOGO DE FALLAS\""
+                    },
+                    {
+                        "number": 2,
+                        "label": "Fecha",
+                        "description": "Fecha de última actualización del documento."
+                    },
+                    {
+                        "number": 3,
+                        "label": "Descripción del producto",
+                        "description": "Nombre del número de parte."
+                    },
+                    {
+                        "number": 4,
+                        "label": "Clave de cliente / Núm. parte",
+                        "description": "CVE CLIENTE."
+                    },
+                    {
+                        "number": 5,
+                        "label": "Cliente",
+                        "description": "Nombre del cliente al que pertenece la pieza."
+                    },
+                    {
+                        "number": 6,
+                        "label": "Clave Viño",
+                        "description": "CVE VIÑO (número de parte interno)."
+                    },
+                    {
+                        "number": 7,
+                        "label": "Fecha de aparición de falla",
+                        "description": "Fecha en que el defecto fue detectado/reportado."
+                    },
+                    {
+                        "number": 8,
+                        "label": "Descripción de falla",
+                        "description": "Texto breve del defecto presentado en el producto."
+                    },
+                    {
+                        "number": 9,
+                        "label": "Responsable de inspección",
+                        "description": "Quién realiza la revisión (Operador, Inspector de Aseg. de Calidad)."
+                    },
+                    {
+                        "number": 10,
+                        "label": "Frecuencia de inspección",
+                        "description": "Con qué periodicidad se inspecciona (Cada tina, Cada hora durante su inspección)."
+                    },
+                    {
+                        "number": 11,
+                        "label": "Ayuda visual de la falla",
+                        "description": "Fotografía del defecto en el producto."
+                    },
+                    {
+                        "number": 12,
+                        "label": "Control de cambios",
+                        "description": "Número de revisión del formato (Rev.0, Rev.1...)."
+                    },
+                    {
+                        "number": 13,
+                        "label": "Responsable de elaboración",
+                        "description": "Nombre y firma de quien actualiza el documento."
+                    },
+                    {
+                        "number": 14,
+                        "label": "Código de documento",
+                        "description": "RG-ASC-110."
+                    }
+                ]
+            }
+        },
+        {
+            "id": 23,
+            "type": "content",
+            "data": {
+                "heading": "Registro de una falla en el catálogo",
+                "row_structure": [
+                    {
+                        "column": "Fecha de aparición de falla",
+                        "description": "Fecha en que el cliente o el área interna reportó el defecto. Ej: 22-jul-24."
+                    },
+                    {
+                        "column": "Descripción falla",
+                        "description": "Cliente + número de parte + descripción del defecto. Apoyada por la fotografía en 'Ayuda Visual'."
+                    },
+                    {
+                        "column": "Responsable (inspección)",
+                        "description": "Operador: inspecciona cada tina. Inspector de Aseg. de Calidad: cada hora durante su inspección."
+                    },
+                    {
+                        "column": "Frecuencia",
+                        "description": "Indicación de cuándo debe inspeccionarse (cada tina, cada hora, por pieza)."
+                    },
+                    {
+                        "column": "Ayuda visual de la falla",
+                        "description": "Fotografía del defecto con marcación visual (recuadro rojo)."
+                    }
+                ],
+                "example": "22-jul-24 | Hella PL5 reporta 260.534-02 Upper Tail Light conductor RH con tonalidad amarilla | Operador: Inspeccionar por pieza | Inspector ASC: Cada hora durante su inspección"
+            }
+        },
+        {
+            "id": 24,
+            "type": "content",
+            "data": {
+                "heading": "Responsable de elaboración del Catálogo de Fallas",
+                "responsible_area": "SGI / Calidad",
+                "update_triggers": [
+                    "Llega un reclamo de cliente",
+                    "Se presenta un reclamo interno",
+                    "Se presentan los primeros defectos de un nuevo proyecto",
+                    "Se detecta un nuevo defecto en el producto"
+                ],
+                "footer_elements": [
+                    {
+                        "label": "Número de revisión",
+                        "value": "Rev.0 (se incrementa con cada actualización)"
+                    },
+                    {
+                        "label": "Nombre y firma",
+                        "description": "Responsable de elaborar y actualizar el documento."
+                    },
+                    {
+                        "label": "Código de documento",
+                        "value": "RG-ASC-110"
+                    }
+                ]
+            }
+        },
+        {
+            "id": 25,
+            "type": "content",
+            "data": {
+                "heading": "¿Dónde y cuándo consultar un Catálogo de Fallas?",
+                "where": {
+                    "label": "¿Dónde?",
+                    "locations": [
+                        {
+                            "area": "Producción",
+                            "location": "Estación de trabajo"
+                        },
+                        {
+                            "area": "GP12",
+                            "location": "Carpeta de alertas"
+                        },
+                        {
+                            "area": "Inspectores de calidad",
+                            "location": "Su respectiva carpeta"
+                        }
+                    ]
+                },
+                "when": {
+                    "label": "¿Cuándo?",
+                    "answer": "Antes de iniciar cada arranque / cada inicio de turno y/o relevo de máquina."
+                }
+            }
+        },
+        {
+            "id": 26,
+            "type": "quiz",
+            "data": {
+                "heading": "Evaluación",
+                "passing_score": 8,
+                "duration_minutes": 10,
+                "note": "Puedes utilizar tus apuntes.",
+                "questions": [
+                    {
+                        "id": "q1",
+                        "type": "multiple_choice",
+                        "question": "¿Qué es la calidad según los conceptos vistos en el curso?",
+                        "options": [
+                            "La ausencia total de defectos en un producto.",
+                            "El grado en que un conjunto de características cumple un requisito.",
+                            "El costo de producir sin errores.",
+                            "La satisfacción del trabajador con su proceso."
+                        ],
+                        "correct": 1
+                    },
+                    {
+                        "id": "q2",
+                        "type": "multiple_choice",
+                        "question": "¿Cuál es la función principal de la Alerta de Calidad (RG-ASC-070)?",
+                        "options": [
+                            "Documentar el costo de los retrabajos.",
+                            "Registrar la producción diaria por turno.",
+                            "Notificar y prevenir un defecto en el producto.",
+                            "Evaluar el desempeño del operador."
+                        ],
+                        "correct": 2
+                    },
+                    {
+                        "id": "q3",
+                        "type": "multiple_choice",
+                        "question": "¿Qué significa el prefijo 'NOCC' en el número de una alerta de calidad?",
+                        "options": [
+                            "Notificación Oficial de Calidad Crítica",
+                            "Notificación interna de un defecto",
+                            "Notificación de reclamo externo (cliente)",
+                            "Número de orden de corrección de calidad"
+                        ],
+                        "correct": 2
+                    },
+                    {
+                        "id": "q4",
+                        "type": "multiple_choice",
+                        "question": "¿Cuántos lotes de vigencia puede tener como máximo una Alerta de Calidad (en condiciones normales, sin recurrencia)?",
+                        "options": [
+                            "3 lotes",
+                            "5 lotes",
+                            "10 lotes",
+                            "Sin límite"
+                        ],
+                        "correct": 1
+                    },
+                    {
+                        "id": "q5",
+                        "type": "multiple_choice",
+                        "question": "¿Qué garantiza la 'Marca de punto limpio'?",
+                        "options": [
+                            "Que el producto fue fabricado en el turno nocturno.",
+                            "Que el lote aún no ha sido inspeccionado.",
+                            "Que el material ya fue revisado y es aceptable, sin defecto.",
+                            "Que el producto fue aprobado por el cliente directamente."
+                        ],
+                        "correct": 2
+                    },
+                    {
+                        "id": "q6",
+                        "type": "multiple_choice",
+                        "question": "¿Qué área es responsable de elaborar y actualizar el Catálogo de Fallas?",
+                        "options": [
+                            "Producción",
+                            "Mantenimiento",
+                            "SGI / Calidad",
+                            "Almacén"
+                        ],
+                        "correct": 2
+                    },
+                    {
+                        "id": "q7",
+                        "type": "multiple_choice",
+                        "question": "¿Cuándo debe consultarse el Catálogo de Fallas?",
+                        "options": [
+                            "Solo cuando el cliente envía un reclamo.",
+                            "Al finalizar el turno para reportar incidencias.",
+                            "Antes de iniciar cada arranque / inicio de turno y/o relevo de máquina.",
+                            "Una vez al mes durante la junta de calidad."
+                        ],
+                        "correct": 2
+                    },
+                    {
+                        "id": "q8",
+                        "type": "multiple_choice",
+                        "question": "¿Cuál de los siguientes NO es un costo de la no calidad para Viñoplastic?",
+                        "options": [
+                            "Retrabajos y alto porcentaje de SCRAP",
+                            "Tiempo muerto y re inspección",
+                            "Aumento en la calificación del proveedor",
+                            "Multas por parte del cliente"
+                        ],
+                        "correct": 2
+                    },
+                    {
+                        "id": "q9",
+                        "type": "multiple_choice",
+                        "question": "¿Qué información se registra en la sección 'Descripción del problema' de la Alerta de Calidad?",
+                        "options": [
+                            "Las firmas de las áreas involucradas.",
+                            "Las imágenes del defecto y la condición aceptable.",
+                            "Quién reporta, número de parte, condición y cantidad del defecto.",
+                            "Los lotes de producción vigentes."
+                        ],
+                        "correct": 2
+                    },
+                    {
+                        "id": "q10",
+                        "type": "multiple_choice",
+                        "question": "En el número de lote 'HE-2023-1012', ¿qué representa 'HE'?",
+                        "options": [
+                            "El número de herramienta del molde",
+                            "El código de cliente HELLA",
+                            "La hora y estación de producción",
+                            "El turno en que se produjo el lote"
+                        ],
+                        "correct": 1
+                    }
+                ]
+            }
+        }
+    ]
+}
