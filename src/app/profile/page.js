@@ -170,13 +170,17 @@ import { Shield, AlertTriangle } from 'lucide-react';
 
 function AdminSection() {
     const [isMaintenance, setIsMaintenance] = useState(false);
+    const [duration, setDuration] = useState(2); // Horas por defecto
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         const configRef = doc(db, 'app_config', 'general');
         const unsubscribe = onSnapshot(configRef, (docSnap) => {
             if (docSnap.exists()) {
-                setIsMaintenance(docSnap.data().maintenanceMode || false);
+                const data = docSnap.data();
+                setIsMaintenance(data.maintenanceMode || false);
+                // Si ya hay una fecha guardada, podríamos calcular las horas restantes para mostrar, 
+                // pero por simplicidad dejaremos el selector en su valor por defecto o último usado.
             }
             setLoading(false);
         });
@@ -185,16 +189,27 @@ function AdminSection() {
 
     const toggleMaintenance = async () => {
         const newState = !isMaintenance;
-        // Optimistic update
-        setIsMaintenance(newState);
+        setIsMaintenance(newState); // Optimistic
+
         try {
-            await setDoc(doc(db, 'app_config', 'general'), {
+            const updateData = {
                 maintenanceMode: newState,
                 maintenanceMessage: "Estamos realizando mejoras en la plataforma. Volveremos pronto."
-            }, { merge: true });
+            };
+
+            // Si se activa, calculamos la fecha de fin
+            if (newState) {
+                const endDate = new Date();
+                endDate.setHours(endDate.getHours() + parseInt(duration));
+                updateData.maintenanceUntil = endDate.toISOString();
+            } else {
+                updateData.maintenanceUntil = null;
+            }
+
+            await setDoc(doc(db, 'app_config', 'general'), updateData, { merge: true });
         } catch (error) {
             console.error("Error updating maintenance mode:", error);
-            setIsMaintenance(!newState); // Revert on error
+            setIsMaintenance(!newState);
             alert("Error al actualizar el modo mantenimiento");
         }
     };
@@ -210,61 +225,91 @@ function AdminSection() {
 
             <div style={{
                 display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'space-between',
+                flexDirection: 'column',
+                gap: '1rem',
                 padding: '1rem',
                 backgroundColor: isMaintenance ? '#fef2f2' : 'var(--bg-secondary)',
                 borderRadius: '8px',
                 marginTop: '1rem'
             }}>
-                <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
-                    <div style={{
-                        padding: '0.5rem',
-                        borderRadius: '50%',
-                        backgroundColor: isMaintenance ? '#fee2e2' : '#e2e8f0',
-                        color: isMaintenance ? '#ef4444' : '#64748b'
-                    }}>
-                        <AlertTriangle size={24} />
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                    <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
+                        <div style={{
+                            padding: '0.5rem',
+                            borderRadius: '50%',
+                            backgroundColor: isMaintenance ? '#fee2e2' : '#e2e8f0',
+                            color: isMaintenance ? '#ef4444' : '#64748b'
+                        }}>
+                            <AlertTriangle size={24} />
+                        </div>
+                        <div>
+                            <h4 style={{ margin: 0, fontSize: '0.95rem', fontWeight: 600, color: 'var(--text-primary)' }}>
+                                Modo Mantenimiento
+                            </h4>
+                            <p style={{ margin: 0, fontSize: '0.8rem', color: 'var(--text-secondary)' }}>
+                                {isMaintenance
+                                    ? 'La plataforma está bloqueada para usuarios.'
+                                    : 'La plataforma está accesible para todos.'}
+                            </p>
+                        </div>
                     </div>
-                    <div>
-                        <h4 style={{ margin: 0, fontSize: '0.95rem', fontWeight: 600, color: 'var(--text-primary)' }}>
-                            Modo Mantenimiento
-                        </h4>
-                        <p style={{ margin: 0, fontSize: '0.8rem', color: 'var(--text-secondary)' }}>
-                            {isMaintenance
-                                ? 'La plataforma está bloqueada para usuarios.'
-                                : 'La plataforma está accesible para todos.'}
-                        </p>
-                    </div>
-                </div>
 
-                <label style={{ position: 'relative', display: 'inline-block', width: '50px', height: '26px', cursor: 'pointer' }}>
-                    <input
-                        type="checkbox"
-                        checked={isMaintenance}
-                        onChange={toggleMaintenance}
-                        style={{ opacity: 0, width: 0, height: 0 }}
-                    />
-                    <span style={{
-                        position: 'absolute',
-                        cursor: 'pointer',
-                        top: 0, left: 0, right: 0, bottom: 0,
-                        backgroundColor: isMaintenance ? '#ef4444' : '#ccc',
-                        transition: '.4s',
-                        borderRadius: '34px'
-                    }}>
+                    <label style={{ position: 'relative', display: 'inline-block', width: '50px', height: '26px', cursor: 'pointer' }}>
+                        <input
+                            type="checkbox"
+                            checked={isMaintenance}
+                            onChange={toggleMaintenance}
+                            style={{ opacity: 0, width: 0, height: 0 }}
+                        />
                         <span style={{
                             position: 'absolute',
-                            content: '""',
-                            height: '20px', width: '20px',
-                            left: isMaintenance ? '26px' : '4px',
-                            bottom: '3px',
-                            backgroundColor: 'white',
+                            cursor: 'pointer',
+                            top: 0, left: 0, right: 0, bottom: 0,
+                            backgroundColor: isMaintenance ? '#ef4444' : '#ccc',
                             transition: '.4s',
-                            borderRadius: '50%'
-                        }}></span>
-                    </span>
-                </label>
+                            borderRadius: '34px'
+                        }}>
+                            <span style={{
+                                position: 'absolute',
+                                content: '""',
+                                height: '20px', width: '20px',
+                                left: isMaintenance ? '26px' : '4px',
+                                bottom: '3px',
+                                backgroundColor: 'white',
+                                transition: '.4s',
+                                borderRadius: '50%'
+                            }}></span>
+                        </span>
+                    </label>
+                </div>
+
+                {!isMaintenance && (
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginLeft: '3.5rem' }}>
+                        <label style={{ fontSize: '0.85rem', color: 'var(--text-secondary)' }}>
+                            Duración estimada:
+                        </label>
+                        <select
+                            value={duration}
+                            onChange={(e) => setDuration(e.target.value)}
+                            style={{
+                                padding: '4px 8px',
+                                borderRadius: '4px',
+                                border: '1px solid var(--border-color)',
+                                fontSize: '0.85rem',
+                                backgroundColor: 'var(--bg-primary)',
+                                color: 'var(--text-primary)'
+                            }}
+                        >
+                            <option value="1">1 hora</option>
+                            <option value="2">2 horas</option>
+                            <option value="4">4 horas</option>
+                            <option value="8">8 horas</option>
+                            <option value="12">12 horas</option>
+                            <option value="24">24 horas</option>
+                            <option value="48">48 horas</option>
+                        </select>
+                    </div>
+                )}
             </div>
 
             {isMaintenance && (

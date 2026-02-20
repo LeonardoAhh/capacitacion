@@ -10,6 +10,7 @@ export default function MaintenanceGuard({ children }) {
     const { user, userRole } = useAuth();
     const [isMaintenance, setIsMaintenance] = useState(false);
     const [maintenanceMessage, setMaintenanceMessage] = useState('');
+    const [maintenanceUntil, setMaintenanceUntil] = useState(null);
     const [loading, setLoading] = useState(true);
     const [isLocalhost, setIsLocalhost] = useState(false);
 
@@ -26,6 +27,7 @@ export default function MaintenanceGuard({ children }) {
                 const data = docSnap.data();
                 setIsMaintenance(data.maintenanceMode || false);
                 setMaintenanceMessage(data.maintenanceMessage || '');
+                setMaintenanceUntil(data.maintenanceUntil || null);
             } else {
                 setIsMaintenance(false);
             }
@@ -54,7 +56,7 @@ export default function MaintenanceGuard({ children }) {
     const shouldBlock = isMaintenance && !isLocalhost && !isAdmin;
 
     if (shouldBlock) {
-        return <MaintenanceScreen message={maintenanceMessage} />;
+        return <MaintenanceScreen message={maintenanceMessage} targetDate={maintenanceUntil} />;
     }
 
     return <>{children}</>;
