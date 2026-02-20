@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
-import Navbar from '@/components/Navbar/Navbar';
+import Navbar from '@/components/layout/Navbar/Navbar';
 import BackButton from '@/components/ui/BackButton/BackButton';
 import { useAuth } from '@/contexts/AuthContext';
 import { useRouter } from 'next/navigation';

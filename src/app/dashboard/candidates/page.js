@@ -10,9 +10,9 @@ import Link from 'next/link';
 import BackButton from '@/components/ui/BackButton/BackButton';
 import { Search, ArrowLeft, Users, CheckCircle, Clock, FileText, FileCheck, AlertCircle, Bell, MessageCircle, Key, Filter, X } from 'lucide-react';
 import { useTheme } from '@/contexts/ThemeContext';
-import CandidateDrawer from '@/components/Dashboard/CandidateDrawer';
-import ProfileDropdown from '@/components/ProfileDropdown/ProfileDropdown';
-import AvatarSelector from '@/components/AvatarSelector/AvatarSelector';
+import CandidateDrawer from '@/components/features/Dashboard/CandidateDrawer';
+import ProfileDropdown from '@/components/layout/ProfileDropdown/ProfileDropdown';
+import AvatarSelector from '@/components/ui/AvatarSelector/AvatarSelector';
 
 // Custom hook for data fetching
 function useDataFetching() {

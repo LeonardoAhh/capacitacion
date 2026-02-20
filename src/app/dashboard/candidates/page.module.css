@@ -35,6 +35,7 @@
 
 .title h1 {
     font-size: 1.5rem;
+    font-family: 'Playfair Display', Georgia, serif;
     font-weight: 700;
     margin: 0;
     letter-spacing: -0.02em;
@@ -79,18 +80,22 @@
 }
 
 .statCard {
-    background: var(--bg-secondary);
-    border: 1px solid var(--border-color);
+    background: var(--card-background);
+    backdrop-filter: blur(20px);
+    border: 1px solid var(--card-border);
     border-radius: var(--radius-xl);
     padding: 1.25rem;
     display: flex;
     align-items: center;
     gap: 1rem;
     transition: all var(--transition-fast);
+    box-shadow: var(--shadow-sm);
 }
 
 .statCard:hover {
-    border-color: var(--color-primary);
+    border-color: var(--card-border);
+    box-shadow: var(--shadow-md);
+    transform: translateY(-2px);
 }
 
 .statIcon {
@@ -273,10 +278,12 @@
 
 /* Table Card */
 .tableCard {
-    background: var(--bg-secondary);
-    border: 1px solid var(--border-color);
+    background: var(--card-background);
+    backdrop-filter: blur(20px);
+    border: 1px solid var(--card-border);
     border-radius: var(--radius-xl);
     overflow: hidden;
+    box-shadow: var(--shadow-sm);
 }
 
 .tableContainer {
@@ -532,12 +539,14 @@
 
 /* Mobile Card */
 .mobileCard {
-    background: var(--bg-secondary);
+    background: var(--card-background);
+    backdrop-filter: blur(20px);
     border-radius: var(--radius-lg);
     padding: 1rem;
-    border: 1px solid var(--border-color);
+    border: 1px solid var(--card-border);
     transition: all var(--transition-fast);
     cursor: pointer;
+    box-shadow: var(--shadow-sm);
 }
 
 .mobileCard:hover {
@@ -845,7 +854,9 @@
 }
 
 @keyframes spin {
-    to { transform: rotate(360deg); }
+    to {
+        transform: rotate(360deg);
+    }
 }
 
 .loadingContainer p {
@@ -1053,6 +1064,7 @@
 
 /* Reduced Motion */
 @media (prefers-reduced-motion: reduce) {
+
     .statCard,
     .tableRow,
     .mobileCard,

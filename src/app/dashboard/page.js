@@ -5,8 +5,8 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import BackButton from '@/components/ui/BackButton/BackButton';
-import ProfileDropdown from '@/components/ProfileDropdown/ProfileDropdown';
-import AvatarSelector from '@/components/AvatarSelector/AvatarSelector';
+import ProfileDropdown from '@/components/layout/ProfileDropdown/ProfileDropdown';
+import AvatarSelector from '@/components/ui/AvatarSelector/AvatarSelector';
 import { useNotifications } from '@/hooks/useNotifications';
 import { useDashboardStats } from '@/hooks/useDashboardStats';
 import {

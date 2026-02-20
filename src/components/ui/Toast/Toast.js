@@ -47,7 +47,7 @@ function Toast({ id, message, type = 'info', onClose, duration = 3000 }) {
             role="alert"
             aria-live={type === 'error' ? 'assertive' : 'polite'}
         >
-            <div className={styles.icon}>
+            <div className={`${styles.icon} ${styles[type]}`}>
                 {icons[type]}
             </div>
             <div className={styles.message}>{message}</div>

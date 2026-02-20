@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useRouter } from 'next/navigation';
-import ProfileDropdown from '@/components/ProfileDropdown/ProfileDropdown';
+import ProfileDropdown from '@/components/layout/ProfileDropdown/ProfileDropdown';
 import BackButton from '@/components/ui/BackButton/BackButton';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card/Card';
 import { Button } from '@/components/ui/Button/Button';

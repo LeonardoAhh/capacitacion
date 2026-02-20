@@ -1,8 +1,8 @@
 import { AuthProvider } from '@/contexts/AuthContext';
 import { ThemeProvider } from '@/contexts/ThemeContext';
 import { ToastProvider } from '@/components/ui/Toast/Toast';
-import { OfflineIndicator, UpdatePrompt } from '@/components/pwa';
-import MaintenanceGuard from '@/components/MaintenanceGuard';
+import { OfflineIndicator, UpdatePrompt } from '@/components/guards/pwa';
+import MaintenanceGuard from '@/components/guards/MaintenanceGuard';
 import '@/styles/globals.css';
 import { Inter } from 'next/font/google';
 

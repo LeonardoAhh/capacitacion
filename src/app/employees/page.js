@@ -3,7 +3,7 @@
 import React, { useEffect, useState, useMemo, useCallback } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useRouter } from 'next/navigation';
-import ProfileDropdown from '@/components/ProfileDropdown/ProfileDropdown';
+import ProfileDropdown from '@/components/layout/ProfileDropdown/ProfileDropdown';
 import {
     User, Briefcase, Activity, FileText, ChevronRight, ArrowLeft,
     Search, Users, UserCheck, UserPlus, Download, Edit, Trash2, X, Save, Upload, Phone, Key, RefreshCw, Loader2
@@ -12,7 +12,7 @@ import Image from 'next/image';
 import styles from './page.module.css';
 import BackButton from '@/components/ui/BackButton/BackButton';
 import { useEmployees } from '@/hooks/useEmployees';
-import EmployeeSearchBar from '@/components/EmployeeSearchBar/EmployeeSearchBar';
+import EmployeeSearchBar from '@/components/ui/EmployeeSearchBar/EmployeeSearchBar';
 import {
     Drawer,
     DrawerContent,
@@ -24,7 +24,7 @@ import {
 import { uploadFile } from '@/lib/upload';
 import { useToast } from '@/components/ui/Toast/Toast';
 import ConfirmDialog from '@/components/ui/ConfirmDialog/ConfirmDialog';
-import EmployeeSkeleton from '@/components/EmployeeSkeleton/EmployeeSkeleton';
+import EmployeeSkeleton from '@/components/ui/EmployeeSkeleton/EmployeeSkeleton';
 import { useFormValidation } from '@/hooks/useFormValidation';
 import { useCatalogs } from '@/hooks/useCatalogs';
 

@@ -1,0 +1,6 @@
+.container {
+    --login-accent: #f59e0b;
+    --login-accent-rgb: 245, 158, 11;
+    --login-gradient-from: #f59e0b;
+    --login-gradient-to: #f97316;
+}

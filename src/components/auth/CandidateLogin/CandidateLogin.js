@@ -3,12 +3,12 @@
 import { useId, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { User, IdCard, Key, UserPlus, AlertCircle } from "lucide-react";
-import baseStyles from '../ui/LoginBase/LoginBase.module.css';
+import baseStyles from '../LoginBase/LoginBase.module.css';
 import componentStyles from './CandidateLogin.module.css';
-import { mergeStyles } from '../ui/LoginBase/mergeStyles';
-import AILoadingState from '../ui/AILoadingState/AILoadingState';
-import { BackgroundLines } from '../ui/BackgroundLines/BackgroundLines';
-import { FADE_UP_LOGIN, CARD_ENTER, ERROR_VARIANTS, SUCCESS_ENTER } from '../ui/LoginBase/loginAnimations';
+import { mergeStyles } from '../LoginBase/mergeStyles';
+import AILoadingState from '../../ui/AILoadingState/AILoadingState';
+import { BackgroundLines } from '../../ui/BackgroundLines/BackgroundLines';
+import { FADE_UP_LOGIN, CARD_ENTER, ERROR_VARIANTS, SUCCESS_ENTER } from '../LoginBase/loginAnimations';
 
 const styles = mergeStyles(baseStyles, componentStyles);
 

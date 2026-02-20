@@ -5,7 +5,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useRouter } from 'next/navigation';
 import { collection, getDocs } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
-import ProfileDropdown from '@/components/ProfileDropdown/ProfileDropdown';
+import ProfileDropdown from '@/components/layout/ProfileDropdown/ProfileDropdown';
 import BackButton from '@/components/ui/BackButton/BackButton';
 import styles from './page.module.css';
 

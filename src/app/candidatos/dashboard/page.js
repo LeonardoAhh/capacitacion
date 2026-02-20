@@ -8,10 +8,10 @@ import { signOut } from 'firebase/auth';
 import { useTheme } from '@/contexts/ThemeContext';
 import { destroySession } from '@/lib/sessionApi';
 
-import SetupWizard from '@/components/SetupWizard/SetupWizard';
-import AvatarSelector from '@/components/AvatarSelector/AvatarSelector';
-import ThemeSelectorModal from '@/components/ThemeSelectorModal/ThemeSelectorModal';
-import PWAPrompt from '@/components/PWAPrompt/PWAPrompt';
+import SetupWizard from '@/components/features/SetupWizard/SetupWizard';
+import AvatarSelector from '@/components/ui/AvatarSelector/AvatarSelector';
+import ThemeSelectorModal from '@/components/layout/ThemeSelectorModal/ThemeSelectorModal';
+import PWAPrompt from '@/components/guards/PWAPrompt/PWAPrompt';
 import WelcomeScreen from './components/WelcomeScreen';
 import ImportantInfoCards from './components/ImportantInfoCards';
 // import RoadmapTimeline from './components/RoadmapTimeline'; // Oculto temporalmente
@@ -29,7 +29,7 @@ import { useCandidateSession, useCourseProgress, useSessionTimer } from './hooks
 import { useCandidateData } from '@/hooks/useCandidateData';
 import { loadCoursesForPosition } from './services/courseService';
 import { getCourseWithSlides } from '@/lib/courseService';
-import CoursePlayer from '@/components/Courses/CoursePlayer';
+import CoursePlayer from '@/components/features/Courses/CoursePlayer';
 import induccionEmpresaExam from '../../../../public/examenes/induccion_empresa.json';
 
 import styles from './page.module.css';

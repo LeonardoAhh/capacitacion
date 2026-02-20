@@ -4,8 +4,8 @@ import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
 import { LayoutDashboard, GraduationCap, Settings } from 'lucide-react';
-import ModuleCard from '@/components/ModuleCard/ModuleCard';
-import ProfileDropdown from '@/components/ProfileDropdown/ProfileDropdown';
+import ModuleCard from '@/components/ui/ModuleCard/ModuleCard';
+import ProfileDropdown from '@/components/layout/ProfileDropdown/ProfileDropdown';
 import styles from './page.module.css';
 
 export default function ModulesPage() {
@@ -62,6 +62,8 @@ export default function ModulesPage() {
         },
     ];
 
+    const firstName = (user?.nombre || user?.name || user?.displayName || 'Usuario').split(' ')[0];
+
     return (
         <div className={styles.page}>
             <a href="#main-content" className={styles.skipLink}>
@@ -73,15 +75,22 @@ export default function ModulesPage() {
             </div>
 
             <div className={styles.content}>
+
                 <header className={styles.header}>
                     <span className={styles.portal}>Portal RRHH</span>
                     <h1 className={styles.title}>
-                        Hola, <span className={styles.userName}>{(user?.nombre || user?.name || user?.displayName || 'Usuario').split(' ')[0]}</span>
+                        Hola, <span className={styles.userName}>{firstName}</span>
                     </h1>
                     <p className={styles.subtitle}>Selecciona un módulo para comenzar</p>
                 </header>
 
-                <nav className={styles.modulesList} id="main-content" aria-label="Módulos disponibles">
+                <div className={styles.divider} aria-hidden="true" />
+
+                <nav
+                    className={styles.modulesList}
+                    id="main-content"
+                    aria-label="Módulos disponibles"
+                >
                     {modules.map((module) => (
                         <ModuleCard
                             key={module.id}
@@ -97,6 +106,7 @@ export default function ModulesPage() {
                 <footer className={styles.footer}>
                     <p className={styles.copyright}>© {new Date().getFullYear()} Viñoplastic</p>
                 </footer>
+
             </div>
         </div>
     );

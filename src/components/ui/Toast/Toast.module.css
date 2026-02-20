@@ -2,19 +2,15 @@
 
 /* Toast Container con variables locales */
 .toastContainer {
-    /* Variables CSS locales */
-    --toast-success-from: #48bb78;
-    --toast-success-to: #38a169;
-    --toast-error-from: #f56565;
-    --toast-error-to: #e53e3e;
-    --toast-warning-from: #ed8936;
-    --toast-warning-to: #dd6b20;
-    --toast-info-from: #4299e1;
-    --toast-info-to: #3182ce;
+    /* Usaremos las variables del layout en lugar de quemar colores: */
+    --toast-success-color: var(--color-success);
+    --toast-error-color: var(--color-danger);
+    --toast-warning-color: var(--color-warning);
+    --toast-info-color: var(--color-primary);
 
-    --toast-border-radius: 12px;
-    --toast-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
-    --toast-backdrop-blur: 16px;
+    --toast-border-radius: var(--radius-lg);
+    --toast-shadow: var(--shadow-lg);
+    --toast-backdrop-blur: 24px;
     --toast-max-width: 420px;
     --toast-min-width: 320px;
     --toast-gap: 12px;
@@ -75,6 +71,7 @@
     align-items: center;
     gap: 12px;
     padding: 16px 20px;
+    background: var(--card-background);
     border-radius: var(--toast-border-radius);
     box-shadow: var(--toast-shadow);
     backdrop-filter: blur(var(--toast-backdrop-blur));
@@ -82,7 +79,7 @@
     animation: slideIn var(--toast-duration-in) var(--toast-easing-in);
     max-width: var(--toast-max-width);
     min-width: var(--toast-min-width);
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    border: 1px solid var(--card-border);
     transition: transform 0.2s var(--toast-easing-in);
     position: relative;
     overflow: hidden;
@@ -96,8 +93,9 @@
     right: 0;
     bottom: 0;
     background: inherit;
-    opacity: 0.9;
+    opacity: 0.8;
     z-index: -1;
+    border-radius: inherit;
 }
 
 .toast:hover {
@@ -170,35 +168,19 @@
 
 /* Toast Types */
 .toast.success {
-    background: linear-gradient(135deg,
-            rgba(72, 187, 120, 0.95) 0%,
-            rgba(56, 161, 105, 0.95) 100%);
-    color: white;
-    border-color: rgba(72, 187, 120, 0.3);
+    border-left: 4px solid var(--toast-success-color);
 }
 
 .toast.error {
-    background: linear-gradient(135deg,
-            rgba(245, 101, 101, 0.95) 0%,
-            rgba(229, 62, 62, 0.95) 100%);
-    color: white;
-    border-color: rgba(245, 101, 101, 0.3);
+    border-left: 4px solid var(--toast-error-color);
 }
 
 .toast.warning {
-    background: linear-gradient(135deg,
-            rgba(237, 137, 54, 0.95) 0%,
-            rgba(221, 107, 32, 0.95) 100%);
-    color: white;
-    border-color: rgba(237, 137, 54, 0.3);
+    border-left: 4px solid var(--toast-warning-color);
 }
 
 .toast.info {
-    background: linear-gradient(135deg,
-            rgba(66, 153, 225, 0.95) 0%,
-            rgba(49, 130, 206, 0.95) 100%);
-    color: white;
-    border-color: rgba(66, 153, 225, 0.3);
+    border-left: 4px solid var(--toast-info-color);
 }
 
 /* Toast Elements */
@@ -206,7 +188,22 @@
     flex-shrink: 0;
     display: flex;
     align-items: center;
-    filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.1));
+}
+
+.icon.success {
+    color: var(--toast-success-color);
+}
+
+.icon.error {
+    color: var(--toast-error-color);
+}
+
+.icon.warning {
+    color: var(--toast-warning-color);
+}
+
+.icon.info {
+    color: var(--toast-info-color);
 }
 
 .message {
@@ -215,14 +212,14 @@
     font-weight: 500;
     line-height: 1.4;
     word-wrap: break-word;
-    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1));
+    color: var(--text-primary);
 }
 
 .closeBtn {
     flex-shrink: 0;
     background: none;
     border: none;
-    color: white;
+    color: var(--text-secondary);
     cursor: pointer;
     padding: 6px;
     border-radius: 6px;
@@ -234,13 +231,14 @@
 }
 
 .closeBtn:hover {
-    background: rgba(255, 255, 255, 0.2);
+    background: var(--bg-tertiary);
+    color: var(--text-primary);
     opacity: 1;
     transform: scale(1.05);
 }
 
 .closeBtn:focus-visible {
-    outline: 2px solid white;
+    outline: 2px solid var(--color-primary);
     outline-offset: 2px;
     opacity: 1;
 }

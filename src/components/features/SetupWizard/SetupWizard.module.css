@@ -10,12 +10,13 @@
 }
 
 .container {
-    background: var(--bg-secondary);
+    background: var(--card-background);
     width: 100%;
     max-width: 420px;
-    border-radius: var(--radius-xl);
-    border: 1px solid var(--border-color);
+    border-radius: 20px;
+    border: 1px solid var(--card-border);
     overflow: hidden;
+    box-shadow: var(--shadow-xl, 0 20px 40px rgba(0, 0, 0, 0.1));
 }
 
 .progressContainer {

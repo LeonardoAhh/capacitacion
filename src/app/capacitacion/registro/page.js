@@ -1,7 +1,7 @@
 ﻿'use client';
 
 import { useState, useEffect, useRef, useCallback } from 'react';
-import ProfileDropdown from '@/components/ProfileDropdown/ProfileDropdown';
+import ProfileDropdown from '@/components/layout/ProfileDropdown/ProfileDropdown';
 import BackButton from '@/components/ui/BackButton/BackButton';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/Button/Button';

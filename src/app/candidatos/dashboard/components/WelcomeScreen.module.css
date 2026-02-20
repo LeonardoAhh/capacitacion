@@ -10,11 +10,12 @@
 .card {
     width: 100%;
     max-width: 440px;
-    background: var(--bg-secondary);
-    border: 1px solid var(--border-color);
-    border-radius: var(--radius-xl);
+    background: var(--card-background);
+    border: 1px solid var(--card-border);
+    border-radius: 20px;
     padding: 2.5rem 2rem 2rem;
     text-align: center;
+    box-shadow: var(--shadow-md);
 }
 
 .avatar {

@@ -9,16 +9,16 @@ import {
 } from 'lucide-react';
 import { useTrainingData } from '@/hooks/useTrainingData';
 import { useTheme } from '@/contexts/ThemeContext';
-import SetupWizard from '@/components/SetupWizard/SetupWizard';
-import AvatarSelector from '@/components/AvatarSelector/AvatarSelector';
-import UserMenu from '@/components/UserMenu/UserMenu';
+import SetupWizard from '@/components/features/SetupWizard/SetupWizard';
+import AvatarSelector from '@/components/ui/AvatarSelector/AvatarSelector';
+import UserMenu from '@/components/layout/UserMenu/UserMenu';
 import { useGamification } from '@/hooks/useGamification';
-import LevelProgress from '@/components/Gamification/LevelProgress';
-import BadgesGallery from '@/components/Gamification/BadgesGallery';
-import CertificateCard from '@/components/Gamification/CertificateCard';
-import TrainingCompliance from '@/components/Gamification/TrainingCompliance';
+import LevelProgress from '@/components/features/Gamification/LevelProgress';
+import BadgesGallery from '@/components/features/Gamification/BadgesGallery';
+import CertificateCard from '@/components/features/Gamification/CertificateCard';
+import TrainingCompliance from '@/components/features/Gamification/TrainingCompliance';
 import { formatDisplayName } from '@/utils/nameUtils';
-import CoursePlayer from '@/components/Courses/CoursePlayer';
+import CoursePlayer from '@/components/features/Courses/CoursePlayer';
 import { getCourseWithSlides } from '@/lib/courseService';
 import {
     Drawer,

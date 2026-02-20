@@ -66,6 +66,7 @@
 
 .title {
     font-size: 1.75rem;
+    font-family: 'Playfair Display', Georgia, serif;
     font-weight: 700;
     color: var(--text-primary);
     margin: 0;
@@ -88,10 +89,12 @@
     display: flex;
     flex-direction: column;
     padding: 1.25rem;
-    background: var(--bg-secondary);
-    border: 1px solid var(--border-color);
-    border-radius: var(--radius-lg);
+    background: var(--card-background);
+    backdrop-filter: blur(20px);
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius-xl);
     transition: all var(--transition-fast);
+    box-shadow: var(--shadow-sm);
 }
 
 .statCard.clickable {
@@ -99,8 +102,9 @@
 }
 
 .statCard.clickable:hover {
-    border-color: var(--color-primary);
+    border-color: var(--card-border);
     transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
 }
 
 .statIcon {
@@ -145,10 +149,12 @@
 }
 
 .section {
-    background: var(--bg-secondary);
-    border: 1px solid var(--border-color);
-    border-radius: var(--radius-lg);
+    background: var(--card-background);
+    backdrop-filter: blur(20px);
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius-xl);
     padding: 1.25rem;
+    box-shadow: var(--shadow-sm);
 }
 
 .sectionHeader {
@@ -369,6 +375,7 @@
 
 /* Reduced Motion */
 @media (prefers-reduced-motion: reduce) {
+
     .statCard,
     .alertItem,
     .actionBtn,

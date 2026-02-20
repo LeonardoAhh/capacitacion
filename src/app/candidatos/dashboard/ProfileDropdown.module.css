@@ -8,25 +8,25 @@
     align-items: center;
     gap: 12px;
     padding: 6px 8px 6px 16px;
-    background: var(--popover-background);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    border: 1px solid var(--card-border);
+    background: #ffffff;
+    border: 1px solid rgba(0, 0, 0, 0.08);
     border-radius: 32px;
     cursor: pointer;
-    transition: all 0.2s ease;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);
 }
 
 .triggerButton:hover {
-    background: var(--card-background);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    background: #fdfaf6;
+    border-color: rgba(245, 158, 11, 0.3);
+    /* Ambar softly */
+    box-shadow: 0 4px 12px rgba(245, 158, 11, 0.08);
     transform: translateY(-1px);
 }
 
-[data-theme="dark"] .triggerButton {
-    /* Variables handle colors */
-    color: white;
+.triggerButton[aria-expanded="true"] {
+    background: #fdfaf6;
+    border-color: rgba(245, 158, 11, 0.3);
 }
 
 .userInfo {
@@ -55,10 +55,6 @@
         box-shadow: none;
     }
 
-    [data-theme="dark"] .triggerButton:hover {
-        background: rgba(255, 255, 255, 0.1);
-    }
-
     .chevron {
         display: none;
     }
@@ -67,13 +63,13 @@
 .userName {
     font-size: 14px;
     font-weight: 600;
-    color: var(--text-primary);
+    color: #111110;
     line-height: 1.2;
 }
 
 .userEmail {
     font-size: 11px;
-    color: var(--text-tertiary);
+    color: #8c8c82;
 }
 
 .avatarContainer {
@@ -82,7 +78,8 @@
     height: 40px;
     border-radius: 50%;
     padding: 2px;
-    background: linear-gradient(135deg, var(--color-primary), var(--color-secondary));
+    background: linear-gradient(135deg, #f59e0b, #d97706);
+    /* Ambar gradient */
 }
 
 .avatar {
@@ -103,8 +100,13 @@
 }
 
 .chevron {
-    color: var(--text-tertiary);
-    transition: transform 0.2s;
+    color: #a3a39a;
+    transition: transform 0.2s, color 0.3s ease;
+}
+
+.triggerButton:hover .chevron,
+.triggerButton[aria-expanded="true"] .chevron {
+    color: #f59e0b;
 }
 
 .dropdownMenu {
@@ -112,28 +114,34 @@
     top: calc(100% + 8px);
     right: 0;
     width: 240px;
-    background: var(--popover-background);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-    border: 1px solid var(--card-border);
+    background: #ffffff;
+    border: 1px solid rgba(0, 0, 0, 0.08);
     border-radius: 20px;
     padding: 8px;
-    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
     z-index: 50;
     transform-origin: top right;
     animation: scaleIn 0.15s ease-out;
 }
 
-[data-theme="dark"] .dropdownMenu {
-    /* Handled by var */
-    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+/* Shimmer top line ambar */
+.dropdownMenu::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 10%;
+    width: 80%;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, #f59e0b, transparent);
+    pointer-events: none;
+    opacity: 0.8;
 }
 
 .mobileUserInfo {
     display: none;
     padding: 8px 12px;
     margin-bottom: 8px;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.06);
 }
 
 @media (max-width: 640px) {
@@ -145,16 +153,12 @@
 .mobileUserName {
     font-size: 14px;
     font-weight: 700;
-    color: #1c1c1e;
-}
-
-[data-theme="dark"] .mobileUserName {
-    color: #fff;
+    color: #111110;
 }
 
 .mobileUserSubtitle {
     font-size: 11px;
-    color: #8e8e93;
+    color: #8c8c82;
     margin-top: 2px;
 }
 
@@ -178,96 +182,74 @@
     padding: 10px 12px;
     border: none;
     background: transparent;
-    color: #1c1c1e;
+    color: #111110;
     font-size: 14px;
     font-weight: 500;
     border-radius: 12px;
     cursor: pointer;
-    transition: background 0.15s;
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
     text-decoration: none;
 }
 
 .menuItem:hover {
-    background: rgba(0, 0, 0, 0.05);
+    background: #fdfaf6;
+    color: #d97706;
+    /* Ambar */
 }
 
-[data-theme="dark"] .menuItem {
-    color: #fff;
-}
-
-[data-theme="dark"] .menuItem:hover {
-    background: rgba(255, 255, 255, 0.1);
+.menuItem:hover svg {
+    color: #f59e0b;
 }
 
 .separator {
     height: 1px;
-    background: rgba(0, 0, 0, 0.08);
+    background: rgba(0, 0, 0, 0.06);
     margin: 8px 4px;
 }
 
-[data-theme="dark"] .separator {
-    background: rgba(255, 255, 255, 0.1);
-}
-
 .logoutButton {
-    color: #ff3b30;
+    color: #ef4444;
 }
 
 .logoutButton:hover {
-    background: rgba(255, 59, 48, 0.1);
+    background: rgba(239, 68, 68, 0.05);
+    color: #ef4444;
 }
 
 .timerItem {
-    background: rgba(0, 122, 255, 0.05);
-    border: 1px solid rgba(0, 122, 255, 0.1);
+    background: #fdfaf6;
+    border: 1px solid rgba(245, 158, 11, 0.1);
+    color: #d97706;
     margin-bottom: 8px;
     cursor: default;
 }
 
+.timerItem svg {
+    color: #f59e0b;
+}
+
 .timerItem:hover {
-    background: rgba(0, 122, 255, 0.1);
-}
-
-[data-theme="dark"] .timerItem {
-    background: rgba(10, 132, 255, 0.1);
-    border-color: rgba(10, 132, 255, 0.2);
-}
-
-[data-theme="dark"] .timerItem:hover {
-    background: rgba(10, 132, 255, 0.15);
+    background: #fdfaf6;
+    color: #d97706;
 }
 
 /* ==================== FOCUS VISIBLE STATES ==================== */
 
 .triggerButton:focus-visible {
-    outline: 2px solid #007aff;
+    outline: 2px solid #f59e0b;
     outline-offset: 2px;
-    box-shadow: 0 0 0 4px rgba(0, 122, 255, 0.2);
-}
-
-[data-theme="dark"] .triggerButton:focus-visible {
-    outline-color: #0a84ff;
-    box-shadow: 0 0 0 4px rgba(10, 132, 255, 0.3);
+    box-shadow: 0 0 0 4px rgba(245, 158, 11, 0.2);
 }
 
 .menuItem:focus-visible {
-    outline: 2px solid #007aff;
+    outline: 2px solid #f59e0b;
     outline-offset: -2px;
-    background: rgba(0, 122, 255, 0.1);
-}
-
-[data-theme="dark"] .menuItem:focus-visible {
-    outline-color: #0a84ff;
-    background: rgba(10, 132, 255, 0.15);
+    background: #fdfaf6;
 }
 
 .logoutButton:focus-visible {
-    outline-color: #ff3b30;
-    background: rgba(255, 59, 48, 0.15);
-}
-
-[data-theme="dark"] .logoutButton:focus-visible {
-    outline-color: #ff453a;
+    outline-color: #ef4444;
+    background: rgba(239, 68, 68, 0.05);
 }
 
 /* ==================== TOUCH-FRIENDLY SIZING ==================== */
@@ -315,7 +297,8 @@
         animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1);
         z-index: 100;
         border: none;
-        border-top: 1px solid var(--card-border);
+        border-top: 1px solid rgba(0, 0, 0, 0.08);
+        /* Reemplazado card border var */
         box-shadow: 0 -4px 24px rgba(0, 0, 0, 0.15);
     }
 }
@@ -339,10 +322,6 @@
         background: rgba(0, 0, 0, 0.03);
         margin-bottom: 8px;
         border-radius: 12px;
-    }
-
-    [data-theme="dark"] .menuItem {
-        background: rgba(255, 255, 255, 0.05);
     }
 
     .avatarContainer {
@@ -370,25 +349,10 @@
 
 /* ==================== IMPROVED CONTRAST ==================== */
 
-.userEmail {
-    font-size: 11px;
-    color: #636366;
-    /* Improved from #8e8e93 */
-}
-
-[data-theme="dark"] .userEmail {
-    color: #a1a1a6;
-}
-
 .mobileUserSubtitle {
     font-size: 11px;
     color: #636366;
-    /* Improved contrast */
     margin-top: 2px;
-}
-
-[data-theme="dark"] .mobileUserSubtitle {
-    color: #a1a1a6;
 }
 
 /* ==================== REDUCED MOTION ==================== */

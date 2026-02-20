@@ -1,0 +1,13 @@
+/* ═══════════════════════════════════════════════════════════════
+   ModernLogin — RRHH / Empleados  |  Índigo / Violeta
+   ═══════════════════════════════════════════════════════════════ */
+
+/* Custom properties en container para herencia */
+.container {
+    --login-accent: #6366f1;
+    --login-accent-rgb: 99, 102, 241;
+    --login-gradient-from: #6366f1;
+    --login-gradient-to: #8b5cf6;
+    /* Forzar inclusión en bundle de Next.js */
+    isolation: isolate;
+}

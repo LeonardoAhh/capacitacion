@@ -8,7 +8,7 @@ import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ArrowLeft, Search, GitCompareArrows, CheckCircle2, XCircle, Target } from 'lucide-react';
 import BackButton from '@/components/ui/BackButton/BackButton';
-import ProfileDropdown from '@/components/ProfileDropdown/ProfileDropdown';
+import ProfileDropdown from '@/components/layout/ProfileDropdown/ProfileDropdown';
 import { useToast } from '@/components/ui/Toast/Toast';
 import { BackgroundLines } from '@/components/ui/BackgroundLines/BackgroundLines';
 import styles from './page.module.css';

@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 
-import ProfileDropdown from '@/components/ProfileDropdown/ProfileDropdown';
+import ProfileDropdown from '@/components/layout/ProfileDropdown/ProfileDropdown';
 import { useAuth } from '@/contexts/AuthContext';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
@@ -17,7 +17,7 @@ import { collection, getDocs, query, orderBy, doc, updateDoc, setDoc, getDoc, de
 import { Dialog, DialogHeader, DialogTitle, DialogBody, DialogFooter, DialogClose } from '@/components/ui/Dialog/Dialog';
 import { Avatar } from '@/components/ui/Avatar/Avatar';
 import styles from './page.module.css';
-import EmployeeSearchBar from '@/components/EmployeeSearchBar/EmployeeSearchBar';
+import EmployeeSearchBar from '@/components/ui/EmployeeSearchBar/EmployeeSearchBar';
 
 export default function EmpleadosPage() {
     const { user, loading: authLoading, canWrite } = useAuth();

@@ -15,9 +15,9 @@ import {
     Zap, Settings2
 } from 'lucide-react';
 import Link from 'next/link';
-import ProfileDropdown from '@/components/ProfileDropdown/ProfileDropdown';
+import ProfileDropdown from '@/components/layout/ProfileDropdown/ProfileDropdown';
 import BackButton from '@/components/ui/BackButton/BackButton';
-import CoursePlayer from '@/components/Courses/CoursePlayer';
+import CoursePlayer from '@/components/features/Courses/CoursePlayer';
 import {
     importCourseFromJSON,
     getAllCourses,

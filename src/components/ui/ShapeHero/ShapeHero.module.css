@@ -1,0 +1,602 @@
+/* =========================================
+   ShapeHero — Editorial White
+   Comparte lenguaje visual con MaintenanceScreen
+   ========================================= */
+
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Geist:wght@300;400;500;600&display=swap');
+
+/* ─── Keyframes ─────────────────────────────────────────── */
+
+@keyframes fadeSlideUp {
+    from {
+        opacity: 0;
+        transform: translateY(24px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes lineExpand {
+    from {
+        transform: scaleX(0);
+        opacity: 0;
+    }
+
+    to {
+        transform: scaleX(1);
+        opacity: 1;
+    }
+}
+
+@keyframes underlineIn {
+    to {
+        transform: scaleX(1);
+    }
+}
+
+@keyframes blink {
+
+    0%,
+    100% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0.3;
+    }
+}
+
+/* ─── Hero shell ────────────────────────────────────────── */
+
+.hero {
+    min-height: 100dvh;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    /* top padding accounts for topBar height */
+    padding: 5rem 2rem 2rem;
+    background: var(--bg-primary, #fafaf8);
+    transition: background-color var(--transition-base, 0.3s ease);
+    overflow: hidden;
+    font-family: 'Geist', system-ui, sans-serif;
+    color: var(--text-primary, #111110);
+}
+
+/* ─── Grid texture ──────────────────────────────────────── */
+
+.grid {
+    position: absolute;
+    inset: 0;
+    background-image:
+        linear-gradient(rgba(0, 0, 0, 0.045) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0, 0, 0, 0.045) 1px, transparent 1px);
+    background-size: 52px 52px;
+    pointer-events: none;
+    mask-image: radial-gradient(ellipse 75% 75% at 50% 50%, black 30%, transparent 100%);
+    -webkit-mask-image: radial-gradient(ellipse 75% 75% at 50% 50%, black 30%, transparent 100%);
+    opacity: 0.6;
+    animation: fadeIn 1s ease both;
+    animation-delay: 0.2s;
+}
+
+/* ─── Skip Link ─────────────────────────────────────────── */
+
+.skipLink {
+    position: absolute;
+    top: -100%;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 0.75rem 1.5rem;
+    background: var(--color-primary, #111110);
+    color: white;
+    border-radius: 0 0 8px 8px;
+    font-weight: 600;
+    font-size: 0.875rem;
+    text-decoration: none;
+    z-index: 100;
+    transition: top 0.2s ease;
+}
+
+.skipLink:focus {
+    top: 0;
+    outline: 2px solid white;
+    outline-offset: 2px;
+}
+
+/* ─── Top bar ───────────────────────────────────────────── */
+
+.topBar {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    padding: 1.4rem 2.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid var(--border-color, rgba(0, 0, 0, 0.08));
+    animation: fadeIn 0.6s ease both;
+    animation-delay: 0.1s;
+    z-index: 50;
+}
+
+.topBarBrand {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+}
+
+.topBarDot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: #f59e0b;
+    box-shadow: 0 0 0 2px rgba(245, 158, 11, 0.2);
+    animation: blink 2.5s ease-in-out infinite;
+}
+
+.topBarLabel {
+    font-size: 0.75rem;
+    font-weight: 500;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--text-secondary, #6b6b63);
+}
+
+/* ─── Controls ──────────────────────────────────────────── */
+
+.controls {
+    animation: fadeIn 0.6s ease both;
+    animation-delay: 0.8s;
+}
+
+/* ─── Main content ──────────────────────────────────────── */
+
+.content {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    width: 100%;
+    max-width: 620px;
+    gap: 0;
+    position: relative;
+    z-index: 1;
+}
+
+/* ─── Brand ─────────────────────────────────────────────── */
+
+.brand {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.4rem;
+    margin-bottom: 2.4rem;
+}
+
+.portal {
+    font-size: 0.72rem;
+    font-weight: 500;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--text-secondary, #a3a39a);
+    animation: fadeSlideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
+    animation-delay: 0.25s;
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+}
+
+/* Thin accent line before portal label */
+.portal::before {
+    content: '';
+    display: inline-block;
+    width: 28px;
+    height: 1.5px;
+    background: #f59e0b;
+    border-radius: 2px;
+    transform-origin: left center;
+    animation: lineExpand 0.5s cubic-bezier(0.16, 1, 0.3, 1) both;
+    animation-delay: 0.15s;
+}
+
+.title {
+    font-family: 'Playfair Display', Georgia, serif;
+    font-size: clamp(2.2rem, 11vw, 6.5rem);
+    word-break: break-word;
+    overflow-wrap: break-word;
+    font-weight: 900;
+    letter-spacing: -0.03em;
+    color: var(--text-primary, #111110);
+    line-height: 1;
+    margin: 0.3rem 0 0.5rem;
+    animation: fadeSlideUp 0.7s cubic-bezier(0.16, 1, 0.3, 1) both;
+    animation-delay: 0.38s;
+}
+
+.titleAccent {
+    position: relative;
+    display: inline;
+}
+
+.titleAccent::after {
+    content: '';
+    position: absolute;
+    bottom: 4px;
+    left: 0;
+    right: 0;
+    height: 5px;
+    background: #f59e0b;
+    border-radius: 2px;
+    transform: scaleX(0);
+    transform-origin: left;
+    animation: underlineIn 0.7s cubic-bezier(0.22, 1, 0.36, 1) 1.1s forwards;
+}
+
+.location {
+    font-size: 0.9rem;
+    font-weight: 400;
+    color: var(--text-secondary, #6b6b63);
+    letter-spacing: 0.05em;
+    animation: fadeSlideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
+    animation-delay: 0.5s;
+}
+
+/* ─── Divider ───────────────────────────────────────────── */
+
+.divider {
+    width: 100%;
+    height: 1px;
+    background: var(--border-color, rgba(0, 0, 0, 0.09));
+    margin-bottom: 2rem;
+    animation: fadeIn 0.5s ease both;
+    animation-delay: 0.6s;
+}
+
+/* ─── Nav cards ─────────────────────────────────────────── */
+
+.nav {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    gap: 0;
+    animation: fadeSlideUp 0.65s cubic-bezier(0.16, 1, 0.3, 1) both;
+    animation-delay: 0.65s;
+}
+
+.card {
+    display: flex;
+    align-items: center;
+    gap: 1.2rem;
+    padding: 1.1rem 0;
+    border-bottom: 1px solid var(--border-color, rgba(0, 0, 0, 0.07));
+    text-decoration: none;
+    transition: all var(--transition-fast, 0.18s ease);
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    background: transparent;
+}
+
+.card:first-child {
+    border-top: 1px solid var(--border-color, rgba(0, 0, 0, 0.07));
+}
+
+/* Left accent bar on hover */
+.card::before {
+    content: '';
+    position: absolute;
+    left: -2px;
+    top: 0;
+    bottom: 0;
+    width: 3px;
+    background: #f59e0b;
+    border-radius: 0 2px 2px 0;
+    transform: scaleY(0);
+    transform-origin: bottom;
+    transition: transform 0.22s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.card:hover::before,
+.card:focus-visible::before {
+    transform: scaleY(1);
+}
+
+.card:hover {
+    padding-left: 1rem;
+}
+
+.card:focus-visible {
+    outline: 2px solid var(--color-primary, #f59e0b);
+    outline-offset: 2px;
+}
+
+.card:active {
+    transform: scale(0.99);
+}
+
+.cardIndex {
+    font-family: 'Playfair Display', Georgia, serif;
+    font-size: 0.7rem;
+    font-weight: 700;
+    color: var(--text-tertiary, #c4c4bb);
+    letter-spacing: 0.06em;
+    min-width: 22px;
+    transition: color 0.18s ease;
+}
+
+.card:hover .cardIndex {
+    color: #f59e0b;
+}
+
+.cardBody {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    gap: 0.1rem;
+}
+
+.cardDescription {
+    font-size: 0.7rem;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text-tertiary, #a3a39a);
+    transition: color 0.18s ease;
+}
+
+.card:hover .cardDescription {
+    color: var(--text-secondary, #6b6b63);
+}
+
+.cardLabel {
+    font-family: 'Playfair Display', Georgia, serif;
+    font-size: 1.45rem;
+    font-weight: 700;
+    color: var(--text-primary, #111110);
+    letter-spacing: -0.01em;
+    transition: color 0.18s ease;
+    line-height: 1.2;
+}
+
+.card:hover .cardLabel {
+    color: var(--color-primary, #111110);
+}
+
+.cardArrow {
+    font-size: 1.1rem;
+    color: var(--text-tertiary, #c4c4bb);
+    transition: all 0.22s cubic-bezier(0.22, 1, 0.36, 1);
+    transform: translateX(0);
+}
+
+.card:hover .cardArrow {
+    color: #f59e0b;
+    transform: translateX(5px);
+}
+
+/* ─── Features link ─────────────────────────────────────── */
+
+.featuresLink {
+    font-size: 0.8125rem;
+    font-weight: 500;
+    color: var(--text-tertiary, #a3a39a);
+    text-decoration: none;
+    padding: 0.25rem 0.5rem;
+    border-radius: var(--radius-sm, 4px);
+    transition: all var(--transition-fast, 0.18s ease);
+    margin-top: 0.5rem;
+    animation: fadeIn 0.5s ease both;
+    animation-delay: 1s;
+}
+
+.featuresLink:hover {
+    color: var(--color-primary, #111110);
+    background: var(--bg-secondary, rgba(0, 0, 0, 0.04));
+}
+
+.featuresLink:focus-visible {
+    outline: 2px solid var(--color-primary, #f59e0b);
+    outline-offset: 2px;
+}
+
+/* ─── Footer ────────────────────────────────────────────── */
+
+.footer {
+    position: absolute;
+    bottom: 1.5rem;
+    left: 50%;
+    transform: translateX(-50%);
+    animation: fadeIn 0.5s ease both;
+    animation-delay: 1.1s;
+}
+
+.year {
+    font-size: 0.72rem;
+    color: var(--text-tertiary, #c4c4bb);
+    font-weight: 400;
+    letter-spacing: 0.04em;
+    white-space: nowrap;
+}
+
+/* ─── Responsive ────────────────────────────────────────── */
+
+@media (min-width: 640px) {
+    .content {
+        max-width: 600px;
+    }
+
+    .card {
+        padding: 1.3rem 0;
+    }
+
+    .cardLabel {
+        font-size: 1.65rem;
+    }
+}
+
+@media (min-width: 1024px) {
+    .hero {
+        padding: 3rem;
+    }
+
+    .content {
+        max-width: 680px;
+    }
+
+    .card {
+        padding: 1.4rem 0;
+    }
+
+    .cardLabel {
+        font-size: 1.8rem;
+    }
+}
+
+@media (min-width: 1280px) {
+    .content {
+        max-width: 760px;
+    }
+}
+
+@media (max-width: 480px) {
+    .hero {
+        padding: 4.5rem 1.25rem 1.5rem;
+    }
+
+    .topBar {
+        padding: 1rem 1.25rem;
+    }
+
+    .topBarLabel {
+        display: none;
+    }
+
+    .title {
+        font-size: clamp(2rem, 12vw, 3.5rem);
+        word-break: break-word;
+        overflow-wrap: break-word;
+    }
+
+    .cardLabel {
+        font-size: 1.2rem;
+    }
+
+    .brand {
+        margin-bottom: 1.6rem;
+    }
+
+    .content {
+        width: 100%;
+    }
+}
+
+@media (max-height: 600px) and (orientation: landscape) {
+    .brand {
+        margin-bottom: 1.2rem;
+    }
+
+    .title {
+        font-size: 2.5rem;
+        margin: 0.15rem 0 0.3rem;
+    }
+
+    .card {
+        padding: 0.75rem 0;
+    }
+
+    .footer {
+        position: relative;
+        margin-top: 1rem;
+    }
+}
+
+/* ─── Reduced Motion ────────────────────────────────────── */
+
+@media (prefers-reduced-motion: reduce) {
+
+    .grid,
+    .portal,
+    .title,
+    .location,
+    .nav,
+    .divider,
+    .featuresLink,
+    .footer,
+    .controls,
+    .topBar {
+        animation: none;
+        opacity: 1;
+        transform: none;
+    }
+
+    .titleAccent::after {
+        animation: none;
+        transform: scaleX(1);
+    }
+
+    .portal::before {
+        animation: none;
+        transform: scaleX(1);
+    }
+
+    .hero,
+    .card,
+    .skipLink {
+        transition: none;
+    }
+
+    .card:hover {
+        padding-left: 0;
+    }
+
+    .card:hover .cardArrow {
+        transform: none;
+    }
+}
+
+/* ─── High Contrast ─────────────────────────────────────── */
+
+@media (prefers-contrast: high) {
+    .card {
+        border-width: 2px;
+    }
+
+    .card:focus-visible {
+        outline-width: 3px;
+    }
+}
+
+/* ─── Print ─────────────────────────────────────────────── */
+
+@media print {
+    .hero {
+        min-height: auto;
+        padding: 2rem;
+    }
+
+    .controls,
+    .footer,
+    .grid {
+        display: none;
+    }
+
+    .card {
+        border-bottom: 1px solid #000;
+    }
+}

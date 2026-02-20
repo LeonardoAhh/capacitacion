@@ -4,7 +4,7 @@ import { useReducer, useEffect, useCallback, useRef } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useRouter } from 'next/navigation';
 import { createSession } from '@/lib/sessionApi';
-import UnifiedLogin from '@/components/ui/UnifiedLogin';
+import UnifiedLogin from '@/components/auth/UnifiedLogin';
 
 const RATE_LIMIT = {
     MAX_ATTEMPTS: 5,

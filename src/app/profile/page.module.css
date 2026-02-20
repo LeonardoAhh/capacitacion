@@ -36,9 +36,9 @@
 
 /* Profile Header Card */
 .headerCard {
-    background: var(--bg-secondary);
-    border-radius: var(--radius-lg);
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    background: var(--card-background);
+    border-radius: var(--radius-xl);
+    box-shadow: var(--shadow-md);
     margin-top: 2rem;
     margin-bottom: 2rem;
     position: relative;
@@ -132,6 +132,7 @@
 .userName {
     margin: 0;
     font-size: 2rem;
+    font-family: 'Playfair Display', Georgia, serif;
     font-weight: 700;
     color: var(--text-primary);
 }
@@ -185,11 +186,11 @@
 
 /* Common Card Styles */
 .card {
-    background: var(--bg-secondary);
-    border-radius: var(--radius-lg);
-    border: 1px solid var(--border-color);
+    background: var(--card-background);
+    border-radius: var(--radius-xl);
+    border: 1px solid var(--card-border);
     padding: 1.5rem;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+    box-shadow: var(--shadow-sm);
 }
 
 .cardTitle {

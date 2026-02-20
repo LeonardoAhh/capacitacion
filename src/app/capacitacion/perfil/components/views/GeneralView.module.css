@@ -5,10 +5,10 @@
 }
 
 .section {
-    background: rgba(255, 255, 255, 0.6);
+    background: var(--card-background);
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.4);
+    border: 1px solid var(--card-border);
     border-radius: 20px;
     padding: 1.5rem;
     box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
@@ -22,7 +22,7 @@
 .sectionTitle {
     font-size: 1.1rem;
     font-weight: 600;
-    color: #334155;
+    color: var(--text-primary);
     margin-bottom: 1.25rem;
     padding-bottom: 0.75rem;
     border-bottom: 1px solid rgba(0, 0, 0, 0.05);
@@ -44,7 +44,7 @@
     align-items: center;
     gap: 1rem;
     padding: 1rem;
-    background: rgba(255, 255, 255, 0.5);
+    background: var(--bg-primary);
     border-radius: 16px;
     border: 1px solid transparent;
     transition: all 0.2s ease;
@@ -135,7 +135,7 @@
 
 .label {
     font-size: 0.75rem;
-    color: #64748b;
+    color: var(--text-secondary);
     font-weight: 500;
     text-transform: uppercase;
     letter-spacing: 0.05em;
@@ -149,7 +149,7 @@
 .value {
     font-size: 0.95rem;
     font-weight: 600;
-    color: #1e293b;
+    color: var(--text-primary);
 }
 
 [data-theme="dark"] .value {
@@ -163,8 +163,8 @@
     justify-content: space-between;
     width: 100%;
     padding: 1.25rem;
-    background: #fff;
-    border: 1px solid rgba(0, 0, 0, 0.05);
+    background: var(--card-background);
+    border: 1px solid var(--card-border);
     border-radius: 16px;
     cursor: pointer;
     transition: all 0.2s ease;
@@ -190,7 +190,7 @@
 
 .navTitle {
     font-weight: 600;
-    color: #334155;
+    color: var(--text-primary);
     font-size: 1rem;
 }
 
@@ -200,10 +200,11 @@
 
 .navSubtitle {
     font-size: 0.85rem;
-    color: #64748b;
+    color: var(--text-secondary);
     margin-top: 0.125rem;
 }
 
 [data-theme="dark"] .navSubtitle {
     color: #94a3b8;
 }
+

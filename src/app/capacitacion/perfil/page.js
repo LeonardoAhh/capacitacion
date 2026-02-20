@@ -15,7 +15,7 @@ import { collection, getDocs, query, where, doc, getDoc } from 'firebase/firesto
 import { checkPromotionCriteria, calculateMonthsInPosition } from '@/lib/promotionUtils';
 
 // Components
-import ProfileDropdown from '@/components/ProfileDropdown/ProfileDropdown';
+import ProfileDropdown from '@/components/layout/ProfileDropdown/ProfileDropdown';
 import { BackgroundLines } from '@/components/ui/BackgroundLines';
 import { useToast } from '@/components/ui/Toast/Toast';
 import ProfileHeader from './components/ProfileHeader';

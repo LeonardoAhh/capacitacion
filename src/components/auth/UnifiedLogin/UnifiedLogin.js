@@ -4,16 +4,13 @@ import { useId } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { AlertCircle, Loader2 } from 'lucide-react';
 import BackButton from '@/components/ui/BackButton/BackButton';
-import styles from './UnifiedLogin.module.css';
+import baseStyles from '../LoginBase/LoginBase.module.css';
+import componentStyles from './UnifiedLogin.module.css';
+import { mergeStyles } from '../LoginBase/mergeStyles';
+import { BackgroundLines } from '../../ui/BackgroundLines/BackgroundLines';
+import { FADE_UP_LOGIN, CARD_ENTER, ERROR_VARIANTS, SUCCESS_ENTER } from '../LoginBase/loginAnimations';
 
-const ANIMATION_VARIANTS = {
-    fade: {
-        initial: { opacity: 0, y: 8 },
-        animate: { opacity: 1, y: 0 },
-        exit: { opacity: 0, y: -8 },
-        transition: { duration: 0.3 },
-    },
-};
+const styles = mergeStyles(baseStyles, componentStyles);
 
 function InputField({
     id,
@@ -26,6 +23,7 @@ function InputField({
     disabled,
     maxLength,
     helperText,
+    icon: Icon,
     hasError,
     autoComplete,
     inputMode,
@@ -35,21 +33,24 @@ function InputField({
             <label htmlFor={id} className={styles.label}>
                 {label}
             </label>
-            <input
-                id={id}
-                type={type}
-                value={value}
-                onChange={onChange}
-                onBlur={onBlur}
-                placeholder={placeholder}
-                disabled={disabled}
-                maxLength={maxLength}
-                autoComplete={autoComplete}
-                inputMode={inputMode}
-                className={`${styles.input} ${hasError ? styles.inputError : ''}`}
-                aria-invalid={hasError ? 'true' : 'false'}
-                aria-describedby={helperText ? `${id}-helper` : undefined}
-            />
+            <div className={styles.inputWrapper}>
+                {Icon && <Icon className={styles.inputIcon} aria-hidden="true" />}
+                <input
+                    id={id}
+                    type={type}
+                    value={value}
+                    onChange={onChange}
+                    onBlur={onBlur}
+                    placeholder={placeholder}
+                    disabled={disabled}
+                    maxLength={maxLength}
+                    autoComplete={autoComplete}
+                    inputMode={inputMode}
+                    className={`${styles.input} ${hasError ? styles.inputError : ''}`}
+                    aria-invalid={hasError ? 'true' : 'false'}
+                    aria-describedby={helperText ? `${id}-helper` : undefined}
+                />
+            </div>
             {helperText && (
                 <p id={`${id}-helper`} className={styles.helperText}>
                     {helperText}
@@ -85,38 +86,54 @@ export default function UnifiedLogin({
     const isDisabled = loading || blocked;
 
     return (
-        <div className={styles.loginPage}>
-            <BackButton href={backHref} label={backLabel} />
+        <div className={styles.container}>
+            <BackgroundLines
+                colors={["#f59e0b", "#f97316", "#d97706", "#c2410c"]}
+                style={{ position: 'absolute', inset: 0, zIndex: 0, opacity: 0.5 }}
+                svgOptions={{ duration: 10 }}
+            />
 
-            <div className={styles.loginCard}>
+            <div style={{ position: 'absolute', top: '1rem', left: '1rem', zIndex: 50 }}>
+                <BackButton href={backHref} label={backLabel} />
+            </div>
+
+            <motion.div
+                className={styles.loginCard}
+                variants={CARD_ENTER}
+                initial="hidden"
+                animate="visible"
+                role="main"
+            >
                 {isSuccess ? (
                     <motion.div
                         className={styles.successContainer}
-                        initial={{ opacity: 0, scale: 0.95 }}
-                        animate={{ opacity: 1, scale: 1 }}
-                        transition={{ duration: 0.3 }}
+                        {...SUCCESS_ENTER}
+                        role="status"
                     >
                         {successContent || (
                             <>
                                 <Loader2 className={styles.spinner} size={32} />
-                                <h2 className={styles.successTitle}>Verificando...</h2>
-                                <p className={styles.successText}>Redirigiendo</p>
+                                <h2 className={styles.title}>Verificando...</h2>
+                                <p className={styles.subtitle}>Redirigiendo</p>
                             </>
                         )}
                     </motion.div>
                 ) : (
                     <>
-                        <header className={styles.header}>
-                            {portal && <span className={styles.portal}>{portal}</span>}
+                        <motion.header variants={FADE_UP_LOGIN} custom={0} className={styles.header}>
+                            {portal && <div className={styles.iconWrapper} aria-hidden="true"><span className={styles.icon}>🔓</span></div>}
                             <h1 className={styles.title}>{title}</h1>
                             {subtitle && <p className={styles.subtitle}>{subtitle}</p>}
-                        </header>
+                        </motion.header>
 
                         <AnimatePresence mode="wait">
                             {error && (
                                 <motion.div
                                     key="error"
-                                    {...ANIMATION_VARIANTS.fade}
+                                    variants={ERROR_VARIANTS}
+                                    initial="initial"
+                                    animate="animate"
+                                    exit="exit"
                                     className={styles.errorMessage}
                                     role="alert"
                                     aria-live="assertive"
@@ -132,7 +149,10 @@ export default function UnifiedLogin({
                             {blocked && blockedMessage && (
                                 <motion.div
                                     key="blocked"
-                                    {...ANIMATION_VARIANTS.fade}
+                                    variants={ERROR_VARIANTS}
+                                    initial="initial"
+                                    animate="animate"
+                                    exit="exit"
                                     className={styles.blockedMessage}
                                     role="alert"
                                     aria-live="assertive"
@@ -142,7 +162,7 @@ export default function UnifiedLogin({
                             )}
                         </AnimatePresence>
 
-                        <form onSubmit={onSubmit} className={styles.form} noValidate>
+                        <motion.form variants={FADE_UP_LOGIN} custom={1} onSubmit={onSubmit} className={styles.form} noValidate>
                             {fields.map((field, index) => (
                                 <InputField
                                     key={field.id || `${baseId}-field-${index}`}
@@ -174,7 +194,7 @@ export default function UnifiedLogin({
                                     submitText
                                 )}
                             </button>
-                        </form>
+                        </motion.form>
 
                         {showGoogle && (
                             <>
@@ -208,7 +228,9 @@ export default function UnifiedLogin({
                         )}
                     </>
                 )}
-            </div>
+            </motion.div>
+
+            <div className={styles.overlay} aria-hidden="true" />
         </div>
     );
 }

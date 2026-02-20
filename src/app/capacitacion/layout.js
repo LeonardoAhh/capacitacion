@@ -1,6 +1,6 @@
 'use client';
 
-import DemoGuard from '@/components/DemoGuard/DemoGuard';
+import DemoGuard from '@/components/guards/DemoGuard/DemoGuard';
 
 export default function CapacitacionLayout({ children }) {
     return (

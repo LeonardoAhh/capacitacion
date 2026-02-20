@@ -4,7 +4,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { db } from '@/lib/firebase';
 import { collection, query, where, getDocs } from 'firebase/firestore';
-import UnifiedLogin from '@/components/ui/UnifiedLogin';
+import UnifiedLogin from '@/components/auth/UnifiedLogin';
 import { createSession } from '@/lib/sessionApi';
 
 export default function TrainingLoginPage() {

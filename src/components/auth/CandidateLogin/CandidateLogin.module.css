@@ -1,0 +1,10 @@
+/* ═══════════════════════════════════════════════════════════════
+   CandidateLogin — Portal de Candidatos  |  Esmeralda / Teal
+   ═══════════════════════════════════════════════════════════════ */
+
+.container {
+    --login-accent: #10b981;
+    --login-accent-rgb: 16, 185, 129;
+    --login-gradient-from: #10b981;
+    --login-gradient-to: #14b8a6;
+}

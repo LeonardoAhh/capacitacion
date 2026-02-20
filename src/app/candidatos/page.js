@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import { db, auth } from '@/lib/firebase';
 import { collection, query, where, getDocs, doc, updateDoc, increment } from 'firebase/firestore';
 import { signInAnonymously } from 'firebase/auth';
-import UnifiedLogin from '@/components/ui/UnifiedLogin';
+import UnifiedLogin from '@/components/auth/UnifiedLogin';
 import { safeGetLocalStorage, safeSetLocalStorage, safeRemoveLocalStorage } from '@/utils/storage';
 import { createSession } from '@/lib/sessionApi';
 

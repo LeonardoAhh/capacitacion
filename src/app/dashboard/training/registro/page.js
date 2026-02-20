@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { db } from '@/lib/firebase';
 import { collection, addDoc, query, where, getDocs, Timestamp } from 'firebase/firestore';
-import Navbar from '@/components/Navbar/Navbar';
+import Navbar from '@/components/layout/Navbar/Navbar';
 import { UserPlus, Save, AlertCircle, CheckCircle } from 'lucide-react';
 import BackButton from '@/components/ui/BackButton/BackButton';
 import styles from './page.module.css';

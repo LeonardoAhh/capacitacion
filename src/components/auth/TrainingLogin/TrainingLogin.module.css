@@ -1,0 +1,10 @@
+/* ═══════════════════════════════════════════════════════════════
+   TrainingLogin — Módulo de Capacitación  |  Rosa / Púrpura
+   ═══════════════════════════════════════════════════════════════ */
+
+.container {
+    --login-accent: #ec4899;
+    --login-accent-rgb: 236, 72, 153;
+    --login-gradient-from: #ec4899;
+    --login-gradient-to: #a855f7;
+}

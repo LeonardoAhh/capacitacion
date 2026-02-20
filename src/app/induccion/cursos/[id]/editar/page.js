@@ -5,8 +5,8 @@ import { useRouter } from 'next/navigation';
 import { ArrowLeft, Play, Save } from 'lucide-react';
 import { getCourseWithSlides, updateSlide, addSlide } from '@/lib/courseService';
 import { useToast } from '@/components/ui/Toast/Toast';
-import SlideList from '@/components/Courses/Editor/SlideList';
-import SlideEditorPanel from '@/components/Courses/Editor/SlideEditorPanel';
+import SlideList from '@/components/features/Courses/Editor/SlideList';
+import SlideEditorPanel from '@/components/features/Courses/Editor/SlideEditorPanel';
 import styles from './editor.module.css';
 
 export default function EditorPage({ params }) {

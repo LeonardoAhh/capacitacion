@@ -7,7 +7,7 @@ import { collection, getDocs, query, orderBy, where } from 'firebase/firestore';
 import { Button } from '@/components/ui/Button/Button';
 import { useToast } from '@/components/ui/Toast/Toast';
 import { Card, CardContent } from '@/components/ui/Card/Card';
-import QuestionManager from '@/components/QuestionManager/QuestionManager'; // [NEW]
+import QuestionManager from '@/components/features/QuestionManager/QuestionManager'; // [NEW]
 import styles from './page.module.css';
 
 import { useAuth } from '@/contexts/AuthContext';

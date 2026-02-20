@@ -16,42 +16,42 @@
 :root {
     --course-accent: var(--color-primary);
     --course-accent-hover: color-mix(in srgb, var(--color-primary) 85%, white);
-    
+
     --course-header-bg: var(--bg-secondary);
     --course-header-border: var(--border-color);
     --course-header-text: var(--text-primary);
-    
+
     --course-nav-bg: var(--bg-secondary);
     --course-nav-border: var(--border-color);
-    
+
     --course-slide-bg: var(--bg-primary);
     --course-slide-text: var(--text-primary);
     --course-slide-text-secondary: var(--text-secondary);
     --course-slide-text-muted: var(--text-tertiary);
-    
+
     --course-overlay-bg: var(--bg-primary);
     --course-content-bg: var(--bg-secondary);
-    
-    --course-card-bg: var(--bg-secondary);
-    --course-card-border: var(--border-color);
+
+    --course-card-bg: var(--card-background);
+    --course-card-border: var(--card-border);
     --course-card-hover-border: var(--color-primary);
-    
+
     --course-btn-bg: var(--bg-tertiary);
     --course-btn-border: var(--border-color);
     --course-btn-text: var(--text-primary);
     --course-btn-hover-bg: var(--bg-secondary);
-    
+
     --course-btn-primary-bg: var(--color-primary);
     --course-btn-primary-text: #ffffff;
-    
+
     --course-success: var(--color-success);
     --course-danger: var(--color-danger);
     --course-warning: var(--color-warning);
-    
+
     --course-dot-bg: var(--border-color);
     --course-dot-active: var(--color-primary);
     --course-dot-visited: var(--text-tertiary);
-    
+
     --course-progress-bg: var(--border-color);
     --course-progress-fill: var(--color-primary);
 }
@@ -63,7 +63,6 @@
     --course-slide-bg: #000000;
     --course-overlay-bg: #000000;
     --course-content-bg: #1C1C1E;
-    --course-card-bg: #1C1C1E;
     --course-btn-bg: #2C2C2E;
     --course-btn-hover-bg: #3C3C3E;
 }
@@ -73,11 +72,11 @@
     --course-ease-spring: cubic-bezier(0.25, 0.1, 0.25, 1);
     --course-ease-out: cubic-bezier(0.16, 1, 0.3, 1);
     --course-ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
-    
+
     --course-duration-fast: 150ms;
     --course-duration-base: 250ms;
     --course-duration-slow: 400ms;
-    
+
     --course-transition-fast: var(--course-duration-fast) var(--course-ease-spring);
     --course-transition-base: var(--course-duration-base) var(--course-ease-spring);
     --course-transition-slow: var(--course-duration-slow) var(--course-ease-out);
@@ -120,6 +119,7 @@
         opacity: 0;
         transform: translateY(16px);
     }
+
     to {
         opacity: 1;
         transform: translateY(0);
@@ -131,6 +131,7 @@
         opacity: 0;
         transform: translateX(-20px);
     }
+
     to {
         opacity: 1;
         transform: translateX(0);
@@ -142,6 +143,7 @@
         opacity: 0;
         transform: scale(0.95);
     }
+
     to {
         opacity: 1;
         transform: scale(1);
@@ -149,9 +151,12 @@
 }
 
 @keyframes coursePulse {
-    0%, 100% {
+
+    0%,
+    100% {
         box-shadow: 0 0 0 0 rgba(var(--bg-primary-rgb), 0.4);
     }
+
     50% {
         box-shadow: 0 0 0 8px rgba(var(--bg-primary-rgb), 0);
     }
@@ -164,23 +169,29 @@
         --course-duration-base: 0ms;
         --course-duration-slow: 0ms;
     }
-    
+
     @keyframes courseFadeIn {
-        from, to {
+
+        from,
+        to {
             opacity: 1;
             transform: none;
         }
     }
-    
+
     @keyframes courseSlideIn {
-        from, to {
+
+        from,
+        to {
             opacity: 1;
             transform: none;
         }
     }
-    
+
     @keyframes courseScaleIn {
-        from, to {
+
+        from,
+        to {
             opacity: 1;
             transform: none;
         }

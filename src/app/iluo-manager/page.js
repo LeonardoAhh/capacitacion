@@ -11,7 +11,7 @@ import { db } from '@/lib/firebase';
 import { collection, query, getDocs, doc, updateDoc, arrayUnion } from 'firebase/firestore';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/components/ui/Toast/Toast';
-import ProfileDropdown from '@/components/ProfileDropdown/ProfileDropdown';
+import ProfileDropdown from '@/components/layout/ProfileDropdown/ProfileDropdown';
 import styles from './page.module.css';
 
 const CATEGORIES = ['TÉCNICA', 'SEGURIDAD', 'CALIDAD', 'LIDERAZGO'];

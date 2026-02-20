@@ -2,52 +2,56 @@
 
 /* Import Course Design System */
 @import './courses.css';
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700;900&display=swap');
 
 :root {
-  /* --- iOS System Colors (Light Mode) --- */
+  /* --- System Colors (Light Mode) --- */
   --blue-500: #007AFF;
   --purple-500: #5856D6;
   --cyan-500: #5AC8FA;
   --green-500: #34C759;
-  --amber-500: #FF9500;
+  --amber-500: #f59e0b;
+  /* Ambar Editorial */
   --red-500: #FF3B30;
 
-  /* --- Semantic Colors (Light Theme) --- */
-  --color-primary: var(--blue-500);
-  --color-secondary: var(--purple-500);
-  --color-accent: var(--cyan-500);
+  /* --- Semantic Colors (Light Theme - Editorial White) --- */
+  --color-primary: var(--amber-500);
+  --color-secondary: #d97706;
+  --color-accent: #fbbf24;
 
   --color-success: var(--green-500);
   --color-warning: var(--amber-500);
   --color-danger: var(--red-500);
   --color-info: var(--blue-500);
 
-  /* iOS Backgrounds - Clean and minimal */
-  --bg-primary: #FFFFFF;
-  --bg-secondary: #F2F2F7;
-  --bg-tertiary: #FFFFFF;
+  /* Backgrounds - Editorial White */
+  --bg-primary: #ffffff;
+  --bg-secondary: #fafaf8;
+  /* Off-white elegant */
+  --bg-tertiary: #ffffff;
   --bg-primary-rgb: 255, 255, 255;
 
-  --app-background: #F2F2F7;
-  --card-background: rgba(255, 255, 255, 0.7);
-  --card-border: rgba(255, 255, 255, 0.5);
-  --popover-background: rgba(255, 255, 255, 0.95);
+  --app-background: #fafaf8;
+  --card-background: #ffffff;
+  --card-border: rgba(0, 0, 0, 0.08);
+  /* Transparent subtle borders */
+  --popover-background: #ffffff;
 
-  /* iOS Text Colors */
-  --text-primary: #000000;
-  --text-secondary: #3C3C43;
-  --text-tertiary: #8E8E93;
+  /* Text Colors */
+  --text-primary: #111110;
+  --text-secondary: #636366;
+  --text-tertiary: #8c8c82;
 
-  /* iOS Separator */
-  --border-color: rgba(60, 60, 67, 0.12);
-  --border-color-rgb: 60, 60, 67;
+  /* Separator */
+  --border-color: rgba(0, 0, 0, 0.06);
+  --border-color-rgb: 0, 0, 0;
 
-  /* iOS Shadows - Subtle and clean */
-  --shadow-sm: 0 1px 3px rgb(0 0 0 / 0.04);
-  --shadow-md: 0 2px 8px rgb(0 0 0 / 0.08);
-  --shadow-lg: 0 4px 16px rgb(0 0 0 / 0.12);
+  /* Shadows - Subtle and clean */
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.02);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.04);
+  --shadow-lg: 0 10px 40px rgba(0, 0, 0, 0.08);
 
-  /* --- iOS Spacing System (8pt grid) --- */
+  /* --- Spacing System (8pt grid) --- */
   --spacing-xs: 0.25rem;
   --spacing-sm: 0.5rem;
   --spacing-md: 1rem;
@@ -56,60 +60,186 @@
   --spacing-2xl: 3rem;
   --spacing-3xl: 4rem;
 
-  /* --- iOS Border Radius --- */
+  /* --- Border Radius --- */
   --radius-sm: 6px;
   --radius-md: 10px;
   --radius-lg: 14px;
   --radius-xl: 20px;
   --radius-full: 9999px;
 
-  /* --- iOS Transitions - Natural feel --- */
-  --ease-spring: cubic-bezier(0.25, 0.1, 0.25, 1);
+  /* --- Transitions - Natural feel --- */
+  --ease-spring: cubic-bezier(0.16, 1, 0.3, 1);
+  /* Editorial smooth bezier */
   --transition-fast: 200ms var(--ease-spring);
   --transition-base: 300ms var(--ease-spring);
   --transition-slow: 400ms var(--ease-spring);
-  /* --- iOS Scrollbar --- */
-  --scrollbar-thumb: rgba(0, 0, 0, 0.2);
+
+  /* --- Scrollbar --- */
+  --scrollbar-thumb: rgba(0, 0, 0, 0.1);
   --scrollbar-track: transparent;
 }
 
 [data-theme="dark"] {
-  /* iOS Dark Mode - System Backgrounds */
-  --bg-primary: #000000;
-  --bg-secondary: #1C1C1E;
-  --bg-secondary: #1C1C1E;
-  --bg-tertiary: #2C2C2E;
-  --bg-primary-rgb: 0, 0, 0;
+  /* Dark Mode - Editorial Dark */
+  --bg-primary: #111110;
+  --bg-secondary: #1c1c1a;
+  --bg-tertiary: #272725;
+  --bg-primary-rgb: 17, 17, 16;
 
-  --app-background: #000000;
-  --card-background: rgba(28, 28, 30, 0.6);
-  --card-border: rgba(255, 255, 255, 0.1);
-  --popover-background: rgba(30, 30, 35, 0.95);
+  --app-background: #111110;
+  --card-background: rgba(28, 28, 26, 0.8);
+  --card-border: rgba(255, 255, 255, 0.06);
+  --popover-background: #1c1c1a;
 
-  /* iOS Dark Mode - Text Colors */
-  --text-primary: #FFFFFF;
-  --text-secondary: #EBEBF5;
-  --text-tertiary: #8E8E93;
+  /* Text Colors */
+  --text-primary: #ffffff;
+  --text-secondary: #a3a39a;
+  --text-tertiary: #73736b;
 
-  /* iOS Dark Mode - Separator */
-  --border-color: rgba(84, 84, 88, 0.65);
-  --border-color-rgb: 84, 84, 88;
+  /* Separator */
+  --border-color: rgba(255, 255, 255, 0.08);
+  --border-color-rgb: 255, 255, 255;
 
-  /* iOS Dark Mode - Shadows */
-  --shadow-sm: 0 1px 3px rgb(0 0 0 / 0.3);
-  --shadow-md: 0 2px 8px rgb(0 0 0 / 0.4);
-  --shadow-lg: 0 4px 16px rgb(0 0 0 / 0.5);
+  /* Shadows */
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.4);
+  --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.6);
+  --shadow-lg: 0 16px 48px rgba(0, 0, 0, 0.8);
 
-  /* iOS Dark Mode - Vibrant Colors (brighter for dark backgrounds) */
-  --color-primary: #0A84FF;
-  --color-secondary: #5E5CE6;
-  --color-accent: #64D2FF;
-  --color-warning: #FF9F0A;
-  --color-danger: #FF453A;
+  /* Vibrant Colors - Maintain Ambar */
+  --color-primary: #f59e0b;
+  --color-secondary: #fbbf24;
+  --color-accent: #fcd34d;
+  --color-warning: #f59e0b;
+  --color-danger: #ef4444;
 
-  /* --- iOS Scrollbar Dark --- */
-  --scrollbar-thumb: rgba(255, 255, 255, 0.2);
+  /* Scrollbar Dark */
+  --scrollbar-thumb: rgba(255, 255, 255, 0.15);
   --scrollbar-track: transparent;
+}
+
+/* --- Blue Theme --- */
+[data-theme='blue'] {
+  --color-primary: #0055ff;
+  --color-secondary: #0044cc;
+  --color-accent: #3377ff;
+
+  --bg-primary: #f5f8ff;
+  --bg-secondary: #ebf1ff;
+  --bg-tertiary: #e0ebff;
+
+  --app-background: #f5f8ff;
+  --card-background: #ffffff;
+  --card-border: rgba(0, 85, 255, 0.1);
+  --popover-background: #ffffff;
+
+  --text-primary: #001133;
+  --text-secondary: #1a3366;
+  --text-tertiary: #335599;
+
+  --border-color: rgba(0, 85, 255, 0.1);
+  --shadow-sm: 0 2px 8px rgba(0, 85, 255, 0.04);
+  --shadow-md: 0 8px 24px rgba(0, 85, 255, 0.08);
+  --shadow-lg: 0 16px 48px rgba(0, 85, 255, 0.12);
+}
+
+/* --- Viñoplastic Theme --- */
+[data-theme='vinoplastic'] {
+  --color-primary: #1e3a8a;
+  --color-secondary: #64748b;
+  --color-accent: #3b82f6;
+
+  --bg-primary: #f8fafc;
+  --bg-secondary: #e2e8f0;
+  --bg-tertiary: #cbd5e1;
+
+  --app-background: #f8fafc;
+  --card-background: rgba(255, 255, 255, 0.8);
+  --card-border: rgba(30, 58, 138, 0.1);
+  --popover-background: #ffffff;
+
+  --text-primary: #0f172a;
+  --text-secondary: #334155;
+  --text-tertiary: #64748b;
+
+  --border-color: #cbd5e1;
+  --shadow-sm: 0 1px 2px 0 rgb(30 58 138 / 0.05);
+  --shadow-md: 0 4px 12px rgb(30 58 138 / 0.08);
+  --shadow-lg: 0 10px 40px rgb(30 58 138 / 0.12);
+}
+
+/* --- Forest Theme --- */
+[data-theme='forest'] {
+  --color-primary: #15803d;
+  --color-secondary: #166534;
+  --color-accent: #22c55e;
+
+  --bg-primary: #f5fbf7;
+  --bg-secondary: #ebf7ef;
+  --bg-tertiary: #dcfce7;
+
+  --app-background: #f5fbf7;
+  --card-background: #ffffff;
+  --card-border: rgba(21, 128, 61, 0.1);
+  --popover-background: #ffffff;
+
+  --text-primary: #052e16;
+  --text-secondary: #14532d;
+  --text-tertiary: #166534;
+
+  --border-color: rgba(21, 128, 61, 0.15);
+  --shadow-sm: 0 2px 8px rgb(21 128 61 / 0.04);
+  --shadow-md: 0 8px 24px rgb(21 128 61 / 0.06);
+  --shadow-lg: 0 16px 48px rgb(21 128 61 / 0.1);
+}
+
+/* --- Ocean Theme --- */
+[data-theme='ocean'] {
+  --color-primary: #0284c7;
+  --color-secondary: #0369a1;
+  --color-accent: #38bdf8;
+
+  --bg-primary: #f0f9ff;
+  --bg-secondary: #e0f2fe;
+  --bg-tertiary: #bae6fd;
+
+  --app-background: #f0f9ff;
+  --card-background: #ffffff;
+  --card-border: rgba(2, 132, 199, 0.1);
+  --popover-background: #ffffff;
+
+  --text-primary: #0c4a6e;
+  --text-secondary: #075985;
+  --text-tertiary: #0284c7;
+
+  --border-color: rgba(2, 132, 199, 0.15);
+  --shadow-sm: 0 2px 8px rgb(2 132 199 / 0.04);
+  --shadow-md: 0 8px 24px rgb(2 132 199 / 0.06);
+  --shadow-lg: 0 16px 48px rgb(2 132 199 / 0.1);
+}
+
+/* --- Sunset Theme --- */
+[data-theme='sunset'] {
+  --color-primary: #ea580c;
+  --color-secondary: #c2410c;
+  --color-accent: #f97316;
+
+  --bg-primary: #fffaf5;
+  --bg-secondary: #fff5eb;
+  --bg-tertiary: #fed7aa;
+
+  --app-background: #fffaf5;
+  --card-background: #ffffff;
+  --card-border: rgba(234, 88, 12, 0.1);
+  --popover-background: #ffffff;
+
+  --text-primary: #431407;
+  --text-secondary: #7c2d12;
+  --text-tertiary: #9a3412;
+
+  --border-color: rgba(234, 88, 12, 0.15);
+  --shadow-sm: 0 2px 8px rgb(234 88 12 / 0.04);
+  --shadow-md: 0 8px 24px rgb(234 88 12 / 0.06);
+  --shadow-lg: 0 16px 48px rgb(234 88 12 / 0.1);
 }
 
 /* --- Reset Moderno --- */
@@ -123,16 +253,14 @@
 
 html {
   scroll-behavior: smooth;
-  /* Previene saltos de layout al aparecer la barra de scroll */
   scrollbar-gutter: stable;
 }
 
 body {
   font-family: 'Inter', system-ui, -apple-system, sans-serif;
-  background-color: var(--bg-primary);
+  background-color: var(--app-background);
   color: var(--text-primary);
   line-height: 1.5;
-  /* Mejora renderizado de fuentes */
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   transition: background-color var(--transition-base), color var(--transition-base);
@@ -143,14 +271,13 @@ h1,
 h2,
 h3,
 h4 {
+  font-family: 'Playfair Display', Georgia, serif;
   font-weight: 700;
   line-height: 1.1;
   color: var(--text-primary);
-  /* Evita que los títulos dejen una palabra huérfana en la segunda línea */
   text-wrap: balance;
 }
 
-/* Tipografía fluida usando clamp (Responsive sin media queries excesivos) */
 h1 {
   font-size: clamp(2rem, 5vw, 3rem);
 }
@@ -165,10 +292,8 @@ h3 {
 
 p {
   max-width: 65ch;
-  /* Longitud de línea óptima para lectura */
   color: var(--text-secondary);
   text-wrap: pretty;
-  /* Evita viudas en párrafos largos */
 }
 
 /* --- Interactive Elements --- */
@@ -179,14 +304,11 @@ textarea {
   font: inherit;
 }
 
-/* Focus Visible: Accesibilidad crítica. 
-   Solo muestra outline cuando se navega con teclado */
 :focus-visible {
   outline: 2px solid var(--color-primary);
   outline-offset: 2px;
 }
 
-/* Ocultar outline por defecto solo si tenemos focus-visible gestionado */
 button:focus:not(:focus-visible) {
   outline: none;
 }
@@ -202,7 +324,6 @@ a:hover {
   color: var(--color-accent);
   text-decoration: underline;
   text-underline-offset: 4px;
-  /* Estilo moderno de link */
 }
 
 /* --- Components --- */
@@ -210,17 +331,15 @@ a:hover {
   width: 100%;
   max-width: 1200px;
   margin-inline: auto;
-  /* Logical property */
   padding-inline: var(--spacing-lg);
 }
 
 .card {
-  background-color: var(--bg-secondary);
+  background-color: var(--card-background);
   border-radius: var(--radius-lg);
   padding: var(--spacing-xl);
   box-shadow: var(--shadow-md);
-  border: 1px solid var(--border-color);
-  /* Transition solo en propiedades necesarias para performance */
+  border: 1px solid var(--card-border);
   transition: transform var(--transition-base), box-shadow var(--transition-base);
 }
 
@@ -243,24 +362,22 @@ a:hover {
   position: relative;
   overflow: hidden;
   user-select: none;
-  /* Mejora UX en botones */
   transition: background-color var(--transition-fast), transform var(--transition-fast);
 }
 
 .btn:active {
   transform: scale(0.98);
-  /* Feedback táctil al presionar */
 }
 
 .btn-primary {
-  background: linear-gradient(135deg, var(--color-primary), var(--color-accent));
+  background: var(--color-primary);
   color: white;
   box-shadow: var(--shadow-sm);
 }
 
 .btn-primary:hover {
-  /* Brillo simple en lugar de cambio de tamaño */
-  filter: brightness(1.1);
+  filter: brightness(1.05);
+  /* Soft brightness increase */
   box-shadow: var(--shadow-md);
 }
 
@@ -279,16 +396,17 @@ a:hover {
   width: 100%;
   padding: var(--spacing-sm) var(--spacing-md);
   background-color: var(--bg-primary);
-  border: 2px solid var(--border-color);
+  border: 1px solid var(--border-color);
+  /* Lighter border for Editorial */
   border-radius: var(--radius-md);
   color: var(--text-primary);
   transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.02);
 }
 
 .input-field:focus {
   border-color: var(--color-primary);
-  /* Ring effect usando box-shadow */
-  box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.15);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-primary) 15%, transparent);
   outline: none;
 }
 
@@ -311,7 +429,7 @@ a:hover {
   top: -100px;
   left: 50%;
   transform: translateX(-50%);
-  background: var(--color-primary, #007AFF);
+  background: var(--color-primary);
   color: white;
   padding: 12px 24px;
   border-radius: 0 0 8px 8px;
@@ -340,7 +458,6 @@ a:hover {
   border: 0;
 }
 
-/* Make sr-only content visible when focused (for skip links) */
 .sr-only:focus {
   position: static;
   width: auto;
@@ -368,7 +485,6 @@ a:hover {
 }
 
 /* --- Accessibility: Color Indicators with Icons --- */
-/* Ensure status indicators have more than just color */
 .status-indicator::before {
   content: '';
   display: inline-block;
@@ -394,108 +510,7 @@ a:hover {
   background-color: var(--color-info);
 }
 
-/* --- Accessibility: Better Link Contrast --- */
 a:focus {
   text-decoration: underline;
   text-decoration-thickness: 2px;
-}
-
-/* --- Viñoplastic Theme --- */
-[data-theme='vinoplastic'] {
-  --color-primary: #1e3a8a;
-  --color-secondary: #64748b;
-  --color-accent: #3b82f6;
-
-  --bg-primary: #f8fafc;
-  --bg-secondary: #e2e8f0;
-  --bg-tertiary: #cbd5e1;
-
-  --app-background: #f8fafc;
-  --card-background: rgba(255, 255, 255, 0.6);
-  --card-border: rgba(30, 58, 138, 0.1);
-  --popover-background: rgba(255, 255, 255, 0.95);
-
-  --text-primary: #0f172a;
-  --text-secondary: #334155;
-  --text-tertiary: #64748b;
-
-  --border-color: #cbd5e1;
-  --shadow-sm: 0 1px 2px 0 rgb(30 58 138 / 0.05);
-  --shadow-md: 0 4px 6px -1px rgb(30 58 138 / 0.1);
-  --shadow-lg: 0 10px 15px -3px rgb(30 58 138 / 0.1);
-}
-
-/* --- Forest Theme --- */
-[data-theme='forest'] {
-  --color-primary: #15803d;
-  --color-secondary: #166534;
-  --color-accent: #22c55e;
-
-  --bg-primary: #f0fdf4;
-  --bg-secondary: #dcfce7;
-  --bg-tertiary: #bbf7d0;
-
-  --app-background: #f0fdf4;
-  --card-background: rgba(255, 255, 255, 0.6);
-  --card-border: rgba(21, 128, 61, 0.15);
-  --popover-background: rgba(255, 255, 255, 0.95);
-
-  --text-primary: #052e16;
-  --text-secondary: #14532d;
-  --text-tertiary: #166534;
-
-  --border-color: #bbf7d0;
-  --shadow-sm: 0 1px 2px 0 rgb(21 128 61 / 0.05);
-  --shadow-md: 0 4px 6px -1px rgb(21 128 61 / 0.1);
-  --shadow-lg: 0 10px 15px -3px rgb(21 128 61 / 0.1);
-}
-
-/* --- Ocean Theme --- */
-[data-theme='ocean'] {
-  --color-primary: #0284c7;
-  --color-secondary: #0369a1;
-  --color-accent: #38bdf8;
-
-  --bg-primary: #f0f9ff;
-  --bg-secondary: #e0f2fe;
-  --bg-tertiary: #bae6fd;
-
-  --app-background: #f0f9ff;
-  --card-background: rgba(255, 255, 255, 0.6);
-  --card-border: rgba(2, 132, 199, 0.15);
-  --popover-background: rgba(255, 255, 255, 0.95);
-
-  --text-primary: #0c4a6e;
-  --text-secondary: #075985;
-  --text-tertiary: #0284c7;
-
-  --border-color: #bae6fd;
-  --shadow-sm: 0 1px 2px 0 rgb(2 132 199 / 0.05);
-  --shadow-md: 0 4px 6px -1px rgb(2 132 199 / 0.1);
-  --shadow-lg: 0 10px 15px -3px rgb(2 132 199 / 0.1);
-}
-
-/* --- Sunset Theme --- */
-[data-theme='sunset'] {
-  --color-primary: #ea580c;
-  --color-secondary: #c2410c;
-  --color-accent: #f97316;
-
-  --bg-primary: #fff7ed;
-  --bg-secondary: #ffedd5;
-  --bg-tertiary: #fed7aa;
-
-  --app-background: #fff7ed;
-  --card-background: rgba(255, 255, 255, 0.6);
-  --card-border: rgba(234, 88, 12, 0.15);
-  --popover-background: rgba(255, 255, 255, 0.95);
-
-  --text-primary: #431407;
-  --text-secondary: #7c2d12;
-  --text-tertiary: #9a3412;
-
-  --border-color: #fed7aa;
-  --shadow-sm: 0 1px 2px 0 rgb(234 88 12 / 0.05);
-  --shadow-md: 0 4px 6px -1px rgb(234 88 12 / 0.1);
-  --shadow-lg: 0 10px 15px -3px rgb(234 88 12 / 0.1);
 }

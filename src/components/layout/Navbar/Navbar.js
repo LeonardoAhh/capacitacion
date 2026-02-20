@@ -2,8 +2,8 @@
 
 import { useAuth } from '@/contexts/AuthContext';
 import { useRouter } from 'next/navigation';
-import LogoVinoPlastic from '@/components/Logo/LogoVinoPlastic';
-import ThemeToggle from '@/components/ThemeToggle/ThemeToggle';
+import LogoVinoPlastic from '@/components/layout/Logo/LogoVinoPlastic';
+import ThemeToggle from '@/components/layout/ThemeToggle/ThemeToggle';
 import MotivationalWidget from './MotivationalWidget';
 import styles from './Navbar.module.css';
 
