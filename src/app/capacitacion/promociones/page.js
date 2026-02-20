@@ -761,6 +761,24 @@ export default function PromocionesPage() {
             });
 
             const ws = XLSX.utils.aoa_to_sheet([headers, ...rows]);
+
+            // Set column widths for better readability
+            ws['!cols'] = [
+                { wch: 15 }, // ID Empleado
+                { wch: 35 }, // Nombre
+                { wch: 25 }, // Puesto Actual
+                { wch: 25 }, // Promoción a
+                { wch: 25 }, // Departamento
+                { wch: 10 }, // Turno
+                { wch: 15 }, // Desempeño
+                { wch: 20 }, // Temporalidad
+                { wch: 15 }, // Matriz
+                { wch: 15 }, // Examen
+                { wch: 20 }, // Criterios
+                { wch: 15 }, // Estado
+                { wch: 15 }  // Citado
+            ];
+
             const wb = XLSX.utils.book_new();
             XLSX.utils.book_append_sheet(wb, ws, 'Promociones');
 

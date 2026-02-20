@@ -49,6 +49,20 @@ export const exportToExcel = async (data, filename = 'reporte_capacitacion', opt
 
     // Create workbook and worksheet
     const ws = XLSX.utils.aoa_to_sheet(rows);
+    
+    // Set column widths for better readability
+    const wscols = [
+        { wch: 15 }, // ID Empleado
+        { wch: 35 }, // Nombre
+        { wch: 25 }, // Departamento
+        { wch: 30 }, // Puesto
+        { wch: 15 }, // Cumplimiento %
+        { wch: 20 }, // Cursos Requeridos
+        { wch: 20 }, // Cursos Completados
+        { wch: 20 }  // Cursos Pendientes
+    ];
+    ws['!cols'] = wscols;
+
     const wb = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, ws, 'Empleados');
 
@@ -69,6 +83,17 @@ export const exportToExcel = async (data, filename = 'reporte_capacitacion', opt
         });
 
         const historyWs = XLSX.utils.aoa_to_sheet(historyRows);
+        
+        // Set column widths for history
+        const historyCols = [
+            { wch: 35 }, // Empleado
+            { wch: 40 }, // Curso
+            { wch: 15 }, // Fecha
+            { wch: 15 }, // Calificación
+            { wch: 15 }  // Estado
+        ];
+        historyWs['!cols'] = historyCols;
+
         XLSX.utils.book_append_sheet(wb, historyWs, 'Historial');
     }
 
@@ -148,13 +173,19 @@ export const exportPDFCompliance = async (data, options = {}) => {
         body: tableData,
         theme: 'striped',
         headStyles: {
-            fillColor: [59, 130, 246],
+            fillColor: [30, 41, 59], // Slate 800 - Editorial Dark
             textColor: 255,
-            fontStyle: 'bold'
+            fontStyle: 'bold',
+            halign: 'center'
         },
         styles: {
+            font: 'helvetica',
             fontSize: 9,
-            cellPadding: 3
+            cellPadding: 4,
+            textColor: [51, 65, 85] // Slate 700
+        },
+        alternateRowStyles: {
+            fillColor: [248, 250, 252] // Slate 50
         },
         columnStyles: {
             0: { cellWidth: 25 },
@@ -168,11 +199,14 @@ export const exportPDFCompliance = async (data, options = {}) => {
             if (data.column.index === 4 && data.cell.section === 'body') {
                 const pct = parseFloat(data.cell.text[0]) || 0;
                 if (pct < 70) {
-                    doc.setTextColor(239, 68, 68);
+                    doc.setTextColor(239, 68, 68); // Red
+                    doc.setFont(undefined, 'bold');
                 } else if (pct >= 90) {
-                    doc.setTextColor(16, 185, 129);
+                    doc.setTextColor(16, 185, 129); // Emerald
+                    doc.setFont(undefined, 'bold');
                 } else {
-                    doc.setTextColor(245, 158, 11);
+                    doc.setTextColor(245, 158, 11); // Amber - Editorial Primary
+                    doc.setFont(undefined, 'bold');
                 }
             }
         }

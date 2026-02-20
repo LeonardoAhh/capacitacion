@@ -4,33 +4,27 @@ service cloud.firestore {
     
     // ===== FUNCIONES AUXILIARES =====
     
-    // Obtener datos del usuario autenticado
     function getUserData() {
       return get(/databases/$(database)/documents/users/$(request.auth.uid)).data;
     }
     
-    // Verificar si el usuario tiene un rol específico
     function hasRole(role) {
        return request.auth != null && getUserData().rol == role;
     }
     
-    // Verificar múltiples roles permitidos
     function hasAnyRole(roles) {
       return request.auth != null && getUserData().rol in roles;
     }
     
-    // Verificar si el usuario NO es anónimo
     function isNotAnonymous() {
       return request.auth != null && 
              request.auth.token.firebase.sign_in_provider != 'anonymous';
     }
     
-    // Verificar si es un usuario autenticado (cualquier tipo, incluyendo anónimos)
     function isAuthenticated() {
       return request.auth != null;
     }
     
-    // --- Validaciones de Datos ---
     function isValidString(text) {
       return text is string && text.size() > 0;
     }
@@ -43,91 +37,70 @@ service cloud.firestore {
     
     // ===== REGLAS POR COLECCIÓN =====
     
-    // USUARIOS: Solo el propio usuario puede leer su perfil, super_admin/rh pueden escribir
     match /users/{userId} {
       allow read: if isAuthenticated() && 
                      (request.auth.uid == userId || hasAnyRole(['super_admin', 'rh']));
-      
-      // Permitir crear: super_admin O el mismo usuario creando su propio documento
       allow create: if hasRole('super_admin') || 
                       (isAuthenticated() && 
                        request.auth.uid == userId &&
                        request.resource.data.email == request.auth.token.email);
-      
       allow update: if hasAnyRole(['super_admin', 'rh']) || request.auth.uid == userId;
       allow delete: if hasRole('super_admin');
     }
     
-    // EMPLEADOS (Legacy): Lectura pública requerida para Login de Capacitación (por ID)
     match /employees/{docId} {
-      allow read: if true; // Permite buscar usuario por ID para el login
-      
+      allow read: if true;
       allow create: if hasAnyRole(['super_admin', 'rh'])
                     && isValidString(request.resource.data.name)
                     && isValidString(request.resource.data.employeeId);
-      
-      // FIX: Agregado avatar, theme, nickname a los campos permitidos para usuarios autenticados
       allow update: if hasAnyRole(['super_admin', 'rh']) ||
                        (isAuthenticated() && 
                         request.resource.data.diff(resource.data).affectedKeys()
                           .hasOnly(['accessCodeUses', 'lastLoginCandidate', 'cursosCompletados', 'coursesProgress', 'avatar', 'theme', 'nickname']));
-                          
       allow delete: if hasRole('super_admin');
     }
     
-    // EMPLEADOS CON PROGRAMACIÓN (Nueva estructura)
     match /employees_programacion/{docId} {
-      allow read: if true; // Permite login sin autenticación previa
-      
+      allow read: if true;
       allow create: if hasAnyRole(['super_admin', 'rh'])
                     && isValidString(request.resource.data.name)
                     && isValidString(request.resource.data.employeeId)
                     && isValidString(request.resource.data.accessCode);
-      
-      // FIX: Permitir actualizar avatar/theme/nickname a usuarios "logueados" (sin Auth de Firebase)
-      // Limitamos los campos permitidos para evitar que cambien su ID o Nombre
       allow update: if hasAnyRole(['super_admin', 'rh']) || 
                        request.resource.data.diff(resource.data).affectedKeys()
                          .hasOnly(['avatar', 'theme', 'nickname']);
-                          
       allow delete: if hasRole('super_admin');
     }
     
-    // CURSOS DE INDUCCIÓN (Nuevo formato)
     match /induction_courses/{docId} {
-      allow read: if true; // Portal de capacitación necesita leer cursos
+      allow read: if true;
       allow write: if hasAnyRole(['super_admin', 'rh'])
                    && isValidString(request.resource.data.title);
     }
     
-    // CURSOS DE INDUCCIÓN (Legacy)
     match /cursos_induccion/{docId} {
       allow read: if true;
       allow write: if hasAnyRole(['super_admin', 'rh']);
     }
 
-    // PROGRAMACIÓN DE CAPACITACIÓN (Asignaciones de cursos a empleados)
     match /programacion/{docId} {
-      allow read: if true; // Los empleados necesitan ver sus cursos asignados
+      allow read: if true;
       allow create: if hasAnyRole(['super_admin', 'rh']);
-      allow update: if hasAnyRole(['super_admin', 'rh']) || true; // Permitir actualizar estado (viewed/completed)
+      allow update: if hasAnyRole(['super_admin', 'rh']) || true;
       allow delete: if hasAnyRole(['super_admin', 'rh']);
     }
     
-    // POSICIONES/PUESTOS: Candidatos necesitan leer para cargar sus cursos
     match /positions/{docId} {
       allow read: if true;
       allow write: if hasAnyRole(['super_admin', 'rh'])
                    && isValidString(request.resource.data.name);
     }
 
-    // CATÁLOGOS DE DATOS (Dropdowns)
     match /datos/{docId} {
       allow read: if isAuthenticated();
       allow write: if hasAnyRole(['super_admin', 'rh']);
     }
     
-    // TRAINING RECORDS
     match /training_records/{docId} {
       allow read: if true;
       allow write: if hasAnyRole(['super_admin', 'rh'])
@@ -135,60 +108,70 @@ service cloud.firestore {
                    && isValidString(request.resource.data.position);
     }
     
-    // SKILLS ILUO: Solo usuarios no anónimos
     match /skills/{docId} {
       allow read: if isNotAnonymous();
       allow write: if hasAnyRole(['super_admin', 'rh']);
     }
     
-    // REGISTROS DE CAPACITACIÓN
     match /training_logs/{docId} {
       allow read: if isNotAnonymous();
       allow write: if hasAnyRole(['super_admin', 'rh']);
     }
     
-    // ALERTAS
     match /alerts/{docId} {
       allow read: if isNotAnonymous();
       allow write: if hasAnyRole(['super_admin', 'rh']);
     }
     
-    // CALENDARIO
     match /calendar_events/{docId} {
       allow read: if isNotAnonymous();
       allow write: if hasAnyRole(['super_admin', 'rh']);
     }
     
-    // PROMOCIONES
     match /promotions/{docId} {
       allow read: if isNotAnonymous();
       allow write: if hasAnyRole(['super_admin', 'rh']);
     }
     
-    // AUDITORÍAS/LOGS: Solo super_admin
     match /audit_logs/{docId} {
       allow read, write: if hasRole('super_admin');
     }
     
-    // EXÁMENES
     match /exam_questions/{docId} {
       allow read: if isNotAnonymous();
       allow write: if hasAnyRole(['super_admin', 'rh']);
     }
 
-    // REGLAS DE PROMOCIÓN
     match /promotion_rules/{docId} {
       allow read: if true;
       allow write: if hasAnyRole(['super_admin', 'rh']);
     }
 
-    // CONFIGURACIÓN DEL SISTEMA: Solo super_admin
     match /system_config/{docId} {
       allow read, write: if hasRole('super_admin');
     }
+
+    // ===== CONFIGURACIÓN GLOBAL (Modo Mantenimiento, etc.) =====
+    match /app_config/{docId} {
+      allow read: if true; // Todo el mundo necesita saber si hay mantenimiento
+      allow write: if hasAnyRole(['admin', 'superadmin', 'ADMIN', 'SUPER_ADMIN', 'super_admin']);
+    }
+
+    // ===== CURSOS INTERACTIVOS NATIVOS =====
+    // Colección `cursos` con subcolección `slides`
+    match /cursos/{courseId} {
+      // Cualquier usuario autenticado puede ver los cursos publicados
+      allow read: if isAuthenticated();
+      // Solo super_admin puede crear/editar/borrar cursos
+      allow write: if hasRole('super_admin');
+
+      match /slides/{slideId} {
+        allow read: if isAuthenticated();
+        allow write: if hasRole('super_admin');
+      }
+    }
     
     // ===== REGLA POR DEFECTO (FALLBACK) =====
-    // Para cualquier otra colección no especificada
     match /{document=**} {
       allow read: if isNotAnonymous();
       allow write: if hasRole('super_admin');
