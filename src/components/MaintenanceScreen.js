@@ -1,59 +1,29 @@
 'use client';
 
-import { Wrench, Clock, AlertTriangle, Zap } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { useState, useEffect, useRef } from 'react';
+import { Wrench, Clock, AlertTriangle } from 'lucide-react';
+import { motion } from 'framer-motion';
+import { useState, useEffect } from 'react';
 import styles from './MaintenanceScreen.module.css';
 
-// Flip digit component for cinematic countdown
-function FlipDigit({ value, label }) {
-    const [current, setCurrent] = useState(value);
-    const [prev, setPrev] = useState(value);
-    const [flipping, setFlipping] = useState(false);
-
-    useEffect(() => {
-        if (value !== current) {
-            setPrev(current);
-            setFlipping(true);
-            const t = setTimeout(() => {
-                setCurrent(value);
-                setFlipping(false);
-            }, 300);
-            return () => clearTimeout(t);
-        }
-    }, [value]);
-
+function CountSegment({ value, label }) {
     return (
-        <div className={styles.flipUnit}>
-            <div className={`${styles.flipCard} ${flipping ? styles.flipping : ''}`}>
-                <div className={styles.flipTop}>
-                    <span className={styles.flipDigitText}>{current}</span>
-                </div>
-                <div className={styles.flipBottom}>
-                    <span className={styles.flipDigitText}>{current}</span>
-                </div>
-                {flipping && (
-                    <>
-                        <div className={styles.flipTopLeave}>
-                            <span className={styles.flipDigitText}>{prev}</span>
-                        </div>
-                        <div className={styles.flipBottomEnter}>
-                            <span className={styles.flipDigitText}>{current}</span>
-                        </div>
-                    </>
-                )}
-            </div>
-            <span className={styles.flipLabel}>{label}</span>
-        </div>
+        <motion.div
+            className={styles.segment}
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+        >
+            <span className={styles.segmentValue}>{value}</span>
+            <span className={styles.segmentLabel}>{label}</span>
+        </motion.div>
     );
 }
 
 export default function MaintenanceScreen({ message, targetDate }) {
-    const [timeLeft, setTimeLeft] = useState({ hours: '00', minutes: '00', seconds: '00', raw: '' });
+    const [timeLeft, setTimeLeft] = useState({ hours: '00', minutes: '00', seconds: '00', indefinite: false });
 
     useEffect(() => {
         if (!targetDate) {
-            setTimeLeft({ hours: '--', minutes: '--', seconds: '--', raw: 'Indefinido' });
+            setTimeLeft({ hours: '--', minutes: '--', seconds: '--', indefinite: true });
             return;
         }
 
@@ -63,7 +33,7 @@ export default function MaintenanceScreen({ message, targetDate }) {
             const distance = target - now;
 
             if (distance < 0) {
-                setTimeLeft({ hours: '00', minutes: '00', seconds: '00', raw: 'Finalizando...' });
+                setTimeLeft({ hours: '00', minutes: '00', seconds: '00', indefinite: false });
                 return;
             }
 
@@ -75,7 +45,7 @@ export default function MaintenanceScreen({ message, targetDate }) {
                 hours: hours.toString().padStart(2, '0'),
                 minutes: minutes.toString().padStart(2, '0'),
                 seconds: seconds.toString().padStart(2, '0'),
-                raw: `${hours.toString().padStart(2, '0')}h ${minutes.toString().padStart(2, '0')}m ${seconds.toString().padStart(2, '0')}s`,
+                indefinite: false,
             });
         };
 
@@ -84,101 +54,80 @@ export default function MaintenanceScreen({ message, targetDate }) {
         return () => clearInterval(timer);
     }, [targetDate]);
 
-    const isIndefinite = timeLeft.hours === '--';
+    const stagger = (i) => ({ initial: { opacity: 0, y: 24 }, animate: { opacity: 1, y: 0 }, transition: { duration: 0.6, delay: i * 0.12, ease: [0.22, 1, 0.36, 1] } });
 
     return (
         <div className={styles.container}>
-            {/* Aurora background orbs */}
-            <div className={styles.orb1} />
-            <div className={styles.orb2} />
-            <div className={styles.orb3} />
 
-            {/* Noise overlay */}
-            <div className={styles.noise} />
+            {/* Subtle grid texture */}
+            <div className={styles.grid} />
 
-            {/* Status badge */}
-            <motion.div
-                className={styles.badge}
-                initial={{ opacity: 0, y: -20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, ease: 'easeOut' }}
-            >
-                <span className={styles.badgeDot} />
-                <Zap size={12} />
-                En mantenimiento
-            </motion.div>
-
-            {/* Icon */}
-            <motion.div
-                className={styles.iconContainer}
-                initial={{ scale: 0.5, opacity: 0 }}
-                animate={{ scale: 1, opacity: 1 }}
-                transition={{ duration: 0.7, ease: [0.34, 1.56, 0.64, 1] }}
-            >
-                <Wrench size={40} strokeWidth={1.5} className={styles.wrenchIcon} />
-            </motion.div>
-
-            {/* Title */}
-            <motion.h1
-                className={styles.title}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: 0.2 }}
-            >
-                Plataforma en
-                <span className={styles.titleAccent}> Mantenimiento</span>
-            </motion.h1>
-
-            {/* Message */}
-            <motion.p
-                className={styles.message}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: 0.35 }}
-            >
-                {message || 'Estamos realizando mejoras importantes en nuestra plataforma para brindarte un mejor servicio. Por favor, vuelve a intentarlo más tarde.'}
-            </motion.p>
-
-            {/* Flip Countdown */}
-            <motion.div
-                className={styles.countdownWrapper}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: 0.5 }}
-            >
-                <div className={styles.countdownLabel}>
-                    <Clock size={14} />
-                    Tiempo estimado
+            {/* Top bar */}
+            <div className={styles.topBar}>
+                <div className={styles.logo}>
+                    <Wrench size={16} strokeWidth={2} />
+                    <span>Vertx System</span>
                 </div>
+                <div className={styles.statusPill}>
+                    <span className={styles.statusDot} />
+                    Mantenimiento activo
+                </div>
+            </div>
 
-                {isIndefinite ? (
-                    <div className={styles.indefinite}>Indefinido</div>
-                ) : (
-                    <div className={styles.flipRow}>
-                        <FlipDigit value={timeLeft.hours} label="horas" />
-                        <span className={styles.separator}>:</span>
-                        <FlipDigit value={timeLeft.minutes} label="min" />
-                        <span className={styles.separator}>:</span>
-                        <FlipDigit value={timeLeft.seconds} label="seg" />
+            {/* Main content */}
+            <main className={styles.main}>
+
+                {/* Eyebrow */}
+                <motion.p className={styles.eyebrow} {...stagger(0)}>
+                    — Sistema temporalmente no disponible
+                </motion.p>
+
+                {/* Big heading */}
+                <motion.h1 className={styles.heading} {...stagger(1)}>
+                    Volvemos<br />
+                    <span className={styles.headingAccent}>muy pronto.</span>
+                </motion.h1>
+
+                {/* Description */}
+                <motion.p className={styles.description} {...stagger(2)}>
+                    {message || 'Estamos realizando mejoras importantes en nuestra plataforma para brindarte un mejor servicio. Por favor, vuelve a intentarlo más tarde.'}
+                </motion.p>
+
+                {/* Divider */}
+                <motion.div className={styles.divider} {...stagger(3)} />
+
+                {/* Countdown */}
+                <motion.div className={styles.countdown} {...stagger(4)}>
+                    <div className={styles.countdownHeader}>
+                        <Clock size={13} strokeWidth={2} />
+                        <span>Tiempo estimado de regreso</span>
                     </div>
-                )}
-            </motion.div>
 
-            {/* Alert strip */}
-            <motion.div
-                className={styles.alertStrip}
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ duration: 0.6, delay: 0.65 }}
-            >
-                <AlertTriangle size={14} />
-                Disculpa las molestias — Volveremos pronto
-            </motion.div>
+                    {timeLeft.indefinite ? (
+                        <p className={styles.indefinite}>Indefinido</p>
+                    ) : (
+                        <div className={styles.segments}>
+                            <CountSegment value={timeLeft.hours} label="horas" />
+                            <span className={styles.colon}>:</span>
+                            <CountSegment value={timeLeft.minutes} label="min" />
+                            <span className={styles.colon}>:</span>
+                            <CountSegment value={timeLeft.seconds} label="seg" />
+                        </div>
+                    )}
+                </motion.div>
+
+                {/* Alert note */}
+                <motion.div className={styles.alertNote} {...stagger(5)}>
+                    <AlertTriangle size={13} strokeWidth={2} />
+                    <span>Disculpá las molestias — Estamos trabajando para volver rápido</span>
+                </motion.div>
+
+            </main>
 
             {/* Footer */}
-            <div className={styles.footer}>
-                &copy; {new Date().getFullYear()} Vertx System. Viñoplastic Training.
-            </div>
+            <footer className={styles.footer}>
+                &copy; {new Date().getFullYear()} Vertx System · Viñoplastic Training
+            </footer>
         </div>
     );
 }
