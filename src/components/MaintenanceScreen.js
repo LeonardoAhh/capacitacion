@@ -26,12 +26,20 @@ function FlipDigit({ value, label }) {
     return (
         <div className={styles.flipUnit}>
             <div className={`${styles.flipCard} ${flipping ? styles.flipping : ''}`}>
-                <div className={styles.flipTop}>{current}</div>
-                <div className={styles.flipBottom}>{current}</div>
+                <div className={styles.flipTop}>
+                    <span className={styles.flipDigitText}>{current}</span>
+                </div>
+                <div className={styles.flipBottom}>
+                    <span className={styles.flipDigitText}>{current}</span>
+                </div>
                 {flipping && (
                     <>
-                        <div className={styles.flipTopLeave}>{prev}</div>
-                        <div className={styles.flipBottomEnter}>{current}</div>
+                        <div className={styles.flipTopLeave}>
+                            <span className={styles.flipDigitText}>{prev}</span>
+                        </div>
+                        <div className={styles.flipBottomEnter}>
+                            <span className={styles.flipDigitText}>{current}</span>
+                        </div>
                     </>
                 )}
             </div>

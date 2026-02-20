@@ -269,42 +269,43 @@
     position: absolute;
     width: 100%;
     height: 50%;
-    background: rgba(255, 255, 255, 0.07);
     border: 1px solid rgba(255, 255, 255, 0.1);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-family: 'Syne', monospace;
-    font-size: 2.2rem;
-    font-weight: 700;
-    color: #e2e8ff;
+    /* Clip the digit — each half shows only its portion */
     overflow: hidden;
     backface-visibility: hidden;
+    /* Inner div will be full card height, positioned to show correct half */
 }
 
+/* Shared inner digit style — applied via pseudo or inline; handled via the
+   shared class below that sizes a full-height ghost element */
 .flipTop {
     top: 0;
     border-radius: 10px 10px 0 0;
     border-bottom: 1px solid rgba(255, 255, 255, 0.06);
-    align-items: flex-end;
-    padding-bottom: 2px;
     background: linear-gradient(to bottom, rgba(255, 255, 255, 0.09), rgba(255, 255, 255, 0.04));
+    /* Align inner content to bottom so top half of digit shows */
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
 }
 
 .flipBottom {
     bottom: 0;
     border-radius: 0 0 10px 10px;
     border-top: none;
-    align-items: flex-start;
-    padding-top: 2px;
     background: linear-gradient(to bottom, rgba(255, 255, 255, 0.04), rgba(255, 255, 255, 0.07));
+    /* Align inner content to top so bottom half of digit shows */
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
 }
 
 .flipTopLeave {
     top: 0;
     border-radius: 10px 10px 0 0;
+    display: flex;
     align-items: flex-end;
-    padding-bottom: 2px;
+    justify-content: center;
     transform-origin: bottom center;
     animation: flipTopAnim 0.3s ease-in forwards;
     z-index: 2;
@@ -314,14 +315,31 @@
 .flipBottomEnter {
     bottom: 0;
     border-radius: 0 0 10px 10px;
+    display: flex;
     align-items: flex-start;
-    padding-top: 2px;
+    justify-content: center;
     transform-origin: top center;
     animation: flipBottomAnim 0.3s ease-out forwards;
     animation-delay: 0.15s;
     transform: rotateX(-90deg);
     z-index: 2;
     background: linear-gradient(to bottom, rgba(255, 255, 255, 0.04), rgba(255, 255, 255, 0.07));
+}
+
+/* The digit text inside each half — uses full card height so overflow:hidden clips correctly */
+.flipDigitText {
+    font-family: 'Syne', monospace;
+    font-size: 2.2rem;
+    font-weight: 700;
+    color: #e2e8ff;
+    line-height: 1;
+    /* Height = full card (80px), so each half clips exactly 50% of the number */
+    height: 160%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    pointer-events: none;
+    user-select: none;
 }
 
 @keyframes flipTopAnim {
