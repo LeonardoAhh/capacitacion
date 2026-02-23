@@ -15,7 +15,9 @@
 .container {
     position: relative;
     z-index: 10;
-    max-width: 900px;
+    max-width: 1400px;
+    /* Aprovecha el espacio pero no se desborda en 4K */
+    width: 100%;
     margin: 0 auto;
     padding: 2rem;
     display: flex;
@@ -148,6 +150,12 @@
     font-weight: 500;
 }
 
+.bottomGrid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem;
+}
+
 .section {
     background: var(--card-background);
     backdrop-filter: blur(20px);
@@ -165,10 +173,11 @@
 }
 
 .sectionTitle {
-    font-size: 1rem;
-    font-weight: 600;
+    font-size: 1.125rem;
+    font-weight: 700;
     color: var(--text-primary);
     margin: 0;
+    font-family: 'Playfair Display', Georgia, serif;
 }
 
 .sectionBadge {
@@ -189,62 +198,111 @@
     display: flex;
     flex-direction: column;
     gap: 0.75rem;
+    max-height: 380px;
+    overflow-y: auto;
+    padding-right: 0.5rem;
+}
+
+/* Scroll transparente/suave */
+.alertList::-webkit-scrollbar {
+    width: 6px;
+}
+
+.alertList::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.alertList::-webkit-scrollbar-thumb {
+    background: rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+}
+
+[data-theme="dark"] .alertList::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.alertList::-webkit-scrollbar-thumb:hover {
+    background: rgba(0, 0, 0, 0.2);
+}
+
+[data-theme="dark"] .alertList::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.2);
 }
 
 .alertItem {
     display: flex;
     align-items: center;
-    gap: 0.75rem;
-    padding: 0.75rem 1rem;
+    gap: 1rem;
+    padding: 1rem 1.25rem;
     background: var(--bg-primary);
     border: 1px solid var(--border-color);
-    border-radius: var(--radius-md);
+    border-radius: var(--radius-lg);
     transition: all var(--transition-fast);
+}
+
+.alertItem.clickable {
+    cursor: pointer;
+}
+
+.alertItem.warningMode {
+    border-color: #F59E0B;
 }
 
 .alertItem:hover {
     border-color: var(--color-primary);
+    box-shadow: var(--shadow-sm);
+}
+
+.alertItem.clickable:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
 }
 
 .alertIcon {
-    width: 36px;
-    height: 36px;
+    width: 40px;
+    height: 40px;
     display: flex;
     align-items: center;
     justify-content: center;
-    border-radius: var(--radius-sm);
+    border-radius: var(--radius-md);
     background: var(--bg-secondary);
     flex-shrink: 0;
 }
 
 .alertIcon.warning {
-    color: var(--color-warning);
+    color: #F59E0B;
+    background: rgba(245, 158, 11, 0.05);
 }
 
 .alertIcon.danger {
     color: var(--color-danger);
+    background: rgba(239, 68, 68, 0.05);
 }
 
 .alertContent {
     flex: 1;
-    min-width: 0;
+    display: flex;
+    align-items: baseline;
+    gap: 0.25rem;
+    flex-wrap: wrap;
 }
 
 .alertTitle {
-    font-size: 0.875rem;
-    font-weight: 600;
+    font-size: 0.9375rem;
+    font-weight: 700;
     color: var(--text-primary);
     margin: 0;
+    text-transform: uppercase;
 }
 
 .alertMeta {
-    font-size: 0.8125rem;
+    font-size: 0.875rem;
     color: var(--text-secondary);
 }
 
 .alertMeta strong {
     color: var(--text-primary);
-    font-weight: 600;
+    font-weight: 700;
 }
 
 .alertDays {
@@ -338,6 +396,10 @@
     }
 
     .statsGrid {
+        grid-template-columns: 1fr;
+    }
+
+    .bottomGrid {
         grid-template-columns: 1fr;
     }
 

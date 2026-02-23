@@ -8,6 +8,7 @@ import Link from 'next/link';
 import BackButton from '@/components/ui/BackButton/BackButton';
 import { useToast } from '@/components/ui/Toast/Toast';
 import { useComplianceRecalc } from '@/hooks/useComplianceRecalc';
+import { Users, FileText, Award, TrendingUp, GitCompareArrows, Calendar } from 'lucide-react';
 import styles from './page.module.css';
 
 export default function CapacitacionPage() {
@@ -32,6 +33,15 @@ export default function CapacitacionPage() {
             </div>
         );
     }
+
+    const quickActions = [
+        { href: '/dashboard/candidates', title: 'Candidatos', icon: Users },
+        { href: '/dashboard/programacion', title: 'Programación', icon: FileText },
+        { href: '/capacitacion', title: 'Capacitación', icon: Award },
+        { href: '/reports', title: 'Reportes', icon: TrendingUp },
+        { href: '/capacitacion/comparacion', title: 'Comparación', icon: GitCompareArrows },
+        { href: '/capacitacion/examen', title: 'Generador Exámenes', icon: Calendar },
+    ];
 
     const modules = [
         {
@@ -172,6 +182,21 @@ export default function CapacitacionPage() {
                     </div>
                     <BackButton href="/dashboard" />
                 </div>
+
+                {/* Accesos Rápidos */}
+                <section className={styles.quickActionsSection}>
+                    <h2 className={styles.sectionTitle}>Accesos Rápidos</h2>
+                    <div className={styles.actionsGrid}>
+                        {quickActions.map((action) => (
+                            <Link key={action.href} href={action.href} className={styles.actionBtn}>
+                                <div className={styles.actionIcon}>
+                                    <action.icon size={20} />
+                                </div>
+                                <span className={styles.actionText}>{action.title}</span>
+                            </Link>
+                        ))}
+                    </div>
+                </section>
 
                 {/* Modules Grid */}
                 <div className={styles.modulesGrid}>

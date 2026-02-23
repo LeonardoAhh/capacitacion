@@ -7,11 +7,14 @@ import Link from 'next/link';
 import BackButton from '@/components/ui/BackButton/BackButton';
 import ProfileDropdown from '@/components/layout/ProfileDropdown/ProfileDropdown';
 import AvatarSelector from '@/components/ui/AvatarSelector/AvatarSelector';
+import EvaluationModal from '@/components/features/Training/EvaluationModal';
 import { useNotifications } from '@/hooks/useNotifications';
 import { useDashboardStats } from '@/hooks/useDashboardStats';
+import { useToast } from '@/components/ui/Toast/Toast';
+import { collection, query, where, getDocs, updateDoc, doc } from 'firebase/firestore';
+import { db } from '@/lib/firebase';
 import {
-    Users, FileText, Clock, AlertCircle, Calendar,
-    TrendingUp, Award, GitCompareArrows, ChevronRight, FlaskConical
+    Users, FileText, Clock, AlertCircle, Calendar
 } from 'lucide-react';
 import styles from './page.module.css';
 
@@ -22,7 +25,9 @@ export default function DashboardPage() {
     const { stats, evaluations, expiringEmployees, loading } = useDashboardStats(user);
     const [showExpiringModal, setShowExpiringModal] = useState(false);
     const [showAvatarSelector, setShowAvatarSelector] = useState(false);
+    const [selectedEvaluation, setSelectedEvaluation] = useState(null);
     const { permission, requestPermission, sendNotification } = useNotifications();
+    const { toast } = useToast();
 
     useEffect(() => {
         const candidateSession = sessionStorage.getItem('candidate_session');
@@ -71,6 +76,44 @@ export default function DashboardPage() {
         }
     }, [user?.uid, updateUserProfile]);
 
+    const handleSaveEvaluation = async (evaluation, result) => {
+        try {
+            if (!evaluation.employeeId) throw new Error('No employee ID');
+
+            const q = query(collection(db, 'employees'), where('employeeId', '==', evaluation.employeeId));
+            const snapshot = await getDocs(q);
+
+            if (snapshot.empty) throw new Error('Empleado no encontrado');
+
+            const employeeDoc = snapshot.docs[0];
+            const evalNum = evaluation.evalNum; // 1, 2 or 3
+            if (![1, 2, 3].includes(evalNum)) throw new Error('Número de evaluación inválido');
+
+            const updateData = {
+                [`eval${evalNum}Score`]: result
+            };
+
+            await updateDoc(doc(db, 'employees', employeeDoc.id), updateData);
+
+            toast({
+                title: 'Evaluación Guardada',
+                description: `Se guardó el resultado para ${evaluation.employeeName}`,
+                type: 'success'
+            });
+            setSelectedEvaluation(null);
+
+            // Reload the page to refresh stats (optional, but easy way to refresh useDashboardStats)
+            window.location.reload();
+        } catch (error) {
+            console.error('Error al guardar evaluación:', error);
+            toast({
+                title: 'Error',
+                description: 'No se pudo guardar la evaluación: ' + error.message,
+                type: 'error'
+            });
+        }
+    };
+
     if (authLoading || !user) {
         return (
             <div className={styles.page}>
@@ -79,14 +122,7 @@ export default function DashboardPage() {
         );
     }
 
-    const quickActions = [
-        { href: '/dashboard/candidates', title: 'Candidatos', icon: Users },
-        { href: '/dashboard/programacion', title: 'Programación', icon: FileText },
-        { href: '/capacitacion', title: 'Capacitación', icon: Award },
-        { href: '/reports', title: 'Reportes', icon: TrendingUp },
-        { href: '/capacitacion/comparacion', title: 'Comparación', icon: GitCompareArrows },
-        { href: '/capacitacion/examen', title: 'Generador Exámenes', icon: Calendar },
-    ];
+
 
     return (
         <div className={styles.page}>
@@ -95,6 +131,13 @@ export default function DashboardPage() {
                 onClose={() => setShowAvatarSelector(false)}
                 onSave={handleAvatarSave}
                 userName={user?.name || user?.displayName || 'Usuario'}
+            />
+
+            <EvaluationModal
+                isOpen={!!selectedEvaluation}
+                onClose={() => setSelectedEvaluation(null)}
+                evaluation={selectedEvaluation}
+                onSave={handleSaveEvaluation}
             />
 
             <div className={styles.profileContainer}>
@@ -145,88 +188,82 @@ export default function DashboardPage() {
                     </div>
                 )}
 
-                {(evaluations.overdue.length > 0 || evaluations.upcoming.length > 0) && (
-                    <section className={styles.section}>
-                        <div className={styles.sectionHeader}>
-                            <h2 className={styles.sectionTitle}>Evaluaciones</h2>
-                            {evaluations.overdue.length > 0 && (
-                                <span className={`${styles.sectionBadge} ${styles.danger}`}>
-                                    {evaluations.overdue.length} vencida{evaluations.overdue.length > 1 ? 's' : ''}
+                <div className={styles.bottomGrid}>
+                    {(evaluations.overdue.length > 0 || evaluations.upcoming.length > 0) && (
+                        <section className={styles.section}>
+                            <div className={styles.sectionHeader}>
+                                <h2 className={styles.sectionTitle}>Evaluaciones</h2>
+                                {evaluations.overdue.length > 0 && (
+                                    <span className={`${styles.sectionBadge} ${styles.danger}`}>
+                                        {evaluations.overdue.length} vencida{evaluations.overdue.length > 1 ? 's' : ''}
+                                    </span>
+                                )}
+                            </div>
+                            <div className={styles.alertList}>
+                                {evaluations.overdue.map((ev, i) => (
+                                    <div
+                                        key={`overdue-${i}`}
+                                        className={`${styles.alertItem} ${styles.clickable}`}
+                                        onClick={() => setSelectedEvaluation(ev)}
+                                    >
+                                        <div className={`${styles.alertIcon} ${styles.danger}`}>
+                                            <AlertCircle size={20} />
+                                        </div>
+                                        <div className={styles.alertContent}>
+                                            <span className={styles.alertTitle}>{ev.employeeName}</span>
+                                            <span className={styles.alertMeta}>
+                                                {ev.evaluationType} &middot; Vencida hace <strong>{ev.daysOverdue}d</strong>
+                                            </span>
+                                        </div>
+                                    </div>
+                                ))}
+                                {evaluations.upcoming.map((ev, i) => (
+                                    <div
+                                        key={`upcoming-${i}`}
+                                        className={`${styles.alertItem} ${styles.clickable}`}
+                                        onClick={() => setSelectedEvaluation(ev)}
+                                    >
+                                        <div className={`${styles.alertIcon} ${styles.warning}`}>
+                                            <Calendar size={20} />
+                                        </div>
+                                        <div className={styles.alertContent}>
+                                            <span className={styles.alertTitle}>{ev.employeeName}</span>
+                                            <span className={styles.alertMeta}>
+                                                {ev.evaluationType} &middot; En <strong>{ev.daysUntil}d</strong>
+                                            </span>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        </section>
+                    )}
+
+                    {stats.expiringContracts > 0 && (
+                        <section className={styles.section}>
+                            <div className={styles.sectionHeader}>
+                                <h2 className={styles.sectionTitle}>Contratos Próximos a Vencer</h2>
+                                <span className={`${styles.sectionBadge} ${styles.warning}`}>
+                                    {stats.expiringContracts}
                                 </span>
-                            )}
-                        </div>
-                        <div className={styles.alertList}>
-                            {evaluations.overdue.slice(0, 3).map((ev, i) => (
-                                <div key={`overdue-${i}`} className={styles.alertItem}>
-                                    <div className={`${styles.alertIcon} ${styles.danger}`}>
-                                        <AlertCircle size={16} />
+                            </div>
+                            <div className={styles.alertList}>
+                                {expiringEmployees.map((emp, i) => (
+                                    <div key={i} className={`${styles.alertItem} ${styles.warningMode}`}>
+                                        <div className={`${styles.alertIcon} ${styles.warning}`}>
+                                            <Clock size={20} />
+                                        </div>
+                                        <div className={styles.alertContent}>
+                                            <span className={styles.alertTitle}>{emp.name}</span>
+                                            <span className={styles.alertMeta}>
+                                                {emp.position} &middot; Vence en <strong>{emp.daysUntilExpiry}d</strong>
+                                            </span>
+                                        </div>
                                     </div>
-                                    <div className={styles.alertContent}>
-                                        <span className={styles.alertTitle}>{ev.employeeName}</span>
-                                        <span className={styles.alertMeta}>
-                                            {ev.evaluationType} · Vencida hace <strong>{ev.daysOverdue}d</strong>
-                                        </span>
-                                    </div>
-                                </div>
-                            ))}
-                            {evaluations.upcoming.slice(0, 2).map((ev, i) => (
-                                <div key={`upcoming-${i}`} className={styles.alertItem}>
-                                    <div className={`${styles.alertIcon} ${styles.warning}`}>
-                                        <Calendar size={16} />
-                                    </div>
-                                    <div className={styles.alertContent}>
-                                        <span className={styles.alertTitle}>{ev.employeeName}</span>
-                                        <span className={styles.alertMeta}>
-                                            {ev.evaluationType} · En <strong>{ev.daysUntil}d</strong>
-                                        </span>
-                                    </div>
-                                </div>
-                            ))}
-                        </div>
-                    </section>
-                )}
-
-                {stats.expiringContracts > 0 && (
-                    <section className={styles.section}>
-                        <div className={styles.sectionHeader}>
-                            <h2 className={styles.sectionTitle}>Contratos Próximos a Vencer</h2>
-                            <span className={`${styles.sectionBadge} ${styles.warning}`}>
-                                {stats.expiringContracts}
-                            </span>
-                        </div>
-                        <div className={styles.alertList}>
-                            {expiringEmployees.slice(0, 3).map((emp, i) => (
-                                <div key={i} className={styles.alertItem}>
-                                    <div className={`${styles.alertIcon} ${styles.warning}`}>
-                                        <Clock size={16} />
-                                    </div>
-                                    <div className={styles.alertContent}>
-                                        <span className={styles.alertTitle}>{emp.name}</span>
-                                        <span className={styles.alertMeta}>
-                                            {emp.position} · Vence en <strong>{emp.daysUntilExpiry}d</strong>
-                                        </span>
-                                    </div>
-                                </div>
-                            ))}
-                        </div>
-                    </section>
-                )}
-
-                <section className={styles.section}>
-                    <div className={styles.sectionHeader}>
-                        <h2 className={styles.sectionTitle}>Accesos Rápidos</h2>
-                    </div>
-                    <div className={styles.actionsGrid}>
-                        {quickActions.map((action) => (
-                            <Link key={action.href} href={action.href} className={styles.actionBtn}>
-                                <div className={styles.actionIcon}>
-                                    <action.icon size={18} />
-                                </div>
-                                <span className={styles.actionText}>{action.title}</span>
-                            </Link>
-                        ))}
-                    </div>
-                </section>
+                                ))}
+                            </div>
+                        </section>
+                    )}
+                </div>
             </div>
         </div>
     );

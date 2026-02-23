@@ -3,7 +3,7 @@
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
-import { LayoutDashboard, GraduationCap, Settings } from 'lucide-react';
+import { LayoutDashboard, GraduationCap, Settings, Award } from 'lucide-react';
 import ModuleCard from '@/components/ui/ModuleCard/ModuleCard';
 import ProfileDropdown from '@/components/layout/ProfileDropdown/ProfileDropdown';
 import styles from './page.module.css';
@@ -42,6 +42,14 @@ export default function ModulesPage() {
             subtitle: 'Administra empleados y desarrollo',
             icon: LayoutDashboard,
             href: '/dashboard',
+            disabled: isDemo,
+        },
+        {
+            id: 'capacitacion',
+            title: 'Capacitación',
+            subtitle: 'Desarrollo y formación',
+            icon: Award,
+            href: '/capacitacion',
             disabled: isDemo,
         },
         {
