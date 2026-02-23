@@ -38,8 +38,8 @@ export default function ModulesPage() {
     const modules = [
         {
             id: 'dashboard',
-            title: 'Gestión de Talento',
-            subtitle: 'Administra empleados y desarrollo',
+            title: 'Nuevos Ingreso',
+            subtitle: 'Contratos y Evaluaciones',
             icon: LayoutDashboard,
             href: '/dashboard',
             disabled: isDemo,
@@ -47,7 +47,7 @@ export default function ModulesPage() {
         {
             id: 'capacitacion',
             title: 'Capacitación',
-            subtitle: 'Desarrollo y formación',
+            subtitle: 'Control administrativo',
             icon: Award,
             href: '/capacitacion',
             disabled: isDemo,
@@ -55,7 +55,7 @@ export default function ModulesPage() {
         {
             id: 'induction',
             title: 'Inducción',
-            subtitle: 'Cursos y onboarding',
+            subtitle: 'Material de cursos',
             icon: GraduationCap,
             href: '/induccion',
             disabled: false,
@@ -85,7 +85,7 @@ export default function ModulesPage() {
             <div className={styles.content}>
 
                 <header className={styles.header}>
-                    <span className={styles.portal}>Portal RRHH</span>
+                    <span className={styles.portal}>Portal Capacitación</span>
                     <h1 className={styles.title}>
                         Hola, <span className={styles.userName}>{firstName}</span>
                     </h1>

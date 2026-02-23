@@ -125,6 +125,7 @@ export default function CandidateDrawer({
                     <motion.div
                         initial="hidden"
                         animate="visible"
+                        style={{ display: 'flex', flexDirection: 'column', flex: 1, minHeight: 0 }}
                         variants={{
                             visible: {
                                 transition: {
