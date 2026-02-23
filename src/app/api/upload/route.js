@@ -11,14 +11,14 @@ const IS_DEV = process.env.NODE_ENV === 'development';
  * Verifica que existe una cookie de sesión admin válida en la request.
  * La cookie __session es httpOnly, por lo que sólo puede ser leída server-side.
  */
-function verifySessionCookie(request) {
+async function verifySessionCookie(request) {
     try {
         const sessionCookie = request.cookies.get('__session');
         if (!sessionCookie?.value) {
             return { valid: false, error: 'Sesión requerida' };
         }
 
-        const session = deserializeSession(sessionCookie.value);
+        const session = await deserializeSession(sessionCookie.value);
 
         if (!session || session?.type !== 'admin') {
             return { valid: false, error: 'Acceso no autorizado' };
@@ -33,7 +33,7 @@ function verifySessionCookie(request) {
 export async function POST(request) {
     try {
         // ====== VERIFICACIÓN DE AUTENTICACIÓN ======
-        const authResult = verifySessionCookie(request);
+        const authResult = await verifySessionCookie(request);
 
         if (!authResult.valid) {
             return NextResponse.json(

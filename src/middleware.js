@@ -55,7 +55,7 @@ function getLoginUrl(sessionType) {
 
 // ─── Middleware ─────────────────────────────────────────────────────────────────
 
-export function middleware(request) {
+export async function middleware(request) {
     const { pathname } = request.nextUrl;
 
     // 1. Rutas de API — aplicar rate limiting
@@ -98,7 +98,7 @@ export function middleware(request) {
 
     // 4. Verificar y validar la cookie de sesión firmada con HMAC
     const sessionCookie = request.cookies.get('__session');
-    const session = sessionCookie ? deserializeSession(sessionCookie.value) : null;
+    const session = sessionCookie ? await deserializeSession(sessionCookie.value) : null;
 
     // 5. Sin cookie válida → redirigir al login correspondiente
     if (!session) {

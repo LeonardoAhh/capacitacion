@@ -22,7 +22,7 @@ export async function POST(request) {
         const response = NextResponse.json({ success: true });
 
         // Cookie firmada con HMAC-SHA256 para evitar manipulación client-side
-        const signedValue = serializeSession({ type, ts: Date.now() });
+        const signedValue = await serializeSession({ type, ts: Date.now() });
 
         response.cookies.set('__session', signedValue, {
             httpOnly: true,

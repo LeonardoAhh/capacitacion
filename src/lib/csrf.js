@@ -1,5 +1,4 @@
 import { NextResponse } from 'next/server';
-import { randomBytes } from 'crypto';
 
 const CSRF_TOKEN_LENGTH = 32;
 const CSRF_HEADER = 'x-csrf-token';
@@ -8,7 +7,9 @@ const CSRF_COOKIE = 'csrf_token';
 const tokenStore = new Map();
 
 function generateToken() {
-    return randomBytes(CSRF_TOKEN_LENGTH).toString('hex');
+    const array = new Uint8Array(32);
+    crypto.getRandomValues(array);
+    return Array.from(array).map(b => b.toString(16).padStart(2, '0')).join('');
 }
 
 export function createCsrfToken(sessionId = 'default') {
