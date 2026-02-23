@@ -1,7 +1,8 @@
-import { useState, useEffect } from 'react';
-import { X, Save, Trash2 } from 'lucide-react';
+import { useState } from 'react';
+import { X, Save, Trash2, UserCog } from 'lucide-react';
 import { db } from '@/lib/firebase';
 import { doc, updateDoc, deleteDoc, collection, query, where, getDocs, writeBatch } from 'firebase/firestore';
+import styles from './EditEmployeeModal.module.css';
 
 export default function EditEmployeeModal({ employee, onClose, onUpdate, onDelete }) {
     const [formData, setFormData] = useState({ ...employee });
@@ -19,128 +20,149 @@ export default function EditEmployeeModal({ employee, onClose, onUpdate, onDelet
             await updateDoc(docRef, {
                 name: formData.name,
                 employeeId: formData.employeeId,
-                position: formData.position || formData.puesto || '', // Handle legacy field name if needed
+                position: formData.position || formData.puesto || '',
                 area: formData.area,
                 shift: formData.shift || ''
             });
             onUpdate({ ...employee, ...formData });
             onClose();
         } catch (error) {
-            console.error("Error updating employee:", error);
-            alert("Error al actualizar empleado");
+            console.error('Error updating employee:', error);
+            alert('Error al actualizar empleado');
         } finally {
             setLoading(false);
         }
     };
 
     const handleDelete = async () => {
-        if (!confirm('¿Estás seguro de eliminar este empleado y todas sus asignaciones? Esta acción es irreversible.')) return;
-
+        if (!confirm(`¿Eliminar a ${formData.name} y todas sus asignaciones? Esta acción es irreversible.`)) return;
         setLoading(true);
         try {
-            // 1. Delete assignments (Cascading Delete)
             const programacionRef = collection(db, 'programacion');
             const q = query(programacionRef, where('employeeId', '==', employee.id));
             const snapshot = await getDocs(q);
 
             const batch = writeBatch(db);
-            snapshot.docs.forEach((doc) => {
-                batch.delete(doc.ref);
-            });
+            snapshot.docs.forEach((d) => batch.delete(d.ref));
             await batch.commit();
 
-            // 2. Delete employee
             await deleteDoc(doc(db, 'employees_programacion', employee.id));
-
             onDelete(employee.id);
             onClose();
         } catch (error) {
-            console.error("Error deleting employee:", error);
-            alert("Error al eliminar empleado: " + error.message);
+            console.error('Error deleting employee:', error);
+            alert('Error al eliminar empleado: ' + error.message);
         } finally {
             setLoading(false);
         }
     };
 
     return (
-        <div style={{
-            position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)',
-            display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000
-        }}>
-            <div style={{
-                background: 'var(--bg-secondary)', padding: '2rem', borderRadius: '16px',
-                width: '100%', maxWidth: '500px', border: '1px solid var(--border-color)',
-                color: 'var(--text-primary)'
-            }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '1.5rem' }}>
-                    <h2 style={{ fontSize: '1.25rem', fontWeight: 600 }}>Editar Empleado</h2>
-                    <button onClick={onClose} style={{ background: 'none', border: 'none', color: 'var(--text-secondary)', cursor: 'pointer' }}>
-                        <X size={24} />
+        <div className={styles.overlay} onClick={onClose}>
+            <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
+
+                {/* Header */}
+                <div className={styles.header}>
+                    <div className={styles.headerLeft}>
+                        <div className={styles.headerIcon}>
+                            <UserCog size={18} />
+                        </div>
+                        <div>
+                            <h2 className={styles.headerTitle}>Editar Empleado</h2>
+                            <p className={styles.headerSubtitle}>Programación de capacitación</p>
+                        </div>
+                    </div>
+                    <button className={styles.closeBtn} onClick={onClose} aria-label="Cerrar">
+                        <X size={16} />
                     </button>
                 </div>
 
-                <form onSubmit={handleSave} style={{ display: 'grid', gap: '1rem' }}>
-                    <div>
-                        <label style={{ display: 'block', marginBottom: '0.5rem', fontSize: '0.875rem' }}>Nombre</label>
-                        <input
-                            name="name"
-                            value={formData.name || ''}
-                            onChange={handleChange}
-                            style={{ width: '100%', padding: '0.75rem', borderRadius: '8px', border: '1px solid var(--border-color)', background: 'var(--bg-primary)', color: 'var(--text-primary)' }}
-                        />
-                    </div>
-                    <div>
-                        <label style={{ display: 'block', marginBottom: '0.5rem', fontSize: '0.875rem' }}>ID</label>
-                        <input
-                            name="employeeId"
-                            value={formData.employeeId || ''}
-                            onChange={handleChange}
-                            style={{ width: '100%', padding: '0.75rem', borderRadius: '8px', border: '1px solid var(--border-color)', background: 'var(--bg-primary)', color: 'var(--text-primary)' }}
-                        />
-                    </div>
-                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
-                        <div>
-                            <label style={{ display: 'block', marginBottom: '0.5rem', fontSize: '0.875rem' }}>Área</label>
+                {/* Body */}
+                <form onSubmit={handleSave}>
+                    <div className={styles.body}>
+                        <div className={styles.inputGroup}>
+                            <label className={styles.label} htmlFor="em-name">Nombre Completo</label>
                             <input
-                                name="area"
-                                value={formData.area || ''}
+                                id="em-name"
+                                className={styles.input}
+                                name="name"
+                                value={formData.name || ''}
                                 onChange={handleChange}
-                                style={{ width: '100%', padding: '0.75rem', borderRadius: '8px', border: '1px solid var(--border-color)', background: 'var(--bg-primary)', color: 'var(--text-primary)' }}
+                                required
                             />
                         </div>
-                        <div>
-                            <label style={{ display: 'block', marginBottom: '0.5rem', fontSize: '0.875rem' }}>Puesto</label>
+
+                        <div className={styles.inputGroup}>
+                            <label className={styles.label} htmlFor="em-id">ID de Empleado</label>
                             <input
-                                name="position"
-                                value={formData.position || formData.puesto || ''}
+                                id="em-id"
+                                className={styles.input}
+                                name="employeeId"
+                                value={formData.employeeId || ''}
                                 onChange={handleChange}
-                                style={{ width: '100%', padding: '0.75rem', borderRadius: '8px', border: '1px solid var(--border-color)', background: 'var(--bg-primary)', color: 'var(--text-primary)' }}
                             />
+                        </div>
+
+                        <div className={styles.row}>
+                            <div className={styles.inputGroup}>
+                                <label className={styles.label} htmlFor="em-area">Área</label>
+                                <input
+                                    id="em-area"
+                                    className={styles.input}
+                                    name="area"
+                                    value={formData.area || ''}
+                                    onChange={handleChange}
+                                />
+                            </div>
+                            <div className={styles.inputGroup}>
+                                <label className={styles.label} htmlFor="em-position">Puesto</label>
+                                <input
+                                    id="em-position"
+                                    className={styles.input}
+                                    name="position"
+                                    value={formData.position || formData.puesto || ''}
+                                    onChange={handleChange}
+                                />
+                            </div>
+                        </div>
+
+                        <div className={styles.inputGroup}>
+                            <label className={styles.label} htmlFor="em-shift">Turno</label>
+                            <select
+                                id="em-shift"
+                                className={styles.select}
+                                name="shift"
+                                value={formData.shift || ''}
+                                onChange={handleChange}
+                            >
+                                <option value="">Seleccionar turno</option>
+                                <option value="1">Turno 1</option>
+                                <option value="2">Turno 2</option>
+                                <option value="3">Turno 3</option>
+                                <option value="4">Turno 4</option>
+                                <option value="Mixto">Mixto</option>
+                            </select>
                         </div>
                     </div>
 
-                    <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '1rem' }}>
+                    {/* Footer */}
+                    <div className={styles.footer}>
                         <button
                             type="button"
                             onClick={handleDelete}
-                            style={{
-                                display: 'flex', alignItems: 'center', gap: '0.5rem',
-                                padding: '0.75rem 1rem', borderRadius: '8px', border: '1px solid #ef4444',
-                                background: 'rgba(239, 68, 68, 0.1)', color: '#ef4444', cursor: 'pointer'
-                            }}
+                            disabled={loading}
+                            className={styles.deleteBtn}
                         >
-                            <Trash2 size={18} /> Eliminar
+                            <Trash2 size={16} />
+                            Eliminar
                         </button>
                         <button
                             type="submit"
                             disabled={loading}
-                            style={{
-                                display: 'flex', alignItems: 'center', gap: '0.5rem',
-                                padding: '0.75rem 2rem', borderRadius: '8px', border: 'none',
-                                background: '#6366f1', color: 'white', cursor: 'pointer'
-                            }}
+                            className={styles.saveBtn}
                         >
-                            <Save size={18} /> Guardar
+                            <Save size={16} />
+                            {loading ? 'Guardando...' : 'Guardar Cambios'}
                         </button>
                     </div>
                 </form>

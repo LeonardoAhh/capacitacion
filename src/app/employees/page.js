@@ -144,7 +144,7 @@ export default function EmployeesPage() {
     const { showToast } = useToast();
 
     // Pagination state
-    const [itemsPerPage, setItemsPerPage] = useState(4);
+    const [itemsPerPage, setItemsPerPage] = useState(8);
 
     // Catalogs
     const { positions, departments, areas, loading: catalogsLoading } = useCatalogs();
@@ -155,6 +155,7 @@ export default function EmployeesPage() {
         refresh,
         page,
         hasMore,
+        hasPrevious,
         nextPage,
         prevPage,
         createEmployee,
@@ -762,9 +763,9 @@ export default function EmployeesPage() {
                                                 onChange={handleItemsPerPageChange}
                                                 className={styles.itemsPerPageSelect}
                                             >
-                                                <option value={4}>4</option>
                                                 <option value={8}>8</option>
                                                 <option value={12}>12</option>
+                                                <option value={15}>15</option>
                                             </select>
                                             <span className={styles.itemsPerPageText}>por página</span>
                                         </div>
@@ -772,7 +773,7 @@ export default function EmployeesPage() {
                                         <div className={styles.paginationControls}>
                                             <button
                                                 onClick={prevPage}
-                                                disabled={page <= 1}
+                                                disabled={!hasPrevious || loading}
                                                 className={styles.paginationBtn}
                                                 aria-label="Página anterior"
                                             >
