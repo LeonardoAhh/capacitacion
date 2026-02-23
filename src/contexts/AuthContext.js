@@ -20,24 +20,6 @@ export function AuthProvider({ children }) {
     const [user, setUser] = useState(null);
     const [loading, setLoading] = useState(true);
 
-    useEffect(() => {
-        const unsubscribe = onAuthStateChanged(auth, async (item) => {
-            if (item) {
-                if (item.isAnonymous) {
-                    setUser({ ...item, rol: 'demo' });
-                } else {
-                    // Fetch User Details using item.uid (which is the uid from firebase auth)
-                    await fetchAndSetUser(item.uid, item);
-                }
-            } else {
-                setUser(null);
-            }
-            setLoading(false);
-        });
-
-        return unsubscribe;
-    }, []);
-
     const fetchAndSetUser = useCallback(async (uid, authUser) => {
         try {
             const userDoc = await getDoc(doc(db, 'users', uid));
@@ -52,6 +34,23 @@ export function AuthProvider({ children }) {
             setUser({ ...authUser });
         }
     }, []);
+
+    useEffect(() => {
+        const unsubscribe = onAuthStateChanged(auth, async (item) => {
+            if (item) {
+                if (item.isAnonymous) {
+                    setUser({ ...item, rol: 'demo' });
+                } else {
+                    await fetchAndSetUser(item.uid, item);
+                }
+            } else {
+                setUser(null);
+            }
+            setLoading(false);
+        });
+
+        return unsubscribe;
+    }, [fetchAndSetUser]);
 
     const signIn = async (email, password) => {
         try {
