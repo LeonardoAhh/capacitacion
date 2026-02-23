@@ -44,7 +44,7 @@ export default function CapacitacionPage() {
         { href: '/dashboard/candidates', title: 'Candidatos', icon: Users },
         { href: '/capacitacion/cumplimiento', title: 'Cumplimiento por Curso', icon: CheckCircle2 },
         { href: '/capacitacion/comparacion', title: 'Comparación', icon: GitCompareArrows },
-        { href: '/capacitacion/generador-examenes', title: 'Exámenes para Categorías', icon: Calendar },
+        { href: '/capacitacion/examen', title: 'Exámenes para Categorías', icon: Calendar },
         { href: '/capacitacion/empleados', title: 'Plantilla Activa', icon: Users },
         { href: '/capacitacion/matriz', title: 'Matriz de Capacitación', icon: LayoutGrid },
         { href: '/capacitacion/perfil', title: 'Perfil de Empleado', icon: UserCircle },

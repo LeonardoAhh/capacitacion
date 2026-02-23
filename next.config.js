@@ -192,6 +192,15 @@ const nextConfig = {
             },
         ],
     },
+    async redirects() {
+        return [
+            {
+                source: '/capacitacion/generador-examenes',
+                destination: '/capacitacion/examen',
+                permanent: true, // 308 — los buscadores actualizarán el índice
+            },
+        ];
+    },
 };
 
 module.exports = withPWA(nextConfig);
