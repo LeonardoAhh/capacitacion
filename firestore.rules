@@ -86,7 +86,7 @@ service cloud.firestore {
     match /programacion/{docId} {
       allow read: if true;
       allow create: if hasAnyRole(['super_admin', 'rh']);
-      allow update: if hasAnyRole(['super_admin', 'rh']) || true;
+      allow update: if hasAnyRole(['super_admin', 'rh']) || isAuthenticated();
       allow delete: if hasAnyRole(['super_admin', 'rh']);
     }
     

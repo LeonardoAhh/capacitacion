@@ -1,4 +1,7 @@
 import { NextResponse } from 'next/server';
+import { deserializeSession } from '@/lib/cookieSign';
+import { rateLimitMiddleware } from '@/lib/rateLimit';
+import { csrfMiddleware } from '@/lib/csrf';
 
 // ─── Configuración de rutas ────────────────────────────────────────────────────
 
@@ -50,37 +53,54 @@ function getLoginUrl(sessionType) {
     }
 }
 
-function parseSessionCookie(cookieValue) {
-    try {
-        return JSON.parse(cookieValue);
-    } catch {
-        return null;
-    }
-}
-
 // ─── Middleware ─────────────────────────────────────────────────────────────────
 
 export function middleware(request) {
     const { pathname } = request.nextUrl;
 
-    // 1. Rutas públicas: siempre accesibles
+    // 1. Rutas de API — aplicar rate limiting
+    if (pathname.startsWith('/api/')) {
+        const rateLimitResult = rateLimitMiddleware(request);
+        if (!rateLimitResult.allowed) {
+            return NextResponse.json(
+                { error: 'Demasiadas solicitudes. Intenta más tarde.' },
+                {
+                    status: 429,
+                    headers: {
+                        'Retry-After': String(rateLimitResult.retryAfter ?? 60),
+                        'X-RateLimit-Remaining': '0',
+                    },
+                }
+            );
+        }
+
+        // CSRF: proteger mutaciones en /api/ que no sean de autenticación
+        if (!pathname.startsWith('/api/auth')) {
+            const csrfResult = csrfMiddleware(request);
+            if (csrfResult) return csrfResult;
+        }
+
+        return NextResponse.next();
+    }
+
+    // 2. Rutas públicas: siempre accesibles
     if (isPublicRoute(pathname)) {
         return NextResponse.next();
     }
 
-    // 2. Determinar qué tipo de sesión requiere esta ruta
+    // 3. Determinar qué tipo de sesión requiere esta ruta
     const requiredType = getRequiredSessionType(pathname);
 
-    // Si la ruta no está mapeada (ej: /api, archivos estáticos), dejar pasar
+    // Si la ruta no está mapeada (archivos estáticos, etc.), dejar pasar
     if (!requiredType) {
         return NextResponse.next();
     }
 
-    // 3. Verificar cookie de sesión
+    // 4. Verificar y validar la cookie de sesión firmada con HMAC
     const sessionCookie = request.cookies.get('__session');
-    const session = sessionCookie ? parseSessionCookie(sessionCookie.value) : null;
+    const session = sessionCookie ? deserializeSession(sessionCookie.value) : null;
 
-    // 4. Sin cookie → redirigir al login correspondiente
+    // 5. Sin cookie válida → redirigir al login correspondiente
     if (!session) {
         const loginUrl = getLoginUrl(requiredType);
         const url = request.nextUrl.clone();
@@ -89,7 +109,7 @@ export function middleware(request) {
         return NextResponse.redirect(url);
     }
 
-    // 5. Cookie existe pero tipo incorrecto → redirigir al login correcto
+    // 6. Cookie válida pero tipo incorrecto → redirigir al login correcto
     if (session.type !== requiredType) {
         const loginUrl = getLoginUrl(requiredType);
         const url = request.nextUrl.clone();
@@ -97,10 +117,11 @@ export function middleware(request) {
         return NextResponse.redirect(url);
     }
 
-    // 6. Cookie válida → permitir acceso
+    // 7. Cookie válida → permitir acceso
     return NextResponse.next();
 }
 
 export const config = {
-    matcher: ['/((?!api|_next/static|_next/image|favicon.ico|sw\\.js|workbox-.*|manifest\\.json|icons/).*)'],
+    matcher: ['/((?!_next/static|_next/image|favicon.ico|sw\\.js|workbox-.*|manifest\\.json|icons/).*)'],
 };
+

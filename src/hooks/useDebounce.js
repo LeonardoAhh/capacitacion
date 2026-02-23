@@ -1,25 +1,8 @@
-import { useState, useEffect } from 'react';
-
 /**
- * Hook personalizado para aplicar debounce a un valor
- * @param {any} value - Valor a aplicar debounce
- * @param {number} delay - Delay en milisegundos (default: 500)
- * @returns {any} - Valor con debounce aplicado
+ * Re-exporta desde utils/debounce.js para mantener compatibilidad de imports.
+ * La lógica centralizada vive en @/utils/debounce
  */
-export default function useDebounce(value, delay = 500) {
-    const [debouncedValue, setDebouncedValue] = useState(value);
+export { useDebounce } from '@/utils/debounce';
 
-    useEffect(() => {
-        // Crear timer que actualizará el valor después del delay
-        const handler = setTimeout(() => {
-            setDebouncedValue(value);
-        }, delay);
-
-        // Limpiar el timeout si el valor cambia antes del delay
-        return () => {
-            clearTimeout(handler);
-        };
-    }, [value, delay]);
-
-    return debouncedValue;
-}
+// Default export para compatibilidad con: import useDebounce from '@/hooks/useDebounce'
+export { useDebounce as default } from '@/utils/debounce';

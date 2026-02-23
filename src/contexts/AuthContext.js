@@ -1,6 +1,6 @@
 'use client';
 
-import { createContext, useContext, useEffect, useState } from 'react';
+import { createContext, useContext, useEffect, useState, useCallback } from 'react';
 import {
     onAuthStateChanged,
     signInWithEmailAndPassword,
@@ -38,21 +38,20 @@ export function AuthProvider({ children }) {
         return unsubscribe;
     }, []);
 
-    const fetchAndSetUser = async (uid, authUser) => {
+    const fetchAndSetUser = useCallback(async (uid, authUser) => {
         try {
             const userDoc = await getDoc(doc(db, 'users', uid));
             if (userDoc.exists()) {
                 const userData = userDoc.data();
                 setUser({ ...authUser, ...userData });
             } else {
-                // New users without doc
                 setUser({ ...authUser });
             }
         } catch (e) {
-            console.error("Error fetching user data", e);
+            console.error('Error fetching user data', e);
             setUser({ ...authUser });
         }
-    }
+    }, []);
 
     const signIn = async (email, password) => {
         try {

@@ -1,57 +1,41 @@
 import { NextResponse } from 'next/server';
 import { uploadFile, createFolder, findFolder } from '@/lib/drive';
-import { headers } from 'next/headers';
-import { auth, db } from '@/lib/firebase';
-import { doc, getDoc } from 'firebase/firestore';
+import { deserializeSession } from '@/lib/cookieSign';
 
 export const dynamic = 'force-dynamic';
 
-// ID de la carpeta raíz predefinida (opcional). 
-// Si no se define, buscará/creará una carpeta llamada "VERT_RH_FILES" en la raíz.
 const ROOT_FOLDER_NAME = 'VERT_RH_FILES';
+const IS_DEV = process.env.NODE_ENV === 'development';
 
 /**
- * Verifica el token de autorización del header
- * Retorna el UID del usuario si es válido, null si no
+ * Verifica que existe una cookie de sesión admin válida en la request.
+ * La cookie __session es httpOnly, por lo que sólo puede ser leída server-side.
  */
-async function verifyAuthToken(request) {
+function verifySessionCookie(request) {
     try {
-        const authHeader = request.headers.get('authorization');
-
-        if (!authHeader || !authHeader.startsWith('Bearer ')) {
-            return { valid: false, error: 'Token de autorización requerido' };
+        const sessionCookie = request.cookies.get('__session');
+        if (!sessionCookie?.value) {
+            return { valid: false, error: 'Sesión requerida' };
         }
 
-        const token = authHeader.split('Bearer ')[1];
+        const session = deserializeSession(sessionCookie.value);
 
-        if (!token || token.length < 20) {
-            return { valid: false, error: 'Token inválido' };
+        if (!session || session?.type !== 'admin') {
+            return { valid: false, error: 'Acceso no autorizado' };
         }
 
-        // En producción, verificarías el token con Firebase Admin SDK
-        // Por ahora, aceptamos el token si tiene un formato válido
-        // y el usuario está autenticado en el frontend
-
-        // NOTA: Para verificación completa, necesitarías:
-        // 1. Instalar firebase-admin: npm install firebase-admin
-        // 2. Configurar las credenciales del service account
-        // 3. Usar: admin.auth().verifyIdToken(token)
-
-        return { valid: true, uid: token };
-
-    } catch (error) {
-        console.error('Error verificando token:', error);
-        return { valid: false, error: 'Error de autenticación' };
+        return { valid: true };
+    } catch {
+        return { valid: false, error: 'Sesión inválida' };
     }
 }
 
 export async function POST(request) {
     try {
         // ====== VERIFICACIÓN DE AUTENTICACIÓN ======
-        const authResult = await verifyAuthToken(request);
+        const authResult = verifySessionCookie(request);
 
         if (!authResult.valid) {
-            console.log('[API Upload] Acceso denegado:', authResult.error);
             return NextResponse.json(
                 {
                     error: 'No autorizado',
@@ -62,15 +46,11 @@ export async function POST(request) {
             );
         }
 
-        console.log(`[API Upload] Usuario autenticado: ${authResult.uid?.substring(0, 10)}...`);
-
         // ====== PROCESAMIENTO DEL ARCHIVO ======
         const formData = await request.formData();
         const file = formData.get('file');
         const employeeId = formData.get('employeeId');
         const docType = formData.get('docType');
-
-        console.log(`[API Upload] Start. File: ${file?.name}, Size: ${file?.size}, EmpID: ${employeeId}`);
 
         if (!file) {
             return NextResponse.json(
@@ -155,9 +135,9 @@ export async function POST(request) {
         });
 
     } catch (error) {
-        console.error('Error en API upload (FULL DETAILS):', error);
+        console.error('[API Upload] Error:', error);
 
-        // Detectar error de token expirado y dar mensaje claro al usuario
+        // Error de token de Google Drive expirado
         if (error.code === 'DRIVE_TOKEN_EXPIRED' || error.message?.includes('invalid_grant')) {
             return NextResponse.json(
                 {
@@ -169,26 +149,24 @@ export async function POST(request) {
             );
         }
 
-        // Debug: Check if Env Vars are missing
-        const missingVars = [];
-        if (!process.env.GOOGLE_CLIENT_ID) missingVars.push('GOOGLE_CLIENT_ID');
-        if (!process.env.GOOGLE_CLIENT_SECRET) missingVars.push('GOOGLE_CLIENT_SECRET');
-        if (!process.env.GOOGLE_REFRESH_TOKEN) missingVars.push('GOOGLE_REFRESH_TOKEN');
-
-        const debugInfo = {
-            message: error.message,
-            stack: error.stack,
-            missingEnvVars: missingVars,
-            hasRootId: !!process.env.GOOGLE_DRIVE_ROOT_ID
+        // En desarrollo: incluir detalles para depuración
+        const responseBody = {
+            error: 'Error interno al procesar la subida',
+            message: IS_DEV ? (error.message || 'Error desconocido') : 'Error interno del servidor',
         };
 
-        return NextResponse.json(
-            {
-                error: 'Error interno al procesar la subida',
-                message: error.message || 'Error desconocido',
-                debug: debugInfo
-            },
-            { status: 500 }
-        );
+        if (IS_DEV) {
+            const missingVars = [];
+            if (!process.env.GOOGLE_CLIENT_ID) missingVars.push('GOOGLE_CLIENT_ID');
+            if (!process.env.GOOGLE_CLIENT_SECRET) missingVars.push('GOOGLE_CLIENT_SECRET');
+            if (!process.env.GOOGLE_REFRESH_TOKEN) missingVars.push('GOOGLE_REFRESH_TOKEN');
+            responseBody.debug = {
+                stack: error.stack,
+                missingEnvVars: missingVars,
+                hasRootId: !!process.env.GOOGLE_DRIVE_ROOT_ID,
+            };
+        }
+
+        return NextResponse.json(responseBody, { status: 500 });
     }
 }

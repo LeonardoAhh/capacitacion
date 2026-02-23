@@ -1,7 +1,8 @@
 import { NextResponse } from 'next/server';
+import { serializeSession } from '@/lib/cookieSign';
 
 /**
- * POST /api/auth/session — Crea una cookie de sesión HTTP-only.
+ * POST /api/auth/session — Crea una cookie de sesión HTTP-only firmada con HMAC.
  * Body: { type: 'admin' | 'candidate' | 'training' }
  */
 export async function POST(request) {
@@ -20,7 +21,10 @@ export async function POST(request) {
 
         const response = NextResponse.json({ success: true });
 
-        response.cookies.set('__session', JSON.stringify({ type, ts: Date.now() }), {
+        // Cookie firmada con HMAC-SHA256 para evitar manipulación client-side
+        const signedValue = serializeSession({ type, ts: Date.now() });
+
+        response.cookies.set('__session', signedValue, {
             httpOnly: true,
             secure: process.env.NODE_ENV === 'production',
             sameSite: 'lax',
@@ -49,8 +53,9 @@ export async function DELETE() {
         secure: process.env.NODE_ENV === 'production',
         sameSite: 'lax',
         path: '/',
-        maxAge: 0, // Expira inmediatamente
+        maxAge: 0,
     });
 
     return response;
 }
+
