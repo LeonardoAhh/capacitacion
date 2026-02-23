@@ -95,22 +95,12 @@ export default function DashboardPage() {
 
             await updateDoc(doc(db, 'employees', employeeDoc.id), updateData);
 
-            toast({
-                title: 'Evaluación Guardada',
-                description: `Se guardó el resultado para ${evaluation.employeeName}`,
-                type: 'success'
-            });
+            toast.success(`Evaluación guardada para ${evaluation.employeeName}`);
             setSelectedEvaluation(null);
-
-            // Reload the page to refresh stats (optional, but easy way to refresh useDashboardStats)
             window.location.reload();
         } catch (error) {
             console.error('Error al guardar evaluación:', error);
-            toast({
-                title: 'Error',
-                description: 'No se pudo guardar la evaluación: ' + error.message,
-                type: 'error'
-            });
+            toast.error('No se pudo guardar la evaluación: ' + error.message);
         }
     };
 
