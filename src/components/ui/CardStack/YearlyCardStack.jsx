@@ -116,10 +116,7 @@ export default function YearlyCardStack({ stats, yearNumber, openDetails }) {
             title: 'Empleados al 100%',
             percentage: stats?.compliance || 0,
             subtext: 'Matriz Cubierta',
-            specs: [
-                { label: "Cumplen", value: stats?.compliantEmployees || 0 },
-                { label: "Con Matriz", value: stats?.totalWithReqs || 0 }
-            ]
+            specs: []
         },
         {
             id: 'opcion-b',
