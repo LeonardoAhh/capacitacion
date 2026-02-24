@@ -73,13 +73,15 @@
 
 /* Body */
 .body {
-    padding: 0 24px 0 24px;
+    padding: 0 24px;
     display: flex;
     flex-direction: column;
     gap: 20px;
-    max-height: calc(85vh - 260px);
+    flex: 1;
     overflow-y: auto;
+    overflow-x: hidden;
     overscroll-behavior: contain;
+    min-height: 0;
 }
 
 /* Spacer for the last section so scroll bottom is fully visible */
@@ -345,4 +347,20 @@
 
 .body::-webkit-scrollbar-thumb:hover {
     background: var(--text-tertiary);
+}
+
+@media (max-width: 768px) {
+    .body {
+        padding: 0 16px;
+        gap: 16px;
+    }
+
+    .infoGrid {
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+    }
+
+    .drawerContent {
+        max-width: 100% !important;
+    }
 }
