@@ -853,54 +853,6 @@ export default function CandidateMonitoringPage() {
                     )}
                 </div>
 
-                {/* WhatsApp Message Selector Modal */}
-                {whatsappModal.isOpen && (
-                    <div
-                        className={styles.modalOverlay}
-                        onClick={() => setWhatsappModal({ isOpen: false, candidate: null })}
-                        role="dialog"
-                        aria-modal="true"
-                        aria-labelledby="modal-title"
-                    >
-                        <div className={styles.modalContent} onClick={(e) => e.stopPropagation()}>
-                            <div className={styles.modalHeader}>
-                                <h3 id="modal-title">
-                                    <MessageCircle size={24} style={{ marginRight: '8px' }} aria-hidden="true" />
-                                    Selecciona un Mensaje
-                                </h3>
-                                <button
-                                    className={styles.modalCloseBtn}
-                                    onClick={() => setWhatsappModal({ isOpen: false, candidate: null })}
-                                    aria-label="Cerrar modal"
-                                >
-                                    ×
-                                </button>
-                            </div>
-
-                            <div className={styles.modalBody}>
-                                <p className={styles.modalSubtitle}>
-                                    Enviando mensaje a: <strong>{whatsappModal.candidate?.name}</strong>
-                                </p>
-
-                                <div className={styles.messageTemplates}>
-                                    {messageTemplates.map(template => (
-                                        <button
-                                            key={template.id}
-                                            className={styles.templateButton}
-                                            onClick={() => sendWhatsAppMessage(template)}
-                                        >
-                                            <div className={styles.templateTitle}>{template.title}</div>
-                                            <div className={styles.templatePreview}>
-                                                {template.message(whatsappModal.candidate?.name || 'Candidato')}
-                                            </div>
-                                        </button>
-                                    ))}
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                )}
-
                 {/* Global Candidate Drawer */}
                 <CandidateDrawer
                     candidate={selectedCandidate}
@@ -910,6 +862,58 @@ export default function CandidateMonitoringPage() {
                     onArchive={() => handleArchiveCandidate(selectedCandidate)}
                 />
             </div>
+
+            {/* WhatsApp Modal — al nivel raíz para no requerir scroll y correcto z-index */}
+            {whatsappModal.isOpen && (
+                <div
+                    className={styles.modalOverlay}
+                    onClick={() => setWhatsappModal({ isOpen: false, candidate: null })}
+                    role="dialog"
+                    aria-modal="true"
+                    aria-labelledby="modal-title"
+                    style={{ position: 'fixed', inset: 0, zIndex: 1000 }}
+                >
+                    <div className={styles.modalContent} onClick={(e) => e.stopPropagation()}>
+                        <div className={styles.modalHeader}>
+                            <h3 id="modal-title">
+                                <MessageCircle size={24} style={{ marginRight: '8px' }} aria-hidden="true" />
+                                Selecciona un Mensaje
+                            </h3>
+                            <button
+                                className={styles.modalCloseBtn}
+                                onClick={() => setWhatsappModal({ isOpen: false, candidate: null })}
+                                aria-label="Cerrar modal"
+                            >
+                                ×
+                            </button>
+                        </div>
+
+                        <div className={styles.modalBody}>
+                            <p className={styles.modalSubtitle}>
+                                Enviando mensaje a: <strong>{whatsappModal.candidate?.name}</strong>
+                            </p>
+
+                            <div className={styles.messageTemplates}>
+                                {messageTemplates.map(template => (
+                                    <button
+                                        key={template.id}
+                                        className={styles.templateButton}
+                                        onClick={(e) => {
+                                            e.stopPropagation(); // evita cierre accidental en móvil
+                                            sendWhatsAppMessage(template);
+                                        }}
+                                    >
+                                        <div className={styles.templateTitle}>{template.title}</div>
+                                        <div className={styles.templatePreview}>
+                                            {template.message(whatsappModal.candidate?.name || 'Candidato', whatsappModal.candidate)}
+                                        </div>
+                                    </button>
+                                ))}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 }
