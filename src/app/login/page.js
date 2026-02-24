@@ -15,7 +15,7 @@ const RATE_LIMIT = {
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 const initialLoginState = {
-    email: '',
+    identifier: '', // acepta email o username
     password: '',
     error: '',
     loading: false,
@@ -84,9 +84,8 @@ function clearRateLimitStorage() {
     } catch { }
 }
 
-function validateLoginFields(email, password) {
-    if (!email.trim()) return 'El correo electrónico es requerido.';
-    if (!EMAIL_REGEX.test(email)) return 'El formato del correo electrónico no es válido.';
+function validateLoginFields(identifier, password) {
+    if (!identifier.trim()) return 'El correo o nombre de usuario es requerido.';
     if (!password) return 'La contraseña es requerida.';
     if (password.length < 6) return 'La contraseña debe tener al menos 6 caracteres.';
     return null;
@@ -94,11 +93,11 @@ function validateLoginFields(email, password) {
 
 export default function LoginPage() {
     const [state, dispatch] = useReducer(loginReducer, initialLoginState);
-    const { signIn, signInWithGoogle } = useAuth();
+    const { signIn, signInWithUsername, signInWithGoogle } = useAuth();
     const router = useRouter();
     const timerRef = useRef(null);
 
-    const { email, password, error, loading, isSuccess, failedAttempts, blockedUntil, remainingSeconds } = state;
+    const { identifier, password, error, loading, isSuccess, failedAttempts, blockedUntil, remainingSeconds } = state;
     const isBlocked = blockedUntil !== null && Date.now() < blockedUntil;
 
     useEffect(() => {
@@ -158,12 +157,12 @@ export default function LoginPage() {
         return true;
     }, [isBlocked, failedAttempts]);
 
-    const handleEmployeeSubmit = useCallback(async (e) => {
+    const handleSubmit = useCallback(async (e) => {
         e.preventDefault();
 
         if (!checkRateLimit()) return;
 
-        const validationError = validateLoginFields(email, password);
+        const validationError = validateLoginFields(identifier, password);
         if (validationError) {
             dispatch({ type: 'LOGIN_ERROR', error: validationError });
             return;
@@ -171,7 +170,11 @@ export default function LoginPage() {
 
         dispatch({ type: 'LOGIN_START' });
 
-        const result = await signIn(email, password);
+        // Detectar automáticamente si es email o username
+        const isEmail = EMAIL_REGEX.test(identifier.trim());
+        const result = isEmail
+            ? await signIn(identifier.trim(), password)
+            : await signInWithUsername(identifier.trim(), password);
 
         if (result.success) {
             await createSession('admin');
@@ -184,7 +187,7 @@ export default function LoginPage() {
                 dispatch({ type: 'RATE_LIMIT_HIT' });
             }
         }
-    }, [email, password, signIn, checkRateLimit, failedAttempts]);
+    }, [identifier, password, signIn, signInWithUsername, checkRateLimit, failedAttempts]);
 
     const handleGoogleSignIn = useCallback(async () => {
         if (!checkRateLimit()) return;
@@ -219,13 +222,13 @@ export default function LoginPage() {
 
     const fields = [
         {
-            id: 'email',
-            label: 'Correo Electrónico',
-            type: 'email',
-            value: email,
-            onChange: (e) => dispatch({ type: 'SET_FIELD', field: 'email', value: e.target.value }),
-            placeholder: '••••••••',
-            autoComplete: 'email',
+            id: 'identifier',
+            label: 'Correo o Usuario',
+            type: 'text',
+            value: identifier,
+            onChange: (e) => dispatch({ type: 'SET_FIELD', field: 'identifier', value: e.target.value }),
+            placeholder: 'correo@empresa.com o usuario',
+            autoComplete: 'username',
         },
         {
             id: 'password',
@@ -248,7 +251,7 @@ export default function LoginPage() {
             loading={loading}
             blocked={isBlocked}
             blockedMessage={isBlocked ? `Espera ${remainingSeconds}s para intentar de nuevo` : null}
-            onSubmit={handleEmployeeSubmit}
+            onSubmit={handleSubmit}
             submitText="Iniciar Sesión"
             isSuccess={isSuccess}
             showGoogle

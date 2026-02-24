@@ -9,7 +9,7 @@ import {
     signInAnonymously
 } from 'firebase/auth';
 import { auth, db } from '@/lib/firebase';
-import { doc, getDoc, updateDoc, setDoc } from 'firebase/firestore';
+import { doc, getDoc, updateDoc, collection, query, where, getDocs } from 'firebase/firestore';
 import { destroySession } from '@/lib/sessionApi';
 
 const AuthContext = createContext({});
@@ -55,10 +55,42 @@ export function AuthProvider({ children }) {
     const signIn = async (email, password) => {
         try {
             const result = await signInWithEmailAndPassword(auth, email, password);
-            // Simple login, no MFA check
             return { success: true, user: result.user };
         } catch (error) {
             return { success: false, error: error.message };
+        }
+    };
+
+    /**
+     * Login por nombre de usuario (alias).
+     * Busca el campo `username` en la colección `users` de Firestore,
+     * obtiene el email asociado y autentica con Firebase Auth.
+     * Las contraseñas NUNCA se almacenan en Firestore.
+     */
+    const signInWithUsername = async (username, password) => {
+        try {
+            const usersRef = collection(db, 'users');
+            const q = query(usersRef, where('username', '==', username.trim().toLowerCase()));
+            const snap = await getDocs(q);
+
+            if (snap.empty) {
+                return { success: false, error: 'Usuario no encontrado. Verifica tu nombre de usuario.' };
+            }
+
+            const userData = snap.docs[0].data();
+            const email = userData.email;
+
+            if (!email) {
+                return { success: false, error: 'Cuenta mal configurada. Contacta al administrador.' };
+            }
+
+            const result = await signInWithEmailAndPassword(auth, email, password);
+            return { success: true, user: result.user };
+        } catch (error) {
+            if (error.code === 'auth/wrong-password' || error.code === 'auth/invalid-credential') {
+                return { success: false, error: 'Contraseña incorrecta.' };
+            }
+            return { success: false, error: 'Error al iniciar sesión.' };
         }
     };
 
@@ -158,7 +190,8 @@ export function AuthProvider({ children }) {
         user,
         loading,
         signIn,
-        signInWithGoogle, // Google Sign-In
+        signInWithUsername,
+        signInWithGoogle,
         updateUserProfile,
         signInAnon,
         signUp,
