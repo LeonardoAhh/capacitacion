@@ -299,8 +299,18 @@ export default function CandidateMonitoringPage() {
         const cleanPhone = phone.replace(/\D/g, '');
         const message = template.message(name, whatsappModal.candidate);
         const encodedMessage = encodeURIComponent(message);
+        const whatsappUrl = `https://wa.me/${cleanPhone}?text=${encodedMessage}`;
 
-        window.open(`https://wa.me/${cleanPhone}?text=${encodedMessage}`, '_blank');
+        // Usar <a> programático: más confiable en móvil que window.open
+        // (Safari/Chrome mobile bloquean window.open fuera del gesture directo)
+        const link = document.createElement('a');
+        link.href = whatsappUrl;
+        link.target = '_blank';
+        link.rel = 'noopener noreferrer';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+
         setWhatsappModal({ isOpen: false, candidate: null });
     }, [whatsappModal.candidate]);
 
