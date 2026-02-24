@@ -1,6 +1,6 @@
 ﻿'use client';
 
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useCallback } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useRouter } from 'next/navigation';
 import ProfileDropdown from '@/components/layout/ProfileDropdown/ProfileDropdown';
@@ -225,6 +225,22 @@ export default function CalendarPage() {
 
     const todayStr = new Date().toISOString().split('T')[0];
 
+    // Cursos únicos realizados en el mes visualizado
+    const uniqueDoneThisMonth = useMemo(() => {
+        const year = date.getFullYear();
+        const month = date.getMonth();
+        const names = new Set(
+            events
+                .filter(e => {
+                    if (e.type !== 'DONE') return false;
+                    const d = new Date(e.date);
+                    return d.getFullYear() === year && d.getMonth() === month;
+                })
+                .map(e => (e.courseName || e.title || '').trim().toUpperCase())
+        );
+        return names.size;
+    }, [events, date]);
+
     // Format date for display
     const formatDisplayDate = (d) => {
         return d.toLocaleDateString('es-MX', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
@@ -270,19 +286,15 @@ export default function CalendarPage() {
                         </div>
                     </div>
 
-                    {/* Legend */}
-                    <div className={styles.legend}>
+                    {/* Legend + Contador */}
+                    <div className={styles.legend} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '0.75rem' }}>
                         <div className={styles.legendItem}>
                             <span className={styles.dotDone}></span>
                             <span>Realizado</span>
                         </div>
-                        <div className={styles.legendItem}>
-                            <span className={styles.dotExpired}></span>
-                            <span>Vencimiento</span>
-                        </div>
-                        <div className={styles.legendItem}>
-                            <span className={styles.dotPlanned}></span>
-                            <span>Programado</span>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', background: 'var(--bg-secondary)', border: '1px solid var(--border-color)', borderRadius: '999px', padding: '4px 14px', fontSize: '0.85rem', color: 'var(--text-primary)' }}>
+                            <span style={{ fontWeight: 700, fontSize: '1.05rem', color: 'var(--color-success, #22c55e)' }}>{uniqueDoneThisMonth}</span>
+                            <span style={{ color: 'var(--text-secondary)' }}>curso{uniqueDoneThisMonth !== 1 ? 's' : ''} impartido{uniqueDoneThisMonth !== 1 ? 's' : ''} este mes</span>
                         </div>
                     </div>
 
@@ -307,26 +319,12 @@ export default function CalendarPage() {
                                 >
                                     <div className={styles.dayNumber}>{day.getDate()}</div>
 
-                                    {stats.total > 0 && (
+                                    {stats.done > 0 && (
                                         <div className={styles.dayStats}>
-                                            {stats.done > 0 && (
-                                                <div className={styles.statBadge + ' ' + styles.statDone}>
-                                                    <span className={styles.dotDone}></span>
-                                                    {stats.done}
-                                                </div>
-                                            )}
-                                            {stats.expired > 0 && (
-                                                <div className={styles.statBadge + ' ' + styles.statExpired}>
-                                                    <span className={styles.dotExpired}></span>
-                                                    {stats.expired}
-                                                </div>
-                                            )}
-                                            {stats.planned > 0 && (
-                                                <div className={styles.statBadge + ' ' + styles.statPlanned}>
-                                                    <span className={styles.dotPlanned}></span>
-                                                    {stats.planned}
-                                                </div>
-                                            )}
+                                            <div className={styles.statBadge + ' ' + styles.statDone}>
+                                                <span className={styles.dotDone}></span>
+                                                {stats.done}
+                                            </div>
                                         </div>
                                     )}
                                 </div>
