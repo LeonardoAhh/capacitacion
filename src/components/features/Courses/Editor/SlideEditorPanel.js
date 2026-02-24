@@ -55,70 +55,116 @@ export default function SlideEditorPanel({ slide, onSave }) {
         </>
     );
 
-    const renderContentSlide = () => (
-        <>
-            <div className={styles.formGroup}>
-                <label className={styles.label}>Encabezado</label>
-                <input
-                    className={styles.input}
-                    value={formData.heading || ''}
-                    onChange={e => handleChange('heading', e.target.value)}
-                />
-            </div>
-            <div className={styles.formGroup}>
-                <label className={styles.label}>Cuerpo de texto</label>
-                <textarea
-                    className={styles.textarea}
-                    value={formData.body || ''}
-                    onChange={e => handleChange('body', e.target.value)}
-                />
-            </div>
+    const renderContentSlide = () => {
+        // Compatibilidad: migrar campo `image` antiguo a array `images`
+        const images = formData.images
+            ? formData.images
+            : formData.image
+                ? [formData.image]
+                : [];
 
-            {/* Imagen Principal */}
-            <ImageUploader
-                currentImage={formData.image}
-                onImageChange={(url) => handleChange('image', url)}
-                label="Imagen de apoyo (Opcional)"
-            />
+        const handleAddImage = (url) => {
+            const updated = [...images, url];
+            setFormData(prev => ({ ...prev, images: updated, image: updated[0] || '' }));
+        };
 
-            {/* Lista de bullets opcionales */}
-            {formData.bullets && (
+        const handleRemoveImage = (idx) => {
+            const updated = images.filter((_, i) => i !== idx);
+            setFormData(prev => ({ ...prev, images: updated, image: updated[0] || '' }));
+        };
+
+        return (
+            <>
                 <div className={styles.formGroup}>
-                    <label className={styles.label}>Viñetas (Bullets)</label>
-                    <div className={styles.itemsList}>
-                        {formData.bullets.map((txt, idx) => (
-                            <div key={idx} className={styles.itemRow}>
-                                <input
-                                    className={styles.input}
-                                    value={txt}
-                                    onChange={e => {
-                                        const newBullets = [...formData.bullets];
-                                        newBullets[idx] = e.target.value;
-                                        handleChange('bullets', newBullets);
-                                    }}
-                                />
-                                <button
-                                    className={styles.removeBtn}
-                                    onClick={() => {
-                                        const newBullets = formData.bullets.filter((_, i) => i !== idx);
-                                        handleChange('bullets', newBullets);
-                                    }}
-                                >
-                                    <Trash2 size={16} />
-                                </button>
-                            </div>
-                        ))}
-                        <button
-                            className={styles.addItemBtn}
-                            onClick={() => handleChange('bullets', [...(formData.bullets || []), ''])}
-                        >
-                            <Plus size={14} /> Agregar viñeta
-                        </button>
-                    </div>
+                    <label className={styles.label}>Encabezado</label>
+                    <input
+                        className={styles.input}
+                        value={formData.heading || ''}
+                        onChange={e => handleChange('heading', e.target.value)}
+                    />
                 </div>
-            )}
-        </>
-    );
+                <div className={styles.formGroup}>
+                    <label className={styles.label}>Cuerpo de texto</label>
+                    <textarea
+                        className={styles.textarea}
+                        value={formData.body || ''}
+                        onChange={e => handleChange('body', e.target.value)}
+                    />
+                </div>
+
+                {/* Galería de imágenes */}
+                <div className={styles.formGroup}>
+                    <label className={styles.label}>
+                        Imágenes ({images.length})
+                        <span style={{ fontSize: '0.75rem', color: 'var(--text-tertiary)', marginLeft: 8 }}>
+                            Se mostrarán en cuadrícula si hay más de una
+                        </span>
+                    </label>
+
+                    {/* Previews existentes */}
+                    {images.length > 0 && (
+                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(120px, 1fr))', gap: 8, marginBottom: 10 }}>
+                            {images.map((url, idx) => (
+                                <div key={idx} style={{ position: 'relative', aspectRatio: '1', borderRadius: 8, overflow: 'hidden', border: '1px solid var(--border-color)', background: 'var(--bg-secondary)' }}>
+                                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                                    <img src={url} alt={`Imagen ${idx + 1}`} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                                    <button
+                                        onClick={() => handleRemoveImage(idx)}
+                                        style={{ position: 'absolute', top: 4, right: 4, background: 'rgba(0,0,0,0.7)', color: 'white', border: 'none', borderRadius: '50%', width: 22, height: 22, display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', fontSize: 14, lineHeight: 1 }}
+                                        title="Quitar imagen"
+                                    >×</button>
+                                </div>
+                            ))}
+                        </div>
+                    )}
+
+                    {/* Uploader para agregar más */}
+                    <ImageUploader
+                        currentImage={null}
+                        onImageChange={handleAddImage}
+                        label={images.length === 0 ? 'Agregar imagen' : '+ Agregar otra imagen'}
+                    />
+                </div>
+
+                {/* Bullets opcionales */}
+                {formData.bullets && (
+                    <div className={styles.formGroup}>
+                        <label className={styles.label}>Viñetas (Bullets)</label>
+                        <div className={styles.itemsList}>
+                            {formData.bullets.map((txt, idx) => (
+                                <div key={idx} className={styles.itemRow}>
+                                    <input
+                                        className={styles.input}
+                                        value={txt}
+                                        onChange={e => {
+                                            const newBullets = [...formData.bullets];
+                                            newBullets[idx] = e.target.value;
+                                            handleChange('bullets', newBullets);
+                                        }}
+                                    />
+                                    <button
+                                        className={styles.removeBtn}
+                                        onClick={() => {
+                                            const newBullets = formData.bullets.filter((_, i) => i !== idx);
+                                            handleChange('bullets', newBullets);
+                                        }}
+                                    >
+                                        <Trash2 size={16} />
+                                    </button>
+                                </div>
+                            ))}
+                            <button
+                                className={styles.addItemBtn}
+                                onClick={() => handleChange('bullets', [...(formData.bullets || []), ''])}
+                            >
+                                <Plus size={14} /> Agregar viñeta
+                            </button>
+                        </div>
+                    </div>
+                )}
+            </>
+        );
+    };
 
     const renderIconGridSlide = () => (
         <>

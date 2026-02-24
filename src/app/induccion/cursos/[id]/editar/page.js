@@ -191,7 +191,7 @@ export default function EditorPage({ params }) {
                         </div>
 
                         {/* Grid de tipos de slide */}
-                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
+                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(180px, 1fr))', gap: 10 }}>
                             {SLIDE_TYPES.map(({ type, label, emoji, desc }) => (
                                 <button
                                     key={type}
