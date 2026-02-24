@@ -1,6 +1,6 @@
 ﻿'use client';
 
-import { useState, useEffect, useMemo, useCallback } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useRouter } from 'next/navigation';
 import ProfileDropdown from '@/components/layout/ProfileDropdown/ProfileDropdown';
@@ -34,6 +34,22 @@ export default function CalendarPage() {
         loadEvents();
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [date]);
+
+    // Cursos únicos realizados en el mes visualizado (hook antes del early return)
+    const uniqueDoneThisMonth = useMemo(() => {
+        const year = date.getFullYear();
+        const month = date.getMonth();
+        const names = new Set(
+            events
+                .filter(e => {
+                    if (e.type !== 'DONE') return false;
+                    const d = new Date(e.date);
+                    return d.getFullYear() === year && d.getMonth() === month;
+                })
+                .map(e => (e.courseName || e.title || '').trim().toUpperCase())
+        );
+        return names.size;
+    }, [events, date]);
 
     // Auth Protection
     useEffect(() => {
@@ -224,22 +240,6 @@ export default function CalendarPage() {
     };
 
     const todayStr = new Date().toISOString().split('T')[0];
-
-    // Cursos únicos realizados en el mes visualizado
-    const uniqueDoneThisMonth = useMemo(() => {
-        const year = date.getFullYear();
-        const month = date.getMonth();
-        const names = new Set(
-            events
-                .filter(e => {
-                    if (e.type !== 'DONE') return false;
-                    const d = new Date(e.date);
-                    return d.getFullYear() === year && d.getMonth() === month;
-                })
-                .map(e => (e.courseName || e.title || '').trim().toUpperCase())
-        );
-        return names.size;
-    }, [events, date]);
 
     // Format date for display
     const formatDisplayDate = (d) => {
