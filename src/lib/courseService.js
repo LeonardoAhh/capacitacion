@@ -76,6 +76,39 @@ export async function importCourseFromJSON(jsonData, userId) {
 }
 
 /**
+ * Crea un curso vacío desde cero (sin JSON).
+ * El admin puede luego agregar slides desde el editor.
+ * @param {string} title - Título inicial del curso
+ * @param {string} userId - UID del usuario que lo crea
+ * @returns {Object} { success, courseId, error }
+ */
+export async function createEmptyCourse(title, userId) {
+    try {
+        const coursesRef = collection(db, COURSES_COLLECTION);
+        const courseData = {
+            title: title || 'Nuevo Curso',
+            description: '',
+            category: 'General',
+            duration: '',
+            instructor: '',
+            instructorRole: '',
+            company: '',
+            year: new Date().getFullYear().toString(),
+            published: false,
+            slideCount: 0,
+            createdBy: userId,
+            createdAt: serverTimestamp(),
+            updatedAt: serverTimestamp(),
+        };
+        const docRef = await addDoc(coursesRef, courseData);
+        return { success: true, courseId: docRef.id };
+    } catch (error) {
+        console.error('Error creando curso vacío:', error);
+        return { success: false, error: error.message };
+    }
+}
+
+/**
  * Obtiene un curso con todos sus slides ordenados por `order`.
  * @param {string} courseId
  * @returns {Object} { success, data: { course, slides }, error }

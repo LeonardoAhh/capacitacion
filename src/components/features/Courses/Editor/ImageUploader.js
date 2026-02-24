@@ -32,8 +32,8 @@ export default function ImageUploader({ currentImage, onImageChange, label = "Im
             const result = await uploadFile(file, { docType: 'course_assets' });
 
             if (result.success) {
-                // Devolvemos la URL pública (viewLink o downloadLink)
-                onImageChange(result.data.viewLink || result.data.downloadLink);
+                // viewLink ya es la URL de thumbnail directa de Drive (embebible en <img>)
+                onImageChange(result.data.viewLink || result.data.downloadLink || '');
             } else {
                 setError(result.error || 'Error al subir la imagen');
             }

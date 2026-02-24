@@ -74,8 +74,8 @@ export async function middleware(request) {
             );
         }
 
-        // CSRF: proteger mutaciones en /api/ que no sean de autenticación
-        if (!pathname.startsWith('/api/auth')) {
+        // CSRF: proteger mutaciones en /api/ que no sean de autenticación ni upload
+        if (!pathname.startsWith('/api/auth') && !pathname.startsWith('/api/upload')) {
             const csrfResult = csrfMiddleware(request);
             if (csrfResult) return csrfResult;
         }

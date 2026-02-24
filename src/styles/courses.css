@@ -58,13 +58,13 @@
 
 /* Dark Theme Overrides */
 [data-theme="dark"] {
-    --course-header-bg: #1C1C1E;
-    --course-nav-bg: #1C1C1E;
-    --course-slide-bg: #000000;
-    --course-overlay-bg: #000000;
-    --course-content-bg: #1C1C1E;
-    --course-btn-bg: #2C2C2E;
-    --course-btn-hover-bg: #3C3C3E;
+    --course-header-bg: var(--bg-secondary);
+    --course-nav-bg: var(--bg-secondary);
+    --course-slide-bg: var(--bg-primary);
+    --course-overlay-bg: var(--bg-primary);
+    --course-content-bg: var(--bg-secondary);
+    --course-btn-bg: var(--bg-tertiary);
+    --course-btn-hover-bg: var(--bg-secondary);
 }
 
 /* ── Animation Tokens ── */

@@ -25,7 +25,9 @@ import {
     deleteCourse,
     togglePublish,
     renameCourse,
+    createEmptyCourse,
 } from '@/lib/courseService';
+import { logInduccionAction } from '@/lib/induccionAudit';
 
 import puestosData from '../../../puestos.json';
 import styles from './page.module.css';
@@ -46,6 +48,9 @@ export default function InductionPage() {
     const [nativeLoading, setNativeLoading] = useState(true);
     const [importing, setImporting] = useState(false);
     const [importAlert, setImportAlert] = useState(null);
+    const [creatingCourse, setCreatingCourse] = useState(false);
+    const [showNewCourseModal, setShowNewCourseModal] = useState(false);
+    const [newCourseTitle, setNewCourseTitle] = useState('');
 
     // ── Player de cursos interactivos ──
     const [playerData, setPlayerData] = useState(null);
@@ -81,7 +86,7 @@ export default function InductionPage() {
     const [uploading, setUploading] = useState(false);
     const [editingCandidateCourse, setEditingCandidateCourse] = useState(null);
 
-    const canEdit = user?.rol === 'super_admin';
+    const canEdit = user?.rol === 'super_admin' || user?.rol === 'instructor';
 
     // ── Auth guard ──
     useEffect(() => {
@@ -213,29 +218,54 @@ export default function InductionPage() {
         setImporting(false);
     }, [loadNativeCourses, user?.uid, includeDynamics, includeQuizzes]);
 
+    // ── Crear curso vacío desde cero ──
+    const handleCreateNewCourse = useCallback(() => {
+        setNewCourseTitle('Nuevo Curso Interactivo');
+        setShowNewCourseModal(true);
+    }, []);
+
+    const handleConfirmNewCourse = useCallback(async () => {
+        if (!newCourseTitle.trim()) return;
+        setCreatingCourse(true);
+        setShowNewCourseModal(false);
+        const result = await createEmptyCourse(newCourseTitle.trim(), user?.uid || 'admin');
+        if (result.success) {
+            toast.success('Creado', 'Redirigiendo al editor...');
+            logInduccionAction({ userId: user?.uid, userName: user?.name || user?.email || 'Desconocido', action: 'create', target: newCourseTitle.trim() });
+            router.push(`/induccion/cursos/${result.courseId}/editar`);
+        } else {
+            toast.error('Error', result.error || 'No se pudo crear el curso.');
+        }
+        setCreatingCourse(false);
+    }, [newCourseTitle, user?.uid, user?.name, user?.email, toast, router]);
+
     // ── Toggle publicar curso nativo ──
     const handleTogglePublish = useCallback(async (courseId, currentPublished) => {
+        const course = nativeCourses.find(c => c.id === courseId);
         const result = await togglePublish(courseId, !currentPublished);
         if (result.success) {
             toast.success('Actualizado', `Curso ${!currentPublished ? 'publicado' : 'despublicado'}.`);
             await loadNativeCourses();
+            logInduccionAction({ userId: user?.uid, userName: user?.name || user?.email || 'Desconocido', action: !currentPublished ? 'publish' : 'unpublish', target: course?.title || courseId });
         } else {
             toast.error('Error', result.error);
         }
-    }, [toast, loadNativeCourses]);
+    }, [toast, loadNativeCourses, nativeCourses, user?.uid, user?.name, user?.email]);
 
     // ── Eliminar curso nativo ──
     const handleDeleteNative = useCallback(async (e, courseId) => {
         e.stopPropagation();
         if (!window.confirm('¿Eliminar este curso y todos sus slides?')) return;
+        const course = nativeCourses.find(c => c.id === courseId);
         const result = await deleteCourse(courseId);
         if (result.success) {
             toast.success('Eliminado', 'Curso eliminado.');
             await loadNativeCourses();
+            logInduccionAction({ userId: user?.uid, userName: user?.name || user?.email || 'Desconocido', action: 'delete', target: course?.title || courseId });
         } else {
             toast.error('Error', result.error);
         }
-    }, [toast, loadNativeCourses]);
+    }, [toast, loadNativeCourses, nativeCourses, user?.uid, user?.name, user?.email]);
 
     // ── Rename inline ──
     const handleStartRename = useCallback((e, course) => {
@@ -247,15 +277,17 @@ export default function InductionPage() {
     const handleConfirmRename = useCallback(async (courseId) => {
         const trimmed = renameValue.trim();
         if (!trimmed) { setRenamingId(null); return; }
+        const prev = nativeCourses.find(c => c.id === courseId);
         const result = await renameCourse(courseId, trimmed);
         if (result.success) {
             toast.success('Renombrado', 'Nombre actualizado.');
             await loadNativeCourses();
+            logInduccionAction({ userId: user?.uid, userName: user?.name || user?.email || 'Desconocido', action: 'rename', target: trimmed, detail: `Antes: "${prev?.title || courseId}"` });
         } else {
             toast.error('Error', result.error);
         }
         setRenamingId(null);
-    }, [renameValue, toast, loadNativeCourses]);
+    }, [renameValue, toast, loadNativeCourses, nativeCourses, user?.uid, user?.name, user?.email]);
 
     const handleRenameKeyDown = useCallback((e, courseId) => {
         if (e.key === 'Enter') handleConfirmRename(courseId);
@@ -463,7 +495,7 @@ export default function InductionPage() {
             <div className={styles.bgDecoration}></div>
 
             <div className={styles.container}>
-                <BackButton href="/modulos" />
+                <BackButton href="/modulos" hidden={user?.rol === 'instructor'} />
 
                 <header className={styles.header}>
                     <div className={styles.titleSection}>
@@ -527,6 +559,15 @@ export default function InductionPage() {
                                 >
                                     <Upload size={13} />
                                     {importing ? 'Importando…' : 'Importar'}
+                                </button>
+                                <button
+                                    className={styles.newCourseBtn}
+                                    onClick={handleCreateNewCourse}
+                                    disabled={creatingCourse}
+                                    title="Crear curso interactivo desde cero"
+                                >
+                                    <Plus size={13} />
+                                    {creatingCourse ? 'Creando...' : 'Nuevo Curso'}
                                 </button>
                             </div>
                         </div>
@@ -971,6 +1012,73 @@ export default function InductionPage() {
                     </section>
                 </div>
             </div>
+
+            {/* ── Modal: Nuevo Curso Interactivo ── */}
+            {showNewCourseModal && (
+                <div
+                    className={styles.modalBackdrop}
+                    onClick={() => setShowNewCourseModal(false)}
+                >
+                    <div
+                        className={styles.modalContent}
+                        style={{ textAlign: 'left', maxWidth: 420 }}
+                        onClick={e => e.stopPropagation()}
+                    >
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
+                            <div>
+                                <h2 style={{ margin: 0, fontSize: '1rem', fontWeight: 700, color: 'var(--text-primary)' }}>
+                                    Nuevo Curso Interactivo
+                                </h2>
+                                <p style={{ margin: '4px 0 0', fontSize: '0.8rem', color: 'var(--text-tertiary)' }}>
+                                    Podrás agregar slides desde el editor
+                                </p>
+                            </div>
+                            <button
+                                className={styles.closeModalBtn}
+                                onClick={() => setShowNewCourseModal(false)}
+                                type="button"
+                            >
+                                <X size={14} />
+                            </button>
+                        </div>
+
+                        <div className={styles.inputGroup} style={{ marginBottom: 20 }}>
+                            <label>Nombre del curso</label>
+                            <input
+                                className={styles.input}
+                                value={newCourseTitle}
+                                onChange={e => setNewCourseTitle(e.target.value)}
+                                placeholder="Ej. Operadores de Máquina"
+                                autoFocus
+                                onKeyDown={e => {
+                                    if (e.key === 'Enter') handleConfirmNewCourse();
+                                    if (e.key === 'Escape') setShowNewCourseModal(false);
+                                }}
+                            />
+                        </div>
+
+                        <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 8 }}>
+                            <button
+                                className={styles.toggleBtn}
+                                onClick={() => setShowNewCourseModal(false)}
+                                type="button"
+                            >
+                                Cancelar
+                            </button>
+                            <button
+                                className={styles.newCourseBtn}
+                                onClick={handleConfirmNewCourse}
+                                disabled={!newCourseTitle.trim() || creatingCourse}
+                                type="button"
+                                style={{ padding: '7px 16px', fontSize: '0.85rem' }}
+                            >
+                                <Plus size={13} />
+                                Crear y editar
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 }

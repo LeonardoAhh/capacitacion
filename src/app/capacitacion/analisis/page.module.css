@@ -210,21 +210,56 @@
     margin-bottom: var(--spacing-xl);
 }
 
+/* 3D Flip Card Container */
+.cardPerspective {
+    perspective: 1000px;
+    height: 100%;
+}
+
+.cardFlipper {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    transition: transform 0.6s cubic-bezier(0.4, 0.2, 0.2, 1);
+    transform-style: preserve-3d;
+    cursor: pointer;
+}
+
+.cardFlipper.isFlipped {
+    transform: rotateY(180deg);
+}
+
 .yearCard {
     background: linear-gradient(135deg, var(--bg-secondary) 0%, var(--bg-tertiary) 100%);
     border: 1px solid var(--border-color);
     transition: all var(--transition-fast);
-    overflow: visible;
-    /* Allow tooltip to overflow */
-    position: relative;
+    /* No overflow: hidden here so tooltips can escape */
 }
 
-.yearCard:hover {
-    transform: translateY(-2px);
+/* Front and Back common properties */
+.cardFront,
+.cardBack {
+    position: relative;
+    width: 100%;
+    backface-visibility: hidden;
+    left: 0;
+    top: 0;
+}
+
+/* Back needs to be initially rotated and absolute to overlay front exactly */
+.cardBack {
+    position: absolute;
+    transform: rotateY(180deg);
+}
+
+/* We drop the translateY hover effect slightly so it doesn't break the 3D flip */
+.cardPerspective:hover .cardFlipper {
+    transform: translateY(-2px) rotateY(0deg);
     box-shadow: var(--shadow-md);
-    border-color: var(--color-primary);
-    z-index: 10;
-    /* Bring to front on hover */
+}
+
+.cardPerspective:hover .cardFlipper.isFlipped {
+    transform: translateY(-2px) rotateY(180deg);
 }
 
 .yearCardContent {

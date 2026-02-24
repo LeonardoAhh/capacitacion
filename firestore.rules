@@ -74,13 +74,13 @@ service cloud.firestore {
     
     match /induction_courses/{docId} {
       allow read: if true;
-      allow write: if hasAnyRole(['super_admin', 'rh'])
+      allow write: if hasAnyRole(['super_admin', 'rh', 'instructor'])
                    && isValidString(request.resource.data.title);
     }
     
     match /cursos_induccion/{docId} {
       allow read: if true;
-      allow write: if hasAnyRole(['super_admin', 'rh']);
+      allow write: if hasAnyRole(['super_admin', 'rh', 'instructor']);
     }
 
     match /programacion/{docId} {
@@ -162,12 +162,12 @@ service cloud.firestore {
     match /cursos/{courseId} {
       // Cualquier usuario autenticado puede ver los cursos publicados
       allow read: if isAuthenticated();
-      // Solo super_admin puede crear/editar/borrar cursos
-      allow write: if hasRole('super_admin');
+      // super_admin e instructor pueden crear/editar/borrar cursos
+      allow write: if hasAnyRole(['super_admin', 'instructor']);
 
       match /slides/{slideId} {
         allow read: if isAuthenticated();
-        allow write: if hasRole('super_admin');
+        allow write: if hasAnyRole(['super_admin', 'instructor']);
       }
     }
     

@@ -828,6 +828,31 @@ textarea.input {
     filter: brightness(1.1);
 }
 
+.newCourseBtn {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    background: rgba(34, 197, 94, 0.12);
+    color: #16a34a;
+    border: 1px solid rgba(34, 197, 94, 0.3);
+    padding: 5px 12px;
+    border-radius: 7px;
+    font-size: 0.78rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.newCourseBtn:hover:not(:disabled) {
+    background: rgba(34, 197, 94, 0.2);
+    border-color: rgba(34, 197, 94, 0.5);
+}
+
+.newCourseBtn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
 .importBtn:disabled {
     opacity: 0.5;
     cursor: not-allowed;

@@ -15,6 +15,7 @@ import styles from './page.module.css';
 import { generateDC3 } from '@/utils/dc3Generator';
 import { exportToExcel, exportPDFCompliance } from '@/utils/exportUtils';
 import { Dialog, DialogHeader, DialogTitle, DialogBody, DialogFooter, DialogClose } from '@/components/ui/Dialog/Dialog';
+import YearlyCardStack from '@/components/ui/CardStack/YearlyCardStack';
 
 export default function AnalisisPage() {
     const { user, loading: authLoading } = useAuth();
@@ -51,6 +52,8 @@ export default function AnalisisPage() {
     const [selectedYear, setSelectedYear] = useState(null);
     const [showYearlyModal, setShowYearlyModal] = useState(false);
     const [yearlyDetails, setYearlyDetails] = useState([]);
+
+
 
     useEffect(() => {
         if (!authLoading && !user) {
@@ -139,43 +142,76 @@ export default function AnalisisPage() {
             }))
             .sort((a, b) => b.score - a.score); // Best first
 
-        // 4. Yearly Statistics
+        // 4. Yearly Statistics — Opción A:
+        //    coursesCompleted = total de completaciones aprobadas en ese año específico
+        //    compliance       = % de empleados con 100% de su matriz cumplida
+        //                       usando historial ACUMULADO hasta el cierre de ese año
         const yearlyStats = {};
         const years = [2024, 2025, 2026];
 
-        // Initialize years
+        const _norm = (str) => (str || '')
+            .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+            .toUpperCase().trim();
+
         years.forEach(year => {
             yearlyStats[year] = {
                 coursesCompleted: 0,
-                totalRequired: 0,
-                compliance: 0
+                compliantEmployees: 0,
+                totalWithReqs: 0,
+                compliance: 0,
+                totalRequiredCourses: 0, // Option B: denominator
+                avancePlan: 0 // Option B: percentage
             };
         });
 
-        // Count courses per year and calculate compliance
         data.forEach(employee => {
             const history = employee.history || [];
+            const requiredCourses = employee.matrix?.requiredCourses || [];
             const requiredCount = employee.matrix?.requiredCount || 0;
 
             years.forEach(year => {
-                // Count courses completed in this year
-                const coursesInYear = history.filter(h => {
-                    const courseYear = parseInt(h.date?.split('/')[2]);
-                    return courseYear === year && h.status === 'approved';
+                // Option B Denominator: sumamos los cursos requeridos de todos
+                yearlyStats[year].totalRequiredCourses += requiredCount;
+                // Cursos completados: aprobados con fecha exacta en ese año
+                const completedInYear = history.filter(h => {
+                    const yr = parseInt(h.date?.split('/')[2]);
+                    return yr === year && h.status === 'approved';
                 }).length;
+                yearlyStats[year].coursesCompleted += completedInYear;
 
-                yearlyStats[year].coursesCompleted += coursesInYear;
+                // Opción A: empleados con 100% al cierre del año
+                // Solo aplica empleados con cursos requeridos definidos
+                if (requiredCourses.length === 0) return;
 
-                // Add to total required (each employee's required courses)
-                yearlyStats[year].totalRequired += requiredCount;
+                yearlyStats[year].totalWithReqs++;
+
+                // Historia acumulada hasta fin de ese año (año <= year)
+                const cumulativeApproved = new Set(
+                    history
+                        .filter(h => {
+                            const yr = parseInt(h.date?.split('/')[2]);
+                            return yr <= year && h.status === 'approved';
+                        })
+                        .map(h => _norm(h.courseName))
+                );
+
+                const allMet = requiredCourses.every(req => cumulativeApproved.has(_norm(req)));
+                if (allMet) yearlyStats[year].compliantEmployees++;
             });
         });
 
-        // Calculate compliance percentage for each year
+        // Calcular % de cumplimiento por año
         years.forEach(year => {
-            const { coursesCompleted, totalRequired } = yearlyStats[year];
-            yearlyStats[year].compliance = totalRequired > 0
-                ? ((coursesCompleted / totalRequired) * 100).toFixed(1)
+            const { compliantEmployees, totalWithReqs, coursesCompleted, totalRequiredCourses } = yearlyStats[year];
+
+            // Opción A
+            yearlyStats[year].compliance = totalWithReqs > 0
+                ? ((compliantEmployees / totalWithReqs) * 100).toFixed(1)
+                : 0;
+
+            // Opción B
+            yearlyStats[year].avancePlan = totalRequiredCourses > 0
+                ? ((coursesCompleted / totalRequiredCourses) * 100).toFixed(1)
                 : 0;
         });
 
@@ -390,6 +426,30 @@ export default function AnalisisPage() {
                         </div>
                         <div className={styles.headerRight}>
                             <Button
+                                variant="primary"
+                                size="sm"
+                                onClick={handleSeed}
+                                disabled={seeding}
+                                title="Recalcula el % de cumplimiento de todos los empleados usando las matrices de posición actuales"
+                            >
+                                {seeding ? (
+                                    <>
+                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={{ animation: 'spin 1s linear infinite' }}>
+                                            <path d="M21 12a9 9 0 1 1-6.219-8.56" />
+                                        </svg>
+                                        Recalculando...
+                                    </>
+                                ) : (
+                                    <>
+                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                            <polyline points="1 4 1 10 7 10" />
+                                            <path d="M3.51 15a9 9 0 1 0 .49-4" />
+                                        </svg>
+                                        Recalcular
+                                    </>
+                                )}
+                            </Button>
+                            <Button
                                 variant="outline"
                                 size="sm"
                                 onClick={() => {
@@ -447,57 +507,12 @@ export default function AnalisisPage() {
                             {kpiData.yearlyStats && (
                                 <div className={styles.yearlyStatsGrid}>
                                     {[2024, 2025, 2026].map(year => (
-                                        <Card key={year} className={styles.yearCard}>
-                                            <CardContent>
-                                                <div className={styles.yearCardContent}>
-                                                    {/* Info Icon with Tooltip */}
-                                                    <div className={styles.yearCardHeader}>
-                                                        <div className={styles.yearLabel}>{year}</div>
-                                                        <div className={styles.infoIconContainer}>
-                                                            <svg className={styles.infoIcon} width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                                                <circle cx="12" cy="12" r="10" />
-                                                                <line x1="12" y1="16" x2="12" y2="12" />
-                                                                <line x1="12" y1="8" x2="12.01" y2="8" />
-                                                            </svg>
-                                                            <div className={styles.tooltip}>
-                                                                <div className={styles.tooltipTitle}>¿Qué significa esto?</div>
-                                                                <div className={styles.tooltipSection}>
-                                                                    <strong>Cursos Completados:</strong>
-                                                                    <p>Total de capacitaciones aprobadas en {year} sumando todos los empleados.</p>
-                                                                </div>
-                                                                <div className={styles.tooltipSection}>
-                                                                    <strong>% Cumplimiento:</strong>
-                                                                    <p>Se calcula dividiendo los cursos completados entre el total de cursos requeridos según las matrices de cada puesto.</p>
-                                                                </div>
-                                                                <div className={styles.tooltipFormula}>
-                                                                    Fórmula: (Completados / Requeridos) × 100
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-
-                                                    <div className={styles.yearCoursesCount}>
-                                                        {kpiData.yearlyStats[year]?.coursesCompleted || 0}
-                                                    </div>
-                                                    <div className={styles.yearCoursesLabel}>Cursos Completados</div>
-                                                    <div className={styles.yearDivider}></div>
-                                                    <div className={styles.yearCompliance}>
-                                                        <span className={styles.yearComplianceLabel}>Cumplimiento:</span>
-                                                        <span className={`${styles.yearComplianceValue} ${getScoreColorClass(kpiData.yearlyStats[year]?.compliance || 0)}`}>
-                                                            {kpiData.yearlyStats[year]?.compliance || 0}%
-                                                        </span>
-                                                    </div>
-                                                    <Button
-                                                        variant="outline"
-                                                        size="sm"
-                                                        className={styles.yearDetailsBtn}
-                                                        onClick={() => openYearlyDetails(year)}
-                                                    >
-                                                        Ver Detalles
-                                                    </Button>
-                                                </div>
-                                            </CardContent>
-                                        </Card>
+                                        <YearlyCardStack
+                                            key={year}
+                                            stats={kpiData.yearlyStats[year]}
+                                            yearNumber={year}
+                                            openDetails={openYearlyDetails}
+                                        />
                                     ))}
                                 </div>
                             )}

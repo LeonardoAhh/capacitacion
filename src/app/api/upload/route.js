@@ -1,11 +1,20 @@
 import { NextResponse } from 'next/server';
 import { uploadFile, createFolder, findFolder } from '@/lib/drive';
 import { deserializeSession } from '@/lib/cookieSign';
+import { createCsrfToken } from '@/lib/csrf';
 
 export const dynamic = 'force-dynamic';
 
 const ROOT_FOLDER_NAME = 'VERT_RH_FILES';
 const IS_DEV = process.env.NODE_ENV === 'development';
+
+/** GET /api/upload — devuelve un CSRF token fresco para que el cliente lo use en el POST */
+export async function GET() {
+    const token = createCsrfToken();
+    return NextResponse.json({ ok: true }, {
+        headers: { 'X-CSRF-Token': token }
+    });
+}
 
 /**
  * Verifica que existe una cookie de sesión admin válida en la request.

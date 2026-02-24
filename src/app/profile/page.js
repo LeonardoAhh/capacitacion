@@ -158,15 +158,20 @@ export default function ProfilePage() {
                 ) && (
                         <AdminSection />
                     )}
+
+                {/* Log de Auditoría de Inducción */}
+                {(['super_admin', 'instructor'].includes(user.rol)) && (
+                    <InduccionAuditSection />
+                )}
             </main>
         </div>
     );
 }
 
 // Subcomponente para evitar re-renders innecesarios y organizar código
-import { doc, setDoc, onSnapshot } from 'firebase/firestore';
+import { doc, setDoc, onSnapshot, collection, query, orderBy, limit, where, getDocs } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
-import { Shield, AlertTriangle } from 'lucide-react';
+import { Shield, AlertTriangle, BookOpen, Trash2, RefreshCw, UploadCloud, FileEdit } from 'lucide-react';
 
 function AdminSection() {
     const [isMaintenance, setIsMaintenance] = useState(false);
@@ -316,6 +321,86 @@ function AdminSection() {
                 <div style={{ marginTop: '10px', fontSize: '0.75rem', color: '#ef4444', fontWeight: 500 }}>
                     ⚠ Tú sigues teniendo acceso por ser Administrador.
                 </div>
+            )}
+        </div>
+    );
+}
+
+// ── Iconos/colores por tipo de acción ──
+const ACTION_META = {
+    create: { label: 'Creó', color: '#22c55e', icon: BookOpen },
+    import: { label: 'Importó', color: '#3b82f6', icon: UploadCloud },
+    delete: { label: 'Eliminó', color: '#ef4444', icon: Trash2 },
+    publish: { label: 'Publicó', color: '#f59e0b', icon: Eye },
+    unpublish: { label: 'Archivó', color: '#6b7280', icon: EyeOff },
+    rename: { label: 'Renombró', color: '#a855f7', icon: FileEdit },
+    update: { label: 'Editó', color: '#0ea5e9', icon: RefreshCw },
+};
+
+function InduccionAuditSection() {
+    const [logs, setLogs] = useState([]);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        const q = query(
+            collection(db, 'audit_logs'),
+            where('module', '==', 'induccion'),
+            orderBy('timestamp', 'desc'),
+            limit(30)
+        );
+        const unsub = onSnapshot(q, (snap) => {
+            setLogs(snap.docs.map(d => ({ id: d.id, ...d.data() })));
+            setLoading(false);
+        });
+        return () => unsub();
+    }, []);
+
+    const formatTime = (ts) => {
+        if (!ts) return '—';
+        const date = ts.toDate ? ts.toDate() : new Date(ts);
+        return date.toLocaleString('es-MX', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' });
+    };
+
+    return (
+        <div className={styles.card}>
+            <h3 className={styles.cardTitle}>
+                <BookOpen className={styles.cardIcon} style={{ width: 18, height: 18 }} />
+                Actividad en Inducción
+            </h3>
+
+            {loading ? (
+                <p style={{ fontSize: '0.8rem', color: 'var(--text-tertiary)', padding: '1rem 0' }}>Cargando historial...</p>
+            ) : logs.length === 0 ? (
+                <p style={{ fontSize: '0.8rem', color: 'var(--text-tertiary)', padding: '1rem 0' }}>No hay actividad registrada aún.</p>
+            ) : (
+                <ul style={{ listStyle: 'none', padding: 0, margin: '0.75rem 0 0', display: 'flex', flexDirection: 'column', gap: 8 }}>
+                    {logs.map(log => {
+                        const meta = ACTION_META[log.action] || { label: log.action, color: 'var(--text-tertiary)', icon: RefreshCw };
+                        const Icon = meta.icon;
+                        return (
+                            <li key={log.id} style={{ display: 'flex', alignItems: 'flex-start', gap: 10, padding: '8px 10px', borderRadius: 8, background: 'var(--bg-secondary)', border: '1px solid var(--border-color)' }}>
+                                <span style={{ marginTop: 2, color: meta.color, flexShrink: 0 }}>
+                                    <Icon size={14} />
+                                </span>
+                                <div style={{ flex: 1, minWidth: 0 }}>
+                                    <p style={{ margin: 0, fontSize: '0.8rem', color: 'var(--text-primary)', lineHeight: 1.4 }}>
+                                        <strong style={{ color: meta.color }}>{meta.label}</strong>
+                                        {' '}
+                                        <span style={{ fontWeight: 600 }}>{log.userName}</span>
+                                        {' — '}
+                                        <span style={{ color: 'var(--text-secondary)' }}>{log.target}</span>
+                                    </p>
+                                    {log.detail && (
+                                        <p style={{ margin: 0, fontSize: '0.72rem', color: 'var(--text-tertiary)', marginTop: 2 }}>{log.detail}</p>
+                                    )}
+                                </div>
+                                <span style={{ fontSize: '0.7rem', color: 'var(--text-tertiary)', flexShrink: 0, whiteSpace: 'nowrap' }}>
+                                    {formatTime(log.timestamp)}
+                                </span>
+                            </li>
+                        );
+                    })}
+                </ul>
             )}
         </div>
     );

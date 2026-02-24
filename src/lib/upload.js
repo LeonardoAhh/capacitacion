@@ -35,11 +35,21 @@ export async function uploadFile(file, options = {}) {
             formData.append('docType', options.docType);
         }
 
+        // Obtener token CSRF fresco antes de subir
+        let csrfToken = '';
+        try {
+            const csrfRes = await fetch('/api/upload', { method: 'GET' });
+            csrfToken = csrfRes.headers.get('X-CSRF-Token') || '';
+        } catch {
+            // Si falla el GET, intentamos continuar sin token (puede que no sea necesario)
+        }
+
         // Hacer la llamada con autenticación
         const response = await fetch('/api/upload', {
             method: 'POST',
             headers: {
-                'Authorization': `Bearer ${idToken}`
+                'Authorization': `Bearer ${idToken}`,
+                ...(csrfToken ? { 'x-csrf-token': csrfToken } : {}),
             },
             body: formData
         });

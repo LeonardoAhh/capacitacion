@@ -21,6 +21,12 @@ export default function ModulesPage() {
         const candidateSession = sessionStorage.getItem('candidate_session');
         if (candidateSession) {
             router.push('/candidatos/dashboard');
+            return;
+        }
+
+        // Instructor solo tiene acceso a /induccion — redirigir directamente
+        if (user?.rol === 'instructor') {
+            router.push('/induccion');
         }
     }, [router, user, authLoading]);
 
@@ -34,6 +40,10 @@ export default function ModulesPage() {
 
     const isDemo = user?.rol === 'demo' || user?.email?.includes('demo');
     const isSuperAdmin = user?.rol === 'super_admin';
+    const isInstructor = user?.rol === 'instructor';
+
+    // Instructor: solo puede ver inducción (el useEffect redirige, esto es fallback)
+    if (isInstructor) return null;
 
     const modules = [
         {

@@ -12,7 +12,9 @@ import styles from './BackButton.module.css';
  * @param {string}   [label]     - Texto del botón (default: "Volver")
  * @param {string}   [className] - Clase CSS adicional
  */
-export default function BackButton({ href, onClick, label = "Volver", className }) {
+export default function BackButton({ href, onClick, label = "Volver", className, hidden }) {
+    if (hidden) return null;
+
     const combinedClassName = className
         ? `${styles.backButton} ${className}`
         : styles.backButton;

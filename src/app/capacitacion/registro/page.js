@@ -358,6 +358,27 @@ export default function RegistroPage() {
 
         setImporting(true);
         try {
+            // Pre-fetch ALL positions once to avoid repeated queries
+            const allPosSnap = await getDocs(collection(db, 'positions'));
+            const positionsCache = {};
+            allPosSnap.docs.forEach(d => {
+                const data = d.data();
+                const key = (data.name || '').toUpperCase().trim()
+                    .normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+                positionsCache[key] = data.requiredCourses || [];
+            });
+
+            const getRequiredCourses = (positionName) => {
+                if (!positionName) return [];
+                const key = positionName.toUpperCase().trim()
+                    .normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+                return positionsCache[key] || [];
+            };
+
+            const normalizeForMatch = (str) => (str || '')
+                .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+                .toUpperCase().trim();
+
             let successCount = 0;
 
             for (const record of importPreview.valid) {
@@ -366,16 +387,14 @@ export default function RegistroPage() {
 
                 if (empSnap.exists()) {
                     const currentData = empSnap.data();
-                    const currentHistory = currentData.history || [];
-                    const currentMatrix = currentData.matrix || {};
+                    const currentHistory = [...(currentData.history || [])];
+                    let currentMatrix = currentData.matrix || {};
 
-                    // Date is already in DD/MM/YYYY format from normalizeRecord
                     const formattedDate = record.date;
                     const status = record.score >= 70 ? 'approved' : 'failed';
 
-                    // Check if course already in history
+                    // Agregar o actualizar entrada en historial
                     const existingIdx = currentHistory.findIndex(h => h.courseName === record.courseName);
-
                     if (existingIdx >= 0) {
                         currentHistory[existingIdx] = {
                             ...currentHistory[existingIdx],
@@ -392,57 +411,54 @@ export default function RegistroPage() {
                         });
                     }
 
-                    // Update matrix if applicable
+                    // Self-healing: si requiredCourses no está en el matrix guardado,
+                    // lo busca en la colección positions (igual que registro manual)
+                    let requiredCourses = currentMatrix.requiredCourses;
+                    if (!requiredCourses || requiredCourses.length === 0) {
+                        requiredCourses = getRequiredCourses(currentData.position);
+                    }
+
                     let updates = { history: currentHistory, updatedAt: new Date().toISOString() };
 
-                    if (currentMatrix.requiredCount > 0) {
-                        // Normalize function for comparison
-                        const normalizeForMatch = (str) => (str || '')
-                            .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
-                            .toUpperCase().trim();
-
-                        // Get approved courses using normalized comparison
+                    if (requiredCourses.length > 0) {
                         const approvedNormalized = new Set(
                             currentHistory
                                 .filter(h => h.status === 'approved')
                                 .map(h => normalizeForMatch(h.courseName))
                         );
 
-                        // Calculate missing courses
-                        const missing = (currentMatrix.requiredCourses || []).filter(req => {
-                            const reqNormalized = normalizeForMatch(req);
-                            return !approvedNormalized.has(reqNormalized);
-                        });
+                        const missing = requiredCourses.filter(req =>
+                            !approvedNormalized.has(normalizeForMatch(req))
+                        );
 
-                        // Separate failed vs pending
                         const historyNormalized = new Set(
                             currentHistory.map(h => normalizeForMatch(h.courseName))
                         );
 
                         const failedCourses = [];
                         const pendingCourses = [];
-
                         missing.forEach(req => {
-                            const reqNormalized = normalizeForMatch(req);
-                            if (historyNormalized.has(reqNormalized)) {
+                            if (historyNormalized.has(normalizeForMatch(req))) {
                                 failedCourses.push(req);
                             } else {
                                 pendingCourses.push(req);
                             }
                         });
 
-                        const completedCount = (currentMatrix.requiredCourses || []).length - missing.length;
-                        const compliancePercentage = currentMatrix.requiredCount > 0
-                            ? Math.round((completedCount / currentMatrix.requiredCount) * 100)
+                        const completedCount = requiredCourses.length - missing.length;
+                        const compliancePercentage = requiredCourses.length > 0
+                            ? Math.round((completedCount / requiredCourses.length) * 100)
                             : 0;
 
                         updates.matrix = {
                             ...currentMatrix,
-                            completedCount: completedCount,
+                            requiredCourses,
+                            requiredCount: requiredCourses.length,
+                            completedCount,
                             missingCourses: missing,
-                            failedCourses: failedCourses,
-                            pendingCourses: pendingCourses,
-                            compliancePercentage: compliancePercentage
+                            failedCourses,
+                            pendingCourses,
+                            compliancePercentage
                         };
                     }
 
@@ -454,7 +470,7 @@ export default function RegistroPage() {
             toast.success("Importación Exitosa", `Se importaron ${successCount} registros correctamente`);
             setImportPreview(null);
             setImportFile(null);
-            loadData(); // Refresh data
+            loadData();
 
         } catch (error) {
             console.error(error);
@@ -463,6 +479,7 @@ export default function RegistroPage() {
             setImporting(false);
         }
     };
+
 
     if (authLoading || !user) {
         return (

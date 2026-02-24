@@ -7,11 +7,15 @@
 }
 
 .container {
+    padding-top: 1rem;
     padding-bottom: 3rem;
     max-width: 1200px;
     margin: 0 auto;
     padding-left: 1rem;
     padding-right: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
 }
 
 .backButton {
@@ -39,8 +43,8 @@
     background: var(--card-background);
     border-radius: var(--radius-xl);
     box-shadow: var(--shadow-md);
-    margin-top: 2rem;
-    margin-bottom: 2rem;
+    margin-top: 0;
+    margin-bottom: 0;
     position: relative;
     z-index: 10;
     padding: 2rem;
