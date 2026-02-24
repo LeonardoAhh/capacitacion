@@ -40,16 +40,15 @@ export async function assignAccessCodeToCandidate(employeeId, expirationDays = 7
         // Usar setDoc con merge para actualizar sin sobrescribir
         await setDoc(employeeRef, {
             accessCode,
-            accessCodeExpires: expiresAt.getTime(),
+            accessCodeExpires: null, // Sin expiración
             isCandidato: true,
             accessCodeGeneratedAt: new Date().getTime(),
-            accessCodeUses: 0 // RESET USAGE COUNTER
+            accessCodeUses: 0
         }, { merge: true });
 
         return {
             success: true,
             code: accessCode,
-            expiresAt: expiresAt.toISOString()
         };
     } catch (error) {
         console.error('Error assigning access code:', error);
@@ -76,9 +75,8 @@ export async function regenerateAccessCode(employeeId, expirationDays = 7) {
  * @param {number} accessCodeExpires - Timestamp de expiración
  * @returns {boolean}
  */
-export function isAccessCodeValid(accessCode, accessCodeExpires) {
-    if (!accessCode || !accessCodeExpires) return false;
-    return Date.now() < accessCodeExpires;
+export function isAccessCodeValid(accessCode) {
+    return !!accessCode;
 }
 
 /**

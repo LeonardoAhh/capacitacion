@@ -177,6 +177,44 @@ function useDataFetching() {
     return { loading, error, candidates, coursesMapRef, fetchData };
 }
 
+/**
+ * Calcula cuánto tiempo le queda al candidato para terminar sus cursos.
+ * Base: fechaIngreso + 7 días.
+ * @param {Object} candidate
+ * @returns {{ daysLeft: number, hoursLeft: number, isExpired: boolean, isUrgent: boolean, label: string }}
+ */
+function getDeadlineInfo(candidate) {
+    const ingreso = candidate.startDate || candidate.fechaIngreso || candidate.createdAt;
+    if (!ingreso) return null;
+
+    try {
+        const start = new Date(ingreso);
+        if (isNaN(start.getTime())) return null;
+
+        const deadline = new Date(start.getTime() + 7 * 24 * 60 * 60 * 1000);
+        const now = new Date();
+        const diffMs = deadline - now;
+
+        if (diffMs <= 0) {
+            return { daysLeft: 0, hoursLeft: 0, isExpired: true, isUrgent: true, label: 'Tiempo vencido' };
+        }
+
+        const daysLeft = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+        const hoursLeft = Math.floor((diffMs % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        const isUrgent = daysLeft < 2;
+
+        let label;
+        if (daysLeft === 0) label = `${hoursLeft}h restantes`;
+        else if (daysLeft === 1) label = `1 día ${hoursLeft}h`;
+        else label = `${daysLeft} días ${hoursLeft}h`;
+
+        return { daysLeft, hoursLeft, isExpired: false, isUrgent, label };
+    } catch {
+        return null;
+    }
+}
+
+
 export default function CandidateMonitoringPage() {
     const { user, loading: authLoading, updateUserProfile } = useAuth();
     const router = useRouter();
@@ -259,7 +297,7 @@ export default function CandidateMonitoringPage() {
         }
 
         const cleanPhone = phone.replace(/\D/g, '');
-        const message = template.message(name);
+        const message = template.message(name, whatsappModal.candidate);
         const encodedMessage = encodeURIComponent(message);
 
         window.open(`https://wa.me/${cleanPhone}?text=${encodedMessage}`, '_blank');
@@ -311,7 +349,19 @@ export default function CandidateMonitoringPage() {
         {
             id: 'completion_reminder',
             title: '🎯 Recordatorio de Finalización',
-            message: (name) => `Hola ${name}, te recordamos completar los cursos pendientes. Cualquier duda que tengas, estamos para ayudarte.`
+            message: (name, candidate) => {
+                const dl = candidate ? getDeadlineInfo(candidate) : null;
+                const tiempoRestante = dl
+                    ? dl.isExpired
+                        ? 'tu tiempo ya ha vencido'
+                        : dl.daysLeft === 0
+                            ? `solo te quedan ${dl.hoursLeft} horas`
+                            : dl.daysLeft === 1
+                                ? `solo te queda 1 día y ${dl.hoursLeft} horas`
+                                : `te quedan ${dl.daysLeft} días y ${dl.hoursLeft} horas`
+                    : 'el tiempo es limitado';
+                return `Hola ${name}, te recordamos que ${tiempoRestante} para completar tu proceso de inducción. Por favor termina los cursos pendientes y entrega tus evaluaciones a Recursos Humanos lo antes posible. ¡Cualquier duda estamos para ayudarte!`;
+            }
         },
         {
             id: 'support_offer',
@@ -524,7 +574,7 @@ export default function CandidateMonitoringPage() {
                     <table className={styles.table} role="table">
                         <thead>
                             <tr>
-                                <th scope="col">Candidato</th>
+                                <th scope="col">Candidato / Tiempo Restante</th>
                                 <th scope="col">ID Empleado</th>
                                 <th scope="col">Puesto</th>
                                 <th scope="col">Estado</th>
@@ -559,6 +609,31 @@ export default function CandidateMonitoringPage() {
                                                 <div className={styles.userInfo}>
                                                     <span className={styles.userName}>{candidate.name}</span>
                                                     <span className={styles.userEmail}>{candidate.curp || 'Sin CURP'}</span>
+                                                    {(() => {
+                                                        const dl = getDeadlineInfo(candidate);
+                                                        if (!dl || candidate.status === 'completed') return null;
+                                                        return (
+                                                            <span
+                                                                className={styles.deadlineTimer}
+                                                                style={{
+                                                                    display: 'inline-flex',
+                                                                    alignItems: 'center',
+                                                                    gap: '4px',
+                                                                    marginTop: '4px',
+                                                                    fontSize: '0.72rem',
+                                                                    fontWeight: 600,
+                                                                    padding: '2px 7px',
+                                                                    borderRadius: '999px',
+                                                                    background: dl.isExpired ? 'rgba(239,68,68,0.15)' : dl.isUrgent ? 'rgba(251,146,60,0.15)' : 'rgba(34,197,94,0.12)',
+                                                                    color: dl.isExpired ? '#ef4444' : dl.isUrgent ? '#f97316' : '#16a34a',
+                                                                }}
+                                                                title={`Fecha límite: 7 días desde su ingreso`}
+                                                                aria-label={`Tiempo restante: ${dl.label}`}
+                                                            >
+                                                                ⏱ {dl.label}
+                                                            </span>
+                                                        );
+                                                    })()}
                                                 </div>
                                             </div>
                                         </td>
@@ -662,6 +737,29 @@ export default function CandidateMonitoringPage() {
                                         <span className={styles.userName}>{candidate.name}</span>
                                         <span className={styles.userDetail}>{candidate.position}</span>
                                         <span className={styles.userMeta}>{candidate.employeeId || 'Sin ID'}</span>
+                                        {(() => {
+                                            const dl = getDeadlineInfo(candidate);
+                                            if (!dl || candidate.status === 'completed') return null;
+                                            return (
+                                                <span
+                                                    style={{
+                                                        display: 'inline-flex',
+                                                        alignItems: 'center',
+                                                        gap: '4px',
+                                                        marginTop: '4px',
+                                                        fontSize: '0.7rem',
+                                                        fontWeight: 600,
+                                                        padding: '2px 8px',
+                                                        borderRadius: '999px',
+                                                        background: dl.isExpired ? 'rgba(239,68,68,0.15)' : dl.isUrgent ? 'rgba(251,146,60,0.15)' : 'rgba(34,197,94,0.12)',
+                                                        color: dl.isExpired ? '#ef4444' : dl.isUrgent ? '#f97316' : '#16a34a',
+                                                    }}
+                                                    aria-label={`Tiempo restante: ${dl.label}`}
+                                                >
+                                                    ⏱ {dl.label}
+                                                </span>
+                                            );
+                                        })()}
                                     </div>
                                     <span className={`${styles.badge} ${styles[candidate.status]}`}>
                                         {candidate.status === 'completed' ? 'Completado' :

@@ -133,6 +133,13 @@ export default function CandidatosLoginPage() {
                 return;
             }
 
+            // Verificar que sigue siendo candidato activo
+            if (!data.isCandidato) {
+                setError('Este acceso ya no está habilitado. Contacta a Recursos Humanos.');
+                setLoading(false);
+                return;
+            }
+
             if (!data.accessCode || data.accessCode !== accessCode) {
                 setError('Código de acceso incorrecto');
                 handleFailedAttempt();
@@ -140,11 +147,6 @@ export default function CandidatosLoginPage() {
                 return;
             }
 
-            if (!data.accessCodeExpires || Date.now() > data.accessCodeExpires) {
-                setError('Código de acceso expirado. Contacta a Recursos Humanos.');
-                setLoading(false);
-                return;
-            }
 
             const codeUses = data.accessCodeUses || 0;
             if (codeUses >= CONFIG.MAX_CODE_USES) {

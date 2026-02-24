@@ -369,13 +369,12 @@ export default function EmployeesPage() {
     const handleGenerateAccessCode = useCallback(() => {
         const code = Math.floor(100000 + Math.random() * 900000).toString();
         const now = Date.now();
-        const expiresIn3Days = now + (3 * 24 * 60 * 60 * 1000);
 
         setFormData(prev => ({
             ...prev,
             accessCode: code,
             accessCodeGeneratedAt: now,
-            accessCodeExpires: expiresIn3Days,
+            accessCodeExpires: null, // Sin expiración
             accessCodeUses: 0
         }));
 
