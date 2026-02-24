@@ -227,7 +227,7 @@ export default function LoginPage() {
             type: 'text',
             value: identifier,
             onChange: (e) => dispatch({ type: 'SET_FIELD', field: 'identifier', value: e.target.value }),
-            placeholder: 'correo@empresa.com o usuario',
+            placeholder: '••••••••',
             autoComplete: 'username',
         },
         {
