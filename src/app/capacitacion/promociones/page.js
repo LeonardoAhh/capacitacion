@@ -20,11 +20,13 @@ import {
 } from '@/lib/promotionUtils';
 import { seedHistoryData } from '@/lib/seedHistorial';
 import styles from './page.module.css';
+import { useConfirm } from '@/hooks/useConfirm';
 
 export default function PromocionesPage() {
     const { user, loading: authLoading, canWrite } = useAuth();
     const router = useRouter();
     const { toast } = useToast();
+    const { showConfirm, confirmDialog } = useConfirm();
 
     const [loading, setLoading] = useState(true);
     const [employees, setEmployees] = useState([]);
@@ -207,7 +209,7 @@ export default function PromocionesPage() {
     };
 
     const reloadRulesFromJSON = async () => {
-        if (!confirm('¿Eliminar todas las reglas existentes y recargar desde el archivo JSON?')) return;
+        if (!await showConfirm('¿Eliminar todas las reglas existentes y recargar desde el archivo JSON?', { title: 'Recargar Reglas', confirmLabel: 'Recargar', danger: true })) return;
         setLoading(true);
         await seedPromotionRules(true);
         setLoading(false);
@@ -215,7 +217,7 @@ export default function PromocionesPage() {
 
     // Reprocess matrix compliance for all employees
     const handleReprocessCompliance = async () => {
-        if (!confirm('¿Recalcular el cumplimiento de matriz para todos los empleados? Esto puede tomar unos segundos.')) return;
+        if (!await showConfirm('¿Recalcular el cumplimiento de matriz para todos los empleados? Esto puede tomar unos segundos.', { title: 'Recalcular Cumplimiento', confirmLabel: 'Recalcular' })) return;
 
         setReprocessing(true);
         try {
@@ -236,7 +238,7 @@ export default function PromocionesPage() {
 
     // Import promotion data (performance score and position start date) from JSON
     const importPromotionData = async () => {
-        if (!confirm('¿Importar datos de evaluación de desempeño y temporalidad desde ultimosc.json? Esto actualizará los empleados existentes.')) return;
+        if (!await showConfirm('¿Importar datos de evaluación de desempeño y temporalidad desde ultimosc.json? Esto actualizará los empleados existentes.', { title: 'Importar Evaluación', confirmLabel: 'Importar' })) return;
 
         setLoading(true);
         try {
@@ -294,7 +296,7 @@ export default function PromocionesPage() {
 
     // Import exam data from JSON (handles multiple attempts per employee)
     const importExamData = async () => {
-        if (!confirm('¿Importar datos de exámenes desde examens.json? Esto sobrescribirá los intentos de examen existentes.')) return;
+        if (!await showConfirm('¿Importar datos de exámenes desde examens.json? Esto sobrescribirá los intentos de examen existentes.', { title: 'Importar Exámenes', confirmLabel: 'Importar' })) return;
 
         setLoading(true);
         try {
@@ -364,7 +366,7 @@ export default function PromocionesPage() {
 
     // Import shift data from JSON
     const importShiftData = async () => {
-        if (!confirm('¿Importar datos de turnos desde turnos.json? Esto actualizará los empleados existentes.')) return;
+        if (!await showConfirm('¿Importar datos de turnos desde turnos.json? Esto actualizará los empleados existentes.', { title: 'Importar Turnos', confirmLabel: 'Importar' })) return;
 
         setLoading(true);
         try {
@@ -682,7 +684,7 @@ export default function PromocionesPage() {
     };
 
     const handleDeleteRule = async (ruleId) => {
-        if (!confirm('¿Eliminar esta regla de promoción?')) return;
+        if (!await showConfirm('¿Eliminar esta regla de promoción?', { title: 'Eliminar Regla', confirmLabel: 'Eliminar' })) return;
 
         try {
             await deleteDoc(doc(db, 'promotion_rules', ruleId));
@@ -1480,6 +1482,7 @@ export default function PromocionesPage() {
                     <Button onClick={() => setRulesModal(false)}>Cerrar</Button>
                 </DialogFooter>
             </Dialog >
+            {confirmDialog}
         </>
     );
 }

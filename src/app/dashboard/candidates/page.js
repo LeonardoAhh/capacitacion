@@ -219,6 +219,7 @@ export default function CandidateMonitoringPage() {
     const { user, loading: authLoading, updateUserProfile } = useAuth();
     const router = useRouter();
     const { theme } = useTheme();
+    const { showConfirm, confirmDialog } = useConfirm();
 
     // Data fetching hook
     const { loading, error, candidates, coursesMapRef, fetchData } = useDataFetching();
@@ -316,7 +317,7 @@ export default function CandidateMonitoringPage() {
 
     // Archive Handler
     const handleArchiveCandidate = useCallback(async (candidate) => {
-        if (!confirm(`¿Estás seguro de que deseas ${candidate.isArchived ? 'restaurar' : 'archivar'} a ${candidate.name}?`)) return;
+        if (!await showConfirm(`¿Estás seguro de que deseas ${candidate.isArchived ? 'restaurar' : 'archivar'} a ${candidate.name}?`, { title: 'Confirmar Acción', confirmLabel: 'Aceptar' })) return;
 
         try {
             const docRef = doc(db, 'employees', candidate.id);
@@ -331,7 +332,7 @@ export default function CandidateMonitoringPage() {
             console.error('Error updating candidate archive status:', error);
             alert('Error al actualizar el estado del candidato');
         }
-    }, [fetchData]);
+    }, [fetchData, showConfirm]);
 
     const handleAvatarSave = useCallback(async (avatarUrl) => {
         if (user?.uid) {
@@ -434,486 +435,489 @@ export default function CandidateMonitoringPage() {
     }
 
     return (
-        <div className={styles.page}>
-            <AvatarSelector
-                isOpen={showAvatarSelector}
-                onClose={() => setShowAvatarSelector(false)}
-                onSave={handleAvatarSave}
-                userName={user?.name || user?.displayName || 'Usuario'}
-            />
+        <>
+            <div className={styles.page}>
+                <AvatarSelector
+                    isOpen={showAvatarSelector}
+                    onClose={() => setShowAvatarSelector(false)}
+                    onSave={handleAvatarSave}
+                    userName={user?.name || user?.displayName || 'Usuario'}
+                />
 
-            <header className={styles.header}>
-                <div className={styles.headerContent}>
-                    <div className={styles.headerLeft}>
-                        <BackButton href="/dashboard" />
-                        <div className={styles.title}>
-                            <h1>Monitoreo de Candidatos</h1>
-                            <p className={styles.subtitle}>Supervisa el avance de inducción en tiempo real</p>
+                <header className={styles.header}>
+                    <div className={styles.headerContent}>
+                        <div className={styles.headerLeft}>
+                            <BackButton href="/dashboard" />
+                            <div className={styles.title}>
+                                <h1>Monitoreo de Candidatos</h1>
+                                <p className={styles.subtitle}>Supervisa el avance de inducción en tiempo real</p>
+                            </div>
+                        </div>
+                        <div className={styles.headerActions}>
+                            <ProfileDropdown
+                                className={styles.profileDropdown}
+                                onAvatarClick={() => setShowAvatarSelector(true)}
+                            />
                         </div>
                     </div>
-                    <div className={styles.headerActions}>
-                        <ProfileDropdown
-                            className={styles.profileDropdown}
-                            onAvatarClick={() => setShowAvatarSelector(true)}
-                        />
+                </header>
+
+                {/* Stats Overview */}
+                <div className={styles.statsGrid}>
+                    <div className={styles.statCard}>
+                        <div className={`${styles.statIcon} ${styles.blue}`}>
+                            <Users />
+                        </div>
+                        <div className={styles.statContent}>
+                            <h3 className={styles.statValue}>{stats.total}</h3>
+                            <p className={styles.statLabel}>Candidatos Totales</p>
+                        </div>
+                    </div>
+                    <div className={styles.statCard}>
+                        <div className={`${styles.statIcon} ${styles.green}`}>
+                            <CheckCircle />
+                        </div>
+                        <div className={styles.statContent}>
+                            <h3 className={styles.statValue}>{stats.completed}</h3>
+                            <p className={styles.statLabel}>Inducción Completada</p>
+                        </div>
+                    </div>
+                    <div className={styles.statCard}>
+                        <div className={`${styles.statIcon} ${styles.orange}`}>
+                            <Clock />
+                        </div>
+                        <div className={styles.statContent}>
+                            <h3 className={styles.statValue}>{stats.avgProgress}%</h3>
+                            <p className={styles.statLabel}>Progreso Promedio</p>
+                        </div>
+                    </div>
+                    <div className={styles.statCard}>
+                        <div className={`${styles.statIcon} ${styles.red}`}>
+                            <AlertCircle />
+                        </div>
+                        <div className={styles.statContent}>
+                            <h3 className={styles.statValue}>{stats.inactive}</h3>
+                            <p className={styles.statLabel}>Sin Actividad (+2 días)</p>
+                        </div>
                     </div>
                 </div>
-            </header>
 
-            {/* Stats Overview */}
-            <div className={styles.statsGrid}>
-                <div className={styles.statCard}>
-                    <div className={`${styles.statIcon} ${styles.blue}`}>
-                        <Users />
-                    </div>
-                    <div className={styles.statContent}>
-                        <h3 className={styles.statValue}>{stats.total}</h3>
-                        <p className={styles.statLabel}>Candidatos Totales</p>
-                    </div>
-                </div>
-                <div className={styles.statCard}>
-                    <div className={`${styles.statIcon} ${styles.green}`}>
-                        <CheckCircle />
-                    </div>
-                    <div className={styles.statContent}>
-                        <h3 className={styles.statValue}>{stats.completed}</h3>
-                        <p className={styles.statLabel}>Inducción Completada</p>
-                    </div>
-                </div>
-                <div className={styles.statCard}>
-                    <div className={`${styles.statIcon} ${styles.orange}`}>
-                        <Clock />
-                    </div>
-                    <div className={styles.statContent}>
-                        <h3 className={styles.statValue}>{stats.avgProgress}%</h3>
-                        <p className={styles.statLabel}>Progreso Promedio</p>
-                    </div>
-                </div>
-                <div className={styles.statCard}>
-                    <div className={`${styles.statIcon} ${styles.red}`}>
-                        <AlertCircle />
-                    </div>
-                    <div className={styles.statContent}>
-                        <h3 className={styles.statValue}>{stats.inactive}</h3>
-                        <p className={styles.statLabel}>Sin Actividad (+2 días)</p>
-                    </div>
-                </div>
-            </div>
-
-            {/* Search and Filters */}
-            <div className={styles.filterBar}>
-                <div className={styles.filterContent}>
-                    <div className={styles.searchContainer}>
-                        <Search className={styles.searchIcon} size={18} aria-hidden="true" />
-                        <input
-                            type="text"
-                            placeholder="Buscar por nombre, ID o puesto..."
-                            className={styles.searchInput}
-                            value={searchTerm}
-                            onChange={(e) => setSearchTerm(e.target.value)}
-                            aria-label="Buscar candidatos"
-                        />
-                        {searchTerm && (
-                            <button
-                                onClick={() => setSearchTerm('')}
-                                className={styles.clearSearch}
-                                aria-label="Limpiar búsqueda"
-                            >
-                                <X size={16} />
-                            </button>
-                        )}
-                    </div>
-
-                    {/* Desktop Filters */}
-                    <div className={styles.desktopFilters}>
-                        <select
-                            value={statusFilter}
-                            onChange={(e) => setStatusFilter(e.target.value)}
-                            className={styles.statusFilter}
-                            aria-label="Filtrar por estado"
-                        >
-                            <option value="all">Todos los estados</option>
-                            <option value="completed">Completados</option>
-                            <option value="inProgress">En Proceso</option>
-                            <option value="inactive">Inactivos</option>
-                            <option value="notStarted">Sin Iniciar</option>
-                            <option value="archived">🗄️ Archivados</option>
-                        </select>
-                    </div>
-
-                    {/* Mobile Filter Toggle */}
-                    <button
-                        onClick={() => setShowMobileFilters(!showMobileFilters)}
-                        className={styles.mobileFilterToggle}
-                        aria-label="Mostrar filtros"
-                    >
-                        <Filter size={18} />
-                    </button>
-                </div>
-
-                {/* Mobile Filters Panel */}
-                {showMobileFilters && (
-                    <div className={styles.mobileFiltersPanel}>
-                        <select
-                            value={statusFilter}
-                            onChange={(e) => setStatusFilter(e.target.value)}
-                            className={styles.statusFilter}
-                        >
-                            <option value="all">Todos los estados</option>
-                            <option value="completed">Completados</option>
-                            <option value="inProgress">En Proceso</option>
-                            <option value="inactive">Inactivos</option>
-                            <option value="notStarted">Sin Iniciar</option>
-                            <option value="archived">🗄️ Archivados</option>
-                        </select>
-                    </div>
-                )}
-            </div>
-
-            {/* Results Summary */}
-            <div className={styles.resultsInfo}>
-                <span>
-                    Mostrando {filteredCandidates.length} de {candidates.length} candidatos
-                </span>
-            </div>
-
-            {/* Table Container */}
-            <div className={styles.tableCard}>
-                {/* Desktop Table */}
-                <div className={styles.tableContainer}>
-                    <table className={styles.table} role="table">
-                        <thead>
-                            <tr>
-                                <th scope="col">Candidato / Tiempo Restante</th>
-                                <th scope="col">ID Empleado</th>
-                                <th scope="col">Puesto</th>
-                                <th scope="col">Estado</th>
-                                <th scope="col">Progreso General</th>
-                                <th scope="col">Actividad Detallada</th>
-                                <th scope="col">Último Acceso</th>
-                                <th scope="col">WhatsApp</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {filteredCandidates.length > 0 ? (
-                                filteredCandidates.map((candidate) => (
-                                    <tr
-                                        key={candidate.id}
-                                        onClick={() => handleRowClick(candidate)}
-                                        className={styles.tableRow}
-                                        role="button"
-                                        tabIndex={0}
-                                        onKeyDown={(e) => {
-                                            if (e.key === 'Enter' || e.key === ' ') {
-                                                e.preventDefault();
-                                                handleRowClick(candidate);
-                                            }
-                                        }}
-                                        aria-label={`Ver detalles de ${candidate.name}`}
-                                    >
-                                        <td>
-                                            <div className={styles.userCell}>
-                                                <div className={styles.avatar} aria-hidden="true">
-                                                    {candidate.name.charAt(0)}
-                                                </div>
-                                                <div className={styles.userInfo}>
-                                                    <span className={styles.userName}>{candidate.name}</span>
-                                                    <span className={styles.userEmail}>{candidate.curp || 'Sin CURP'}</span>
-                                                    {(() => {
-                                                        const dl = getDeadlineInfo(candidate);
-                                                        if (!dl || candidate.status === 'completed') return null;
-                                                        return (
-                                                            <span
-                                                                className={styles.deadlineTimer}
-                                                                style={{
-                                                                    display: 'inline-flex',
-                                                                    alignItems: 'center',
-                                                                    gap: '4px',
-                                                                    marginTop: '4px',
-                                                                    fontSize: '0.72rem',
-                                                                    fontWeight: 600,
-                                                                    padding: '2px 7px',
-                                                                    borderRadius: '999px',
-                                                                    background: dl.isExpired ? 'rgba(239,68,68,0.15)' : dl.isUrgent ? 'rgba(251,146,60,0.15)' : 'rgba(34,197,94,0.12)',
-                                                                    color: dl.isExpired ? '#ef4444' : dl.isUrgent ? '#f97316' : '#16a34a',
-                                                                }}
-                                                                title={`Fecha límite: 7 días desde su ingreso`}
-                                                                aria-label={`Tiempo restante: ${dl.label}`}
-                                                            >
-                                                                ⏱ {dl.label}
-                                                            </span>
-                                                        );
-                                                    })()}
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td>{candidate.employeeId || 'N/A'}</td>
-                                        <td>{candidate.position}</td>
-                                        <td>
-                                            <span className={`${styles.badge} ${styles[candidate.status]}`}>
-                                                {candidate.status === 'completed' ? '✓ Completado' :
-                                                    candidate.status === 'inProgress' ? '⏳ En Proceso' :
-                                                        candidate.status === 'inactive' ? '⚠ Inactivo' :
-                                                            '○ Sin Iniciar'}
-                                            </span>
-                                        </td>
-                                        <td>
-                                            <div className={styles.progressCell}>
-                                                <div className={styles.progressContainer} aria-label={`Progreso: ${candidate.progress}%`}>
-                                                    <div
-                                                        className={`${styles.progressBar} ${candidate.progress >= 100 ? styles.complete : ''}`}
-                                                        style={{ width: `${candidate.progress}%` }}
-                                                    />
-                                                </div>
-                                                <span className={styles.progressText}>
-                                                    {candidate.completedCount} de {candidate.requiredCount} completados ({candidate.progress}%)
-                                                </span>
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <div className={styles.activityCell}>
-                                                <div className={styles.activityRow}>
-                                                    <div className={styles.activityItem} title="Presentaciones Vistas">
-                                                        <FileText size={14} />
-                                                        {candidate.presentationsViewed} Vistas
-                                                    </div>
-                                                </div>
-                                                <div className={styles.accessCodeInfo} title={`Expira el: ${candidate.accessCodeExpires}`}>
-                                                    <Key size={14} />
-                                                    <span>
-                                                        Code: <strong>{candidate.accessCode}</strong>
-                                                    </span>
-                                                    <span className={styles.usageCount}>
-                                                        ({candidate.accessCodeUses} usos)
-                                                    </span>
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <div className={styles.lastLoginCell}>
-                                                {candidate.daysSinceLastLogin !== null && candidate.daysSinceLastLogin > 2 && candidate.status !== 'completed' && (
-                                                    <Bell size={16} className={styles.inactiveIcon} title="Sin actividad reciente" />
-                                                )}
-                                                <span>{candidate.lastLogin}</span>
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <button
-                                                onClick={(e) => handleWhatsApp(candidate, e)}
-                                                className={styles.whatsappButton}
-                                                title={candidate.phone ? "Enviar mensaje de WhatsApp" : "Sin número de teléfono"}
-                                                disabled={!candidate.phone}
-                                                aria-label={`Enviar WhatsApp a ${candidate.name}`}
-                                            >
-                                                <MessageCircle size={18} />
-                                            </button>
-                                        </td>
-                                    </tr>
-                                ))
-                            ) : (
-                                <tr>
-                                    <td colSpan="8" className={styles.emptyState}>
-                                        No se encontraron candidatos que coincidan con la búsqueda.
-                                    </td>
-                                </tr>
+                {/* Search and Filters */}
+                <div className={styles.filterBar}>
+                    <div className={styles.filterContent}>
+                        <div className={styles.searchContainer}>
+                            <Search className={styles.searchIcon} size={18} aria-hidden="true" />
+                            <input
+                                type="text"
+                                placeholder="Buscar por nombre, ID o puesto..."
+                                className={styles.searchInput}
+                                value={searchTerm}
+                                onChange={(e) => setSearchTerm(e.target.value)}
+                                aria-label="Buscar candidatos"
+                            />
+                            {searchTerm && (
+                                <button
+                                    onClick={() => setSearchTerm('')}
+                                    className={styles.clearSearch}
+                                    aria-label="Limpiar búsqueda"
+                                >
+                                    <X size={16} />
+                                </button>
                             )}
-                        </tbody>
-                    </table>
-                </div>
+                        </div>
 
-                {/* Mobile Cards */}
-                <div className={styles.mobileCards}>
-                    {filteredCandidates.length > 0 ? (
-                        filteredCandidates.map((candidate) => (
-                            <div
-                                key={candidate.id}
-                                className={styles.mobileCard}
-                                onClick={() => handleRowClick(candidate)}
-                                role="button"
-                                tabIndex={0}
-                                onKeyDown={(e) => {
-                                    if (e.key === 'Enter' || e.key === ' ') {
-                                        e.preventDefault();
-                                        handleRowClick(candidate);
-                                    }
-                                }}
-                                aria-label={`Ver detalles de ${candidate.name}`}
+                        {/* Desktop Filters */}
+                        <div className={styles.desktopFilters}>
+                            <select
+                                value={statusFilter}
+                                onChange={(e) => setStatusFilter(e.target.value)}
+                                className={styles.statusFilter}
+                                aria-label="Filtrar por estado"
                             >
-                                <div className={styles.cardHeader}>
-                                    <div className={styles.avatar} aria-hidden="true">
-                                        {candidate.name.charAt(0)}
-                                    </div>
-                                    <div className={styles.cardUserInfo}>
-                                        <span className={styles.userName}>{candidate.name}</span>
-                                        <span className={styles.userDetail}>{candidate.position}</span>
-                                        <span className={styles.userMeta}>{candidate.employeeId || 'Sin ID'}</span>
-                                        {(() => {
-                                            const dl = getDeadlineInfo(candidate);
-                                            if (!dl || candidate.status === 'completed') return null;
-                                            return (
-                                                <span
-                                                    style={{
-                                                        display: 'inline-flex',
-                                                        alignItems: 'center',
-                                                        gap: '4px',
-                                                        marginTop: '4px',
-                                                        fontSize: '0.7rem',
-                                                        fontWeight: 600,
-                                                        padding: '2px 8px',
-                                                        borderRadius: '999px',
-                                                        background: dl.isExpired ? 'rgba(239,68,68,0.15)' : dl.isUrgent ? 'rgba(251,146,60,0.15)' : 'rgba(34,197,94,0.12)',
-                                                        color: dl.isExpired ? '#ef4444' : dl.isUrgent ? '#f97316' : '#16a34a',
-                                                    }}
-                                                    aria-label={`Tiempo restante: ${dl.label}`}
-                                                >
-                                                    ⏱ {dl.label}
-                                                </span>
-                                            );
-                                        })()}
-                                    </div>
-                                    <span className={`${styles.badge} ${styles[candidate.status]}`}>
-                                        {candidate.status === 'completed' ? 'Completado' :
-                                            candidate.status === 'inProgress' ? 'En Proceso' :
-                                                candidate.status === 'inactive' ? 'Inactivo' : 'Pendiente'}
-                                    </span>
-                                </div>
+                                <option value="all">Todos los estados</option>
+                                <option value="completed">Completados</option>
+                                <option value="inProgress">En Proceso</option>
+                                <option value="inactive">Inactivos</option>
+                                <option value="notStarted">Sin Iniciar</option>
+                                <option value="archived">🗄️ Archivados</option>
+                            </select>
+                        </div>
 
-                                <div className={styles.cardBody}>
-                                    <div className={styles.progressSection}>
-                                        <div className={styles.progressHeader}>
-                                            <span className={styles.progressLabel}>Progreso de Inducción</span>
-                                            <span className={styles.progressPercentage}>{candidate.progress}%</span>
-                                        </div>
-                                        <div className={styles.progressContainer} aria-label={`Progreso: ${candidate.progress}%`}>
-                                            <div
-                                                className={`${styles.progressBar} ${candidate.progress >= 100 ? styles.complete : ''}`}
-                                                style={{ width: `${candidate.progress}%` }}
-                                            />
-                                        </div>
-                                        <div className={styles.progressDetail}>
-                                            {candidate.completedCount} de {candidate.requiredCount} cursos completados
-                                        </div>
-                                    </div>
+                        {/* Mobile Filter Toggle */}
+                        <button
+                            onClick={() => setShowMobileFilters(!showMobileFilters)}
+                            className={styles.mobileFilterToggle}
+                            aria-label="Mostrar filtros"
+                        >
+                            <Filter size={18} />
+                        </button>
+                    </div>
 
-                                    <div className={styles.activitySection}>
-                                        <div className={styles.activityItem}>
-                                            <FileText size={14} />
-                                            <span>{candidate.presentationsViewed} Presentaciones vistas</span>
-                                        </div>
-                                        <div className={styles.accessCodeItem}>
-                                            <Key size={14} />
-                                            <div className={styles.accessCodeDetails}>
-                                                <span className={styles.accessCode}>Code: {candidate.accessCode}</span>
-                                                <span className={styles.accessCodeMeta}>
-                                                    {candidate.accessCodeUses} usos · Expira: {candidate.accessCodeExpires}
-                                                </span>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div className={styles.lastLoginSection}>
-                                        <div className={styles.lastLoginInfo}>
-                                            <span className={styles.lastLoginLabel}>Último acceso:</span>
-                                            <span className={styles.lastLoginValue}>{candidate.lastLogin}</span>
-                                            {candidate.daysSinceLastLogin !== null && candidate.daysSinceLastLogin > 2 && candidate.status !== 'completed' && (
-                                                <Bell size={16} className={styles.inactiveIcon} title="Sin actividad reciente" />
-                                            )}
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div className={styles.cardActions}>
-                                    <button
-                                        className={styles.viewDetailButton}
-                                        aria-label={`Ver detalles de ${candidate.name}`}
-                                        onClick={(e) => {
-                                            e.stopPropagation();
-                                            handleRowClick(candidate);
-                                        }}
-                                    >
-                                        Ver Detalle
-                                    </button>
-
-                                    <button
-                                        onClick={(e) => handleWhatsApp(candidate, e)}
-                                        className={styles.whatsappButton}
-                                        title={candidate.phone ? "Enviar mensaje por WhatsApp" : "Sin número de teléfono"}
-                                        disabled={!candidate.phone}
-                                        aria-label={`Enviar WhatsApp a ${candidate.name}`}
-                                    >
-                                        <MessageCircle size={18} aria-hidden="true" />
-                                    </button>
-                                </div>
-                            </div>
-                        ))
-                    ) : (
-                        <div className={styles.emptyState}>
-                            No se encontraron candidatos que coincidan con la búsqueda.
+                    {/* Mobile Filters Panel */}
+                    {showMobileFilters && (
+                        <div className={styles.mobileFiltersPanel}>
+                            <select
+                                value={statusFilter}
+                                onChange={(e) => setStatusFilter(e.target.value)}
+                                className={styles.statusFilter}
+                            >
+                                <option value="all">Todos los estados</option>
+                                <option value="completed">Completados</option>
+                                <option value="inProgress">En Proceso</option>
+                                <option value="inactive">Inactivos</option>
+                                <option value="notStarted">Sin Iniciar</option>
+                                <option value="archived">🗄️ Archivados</option>
+                            </select>
                         </div>
                     )}
                 </div>
 
-                {/* Global Candidate Drawer */}
-                <CandidateDrawer
-                    candidate={selectedCandidate}
-                    coursesMap={coursesMapRef}
-                    open={isDrawerOpen}
-                    onOpenChange={setIsDrawerOpen}
-                    onArchive={() => handleArchiveCandidate(selectedCandidate)}
-                />
-            </div>
+                {/* Results Summary */}
+                <div className={styles.resultsInfo}>
+                    <span>
+                        Mostrando {filteredCandidates.length} de {candidates.length} candidatos
+                    </span>
+                </div>
 
-            {/* WhatsApp Modal — al nivel raíz para no requerir scroll y correcto z-index */}
-            {whatsappModal.isOpen && (
-                <div
-                    className={styles.modalOverlay}
-                    onClick={() => setWhatsappModal({ isOpen: false, candidate: null })}
-                    role="dialog"
-                    aria-modal="true"
-                    aria-labelledby="modal-title"
-                    style={{ position: 'fixed', inset: 0, zIndex: 1000 }}
-                >
-                    <div className={styles.modalContent} onClick={(e) => e.stopPropagation()}>
-                        <div className={styles.modalHeader}>
-                            <h3 id="modal-title">
-                                <MessageCircle size={24} style={{ marginRight: '8px' }} aria-hidden="true" />
-                                Selecciona un Mensaje
-                            </h3>
-                            <button
-                                className={styles.modalCloseBtn}
-                                onClick={() => setWhatsappModal({ isOpen: false, candidate: null })}
-                                aria-label="Cerrar modal"
-                            >
-                                ×
-                            </button>
-                        </div>
+                {/* Table Container */}
+                <div className={styles.tableCard}>
+                    {/* Desktop Table */}
+                    <div className={styles.tableContainer}>
+                        <table className={styles.table} role="table">
+                            <thead>
+                                <tr>
+                                    <th scope="col">Candidato / Tiempo Restante</th>
+                                    <th scope="col">ID Empleado</th>
+                                    <th scope="col">Puesto</th>
+                                    <th scope="col">Estado</th>
+                                    <th scope="col">Progreso General</th>
+                                    <th scope="col">Actividad Detallada</th>
+                                    <th scope="col">Último Acceso</th>
+                                    <th scope="col">WhatsApp</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {filteredCandidates.length > 0 ? (
+                                    filteredCandidates.map((candidate) => (
+                                        <tr
+                                            key={candidate.id}
+                                            onClick={() => handleRowClick(candidate)}
+                                            className={styles.tableRow}
+                                            role="button"
+                                            tabIndex={0}
+                                            onKeyDown={(e) => {
+                                                if (e.key === 'Enter' || e.key === ' ') {
+                                                    e.preventDefault();
+                                                    handleRowClick(candidate);
+                                                }
+                                            }}
+                                            aria-label={`Ver detalles de ${candidate.name}`}
+                                        >
+                                            <td>
+                                                <div className={styles.userCell}>
+                                                    <div className={styles.avatar} aria-hidden="true">
+                                                        {candidate.name.charAt(0)}
+                                                    </div>
+                                                    <div className={styles.userInfo}>
+                                                        <span className={styles.userName}>{candidate.name}</span>
+                                                        <span className={styles.userEmail}>{candidate.curp || 'Sin CURP'}</span>
+                                                        {(() => {
+                                                            const dl = getDeadlineInfo(candidate);
+                                                            if (!dl || candidate.status === 'completed') return null;
+                                                            return (
+                                                                <span
+                                                                    className={styles.deadlineTimer}
+                                                                    style={{
+                                                                        display: 'inline-flex',
+                                                                        alignItems: 'center',
+                                                                        gap: '4px',
+                                                                        marginTop: '4px',
+                                                                        fontSize: '0.72rem',
+                                                                        fontWeight: 600,
+                                                                        padding: '2px 7px',
+                                                                        borderRadius: '999px',
+                                                                        background: dl.isExpired ? 'rgba(239,68,68,0.15)' : dl.isUrgent ? 'rgba(251,146,60,0.15)' : 'rgba(34,197,94,0.12)',
+                                                                        color: dl.isExpired ? '#ef4444' : dl.isUrgent ? '#f97316' : '#16a34a',
+                                                                    }}
+                                                                    title={`Fecha límite: 7 días desde su ingreso`}
+                                                                    aria-label={`Tiempo restante: ${dl.label}`}
+                                                                >
+                                                                    ⏱ {dl.label}
+                                                                </span>
+                                                            );
+                                                        })()}
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td>{candidate.employeeId || 'N/A'}</td>
+                                            <td>{candidate.position}</td>
+                                            <td>
+                                                <span className={`${styles.badge} ${styles[candidate.status]}`}>
+                                                    {candidate.status === 'completed' ? '✓ Completado' :
+                                                        candidate.status === 'inProgress' ? '⏳ En Proceso' :
+                                                            candidate.status === 'inactive' ? '⚠ Inactivo' :
+                                                                '○ Sin Iniciar'}
+                                                </span>
+                                            </td>
+                                            <td>
+                                                <div className={styles.progressCell}>
+                                                    <div className={styles.progressContainer} aria-label={`Progreso: ${candidate.progress}%`}>
+                                                        <div
+                                                            className={`${styles.progressBar} ${candidate.progress >= 100 ? styles.complete : ''}`}
+                                                            style={{ width: `${candidate.progress}%` }}
+                                                        />
+                                                    </div>
+                                                    <span className={styles.progressText}>
+                                                        {candidate.completedCount} de {candidate.requiredCount} completados ({candidate.progress}%)
+                                                    </span>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div className={styles.activityCell}>
+                                                    <div className={styles.activityRow}>
+                                                        <div className={styles.activityItem} title="Presentaciones Vistas">
+                                                            <FileText size={14} />
+                                                            {candidate.presentationsViewed} Vistas
+                                                        </div>
+                                                    </div>
+                                                    <div className={styles.accessCodeInfo} title={`Expira el: ${candidate.accessCodeExpires}`}>
+                                                        <Key size={14} />
+                                                        <span>
+                                                            Code: <strong>{candidate.accessCode}</strong>
+                                                        </span>
+                                                        <span className={styles.usageCount}>
+                                                            ({candidate.accessCodeUses} usos)
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div className={styles.lastLoginCell}>
+                                                    {candidate.daysSinceLastLogin !== null && candidate.daysSinceLastLogin > 2 && candidate.status !== 'completed' && (
+                                                        <Bell size={16} className={styles.inactiveIcon} title="Sin actividad reciente" />
+                                                    )}
+                                                    <span>{candidate.lastLogin}</span>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <button
+                                                    onClick={(e) => handleWhatsApp(candidate, e)}
+                                                    className={styles.whatsappButton}
+                                                    title={candidate.phone ? "Enviar mensaje de WhatsApp" : "Sin número de teléfono"}
+                                                    disabled={!candidate.phone}
+                                                    aria-label={`Enviar WhatsApp a ${candidate.name}`}
+                                                >
+                                                    <MessageCircle size={18} />
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    ))
+                                ) : (
+                                    <tr>
+                                        <td colSpan="8" className={styles.emptyState}>
+                                            No se encontraron candidatos que coincidan con la búsqueda.
+                                        </td>
+                                    </tr>
+                                )}
+                            </tbody>
+                        </table>
+                    </div>
 
-                        <div className={styles.modalBody}>
-                            <p className={styles.modalSubtitle}>
-                                Enviando mensaje a: <strong>{whatsappModal.candidate?.name}</strong>
-                            </p>
-
-                            <div className={styles.messageTemplates}>
-                                {messageTemplates.map(template => (
-                                    <button
-                                        key={template.id}
-                                        className={styles.templateButton}
-                                        onClick={(e) => {
-                                            e.stopPropagation(); // evita cierre accidental en móvil
-                                            sendWhatsAppMessage(template);
-                                        }}
-                                    >
-                                        <div className={styles.templateTitle}>{template.title}</div>
-                                        <div className={styles.templatePreview}>
-                                            {template.message(whatsappModal.candidate?.name || 'Candidato', whatsappModal.candidate)}
+                    {/* Mobile Cards */}
+                    <div className={styles.mobileCards}>
+                        {filteredCandidates.length > 0 ? (
+                            filteredCandidates.map((candidate) => (
+                                <div
+                                    key={candidate.id}
+                                    className={styles.mobileCard}
+                                    onClick={() => handleRowClick(candidate)}
+                                    role="button"
+                                    tabIndex={0}
+                                    onKeyDown={(e) => {
+                                        if (e.key === 'Enter' || e.key === ' ') {
+                                            e.preventDefault();
+                                            handleRowClick(candidate);
+                                        }
+                                    }}
+                                    aria-label={`Ver detalles de ${candidate.name}`}
+                                >
+                                    <div className={styles.cardHeader}>
+                                        <div className={styles.avatar} aria-hidden="true">
+                                            {candidate.name.charAt(0)}
                                         </div>
-                                    </button>
-                                ))}
+                                        <div className={styles.cardUserInfo}>
+                                            <span className={styles.userName}>{candidate.name}</span>
+                                            <span className={styles.userDetail}>{candidate.position}</span>
+                                            <span className={styles.userMeta}>{candidate.employeeId || 'Sin ID'}</span>
+                                            {(() => {
+                                                const dl = getDeadlineInfo(candidate);
+                                                if (!dl || candidate.status === 'completed') return null;
+                                                return (
+                                                    <span
+                                                        style={{
+                                                            display: 'inline-flex',
+                                                            alignItems: 'center',
+                                                            gap: '4px',
+                                                            marginTop: '4px',
+                                                            fontSize: '0.7rem',
+                                                            fontWeight: 600,
+                                                            padding: '2px 8px',
+                                                            borderRadius: '999px',
+                                                            background: dl.isExpired ? 'rgba(239,68,68,0.15)' : dl.isUrgent ? 'rgba(251,146,60,0.15)' : 'rgba(34,197,94,0.12)',
+                                                            color: dl.isExpired ? '#ef4444' : dl.isUrgent ? '#f97316' : '#16a34a',
+                                                        }}
+                                                        aria-label={`Tiempo restante: ${dl.label}`}
+                                                    >
+                                                        ⏱ {dl.label}
+                                                    </span>
+                                                );
+                                            })()}
+                                        </div>
+                                        <span className={`${styles.badge} ${styles[candidate.status]}`}>
+                                            {candidate.status === 'completed' ? 'Completado' :
+                                                candidate.status === 'inProgress' ? 'En Proceso' :
+                                                    candidate.status === 'inactive' ? 'Inactivo' : 'Pendiente'}
+                                        </span>
+                                    </div>
+
+                                    <div className={styles.cardBody}>
+                                        <div className={styles.progressSection}>
+                                            <div className={styles.progressHeader}>
+                                                <span className={styles.progressLabel}>Progreso de Inducción</span>
+                                                <span className={styles.progressPercentage}>{candidate.progress}%</span>
+                                            </div>
+                                            <div className={styles.progressContainer} aria-label={`Progreso: ${candidate.progress}%`}>
+                                                <div
+                                                    className={`${styles.progressBar} ${candidate.progress >= 100 ? styles.complete : ''}`}
+                                                    style={{ width: `${candidate.progress}%` }}
+                                                />
+                                            </div>
+                                            <div className={styles.progressDetail}>
+                                                {candidate.completedCount} de {candidate.requiredCount} cursos completados
+                                            </div>
+                                        </div>
+
+                                        <div className={styles.activitySection}>
+                                            <div className={styles.activityItem}>
+                                                <FileText size={14} />
+                                                <span>{candidate.presentationsViewed} Presentaciones vistas</span>
+                                            </div>
+                                            <div className={styles.accessCodeItem}>
+                                                <Key size={14} />
+                                                <div className={styles.accessCodeDetails}>
+                                                    <span className={styles.accessCode}>Code: {candidate.accessCode}</span>
+                                                    <span className={styles.accessCodeMeta}>
+                                                        {candidate.accessCodeUses} usos · Expira: {candidate.accessCodeExpires}
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div className={styles.lastLoginSection}>
+                                            <div className={styles.lastLoginInfo}>
+                                                <span className={styles.lastLoginLabel}>Último acceso:</span>
+                                                <span className={styles.lastLoginValue}>{candidate.lastLogin}</span>
+                                                {candidate.daysSinceLastLogin !== null && candidate.daysSinceLastLogin > 2 && candidate.status !== 'completed' && (
+                                                    <Bell size={16} className={styles.inactiveIcon} title="Sin actividad reciente" />
+                                                )}
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div className={styles.cardActions}>
+                                        <button
+                                            className={styles.viewDetailButton}
+                                            aria-label={`Ver detalles de ${candidate.name}`}
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                handleRowClick(candidate);
+                                            }}
+                                        >
+                                            Ver Detalle
+                                        </button>
+
+                                        <button
+                                            onClick={(e) => handleWhatsApp(candidate, e)}
+                                            className={styles.whatsappButton}
+                                            title={candidate.phone ? "Enviar mensaje por WhatsApp" : "Sin número de teléfono"}
+                                            disabled={!candidate.phone}
+                                            aria-label={`Enviar WhatsApp a ${candidate.name}`}
+                                        >
+                                            <MessageCircle size={18} aria-hidden="true" />
+                                        </button>
+                                    </div>
+                                </div>
+                            ))
+                        ) : (
+                            <div className={styles.emptyState}>
+                                No se encontraron candidatos que coincidan con la búsqueda.
+                            </div>
+                        )}
+                    </div>
+
+                    {/* Global Candidate Drawer */}
+                    <CandidateDrawer
+                        candidate={selectedCandidate}
+                        coursesMap={coursesMapRef}
+                        open={isDrawerOpen}
+                        onOpenChange={setIsDrawerOpen}
+                        onArchive={() => handleArchiveCandidate(selectedCandidate)}
+                    />
+                </div>
+
+                {/* WhatsApp Modal — al nivel raíz para no requerir scroll y correcto z-index */}
+                {whatsappModal.isOpen && (
+                    <div
+                        className={styles.modalOverlay}
+                        onClick={() => setWhatsappModal({ isOpen: false, candidate: null })}
+                        role="dialog"
+                        aria-modal="true"
+                        aria-labelledby="modal-title"
+                        style={{ position: 'fixed', inset: 0, zIndex: 1000 }}
+                    >
+                        <div className={styles.modalContent} onClick={(e) => e.stopPropagation()}>
+                            <div className={styles.modalHeader}>
+                                <h3 id="modal-title">
+                                    <MessageCircle size={24} style={{ marginRight: '8px' }} aria-hidden="true" />
+                                    Selecciona un Mensaje
+                                </h3>
+                                <button
+                                    className={styles.modalCloseBtn}
+                                    onClick={() => setWhatsappModal({ isOpen: false, candidate: null })}
+                                    aria-label="Cerrar modal"
+                                >
+                                    ×
+                                </button>
+                            </div>
+
+                            <div className={styles.modalBody}>
+                                <p className={styles.modalSubtitle}>
+                                    Enviando mensaje a: <strong>{whatsappModal.candidate?.name}</strong>
+                                </p>
+
+                                <div className={styles.messageTemplates}>
+                                    {messageTemplates.map(template => (
+                                        <button
+                                            key={template.id}
+                                            className={styles.templateButton}
+                                            onClick={(e) => {
+                                                e.stopPropagation(); // evita cierre accidental en móvil
+                                                sendWhatsAppMessage(template);
+                                            }}
+                                        >
+                                            <div className={styles.templateTitle}>{template.title}</div>
+                                            <div className={styles.templatePreview}>
+                                                {template.message(whatsappModal.candidate?.name || 'Candidato', whatsappModal.candidate)}
+                                            </div>
+                                        </button>
+                                    ))}
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
-            )}
-        </div>
+                )}
+            </div>
+            {confirmDialog}
+        </>
     );
 }

@@ -9,9 +9,11 @@ import { useToast } from '@/components/ui/Toast/Toast';
 import { Button } from '@/components/ui/Button/Button';
 
 import styles from './QuestionManager.module.css';
+import { useConfirm } from '@/hooks/useConfirm';
 
 export default function QuestionManager({ isOpen, onClose }) {
     const { toast } = useToast();
+    const { showConfirm, confirmDialog } = useConfirm();
     const [questions, setQuestions] = useState([]);
     const [loading, setLoading] = useState(false);
     const [searchTerm, setSearchTerm] = useState('');
@@ -88,7 +90,7 @@ export default function QuestionManager({ isOpen, onClose }) {
     };
 
     const handleDelete = async (id) => {
-        if (!window.confirm("¿Seguro que deseas eliminar esta pregunta?")) return;
+        if (!await showConfirm("¿Seguro que deseas eliminar esta pregunta?", { title: 'Eliminar Pregunta', confirmLabel: 'Eliminar' })) return;
 
         try {
             await deleteDoc(doc(db, 'exam_questions', id));
@@ -152,213 +154,216 @@ export default function QuestionManager({ isOpen, onClose }) {
 
 
     return (
-        <AnimatePresence>
-            {isOpen && (
-                <>
-                    <motion.div
-                        className={styles.overlay}
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        exit={{ opacity: 0 }}
-                        onClick={onClose}
-                    />
+        <>
+            <AnimatePresence>
+                {isOpen && (
+                    <>
+                        <motion.div
+                            className={styles.overlay}
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            exit={{ opacity: 0 }}
+                            onClick={onClose}
+                        />
 
-                    <motion.div
-                        className={styles.panel}
-                        initial={{ x: '100%' }}
-                        animate={{ x: 0 }}
-                        exit={{ x: '100%' }}
-                        transition={{ type: "spring", damping: 25, stiffness: 200 }}
-                    >
-                        <div className={styles.header}>
-                            <h2>{editingQuestion ? (editingQuestion.id ? 'Editar Pregunta' : 'Nueva Pregunta') : 'Gestión de Preguntas'}</h2>
-                            <button onClick={onClose} className={styles.closeBtn}><X size={24} /></button>
-                        </div>
+                        <motion.div
+                            className={styles.panel}
+                            initial={{ x: '100%' }}
+                            animate={{ x: 0 }}
+                            exit={{ x: '100%' }}
+                            transition={{ type: "spring", damping: 25, stiffness: 200 }}
+                        >
+                            <div className={styles.header}>
+                                <h2>{editingQuestion ? (editingQuestion.id ? 'Editar Pregunta' : 'Nueva Pregunta') : 'Gestión de Preguntas'}</h2>
+                                <button onClick={onClose} className={styles.closeBtn}><X size={24} /></button>
+                            </div>
 
-                        <div className={styles.content}>
-                            {editingQuestion ? (
-                                // ===== EDITOR FORM =====
-                                <form onSubmit={handleSave} className={styles.form}>
-                                    <div className={styles.formGroup}>
-                                        <label>Pregunta</label>
-                                        <textarea
-                                            className={styles.textarea}
-                                            value={formData.question}
-                                            onChange={e => setFormData({ ...formData, question: e.target.value })}
-                                            placeholder="Escribe la pregunta..."
-                                            rows={3}
-                                        />
-                                    </div>
-
-                                    <div className={styles.formGroup}>
-                                        <label>Departamento</label>
-                                        <select
-                                            className={styles.select}
-                                            value={formData.department}
-                                            onChange={e => setFormData({ ...formData, department: e.target.value })}
-                                        >
-                                            <option value="Producción">Producción</option>
-                                            <option value="Calidad">Calidad</option>
-                                            <option value="Moldes">Moldes</option>
-                                            <option value="Recursos Humanos">Recursos Humanos</option>
-                                        </select>
-                                    </div>
-
-                                    <div className={styles.formGroup}>
-                                        <label>Tema</label>
-                                        <input
-                                            className={styles.input}
-                                            value={formData.theme}
-                                            onChange={e => setFormData({ ...formData, theme: e.target.value })}
-                                            placeholder="Ej. Seguridad, Calidad..."
-                                        />
-                                    </div>
-
-                                    <div className={styles.formGroup}>
-                                        <label>Tipo</label>
-                                        <select
-                                            className={styles.select}
-                                            value={formData.type}
-                                            onChange={e => setFormData({ ...formData, type: e.target.value })}
-                                        >
-                                            <option value="Múltiple">Opción Múltiple</option>
-                                            <option value="Abierta">Abierta</option>
-                                        </select>
-                                    </div>
-
-
-
-                                    <div className={styles.formGroup} style={{ flexDirection: 'row', alignItems: 'center', gap: '10px' }}>
-                                        <input
-                                            type="checkbox"
-                                            id="isFixed"
-                                            checked={formData.isFixed}
-                                            onChange={e => setFormData({ ...formData, isFixed: e.target.checked })}
-                                            style={{ width: 'auto', margin: 0 }}
-                                        />
-                                        <label htmlFor="isFixed" style={{ marginBottom: 0, cursor: 'pointer' }}>Pregunta Fija (Siempre aparecerá en el examen)</label>
-                                    </div>
-
-                                    {formData.type === 'Múltiple' && (
-                                        <div className={styles.optionsGrid}>
-                                            <div className={styles.formGroup}>
-                                                <label>Opción A</label>
-                                                <input
-                                                    className={styles.input}
-                                                    value={formData.options.a}
-                                                    onChange={e => setFormData({ ...formData, options: { ...formData.options, a: e.target.value } })}
-                                                />
-                                            </div>
-                                            <div className={styles.formGroup}>
-                                                <label>Opción B</label>
-                                                <input
-                                                    className={styles.input}
-                                                    value={formData.options.b}
-                                                    onChange={e => setFormData({ ...formData, options: { ...formData.options, b: e.target.value } })}
-                                                />
-                                            </div>
-                                            <div className={styles.formGroup}>
-                                                <label>Opción C</label>
-                                                <input
-                                                    className={styles.input}
-                                                    value={formData.options.c}
-                                                    onChange={e => setFormData({ ...formData, options: { ...formData.options, c: e.target.value } })}
-                                                />
-                                            </div>
-                                            <div className={styles.formGroup}>
-                                                <label>Respuesta Correcta</label>
-                                                <select
-                                                    className={styles.select}
-                                                    value={formData.correctAnswer}
-                                                    onChange={e => setFormData({ ...formData, correctAnswer: e.target.value })}
-                                                >
-                                                    <option value="a">Opción A</option>
-                                                    <option value="b">Opción B</option>
-                                                    <option value="c">Opción C</option>
-                                                </select>
-                                            </div>
-                                        </div>
-                                    )}
-
-                                    <div className={styles.formActions}>
-                                        <button type="button" onClick={() => setEditingQuestion(null)} className={styles.cancelBtn}>Cancelar</button>
-                                        <button type="submit" disabled={saving} className={styles.submitBtn}>
-                                            {saving ? 'Guardando...' : 'Guardar'}
-                                        </button>
-                                    </div>
-                                </form>
-                            ) : (
-                                // ===== LIST VIEW =====
-                                <>
-                                    <div className={styles.searchBar}>
-                                        <div style={{ position: 'relative', flex: 1 }}>
-                                            <Search size={18} style={{ position: 'absolute', left: 10, top: 12, color: 'gray' }} />
-                                            <input
-                                                className={styles.searchInput}
-                                                style={{ paddingLeft: '35px' }}
-                                                placeholder="Buscar preguntas..."
-                                                value={searchTerm}
-                                                onChange={(e) => setSearchTerm(e.target.value)}
+                            <div className={styles.content}>
+                                {editingQuestion ? (
+                                    // ===== EDITOR FORM =====
+                                    <form onSubmit={handleSave} className={styles.form}>
+                                        <div className={styles.formGroup}>
+                                            <label>Pregunta</label>
+                                            <textarea
+                                                className={styles.textarea}
+                                                value={formData.question}
+                                                onChange={e => setFormData({ ...formData, question: e.target.value })}
+                                                placeholder="Escribe la pregunta..."
+                                                rows={3}
                                             />
                                         </div>
-                                        <select
-                                            className={styles.select}
-                                            style={{ width: '220px', marginLeft: '10px' }}
-                                            value={selectedDept}
-                                            onChange={(e) => setSelectedDept(e.target.value)}
-                                        >
-                                            <option value="Todos">Todos</option>
-                                            <option value="Producción">Producción</option>
-                                            <option value="Calidad">Calidad</option>
-                                            <option value="Moldes">Moldes</option>
-                                            <option value="Recursos Humanos">Recursos Humanos</option>
-                                        </select>
-                                    </div>
 
-                                    <Button onClick={handleCreate} className={styles.addButton}>
-                                        <Plus size={18} style={{ marginRight: 8 }} />
-                                        Nueva Pregunta
-                                    </Button>
-
-
-
-
-                                    {loading ? (
-                                        <div className={styles.loading}>Cargando preguntas...</div>
-                                    ) : (
-                                        <div className={styles.questionList}>
-                                            {filteredQuestions.map(q => (
-                                                <div key={q.id} className={styles.questionCard}>
-                                                    <div className={styles.questionHeader}>
-                                                        <span className={styles.badge}>{q.department || 'Producción'}</span>
-                                                        <span className={styles.badge}>{q.theme || 'General'}</span>
-                                                        <span className={styles.badge}>{q.type}</span>
-                                                        {q.isFixed && <span className={styles.badge} style={{ backgroundColor: '#ffd700', color: '#000' }}>★ Fija</span>}
-                                                    </div>
-                                                    <p className={styles.questionText}>{q.question}</p>
-                                                    <div className={styles.actions}>
-                                                        <button onClick={() => handleEdit(q)} className={`${styles.actionBtn} ${styles.editBtn}`}>
-                                                            <Edit2 size={16} />
-                                                        </button>
-                                                        <button onClick={() => handleDelete(q.id)} className={`${styles.actionBtn} ${styles.deleteBtn}`}>
-                                                            <Trash2 size={16} />
-                                                        </button>
-                                                    </div>
-                                                </div>
-                                            ))}
-                                            {filteredQuestions.length === 0 && (
-                                                <div className={styles.loading}>No se encontraron preguntas.</div>
-                                            )}
+                                        <div className={styles.formGroup}>
+                                            <label>Departamento</label>
+                                            <select
+                                                className={styles.select}
+                                                value={formData.department}
+                                                onChange={e => setFormData({ ...formData, department: e.target.value })}
+                                            >
+                                                <option value="Producción">Producción</option>
+                                                <option value="Calidad">Calidad</option>
+                                                <option value="Moldes">Moldes</option>
+                                                <option value="Recursos Humanos">Recursos Humanos</option>
+                                            </select>
                                         </div>
-                                    )}
 
-                                    {/* MIGRATION TOOLS (REMOVED) */}
-                                </>
-                            )}
-                        </div>
-                    </motion.div>
-                </>
-            )}
-        </AnimatePresence>
+                                        <div className={styles.formGroup}>
+                                            <label>Tema</label>
+                                            <input
+                                                className={styles.input}
+                                                value={formData.theme}
+                                                onChange={e => setFormData({ ...formData, theme: e.target.value })}
+                                                placeholder="Ej. Seguridad, Calidad..."
+                                            />
+                                        </div>
+
+                                        <div className={styles.formGroup}>
+                                            <label>Tipo</label>
+                                            <select
+                                                className={styles.select}
+                                                value={formData.type}
+                                                onChange={e => setFormData({ ...formData, type: e.target.value })}
+                                            >
+                                                <option value="Múltiple">Opción Múltiple</option>
+                                                <option value="Abierta">Abierta</option>
+                                            </select>
+                                        </div>
+
+
+
+                                        <div className={styles.formGroup} style={{ flexDirection: 'row', alignItems: 'center', gap: '10px' }}>
+                                            <input
+                                                type="checkbox"
+                                                id="isFixed"
+                                                checked={formData.isFixed}
+                                                onChange={e => setFormData({ ...formData, isFixed: e.target.checked })}
+                                                style={{ width: 'auto', margin: 0 }}
+                                            />
+                                            <label htmlFor="isFixed" style={{ marginBottom: 0, cursor: 'pointer' }}>Pregunta Fija (Siempre aparecerá en el examen)</label>
+                                        </div>
+
+                                        {formData.type === 'Múltiple' && (
+                                            <div className={styles.optionsGrid}>
+                                                <div className={styles.formGroup}>
+                                                    <label>Opción A</label>
+                                                    <input
+                                                        className={styles.input}
+                                                        value={formData.options.a}
+                                                        onChange={e => setFormData({ ...formData, options: { ...formData.options, a: e.target.value } })}
+                                                    />
+                                                </div>
+                                                <div className={styles.formGroup}>
+                                                    <label>Opción B</label>
+                                                    <input
+                                                        className={styles.input}
+                                                        value={formData.options.b}
+                                                        onChange={e => setFormData({ ...formData, options: { ...formData.options, b: e.target.value } })}
+                                                    />
+                                                </div>
+                                                <div className={styles.formGroup}>
+                                                    <label>Opción C</label>
+                                                    <input
+                                                        className={styles.input}
+                                                        value={formData.options.c}
+                                                        onChange={e => setFormData({ ...formData, options: { ...formData.options, c: e.target.value } })}
+                                                    />
+                                                </div>
+                                                <div className={styles.formGroup}>
+                                                    <label>Respuesta Correcta</label>
+                                                    <select
+                                                        className={styles.select}
+                                                        value={formData.correctAnswer}
+                                                        onChange={e => setFormData({ ...formData, correctAnswer: e.target.value })}
+                                                    >
+                                                        <option value="a">Opción A</option>
+                                                        <option value="b">Opción B</option>
+                                                        <option value="c">Opción C</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        )}
+
+                                        <div className={styles.formActions}>
+                                            <button type="button" onClick={() => setEditingQuestion(null)} className={styles.cancelBtn}>Cancelar</button>
+                                            <button type="submit" disabled={saving} className={styles.submitBtn}>
+                                                {saving ? 'Guardando...' : 'Guardar'}
+                                            </button>
+                                        </div>
+                                    </form>
+                                ) : (
+                                    // ===== LIST VIEW =====
+                                    <>
+                                        <div className={styles.searchBar}>
+                                            <div style={{ position: 'relative', flex: 1 }}>
+                                                <Search size={18} style={{ position: 'absolute', left: 10, top: 12, color: 'gray' }} />
+                                                <input
+                                                    className={styles.searchInput}
+                                                    style={{ paddingLeft: '35px' }}
+                                                    placeholder="Buscar preguntas..."
+                                                    value={searchTerm}
+                                                    onChange={(e) => setSearchTerm(e.target.value)}
+                                                />
+                                            </div>
+                                            <select
+                                                className={styles.select}
+                                                style={{ width: '220px', marginLeft: '10px' }}
+                                                value={selectedDept}
+                                                onChange={(e) => setSelectedDept(e.target.value)}
+                                            >
+                                                <option value="Todos">Todos</option>
+                                                <option value="Producción">Producción</option>
+                                                <option value="Calidad">Calidad</option>
+                                                <option value="Moldes">Moldes</option>
+                                                <option value="Recursos Humanos">Recursos Humanos</option>
+                                            </select>
+                                        </div>
+
+                                        <Button onClick={handleCreate} className={styles.addButton}>
+                                            <Plus size={18} style={{ marginRight: 8 }} />
+                                            Nueva Pregunta
+                                        </Button>
+
+
+
+
+                                        {loading ? (
+                                            <div className={styles.loading}>Cargando preguntas...</div>
+                                        ) : (
+                                            <div className={styles.questionList}>
+                                                {filteredQuestions.map(q => (
+                                                    <div key={q.id} className={styles.questionCard}>
+                                                        <div className={styles.questionHeader}>
+                                                            <span className={styles.badge}>{q.department || 'Producción'}</span>
+                                                            <span className={styles.badge}>{q.theme || 'General'}</span>
+                                                            <span className={styles.badge}>{q.type}</span>
+                                                            {q.isFixed && <span className={styles.badge} style={{ backgroundColor: '#ffd700', color: '#000' }}>★ Fija</span>}
+                                                        </div>
+                                                        <p className={styles.questionText}>{q.question}</p>
+                                                        <div className={styles.actions}>
+                                                            <button onClick={() => handleEdit(q)} className={`${styles.actionBtn} ${styles.editBtn}`}>
+                                                                <Edit2 size={16} />
+                                                            </button>
+                                                            <button onClick={() => handleDelete(q.id)} className={`${styles.actionBtn} ${styles.deleteBtn}`}>
+                                                                <Trash2 size={16} />
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                ))}
+                                                {filteredQuestions.length === 0 && (
+                                                    <div className={styles.loading}>No se encontraron preguntas.</div>
+                                                )}
+                                            </div>
+                                        )}
+
+                                        {/* MIGRATION TOOLS (REMOVED) */}
+                                    </>
+                                )}
+                            </div>
+                        </motion.div>
+                    </>
+                )}
+            </AnimatePresence>
+            {confirmDialog}
+        </>
     );
 }

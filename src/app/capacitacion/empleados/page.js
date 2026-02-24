@@ -18,11 +18,13 @@ import { Dialog, DialogHeader, DialogTitle, DialogBody, DialogFooter, DialogClos
 import { Avatar } from '@/components/ui/Avatar/Avatar';
 import styles from './page.module.css';
 import EmployeeSearchBar from '@/components/ui/EmployeeSearchBar/EmployeeSearchBar';
+import { useConfirm } from '@/hooks/useConfirm';
 
 export default function EmpleadosPage() {
     const { user, loading: authLoading, canWrite } = useAuth();
     const router = useRouter();
     const { toast } = useToast();
+    const { showConfirm, confirmDialog } = useConfirm();
     const [employees, setEmployees] = useState([]);
     const [filteredEmployees, setFilteredEmployees] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -234,7 +236,7 @@ export default function EmpleadosPage() {
             return;
         }
 
-        if (!window.confirm(`¿Estás seguro de eliminar a ${emp.name}? Esta acción es irreversible y eliminará al empleado de todos los registros (Capacitación, Instructores, etc).`)) return;
+        if (!await showConfirm(`¿Estás seguro de eliminar a ${emp.name}? Esta acción es irreversible y eliminará al empleado de todos los registros (Capacitación, Instructores, etc).`, { title: 'Eliminar Empleado', confirmLabel: 'Eliminar' })) return;
 
         try {
             const batch = writeBatch(db);
@@ -1171,6 +1173,7 @@ export default function EmpleadosPage() {
                     <Button onClick={() => setPreviewImage(null)}>Cerrar</Button>
                 </DialogFooter>
             </Dialog>
+            {confirmDialog}
         </>
     );
 }

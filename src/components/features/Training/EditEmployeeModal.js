@@ -3,10 +3,12 @@ import { X, Save, Trash2, UserCog } from 'lucide-react';
 import { db } from '@/lib/firebase';
 import { doc, updateDoc, deleteDoc, collection, query, where, getDocs, writeBatch } from 'firebase/firestore';
 import styles from './EditEmployeeModal.module.css';
+import { useConfirm } from '@/hooks/useConfirm';
 
 export default function EditEmployeeModal({ employee, onClose, onUpdate, onDelete }) {
     const [formData, setFormData] = useState({ ...employee });
     const [loading, setLoading] = useState(false);
+    const { showConfirm, confirmDialog } = useConfirm();
 
     const handleChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -28,14 +30,13 @@ export default function EditEmployeeModal({ employee, onClose, onUpdate, onDelet
             onClose();
         } catch (error) {
             console.error('Error updating employee:', error);
-            alert('Error al actualizar empleado');
         } finally {
             setLoading(false);
         }
     };
 
     const handleDelete = async () => {
-        if (!confirm(`¿Eliminar a ${formData.name} y todas sus asignaciones? Esta acción es irreversible.`)) return;
+        if (!await showConfirm(`¿Eliminar a ${formData.name} y todas sus asignaciones? Esta acción es irreversible.`, { title: 'Eliminar Empleado', confirmLabel: 'Eliminar' })) return;
         setLoading(true);
         try {
             const programacionRef = collection(db, 'programacion');
@@ -51,122 +52,124 @@ export default function EditEmployeeModal({ employee, onClose, onUpdate, onDelet
             onClose();
         } catch (error) {
             console.error('Error deleting employee:', error);
-            alert('Error al eliminar empleado: ' + error.message);
         } finally {
             setLoading(false);
         }
     };
 
     return (
-        <div className={styles.overlay} onClick={onClose}>
-            <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
+        <>
+            <div className={styles.overlay} onClick={onClose}>
+                <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
 
-                {/* Header */}
-                <div className={styles.header}>
-                    <div className={styles.headerLeft}>
-                        <div className={styles.headerIcon}>
-                            <UserCog size={18} />
+                    {/* Header */}
+                    <div className={styles.header}>
+                        <div className={styles.headerLeft}>
+                            <div className={styles.headerIcon}>
+                                <UserCog size={18} />
+                            </div>
+                            <div>
+                                <h2 className={styles.headerTitle}>Editar Empleado</h2>
+                                <p className={styles.headerSubtitle}>Programación de capacitación</p>
+                            </div>
                         </div>
-                        <div>
-                            <h2 className={styles.headerTitle}>Editar Empleado</h2>
-                            <p className={styles.headerSubtitle}>Programación de capacitación</p>
-                        </div>
+                        <button className={styles.closeBtn} onClick={onClose} aria-label="Cerrar">
+                            <X size={16} />
+                        </button>
                     </div>
-                    <button className={styles.closeBtn} onClick={onClose} aria-label="Cerrar">
-                        <X size={16} />
-                    </button>
-                </div>
 
-                {/* Body */}
-                <form onSubmit={handleSave}>
-                    <div className={styles.body}>
-                        <div className={styles.inputGroup}>
-                            <label className={styles.label} htmlFor="em-name">Nombre Completo</label>
-                            <input
-                                id="em-name"
-                                className={styles.input}
-                                name="name"
-                                value={formData.name || ''}
-                                onChange={handleChange}
-                                required
-                            />
-                        </div>
-
-                        <div className={styles.inputGroup}>
-                            <label className={styles.label} htmlFor="em-id">ID de Empleado</label>
-                            <input
-                                id="em-id"
-                                className={styles.input}
-                                name="employeeId"
-                                value={formData.employeeId || ''}
-                                onChange={handleChange}
-                            />
-                        </div>
-
-                        <div className={styles.row}>
+                    {/* Body */}
+                    <form onSubmit={handleSave}>
+                        <div className={styles.body}>
                             <div className={styles.inputGroup}>
-                                <label className={styles.label} htmlFor="em-area">Área</label>
+                                <label className={styles.label} htmlFor="em-name">Nombre Completo</label>
                                 <input
-                                    id="em-area"
+                                    id="em-name"
                                     className={styles.input}
-                                    name="area"
-                                    value={formData.area || ''}
+                                    name="name"
+                                    value={formData.name || ''}
+                                    onChange={handleChange}
+                                    required
+                                />
+                            </div>
+
+                            <div className={styles.inputGroup}>
+                                <label className={styles.label} htmlFor="em-id">ID de Empleado</label>
+                                <input
+                                    id="em-id"
+                                    className={styles.input}
+                                    name="employeeId"
+                                    value={formData.employeeId || ''}
                                     onChange={handleChange}
                                 />
                             </div>
+
+                            <div className={styles.row}>
+                                <div className={styles.inputGroup}>
+                                    <label className={styles.label} htmlFor="em-area">Área</label>
+                                    <input
+                                        id="em-area"
+                                        className={styles.input}
+                                        name="area"
+                                        value={formData.area || ''}
+                                        onChange={handleChange}
+                                    />
+                                </div>
+                                <div className={styles.inputGroup}>
+                                    <label className={styles.label} htmlFor="em-position">Puesto</label>
+                                    <input
+                                        id="em-position"
+                                        className={styles.input}
+                                        name="position"
+                                        value={formData.position || formData.puesto || ''}
+                                        onChange={handleChange}
+                                    />
+                                </div>
+                            </div>
+
                             <div className={styles.inputGroup}>
-                                <label className={styles.label} htmlFor="em-position">Puesto</label>
-                                <input
-                                    id="em-position"
-                                    className={styles.input}
-                                    name="position"
-                                    value={formData.position || formData.puesto || ''}
+                                <label className={styles.label} htmlFor="em-shift">Turno</label>
+                                <select
+                                    id="em-shift"
+                                    className={styles.select}
+                                    name="shift"
+                                    value={formData.shift || ''}
                                     onChange={handleChange}
-                                />
+                                >
+                                    <option value="">Seleccionar turno</option>
+                                    <option value="1">Turno 1</option>
+                                    <option value="2">Turno 2</option>
+                                    <option value="3">Turno 3</option>
+                                    <option value="4">Turno 4</option>
+                                    <option value="Mixto">Mixto</option>
+                                </select>
                             </div>
                         </div>
 
-                        <div className={styles.inputGroup}>
-                            <label className={styles.label} htmlFor="em-shift">Turno</label>
-                            <select
-                                id="em-shift"
-                                className={styles.select}
-                                name="shift"
-                                value={formData.shift || ''}
-                                onChange={handleChange}
+                        {/* Footer */}
+                        <div className={styles.footer}>
+                            <button
+                                type="button"
+                                onClick={handleDelete}
+                                disabled={loading}
+                                className={styles.deleteBtn}
                             >
-                                <option value="">Seleccionar turno</option>
-                                <option value="1">Turno 1</option>
-                                <option value="2">Turno 2</option>
-                                <option value="3">Turno 3</option>
-                                <option value="4">Turno 4</option>
-                                <option value="Mixto">Mixto</option>
-                            </select>
+                                <Trash2 size={16} />
+                                Eliminar
+                            </button>
+                            <button
+                                type="submit"
+                                disabled={loading}
+                                className={styles.saveBtn}
+                            >
+                                <Save size={16} />
+                                {loading ? 'Guardando...' : 'Guardar Cambios'}
+                            </button>
                         </div>
-                    </div>
-
-                    {/* Footer */}
-                    <div className={styles.footer}>
-                        <button
-                            type="button"
-                            onClick={handleDelete}
-                            disabled={loading}
-                            className={styles.deleteBtn}
-                        >
-                            <Trash2 size={16} />
-                            Eliminar
-                        </button>
-                        <button
-                            type="submit"
-                            disabled={loading}
-                            className={styles.saveBtn}
-                        >
-                            <Save size={16} />
-                            {loading ? 'Guardando...' : 'Guardar Cambios'}
-                        </button>
-                    </div>
-                </form>
+                    </form>
+                </div>
             </div>
-        </div>
+            {confirmDialog}
+        </>
     );
 }
