@@ -13,6 +13,7 @@ export default function MaintenanceGuard({ children }) {
     const [maintenanceUntil, setMaintenanceUntil] = useState(null);
     const [loading, setLoading] = useState(true);
     const [isLocalhost, setIsLocalhost] = useState(false);
+    const [currentTime, setCurrentTime] = useState(Date.now());
 
     useEffect(() => {
         // Verificar si es localhost
@@ -40,6 +41,18 @@ export default function MaintenanceGuard({ children }) {
         return () => unsubscribe();
     }, []);
 
+    // Temporizador para auto-desbloqueo si el tiempo especificado se alcanzó
+    useEffect(() => {
+        if (!isMaintenance || !maintenanceUntil) return;
+
+        // Actualizar el tiempo local cada 10 segundos para forzar re-evaluación
+        const interval = setInterval(() => {
+            setCurrentTime(Date.now());
+        }, 10000);
+
+        return () => clearInterval(interval);
+    }, [isMaintenance, maintenanceUntil]);
+
     // Si está cargando la configuración inicial, mostramos children (o un loader si se prefiere, pero children evita flickering en carga normal)
     // Sin embargo, para evitar leak de contenido si está bloqueado, mejor mostramos loading o nada hasta confirmar.
     if (loading) return null;
@@ -53,7 +66,17 @@ export default function MaintenanceGuard({ children }) {
     // 3. El usuario NO es admin ni superadmin
 
     const isAdmin = userRole === 'admin' || userRole === 'superadmin';
-    const shouldBlock = isMaintenance && !isLocalhost && !isAdmin;
+
+    // Validar si el tiempo de mantenimiento ya expiró
+    let isExpired = false;
+    if (isMaintenance && maintenanceUntil) {
+        const targetTime = new Date(maintenanceUntil).getTime();
+        if (targetTime < currentTime) {
+            isExpired = true;
+        }
+    }
+
+    const shouldBlock = isMaintenance && !isExpired && !isLocalhost && !isAdmin;
 
     if (shouldBlock) {
         return <MaintenanceScreen message={maintenanceMessage} targetDate={maintenanceUntil} />;
