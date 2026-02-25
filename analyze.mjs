@@ -2,13 +2,27 @@ import { initializeApp } from "firebase/app";
 import { getFirestore, collection, getDocs, query } from "firebase/firestore";
 import fs from "fs";
 
+// Cargar variables de entorno desde .env.local para no exponer claves en el repositorio
+try {
+    const envLines = fs.readFileSync('.env.local', 'utf8').split('\n');
+    envLines.forEach(line => {
+        const match = line.match(/^\s*([\w.-]+)\s*=\s*(.*)?\s*$/);
+        if (match) {
+            process.env[match[1]] = match[2].replace(/(^['"]|['"]$)/g, '').trim();
+        }
+    });
+} catch (e) {
+    console.warn("No se pudo cargar .env.local automáticamente. Asegúrate de configurarlas.");
+}
+
+// Configuración leída de forma segura
 const firebaseConfig = {
-    apiKey: "AIzaSyClXZHZb1Wdfxisdwc8RdBHOySFQkqaJnY",
-    authDomain: "capacitacion-18434.firebaseapp.com",
-    projectId: "capacitacion-18434",
-    storageBucket: "capacitacion-18434.firebasestorage.app",
-    messagingSenderId: "935733399914",
-    appId: "1:935733399914:web:ec00baf34db1c40020d513"
+    apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
+    authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
+    projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
+    storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET,
+    messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID,
+    appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID
 };
 
 const app = initializeApp(firebaseConfig);
