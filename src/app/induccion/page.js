@@ -1,7 +1,8 @@
-'use client';
+﻿'use client';
 
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { db } from '@/lib/firebase';
+import { auth } from '@/lib/firebase';
 import { uploadFile } from '@/lib/upload';
 import { collection, query, getDocs, addDoc, orderBy, onSnapshot, deleteDoc, doc, updateDoc } from 'firebase/firestore';
 import { useAuth } from '@/contexts/AuthContext';
@@ -12,7 +13,7 @@ import { useToast } from '@/components/ui/Toast/Toast';
 import {
     ChevronRight, Plus, FileText, Link2, Trash2, Edit3,
     ExternalLink, X, Check, BookOpen, Upload, Play,
-    Zap, Settings2
+    Zap, Settings2, Image, Video, UploadCloud
 } from 'lucide-react';
 import Link from 'next/link';
 import ProfileDropdown from '@/components/layout/ProfileDropdown/ProfileDropdown';
@@ -39,6 +40,7 @@ export default function InductionPage() {
     const { toast } = useToast();
     const { showConfirm, confirmDialog } = useConfirm();
     const fileInputRef = useRef(null);
+    const galleryFileRef = useRef(null);
 
     // ── Colecciones existentes ──
     const [courses, setCourses] = useState([]);
@@ -88,6 +90,17 @@ export default function InductionPage() {
     const [uploading, setUploading] = useState(false);
     const [editingCandidateCourse, setEditingCandidateCourse] = useState(null);
 
+    // ── Galería ──
+    const [galleryItems, setGalleryItems] = useState([]);
+    const [showGalleryModal, setShowGalleryModal] = useState(false);
+    const [galleryType, setGalleryType] = useState('imagen');
+    const [galleryFile, setGalleryFile] = useState(null);
+    const [galleryName, setGalleryName] = useState('');
+    const [galleryUploading, setGalleryUploading] = useState(false);
+    const [galleryProgress, setGalleryProgress] = useState(0);
+    const [galleryExpanded, setGalleryExpanded] = useState(true);
+    const [selectedMedia, setSelectedMedia] = useState(null);
+
     const canEdit = user?.rol === 'super_admin' || user?.rol === 'instructor';
 
     // ── Auth guard ──
@@ -125,6 +138,98 @@ export default function InductionPage() {
     useEffect(() => {
         loadNativeCourses();
     }, [loadNativeCourses]);
+
+    // ── Cargar galería (tiempo real) ──
+    useEffect(() => {
+        const q = query(collection(db, 'induccion_galeria'), orderBy('createdAt', 'desc'));
+        const unsub = onSnapshot(q, (snap) => {
+            setGalleryItems(snap.docs.map(d => ({ id: d.id, ...d.data() })));
+        });
+        return () => unsub();
+    }, []);
+
+    // ── Subir archivo a galería ──
+    const handleGalleryUpload = useCallback(async () => {
+        if (!galleryFile) return toast.warning('Atención', 'Selecciona un archivo.');
+        if (!galleryName.trim()) return toast.warning('Atención', 'Escribe un nombre.');
+
+        setGalleryUploading(true);
+        setGalleryProgress(0);
+
+        try {
+            const formData = new FormData();
+            formData.append('file', galleryFile);
+            formData.append('nombre', galleryName.trim());
+
+            await new Promise((resolve, reject) => {
+                const xhr = new XMLHttpRequest();
+                xhr.open('POST', '/api/gallery-upload');
+                xhr.withCredentials = true;
+
+                // Token de Firebase para autenticacion (igual que lib/upload.js)
+                const currentUser = auth.currentUser;
+                if (!currentUser) {
+                    reject(new Error('Usuario no autenticado'));
+                    return;
+                }
+                currentUser.getIdToken().then(idToken => {
+                    xhr.setRequestHeader('Authorization', `Bearer ${idToken}`);
+                    xhr.upload.onprogress = (e) => {
+                        if (e.lengthComputable) setGalleryProgress(Math.round((e.loaded / e.total) * 90));
+                    };
+                    xhr.onload = async () => {
+                        if (xhr.status >= 200 && xhr.status < 300) {
+                            const result = JSON.parse(xhr.responseText);
+                            if (result.success) {
+                                await addDoc(collection(db, 'induccion_galeria'), {
+                                    nombre: galleryName.trim(),
+                                    tipo: result.data.tipo,
+                                    mimeType: result.data.mimeType,
+                                    viewLink: result.data.viewLink,
+                                    downloadLink: result.data.downloadLink,
+                                    driveId: result.data.id,
+                                    creadoPor: user?.uid || 'unknown',
+                                    createdAt: new Date().toISOString(),
+                                });
+                                setGalleryProgress(100);
+                                toast.success('Subido', `"${galleryName}" agregado a la galeria.`);
+                                setShowGalleryModal(false);
+                                setGalleryFile(null);
+                                setGalleryName('');
+                                setGalleryProgress(0);
+                                if (galleryFileRef.current) galleryFileRef.current.value = '';
+                                resolve();
+                            } else {
+                                reject(new Error(result.error || 'Error al subir'));
+                            }
+                        } else {
+                            try {
+                                const err = JSON.parse(xhr.responseText);
+                                reject(new Error(err.error || `HTTP ${xhr.status}`));
+                            } catch {
+                                reject(new Error(`HTTP ${xhr.status}`));
+                            }
+                        }
+                    };
+                    xhr.onerror = () => reject(new Error('Error de red'));
+                    xhr.send(formData);
+                }).catch(err => reject(new Error('No se pudo obtener token: ' + err.message)));
+            });
+        } catch (err) {
+            toast.error('Error', err.message || 'No se pudo subir el archivo.');
+            setGalleryProgress(0);
+        } finally {
+            setGalleryUploading(false);
+        }
+    }, [galleryFile, galleryName, user?.uid, toast]);
+
+    // ── Eliminar item de galería ──
+    const handleGalleryDelete = useCallback(async (e, itemId) => {
+        e.stopPropagation();
+        if (!await showConfirm('¿Eliminar este elemento de la galería?', { title: 'Eliminar', confirmLabel: 'Eliminar' })) return;
+        await deleteDoc(doc(db, 'induccion_galeria', itemId));
+        toast.success('Eliminado', 'Elemento eliminado de la galería.');
+    }, [showConfirm, toast]);
 
     // Auto-ocultar alerta import
     useEffect(() => {
@@ -1082,7 +1187,208 @@ export default function InductionPage() {
                         </div>
                     </div>
                 )}
+
+
+                {/* ==================== GALERIA ==================== */}
+                <section className={styles.nativeSection}>
+                    <div className={styles.coursesHeader}>
+                        <h2
+                            className={styles.sectionTitle}
+                            onClick={() => setGalleryExpanded(!galleryExpanded)}
+                            style={{ cursor: 'pointer' }}
+                        >
+                            <ChevronRight
+                                size={16}
+                                className={`${styles.chevronIcon} ${galleryExpanded ? styles.expanded : ''}`}
+                            />
+                            <Image size={14} style={{ color: '#e8742a', flexShrink: 0 }} />
+                            Galeria
+                            <span className={styles.sectionCount}>{galleryItems.length}</span>
+                        </h2>
+                        {canEdit && (
+                            <button
+                                className={styles.newCourseBtn}
+                                onClick={() => {
+                                    setGalleryFile(null);
+                                    setGalleryName('');
+                                    setGalleryProgress(0);
+                                    setGalleryType('imagen');
+                                    setShowGalleryModal(true);
+                                }}
+                            >
+                                <UploadCloud size={13} />
+                                Subir
+                            </button>
+                        )}
+                    </div>
+
+                    {galleryExpanded && (
+                        galleryItems.length === 0 ? (
+                            <div className={styles.emptyState}>
+                                <p>No hay elementos en la galeria. Sube imagenes o videos.</p>
+                            </div>
+                        ) : (
+                            <div className={styles.galleryGrid}>
+                                {galleryItems.map(item => (
+                                    <div key={item.id} className={styles.galleryCard}>
+                                        <div onClick={() => setSelectedMedia(item)} className={styles.galleryThumbWrap} style={{ cursor: 'pointer' }}>
+                                            {item.tipo === 'imagen' ? (
+                                                <img
+                                                    src={item.viewLink}
+                                                    alt={item.nombre}
+                                                    className={styles.galleryThumb}
+                                                    onError={e => { e.target.style.display = 'none'; e.target.nextSibling.style.display = 'flex'; }}
+                                                />
+                                            ) : null}
+                                            <div
+                                                className={styles.galleryVideoPlaceholder}
+                                                style={{ display: item.tipo === 'video' ? 'flex' : 'none' }}
+                                            >
+                                                <Video size={32} style={{ color: '#e8742a', opacity: 0.7 }} />
+                                            </div>
+                                            {item.tipo === 'video' && (
+                                                <div className={styles.galleryPlayOverlay}>
+                                                    <Play size={20} />
+                                                </div>
+                                            )}
+                                        </div>
+                                        <div className={styles.galleryCardFooter}>
+                                            <span className={styles.galleryItemName} title={item.nombre}>
+                                                {item.tipo === 'imagen'
+                                                    ? <Image size={11} style={{ color: '#e8742a', flexShrink: 0 }} />
+                                                    : <Video size={11} style={{ color: '#6366f1', flexShrink: 0 }} />
+                                                }
+                                                {item.nombre}
+                                            </span>
+                                            {canEdit && (
+                                                <button
+                                                    className={styles.galleryDeleteBtn}
+                                                    onClick={(e) => handleGalleryDelete(e, item.id)}
+                                                    title="Eliminar"
+                                                >
+                                                    <Trash2 size={12} />
+                                                </button>
+                                            )}
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        )
+                    )}
+                </section>
             </div>
+
+            {/* MODAL GALERIA */}
+            {showGalleryModal && (
+                <div className={styles.galleryModalBackdrop} onClick={(e) => { if (e.target === e.currentTarget) setShowGalleryModal(false); }}>
+                    <div className={styles.galleryModalBox}>
+                        <button className={styles.closeModalBtn} onClick={() => setShowGalleryModal(false)}>
+                            <X size={14} />
+                        </button>
+
+                        <div className={styles.galleryModalHeader}>
+                            <UploadCloud size={22} style={{ color: '#e8742a' }} />
+                            <h2>Subir a Galeria</h2>
+                            <p>Sube una imagen o video y asignale un nombre.</p>
+                        </div>
+
+                        <div className={styles.galleryTypeSelector}>
+                            {['imagen', 'video'].map(t => (
+                                <button
+                                    key={t}
+                                    className={`${styles.galleryTypeBtn} ${galleryType === t ? styles.galleryTypeBtnActive : ''}`}
+                                    onClick={() => {
+                                        setGalleryType(t);
+                                        setGalleryFile(null);
+                                        if (galleryFileRef.current) galleryFileRef.current.value = '';
+                                    }}
+                                    disabled={galleryUploading}
+                                >
+                                    {t === 'imagen' ? <Image size={14} /> : <Video size={14} />}
+                                    {t.charAt(0).toUpperCase() + t.slice(1)}
+                                </button>
+                            ))}
+                        </div>
+
+                        <div className={styles.inputGroup} style={{ textAlign: 'left', marginBottom: '12px' }}>
+                            <label>Nombre</label>
+                            <input
+                                className={styles.input}
+                                placeholder={galleryType === 'imagen' ? 'Ej. Logo empresa' : 'Ej. Video bienvenida'}
+                                value={galleryName}
+                                onChange={e => setGalleryName(e.target.value)}
+                                disabled={galleryUploading}
+                            />
+                        </div>
+
+                        <label className={`${styles.galleryFileLabel} ${galleryFile ? styles.galleryFileLabelActive : ''}`}>
+                            <input
+                                ref={galleryFileRef}
+                                type="file"
+                                accept={galleryType === 'imagen' ? 'image/jpeg,image/png,image/webp,image/gif' : 'video/mp4,video/webm,video/quicktime'}
+                                style={{ display: 'none' }}
+                                onChange={e => {
+                                    const f = e.target.files?.[0];
+                                    if (f) {
+                                        setGalleryFile(f);
+                                        if (!galleryName) setGalleryName(f.name.replace(/\.[^.]+$/, ''));
+                                    }
+                                }}
+                                disabled={galleryUploading}
+                            />
+                            {galleryFile ? (
+                                <><Check size={14} /> {galleryFile.name}</>
+                            ) : (
+                                <><Upload size={14} /> {galleryType === 'imagen' ? 'Seleccionar imagen' : 'Seleccionar video'}</>
+                            )}
+                        </label>
+
+                        {galleryUploading && (
+                            <div className={styles.galleryProgressWrap}>
+                                <div className={styles.galleryProgressBar} style={{ width: `${galleryProgress}%` }} />
+                                <span className={styles.galleryProgressText}>{galleryProgress}%</span>
+                            </div>
+                        )}
+
+                        <div className={styles.galleryModalActions}>
+                            <button
+                                className={styles.toggleBtn}
+                                onClick={() => setShowGalleryModal(false)}
+                                disabled={galleryUploading}
+                            >
+                                Cancelar
+                            </button>
+                            <button
+                                className={styles.newCourseBtn}
+                                onClick={handleGalleryUpload}
+                                disabled={galleryUploading || !galleryFile || !galleryName.trim()}
+                            >
+                                <UploadCloud size={13} />
+                                {galleryUploading ? 'Subiendo...' : 'Subir'}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+            {/* MODAL VISOR NATIVO (LIGHTBOX) */}
+            {selectedMedia && (
+                <div className={styles.lightboxBackdrop} onClick={() => setSelectedMedia(null)}>
+                    <button className={styles.lightboxCloseBtn} onClick={() => setSelectedMedia(null)}>
+                        <X size={24} color="white" />
+                    </button>
+                    <div className={styles.lightboxContent} onClick={e => e.stopPropagation()}>
+                        {selectedMedia.tipo === 'imagen' ? (
+                            <img src={selectedMedia.viewLink} alt={selectedMedia.nombre} className={styles.lightboxImage} />
+                        ) : (
+                            <video src={selectedMedia.viewLink} controls autoPlay className={styles.lightboxVideo} />
+                        )}
+                        <div className={styles.lightboxCaption}>
+                            {selectedMedia.nombre}
+                        </div>
+                    </div>
+                </div>
+            )}
+
             {confirmDialog}
         </>
     );
