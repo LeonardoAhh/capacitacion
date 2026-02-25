@@ -186,8 +186,7 @@ export default function PresentacionPage() {
                 <header className={styles.header}>
                     <h1 className={styles.title}>Análisis de Capacitación</h1>
                     <p className={styles.subtitle}>
-                        Proyección del impacto de la aplicación de {data.validUserCourses.length} cursos propuestos frente a la
-                        matriz oficial de puestos y registros vigentes de entrenamiento.
+                        Proyección del impacto de la aplicación de {data.validUserCourses.length} cursos con material actualmente.
                     </p>
                 </header>
 
@@ -241,10 +240,9 @@ export default function PresentacionPage() {
                     <div className={styles.row}>
                         {/* Nuevo Ingreso */}
                         <div className={styles.card}>
-                            <h2 className={styles.cardTitle}>2. Personal de Nuevo Ingreso</h2>
+                            <h2 className={styles.cardTitle}>2. Personal Activo</h2>
                             <p style={{ marginBottom: "1rem", color: "var(--text-secondary)" }}>
                                 Tienen 0% de cumplimiento en los cursos requeridos.
-                                Total: <strong>{data.newHireCount} empleados</strong>.
                             </p>
                             <div className={styles.kpiItem} style={{ marginBottom: "2rem" }}>
                                 <div className={`${styles.kpiValue} ${styles.valuePositive}`} style={{ fontSize: "3rem" }}>
