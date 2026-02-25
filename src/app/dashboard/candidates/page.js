@@ -13,6 +13,7 @@ import { useTheme } from '@/contexts/ThemeContext';
 import CandidateDrawer from '@/components/features/Dashboard/CandidateDrawer';
 import ProfileDropdown from '@/components/layout/ProfileDropdown/ProfileDropdown';
 import AvatarSelector from '@/components/ui/AvatarSelector/AvatarSelector';
+import { useConfirm } from '@/hooks/useConfirm';
 
 // Custom hook for data fetching
 function useDataFetching() {
@@ -854,16 +855,16 @@ export default function CandidateMonitoringPage() {
                             </div>
                         )}
                     </div>
+                </div>{/* fin tableCard */}
 
-                    {/* Global Candidate Drawer */}
-                    <CandidateDrawer
-                        candidate={selectedCandidate}
-                        coursesMap={coursesMapRef}
-                        open={isDrawerOpen}
-                        onOpenChange={setIsDrawerOpen}
-                        onArchive={() => handleArchiveCandidate(selectedCandidate)}
-                    />
-                </div>
+                {/* Global Candidate Drawer — fuera del tableCard para que position:fixed funcione correctamente */}
+                <CandidateDrawer
+                    candidate={selectedCandidate}
+                    coursesMap={coursesMapRef}
+                    open={isDrawerOpen}
+                    onOpenChange={setIsDrawerOpen}
+                    onArchive={() => handleArchiveCandidate(selectedCandidate)}
+                />
 
                 {/* WhatsApp Modal — al nivel raíz para no requerir scroll y correcto z-index */}
                 {whatsappModal.isOpen && (
