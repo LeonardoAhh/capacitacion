@@ -1,4 +1,6 @@
-﻿'use client';
+﻿/* eslint-disable @next/next/no-img-element */
+/* eslint-disable jsx-a11y/alt-text */
+'use client';
 
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { db } from '@/lib/firebase';
