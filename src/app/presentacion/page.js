@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import React, { useState, useEffect } from 'react';
 import { db } from '@/lib/firebase';
@@ -336,7 +336,7 @@ export default function PresentacionPage() {
                                 </div>
                             </div>
                         </>
-                    ) : (
+                    ) : currentSlide === 2 ? (
                         <>
                             {/* Slide 2: Instructores y Cursos */}
                             <div className={`${styles.card} ${styles.cardFull}`}>
@@ -364,17 +364,182 @@ export default function PresentacionPage() {
                                 </div>
                             </div>
                         </>
+                    ) : (
+                        <>
+                            {/* Slide 3: Plan de Trabajo */}
+
+                            {/* Título */}
+                            <div className={`${styles.card} ${styles.cardFull}`} style={{ textAlign: 'center', padding: '2rem 2.5rem' }}>
+                                <h2 className={styles.cardTitle} style={{ fontSize: '1.8rem', marginBottom: '0.4rem' }}>Plan de Trabajo – Incremento de Capacitación</h2>
+                                <p style={{ color: '#6b7280', fontSize: '0.95rem' }}>Plataforma Web / Móvil</p>
+                            </div>
+
+                            {/* Fila 1: Estado Actual + Áreas de Mejora */}
+                            <div className={styles.row}>
+                                <div className={styles.card}>
+                                    <h3 className={styles.cardTitle} style={{ fontSize: '1.05rem' }}>1. Estado Actual</h3>
+                                    <p style={{ color: '#374151', fontSize: '0.93rem', lineHeight: '1.7', marginBottom: '1rem' }}>
+                                        La plataforma se ha probado con el personal de <strong>nuevo ingreso (candidatos)</strong>, otorgándoles acceso para completar sus cursos de inducción e integrarlos directamente a la operación.
+                                    </p>
+                                    <ul style={{ listStyle: 'none', padding: 0, display: 'flex', flexDirection: 'column', gap: '0.7rem' }}>
+                                        <li style={{ display: 'flex', gap: '0.7rem', color: '#374151', fontSize: '0.9rem', lineHeight: '1.6' }}>
+                                            <span style={{ color: '#f59e0b', fontWeight: '700', flexShrink: 0 }}>◉</span>
+                                            <span><strong>Seguimiento:</strong> En tiempo real desde el panel de &quot;Recursos Humanos&quot;, visualizando a detalle el cumplimiento de cada usuario.</span>
+                                        </li>
+                                        <li style={{ display: 'flex', gap: '0.7rem', color: '#374151', fontSize: '0.9rem', lineHeight: '1.6' }}>
+                                            <span style={{ color: '#f59e0b', fontWeight: '700', flexShrink: 0 }}>◉</span>
+                                            <span><strong>Automatización:</strong> Envío automático de mensajes por WhatsApp para un seguimiento directo.</span>
+                                        </li>
+                                    </ul>
+                                </div>
+
+                                <div className={styles.card}>
+                                    <h3 className={styles.cardTitle} style={{ fontSize: '1.05rem' }}>2. Áreas de Mejora y Requerimientos</h3>
+                                    <p style={{ color: '#374151', fontSize: '0.93rem', lineHeight: '1.7', marginBottom: '1rem' }}>
+                                        Para llevar la capacitación al siguiente nivel, se deben dejar de lado las <strong>Presentaciones en PowerPoint y Archivos PDF</strong> e implementar presentaciones nativas en la plataforma.
+                                    </p>
+                                    <ul style={{ listStyle: 'none', padding: 0, display: 'flex', flexDirection: 'column', gap: '0.7rem', marginBottom: '1rem' }}>
+                                        <li style={{ display: 'flex', alignItems: 'flex-start', gap: '0.7rem', color: '#374151', fontSize: '0.9rem', lineHeight: '1.6' }}>
+                                            <span style={{ background: '#f59e0b', color: 'white', borderRadius: '50%', minWidth: '22px', height: '22px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: '700', fontSize: '0.8rem' }}>1</span>
+                                            <span><strong>Apoyo interdepartamental:</strong> Colaboración de las distintas áreas para generar material (imágenes, videos, texto).</span>
+                                        </li>
+                                        <li style={{ display: 'flex', alignItems: 'flex-start', gap: '0.7rem', color: '#374151', fontSize: '0.9rem', lineHeight: '1.6' }}>
+                                            <span style={{ background: '#f59e0b', color: 'white', borderRadius: '50%', minWidth: '22px', height: '22px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: '700', fontSize: '0.8rem' }}>2</span>
+                                            <span><strong>Autorización de cambio de turno:</strong> Se solicita autorización para cambiar al <strong>3er Turno</strong>.</span>
+                                        </li>
+                                    </ul>
+                                    <div style={{ background: 'rgba(16,185,129,0.06)', borderRadius: '10px', padding: '0.8rem 1rem', border: '1px solid rgba(16,185,129,0.2)', fontSize: '0.87rem', color: '#065f46', lineHeight: '1.6' }}>
+                                        <strong>Nota:</strong> El cambio de turno <strong>no afecta</strong> las actividades de capacitación. Todo lo programado continúa mediante correo electrónico.
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Fila 2: Plan de Acción + Métricas */}
+                            <div className={styles.row}>
+                                <div className={styles.card}>
+                                    <h3 className={styles.cardTitle} style={{ fontSize: '1.05rem' }}>3. Plan de Acción</h3>
+                                    <ul style={{ listStyle: 'none', padding: 0, display: 'flex', flexDirection: 'column', gap: '0.9rem' }}>
+                                        <li style={{ color: '#374151', fontSize: '0.9rem', lineHeight: '1.6', borderLeft: '3px solid #f59e0b', paddingLeft: '0.8rem' }}>
+                                            <strong>Reducir brecha en personal activo:</strong> A través del módulo de &quot;Empleados&quot;, con dashboard personalizado por colaborador, asignación individual de cursos y seguimiento en tiempo real desde &quot;Recursos Humanos&quot;.
+                                        </li>
+                                        <li style={{ color: '#374151', fontSize: '0.9rem', lineHeight: '1.6', borderLeft: '3px solid #f59e0b', paddingLeft: '0.8rem' }}>
+                                            <strong>Capacitación para mandos medios:</strong> Presentaciones nativas basadas en los resultados de la encuesta aplicada al personal operativo.
+                                        </li>
+                                        <li style={{ color: '#374151', fontSize: '0.9rem', lineHeight: '1.6', borderLeft: '3px solid #f59e0b', paddingLeft: '0.8rem' }}>
+                                            <strong>Exámenes digitales:</strong> Calificaciones automáticas e impresión de formatos para su resguardo en carpetas físicas.
+                                        </li>
+                                    </ul>
+                                </div>
+
+                                <div className={styles.card}>
+                                    <h3 className={styles.cardTitle} style={{ fontSize: '1.05rem' }}>4. Métricas y Proyecciones</h3>
+                                    <div style={{ display: 'flex', justifyContent: 'space-around', textAlign: 'center', gap: '0.4rem', flexWrap: 'wrap', margin: '1rem 0' }}>
+                                        <div>
+                                            <div style={{ fontSize: '1.7rem', fontWeight: '900', color: '#9ca3af' }}>22.4%</div>
+                                            <div style={{ fontSize: '0.7rem', color: '#9ca3af', fontWeight: '600' }}>2024</div>
+                                        </div>
+                                        <div style={{ fontSize: '1.4rem', color: '#d1d5db', alignSelf: 'center' }}>→</div>
+                                        <div>
+                                            <div style={{ fontSize: '1.7rem', fontWeight: '900', color: '#6b7280' }}>41.2%</div>
+                                            <div style={{ fontSize: '0.7rem', color: '#9ca3af', fontWeight: '600' }}>2025</div>
+                                        </div>
+                                        <div style={{ fontSize: '1.4rem', color: '#d1d5db', alignSelf: 'center' }}>→</div>
+                                        <div>
+                                            <div style={{ fontSize: '1.7rem', fontWeight: '900', color: '#374151' }}>53.16%</div>
+                                            <div style={{ fontSize: '0.7rem', color: '#9ca3af', fontWeight: '600' }}>Actual</div>
+                                        </div>
+                                        <div style={{ fontSize: '1.4rem', color: '#10b981', alignSelf: 'center' }}>→</div>
+                                        <div>
+                                            <div style={{ fontSize: '1.7rem', fontWeight: '900', color: '#10b981' }}>77.92%</div>
+                                            <div style={{ fontSize: '0.7rem', color: '#10b981', fontWeight: '600' }}>Proyectado</div>
+                                        </div>
+                                    </div>
+                                    <p style={{ color: '#374151', fontSize: '0.88rem', lineHeight: '1.6', marginBottom: '0.7rem' }}>
+                                        En los últimos <strong>2 meses</strong> se obtuvo un avance del <strong style={{ color: '#10b981' }}>+8.4%</strong>. Se proyecta un incremento del <strong style={{ color: '#10b981' }}>+24.76%</strong> cubriendo los <strong>24 cursos disponibles</strong>.
+                                    </p>
+                                    <p style={{ color: '#374151', fontSize: '0.88rem', lineHeight: '1.6' }}>
+                                        <strong>Próximo objetivo:</strong> Superar el 77.92% analizando cursos faltantes. Algunos requieren proveedor externo certificado, ya que son <strong>requisito para Auditoría</strong>.
+                                    </p>
+                                </div>
+                            </div>
+
+                            {/* Fila 3: Estatus Operativo + Renovaciones */}
+                            <div className={styles.row}>
+                                <div className={styles.card}>
+                                    <h3 className={styles.cardTitle} style={{ fontSize: '1.05rem' }}>5. Estatus Operativo y de Seguimiento</h3>
+
+                                    <p style={{ color: '#6b7280', fontSize: '0.78rem', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '0.75rem' }}>Evaluaciones de Desempeño – Nuevos Ingresos</p>
+                                    <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '1.5rem' }}>
+                                        <span style={{ fontSize: '3rem', fontWeight: '900', color: '#10b981', lineHeight: 1 }}>100%</span>
+                                        <p style={{ color: '#374151', lineHeight: '1.6', fontSize: '0.9rem', margin: 0 }}>Cumplimiento en la entrega de evaluaciones de desempeño al día de hoy.</p>
+                                    </div>
+
+                                    <p style={{ color: '#6b7280', fontSize: '0.78rem', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '0.75rem' }}>Cursos y Exámenes Programados</p>
+                                    <ul style={{ listStyle: 'none', padding: 0, display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+                                        <li style={{ fontSize: '0.87rem', lineHeight: '1.5', borderLeft: '3px solid #f59e0b', paddingLeft: '0.75rem', color: '#374151' }}>
+                                            <strong>Cursos de Inducción (Plataforma):</strong> <span style={{ color: '#6b7280' }}>Datos entregados al área de Reclutamiento en el formato establecido.</span>
+                                        </li>
+                                        <li style={{ fontSize: '0.87rem', lineHeight: '1.5', borderLeft: '3px solid #f59e0b', paddingLeft: '0.75rem', color: '#374151' }}>
+                                            <strong>Introducción a la Metrología y Equipos de Medición</strong> <span style={{ color: '#f59e0b', fontWeight: '600', fontSize: '0.8rem' }}>(7 Mar)</span><span style={{ color: '#6b7280' }}>: Material listo para el proveedor.</span>
+                                        </li>
+                                        <li style={{ fontSize: '0.87rem', lineHeight: '1.5', borderLeft: '3px solid #f59e0b', paddingLeft: '0.75rem', color: '#374151' }}>
+                                            <strong>NOM-002-STPS-2010:</strong> <span style={{ color: '#6b7280' }}>Ing. Vanessa da seguimiento. Sin requerimientos extraordinarios.</span>
+                                        </li>
+                                        <li style={{ fontSize: '0.87rem', lineHeight: '1.5', borderLeft: '3px solid #f59e0b', paddingLeft: '0.75rem', color: '#374151' }}>
+                                            <strong>Exámenes para Cambios de Categoría:</strong> <span style={{ color: '#6b7280' }}>Pendiente al 3er y 4to Turno del personal que cumple los requisitos.</span>
+                                        </li>
+                                    </ul>
+                                </div>
+
+                                <div className={styles.card}>
+                                    <h3 className={styles.cardTitle} style={{ fontSize: '1.05rem' }}>Renovaciones de Contrato Próximas</h3>
+                                    <div className={styles.tableContainer}>
+                                        <table className={styles.dataTable}>
+                                            <thead>
+                                                <tr>
+                                                    <th>ID</th>
+                                                    <th>Nombre Completo</th>
+                                                    <th>Depto.</th>
+                                                    <th>Término</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {[
+                                                    { id: '4042', nombre: 'Muñoz Servín Ximena', depto: 'Producción', fecha: '20/04/2026' },
+                                                    { id: '4043', nombre: 'Díaz Ayala María Elena', depto: 'Producción', fecha: '20/04/2026' },
+                                                    { id: '4044', nombre: 'Barrientos Monroy Diego', depto: 'Producción', fecha: '20/04/2026' },
+                                                    { id: '4046', nombre: 'Martínez Olvera Aracelí', depto: 'Producción', fecha: '22/04/2026' },
+                                                    { id: '4047', nombre: 'De León Castañeda Adolfo Orfaly', depto: 'Producción', fecha: '22/04/2026' },
+                                                    { id: '4048', nombre: 'Pacheco Moreno Hernán', depto: 'Producción', fecha: '22/04/2026' },
+                                                    { id: '4049', nombre: 'Guadarrama Velázquez María de Jesús', depto: 'Producción', fecha: '22/04/2026' },
+                                                    { id: '4050', nombre: 'Servín Martínez Lorena', depto: 'Producción', fecha: '22/04/2026' },
+                                                    { id: '4051', nombre: 'Samaniego Guzmán Ma. Guadalupe', depto: 'Producción', fecha: '22/04/2026' },
+                                                    { id: '4052', nombre: 'Zúñiga Ortiz Ingrid Ailín', depto: 'Producción', fecha: '22/04/2026' },
+                                                ].map(e => (
+                                                    <tr key={e.id}>
+                                                        <td className={styles.cellId}>{e.id}</td>
+                                                        <td className={styles.cellName}>{e.nombre}</td>
+                                                        <td>{e.depto}</td>
+                                                        <td style={{ color: '#f59e0b', fontWeight: '600' }}>{e.fecha}</td>
+                                                    </tr>
+                                                ))}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </>
                     )}
                 </div>
 
                 <div className={styles.navigationControls}>
                     {currentSlide > 1 && (
-                        <button className={styles.navButton} onClick={() => setCurrentSlide(1)}>
+                        <button className={styles.navButton} onClick={() => setCurrentSlide(s => s - 1)}>
                             ⟵ Anterior
                         </button>
                     )}
-                    {currentSlide === 1 && (
-                        <button className={styles.navButtonPrimary} onClick={() => setCurrentSlide(2)}>
+                    {currentSlide < 3 && (
+                        <button className={styles.navButtonPrimary} onClick={() => setCurrentSlide(s => s + 1)}>
                             Siguiente ⟶
                         </button>
                     )}
