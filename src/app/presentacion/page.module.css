@@ -325,3 +325,61 @@
         transform: rotate(360deg);
     }
 }
+
+/* ==================== NAVIGATION BUTTONS ==================== */
+.navigationControls {
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
+    margin-top: 2rem;
+    padding-top: 2rem;
+    border-top: 1px solid #e5e7eb;
+}
+
+[data-theme="dark"] .navigationControls {
+    border-top: 1px solid #374151;
+}
+
+.navButton {
+    background: transparent;
+    color: #4b5563;
+    border: 1px solid #d1d5db;
+    padding: 0.8rem 1.5rem;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.navButton:hover {
+    background: #f3f4f6;
+    color: #111827;
+}
+
+[data-theme="dark"] .navButton {
+    color: #9ca3af;
+    border-color: #4b5563;
+}
+
+[data-theme="dark"] .navButton:hover {
+    background: #374151;
+    color: #f3f4f6;
+}
+
+.navButtonPrimary {
+    background: #f59e0b;
+    color: white;
+    border: none;
+    padding: 0.8rem 1.5rem;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    box-shadow: 0 4px 6px -1px rgba(245, 158, 11, 0.2);
+}
+
+.navButtonPrimary:hover {
+    background: #d97706;
+    transform: translateY(-1px);
+    box-shadow: 0 6px 8px -1px rgba(245, 158, 11, 0.3);
+}
