@@ -1,0 +1,74 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reporte de Análisis de Capacitación</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #fafaf8; color: #333; margin: 0; padding: 20px; }
+        .container { max-width: 900px; margin: auto; background: white; padding: 30px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
+        h1 { color: #111; border-bottom: 2px solid #f59e0b; padding-bottom: 10px; }
+        h2 { color: #f59e0b; margin-top: 30px; }
+        .card { background: #fff; border: 1px solid #eaeaea; border-radius: 6px; padding: 20px; margin-bottom: 20px; }
+        .number { font-size: 2em; font-weight: bold; color: #f59e0b; }
+        .success { color: #10b981; font-weight: bold; }
+        ul { line-height: 1.6; }
+        .alert { background: #fee2e2; color: #991b1b; padding: 15px; border-radius: 6px; border-left: 4px solid #dc2626; }
+        .badge { display: inline-block; padding: 3px 8px; background: #f3f4f6; border-radius: 12px; font-size: 0.85em; margin: 3px; border: 1px solid #e5e7eb; }
+        .data-table { width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 0.9em; }
+        .data-table th, .data-table td { border: 1px solid #e5e7eb; padding: 8px 12px; text-align: left; }
+        .data-table th { background-color: #f9fafb; color: #4b5563; }
+        .data-table tr:nth-child(even) { background-color: #f9fafb; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Análisis Estratégico de Cursos de Capacitación</h1>
+        <p>Este reporte proyecta el impacto de aplicar el paquete de <strong>37 cursos</strong> propuestos al personal de la empresa, validando contra la matriz de puestos y los registros reales de <code>training_records</code> en Firebase.</p>
+        
+        <div class="card">
+            <h2>1. Incremento de Avance Global</h2>
+            <p>Calculando el promedio de avance actual de todos los empleados y sumando el porcentaje si aprueban este paquete de cursos:</p>
+            <ul>
+                <li>Avance Actual Promedio: <span class="number" style="font-size:1.5em; color:#6b7280;">53.48%</span></li>
+                <li>Avance Futuro Proyectado: <span class="number" style="font-size:1.5em; color:#10b981;">79.61%</span></li>
+                <li><strong>Incremento Total: <span class="success">▲ 26.13%</span></strong></li>
+            </ul>
+        </div>
+
+        <div class="card">
+            <h2>2. Avance en Personal de Nuevo Ingreso</h2>
+            <p>Empleados que actualmente tienen un avance de 0% (o sin registros en historial) frente a su matriz de puesto:</p>
+            <ul>
+                <li>Total de Personal de Nuevo Ingreso / Sin Avance: <strong>47 empleados</strong></li>
+                <li>Avance promedio si toman estos cursos: <span class="number">79.61%</span></li>
+            </ul>
+            <p><strong>Detalle de Empleados (0% de Avance Actual):</strong></p>
+            <table class="data-table">
+                <thead>
+                    <tr><th>ID</th><th>Nombre</th><th>Puesto</th></tr>
+                </thead>
+                <tbody>
+                    <tr><td><code>4039</code></td><td>RODRIGUEZ VEGA OCIEL ALEJANDRO</td><td>METRÓLOGO B</td></tr><tr><td><code>4040</code></td><td>VAZQUEZ IRETA SOFIA GUADALUPE</td><td>SUPERVISOR DE ACABADOS - GP12 C</td></tr><tr><td><code>4041</code></td><td>HERNANDEZ GARCIA JOVANIC TOMAS</td><td>SUPERVISOR DE PRODUCCIÓN D</td></tr><tr><td><code>4042</code></td><td>MUÑOZ SERVIN XIMENA</td><td>OPERADOR DE MÁQUINA D</td></tr><tr><td><code>4043</code></td><td>DIAZ AYALA MARIA ELENA</td><td>OPERADOR DE MÁQUINA D</td></tr><tr><td><code>4044</code></td><td>BARRIENTOS MONROY DIEGO</td><td>OPERADOR DE MÁQUINA D</td></tr><tr><td><code>4046</code></td><td>MARTINEZ OLVERA ARACELI</td><td>OPERADOR DE MÁQUINA D</td></tr><tr><td><code>4047</code></td><td>DE LEÓN CASTAÑEDA ADOLFO ORFALY</td><td>OPERADOR DE MÁQUINA D</td></tr><tr><td><code>4048</code></td><td>PACHECO MORENO HERNAN</td><td>OPERADOR DE MÁQUINA D</td></tr><tr><td><code>4049</code></td><td>GUADARRAMA VELAZQUEZ MARIA DE JESUS</td><td>OPERADOR DE MÁQUINA D</td></tr><tr><td><code>4050</code></td><td>SERVIN MARTINEZ LORENA</td><td>OPERADOR DE MÁQUINA D</td></tr><tr><td><code>4051</code></td><td>SAMANIEGO GUZMAN MA GUADALUPE</td><td>OPERADOR DE MÁQUINA D</td></tr><tr><td><code>4052</code></td><td>ZUÑIGA ORTIZ INGRID AILIN</td><td>OPERADOR DE MÁQUINA D</td></tr><tr><td><code>4054</code></td><td>ESCOBEDO DE LA CRUZ MARIA DANIELA</td><td>OPERADOR DE MÁQUINA D</td></tr><tr><td><code>4055</code></td><td>MENDOZA RUIZ MA. REMEDIOS CANDELARIA</td><td>OPERADOR DE MÁQUINA D</td></tr><tr><td><code>4056</code></td><td>VELAZQUEZ RIVERA MARIA ESMERALDA</td><td>OPERADOR DE MÁQUINA D</td></tr><tr><td><code>4059</code></td><td>HERNANDEZ ORTIZ MELISSA</td><td>INGENIERO DE CALIDAD B</td></tr><tr><td><code>4060</code></td><td>GONZALEZ PALOMARES JOSEFINA</td><td>OPERADOR DE MÁQUINA D</td></tr><tr><td><code>4061</code></td><td>CRUZ SALINAS MARIA EUGENIA</td><td>OPERADOR DE MÁQUINA D</td></tr><tr><td><code>4062</code></td><td>MIRANDA VAZQUEZ JHON EZEQUIEL</td><td>OPERADOR DE MÁQUINA D</td></tr><tr><td><code>4063</code></td><td>HERNANDEZ CABRERA JUANA</td><td>OPERADOR DE MÁQUINA D</td></tr><tr><td><code>4064</code></td><td>ANGELES GONZALEZ JOEL OSVALDO</td><td>OPERADOR DE MÁQUINA D</td></tr><tr><td><code>4065</code></td><td>SERRANO RODRIGUEZ JOSE ALEJANDRO</td><td>OPERADOR DE MÁQUINA D</td></tr><tr><td><code>4067</code></td><td>ALVAREZ GALLEGOS MARIA DE LOS ANGELES</td><td>OPERADOR DE MÁQUINA D</td></tr><tr><td><code>4068</code></td><td>SANCHEZ ORTIZ EFRAIN</td><td>OPERADOR DE MÁQUINA D</td></tr><tr><td><code>4069</code></td><td>OCHOA VELAZQUEZ PAMELA</td><td>AUXILIAR DEL SGI C</td></tr><tr><td><code>4070</code></td><td>HILARIO MONTOR LENIN DAVID</td><td>OPERADOR DE MÁQUINA D</td></tr><tr><td><code>4071</code></td><td>JORGE ALBERTO ALVARADO FRAGOSO</td><td>SUPERVISOR DE PRODUCCIÓN D</td></tr><tr><td><code>4072</code></td><td>RODRIGUEZ GUTIERREZ DULCE JAZMIN</td><td>SUPERVISOR DE PRODUCCIÓN D</td></tr><tr><td><code>4073</code></td><td>ESCOBAR CHAVEZ LUIS ENRIQUE</td><td>OPERADOR DE MÁQUINA D</td></tr><tr><td><code>4074</code></td><td>CHONG ALTUZAR JOSE ANTONIO</td><td>SUPERVISOR DE PRODUCCIÓN D</td></tr><tr><td><code>4075</code></td><td>ESTRELLA SAUCEDO JUANA</td><td>OPERADOR DE MÁQUINA D</td></tr><tr><td><code>4076</code></td><td>LUQUEÑO FERNANDEZ IVONNE MARLEN</td><td>OPERADOR DE MÁQUINA D</td></tr><tr><td><code>4077</code></td><td>VILLANUEVA LUCIANO MARIA DEL CARMEN</td><td>OPERADOR DE MÁQUINA D</td></tr><tr><td><code>4078</code></td><td>SUSANO TEODORO YOSELIN</td><td>OPERADOR DE MÁQUINA D</td></tr><tr><td><code>4079</code></td><td>ORTEGA DURAN DIEGO</td><td>OPERADOR DE MÁQUINA D</td></tr><tr><td><code>4080</code></td><td>PLATON LUCINA DOMINGA</td><td>OPERADOR DE MÁQUINA D</td></tr><tr><td><code>4081</code></td><td>ARAIZA SANCHEZ ARMANDO</td><td>SUPERVISOR DE LOGÍSTICA</td></tr><tr><td><code>4083</code></td><td>GARCIA RAMIREZ ZITLALXOCHITL</td><td>OPERADOR DE MÁQUINA D</td></tr><tr><td><code>4084</code></td><td>NUÑEZ RIVERA PAOLA GIOVANNA</td><td>METRÓLOGO C</td></tr><tr><td><code>4085</code></td><td>RAMIREZ MORALES JOSÉ MANUEL</td><td>OPERADOR DE MÁQUINA D</td></tr><tr><td><code>4086</code></td><td>ARREDONDO PICHARDO JONATHAN</td><td>OPERADOR DE MÁQUINA D</td></tr><tr><td><code>4087</code></td><td>RODRIGUEZ SANCHEZ LUIS ERNESTO</td><td>AUXILIAR DE ALMACÉN C</td></tr><tr><td><code>4088</code></td><td>ARRIAGA RAMIREZ YOHALI NARCEDALIA</td><td>OPERADOR DE ACABADOS - GP12 D</td></tr><tr><td><code>4089</code></td><td>RAMIREZ OLGUIN OSCAR ANTONIO</td><td>AUXILIAR DE ALMACÉN C</td></tr><tr><td><code>4090</code></td><td>LOPEZ OLIVARES KARLA VANESSA</td><td>LÍDER DE COTIZACIONES</td></tr><tr><td><code>4091</code></td><td>MONTIEL JIMENEZ MARIA YESSICA</td><td>OPERADOR DE ACABADOS - GP12 D</td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="card">
+            <h2>3. Puestos que Cumplen su Matriz al 100%</h2>
+            <p>Si un empleado de estos puestos aprueba <strong>todos los cursos de la lista</strong>, cumpliría su matriz al 100% (es decir, no requieren más cursos de los que están aquí):</p>
+            <ul><li><strong>ANALISTA DE RECLUTAMIENTO Y SELECCIÓN A</strong></li><li><strong>ANALISTA DE RECLUTAMIENTO Y SELECCIÓN B</strong></li><li><strong>ANALISTA DE RECURSOS HUMANOS</strong></li><li><strong>ASISTENTE DE RECURSOS HUMANOS</strong></li><li><strong>AUXILIAR PROGRAMADOR</strong></li><li><strong>CHECK LIST A</strong></li><li><strong>CHECK LIST B</strong></li><li><strong>COORDINADOR DE RECLUTAMIENTO Y SELECCIÓN</strong></li><li><strong>COORDINADOR DE RPS</strong></li><li><strong>GERENTE DE PLANTA</strong></li><li><strong>INGENIERO DE CALIDAD C</strong></li><li><strong>LÍDER DE COTIZACIONES</strong></li></ul>
+        </div>
+
+        <div class="card">
+            <h2>4. Listado de Cursos Considerados</h2>
+            <p>Se está contemplando el impacto del siguiente paquete de <strong>37 cursos</strong> en toda la plantilla:</p>
+            <div>
+                <span class="badge" style="background: #eef2ff; color: #4f46e5; border-color: #c7d2fe;">ALERTAS DE CALIDAD Y CATÁLOGO DE FALLAS</span><span class="badge" style="background: #eef2ff; color: #4f46e5; border-color: #c7d2fe;">ASPECTOS E IMPACTOS AMBIENTALES</span><span class="badge" style="background: #eef2ff; color: #4f46e5; border-color: #c7d2fe;">AUDITORÍAS DE PROCESO EN CAPAS</span><span class="badge" style="background: #eef2ff; color: #4f46e5; border-color: #c7d2fe;">COLADA CALIENTE</span><span class="badge" style="background: #eef2ff; color: #4f46e5; border-color: #c7d2fe;">CONOCIMIENTO SOBRE LA LEY FEDERAL DEL TRABAJO</span><span class="badge" style="background: #eef2ff; color: #4f46e5; border-color: #c7d2fe;">MANEJO DE MATERIAL NO CONFORME</span><span class="badge" style="background: #eef2ff; color: #4f46e5; border-color: #c7d2fe;">CONTROL DE CONTRATISTAS</span><span class="badge" style="background: #eef2ff; color: #4f46e5; border-color: #c7d2fe;">ESTRUCTURA DEL SGI Y DOCUMENTOS</span><span class="badge" style="background: #eef2ff; color: #4f46e5; border-color: #c7d2fe;">FAMILIAS DEL PRODUCTO</span><span class="badge" style="background: #eef2ff; color: #4f46e5; border-color: #c7d2fe;">INDUCCIÓN A LA EMPRESA</span><span class="badge" style="background: #eef2ff; color: #4f46e5; border-color: #c7d2fe;">INSTRUCCIONES DE TRABAJO</span><span class="badge" style="background: #eef2ff; color: #4f46e5; border-color: #c7d2fe;">ISO 14001:2015</span><span class="badge" style="background: #eef2ff; color: #4f46e5; border-color: #c7d2fe;">DIAGRAMA DE TORTUGA</span><span class="badge" style="background: #eef2ff; color: #4f46e5; border-color: #c7d2fe;">MATRIZ DE RIESGOS</span><span class="badge" style="background: #eef2ff; color: #4f46e5; border-color: #c7d2fe;">METODOLOGÍA 5S</span><span class="badge" style="background: #eef2ff; color: #4f46e5; border-color: #c7d2fe;">NOM-004-STPS-1999</span><span class="badge" style="background: #eef2ff; color: #4f46e5; border-color: #c7d2fe;">NOM-005-STPS-1998</span><span class="badge" style="background: #eef2ff; color: #4f46e5; border-color: #c7d2fe;">NOM-009-STPS-2011</span><span class="badge" style="background: #eef2ff; color: #4f46e5; border-color: #c7d2fe;">NOM-035-STPS-2018</span><span class="badge" style="background: #eef2ff; color: #4f46e5; border-color: #c7d2fe;">OBJETIVOS DEL SGI, ASPECTOS E IMPACTOS AMBIENTALES</span><span class="badge" style="background: #eef2ff; color: #4f46e5; border-color: #c7d2fe;">PARA OPERADORES DE MÁQUINA</span><span class="badge" style="background: #eef2ff; color: #4f46e5; border-color: #c7d2fe;">PREVENCIÓN DE LA VIOLENCIA LABORAL</span><span class="badge" style="background: #eef2ff; color: #4f46e5; border-color: #c7d2fe;">REPORTE DE PRODUCCIÓN</span><span class="badge" style="background: #eef2ff; color: #4f46e5; border-color: #c7d2fe;">SEGURIDAD Y PREVENCIÓN DE ACCIDENTES</span><span class="badge" style="background: #eef2ff; color: #4f46e5; border-color: #c7d2fe;">SEPARACIÓN DE RESIDUOS</span><span class="badge" style="background: #eef2ff; color: #4f46e5; border-color: #c7d2fe;">SISTEMA DE GESTIÓN INTEGRAL</span><span class="badge" style="background: #eef2ff; color: #4f46e5; border-color: #c7d2fe;">TRAZABILIDAD DEL PRODUCTO</span><span class="badge" style="background: #eef2ff; color: #4f46e5; border-color: #c7d2fe;">VDA 6.5 AUDITORÍAS DE PRODUCTO</span><span class="badge" style="background: #eef2ff; color: #4f46e5; border-color: #c7d2fe;">LIDERAZGO</span><span class="badge" style="background: #eef2ff; color: #4f46e5; border-color: #c7d2fe;">COMUNICACIÓN ASERTIVA</span><span class="badge" style="background: #eef2ff; color: #4f46e5; border-color: #c7d2fe;">ESCUCHA EFECTIVA</span><span class="badge" style="background: #eef2ff; color: #4f46e5; border-color: #c7d2fe;">REUNIONES EFECTIVAS</span><span class="badge" style="background: #eef2ff; color: #4f46e5; border-color: #c7d2fe;">GESTIÓN DE EQUIPOS MULTICULTURALES</span><span class="badge" style="background: #eef2ff; color: #4f46e5; border-color: #c7d2fe;">INSPECCIÓN VISUAL</span><span class="badge" style="background: #eef2ff; color: #4f46e5; border-color: #c7d2fe;">NOM-026-STPS-2008</span><span class="badge" style="background: #eef2ff; color: #4f46e5; border-color: #c7d2fe;">IT-PRO-009</span><span class="badge" style="background: #eef2ff; color: #4f46e5; border-color: #c7d2fe;">IDENTIFICACIÓN HOUSING</span>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+        
