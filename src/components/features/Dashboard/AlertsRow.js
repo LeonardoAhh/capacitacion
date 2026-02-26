@@ -6,6 +6,22 @@ import EmployeeDrawer from "./EmployeeDrawer";
 import styles from "./DashboardBentoGrid.module.css";
 
 /**
+ * Convierte un string YYYY-MM-DD a Date en hora LOCAL (no UTC).
+ * Sin esto, "2026-02-20" se interpreta como medianoche UTC, que en México (UTC-6)
+ * es el 19/02 → muestra un día menos o "Invalid Date".
+ */
+function parseLocalDate(str) {
+    if (!str) return null;
+    const s = String(str);
+    // Si ya tiene T (ISO completo) o es un objeto, parsear directo
+    if (s.includes('T') || s.includes(' ')) return new Date(s);
+    // Solo YYYY-MM-DD → agregar T00:00:00 para forzar hora local
+    const d = new Date(s + 'T00:00:00');
+    return isNaN(d.getTime()) ? null : d;
+}
+
+
+/**
  * Helpers para transformar datos en items de drawer.
  */
 function mapExpiringItems(employees) {
@@ -37,7 +53,7 @@ function mapEvaluationItems(evaluations, labelDate, labelDays) {
             { label: 'Área', value: ev.area || 'No especificada' },
             { label: 'Departamento', value: ev.department || 'No especificado' },
             { label: 'Turno', value: ev.shift ? `Turno ${ev.shift}` : 'No especificado' },
-            { label: labelDate, value: (ev.dueDate || ev.scheduledDate) ? new Date(ev.dueDate || ev.scheduledDate).toLocaleDateString('es-MX') : 'No disponible' },
+            { label: labelDate, value: (() => { const f = parseLocalDate(ev.dueDate || ev.scheduledDate); return f ? f.toLocaleDateString('es-MX') : 'No disponible'; })() },
             {
                 label: labelDays, value: ev.daysOverdue != null
                     ? `${ev.daysOverdue} día${ev.daysOverdue !== 1 ? 's' : ''}`

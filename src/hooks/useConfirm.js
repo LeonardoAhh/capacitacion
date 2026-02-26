@@ -82,8 +82,8 @@ export function useConfirm() {
                     aria-describedby="confirm-message"
                     style={{
                         position: 'relative',
-                        background: 'var(--bg-card, #1a1a2e)',
-                        border: '1px solid var(--border-color, rgba(255,255,255,0.1))',
+                        background: 'var(--card-background, #ffffff)',
+                        border: '1px solid var(--border-color, #e5e7eb)',
                         borderRadius: 14,
                         padding: '1.75rem',
                         maxWidth: 420,

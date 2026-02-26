@@ -2,7 +2,30 @@ import { useState } from 'react';
 import { X, Calendar, Clock, User, FileText, CheckCircle } from 'lucide-react';
 import styles from './EvaluationModal.module.css';
 
+
+/**
+ * Convierte cualquier formato de fecha a un Date local sin desfase UTC.
+ * Soporta: strings YYYY-MM-DD, ISO completo, Timestamps de Firebase.
+ */
+function parseFecha(valor) {
+    if (!valor) return null;
+    // Timestamp de Firebase { seconds, nanoseconds }
+    if (typeof valor === 'object' && valor.seconds !== undefined) {
+        return new Date(valor.seconds * 1000);
+    }
+    const s = String(valor);
+    // Si es solo YYYY-MM-DD (sin hora), forzar hora local agregando T00:00:00
+    if (/^\d{4}-\d{2}-\d{2}$/.test(s)) {
+        const d = new Date(s + 'T00:00:00');
+        return isNaN(d.getTime()) ? null : d;
+    }
+    // ISO completo u otro formato
+    const d = new Date(s);
+    return isNaN(d.getTime()) ? null : d;
+}
+
 export default function EvaluationModal({ isOpen, onClose, evaluation, onSave }) {
+
     const [result, setResult] = useState('');
     const [saving, setSaving] = useState(false);
 
@@ -67,7 +90,14 @@ export default function EvaluationModal({ isOpen, onClose, evaluation, onSave })
                             <div className={styles.infoIcon}><Calendar size={18} /></div>
                             <div>
                                 <span className={styles.infoLabel}>Fecha Programada</span>
-                                <span className={styles.infoValue}>{new Date(evaluation.dueDate).toLocaleDateString()}</span>
+                                <span className={styles.infoValue}>
+                                    {(() => {
+                                        // dueDate = overdue, scheduledDate = upcoming, date = campo base del hook
+                                        const rawDate = evaluation.dueDate || evaluation.scheduledDate || evaluation.date;
+                                        const fecha = parseFecha(rawDate);
+                                        return fecha ? fecha.toLocaleDateString('es-MX') : 'Fecha no disponible';
+                                    })()}
+                                </span>
                             </div>
                         </div>
                     </div>

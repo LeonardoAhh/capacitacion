@@ -70,6 +70,7 @@ export async function uploadFile(buffer, name, mimeType, folderId = null) {
         return {
             id: file.data.id,
             viewLink: directUrl,
+            webViewLink: file.data.webViewLink,
             downloadLink: file.data.webContentLink
         };
     } catch (error) {

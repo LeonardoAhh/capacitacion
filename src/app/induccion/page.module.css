@@ -1438,3 +1438,812 @@ textarea.input {
         padding: 20px 16px 18px;
     }
 }
+
+/* ── Controles de filtro y ordenamiento de galería ── */
+.galleryControls {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    margin: 8px 0 12px;
+    flex-wrap: wrap;
+}
+
+.gallerySearchInput {
+    flex: 1;
+    min-width: 140px;
+    padding: 7px 12px;
+    border-radius: 8px;
+    border: 1.5px solid var(--border-color, rgba(255, 255, 255, 0.1));
+    background: var(--bg-secondary, rgba(255, 255, 255, 0.05));
+    color: var(--text-primary, #fff);
+    font-size: 0.82rem;
+    outline: none;
+    transition: border-color 0.2s;
+}
+
+.gallerySearchInput:focus {
+    border-color: #e8742a;
+}
+
+.gallerySortSelect {
+    padding: 7px 10px;
+    border-radius: 8px;
+    border: 1.5px solid var(--border-color, rgba(255, 255, 255, 0.1));
+    background: var(--bg-secondary, rgba(255, 255, 255, 0.05));
+    color: var(--text-primary, #fff);
+    font-size: 0.82rem;
+    outline: none;
+    cursor: pointer;
+    transition: border-color 0.2s;
+}
+
+.gallerySortSelect:focus {
+    border-color: #e8742a;
+}
+
+/* ── Drag & Drop — estado activo ── */
+.galleryFileLabelDrag {
+    border-color: #e8742a !important;
+    background: rgba(232, 116, 42, 0.08) !important;
+    transform: scale(1.01);
+}
+
+/* ── Preview de imagen antes de subir ── */
+.galleryPreviewWrap {
+    width: 100%;
+    border-radius: 10px;
+    overflow: hidden;
+    margin: 8px 0;
+    border: 1.5px solid var(--border-color, rgba(255, 255, 255, 0.1));
+    max-height: 180px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0, 0, 0, 0.2);
+}
+
+.galleryPreviewImg {
+    max-width: 100%;
+    max-height: 180px;
+    object-fit: contain;
+    border-radius: 8px;
+}
+
+/* ── Navegación del Slideshow ── */
+.lightboxNavBtn {
+    position: fixed;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(255, 255, 255, 0.12);
+    border: none;
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.15s;
+    z-index: 100002;
+    backdrop-filter: blur(4px);
+}
+
+.lightboxNavBtn:hover {
+    background: rgba(255, 255, 255, 0.25);
+    transform: translateY(-50%) scale(1.08);
+}
+
+/* ── Botón de descarga en el Lightbox ── */
+.lightboxDownloadBtn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.15);
+    color: white;
+    text-decoration: none;
+    transition: background 0.2s;
+    flex-shrink: 0;
+}
+
+.lightboxDownloadBtn:hover {
+    background: rgba(255, 255, 255, 0.3);
+}
+
+/* ── Contador de posición del Slideshow ── */
+.lightboxCounter {
+    text-align: center;
+    color: rgba(255, 255, 255, 0.55);
+    font-size: 0.78rem;
+    margin-top: 6px;
+    letter-spacing: 0.03em;
+}
+
+/* ── Ajuste del caption para incluir el botón de descarga ── */
+.lightboxCaption {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+
+/* ==================== INDUCCION LAYOUT (TABS & SIDEBAR) ==================== */
+.layoutContainer {
+    display: flex;
+    gap: 32px;
+    align-items: flex-start;
+    width: 100%;
+    margin-top: 16px;
+}
+
+.sidebarContainer {
+    position: sticky;
+    top: 100px;
+    width: 260px;
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    padding-right: 16px;
+    border-right: 1px solid var(--border-color);
+}
+
+.sidebarHeader {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--text-tertiary);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    padding: 0 12px;
+}
+
+.sidebarList {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.sidebarTab {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 14px;
+    border-radius: 10px;
+    background: transparent;
+    border: none;
+    color: var(--text-secondary);
+    font-size: 0.95rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-align: left;
+}
+
+.sidebarTab:hover {
+    background: var(--bg-secondary);
+    color: var(--text-primary);
+}
+
+.sidebarTab.active {
+    background: var(--color-primary-light);
+    color: var(--color-primary);
+    font-weight: 600;
+}
+
+.tabLeft {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.tabIcon {
+    opacity: 0.7;
+    transition: all 0.2s;
+}
+
+.sidebarTab.active .tabIcon {
+    opacity: 1;
+}
+
+.tabCount {
+    font-size: 0.75rem;
+    background: var(--bg-hover);
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-weight: 600;
+    color: var(--text-secondary);
+}
+
+.sidebarTab.active .tabCount {
+    background: white;
+    color: var(--color-primary);
+}
+
+[data-theme="dark"] .sidebarTab.active .tabCount {
+    background: rgba(0, 0, 0, 0.2);
+}
+
+.tabContent {
+    flex-grow: 1;
+    min-width: 0;
+    min-height: 500px;
+}
+
+/* ==================== BOTTOM NAV (MOBILE) ==================== */
+.bottomNav {
+    display: none;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background: var(--card-background);
+    border-top: 1px solid var(--border-color);
+    z-index: 100;
+    padding: 8px 16px;
+    justify-content: space-around;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.bottomNavTab {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    background: transparent;
+    border: none;
+    color: var(--text-tertiary);
+    font-size: 0.7rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    padding: 4px 12px;
+    border-radius: 8px;
+    position: relative;
+}
+
+.bottomNavTab:hover {
+    color: var(--text-secondary);
+}
+
+.bottomNavTab.active {
+    color: var(--color-primary);
+    font-weight: 600;
+}
+
+.bottomNavItemCount {
+    position: absolute;
+    top: -2px;
+    right: 4px;
+    background: var(--color-danger);
+    color: white;
+    font-size: 0.6rem;
+    font-weight: bold;
+    padding: 1px 5px;
+    border-radius: 10px;
+    border: 2px solid var(--card-background);
+}
+
+
+/* RESPONSIVE */
+@media (max-width: 768px) {
+    .layoutContainer {
+        flex-direction: column;
+        gap: 0;
+    }
+
+    .sidebarContainer {
+        display: none;
+    }
+
+    .bottomNav {
+        display: flex;
+    }
+
+    .tabContent {
+        padding-bottom: 80px;
+        /* espacio para la bottom nav */
+    }
+}
+
+/* ==================== SKELETON CARD ==================== */
+.skeletonCard {
+    background: var(--card-background);
+    border-radius: 16px;
+    padding: 20px;
+    border: 1px solid var(--border-color);
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+    box-shadow: var(--shadow-sm);
+}
+
+.skeletonAvatar {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    background: var(--bg-hover);
+    animation: pulse 1.5s infinite ease-in-out;
+}
+
+.skeletonContent {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.skeletonTitle {
+    height: 18px;
+    width: 70%;
+    background: var(--bg-hover);
+    border-radius: 4px;
+    animation: pulse 1.5s infinite ease-in-out;
+}
+
+.skeletonMeta {
+    height: 14px;
+    width: 40%;
+    background: var(--bg-hover);
+    border-radius: 4px;
+    animation: pulse 1.5s infinite ease-in-out;
+}
+
+.skeletonBadges {
+    display: flex;
+    gap: 8px;
+}
+
+.skeletonBadge {
+    height: 24px;
+    width: 80px;
+    background: var(--bg-hover);
+    border-radius: 12px;
+    animation: pulse 1.5s infinite ease-in-out;
+}
+
+@keyframes pulse {
+    0% {
+        opacity: 0.5;
+    }
+
+    50% {
+        opacity: 1;
+    }
+
+    100% {
+        opacity: 0.5;
+    }
+}
+
+/* ==================== COURSE CARD (Premium) ==================== */
+.courseCardPremium {
+    background: var(--card-background);
+    border: 1px solid var(--border-color);
+    border-radius: 16px;
+    padding: 20px;
+    display: flex;
+    gap: 16px;
+    transition: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+    box-shadow: var(--shadow-sm);
+    position: relative;
+    overflow: hidden;
+}
+
+.courseCardPremium:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+    border-color: var(--color-primary-light);
+}
+
+.cardInactive {
+    opacity: 0.6;
+    filter: grayscale(0.5);
+}
+
+/* AVATAR GENERADO */
+.courseAvatar {
+    width: 52px;
+    height: 52px;
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: white;
+    flex-shrink: 0;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.courseAvatar.type_native {
+    background: linear-gradient(135deg, #FF9A44 0%, #FC6076 100%);
+}
+
+.courseAvatar.type_link {
+    background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+}
+
+/* CONTENIDO */
+.courseContent {
+    flex-grow: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.courseHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 12px;
+}
+
+.titleArea {
+    flex-grow: 1;
+}
+
+.titleArea h3 {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin: 0 0 4px 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    line-height: 1.3;
+}
+
+.titleArea p {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    margin: 0;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+/* BADGES */
+.badgesContainer {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+}
+
+.statusBadge,
+.requiredBadge,
+.inactiveBadge,
+.orderBadge {
+    font-size: 0.7rem;
+    font-weight: 600;
+    padding: 3px 8px;
+    border-radius: 6px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    display: inline-flex;
+    align-items: center;
+}
+
+.statusPublished {
+    background: rgba(34, 197, 94, 0.1);
+    color: #16a34a;
+    border: 1px solid rgba(34, 197, 94, 0.2);
+}
+
+[data-theme="dark"] .statusPublished {
+    color: #4ade80;
+}
+
+.statusDraft {
+    background: rgba(234, 179, 8, 0.1);
+    color: #ca8a04;
+    border: 1px solid rgba(234, 179, 8, 0.2);
+}
+
+[data-theme="dark"] .statusDraft {
+    color: #facc15;
+}
+
+.requiredBadge {
+    background: rgba(239, 68, 68, 0.1);
+    color: #dc2626;
+    border: 1px solid rgba(239, 68, 68, 0.2);
+}
+
+[data-theme="dark"] .requiredBadge {
+    color: #f87171;
+}
+
+.inactiveBadge {
+    background: var(--bg-hover);
+    color: var(--text-tertiary);
+}
+
+.orderBadge {
+    background: var(--text-primary);
+    color: var(--bg-primary);
+    font-size: 0.65rem;
+    padding: 2px 6px;
+    border-radius: 4px;
+}
+
+/* META CHIPS */
+.metaChips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 4px;
+}
+
+.metaChip {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+    background: var(--bg-secondary);
+    padding: 4px 10px;
+    border-radius: 20px;
+}
+
+.metaChip.activeLink {
+    background: var(--color-primary-light);
+    color: var(--color-primary);
+    font-weight: 500;
+    cursor: pointer;
+    text-decoration: none;
+    transition: background 0.2s;
+}
+
+.metaChip.activeLink:hover {
+    background: var(--color-primary);
+    color: white;
+}
+
+/* ACTIONS */
+.cardActions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 8px;
+    padding-top: 12px;
+    border-top: 1px dashed var(--border-color);
+}
+
+.actionBtn {
+    background: transparent;
+    border: none;
+    color: var(--text-tertiary);
+    cursor: pointer;
+    padding: 6px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+}
+
+.actionBtn:hover {
+    background: var(--bg-hover);
+    color: var(--text-primary);
+}
+
+.actionBtn.publishedBtn {
+    color: var(--color-primary);
+}
+
+.actionBtn.publishedBtn:hover {
+    background: var(--color-primary-light);
+}
+
+.actionBtnDelete:hover {
+    background: rgba(239, 68, 68, 0.1);
+    color: #ef4444;
+}
+
+.playActionBtn {
+    margin-left: auto;
+    background: var(--text-primary);
+    color: var(--bg-primary);
+    border: none;
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    cursor: pointer;
+    transition: transform 0.2s, background 0.2s;
+}
+
+.playActionBtn:hover {
+    transform: scale(1.05);
+}
+
+@media (max-width: 600px) {
+    .courseCardPremium {
+        flex-direction: column;
+        padding: 16px;
+    }
+
+    .courseAvatar {
+        width: 40px;
+        height: 40px;
+        font-size: 1rem;
+    }
+
+    .courseHeader {
+        flex-direction: column;
+    }
+
+    .badgesContainer {
+        margin-top: 4px;
+    }
+
+    .playActionBtn {
+        width: 100%;
+        justify-content: center;
+    }
+}
+
+/* ==================== TABS CONTENT LAYOUT ==================== */
+.tabContent {
+    flex-grow: 1;
+    min-width: 0;
+    min-height: 500px;
+    animation: fadeIn 0.3s ease-out;
+}
+
+.tabSection {
+    background: transparent;
+    margin-bottom: 32px;
+}
+
+.tabSectionHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    margin-bottom: 20px;
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 16px;
+    gap: 16px;
+    flex-wrap: wrap;
+}
+
+.tabSectionTitle {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin: 0 0 4px 0;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-family: inherit;
+    letter-spacing: -0.02em;
+}
+
+.tabSectionSub {
+    font-size: 0.85rem;
+    color: var(--text-tertiary);
+    margin: 0;
+}
+
+.tabSectionActions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.courseGrid,
+.candidateList {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 20px;
+}
+
+@media (max-width: 768px) {
+
+    .courseGrid,
+    .candidateList {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* ==================== MATERIAL TAB STYLES ==================== */
+.materialList {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 16px;
+}
+
+.materialCard {
+    background: var(--card-background);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 16px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    transition: all 0.2s;
+    position: relative;
+    overflow: hidden;
+}
+
+.materialCard:hover {
+    border-color: rgba(var(--color-primary-rgb), 0.3);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    transform: translateY(-2px);
+}
+
+.materialIcon {
+    width: 44px;
+    height: 44px;
+    background: rgba(var(--color-primary-rgb), 0.1);
+    color: var(--color-primary);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.materialInfo {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    min-width: 0;
+    flex-grow: 1;
+}
+
+.materialTitle {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.materialLink {
+    font-size: 0.8rem;
+    color: var(--color-primary);
+    font-weight: 500;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    text-decoration: none;
+    transition: color 0.2s;
+}
+
+.materialLink:hover {
+    color: var(--color-primary-dark, #c6601f);
+}
+
+.materialDeleteBtn {
+    background: transparent;
+    border: none;
+    color: var(--text-tertiary);
+    cursor: pointer;
+    padding: 6px;
+    border-radius: 6px;
+    transition: all 0.2s;
+}
+
+.materialDeleteBtn:hover {
+    background: rgba(239, 68, 68, 0.1);
+    color: #ef4444;
+}
+
+@media (max-width: 600px) {
+    .materialList {
+        grid-template-columns: 1fr;
+    }
+}

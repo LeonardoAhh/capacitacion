@@ -1,0 +1,103 @@
+/* ── AuditTimeline ── */
+
+.wrap {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+}
+
+.item {
+    display: flex;
+    gap: 12px;
+    position: relative;
+    padding-bottom: 16px;
+}
+
+/* Línea vertical continua */
+.item:not(:last-child)::before {
+    content: '';
+    position: absolute;
+    left: 15px;
+    top: 30px;
+    bottom: 0;
+    width: 1px;
+    background: var(--border-color);
+}
+
+/* Ícono del evento */
+.iconWrap {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    font-size: 0.85rem;
+    z-index: 1;
+}
+
+.body {
+    flex: 1;
+    padding-top: 4px;
+    min-width: 0;
+}
+
+.actionLabel {
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.meta {
+    font-size: 0.74rem;
+    color: var(--text-tertiary);
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-top: 2px;
+}
+
+.target {
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+    background: var(--bg-secondary);
+    padding: 2px 8px;
+    border-radius: 99px;
+    margin-top: 4px;
+    display: inline-block;
+    max-width: 100%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* ── Botón Ver más ── */
+.loadMore {
+    margin-top: 8px;
+    padding: 7px 16px;
+    border-radius: 8px;
+    border: 1.5px solid var(--border-color);
+    background: transparent;
+    color: var(--text-secondary);
+    font-size: 0.8rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 0.15s, color 0.15s;
+    align-self: flex-start;
+}
+
+.loadMore:hover {
+    background: var(--bg-secondary);
+    color: var(--text-primary);
+}
+
+.empty {
+    text-align: center;
+    color: var(--text-tertiary);
+    font-size: 0.85rem;
+    padding: 32px 0;
+}

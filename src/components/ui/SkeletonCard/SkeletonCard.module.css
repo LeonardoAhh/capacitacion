@@ -1,0 +1,112 @@
+/* ── SkeletonCard — animación shimmer ── */
+
+@keyframes shimmer {
+    0% {
+        background-position: -400px 0;
+    }
+
+    100% {
+        background-position: 400px 0;
+    }
+}
+
+.skeletonBase {
+    background: linear-gradient(90deg,
+            var(--bg-secondary, rgba(255, 255, 255, 0.06)) 25%,
+            var(--bg-tertiary, rgba(255, 255, 255, 0.12)) 37%,
+            var(--bg-secondary, rgba(255, 255, 255, 0.06)) 63%);
+    background-size: 800px 100%;
+    animation: shimmer 1.4s infinite linear;
+    border-radius: 8px;
+}
+
+/* ── Tipo: course ── */
+.courseWrap {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 14px;
+    border: 1px solid var(--border-color, rgba(255, 255, 255, 0.08));
+    border-radius: 12px;
+    background: var(--bg-card, rgba(255, 255, 255, 0.03));
+}
+
+.courseAvatar {
+    width: 44px;
+    height: 44px;
+    border-radius: 10px;
+}
+
+.courseTitle {
+    height: 14px;
+    width: 70%;
+}
+
+.courseMeta {
+    height: 11px;
+    width: 45%;
+}
+
+.courseBadge {
+    height: 22px;
+    width: 72px;
+    border-radius: 99px;
+}
+
+.courseRow {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+/* ── Tipo: gallery ── */
+.galleryWrap {
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.galleryThumb {
+    width: 100%;
+    height: 130px;
+    border-radius: 10px 10px 0 0;
+}
+
+.galleryFooter {
+    height: 36px;
+    border-radius: 0 0 10px 10px;
+    margin-top: 2px;
+}
+
+/* ── Tipo: material ── */
+.materialWrap {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px;
+    border: 1px solid var(--border-color, rgba(255, 255, 255, 0.08));
+    border-radius: 10px;
+}
+
+.materialIcon {
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+    flex-shrink: 0;
+}
+
+.materialLines {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.materialLine1 {
+    height: 13px;
+    width: 60%;
+}
+
+.materialLine2 {
+    height: 10px;
+    width: 40%;
+}
