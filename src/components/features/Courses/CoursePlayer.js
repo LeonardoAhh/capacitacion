@@ -282,10 +282,36 @@ export default function CoursePlayer({ course, slides, onClose, inline = false, 
                         </span>
                     )}
 
-                    {/* Contador */}
-                    <span className={styles.counter} aria-label={`Slide ${current + 1} de ${total}`}>
-                        {current + 1} / {total}
-                    </span>
+                    {/* Contador + Badge de tipo */}
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                        {/* Badge: tipo del slide actual */}
+                        {!inline && (() => {
+                            const type = currentSlide?.type;
+                            const BADGES = {
+                                quiz: { emoji: '🧠', label: 'Quiz' },
+                                group_quiz: { emoji: '🧠', label: 'Quiz' },
+                                dynamic: { emoji: '🎯', label: 'Dinámica' },
+                                group_dynamic: { emoji: '🎯', label: 'Dinámica' },
+                                title: { emoji: '🎯', label: 'Portada' },
+                                objective: { emoji: '🎓', label: 'Objetivo' },
+                                benefits: { emoji: '✅', label: 'Beneficios' },
+                                icon_grid: { emoji: '🔲', label: 'Íconos' },
+                                comparison: { emoji: '⚖️', label: 'Comparación' },
+                                definition: { emoji: '📖', label: 'Definición' },
+                                content: { emoji: '📄', label: 'Contenido' },
+                            };
+                            const badge = BADGES[type];
+                            if (!badge) return null;
+                            return (
+                                <span className={styles.slideBadge}>
+                                    {badge.emoji} {badge.label}
+                                </span>
+                            );
+                        })()}
+                        <span className={styles.counter} aria-label={`Slide ${current + 1} de ${total}`}>
+                            {current + 1} / {total}
+                        </span>
+                    </div>
 
                     {/* Fullscreen */}
                     {!inline && (
@@ -303,29 +329,46 @@ export default function CoursePlayer({ course, slides, onClose, inline = false, 
                 </div>
             </header>
 
-            {/* ── Barra de progreso segmentada ── */}
-            <div
-                className={styles.segmentedBar}
-                role="progressbar"
-                aria-valuenow={current + 1}
-                aria-valuemin={1}
-                aria-valuemax={total}
-                aria-label={`Progreso: slide ${current + 1} de ${total}`}
-            >
-                {allSlides.map((_, i) => (
-                    <button
-                        key={i}
-                        className={[
-                            styles.segment,
-                            i === current ? styles.segmentActive : '',
-                            i < current ? styles.segmentVisited : '',
-                        ].filter(Boolean).join(' ')}
-                        onClick={() => goTo(i, i > current ? 'forward' : 'backward')}
-                        aria-label={`Slide ${i + 1}`}
-                        tabIndex={-1}
+            {/* ── Barra de progreso: segmentada (≤12 slides) o lineal (>12 slides) ── */}
+            {total <= 12 ? (
+                <div
+                    className={styles.segmentedBar}
+                    role="progressbar"
+                    aria-valuenow={current + 1}
+                    aria-valuemin={1}
+                    aria-valuemax={total}
+                    aria-label={`Progreso: slide ${current + 1} de ${total}`}
+                >
+                    {allSlides.map((_, i) => (
+                        <button
+                            key={i}
+                            className={[
+                                styles.segment,
+                                i === current ? styles.segmentActive : '',
+                                i < current ? styles.segmentVisited : '',
+                            ].filter(Boolean).join(' ')}
+                            onClick={() => goTo(i, i > current ? 'forward' : 'backward')}
+                            aria-label={`Slide ${i + 1}`}
+                            tabIndex={-1}
+                        />
+                    ))}
+                </div>
+            ) : (
+                /* Barra lineal para cursos largos: más legible en mobile */
+                <div
+                    className={styles.linearBar}
+                    role="progressbar"
+                    aria-valuenow={current + 1}
+                    aria-valuemin={1}
+                    aria-valuemax={total}
+                    aria-label={`Progreso: slide ${current + 1} de ${total}`}
+                >
+                    <div
+                        className={styles.linearBarFill}
+                        style={{ width: `${((current + 1) / total) * 100}%` }}
                     />
-                ))}
-            </div>
+                </div>
+            )}
 
             {/* ── Contenido del slide ── */}
             <main

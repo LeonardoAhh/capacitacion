@@ -1,15 +1,53 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { IconSave, IconPlus, IconTrash2, IconArrowLeft, IconCheckCircle2, Loader2 } from '@/lib/icons';
 import ImageUploader from './ImageUploader';
 import MediaUploader from './MediaUploader';
+import IconPicker from './IconPicker';
 import styles from '@/app/induccion/cursos/[id]/editar/editor.module.css';
 
+/** Límite de ítems para slides de tipo icon_grid */
+const ICON_GRID_MAX = 6;
+/** Límite de caracteres recomendado para campos de texto largo */
+const BODY_MAX_CHARS = 600;
+const TEXTAREA_MAX_CHARS = 400;
+
+/**
+ * CharCounter — Contador de caracteres inline con warning cuando se acerca al límite
+ * @param {number} current
+ * @param {number} max
+ */
+function CharCounter({ current = 0, max }) {
+    const pct = current / max;
+    const color = pct >= 1
+        ? 'var(--color-danger)'
+        : pct >= 0.85
+            ? 'var(--color-warning, #f59e0b)'
+            : 'var(--text-tertiary)';
+
+    return (
+        <span style={{ fontSize: '0.68rem', color, float: 'right', fontVariantNumeric: 'tabular-nums' }}>
+            {current}/{max}
+        </span>
+    );
+}
+
+/**
+ * SlideEditorPanel — Panel de edición de un slide individual.
+ * Incluye: auto-save con debounce, IconPicker visual, validación max 6 en IconGrid,
+ * contador de caracteres en textareas y UI mejorada de respuesta correcta en Quiz.
+ *
+ * @param {Object}   props
+ * @param {Object}   props.slide        - Slide actualmente seleccionado
+ * @param {Function} props.onSave       - Callback async (slideId, data) => void
+ * @param {Function} props.onDelete     - Callback (slideId) => void
+ * @param {Function} [props.onFormChange] - Callback en tiempo real (newData) => void (live preview)
+ */
 export default function SlideEditorPanel({ slide, onSave, onDelete, onFormChange }) {
     const [formData, setFormData] = useState({});
-    const [savingState, setSavingState] = useState('idle'); // 'idle', 'saving', 'saved', 'error'
+    const [savingState, setSavingState] = useState('idle'); // 'idle' | 'saving' | 'saved' | 'error'
     const timerRef = useRef(null);
 
-    // Initial load
+    // Carga inicial del slide
     useEffect(() => {
         if (slide) {
             setFormData(JSON.parse(JSON.stringify(slide.data || {})));
@@ -17,32 +55,29 @@ export default function SlideEditorPanel({ slide, onSave, onDelete, onFormChange
         }
     }, [slide]);
 
-    // Auto-save logic
+    // Auto-save con debounce
     useEffect(() => {
         if (!slide || Object.keys(formData).length === 0) return;
 
-        // Evitamos guardar si los datos son iguales a los originales del slide
         const originalDataStr = JSON.stringify(slide.data || {});
         const currentDataStr = JSON.stringify(formData);
 
         if (originalDataStr !== currentDataStr) {
             setSavingState('saving');
-
             if (timerRef.current) clearTimeout(timerRef.current);
 
             timerRef.current = setTimeout(async () => {
                 try {
                     await onSave(slide.id, formData);
                     setSavingState('saved');
-                    // Reset to idle after 2s
                     setTimeout(() => {
                         setSavingState(curr => curr === 'saved' ? 'idle' : curr);
                     }, 2000);
                 } catch (error) {
-                    console.error("Auto-save failed", error);
+                    console.error('Auto-save failed', error);
                     setSavingState('error');
                 }
-            }, 800); // 800ms debounce
+            }, 800);
         }
 
         return () => {
@@ -50,14 +85,13 @@ export default function SlideEditorPanel({ slide, onSave, onDelete, onFormChange
         };
     }, [formData, slide, onSave]);
 
-    const handleChange = (field, value) => {
+    const handleChange = useCallback((field, value) => {
         setFormData(prev => {
             const next = { ...prev, [field]: value };
-            // Notificar al padre en tiempo real para actualizar el preview
             if (onFormChange) onFormChange(next);
             return next;
         });
-    };
+    }, [onFormChange]);
 
     if (!slide) {
         return (
@@ -68,7 +102,7 @@ export default function SlideEditorPanel({ slide, onSave, onDelete, onFormChange
         );
     }
 
-    // ── Renders por Tipo ──
+    // ── Renders por tipo ──────────────────────────────────────────────────────
 
     const renderTitleSlide = () => (
         <>
@@ -78,6 +112,7 @@ export default function SlideEditorPanel({ slide, onSave, onDelete, onFormChange
                     className={styles.input}
                     value={formData.title || ''}
                     onChange={e => handleChange('title', e.target.value)}
+                    maxLength={120}
                 />
             </div>
             <div className={styles.formGroup}>
@@ -86,18 +121,16 @@ export default function SlideEditorPanel({ slide, onSave, onDelete, onFormChange
                     className={styles.input}
                     value={formData.subtitle || ''}
                     onChange={e => handleChange('subtitle', e.target.value)}
+                    maxLength={200}
                 />
             </div>
         </>
     );
 
     const renderContentSlide = () => {
-        // Compatibilidad: migrar campo `image` antiguo a array `images`
         const images = formData.images
             ? formData.images
-            : formData.image
-                ? [formData.image]
-                : [];
+            : formData.image ? [formData.image] : [];
 
         const handleAddImage = (url) => {
             const updated = [...images, url];
@@ -117,14 +150,19 @@ export default function SlideEditorPanel({ slide, onSave, onDelete, onFormChange
                         className={styles.input}
                         value={formData.heading || ''}
                         onChange={e => handleChange('heading', e.target.value)}
+                        maxLength={120}
                     />
                 </div>
                 <div className={styles.formGroup}>
-                    <label className={styles.label}>Cuerpo de texto</label>
+                    <label className={styles.label}>
+                        Cuerpo de texto
+                        <CharCounter current={formData.body?.length ?? 0} max={BODY_MAX_CHARS} />
+                    </label>
                     <textarea
                         className={styles.textarea}
                         value={formData.body || ''}
                         onChange={e => handleChange('body', e.target.value)}
+                        maxLength={BODY_MAX_CHARS}
                     />
                 </div>
 
@@ -137,7 +175,6 @@ export default function SlideEditorPanel({ slide, onSave, onDelete, onFormChange
                         </span>
                     </label>
 
-                    {/* Previews existentes */}
                     {images.length > 0 && (
                         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(120px, 1fr))', gap: 8, marginBottom: 10 }}>
                             {images.map((url, idx) => (
@@ -154,7 +191,6 @@ export default function SlideEditorPanel({ slide, onSave, onDelete, onFormChange
                         </div>
                     )}
 
-                    {/* Uploader para agregar más */}
                     {images.length < 6 && (
                         <ImageUploader
                             currentImage={null}
@@ -179,6 +215,7 @@ export default function SlideEditorPanel({ slide, onSave, onDelete, onFormChange
                                             newBullets[idx] = e.target.value;
                                             handleChange('bullets', newBullets);
                                         }}
+                                        maxLength={200}
                                     />
                                     <button
                                         className={styles.removeBtn}
@@ -204,96 +241,145 @@ export default function SlideEditorPanel({ slide, onSave, onDelete, onFormChange
         );
     };
 
-    const renderIconGridSlide = () => (
-        <>
-            <div className={styles.formGroup}>
-                <label className={styles.label}>Encabezado</label>
-                <input
-                    className={styles.input}
-                    value={formData.heading || ''}
-                    onChange={e => handleChange('heading', e.target.value)}
-                />
-            </div>
-            <div className={styles.formGroup}>
-                <label className={styles.label}>Descripción</label>
-                <textarea
-                    className={styles.textarea}
-                    value={formData.description || ''}
-                    onChange={e => handleChange('description', e.target.value)}
-                />
-            </div>
-            <div className={styles.formGroup}>
-                <label className={styles.label}>Items de Grid ({formData.items?.length || 0})</label>
-                <div className={styles.itemsList}>
-                    {formData.items?.map((item, idx) => (
-                        <div key={idx} className={styles.itemRow} style={{ flexDirection: 'column' }}>
-                            <div style={{ display: 'flex', width: '100%', gap: 10 }}>
-                                <input
-                                    className={styles.input}
-                                    placeholder="Etiqueta"
-                                    value={item.label || ''}
-                                    onChange={e => {
-                                        const newItems = [...formData.items];
-                                        newItems[idx] = { ...item, label: e.target.value };
-                                        handleChange('items', newItems);
-                                    }}
-                                />
-                                <input
-                                    className={styles.input}
-                                    placeholder="Icono (Nombre Lucide)"
-                                    value={item.icon || ''}
-                                    onChange={e => {
-                                        const newItems = [...formData.items];
-                                        newItems[idx] = { ...item, icon: e.target.value };
-                                        handleChange('items', newItems);
-                                    }}
-                                />
-                                <button
-                                    className={styles.removeBtn}
-                                    onClick={() => {
-                                        const newItems = formData.items.filter((_, i) => i !== idx);
-                                        handleChange('items', newItems);
-                                    }}
-                                >
-                                    <IconTrash2 size={16} />
-                                </button>
-                            </div>
+    const renderIconGridSlide = () => {
+        const items = formData.items || [];
+        const atMax = items.length >= ICON_GRID_MAX;
 
-                            <div style={{ paddingLeft: 10, borderLeft: '2px solid var(--border-color)', marginTop: 8 }}>
-                                <ImageUploader
-                                    currentImage={item.image}
-                                    onImageChange={(url) => {
-                                        const newItems = [...formData.items];
-                                        newItems[idx] = { ...item, image: url };
-                                        handleChange('items', newItems);
-                                    }}
-                                    label="Imagen (reemplaza icono)"
-                                />
-                            </div>
-
-                            <textarea
-                                className={styles.input}
-                                placeholder="Descripción del item"
-                                rows={2}
-                                value={item.description || ''}
-                                onChange={e => {
-                                    const newItems = [...formData.items];
-                                    newItems[idx] = { ...item, description: e.target.value };
-                                    handleChange('items', newItems);
-                                }}
-                            />
-                        </div>
-                    ))}
-                    <button
-                        className={styles.addItemBtn}
-                        onClick={() => handleChange('items', [...(formData.items || []), { label: '', icon: 'Circle', description: '' }])}
-                    >
-                        <IconPlus size={14} /> Agregar Item
-                    </button>
+        return (
+            <>
+                <div className={styles.formGroup}>
+                    <label className={styles.label}>Encabezado</label>
+                    <input
+                        className={styles.input}
+                        value={formData.heading || ''}
+                        onChange={e => handleChange('heading', e.target.value)}
+                        maxLength={100}
+                    />
                 </div>
-            </div>
-        </>
-    );
+                <div className={styles.formGroup}>
+                    <label className={styles.label}>
+                        Descripción
+                        <CharCounter current={formData.description?.length ?? 0} max={TEXTAREA_MAX_CHARS} />
+                    </label>
+                    <textarea
+                        className={styles.textarea}
+                        value={formData.description || ''}
+                        onChange={e => handleChange('description', e.target.value)}
+                        maxLength={TEXTAREA_MAX_CHARS}
+                    />
+                </div>
+                <div className={styles.formGroup}>
+                    <label className={styles.label}>
+                        Íconos
+                        <span style={{
+                            float: 'right',
+                            fontSize: '0.72rem',
+                            fontWeight: 700,
+                            color: atMax ? 'var(--color-danger)' : 'var(--text-tertiary)',
+                        }}>
+                            {items.length}/{ICON_GRID_MAX} máx.
+                        </span>
+                    </label>
+                    <div className={styles.itemsList}>
+                        {items.map((item, idx) => (
+                            <div key={idx} className={styles.itemRow} style={{ flexDirection: 'column', gap: 8 }}>
+                                <div style={{ display: 'flex', width: '100%', gap: 8, alignItems: 'flex-start' }}>
+                                    {/* Número de ícono */}
+                                    <span style={{
+                                        flexShrink: 0, width: 24, height: 24,
+                                        borderRadius: '50%', background: 'var(--bg-tertiary)',
+                                        border: '1px solid var(--border-color)',
+                                        display: 'flex', alignItems: 'center', justifyContent: 'center',
+                                        fontSize: '0.7rem', fontWeight: 700, color: 'var(--text-secondary)',
+                                        marginTop: 8,
+                                    }}>
+                                        {idx + 1}
+                                    </span>
+                                    <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 6 }}>
+                                        {/* Etiqueta */}
+                                        <input
+                                            className={styles.input}
+                                            placeholder="Etiqueta del ícono"
+                                            value={item.label || ''}
+                                            maxLength={50}
+                                            onChange={e => {
+                                                const newItems = [...items];
+                                                newItems[idx] = { ...item, label: e.target.value };
+                                                handleChange('items', newItems);
+                                            }}
+                                        />
+                                        {/* IconPicker visual */}
+                                        <IconPicker
+                                            value={item.icon || ''}
+                                            onChange={(iconName) => {
+                                                const newItems = [...items];
+                                                newItems[idx] = { ...item, icon: iconName };
+                                                handleChange('items', newItems);
+                                            }}
+                                        />
+                                    </div>
+                                    <button
+                                        className={styles.removeBtn}
+                                        onClick={() => {
+                                            const newItems = items.filter((_, i) => i !== idx);
+                                            handleChange('items', newItems);
+                                        }}
+                                        title="Eliminar ícono"
+                                        style={{ marginTop: 6 }}
+                                    >
+                                        <IconTrash2 size={16} />
+                                    </button>
+                                </div>
+
+                                {/* Imagen alternativa (opcional) */}
+                                <div style={{ paddingLeft: 32, borderLeft: '2px solid var(--border-color)' }}>
+                                    <ImageUploader
+                                        currentImage={item.image}
+                                        onImageChange={(url) => {
+                                            const newItems = [...items];
+                                            newItems[idx] = { ...item, image: url };
+                                            handleChange('items', newItems);
+                                        }}
+                                        label="Imagen (reemplaza ícono)"
+                                    />
+                                </div>
+
+                                {/* Descripción del ítem */}
+                                <textarea
+                                    className={styles.input}
+                                    placeholder="Descripción del ícono (opcional)"
+                                    rows={2}
+                                    style={{ paddingLeft: 32, marginLeft: 0, resize: 'vertical' }}
+                                    value={item.description || ''}
+                                    maxLength={200}
+                                    onChange={e => {
+                                        const newItems = [...items];
+                                        newItems[idx] = { ...item, description: e.target.value };
+                                        handleChange('items', newItems);
+                                    }}
+                                />
+                            </div>
+                        ))}
+
+                        {/* Botón añadir — deshabilitado al llegar al máximo */}
+                        <button
+                            className={styles.addItemBtn}
+                            onClick={() => {
+                                if (atMax) return;
+                                handleChange('items', [...items, { label: '', icon: 'Bulb', description: '' }]);
+                            }}
+                            disabled={atMax}
+                            title={atMax ? `Máximo ${ICON_GRID_MAX} íconos permitidos` : undefined}
+                            style={{ opacity: atMax ? 0.4 : 1, cursor: atMax ? 'not-allowed' : 'pointer' }}
+                        >
+                            <IconPlus size={14} />
+                            {atMax ? `Máximo ${ICON_GRID_MAX} íconos` : 'Agregar Ícono'}
+                        </button>
+                    </div>
+                </div>
+            </>
+        );
+    };
 
     const renderComparisonSlide = () => (
         <>
@@ -303,18 +389,22 @@ export default function SlideEditorPanel({ slide, onSave, onDelete, onFormChange
                     className={styles.input}
                     value={formData.heading || ''}
                     onChange={e => handleChange('heading', e.target.value)}
+                    maxLength={100}
                 />
             </div>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 20 }}>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
                 {/* Lado Izquierdo */}
                 <div>
-                    <h4 className={styles.label} style={{ color: '#ef4444' }}>Lado Izquierdo (Rojo)</h4>
+                    <h4 className={styles.label} style={{ color: 'var(--color-danger)' }}>
+                        🔴 Lado Izquierdo
+                    </h4>
                     <div className={styles.formGroup}>
                         <input
                             className={styles.input}
-                            placeholder="Título Izquierdo"
+                            placeholder="Título"
                             value={formData.left?.title || ''}
                             onChange={e => handleChange('left', { ...formData.left, title: e.target.value })}
+                            maxLength={80}
                         />
                     </div>
                     <div className={styles.itemsList}>
@@ -323,6 +413,7 @@ export default function SlideEditorPanel({ slide, onSave, onDelete, onFormChange
                                 <input
                                     className={styles.input}
                                     value={txt}
+                                    maxLength={200}
                                     onChange={e => {
                                         const newItems = [...formData.left.items];
                                         newItems[idx] = e.target.value;
@@ -344,20 +435,23 @@ export default function SlideEditorPanel({ slide, onSave, onDelete, onFormChange
                             className={styles.addItemBtn}
                             onClick={() => handleChange('left', { ...formData.left, items: [...(formData.left?.items || []), ''] })}
                         >
-                            <IconPlus size={14} /> Agregar Item
+                            <IconPlus size={14} /> Agregar
                         </button>
                     </div>
                 </div>
 
                 {/* Lado Derecho */}
                 <div>
-                    <h4 className={styles.label} style={{ color: '#22c55e' }}>Lado Derecho (Verde)</h4>
+                    <h4 className={styles.label} style={{ color: 'var(--color-success)' }}>
+                        🟢 Lado Derecho
+                    </h4>
                     <div className={styles.formGroup}>
                         <input
                             className={styles.input}
-                            placeholder="Título Derecho"
+                            placeholder="Título"
                             value={formData.right?.title || ''}
                             onChange={e => handleChange('right', { ...formData.right, title: e.target.value })}
+                            maxLength={80}
                         />
                     </div>
                     <div className={styles.itemsList}>
@@ -366,6 +460,7 @@ export default function SlideEditorPanel({ slide, onSave, onDelete, onFormChange
                                 <input
                                     className={styles.input}
                                     value={txt}
+                                    maxLength={200}
                                     onChange={e => {
                                         const newItems = [...formData.right.items];
                                         newItems[idx] = e.target.value;
@@ -387,7 +482,7 @@ export default function SlideEditorPanel({ slide, onSave, onDelete, onFormChange
                             className={styles.addItemBtn}
                             onClick={() => handleChange('right', { ...formData.right, items: [...(formData.right?.items || []), ''] })}
                         >
-                            <IconPlus size={14} /> Agregar Item
+                            <IconPlus size={14} /> Agregar
                         </button>
                     </div>
                 </div>
@@ -395,111 +490,28 @@ export default function SlideEditorPanel({ slide, onSave, onDelete, onFormChange
         </>
     );
 
-    // Selección del render
-    const renderFields = () => {
-        switch (slide.type) {
-            case 'title': return renderTitleSlide();
-            case 'content': return renderContentSlide();
-            case 'icon_grid': return renderIconGridSlide();
-            case 'comparison': return renderComparisonSlide();
-            case 'objective':
-            case 'definition':
-                return (
-                    <>
-                        <div className={styles.formGroup}>
-                            <label className={styles.label}>Encabezado</label>
-                            <input
-                                className={styles.input}
-                                value={formData.heading || ''}
-                                onChange={e => handleChange('heading', e.target.value)}
-                            />
-                        </div>
-                        <div className={styles.formGroup}>
-                            <label className={styles.label}>Cuerpo de texto</label>
-                            <textarea
-                                className={styles.textarea}
-                                value={formData.body || ''}
-                                onChange={e => handleChange('body', e.target.value)}
-                            />
-                        </div>
-                    </>
-                );
-            case 'benefits':
-                return (
-                    <>
-                        <div className={styles.formGroup}>
-                            <label className={styles.label}>Encabezado</label>
-                            <input
-                                className={styles.input}
-                                value={formData.heading || ''}
-                                onChange={e => handleChange('heading', e.target.value)}
-                            />
-                        </div>
-                        <div className={styles.formGroup}>
-                            <label className={styles.label}>Beneficios</label>
-                            <div className={styles.itemsList}>
-                                {formData.items?.map((item, idx) => (
-                                    <div key={idx} className={styles.itemRow}>
-                                        <input
-                                            className={styles.input}
-                                            value={item.text || item}
-                                            onChange={e => {
-                                                const newItems = [...formData.items];
-                                                newItems[idx] = typeof item === 'object' ? { ...item, text: e.target.value } : e.target.value;
-                                                handleChange('items', newItems);
-                                            }}
-                                        />
-                                        <button
-                                            className={styles.removeBtn}
-                                            onClick={() => {
-                                                const newItems = formData.items.filter((_, i) => i !== idx);
-                                                handleChange('items', newItems);
-                                            }}
-                                        >
-                                            <IconTrash2 size={16} />
-                                        </button>
-                                    </div>
-                                ))}
-                                <button
-                                    className={styles.addItemBtn}
-                                    onClick={() => handleChange('items', [...(formData.items || []), { text: 'Nuevo beneficio' }])}
-                                >
-                                    <IconPlus size={14} /> Agregar Item
-                                </button>
-                            </div>
-                        </div>
-                    </>
-                );
-            case 'group_dynamic':
-            case 'dynamic':
-                return renderDynamicSlide();
-            case 'group_quiz':
-            case 'quiz':
-                return renderQuizSlide();
-            default:
-                return <p>Editor no disponible para tipo: {slide.type}</p>;
-        }
-    };
-
-    // ── Editores Específicos Nuevos ──
-
     const renderDynamicSlide = () => (
         <>
             <div className={styles.formGroup}>
-                <label className={styles.label}>Título (Heading)</label>
+                <label className={styles.label}>Título de la Dinámica</label>
                 <input
                     className={styles.input}
                     value={formData.heading || ''}
                     onChange={e => handleChange('heading', e.target.value)}
+                    maxLength={100}
                 />
             </div>
             <div className={styles.formGroup}>
-                <label className={styles.label}>Instrucciones</label>
+                <label className={styles.label}>
+                    Instrucciones
+                    <CharCounter current={formData.instructions?.length ?? 0} max={TEXTAREA_MAX_CHARS} />
+                </label>
                 <textarea
                     className={styles.textarea}
                     placeholder="Instrucciones para el facilitador..."
                     value={formData.instructions || ''}
                     onChange={e => handleChange('instructions', e.target.value)}
+                    maxLength={TEXTAREA_MAX_CHARS}
                 />
             </div>
             <div className={styles.formGroup}>
@@ -511,6 +523,7 @@ export default function SlideEditorPanel({ slide, onSave, onDelete, onFormChange
                             placeholder="Ej. Roleplay, Debate"
                             value={formData.type || ''}
                             onChange={e => handleChange('type', e.target.value)}
+                            maxLength={60}
                         />
                     </div>
                     <div style={{ flex: 1 }}>
@@ -520,26 +533,35 @@ export default function SlideEditorPanel({ slide, onSave, onDelete, onFormChange
                             placeholder="Ej. 15 min"
                             value={formData.duration || ''}
                             onChange={e => handleChange('duration', e.target.value)}
+                            maxLength={30}
                         />
                     </div>
                 </div>
             </div>
             <div className={styles.formGroup}>
-                <label className={styles.label}>Escenario (Opcional)</label>
+                <label className={styles.label}>
+                    Escenario (Opcional)
+                    <CharCounter current={formData.scenario?.length ?? 0} max={TEXTAREA_MAX_CHARS} />
+                </label>
                 <textarea
                     className={styles.textarea}
                     placeholder="Descripción del caso o escenario..."
                     value={formData.scenario || ''}
                     onChange={e => handleChange('scenario', e.target.value)}
+                    maxLength={TEXTAREA_MAX_CHARS}
                 />
             </div>
             <div className={styles.formGroup}>
-                <label className={styles.label}>Reflexión (Debrief)</label>
+                <label className={styles.label}>
+                    Reflexión (Debrief)
+                    <CharCounter current={formData.debrief?.length ?? 0} max={TEXTAREA_MAX_CHARS} />
+                </label>
                 <textarea
                     className={styles.textarea}
                     placeholder="Preguntas para el cierre..."
                     value={formData.debrief || ''}
                     onChange={e => handleChange('debrief', e.target.value)}
+                    maxLength={TEXTAREA_MAX_CHARS}
                 />
             </div>
         </>
@@ -553,36 +575,89 @@ export default function SlideEditorPanel({ slide, onSave, onDelete, onFormChange
                     className={styles.input}
                     value={formData.question || ''}
                     onChange={e => handleChange('question', e.target.value)}
+                    maxLength={300}
                 />
             </div>
             <div className={styles.formGroup}>
-                <label className={styles.label}>Explicación (Feedback)</label>
+                <label className={styles.label}>
+                    Explicación (Feedback al responder)
+                    <CharCounter current={formData.explanation?.length ?? 0} max={TEXTAREA_MAX_CHARS} />
+                </label>
                 <textarea
                     className={styles.textarea}
                     placeholder="Explicación que aparece al responder..."
                     value={formData.explanation || ''}
                     onChange={e => handleChange('explanation', e.target.value)}
+                    maxLength={TEXTAREA_MAX_CHARS}
                 />
             </div>
 
             <div className={styles.formGroup}>
-                <label className={styles.label}>Opciones</label>
+                <label className={styles.label}>
+                    Opciones
+                    <span style={{ float: 'right', fontSize: '0.72rem', color: 'var(--text-tertiary)', fontWeight: 400 }}>
+                        Selecciona la respuesta correcta →
+                    </span>
+                </label>
+
+                {/* Hint cuando no hay opción correcta seleccionada */}
+                {!formData.correctOptionId && (formData.options?.length ?? 0) > 0 && (
+                    <div style={{
+                        display: 'flex', alignItems: 'center', gap: 6,
+                        padding: '6px 10px', marginBottom: 8,
+                        background: 'color-mix(in srgb, var(--color-warning, #f59e0b) 10%, transparent)',
+                        border: '1px solid color-mix(in srgb, var(--color-warning, #f59e0b) 30%, transparent)',
+                        borderRadius: '8px', fontSize: '0.78rem', color: 'var(--text-secondary)',
+                    }}>
+                        ⚠️ Selecciona cuál es la respuesta correcta haciendo clic en el círculo
+                    </div>
+                )}
+
                 <div className={styles.itemsList}>
                     {formData.options?.map((opt, idx) => {
                         const isCorrect = formData.correctOptionId === opt.id;
                         return (
-                            <div key={idx} className={styles.itemRow} style={{ alignItems: 'center' }}>
-                                <input
-                                    type="radio"
-                                    name="correctOption"
-                                    checked={isCorrect}
-                                    onChange={() => handleChange('correctOptionId', opt.id)}
-                                    style={{ marginRight: 8, cursor: 'pointer', accentColor: '#22c55e' }}
-                                    title="Marcar como correcta"
-                                />
+                            <div
+                                key={idx}
+                                className={styles.itemRow}
+                                style={{
+                                    alignItems: 'center',
+                                    background: isCorrect
+                                        ? 'color-mix(in srgb, var(--color-success, #22c55e) 8%, transparent)'
+                                        : 'transparent',
+                                    border: `1px solid ${isCorrect ? 'color-mix(in srgb, var(--color-success, #22c55e) 35%, transparent)' : 'transparent'}`,
+                                    borderRadius: 8,
+                                    padding: '4px 6px',
+                                    transition: 'background 0.15s, border-color 0.15s',
+                                }}
+                            >
+                                {/* Radio con tooltip claro */}
+                                <button
+                                    type="button"
+                                    onClick={() => handleChange('correctOptionId', opt.id)}
+                                    title={isCorrect ? 'Respuesta correcta ✓' : 'Marcar como respuesta correcta'}
+                                    style={{
+                                        width: 22, height: 22, borderRadius: '50%',
+                                        border: `2px solid ${isCorrect ? 'var(--color-success, #22c55e)' : 'var(--border-color)'}`,
+                                        background: isCorrect ? 'var(--color-success, #22c55e)' : 'transparent',
+                                        cursor: 'pointer',
+                                        display: 'flex', alignItems: 'center', justifyContent: 'center',
+                                        flexShrink: 0,
+                                        transition: 'all 0.15s',
+                                        color: '#fff',
+                                        fontSize: 12, fontWeight: 900,
+                                    }}
+                                    aria-pressed={isCorrect}
+                                    aria-label={`Opción ${idx + 1}: ${isCorrect ? 'correcta' : 'incorrecta'}`}
+                                >
+                                    {isCorrect ? '✓' : ''}
+                                </button>
+
                                 <input
                                     className={styles.input}
+                                    style={{ flex: 1 }}
                                     value={opt.text || ''}
+                                    maxLength={200}
                                     onChange={e => {
                                         const newOptions = [...formData.options];
                                         newOptions[idx] = { ...opt, text: e.target.value };
@@ -595,7 +670,6 @@ export default function SlideEditorPanel({ slide, onSave, onDelete, onFormChange
                                     onClick={() => {
                                         const newOptions = formData.options.filter((_, i) => i !== idx);
                                         handleChange('options', newOptions);
-                                        // Si borramos la correcta, resetear
                                         if (isCorrect) handleChange('correctOptionId', '');
                                     }}
                                 >
@@ -614,30 +688,143 @@ export default function SlideEditorPanel({ slide, onSave, onDelete, onFormChange
                         <IconPlus size={14} /> Agregar Opción
                     </button>
                 </div>
-                {!formData.correctOptionId && formData.options?.length > 0 && (
-                    <p style={{ color: '#ef4444', fontSize: '0.8rem', marginTop: 5 }}>⚠ Debes seleccionar una respuesta correcta</p>
-                )}
             </div>
         </>
     );
 
+    // ── Despacho de render por tipo ───────────────────────────────────────────
+    const renderFields = () => {
+        switch (slide.type) {
+            case 'title': return renderTitleSlide();
+            case 'content': return renderContentSlide();
+            case 'icon_grid': return renderIconGridSlide();
+            case 'comparison': return renderComparisonSlide();
+            case 'objective':
+            case 'definition':
+                return (
+                    <>
+                        <div className={styles.formGroup}>
+                            <label className={styles.label}>Encabezado</label>
+                            <input
+                                className={styles.input}
+                                value={formData.heading || ''}
+                                onChange={e => handleChange('heading', e.target.value)}
+                                maxLength={120}
+                            />
+                        </div>
+                        <div className={styles.formGroup}>
+                            <label className={styles.label}>
+                                Cuerpo de texto
+                                <CharCounter current={formData.body?.length ?? 0} max={BODY_MAX_CHARS} />
+                            </label>
+                            <textarea
+                                className={styles.textarea}
+                                value={formData.body || ''}
+                                onChange={e => handleChange('body', e.target.value)}
+                                maxLength={BODY_MAX_CHARS}
+                            />
+                        </div>
+                    </>
+                );
+            case 'benefits':
+                return (
+                    <>
+                        <div className={styles.formGroup}>
+                            <label className={styles.label}>Encabezado</label>
+                            <input
+                                className={styles.input}
+                                value={formData.heading || ''}
+                                onChange={e => handleChange('heading', e.target.value)}
+                                maxLength={100}
+                            />
+                        </div>
+                        <div className={styles.formGroup}>
+                            <label className={styles.label}>Beneficios</label>
+                            <div className={styles.itemsList}>
+                                {formData.items?.map((item, idx) => (
+                                    <div key={idx} className={styles.itemRow}>
+                                        <input
+                                            className={styles.input}
+                                            value={item.text || item}
+                                            maxLength={200}
+                                            onChange={e => {
+                                                const newItems = [...formData.items];
+                                                newItems[idx] = typeof item === 'object'
+                                                    ? { ...item, text: e.target.value }
+                                                    : e.target.value;
+                                                handleChange('items', newItems);
+                                            }}
+                                        />
+                                        <button
+                                            className={styles.removeBtn}
+                                            onClick={() => {
+                                                const newItems = formData.items.filter((_, i) => i !== idx);
+                                                handleChange('items', newItems);
+                                            }}
+                                        >
+                                            <IconTrash2 size={16} />
+                                        </button>
+                                    </div>
+                                ))}
+                                <button
+                                    className={styles.addItemBtn}
+                                    onClick={() => handleChange('items', [...(formData.items || []), { text: 'Nuevo beneficio' }])}
+                                >
+                                    <IconPlus size={14} /> Agregar Beneficio
+                                </button>
+                            </div>
+                        </div>
+                    </>
+                );
+            case 'group_dynamic':
+            case 'dynamic':
+                return renderDynamicSlide();
+            case 'group_quiz':
+            case 'quiz':
+                return renderQuizSlide();
+            default:
+                return <p style={{ color: 'var(--text-secondary)', fontSize: '0.85rem' }}>Editor no disponible para tipo: {slide.type}</p>;
+        }
+    };
+
+    // ── Etiqueta del estado de guardado ─────────────────────────────────────────
+    const SLIDE_TYPE_LABELS = {
+        title: 'Portada', objective: 'Objetivo', definition: 'Definición',
+        content: 'Contenido', benefits: 'Beneficios', icon_grid: 'Íconos',
+        comparison: 'Comparación', quiz: 'Quiz', group_quiz: 'Quiz',
+        dynamic: 'Dinámica', group_dynamic: 'Dinámica',
+    };
+
     return (
         <div className={styles.formContainer}>
+            {/* Cabecera del panel con estado de guardado */}
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
-                <h2 className={styles.formTitle}>Editar Slide {slide.order} — {slide.type}</h2>
+                <h2 className={styles.formTitle}>
+                    Slide {slide.order} — {SLIDE_TYPE_LABELS[slide.type] || slide.type}
+                </h2>
                 <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: '0.8rem', color: savingState === 'error' ? '#ef4444' : 'var(--text-tertiary)', background: 'var(--bg-secondary)', padding: '6px 12px', borderRadius: 20 }}>
+                    <div style={{
+                        display: 'flex', alignItems: 'center', gap: 6,
+                        fontSize: '0.8rem',
+                        color: savingState === 'error' ? 'var(--color-danger)' : 'var(--text-tertiary)',
+                        background: 'var(--bg-secondary)', padding: '6px 12px', borderRadius: 20,
+                    }}>
                         {savingState === 'saving' && <><Loader2 size={14} className={styles.spin} style={{ animation: 'spin 1s linear infinite' }} /> Guardando...</>}
-                        {savingState === 'saved' && <><IconCheckCircle2 size={14} style={{ color: 'var(--course-success, #22c55e)' }} /> Guardado</>}
+                        {savingState === 'saved' && <><IconCheckCircle2 size={14} style={{ color: 'var(--color-success, #22c55e)' }} /> Guardado</>}
                         {savingState === 'error' && <>Error al guardar</>}
-                        {savingState === 'idle' && <span style={{ opacity: 0.7 }}>Cambios se guardan solos</span>}
+                        {savingState === 'idle' && <span style={{ opacity: 0.7 }}>Auto-guardado activo</span>}
                     </div>
                     <button
                         className={styles.secondaryBtn}
-                        style={{ padding: '8px 12px', borderRadius: 8, border: '1px solid var(--border-color)', background: 'transparent', cursor: 'pointer', color: '#ef4444', display: 'flex', alignItems: 'center', gap: 6 }}
+                        style={{
+                            padding: '8px 12px', borderRadius: 8,
+                            border: '1px solid var(--border-color)',
+                            background: 'transparent', cursor: 'pointer',
+                            color: 'var(--color-danger)', display: 'flex', alignItems: 'center', gap: 6,
+                        }}
                         onClick={() => onDelete(slide.id)}
                         disabled={savingState === 'saving'}
-                        title="Eliminar Slide"
+                        title="Eliminar este slide"
                     >
                         <IconTrash2 size={16} />
                     </button>
@@ -646,25 +833,35 @@ export default function SlideEditorPanel({ slide, onSave, onDelete, onFormChange
 
             {renderFields()}
 
-            {/* Multimedia Global para el Slide (Fondo o apoyo visual generico) */}
+            {/* Multimedia Global del Slide (Fondo o apoyo visual) */}
             <div style={{ borderTop: '1px solid var(--border-color)', paddingTop: 20, marginTop: 20 }}>
-                {formData.bgMedia && formData.bgMedia.url && (
+                {formData.bgMedia?.url && (
                     <div className={styles.formGroup} style={{ marginBottom: 15 }}>
-                        <label className={styles.label}>Diseño del Multimedia</label>
+                        <label className={styles.label}>Layout del Multimedia</label>
                         <div style={{ display: 'flex', gap: 10 }}>
                             <button
-                                className={formData.bgMedia.layout !== 'split' ? styles.primaryBtn : styles.secondaryBtn}
-                                style={{ flex: 1, padding: '8px', borderRadius: 8, border: formData.bgMedia.layout !== 'split' ? 'none' : '1px solid var(--border-color)', background: formData.bgMedia.layout !== 'split' ? 'var(--course-accent)' : 'transparent', color: formData.bgMedia.layout !== 'split' ? 'white' : 'var(--text-primary)', cursor: 'pointer' }}
+                                style={{
+                                    flex: 1, padding: '8px', borderRadius: 8, cursor: 'pointer',
+                                    border: formData.bgMedia.layout !== 'split' ? 'none' : '1px solid var(--border-color)',
+                                    background: formData.bgMedia.layout !== 'split' ? 'var(--color-primary)' : 'transparent',
+                                    color: formData.bgMedia.layout !== 'split' ? '#fff' : 'var(--text-primary)',
+                                    fontWeight: 600, fontSize: '0.82rem',
+                                }}
                                 onClick={() => handleChange('bgMedia', { ...formData.bgMedia, layout: 'full' })}
                             >
                                 Fondo Completo
                             </button>
                             <button
-                                className={formData.bgMedia.layout === 'split' ? styles.primaryBtn : styles.secondaryBtn}
-                                style={{ flex: 1, padding: '8px', borderRadius: 8, border: formData.bgMedia.layout === 'split' ? 'none' : '1px solid var(--border-color)', background: formData.bgMedia.layout === 'split' ? 'var(--course-accent)' : 'transparent', color: formData.bgMedia.layout === 'split' ? 'white' : 'var(--text-primary)', cursor: 'pointer' }}
+                                style={{
+                                    flex: 1, padding: '8px', borderRadius: 8, cursor: 'pointer',
+                                    border: formData.bgMedia.layout === 'split' ? 'none' : '1px solid var(--border-color)',
+                                    background: formData.bgMedia.layout === 'split' ? 'var(--color-primary)' : 'transparent',
+                                    color: formData.bgMedia.layout === 'split' ? '#fff' : 'var(--text-primary)',
+                                    fontWeight: 600, fontSize: '0.82rem',
+                                }}
                                 onClick={() => handleChange('bgMedia', { ...formData.bgMedia, layout: 'split' })}
                             >
-                                Mitad de Pantalla
+                                Mitad Pantalla
                             </button>
                         </div>
                     </div>

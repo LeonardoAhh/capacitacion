@@ -2,8 +2,12 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
-import { IconArrowLeft, IconX } from '@/lib/icons';
-import { getCourseWithSlides, updateSlide, addSlide, deleteSlide, updateSlidesOrder } from '@/lib/courseService';
+import {
+    IconArrowLeft, IconX,
+    IconTarget, IconFileText, IconGraduationCap,
+    IconCheckSquare, IconGrid, IconColumns, IconBookOpen
+} from '@/lib/icons';
+import { getCourseWithSlides, updateSlide, addSlide, deleteSlide, updateSlidesOrder, duplicateSlide } from '@/lib/courseService';
 import { useToast } from '@/components/ui/Toast/Toast';
 import { useConfirm } from '@/hooks/useConfirm';
 import SlideList from '@/components/features/Courses/Editor/SlideList';
@@ -12,21 +16,21 @@ import CoursePlayer from '@/components/features/Courses/CoursePlayer';
 import styles from './editor.module.css';
 
 const SLIDE_TYPES = [
-    { type: 'title', label: 'Portada', emoji: '🎯', desc: 'Título principal del curso' },
-    { type: 'content', label: 'Contenido', emoji: '📄', desc: 'Texto e imagen' },
-    { type: 'objective', label: 'Objetivo', emoji: '🎓', desc: 'Objetivo de aprendizaje' },
-    { type: 'benefits', label: 'Beneficios', emoji: '✅', desc: 'Lista de beneficios' },
-    { type: 'icon_grid', label: 'Íconos', emoji: '🔲', desc: 'Cuadrícula de íconos' },
-    { type: 'comparison', label: 'Comparación', emoji: '⚖️', desc: 'Dos columnas comparativas' },
-    { type: 'quiz', label: 'Quiz', emoji: '❓', desc: 'Pregunta con opciones' },
-    { type: 'definition', label: 'Definición', emoji: '📖', desc: 'Término y definición' },
+    { type: 'title', label: 'Portada', icon: IconTarget, iconColor: '#E879F9', desc: 'Título principal del curso' },
+    { type: 'content', label: 'Contenido', icon: IconFileText, iconColor: '#C4B5FD', desc: 'Texto e imagen' },
+    { type: 'objective', label: 'Objetivo', icon: IconGraduationCap, iconColor: '#FDBA74', desc: 'Objetivo de aprendizaje' },
+    { type: 'benefits', label: 'Beneficios', icon: IconCheckSquare, iconColor: '#6EE7B7', desc: 'Lista de beneficios' },
+    { type: 'icon_grid', label: 'Íconos', icon: IconGrid, iconColor: '#D8B4FE', desc: 'Cuadrícula de íconos' },
+    { type: 'comparison', label: 'Comparación', icon: IconColumns, iconColor: '#FCD34D', desc: 'Dos columnas comparativas' },
+    { type: 'quiz', label: 'Quiz', icon: IconBookOpen, iconColor: '#FDA4AF', desc: 'Pregunta con opciones' },
+    { type: 'definition', label: 'Definición', icon: IconBookOpen, iconColor: '#93C5FD', desc: 'Término y definición' },
 ];
 
 export default function EditorPage({ params }) {
     const { id: courseId } = params;
     const router = useRouter();
     const { toast } = useToast();
-    const confirm = useConfirm();
+    const { showConfirm, confirmDialog } = useConfirm();
 
     const [course, setCourse] = useState(null);
     const [slides, setSlides] = useState([]);
@@ -71,12 +75,11 @@ export default function EditorPage({ params }) {
 
     // Eliminar un slide
     const handleDeleteSlide = async (slideId) => {
-        const isConfirmed = await confirm({
+        const isConfirmed = await showConfirm('Esta acción no se puede deshacer. ¿Deseas eliminar este slide permanentemente?', {
             title: '¿Eliminar Slide?',
-            message: 'Esta acción no se puede deshacer. ¿Deseas eliminar este slide permanente?',
-            confirmText: 'Eliminar',
-            cancelText: 'Cancelar',
-            variant: 'danger'
+            danger: true,
+            confirmLabel: 'Eliminar',
+            cancelLabel: 'Cancelar',
         });
 
         if (!isConfirmed) return;
@@ -113,6 +116,24 @@ export default function EditorPage({ params }) {
         setSlides(newOrderedSlides);
         await updateSlidesOrder(courseId, newOrderedSlides);
     }, [courseId]);
+
+    // Duplicar slide — crea una copia inmediatamente después del original
+    const handleDuplicateSlide = useCallback(async (slide) => {
+        setSaving(true);
+        const result = await duplicateSlide(courseId, slide, slides);
+        if (result.success) {
+            toast.success('Duplicado', 'Slide duplicado correctamente');
+            // Recargar desde Firebase para reflejar el nuevo orden
+            const refreshed = await getCourseWithSlides(courseId);
+            if (refreshed.success) {
+                setSlides(refreshed.data.slides);
+                handleSelectSlide(result.newSlide);
+            }
+        } else {
+            toast.error('Error', result.error || 'No se pudo duplicar el slide');
+        }
+        setSaving(false);
+    }, [courseId, slides, toast, handleSelectSlide]);
 
     // Crear nuevo slide desde el modal
     const handleConfirmSlideType = async (type) => {
@@ -151,6 +172,7 @@ export default function EditorPage({ params }) {
 
     return (
         <div className={styles.container}>
+            {confirmDialog}
             {/* Header / Toolbar */}
             <header className={styles.header}>
                 <div className={styles.headerLeft}>
@@ -183,6 +205,7 @@ export default function EditorPage({ params }) {
                         onSelect={handleSelectSlide}
                         onAdd={() => setShowSlideModal(true)}
                         onReorder={handleReorderSlides}
+                        onDuplicate={handleDuplicateSlide}
                     />
                 </aside>
 
@@ -224,88 +247,32 @@ export default function EditorPage({ params }) {
 
             {/* ── Modal: Elegir tipo de slide ── */}
             {showSlideModal && (
-                <div
-                    onClick={() => setShowSlideModal(false)}
-                    style={{
-                        position: 'fixed', inset: 0,
-                        background: 'rgba(0,0,0,0.55)',
-                        backdropFilter: 'blur(4px)',
-                        WebkitBackdropFilter: 'blur(4px)',
-                        display: 'flex', alignItems: 'center', justifyContent: 'center',
-                        zIndex: 9999, padding: '20px',
-                    }}
-                >
-                    <div
-                        onClick={e => e.stopPropagation()}
-                        style={{
-                            background: 'var(--bg-primary)',
-                            borderRadius: 18,
-                            padding: '28px 24px',
-                            width: '100%',
-                            maxWidth: 500,
-                            boxShadow: '0 24px 60px rgba(0,0,0,0.3)',
-                            border: '1px solid var(--border-color)',
-                        }}
-                    >
-                        {/* Cabecera del modal */}
-                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 20 }}>
+                <div className={styles.slideModalBackdrop} onClick={() => setShowSlideModal(false)}>
+                    <div className={styles.slideModalBox} onClick={e => e.stopPropagation()}>
+
+                        <div className={styles.slideModalHeader}>
                             <div>
-                                <h2 style={{ margin: 0, fontSize: '1.05rem', fontWeight: 700, color: 'var(--text-primary)' }}>
-                                    Nuevo Slide
-                                </h2>
-                                <p style={{ margin: '4px 0 0', fontSize: '0.8rem', color: 'var(--text-tertiary)' }}>
-                                    Elige el tipo de contenido
-                                </p>
+                                <h2 className={styles.slideModalTitle}>Nuevo Slide</h2>
+                                <p className={styles.slideModalSubtitle}>Elige el tipo de contenido</p>
                             </div>
-                            <button
-                                onClick={() => setShowSlideModal(false)}
-                                style={{
-                                    background: 'var(--bg-secondary)',
-                                    border: '1px solid var(--border-color)',
-                                    borderRadius: 8,
-                                    width: 30, height: 30,
-                                    display: 'flex', alignItems: 'center', justifyContent: 'center',
-                                    cursor: 'pointer', color: 'var(--text-secondary)',
-                                }}
-                            >
-                                <IconX size={14} />
+                            <button className={styles.slideModalCloseBtn} onClick={() => setShowSlideModal(false)}>
+                                <IconX size={16} />
                             </button>
                         </div>
 
-                        {/* Grid de tipos de slide */}
-                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(180px, 1fr))', gap: 10 }}>
-                            {SLIDE_TYPES.map(({ type, label, emoji, desc }) => (
+                        <div className={styles.slideTypesGrid}>
+                            {SLIDE_TYPES.map(({ type, label, icon: IconAsset, iconColor, desc }) => (
                                 <button
                                     key={type}
                                     onClick={() => handleConfirmSlideType(type)}
-                                    style={{
-                                        display: 'flex', alignItems: 'flex-start', gap: 10,
-                                        padding: '12px 14px',
-                                        background: 'var(--bg-secondary)',
-                                        border: '1px solid var(--border-color)',
-                                        borderRadius: 12, cursor: 'pointer',
-                                        textAlign: 'left',
-                                        transition: 'border-color 0.15s, background 0.15s',
-                                    }}
-                                    onMouseEnter={e => {
-                                        e.currentTarget.style.borderColor = 'rgba(232,116,42,0.45)';
-                                        e.currentTarget.style.background = 'rgba(232,116,42,0.06)';
-                                    }}
-                                    onMouseLeave={e => {
-                                        e.currentTarget.style.borderColor = 'var(--border-color)';
-                                        e.currentTarget.style.background = 'var(--bg-secondary)';
-                                    }}
+                                    className={styles.slideTypeCard}
                                 >
-                                    <span style={{ fontSize: '1.4rem', lineHeight: 1, flexShrink: 0, marginTop: 1 }}>
-                                        {emoji}
-                                    </span>
-                                    <div>
-                                        <p style={{ margin: 0, fontSize: '0.82rem', fontWeight: 600, color: 'var(--text-primary)' }}>
-                                            {label}
-                                        </p>
-                                        <p style={{ margin: '2px 0 0', fontSize: '0.72rem', color: 'var(--text-tertiary)', lineHeight: 1.3 }}>
-                                            {desc}
-                                        </p>
+                                    <div className={styles.slideTypeIcon} style={{ color: iconColor }}>
+                                        <IconAsset />
+                                    </div>
+                                    <div className={styles.slideTypeInfo}>
+                                        <h3 className={styles.slideTypeName}>{label}</h3>
+                                        <p className={styles.slideTypeDesc}>{desc}</p>
                                     </div>
                                 </button>
                             ))}

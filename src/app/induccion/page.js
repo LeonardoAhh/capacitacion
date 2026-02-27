@@ -13,14 +13,32 @@ import { Button } from '@/components/ui/Button/Button';
 import { Combobox } from '@/components/ui/Combobox/Combobox';
 import { useToast } from '@/components/ui/Toast/Toast';
 import {
-    ChevronRight, Plus, FileText, Link2, Trash2, Edit3,
-    ExternalLink, X, Check, BookOpen, Upload, Play,
-    Zap, Settings2, Image, Video, UploadCloud, Search, FolderOpen, Users
-} from 'lucide-react';
+    IconChevronRight as ChevronRight,
+    IconPlus as Plus,
+    IconFileText as FileText,
+    IconLink as Link2,
+    IconTrash2 as Trash2,
+    IconEdit as Edit3,
+    IconExternalLink as ExternalLink,
+    IconX as X,
+    IconCheck as Check,
+    IconBookOpen as BookOpen,
+    IconUpload as Upload,
+    IconPlay as Play,
+    IconZap as Zap,
+    IconSettings as Settings2,
+    IconImage as Image,
+    IconVideo as Video,
+    IconUploadCloud as UploadCloud,
+    IconSearch as Search,
+    IconFolderOpen as FolderOpen,
+    IconUsers as Users
+} from '@/lib/icons';
 import Link from 'next/link';
 import ProfileDropdown from '@/components/layout/ProfileDropdown/ProfileDropdown';
 import BackButton from '@/components/ui/BackButton/BackButton';
 import CoursePlayer from '@/components/features/Courses/CoursePlayer';
+import CourseWizardModal from '@/components/features/Courses/CourseWizardModal';
 import {
     importCourseFromJSON,
     getAllCourses,
@@ -28,7 +46,7 @@ import {
     deleteCourse,
     togglePublish,
     renameCourse,
-    createEmptyCourse,
+    createCourseFromWizard,
 } from '@/lib/courseService';
 import { logInduccionAction } from '@/lib/induccionAudit';
 import { useConfirm } from '@/hooks/useConfirm';
@@ -255,17 +273,19 @@ export default function InductionPage() {
         setShowNewCourseModal(true);
     }, []);
 
-    const handleConfirmNewCourse = useCallback(async () => {
-        if (!newCourseTitle.trim()) return;
-        setCreatingCourse(true); setShowNewCourseModal(false);
-        const result = await createEmptyCourse(newCourseTitle.trim(), user?.uid || 'admin');
+    const handleConfirmNewCourse = useCallback(async (courseData, firstSlideType) => {
+        setCreatingCourse(true);
+        setShowNewCourseModal(false);
+        const result = await createCourseFromWizard(courseData, firstSlideType, user?.uid || 'admin');
         if (result.success) {
             toast.success('Creado', 'Redirigiendo al editor...');
-            logInduccionAction({ userId: user?.uid, userName: user?.name || user?.email || 'Desconocido', action: 'create', target: newCourseTitle.trim() });
+            logInduccionAction({ userId: user?.uid, userName: user?.name || user?.email || 'Desconocido', action: 'create', target: courseData.title });
             router.push(`/induccion/cursos/${result.courseId}/editar`);
-        } else { toast.error('Error', result.error || 'No se pudo crear el curso.'); }
-        setCreatingCourse(false);
-    }, [newCourseTitle, user?.uid, user?.name, user?.email, toast, router]);
+        } else {
+            toast.error('Error', result.error || 'No se pudo crear el curso.');
+            setCreatingCourse(false); // Permite re-intentar
+        }
+    }, [user?.uid, user?.name, user?.email, toast, router]);
 
     const handleTogglePublish = useCallback(async (courseId, currentPublished) => {
         const course = nativeCourses.find(c => c.id === courseId);
@@ -664,7 +684,7 @@ export default function InductionPage() {
                                                             onClick={() => handleTogglePublish(course.id, course.published)}
                                                             title="Click para cambiar estado"
                                                         >
-                                                            {course.published ? 'Publicado' : 'Borrador'}
+                                                            {course.published ? '📗 Publicado' : '🔒 Borrador'}
                                                         </span>
                                                         <button className={styles.editBtn} onClick={(e) => handleStartRename(e, course)} title="Renombrar curso">
                                                             <Edit3 size={13} />
@@ -1016,36 +1036,12 @@ export default function InductionPage() {
                         {galleryItems.length > 0 && <span className={styles.bottomNavItemCount}>{galleryItems.length}</span>}
                     </button>
                 </nav>
-                {/* ══ MODAL: Nuevo Curso Interactivo ══ */}
+                {/* ══ MODAL: Nuevo Curso Interactivo (Wizard) ══ */}
                 {showNewCourseModal && (
-                    <div className={styles.modalBackdrop} onClick={() => setShowNewCourseModal(false)}>
-                        <div className={styles.modalContent} style={{ textAlign: 'left', maxWidth: 420 }} onClick={e => e.stopPropagation()}>
-                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
-                                <div>
-                                    <h2 style={{ margin: 0, fontSize: '1rem', fontWeight: 700, color: 'var(--text-primary)' }}>Nuevo Curso Interactivo</h2>
-                                    <p style={{ margin: '4px 0 0', fontSize: '0.8rem', color: 'var(--text-secondary)' }}>Podrás agregar slides desde el editor</p>
-                                </div>
-                                <button className={styles.closeModalBtn} onClick={() => setShowNewCourseModal(false)} type="button"><X size={14} /></button>
-                            </div>
-                            <div className={styles.inputGroup} style={{ marginBottom: 20 }}>
-                                <label>Nombre del curso</label>
-                                <input
-                                    className={styles.input}
-                                    value={newCourseTitle}
-                                    onChange={e => setNewCourseTitle(e.target.value)}
-                                    placeholder="Ej. Operadores de Máquina"
-                                    autoFocus
-                                    onKeyDown={e => { if (e.key === 'Enter') handleConfirmNewCourse(); if (e.key === 'Escape') setShowNewCourseModal(false); }}
-                                />
-                            </div>
-                            <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 8 }}>
-                                <button className={styles.toggleBtn} onClick={() => setShowNewCourseModal(false)} type="button">Cancelar</button>
-                                <button className={styles.newCourseBtn} onClick={handleConfirmNewCourse} disabled={!newCourseTitle.trim() || creatingCourse} type="button" style={{ padding: '7px 16px', fontSize: '0.85rem' }}>
-                                    <Plus size={13} /> Crear y editar
-                                </button>
-                            </div>
-                        </div>
-                    </div>
+                    <CourseWizardModal
+                        onComplete={handleConfirmNewCourse}
+                        onCancel={() => setShowNewCourseModal(false)}
+                    />
                 )}
 
                 {/* ══ MODAL: Galería Upload ══ */}

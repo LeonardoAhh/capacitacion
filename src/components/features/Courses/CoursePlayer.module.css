@@ -98,6 +98,24 @@
     white-space: nowrap;
 }
 
+/* ── Badge de tipo de slide ── */
+.slideBadge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 2px 8px;
+    border-radius: 20px;
+    font-size: 0.68rem;
+    font-weight: 700;
+    white-space: nowrap;
+    background: color-mix(in srgb, var(--course-accent) 12%, transparent);
+    color: var(--course-accent);
+    border: 1px solid color-mix(in srgb, var(--course-accent) 25%, transparent);
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    transition: background var(--course-transition-fast), color var(--course-transition-fast);
+}
+
 .progressTrack {
     width: 80px;
     height: 4px;
@@ -237,6 +255,59 @@
     border-radius: 4px;
     background: var(--course-dot-active);
 }
+
+/* ── Barra segmentada de progreso (≤12 slides) ── */
+.segmentedBar {
+    display: flex;
+    gap: 3px;
+    padding: 0 var(--course-spacing-md);
+    height: 6px;
+    flex-shrink: 0;
+    background: var(--course-content-bg, var(--bg-primary));
+}
+
+.segment {
+    flex: 1;
+    height: 100%;
+    border-radius: 3px;
+    border: none;
+    padding: 0;
+    background: var(--course-progress-bg);
+    cursor: pointer;
+    min-width: 10px;
+    transition: background var(--course-transition-base), transform var(--course-transition-fast);
+}
+
+.segment:hover {
+    background: var(--course-dot-visited);
+    transform: scaleY(1.5);
+}
+
+.segmentVisited {
+    background: var(--course-dot-visited);
+}
+
+.segmentActive {
+    background: var(--course-progress-fill);
+}
+
+/* ── Barra de progreso lineal (>12 slides) ── */
+.linearBar {
+    height: 4px;
+    width: 100%;
+    background: var(--course-progress-bg);
+    flex-shrink: 0;
+    overflow: hidden;
+}
+
+.linearBarFill {
+    height: 100%;
+    background: var(--course-progress-fill);
+    border-radius: 0 2px 2px 0;
+    transition: width var(--course-duration-slow) var(--course-ease-in-out);
+}
+
+
 
 /* ── Empty State ── */
 .emptyMsg {

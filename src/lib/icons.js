@@ -38,6 +38,7 @@ import {
     AiOutlineFolderOpen,
     AiOutlineBook,
     AiOutlineRead,
+    AiOutlineLink,
 
     // Edición / CRUD
     AiOutlineEdit,
@@ -123,6 +124,7 @@ import {
     AiOutlineReload,
     AiOutlineFullscreen,
     AiOutlineFullscreenExit,
+    AiOutlineExport,
 } from 'react-icons/ai';
 
 // ─────────────────────────────────────────────
@@ -155,8 +157,11 @@ export const IconFile = AiOutlineFile;
 export const IconFileText = AiOutlineFileText;
 export const IconFileCheck = AiOutlineFileDone;
 export const IconFolderCog = AiOutlineFolderOpen;
+export const IconFolderOpen = AiOutlineFolderOpen;
 export const IconBookOpen = AiOutlineBook;
 export const IconRead = AiOutlineRead;
+export const IconLink = AiOutlineLink;
+export const IconExternalLink = AiOutlineExport;
 
 // Edición / CRUD
 export const IconEdit = AiOutlineEdit;

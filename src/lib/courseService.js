@@ -109,6 +109,75 @@ export async function createEmptyCourse(title, userId) {
 }
 
 /**
+ * Crea un curso interactivo a través del Wizard, insertando un slide inicial de plantilla.
+ * @param {Object} courseData - { title, category }
+ * @param {string} firstSlideType - Tipo del primer slide ('title', 'content', 'objective', 'quiz', 'benefits')
+ * @param {string} userId - UID del creador
+ * @returns {Object} { success, courseId, error }
+ */
+export async function createCourseFromWizard(courseData, firstSlideType, userId) {
+    try {
+        const courseId = `course-${Date.now()}`;
+        const courseRef = doc(db, COURSES_COLLECTION, courseId);
+
+        const newCourse = {
+            title: courseData.title || 'Nuevo Curso',
+            description: '',
+            category: courseData.category || 'General',
+            duration: '',
+            instructor: '',
+            instructorRole: '',
+            company: '',
+            year: new Date().getFullYear().toString(),
+            published: false,
+            slideCount: 1, // Arranca con 1 slide pre-creado
+            createdBy: userId,
+            createdAt: serverTimestamp(),
+            updatedAt: serverTimestamp(),
+        };
+
+        const batch = writeBatch(db);
+        batch.set(courseRef, newCourse);
+
+        // Configurar pre-poblado rápido según el slide
+        let initialData = {};
+        if (firstSlideType === 'title') {
+            initialData = { heading: courseData.title, subheading: 'Escribe aquí un subtitulo descriptivo.' };
+        } else if (firstSlideType === 'objective') {
+            initialData = { heading: 'Objetivo del Curso', body: 'Al finalizar este curso, el colaborador logrará...' };
+        } else if (firstSlideType === 'quiz') {
+            initialData = {
+                heading: 'Verificación de Conocimiento',
+                body: 'Selecciona la respuesta correcta a la siguiente pregunta.',
+                options: [
+                    { text: 'Opción 1', isCorrect: true, explanation: '' },
+                    { text: 'Opción 2', isCorrect: false, explanation: '' }
+                ]
+            };
+        } else if (firstSlideType === 'benefits') {
+            initialData = { heading: 'Lista de Temas', items: ['Tema 1', 'Tema 2', 'Tema 3'] };
+        } else {
+            // First Slide Content (Default)
+            initialData = { heading: 'Título de la Lección', body: 'Contenido principal...' };
+        }
+
+        const slideRef = doc(db, COURSES_COLLECTION, courseId, SLIDES_SUBCOLLECTION, 'slide-01');
+        batch.set(slideRef, {
+            order: 1,
+            type: firstSlideType,
+            data: initialData
+        });
+
+        await batch.commit();
+
+        return { success: true, courseId };
+    } catch (error) {
+        console.error('Error creando curso desde Wizard:', error);
+        return { success: false, error: error.message };
+    }
+}
+
+/**
  * Obtiene un curso con todos sus slides ordenados por `order`.
  * @param {string} courseId
  * @returns {Object} { success, data: { course, slides }, error }
@@ -263,6 +332,55 @@ export async function updateSlidesOrder(courseId, orderedSlides) {
         return { success: true };
     } catch (error) {
         console.error('Error reordenando slides en bloque:', error);
+        return { success: false, error: error.message };
+    }
+}
+
+/**
+ * Duplica un slide existente, insertándolo justo después del original.
+ * Los slides que vienen después se re-numeran automáticamente.
+ * @param {string} courseId
+ * @param {Object} slide     - Objeto del slide a duplicar (id, type, data, order)
+ * @param {Array}  allSlides - Lista completa de slides del curso (para recalcular orders)
+ * @returns {Object} { success, newSlide: { id, type, data, order }, error }
+ */
+export async function duplicateSlide(courseId, slide, allSlides) {
+    try {
+        const slidesRef = collection(db, COURSES_COLLECTION, courseId, SLIDES_SUBCOLLECTION);
+
+        // Calcular el order del nuevo slide (inmediatamente después del original)
+        const insertAt = (slide.order ?? allSlides.length) + 1;
+
+        // Creamos el nuevo slide (copia profunda de la data)
+        const newSlideData = {
+            type: slide.type,
+            data: JSON.parse(JSON.stringify(slide.data || {})),
+            order: insertAt,
+            createdAt: serverTimestamp(),
+            updatedAt: serverTimestamp(),
+        };
+
+        const batch = writeBatch(db);
+
+        // Incrementar order de todos los slides que van después del insertAt
+        const slidesToShift = allSlides.filter(s => s.id !== slide.id && (s.order ?? 0) >= insertAt);
+        slidesToShift.forEach(s => {
+            const ref = doc(db, COURSES_COLLECTION, courseId, SLIDES_SUBCOLLECTION, s.id);
+            batch.update(ref, { order: (s.order ?? 0) + 1, updatedAt: serverTimestamp() });
+        });
+
+        // Crear el nuevo documento con un ID automático
+        const newRef = doc(slidesRef);
+        batch.set(newRef, newSlideData);
+
+        await batch.commit();
+
+        return {
+            success: true,
+            newSlide: { id: newRef.id, ...newSlideData },
+        };
+    } catch (error) {
+        console.error('Error duplicando slide:', error);
         return { success: false, error: error.message };
     }
 }
