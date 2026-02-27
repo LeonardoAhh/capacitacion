@@ -139,9 +139,34 @@ export default function EditorPage({ params }) {
     const handleConfirmSlideType = async (type) => {
         setShowSlideModal(false);
         setSaving(true);
+        
+        let defaultData = { heading: 'Nuevo Slide' };
+        
+        if (type === 'quiz') {
+            defaultData = {
+                heading: 'Evaluación Final',
+                questions: [
+                    { q: 'Escribe tu pregunta aquí...', options: ['Opción 1', 'Opción 2', 'Opción 3'], correct: 0, explanation: '' }
+                ],
+                passingScore: 70
+            };
+        } else if (type === 'objective') {
+            defaultData = { heading: 'Objetivo del Curso', body: 'Al finalizar, el usuario será capaz de...' };
+        } else if (type === 'icon_grid') {
+            defaultData = { heading: 'Puntos Clave', items: [{ icon: 'IconStar', text: 'Punto 1', desc: '' }] };
+        } else if (type === 'benefits') {
+            defaultData = { heading: 'Beneficios', items: ['Beneficio 1', 'Beneficio 2'] };
+        } else if (type === 'comparison') {
+            defaultData = { heading: 'Comparativa', col1Title: 'Antes', col1Items: ['Item A'], col2Title: 'Después', col2Items: ['Item B'] };
+        } else if (type === 'definition') {
+            defaultData = { heading: 'Concepto Clave', term: 'Término', definition: 'Su definición breve aquí' };
+        } else {
+            defaultData = { heading: 'Nuevo Slide', body: 'Contenido inicial...' }; // Title & Content
+        }
+
         const result = await addSlide(courseId, {
             type,
-            data: { heading: 'Nuevo Slide', body: 'Contenido inicial...', title: 'Nuevo Slide' },
+            data: defaultData,
             order: slides.length + 1,
         });
         if (result.success) {

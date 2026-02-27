@@ -567,130 +567,164 @@ export default function SlideEditorPanel({ slide, onSave, onDelete, onFormChange
         </>
     );
 
-    const renderQuizSlide = () => (
-        <>
-            <div className={styles.formGroup}>
-                <label className={styles.label}>Pregunta</label>
-                <input
-                    className={styles.input}
-                    value={formData.question || ''}
-                    onChange={e => handleChange('question', e.target.value)}
-                    maxLength={300}
-                />
-            </div>
-            <div className={styles.formGroup}>
-                <label className={styles.label}>
-                    Explicación (Feedback al responder)
-                    <CharCounter current={formData.explanation?.length ?? 0} max={TEXTAREA_MAX_CHARS} />
-                </label>
-                <textarea
-                    className={styles.textarea}
-                    placeholder="Explicación que aparece al responder..."
-                    value={formData.explanation || ''}
-                    onChange={e => handleChange('explanation', e.target.value)}
-                    maxLength={TEXTAREA_MAX_CHARS}
-                />
-            </div>
+    const renderQuizSlide = () => {
+        const qObj = formData.questions?.[0] || { q: '', options: [], correct: 0, explanation: '' };
 
-            <div className={styles.formGroup}>
-                <label className={styles.label}>
-                    Opciones
-                    <span style={{ float: 'right', fontSize: '0.72rem', color: 'var(--text-tertiary)', fontWeight: 400 }}>
-                        Selecciona la respuesta correcta →
-                    </span>
-                </label>
-
-                {/* Hint cuando no hay opción correcta seleccionada */}
-                {!formData.correctOptionId && (formData.options?.length ?? 0) > 0 && (
-                    <div style={{
-                        display: 'flex', alignItems: 'center', gap: 6,
-                        padding: '6px 10px', marginBottom: 8,
-                        background: 'color-mix(in srgb, var(--color-warning, #f59e0b) 10%, transparent)',
-                        border: '1px solid color-mix(in srgb, var(--color-warning, #f59e0b) 30%, transparent)',
-                        borderRadius: '8px', fontSize: '0.78rem', color: 'var(--text-secondary)',
-                    }}>
-                        ⚠️ Selecciona cuál es la respuesta correcta haciendo clic en el círculo
-                    </div>
-                )}
-
-                <div className={styles.itemsList}>
-                    {formData.options?.map((opt, idx) => {
-                        const isCorrect = formData.correctOptionId === opt.id;
-                        return (
-                            <div
-                                key={idx}
-                                className={styles.itemRow}
-                                style={{
-                                    alignItems: 'center',
-                                    background: isCorrect
-                                        ? 'color-mix(in srgb, var(--color-success, #22c55e) 8%, transparent)'
-                                        : 'transparent',
-                                    border: `1px solid ${isCorrect ? 'color-mix(in srgb, var(--color-success, #22c55e) 35%, transparent)' : 'transparent'}`,
-                                    borderRadius: 8,
-                                    padding: '4px 6px',
-                                    transition: 'background 0.15s, border-color 0.15s',
-                                }}
-                            >
-                                {/* Radio con tooltip claro */}
-                                <button
-                                    type="button"
-                                    onClick={() => handleChange('correctOptionId', opt.id)}
-                                    title={isCorrect ? 'Respuesta correcta ✓' : 'Marcar como respuesta correcta'}
-                                    style={{
-                                        width: 22, height: 22, borderRadius: '50%',
-                                        border: `2px solid ${isCorrect ? 'var(--color-success, #22c55e)' : 'var(--border-color)'}`,
-                                        background: isCorrect ? 'var(--color-success, #22c55e)' : 'transparent',
-                                        cursor: 'pointer',
-                                        display: 'flex', alignItems: 'center', justifyContent: 'center',
-                                        flexShrink: 0,
-                                        transition: 'all 0.15s',
-                                        color: '#fff',
-                                        fontSize: 12, fontWeight: 900,
-                                    }}
-                                    aria-pressed={isCorrect}
-                                    aria-label={`Opción ${idx + 1}: ${isCorrect ? 'correcta' : 'incorrecta'}`}
-                                >
-                                    {isCorrect ? '✓' : ''}
-                                </button>
-
-                                <input
-                                    className={styles.input}
-                                    style={{ flex: 1 }}
-                                    value={opt.text || ''}
-                                    maxLength={200}
-                                    onChange={e => {
-                                        const newOptions = [...formData.options];
-                                        newOptions[idx] = { ...opt, text: e.target.value };
-                                        handleChange('options', newOptions);
-                                    }}
-                                    placeholder={`Opción ${idx + 1}`}
-                                />
-                                <button
-                                    className={styles.removeBtn}
-                                    onClick={() => {
-                                        const newOptions = formData.options.filter((_, i) => i !== idx);
-                                        handleChange('options', newOptions);
-                                        if (isCorrect) handleChange('correctOptionId', '');
-                                    }}
-                                >
-                                    <IconTrash2 size={16} />
-                                </button>
-                            </div>
-                        );
-                    })}
-                    <button
-                        className={styles.addItemBtn}
-                        onClick={() => {
-                            const newId = `opt-${Date.now()}`;
-                            handleChange('options', [...(formData.options || []), { id: newId, text: '' }]);
-                        }}
-                    >
-                        <IconPlus size={14} /> Agregar Opción
-                    </button>
+        return (
+            <>
+                <div className={styles.formGroup}>
+                    <label className={styles.label}>Título (Para vista principal)</label>
+                    <input
+                        className={styles.input}
+                        value={formData.heading || ''}
+                        onChange={e => handleChange('heading', e.target.value)}
+                        placeholder="Ej. Evaluación Final"
+                        maxLength={120}
+                    />
                 </div>
-            </div>
-        </>
-    );
+                <div className={styles.formGroup}>
+                    <label className={styles.label}>Pregunta</label>
+                    <input
+                        className={styles.input}
+                        value={qObj.q}
+                        onChange={e => {
+                            const newQs = [...(formData.questions || [])];
+                            newQs[0] = { ...qObj, q: e.target.value };
+                            handleChange('questions', newQs);
+                        }}
+                        maxLength={300}
+                    />
+                </div>
+                <div className={styles.formGroup}>
+                    <label className={styles.label}>
+                        Explicación (Feedback al responder)
+                        <CharCounter current={qObj.explanation?.length ?? 0} max={TEXTAREA_MAX_CHARS} />
+                    </label>
+                    <textarea
+                        className={styles.textarea}
+                        placeholder="Explicación que aparece al responder..."
+                        value={qObj.explanation}
+                        onChange={e => {
+                            const newQs = [...(formData.questions || [])];
+                            newQs[0] = { ...qObj, explanation: e.target.value };
+                            handleChange('questions', newQs);
+                        }}
+                        maxLength={TEXTAREA_MAX_CHARS}
+                    />
+                </div>
+
+                <div className={styles.formGroup}>
+                    <label className={styles.label}>
+                        Opciones
+                        <span style={{ float: 'right', fontSize: '0.72rem', color: 'var(--text-tertiary)', fontWeight: 400 }}>
+                            Selecciona la respuesta correcta →
+                        </span>
+                    </label>
+
+                    {/* Hint cuando no hay opción correcta seleccionada */}
+                    {qObj.correct === undefined && (qObj.options?.length ?? 0) > 0 && (
+                        <div style={{
+                            display: 'flex', alignItems: 'center', gap: 6,
+                            padding: '6px 10px', marginBottom: 8,
+                            background: 'color-mix(in srgb, var(--color-warning, #f59e0b) 10%, transparent)',
+                            border: '1px solid color-mix(in srgb, var(--color-warning, #f59e0b) 30%, transparent)',
+                            borderRadius: '8px', fontSize: '0.78rem', color: 'var(--text-secondary)',
+                        }}>
+                            ⚠️ Selecciona cuál es la respuesta correcta haciendo clic en el círculo
+                        </div>
+                    )}
+
+                    <div className={styles.itemsList}>
+                        {qObj.options?.map((optText, idx) => {
+                            const isCorrect = qObj.correct === idx;
+                            return (
+                                <div
+                                    key={idx}
+                                    className={styles.itemRow}
+                                    style={{
+                                        alignItems: 'center',
+                                        background: isCorrect
+                                            ? 'color-mix(in srgb, var(--color-success, #22c55e) 8%, transparent)'
+                                            : 'transparent',
+                                        border: `1px solid ${isCorrect ? 'color-mix(in srgb, var(--color-success, #22c55e) 35%, transparent)' : 'transparent'}`,
+                                        borderRadius: 8,
+                                        padding: '4px 6px',
+                                        transition: 'background 0.15s, border-color 0.15s',
+                                    }}
+                                >
+                                    {/* Radio con tooltip claro */}
+                                    <button
+                                        type="button"
+                                        onClick={() => {
+                                            const newQs = [...(formData.questions || [])];
+                                            newQs[0] = { ...qObj, correct: idx };
+                                            handleChange('questions', newQs);
+                                        }}
+                                        title={isCorrect ? 'Respuesta correcta ✓' : 'Marcar como respuesta correcta'}
+                                        style={{
+                                            width: 22, height: 22, borderRadius: '50%',
+                                            border: `2px solid ${isCorrect ? 'var(--color-success, #22c55e)' : 'var(--border-color)'}`,
+                                            background: isCorrect ? 'var(--color-success, #22c55e)' : 'transparent',
+                                            cursor: 'pointer',
+                                            display: 'flex', alignItems: 'center', justifyContent: 'center',
+                                            flexShrink: 0,
+                                            transition: 'all 0.15s',
+                                            color: '#fff',
+                                            fontSize: 12, fontWeight: 900,
+                                        }}
+                                        aria-pressed={isCorrect}
+                                        aria-label={`Opción ${idx + 1}: ${isCorrect ? 'correcta' : 'incorrecta'}`}
+                                    >
+                                        {isCorrect ? '✓' : ''}
+                                    </button>
+
+                                    <input
+                                        className={styles.input}
+                                        style={{ flex: 1 }}
+                                        value={optText || ''}
+                                        maxLength={200}
+                                        onChange={e => {
+                                            const newOptions = [...(qObj.options || [])];
+                                            newOptions[idx] = e.target.value;
+                                            const newQs = [...(formData.questions || [])];
+                                            newQs[0] = { ...qObj, options: newOptions };
+                                            handleChange('questions', newQs);
+                                        }}
+                                        placeholder={`Opción ${idx + 1}`}
+                                    />
+                                    <button
+                                        className={styles.removeBtn}
+                                        onClick={() => {
+                                            const newOptions = (qObj.options || []).filter((_, i) => i !== idx);
+                                            const newQs = [...(formData.questions || [])];
+                                            let newCorrect = qObj.correct;
+                                            if (isCorrect) newCorrect = undefined;
+                                            else if (typeof qObj.correct === 'number' && qObj.correct > idx) newCorrect -= 1;
+
+                                            newQs[0] = { ...qObj, options: newOptions, correct: newCorrect };
+                                            handleChange('questions', newQs);
+                                        }}
+                                    >
+                                        <IconTrash2 size={16} />
+                                    </button>
+                                </div>
+                            );
+                        })}
+                        <button
+                            className={styles.addItemBtn}
+                            onClick={() => {
+                                const newQs = [...(formData.questions || [])];
+                                newQs[0] = { ...qObj, options: [...(qObj.options || []), ''] };
+                                handleChange('questions', newQs);
+                            }}
+                        >
+                            <IconPlus size={14} /> Agregar Opción
+                        </button>
+                    </div>
+                </div>
+            </>
+        );
+    };
 
     // ── Despacho de render por tipo ───────────────────────────────────────────
     const renderFields = () => {
