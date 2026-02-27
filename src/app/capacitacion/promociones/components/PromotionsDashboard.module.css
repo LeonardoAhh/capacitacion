@@ -1,0 +1,141 @@
+.dashboardContainer {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: var(--spacing-lg);
+    margin-bottom: var(--spacing-xl);
+}
+
+.statCard {
+    background: rgba(255, 255, 255, 0.45);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    border-radius: 20px;
+    padding: var(--spacing-lg) var(--spacing-xl);
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-xl);
+    transition: transform 0.3s, box-shadow 0.3s;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+}
+
+[data-theme="dark"] .statCard {
+    background: rgba(30, 30, 35, 0.45);
+    border-color: rgba(255, 255, 255, 0.08);
+}
+
+.statCard:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 20px -5px rgba(0, 0, 0, 0.1);
+}
+
+.statIcon {
+    font-size: 2.2rem;
+    width: 60px;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255, 255, 255, 0.5);
+    border-radius: 16px;
+    box-shadow: inset 0 2px 4px rgba(255, 255, 255, 0.5);
+    flex-shrink: 0;
+}
+
+[data-theme="dark"] .statIcon {
+    background: rgba(0, 0, 0, 0.2);
+    box-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.05);
+}
+
+.statInfo {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+}
+
+.statLabel {
+    font-size: 0.85rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--text-secondary);
+    margin-bottom: 4px;
+}
+
+.statValue {
+    font-size: 2rem;
+    font-weight: 800;
+    color: var(--text-primary);
+    line-height: 1;
+}
+
+.statValueText {
+    font-size: 1.4rem;
+    font-weight: 800;
+    color: var(--text-primary);
+    line-height: 1.2;
+}
+
+.statDesc {
+    font-size: 0.8rem;
+    color: var(--text-tertiary);
+    margin-top: 6px;
+}
+
+.statValueRow {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.pillBadge {
+    padding: 4px 10px;
+    border-radius: 50px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    background: rgba(34, 197, 94, 0.15);
+    color: #22c55e;
+    border: 1px solid rgba(34, 197, 94, 0.2);
+}
+
+[data-theme="dark"] .pillBadge {
+    color: #4ade80;
+}
+
+.miniProgressBar {
+    height: 4px;
+    background: rgba(0, 0, 0, 0.05);
+    border-radius: 2px;
+    margin-top: 10px;
+    overflow: hidden;
+}
+
+[data-theme="dark"] .miniProgressBar {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.miniProgressFill {
+    height: 100%;
+    background: #10b981;
+    border-radius: 2px;
+    transition: width 1s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Card Specific Themes (Subtle borders) */
+.blueCard {
+    border-left: 4px solid #3b82f6;
+}
+
+.greenCard {
+    border-left: 4px solid #10b981;
+}
+
+.orangeCard {
+    border-left: 4px solid #f59e0b;
+}
+
+@media (max-width: 768px) {
+    .dashboardContainer {
+        grid-template-columns: 1fr;
+    }
+}

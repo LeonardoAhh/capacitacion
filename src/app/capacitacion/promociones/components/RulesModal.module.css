@@ -1,0 +1,129 @@
+/* ==================== RULES MODAL ==================== */
+.rulesModalBody {
+    max-height: 70vh;
+    overflow-y: auto;
+}
+
+.ruleForm {
+    background: var(--bg-secondary);
+    padding: var(--spacing-lg);
+    border-radius: 16px;
+    margin-bottom: var(--spacing-xl);
+}
+
+[data-theme="dark"] .ruleForm {
+    background: rgba(40, 40, 45, 0.6);
+}
+
+.ruleForm h4 {
+    margin: 0 0 var(--spacing-md);
+    font-size: 1rem;
+    color: var(--text-primary);
+    font-weight: 700;
+}
+
+.ruleFormGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: var(--spacing-md);
+}
+
+.ruleFormGrid .formGroup {
+    margin-bottom: 0;
+}
+
+.ruleFormActions {
+    display: flex;
+    justify-content: flex-end;
+    gap: var(--spacing-sm);
+    margin-top: var(--spacing-md);
+}
+
+.rulesList h4 {
+    font-size: 1rem;
+    color: var(--text-primary);
+    margin-bottom: var(--spacing-md);
+    font-weight: 700;
+}
+
+.rulesListHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--spacing-md);
+}
+
+.rulesListHeader h4 {
+    margin: 0;
+}
+
+.rulesTable {
+    max-height: 300px;
+    overflow-y: auto;
+    border: 1px solid var(--border-color);
+    border-radius: 16px;
+}
+
+[data-theme="dark"] .rulesTable {
+    border-color: rgba(255, 255, 255, 0.06);
+}
+
+.ruleRow {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: var(--spacing-md);
+    border-bottom: 1px solid var(--border-color);
+    gap: var(--spacing-md);
+    transition: background 0.2s;
+}
+
+[data-theme="dark"] .ruleRow {
+    border-color: rgba(255, 255, 255, 0.06);
+}
+
+.ruleRow:last-child {
+    border-bottom: none;
+}
+
+.ruleRow:hover {
+    background: var(--bg-secondary);
+}
+
+[data-theme="dark"] .ruleRow:hover {
+    background: rgba(255, 255, 255, 0.04);
+}
+
+.ruleInfo {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    flex: 1;
+}
+
+.ruleInfo strong {
+    font-size: 0.9rem;
+    color: var(--text-primary);
+}
+
+.ruleInfo span {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+}
+
+.ruleInfo small {
+    font-size: 0.75rem;
+    color: var(--text-tertiary);
+}
+
+.ruleActions {
+    display: flex;
+    gap: 4px;
+}
+
+.moreRules {
+    text-align: center;
+    padding: var(--spacing-md);
+    color: var(--text-tertiary);
+    font-size: 0.85rem;
+}
