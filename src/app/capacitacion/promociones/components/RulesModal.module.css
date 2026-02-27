@@ -1,30 +1,49 @@
-/* ==================== RULES MODAL ==================== */
+/* ==================== RULES MODAL REDESIGN ==================== */
 .rulesModalBody {
-    max-height: 70vh;
+    max-height: 75vh;
     overflow-y: auto;
+    padding-right: 8px; /* Room for scrollbar */
+}
+
+.rulesModalBody::-webkit-scrollbar {
+    width: 6px;
+}
+
+.rulesModalBody::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.rulesModalBody::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
 }
 
 .ruleForm {
-    background: var(--bg-secondary);
+    background: rgba(30,30,35,0.4);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255,255,255,0.06);
     padding: var(--spacing-lg);
     border-radius: 16px;
     margin-bottom: var(--spacing-xl);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
 }
 
-[data-theme="dark"] .ruleForm {
-    background: rgba(40, 40, 45, 0.6);
+[data-theme="light"] .ruleForm {
+    background: rgba(255,255,255,0.5);
+    border-color: rgba(0,0,0,0.05);
 }
 
 .ruleForm h4 {
     margin: 0 0 var(--spacing-md);
-    font-size: 1rem;
+    font-size: 1.1rem;
     color: var(--text-primary);
-    font-weight: 700;
+    font-weight: 800;
 }
 
 .ruleFormGrid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
     gap: var(--spacing-md);
 }
 
@@ -32,18 +51,41 @@
     margin-bottom: 0;
 }
 
+/* Glass Inputs Specific to Modal */
+.glassInput {
+    background: rgba(0, 0, 0, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    padding: 10px 14px;
+    color: var(--text-primary);
+    width: 100%;
+    transition: all 0.2s;
+}
+
+[data-theme="light"] .glassInput {
+    background: rgba(255, 255, 255, 0.7);
+    border-color: var(--border-color);
+}
+
+.glassInput:focus {
+    outline: none;
+    border-color: #f59e0b; /* Amber */
+    box-shadow: 0 0 0 2px rgba(245, 158, 11, 0.15);
+}
+
 .ruleFormActions {
     display: flex;
     justify-content: flex-end;
     gap: var(--spacing-sm);
-    margin-top: var(--spacing-md);
+    margin-top: var(--spacing-lg);
 }
 
+/* Modal Headers */
 .rulesList h4 {
-    font-size: 1rem;
+    font-size: 1.1rem;
     color: var(--text-primary);
-    margin-bottom: var(--spacing-md);
-    font-weight: 700;
+    font-weight: 800;
+    margin: 0;
 }
 
 .rulesListHeader {
@@ -51,35 +93,71 @@
     justify-content: space-between;
     align-items: center;
     margin-bottom: var(--spacing-md);
+    flex-wrap: wrap;
+    gap: var(--spacing-sm);
 }
 
-.rulesListHeader h4 {
-    margin: 0;
+.ruleSearchInput {
+    flex: 1;
+    min-width: 200px;
+    max-width: 350px;
+    background: rgba(0, 0, 0, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 20px;
+    padding: 8px 16px;
+    color: var(--text-primary);
+    font-size: 0.9rem;
+    transition: all 0.2s;
 }
 
+[data-theme="light"] .ruleSearchInput {
+    background: rgba(255, 255, 255, 0.7);
+    border-color: var(--border-color);
+}
+
+.ruleSearchInput:focus {
+    outline: none;
+    border-color: #f59e0b;
+    box-shadow: 0 0 0 2px rgba(245, 158, 11, 0.15);
+}
+
+/* Rules Table List */
 .rulesTable {
-    max-height: 300px;
+    max-height: 380px;
     overflow-y: auto;
-    border: 1px solid var(--border-color);
+    border: 1px solid rgba(255,255,255,0.06);
     border-radius: 16px;
+    background: rgba(20, 20, 25, 0.3);
 }
 
-[data-theme="dark"] .rulesTable {
-    border-color: rgba(255, 255, 255, 0.06);
+[data-theme="light"] .rulesTable {
+    background: rgba(255, 255, 255, 0.3);
+    border-color: rgba(0,0,0,0.05);
 }
+
+
+.rulesTable::-webkit-scrollbar {
+    width: 6px;
+}
+
+.rulesTable::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+}
+
 
 .ruleRow {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: var(--spacing-md);
-    border-bottom: 1px solid var(--border-color);
+    padding: var(--spacing-md) var(--spacing-lg);
+    border-bottom: 1px solid rgba(255,255,255,0.06);
     gap: var(--spacing-md);
     transition: background 0.2s;
 }
 
-[data-theme="dark"] .ruleRow {
-    border-color: rgba(255, 255, 255, 0.06);
+[data-theme="light"] .ruleRow {
+    border-bottom: 1px solid rgba(0,0,0,0.05);
 }
 
 .ruleRow:last-child {
@@ -87,27 +165,28 @@
 }
 
 .ruleRow:hover {
-    background: var(--bg-secondary);
+    background: rgba(255, 255, 255, 0.03);
 }
 
-[data-theme="dark"] .ruleRow:hover {
-    background: rgba(255, 255, 255, 0.04);
+[data-theme="light"] .ruleRow:hover {
+    background: rgba(0, 0, 0, 0.02);
 }
 
 .ruleInfo {
     display: flex;
     flex-direction: column;
-    gap: 2px;
+    gap: 4px;
     flex: 1;
 }
 
 .ruleInfo strong {
-    font-size: 0.9rem;
+    font-size: 0.95rem;
     color: var(--text-primary);
+    font-weight: 800;
 }
 
 .ruleInfo span {
-    font-size: 0.8rem;
+    font-size: 0.85rem;
     color: var(--text-secondary);
 }
 
@@ -121,9 +200,41 @@
     gap: 4px;
 }
 
+.actionIconOrange {
+    filter: grayscale(1) invert(0.5) sepia(1) hue-rotate(350deg) saturate(3);
+    opacity: 0.8;
+}
+
+.actionIconOrange:hover {
+    opacity: 1;
+}
+
+.actionIconGray {
+    opacity: 0.5;
+}
+
+.actionIconGray:hover {
+    opacity: 0.9;
+}
+
+
 .moreRules {
     text-align: center;
     padding: var(--spacing-md);
     color: var(--text-tertiary);
     font-size: 0.85rem;
+}
+
+/* Amber Theme Buttons */
+.amberBtn {
+    background: linear-gradient(135deg, #f59e0b, #d97706);
+    color: white !important;
+    border: none !important;
+    box-shadow: 0 4px 10px rgba(245, 158, 11, 0.3) !important;
+    font-weight: 700 !important;
+}
+
+.amberBtn:hover {
+    box-shadow: 0 6px 14px rgba(245, 158, 11, 0.4) !important;
+    transform: translateY(-2px);
 }

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { Dialog, DialogHeader, DialogTitle, DialogBody, DialogFooter, DialogClose } from '@/components/ui/Dialog/Dialog';
 import { Button } from '@/components/ui/Button/Button';
 import { db } from '@/lib/firebase';
@@ -18,6 +18,7 @@ export default function RulesModal({ isOpen, onClose, rules, onRulesUpdated }) {
 
     // Rule CRUD local state
     const [editingRule, setEditingRule] = useState(null);
+    const [searchQuery, setSearchQuery] = useState('');
     const [ruleForm, setRuleForm] = useState({
         currentPosition: '',
         promotionTo: '',
@@ -41,7 +42,7 @@ export default function RulesModal({ isOpen, onClose, rules, onRulesUpdated }) {
 
     const handleSaveRule = async () => {
         if (!ruleForm.currentPosition || !ruleForm.promotionTo) {
-            toast.error('Error', 'Complete todos los campos');
+            toast.error('Error', 'Complete todos los campos base');
             return;
         }
 
@@ -81,23 +82,32 @@ export default function RulesModal({ isOpen, onClose, rules, onRulesUpdated }) {
     };
 
     const handleDeleteRule = async (ruleId) => {
-        if (!await showConfirm('¿Eliminar esta regla de promoción?', { title: 'Eliminar Regla', confirmLabel: 'Eliminar' })) return;
+        if (!await showConfirm('¿Eliminar de forma permanente esta regla?', { title: 'Eliminar Regla', confirmLabel: 'Eliminar' })) return;
 
         try {
             await deleteDoc(doc(db, 'promotion_rules', ruleId));
             const newRules = rules.filter(r => r.id !== ruleId);
             onRulesUpdated(newRules);
-            toast.success('Eliminado', 'Regla eliminada');
+            toast.success('Eliminado', 'Regla retirada del sistema');
         } catch (error) {
             console.error('Error deleting rule:', error);
-            toast.error('Error', 'No se pudo eliminar');
+            toast.error('Error', 'Hubo un error al eliminarla');
         }
     };
+
+    const filteredRules = useMemo(() => {
+        if (!searchQuery) return rules;
+        const q = searchQuery.toLowerCase();
+        return rules.filter(r =>
+            (r.currentPosition || '').toLowerCase().includes(q) ||
+            (r.promotionTo || '').toLowerCase().includes(q)
+        );
+    }, [rules, searchQuery]);
 
     return (
         <>
             <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
-                <DialogHeader>
+                <DialogHeader className={styles.modalHeaderAmber}>
                     <DialogTitle>Reglas de Promoción</DialogTitle>
                     <DialogClose onClose={onClose} />
                 </DialogHeader>
@@ -112,6 +122,7 @@ export default function RulesModal({ isOpen, onClose, rules, onRulesUpdated }) {
                                     value={ruleForm.currentPosition}
                                     onChange={(e) => setRuleForm({ ...ruleForm, currentPosition: e.target.value })}
                                     placeholder="AUXILIAR DE ALMACÉN B"
+                                    className={styles.glassInput}
                                 />
                             </div>
                             <div className={styles.formGroup}>
@@ -121,6 +132,7 @@ export default function RulesModal({ isOpen, onClose, rules, onRulesUpdated }) {
                                     value={ruleForm.promotionTo}
                                     onChange={(e) => setRuleForm({ ...ruleForm, promotionTo: e.target.value })}
                                     placeholder="AUXILIAR DE ALMACÉN A"
+                                    className={styles.glassInput}
                                 />
                             </div>
                             <div className={styles.formGroup}>
@@ -130,6 +142,7 @@ export default function RulesModal({ isOpen, onClose, rules, onRulesUpdated }) {
                                     min="1"
                                     value={ruleForm.temporalityMonths}
                                     onChange={(e) => setRuleForm({ ...ruleForm, temporalityMonths: parseInt(e.target.value) })}
+                                    className={styles.glassInput}
                                 />
                             </div>
                             <div className={styles.formGroup}>
@@ -140,6 +153,7 @@ export default function RulesModal({ isOpen, onClose, rules, onRulesUpdated }) {
                                     max="100"
                                     value={ruleForm.examMinScore}
                                     onChange={(e) => setRuleForm({ ...ruleForm, examMinScore: parseInt(e.target.value) })}
+                                    className={styles.glassInput}
                                 />
                             </div>
                             <div className={styles.formGroup}>
@@ -150,6 +164,7 @@ export default function RulesModal({ isOpen, onClose, rules, onRulesUpdated }) {
                                     max="100"
                                     value={ruleForm.matrixMinCoverage}
                                     onChange={(e) => setRuleForm({ ...ruleForm, matrixMinCoverage: parseInt(e.target.value) })}
+                                    className={styles.glassInput}
                                 />
                             </div>
                             <div className={styles.formGroup}>
@@ -160,6 +175,7 @@ export default function RulesModal({ isOpen, onClose, rules, onRulesUpdated }) {
                                     max="100"
                                     value={ruleForm.performanceMinScore}
                                     onChange={(e) => setRuleForm({ ...ruleForm, performanceMinScore: parseInt(e.target.value) })}
+                                    className={styles.glassInput}
                                 />
                             </div>
                         </div>
@@ -175,11 +191,14 @@ export default function RulesModal({ isOpen, onClose, rules, onRulesUpdated }) {
                                         matrixMinCoverage: 90,
                                         performanceMinScore: 80
                                     });
-                                }}>
+                                }} style={{ color: 'var(--text-secondary)' }}>
                                     Cancelar
                                 </Button>
                             )}
-                            <Button onClick={handleSaveRule}>
+                            <Button
+                                onClick={handleSaveRule}
+                                className={styles.amberBtn}
+                            >
                                 {editingRule ? 'Actualizar' : 'Agregar'}
                             </Button>
                         </div>
@@ -187,39 +206,52 @@ export default function RulesModal({ isOpen, onClose, rules, onRulesUpdated }) {
 
                     <div className={styles.rulesList}>
                         <div className={styles.rulesListHeader}>
-                            <h4>Reglas Existentes ({rules.length})</h4>
+                            <h4>Reglas Existentes ({filteredRules.length})</h4>
+                            <input
+                                type="text"
+                                placeholder="🔍 Buscar por puesto..."
+                                value={searchQuery}
+                                onChange={(e) => setSearchQuery(e.target.value)}
+                                className={styles.ruleSearchInput}
+                            />
                         </div>
                         <div className={styles.rulesTable}>
-                            {rules.slice(0, 20).map(rule => (
-                                <div key={rule.id} className={styles.ruleRow}>
-                                    <div className={styles.ruleInfo}>
-                                        <strong>{rule.currentPosition}</strong>
-                                        <span>→ {rule.promotionTo}</span>
-                                        <small>
-                                            {rule.temporalityMonths}m | Exam {rule.examMinScore}% |
-                                            Matriz {rule.matrixMinCoverage}% | Eval {rule.performanceMinScore}%
-                                        </small>
-                                    </div>
-                                    {canWrite() && (
-                                        <div className={styles.ruleActions}>
-                                            <Button variant="ghost" size="sm" onClick={() => handleEditRule(rule)}>
-                                                ✏️
-                                            </Button>
-                                            <Button variant="ghost" size="sm" onClick={() => handleDeleteRule(rule.id)}>
-                                                🗑️
-                                            </Button>
-                                        </div>
-                                    )}
+                            {filteredRules.length === 0 ? (
+                                <div style={{ padding: '2rem', textAlign: 'center', color: 'var(--text-tertiary)' }}>
+                                    No se encontraron reglas.
                                 </div>
-                            ))}
-                            {rules.length > 20 && (
-                                <p className={styles.moreRules}>+{rules.length - 20} reglas más...</p>
+                            ) : (
+                                filteredRules.slice(0, 50).map(rule => (
+                                    <div key={rule.id} className={styles.ruleRow}>
+                                        <div className={styles.ruleInfo}>
+                                            <strong>{rule.currentPosition || 'N/A'}</strong>
+                                            <span>→ {rule.promotionTo || 'N/A'}</span>
+                                            <small>
+                                                {rule.temporalityMonths || 0}m | Exam {rule.examMinScore || 0}% |
+                                                Matriz {rule.matrixMinCoverage || 0}% | Eval {rule.performanceMinScore || 0}%
+                                            </small>
+                                        </div>
+                                        {canWrite() && (
+                                            <div className={styles.ruleActions}>
+                                                <Button variant="ghost" size="sm" onClick={() => handleEditRule(rule)} className={styles.actionIconOrange}>
+                                                    ✏️
+                                                </Button>
+                                                <Button variant="ghost" size="sm" onClick={() => handleDeleteRule(rule.id)} className={styles.actionIconGray}>
+                                                    🗑️
+                                                </Button>
+                                            </div>
+                                        )}
+                                    </div>
+                                ))
+                            )}
+                            {filteredRules.length > 50 && (
+                                <p className={styles.moreRules}>+{filteredRules.length - 50} reglas más (Usa el buscador para filtrar)</p>
                             )}
                         </div>
                     </div>
                 </DialogBody>
                 <DialogFooter>
-                    <Button onClick={onClose}>Cerrar</Button>
+                    <Button onClick={onClose} className={styles.amberBtn}>Cerrar</Button>
                 </DialogFooter>
             </Dialog>
             {confirmDialog}
