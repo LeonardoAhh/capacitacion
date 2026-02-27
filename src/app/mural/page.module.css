@@ -368,6 +368,12 @@
     transition: background 0.2s;
 }
 
+.metricItem>div {
+    flex-grow: 1;
+    min-width: 0;
+    /* Permite que el texto fluya libremente */
+}
+
 .metricItem:hover {
     background: rgba(255, 255, 255, 0.05);
 }
@@ -397,6 +403,10 @@
     font-weight: 700;
     color: #f59e0b;
     /* Amber */
+    word-break: break-word;
+    /* Forza la ruptura si el texto es muy largo */
+    white-space: normal;
+    line-height: 1.4;
 }
 
 /* Card Footer */

@@ -118,7 +118,6 @@ export default function MuralPage() {
                         <Award size={48} className={styles.headerIcon} />
                     </div>
                     <h1>Mural de Reconocimiento</h1>
-                    <p>Descubre tu progreso y celebra tus logros</p>
                 </div>
 
                 {!result && (
