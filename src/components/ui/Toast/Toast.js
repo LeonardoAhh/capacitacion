@@ -1,7 +1,7 @@
 'use client';
 
 import { createContext, useContext, useState, useCallback, useEffect, useRef, useMemo } from 'react';
-import { X, CheckCircle, AlertCircle, Info, AlertTriangle } from 'lucide-react';
+import { IconX, IconCheckCircle, IconAlertCircle, IconInfo, IconAlertTriangle } from '@/lib/icons';
 import styles from './Toast.module.css';
 
 // Toast Context
@@ -35,10 +35,10 @@ function Toast({ id, message, type = 'info', onClose, duration = 3000 }) {
     }, [duration, handleClose]);
 
     const icons = {
-        success: <CheckCircle size={20} />,
-        error: <AlertCircle size={20} />,
-        warning: <AlertTriangle size={20} />,
-        info: <Info size={20} />
+        success: <IconCheckCircle size={20} />,
+        error: <IconAlertCircle size={20} />,
+        warning: <IconAlertTriangle size={20} />,
+        info: <IconInfo size={20} />
     };
 
     return (
@@ -57,7 +57,7 @@ function Toast({ id, message, type = 'info', onClose, duration = 3000 }) {
                 aria-label="Cerrar notificación"
                 type="button"
             >
-                <X size={16} />
+                <IconX size={16} />
             </button>
         </div>
     );

@@ -1,7 +1,7 @@
 'use client';
 
 import { forwardRef, useEffect, useState } from 'react';
-import { AlertCircle, CheckCircle2, Eye, EyeOff } from 'lucide-react';
+import { IconAlertCircle, IconCheckCircle2, IconEye, IconEyeOff } from '@/lib/icons';
 import styles from './FormField.module.css';
 
 const FormField = forwardRef(function FormField(
@@ -64,7 +64,7 @@ const FormField = forwardRef(function FormField(
                         tabIndex={-1}
                         aria-label={showPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'}
                     >
-                        {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                        {showPassword ? <IconEyeOff size={18} /> : <IconEye size={18} />}
                     </button>
                 )}
 
@@ -93,13 +93,13 @@ const FormField = forwardRef(function FormField(
 
                 {hasError && (
                     <div className={styles.statusIcon} aria-hidden="true">
-                        <AlertCircle size={18} />
+                        <IconAlertCircle size={18} />
                     </div>
                 )}
 
                 {isValid && showValidState && (
                     <div className={styles.statusIcon} aria-hidden="true">
-                        <CheckCircle2 size={18} />
+                        <IconCheckCircle2 size={18} />
                     </div>
                 )}
             </div>

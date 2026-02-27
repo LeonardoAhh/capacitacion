@@ -55,34 +55,50 @@ export default function ContentSlide({ data, accentColor }) {
             {hasImages && (
                 <div className={styles.slideImageContainer}>
                     {isMulti ? (
-                        /* Grid para múltiples imágenes */
+                        /* Grid para múltiples imágenes Premium (hasta 6) */
                         <div style={{
                             display: 'grid',
-                            gridTemplateColumns: gallery.length === 2 ? '1fr 1fr' : 'repeat(auto-fill, minmax(120px, 1fr))',
-                            gap: 8,
+                            gridTemplateColumns: gallery.length === 2 ? '1fr 1fr' :
+                                gallery.length === 3 ? '1fr 1fr 1fr' :
+                                    gallery.length === 4 ? '1fr 1fr' :
+                                        gallery.length === 5 ? 'repeat(6, 1fr)' :
+                                            'repeat(3, 1fr)',
+                            gridAutoRows: 'minmax(100px, 150px)',
+                            gap: 12,
                             width: '100%',
                         }}>
-                            {gallery.map((url, idx) => (
-                                // eslint-disable-next-line @next/next/no-img-element
-                                <img
-                                    key={idx}
-                                    src={url}
-                                    alt={`${heading || 'Imagen'} ${idx + 1}`}
-                                    onClick={() => setLightboxIdx(idx)}
-                                    loading="lazy"
-                                    style={{
-                                        width: '100%',
-                                        aspectRatio: '4/3',
-                                        objectFit: 'cover',
-                                        borderRadius: 8,
-                                        cursor: 'zoom-in',
-                                        border: '1px solid rgba(255,255,255,0.08)',
-                                        transition: 'transform 0.2s, opacity 0.2s',
-                                    }}
-                                    onMouseEnter={e => { e.currentTarget.style.transform = 'scale(1.03)'; e.currentTarget.style.opacity = '0.9'; }}
-                                    onMouseLeave={e => { e.currentTarget.style.transform = 'scale(1)'; e.currentTarget.style.opacity = '1'; }}
-                                />
-                            ))}
+                            {gallery.map((url, idx) => {
+                                // Configurar layout dinámico para 5 imágenes (2 grandes arriba, 3 abajo)
+                                let gridStyle = {};
+                                if (gallery.length === 5) {
+                                    if (idx < 2) gridStyle = { gridColumn: 'span 3' };
+                                    else gridStyle = { gridColumn: 'span 2' };
+                                }
+
+                                return (
+                                    // eslint-disable-next-line @next/next/no-img-element
+                                    <img
+                                        key={idx}
+                                        src={url}
+                                        alt={`${heading || 'Imagen'} ${idx + 1}`}
+                                        onClick={() => setLightboxIdx(idx)}
+                                        loading="lazy"
+                                        style={{
+                                            width: '100%',
+                                            height: '100%',
+                                            objectFit: 'cover',
+                                            borderRadius: 12,
+                                            cursor: 'zoom-in',
+                                            border: '1px solid rgba(255,255,255,0.08)',
+                                            boxShadow: '0 4px 15px rgba(0,0,0,0.1)',
+                                            transition: 'transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s',
+                                            ...gridStyle
+                                        }}
+                                        onMouseEnter={e => { e.currentTarget.style.transform = 'scale(1.04)'; e.currentTarget.style.opacity = '0.95'; }}
+                                        onMouseLeave={e => { e.currentTarget.style.transform = 'scale(1)'; e.currentTarget.style.opacity = '1'; }}
+                                    />
+                                );
+                            })}
                         </div>
                     ) : (
                         /* Imagen única */

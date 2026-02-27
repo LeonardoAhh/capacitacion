@@ -563,11 +563,39 @@
     background: var(--c-cream);
     border: 1px solid var(--c-line);
     transition: border-color var(--t), box-shadow var(--t);
+    animation: indFadeUp 0.4s ease forwards;
+    opacity: 0;
 }
 
 .nativeCard:hover {
     border-color: var(--c-orange-mid);
     box-shadow: 0 2px 8px rgba(212, 98, 42, 0.08);
+}
+
+/* Eskeleton UI - Loader */
+@keyframes shimmer {
+    0% {
+        background-position: -400px 0;
+    }
+
+    100% {
+        background-position: 400px 0;
+    }
+}
+
+.skeletonCard {
+    background: #f6f7f8;
+    background-image: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+    background-size: 800px 100%;
+    animation: shimmer 1.5s infinite linear;
+    border-radius: var(--r-lg);
+    min-height: 70px;
+    width: 100%;
+}
+
+:root[data-theme="dark"] .skeletonCard {
+    background: #2a2a2a;
+    background-image: linear-gradient(90deg, #222 25%, #333 50%, #222 75%);
 }
 
 .nativeCardLeft {
@@ -767,9 +795,28 @@
     justify-content: flex-start;
     height: auto;
     min-height: min-content;
+    animation: indFadeUp 0.4s ease forwards;
+    opacity: 0;
 }
 
-.courseCard:hover {
+.courseCard.skeleton {
+    min-height: 140px;
+    display: block;
+    border: 1px solid var(--c-line);
+    box-shadow: none;
+    cursor: default;
+    animation: shimmer 1.5s infinite linear;
+    background: #f6f7f8;
+    background-image: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+    background-size: 800px 100%;
+}
+
+:root[data-theme="dark"] .courseCard.skeleton {
+    background: #2a2a2a;
+    background-image: linear-gradient(90deg, #222 25%, #333 50%, #222 75%);
+}
+
+.courseCard:hover:not(.skeleton) {
     border-color: var(--c-orange-mid);
     box-shadow: var(--sh-lift);
     transform: translateY(-1px);
@@ -869,6 +916,13 @@
     background: var(--c-red-dim);
     color: var(--c-red);
     border-color: rgba(185, 28, 28, 0.2);
+}
+
+.deleteBtn:active,
+.editBtn:active,
+.nativeDeleteBtn:active,
+.playBtn:active {
+    transform: scale(0.92);
 }
 
 .cardActionsRow {
@@ -1189,6 +1243,8 @@ textarea.input {
     background: var(--c-cream);
     border: 1px solid var(--c-line);
     transition: all var(--t) var(--ease);
+    animation: indScaleIn 0.3s ease forwards;
+    opacity: 0;
 }
 
 .galleryCard:hover {
@@ -2187,6 +2243,50 @@ textarea.input {
 .playActionBtn:hover {
     filter: brightness(1.20);
     transform: scale(1.04);
+}
+
+/* ================================================================
+   SEARCH INPUT
+   ================================================================ */
+.headerActions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-top: 16px;
+    width: 100%;
+}
+
+.searchInputWrapper {
+    position: relative;
+    flex: 1;
+    max-width: 380px;
+}
+
+.searchIcon {
+    position: absolute;
+    left: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--c-muted);
+    pointer-events: none;
+}
+
+.searchInput {
+    width: 100%;
+    padding: 10px 14px 10px 40px;
+    border-radius: 20px;
+    border: 1px solid var(--c-line);
+    background: var(--c-surface);
+    color: var(--c-ink);
+    font-size: 0.85rem;
+    transition: all var(--t) ease;
+    outline: none;
+}
+
+.searchInput:focus {
+    border-color: var(--c-orange);
+    background: var(--c-surface);
+    box-shadow: 0 0 0 3px var(--c-orange-glow);
 }
 
 /* ================================================================

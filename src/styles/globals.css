@@ -93,8 +93,8 @@
 
   /* Text Colors */
   --text-primary: #ffffff;
-  --text-secondary: #a3a39a;
-  --text-tertiary: #73736b;
+  --text-secondary: #babab1;
+  --text-tertiary: #8b8b83;
 
   /* Separator */
   --border-color: rgba(255, 255, 255, 0.08);

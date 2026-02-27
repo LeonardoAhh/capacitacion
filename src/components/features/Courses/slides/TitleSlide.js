@@ -1,9 +1,9 @@
 import styles from './slides.module.css';
 
-export default function TitleSlide({ data }) {
+export default function TitleSlide({ data, inline = false }) {
     return (
-        <article 
-            className={`${styles.slide} ${styles.titleSlide}`}
+        <article
+            className={`${styles.slide} ${styles.titleSlide} ${inline ? styles.slideInline : ''}`}
             role="region"
             aria-label={`Título del curso: ${data.title}`}
         >
@@ -28,3 +28,4 @@ export default function TitleSlide({ data }) {
         </article>
     );
 }
+

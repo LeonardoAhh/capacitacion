@@ -8,7 +8,8 @@
     width: 100%;
     max-width: 900px;
     margin: 0 auto;
-    min-height: 65vh;
+    /* min-height flexible: el scroll lo maneja el contenedor padre (.content del CoursePlayer) */
+    min-height: 0;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -17,6 +18,24 @@
     background: var(--course-slide-bg);
     color: var(--course-slide-text);
 }
+
+/* Modo preview inline del editor — sin restricciones de viewport */
+.slideInline {
+    max-width: 100% !important;
+    width: 100% !important;
+    min-height: unset !important;
+    height: 100% !important;
+    padding: 1.5rem 2rem !important;
+    box-sizing: border-box;
+}
+
+/* TitleSlide en modo preview: fuente relativa al contenedor */
+.slideInline.titleSlide h1,
+.slideInline h1 {
+    font-size: clamp(1.4rem, 4cqw, 2.8rem) !important;
+    line-height: 1.1;
+}
+
 
 .slide,
 .slide * {
@@ -334,10 +353,26 @@
 
 .iconGrid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
     gap: var(--course-spacing-sm);
     width: 100%;
     max-width: 750px;
+    /* Columna por defecto (se sobreescribe con .cols1,.cols2,.cols3) */
+    grid-template-columns: repeat(3, 1fr);
+}
+
+/* ── Clases de columnas según cantidad de ítems ── */
+.iconGrid.cols1 {
+    grid-template-columns: 1fr;
+    max-width: 280px;
+}
+
+.iconGrid.cols2 {
+    grid-template-columns: repeat(2, 1fr);
+    max-width: 500px;
+}
+
+.iconGrid.cols3 {
+    grid-template-columns: repeat(3, 1fr);
 }
 
 .gridItem {
@@ -504,22 +539,28 @@
 .optionBtn {
     display: flex;
     align-items: center;
-    gap: var(--course-spacing-sm);
-    padding: var(--course-spacing-sm) var(--course-spacing-md);
-    border-radius: var(--course-radius-md);
-    border: 1px solid var(--border-color);
-    background: transparent;
+    gap: var(--course-spacing-md);
+    padding: var(--course-spacing-md) var(--course-spacing-lg);
+    border-radius: var(--course-radius-lg);
+    border: 2px solid var(--border-color);
+    background: var(--bg-primary);
     color: var(--course-slide-text);
-    font-size: var(--course-font-sm);
+    font-size: 1.05rem;
+    font-weight: 500;
     cursor: pointer;
-    transition: all var(--course-transition-fast);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     text-align: left;
     width: 100%;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.02);
+    position: relative;
+    overflow: hidden;
 }
 
 .optionBtn:hover:not(.optionSelected) {
     background: var(--bg-tertiary);
     border-color: var(--course-accent);
+    transform: translateY(-3px);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.06);
 }
 
 .optionBtn:focus-visible {
@@ -528,20 +569,26 @@
 }
 
 .optionSelected {
-    background: var(--bg-tertiary);
+    background: rgba(var(--course-accent-rgb), 0.05);
     border-color: var(--course-accent);
+    transform: scale(1.02);
+    box-shadow: 0 4px 15px rgba(var(--course-accent-rgb), 0.15);
 }
 
 .optionCorrect {
     border-color: var(--course-success) !important;
-    background: rgba(34, 197, 94, 0.08) !important;
+    background: rgba(34, 197, 94, 0.1) !important;
     color: var(--course-success);
+    transform: scale(1.03);
+    box-shadow: 0 5px 20px rgba(34, 197, 94, 0.2) !important;
 }
 
 .optionIncorrect {
     border-color: var(--course-danger) !important;
     background: rgba(239, 68, 68, 0.08) !important;
     color: var(--course-danger);
+    transform: translateX(4px);
+    /* Shake hint */
 }
 
 .optionLetter {
@@ -592,12 +639,26 @@
     width: 100%;
     max-width: 800px;
     padding: var(--course-spacing-xl);
-    border-radius: var(--course-radius-md);
+    border-radius: var(--course-radius-lg);
     text-align: center;
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: var(--course-spacing-sm);
+    gap: var(--course-spacing-md);
+    animation: courseFadeInUp 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+    transform-origin: center bottom;
+}
+
+@keyframes courseFadeInUp {
+    0% {
+        opacity: 0;
+        transform: translateY(20px) scale(0.95);
+    }
+
+    100% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
 }
 
 .quizResultPassed {
@@ -628,6 +689,73 @@
     font-size: var(--course-font-base);
     color: var(--course-slide-text-secondary);
     font-weight: 500;
+}
+
+/* ── Quiz: Animación Shake (respuesta incorrecta) ── */
+.optionShake {
+    animation: quizShake 0.4s cubic-bezier(.36, .07, .19, .97) both;
+}
+
+@keyframes quizShake {
+
+    0%,
+    100% {
+        transform: translateX(0);
+    }
+
+    20% {
+        transform: translateX(-8px);
+    }
+
+    40% {
+        transform: translateX(8px);
+    }
+
+    60% {
+        transform: translateX(-5px);
+    }
+
+    80% {
+        transform: translateX(5px);
+    }
+}
+
+/* ── Quiz: Explicación de respuesta correcta ── */
+.explanation {
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+    margin-top: 10px;
+    padding: 12px 14px;
+    border-radius: 10px;
+    background: rgba(99, 102, 241, 0.08);
+    border: 1px solid rgba(99, 102, 241, 0.2);
+    animation: fadeIn 0.4s ease both;
+}
+
+.explanationIcon {
+    font-size: 1rem;
+    flex-shrink: 0;
+    margin-top: 1px;
+}
+
+.explanation p {
+    margin: 0;
+    font-size: var(--course-font-sm);
+    color: var(--course-slide-text-secondary);
+    line-height: 1.5;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(6px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 /* ==========================================
@@ -808,13 +936,23 @@
         display: none;
     }
 
+    /* IconGrid: en mobile solo 2 columnas máximo sin importar la clase */
     .iconGrid {
-        grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
-        gap: var(--course-spacing-sm);
+        gap: var(--course-spacing-xs);
+    }
+
+    /* Forzar máx 2 columnas en mobile para cols3 */
+    .iconGrid.cols3 {
+        grid-template-columns: repeat(2, 1fr);
     }
 
     .gridItem {
         padding: var(--course-spacing-md) var(--course-spacing-sm);
+    }
+
+    .iconWrapper {
+        width: 52px;
+        height: 52px;
     }
 
     .iconEmoji {
@@ -875,8 +1013,14 @@
         font-size: 1.5rem;
     }
 
-    .iconGrid {
+    /* Phones pequeños: siempre 2 columnas para iconGrid */
+    .iconGrid,
+    .iconGrid.cols3 {
         grid-template-columns: repeat(2, 1fr);
+    }
+
+    .iconGrid.cols1 {
+        grid-template-columns: 1fr;
     }
 
     .categoryBadge {
@@ -934,6 +1078,7 @@
    ACCESSIBILITY — HIGH CONTRAST
    ========================================== */
 @media (prefers-contrast: high) {
+
     .tag,
     .highlight,
     .gridItem,

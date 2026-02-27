@@ -7,6 +7,25 @@
     overflow: hidden;
 }
 
+/* Transparencia de scroll pedida por el usuario */
+.container *::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+
+.container *::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.container *::-webkit-scrollbar-thumb {
+    background: rgba(150, 150, 150, 0.2);
+    border-radius: 10px;
+}
+
+.container *::-webkit-scrollbar-thumb:hover {
+    background: rgba(150, 150, 150, 0.4);
+}
+
 .header {
     height: 60px;
     border-bottom: 1px solid var(--border-color);
@@ -136,6 +155,41 @@
     border-color: rgba(var(--color-primary-rgb), 0.3);
 }
 
+.slideItem.dragging {
+    opacity: 0.4;
+    border-style: dashed;
+}
+
+.dragHandle {
+    color: var(--text-tertiary);
+    cursor: grab;
+    display: flex;
+    align-items: center;
+    flex-shrink: 0;
+    padding: 2px;
+    border-radius: 4px;
+    transition: color 0.2s;
+    touch-action: none;
+}
+
+.dragHandle:hover {
+    color: var(--text-secondary);
+    background: var(--bg-tertiary);
+}
+
+.dragHandle:active {
+    cursor: grabbing;
+}
+
+.dragOverlay {
+    background: var(--bg-secondary) !important;
+    border-color: var(--color-primary) !important;
+    border-style: solid !important;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+    opacity: 1 !important;
+    scale: 1.02;
+}
+
 .slideNumber {
     font-size: 0.75rem;
     font-weight: 600;
@@ -190,15 +244,66 @@
     border-color: var(--color-primary);
 }
 
-/* Main Content - Form */
+/* Main Content - Form & Preview Split */
+.mainContent {
+    flex: 1;
+    display: flex;
+    overflow: hidden;
+}
+
 .mainPanel {
     flex: 1;
     overflow-y: auto;
-    padding: 40px;
+    padding: 30px;
     display: flex;
     justify-content: center;
     background: var(--bg-tertiary);
+    border-right: 1px solid var(--border-color);
 }
+
+.previewPanel {
+    flex: 1;
+    background: var(--bg-secondary);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.previewLabel {
+    flex-shrink: 0;
+    padding: 8px 16px;
+    font-size: 0.6rem;
+    font-weight: 700;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--text-tertiary);
+    user-select: none;
+    border-bottom: 1px solid var(--border-color);
+    background: var(--bg-tertiary);
+}
+
+.previewWrapper {
+    /* Ocupa todo el espacio disponible del panel derecho */
+    flex: 1;
+    position: relative;
+    overflow: hidden;
+    background: var(--bg-primary);
+    /* Habilitar Container Queries para que los slides escalen relativo al contenedor */
+    container-type: inline-size;
+    container-name: slidePreview;
+}
+
+/* ── Sobreescritura de fuentes de slides para el preview ──
+   Los slides usan vw (relativo al viewport), aquí los hacemos
+   relativos al contenedor con cqw (container query width)      */
+@container slidePreview (min-width: 0px) {
+
+    .previewWrapper :global(.titleSlide h1),
+    .previewWrapper :global([class*="titleSlide"] h1) {
+        font-size: clamp(1.5rem, 6cqw, 3.5rem);
+    }
+}
+
 
 .formContainer {
     width: 100%;

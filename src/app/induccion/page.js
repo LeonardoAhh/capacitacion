@@ -15,7 +15,7 @@ import { useToast } from '@/components/ui/Toast/Toast';
 import {
     ChevronRight, Plus, FileText, Link2, Trash2, Edit3,
     ExternalLink, X, Check, BookOpen, Upload, Play,
-    Zap, Settings2, Image, Video, UploadCloud
+    Zap, Settings2, Image, Video, UploadCloud, Search, FolderOpen, Users
 } from 'lucide-react';
 import Link from 'next/link';
 import ProfileDropdown from '@/components/layout/ProfileDropdown/ProfileDropdown';
@@ -56,7 +56,6 @@ export default function InductionPage() {
     const [nativeCourses, setNativeCourses] = useState([]);
     const [nativeLoading, setNativeLoading] = useState(true);
     const [importing, setImporting] = useState(false);
-    const [importAlert, setImportAlert] = useState(null);
     const [creatingCourse, setCreatingCourse] = useState(false);
     const [showNewCourseModal, setShowNewCourseModal] = useState(false);
     const [newCourseTitle, setNewCourseTitle] = useState('');
@@ -101,6 +100,9 @@ export default function InductionPage() {
     // ── Import options ──
     const [includeDynamics, setIncludeDynamics] = useState(true);
     const [includeQuizzes, setIncludeQuizzes] = useState(true);
+
+    // ── Búsqueda ──
+    const [searchQuery, setSearchQuery] = useState('');
 
     const canEdit = user?.rol === 'super_admin' || user?.rol === 'instructor';
 
@@ -205,11 +207,7 @@ export default function InductionPage() {
         toast.success('Eliminado', 'Elemento eliminado de la galería.');
     }, [showConfirm, toast]);
 
-    useEffect(() => {
-        if (!importAlert) return;
-        const t = setTimeout(() => setImportAlert(null), 5000);
-        return () => clearTimeout(t);
-    }, [importAlert]);
+
 
     const handlePlayNative = useCallback(async (courseId) => {
         const result = await getCourseWithSlides(courseId);
@@ -242,15 +240,15 @@ export default function InductionPage() {
                 if (result.success) { successCount++; } else { errorMsg = result.error; }
             }
             if (successCount > 0) {
-                setImportAlert({ type: 'success', message: `${successCount} curso(s) importado(s) correctamente.` });
+                toast.success('Éxito', `${successCount} curso(s) importado(s) correctamente.`);
                 if (fileInputRef.current) fileInputRef.current.value = '';
                 await loadNativeCourses();
-            } else { setImportAlert({ type: 'error', message: errorMsg || 'No se pudieron importar los cursos.' }); }
+            } else { toast.error('Error', errorMsg || 'No se pudieron importar los cursos.'); }
         } catch (err) {
-            setImportAlert({ type: 'error', message: `Error al parsear JSON: ${err.message}` });
+            toast.error('Error', `Error al parsear JSON: ${err.message}`);
         }
         setImporting(false);
-    }, [loadNativeCourses, user?.uid, includeDynamics, includeQuizzes]);
+    }, [loadNativeCourses, user?.uid, includeDynamics, includeQuizzes, toast]);
 
     const handleCreateNewCourse = useCallback(() => {
         setNewCourseTitle('Nuevo Curso Interactivo');
@@ -474,6 +472,13 @@ export default function InductionPage() {
     const showInteractivos = canEdit;
     const showCandidatos = canEdit;
 
+    // ── Filtros de Búsqueda ──
+    const q = searchQuery.toLowerCase().trim();
+    const filteredNative = nativeCourses.filter(c => c.title?.toLowerCase().includes(q));
+    const filteredCandidates = candidateCourses.filter(c => c.nombre?.toLowerCase().includes(q) || c.descripcion?.toLowerCase().includes(q));
+    const filteredMaterial = courses.filter(c => c.title?.toLowerCase().includes(q));
+    const filteredGallery = galleryItems.filter(c => c.nombre?.toLowerCase().includes(q));
+
     return (
         <>
             <div className={styles.main}>
@@ -556,6 +561,18 @@ export default function InductionPage() {
                         <div className={styles.titleSection}>
                             <h1>Inducción</h1>
                             <p>Material y cursos de bienvenida para empleados y candidatos</p>
+                            <div className={styles.headerActions}>
+                                <div className={styles.searchInputWrapper}>
+                                    <Search size={16} className={styles.searchIcon} />
+                                    <input
+                                        type="search"
+                                        placeholder="Buscar..."
+                                        className={styles.searchInput}
+                                        value={searchQuery}
+                                        onChange={(e) => setSearchQuery(e.target.value)}
+                                    />
+                                </div>
+                            </div>
                         </div>
                     </header>
 
@@ -606,22 +623,17 @@ export default function InductionPage() {
                                     </div>
                                 </div>
 
-                                {importAlert && (
-                                    <div className={`${styles.importAlert} ${importAlert.type === 'success' ? styles.importAlertSuccess : styles.importAlertError}`}>
-                                        {importAlert.message}
-                                    </div>
-                                )}
-
                                 {showNativeSection && (
                                     <div className={styles.nativeGrid}>
                                         {nativeLoading ? (
-                                            <div className={styles.emptyState}><p>Cargando cursos…</p></div>
-                                        ) : nativeCourses.length === 0 ? (
+                                            Array(6).fill(0).map((_, i) => <div key={i} className={styles.skeletonCard} />)
+                                        ) : filteredNative.length === 0 ? (
                                             <div className={styles.emptyState}>
-                                                <p>No hay cursos interactivos. Importa un JSON para comenzar.</p>
+                                                <FolderOpen size={48} opacity={0.15} style={{ marginBottom: '10px' }} />
+                                                <p>{searchQuery ? 'No hay resultados que coincidan con la búsqueda.' : 'No hay cursos interactivos. Importa un JSON para comenzar.'}</p>
                                             </div>
                                         ) : (
-                                            nativeCourses.map(course => (
+                                            filteredNative.map(course => (
                                                 <div key={course.id} className={styles.nativeCard}>
                                                     <div className={styles.nativeCardLeft}>
                                                         <div className={styles.nativeIcon}><BookOpen size={16} /></div>
@@ -790,10 +802,13 @@ export default function InductionPage() {
                                             )}
 
                                             <div className={styles.coursesGrid}>
-                                                {candidateCourses.length === 0 ? (
-                                                    <div className={styles.emptyState}><p>No hay cursos de candidatos</p></div>
+                                                {filteredCandidates.length === 0 ? (
+                                                    <div className={styles.emptyState}>
+                                                        <Users size={48} opacity={0.15} style={{ marginBottom: '10px' }} />
+                                                        <p>{searchQuery ? 'No hay candidatos o cursos que coincidan.' : 'No hay cursos de candidatos creados aún.'}</p>
+                                                    </div>
                                                 ) : (
-                                                    candidateCourses.map(course => {
+                                                    filteredCandidates.map(course => {
                                                         const isNative = course.tipo === 'native' || !!course.nativeCourseId;
                                                         return (
                                                             <div key={course.id} className={styles.courseCard} onClick={() => handleCandidateCardClick(course)}>
@@ -883,10 +898,13 @@ export default function InductionPage() {
                                         )}
 
                                         <div className={styles.coursesGrid}>
-                                            {courses.length === 0 ? (
-                                                <div className={styles.emptyState}><p>No hay material de inducción</p></div>
+                                            {filteredMaterial.length === 0 ? (
+                                                <div className={styles.emptyState}>
+                                                    <FileText size={48} opacity={0.15} style={{ marginBottom: '10px' }} />
+                                                    <p>{searchQuery ? 'No hay material que coincida.' : 'No hay material de inducción'}</p>
+                                                </div>
                                             ) : (
-                                                courses.map(course => (
+                                                filteredMaterial.map(course => (
                                                     <div key={course.id} className={styles.courseCard} onClick={() => window.open(course.material?.url, '_blank')}>
                                                         <div className={styles.cardTopColor} style={{ background: course.material?.type === 'link' ? '#f59e0b' : '#ef4444' }} />
                                                         {canEdit && (
@@ -931,11 +949,14 @@ export default function InductionPage() {
                             </div>
 
                             {galleryExpanded && (
-                                galleryItems.length === 0 ? (
-                                    <div className={styles.emptyState}><p>No hay elementos en la galería. Sube imágenes o videos.</p></div>
+                                filteredGallery.length === 0 ? (
+                                    <div className={styles.emptyState}>
+                                        <Image size={48} opacity={0.15} style={{ marginBottom: '10px' }} />
+                                        <p>{searchQuery ? 'No hay resultados en la galería.' : 'No hay elementos en la galería. Sube imágenes o videos.'}</p>
+                                    </div>
                                 ) : (
                                     <div className={styles.galleryGrid}>
-                                        {galleryItems.map(item => (
+                                        {filteredGallery.map(item => (
                                             <div key={item.id} className={styles.galleryCard}>
                                                 <div onClick={() => setSelectedMedia(item)} className={styles.galleryThumbWrap} style={{ cursor: 'pointer' }}>
                                                     {item.tipo === 'imagen' ? (

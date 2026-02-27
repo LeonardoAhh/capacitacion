@@ -243,6 +243,31 @@ export async function updateCourseFields(courseId, fields) {
 }
 
 /**
+ * Actualiza el orden (order) de los slides en modo Batch para reordenamiento (Drag & Drop)
+ * @param {string} courseId
+ * @param {Array} orderedSlides - Lista de slides con su propiedad `order` ya asignada
+ */
+export async function updateSlidesOrder(courseId, orderedSlides) {
+    try {
+        const batch = writeBatch(db);
+
+        orderedSlides.forEach((slide) => {
+            const slideRef = doc(db, COURSES_COLLECTION, courseId, SLIDES_SUBCOLLECTION, slide.id);
+            batch.update(slideRef, {
+                order: slide.order,
+                updatedAt: serverTimestamp()
+            });
+        });
+
+        await batch.commit();
+        return { success: true };
+    } catch (error) {
+        console.error('Error reordenando slides en bloque:', error);
+        return { success: false, error: error.message };
+    }
+}
+
+/**
  * Actualiza el data de un slide individual.
  * @param {string} courseId
  * @param {string} slideId
@@ -294,3 +319,75 @@ export async function addSlide(courseId, slideData) {
         return { success: false, error: error.message };
     }
 }
+
+/**
+ * Elimina un slide específico de un curso.
+ * @param {string} courseId 
+ * @param {string} slideId 
+ */
+export async function deleteSlide(courseId, slideId) {
+    try {
+        const slideRef = doc(db, COURSES_COLLECTION, courseId, SLIDES_SUBCOLLECTION, slideId);
+        await deleteDoc(slideRef);
+        return { success: true };
+    } catch (error) {
+        console.error('Error eliminando slide:', error);
+        return { success: false, error: error.message };
+    }
+}
+
+// ──────────────────────────────────────────────
+//  PROGRESO DEL USUARIO
+// ──────────────────────────────────────────────
+
+/**
+ * Guarda el progreso del usuario en un curso (slide actual).
+ * Ruta: users/{userId}/progress/{courseId}
+ * @param {string} courseId     - ID del curso
+ * @param {string} userId       - UID del usuario autenticado
+ * @param {number} slideIndex   - Índice del slide actual (base 0)
+ * @param {number} [quizScore]  - Score del quiz si ya fue respondido (0-100)
+ * @returns {Promise<{success: boolean, error?: string}>}
+ */
+export async function saveUserProgress(courseId, userId, slideIndex, quizScore = null) {
+    if (!courseId || !userId) return { success: false, error: 'Parámetros inválidos' };
+    try {
+        const progressRef = doc(db, 'users', userId, 'progress', courseId);
+        const data = {
+            courseId,
+            slideIndex,
+            updatedAt: serverTimestamp(),
+        };
+        if (quizScore !== null) data.quizScore = quizScore;
+        await setDoc(progressRef, data, { merge: true });
+        return { success: true };
+    } catch (error) {
+        console.error('Error guardando progreso:', error);
+        return { success: false, error: error.message };
+    }
+}
+
+/**
+ * Lee el progreso guardado del usuario para un curso.
+ * Ruta: users/{userId}/progress/{courseId}
+ * @param {string} courseId - ID del curso
+ * @param {string} userId   - UID del usuario autenticado
+ * @returns {Promise<{slideIndex: number, quizScore: number|null} | null>}
+ */
+export async function getUserProgress(courseId, userId) {
+    if (!courseId || !userId) return null;
+    try {
+        const progressRef = doc(db, 'users', userId, 'progress', courseId);
+        const snap = await getDoc(progressRef);
+        if (!snap.exists()) return null;
+        const data = snap.data();
+        return {
+            slideIndex: data.slideIndex ?? 0,
+            quizScore: data.quizScore ?? null,
+        };
+    } catch (error) {
+        console.error('Error leyendo progreso:', error);
+        return null;
+    }
+}
+

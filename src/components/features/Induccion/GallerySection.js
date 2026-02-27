@@ -1,5 +1,7 @@
 'use client';
 
+/* eslint-disable @next/next/no-img-element */
+
 import { useState, useCallback, useEffect, useRef } from 'react';
 import { db, auth } from '@/lib/firebase';
 import { collection, addDoc, deleteDoc, doc, updateDoc, increment } from 'firebase/firestore';
@@ -7,7 +9,7 @@ import { logInduccionAction } from '@/lib/induccionAudit';
 import { useConfirm } from '@/hooks/useConfirm';
 import { useToast } from '@/components/ui/Toast/Toast';
 import {
-    Image, Video, UploadCloud, Upload, Check, Trash2,
+    Image as ImageIcon, Video, UploadCloud, Upload, Check, Trash2,
     Play, X, ChevronLeft, ChevronRight, Download,
     LayoutGrid, List, Eye,
 } from 'lucide-react';
@@ -304,7 +306,7 @@ export default function GallerySection({ items = [], canEdit = false, userId, us
                             <div className={styles.footer}>
                                 <span className={styles.itemName}>
                                     {item.tipo === 'imagen'
-                                        ? <Image size={11} style={{ color: 'var(--color-primary)', flexShrink: 0 }} />
+                                        ? <ImageIcon size={11} style={{ color: 'var(--color-primary)', flexShrink: 0 }} />
                                         : <Video size={11} style={{ color: '#6366f1', flexShrink: 0 }} />}
                                     {item.nombre}
                                 </span>
@@ -364,7 +366,7 @@ export default function GallerySection({ items = [], canEdit = false, userId, us
                                     onClick={() => { setGalleryType(t); setGalleryFile(null); if (fileInputRef.current) fileInputRef.current.value = ''; }}
                                     disabled={uploading}
                                 >
-                                    {t === 'imagen' ? <Image size={14} /> : <Video size={14} />}
+                                    {t === 'imagen' ? <ImageIcon size={14} /> : <Video size={14} />}
                                     {t.charAt(0).toUpperCase() + t.slice(1)}
                                 </button>
                             ))}

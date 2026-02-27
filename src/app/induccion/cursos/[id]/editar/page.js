@@ -1,12 +1,14 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
-import { ArrowLeft, X } from 'lucide-react';
-import { getCourseWithSlides, updateSlide, addSlide } from '@/lib/courseService';
+import { IconArrowLeft, IconX } from '@/lib/icons';
+import { getCourseWithSlides, updateSlide, addSlide, deleteSlide, updateSlidesOrder } from '@/lib/courseService';
 import { useToast } from '@/components/ui/Toast/Toast';
+import { useConfirm } from '@/hooks/useConfirm';
 import SlideList from '@/components/features/Courses/Editor/SlideList';
 import SlideEditorPanel from '@/components/features/Courses/Editor/SlideEditorPanel';
+import CoursePlayer from '@/components/features/Courses/CoursePlayer';
 import styles from './editor.module.css';
 
 const SLIDE_TYPES = [
@@ -24,11 +26,13 @@ export default function EditorPage({ params }) {
     const { id: courseId } = params;
     const router = useRouter();
     const { toast } = useToast();
+    const confirm = useConfirm();
 
     const [course, setCourse] = useState(null);
     const [slides, setSlides] = useState([]);
     const [loading, setLoading] = useState(true);
     const [selectedSlide, setSelectedSlide] = useState(null);
+    const [livePreviewSlide, setLivePreviewSlide] = useState(null); // data en tiempo real para preview
     const [saving, setSaving] = useState(false);
     const [showSlideModal, setShowSlideModal] = useState(false);
 
@@ -53,20 +57,62 @@ export default function EditorPage({ params }) {
     }, [courseId, router, toast]);
 
     // Guardar cambios en un slide
-    const handleSaveSlide = async (slideId, newData) => {
+    const handleSaveSlide = useCallback(async (slideId, newData) => {
         setSaving(true);
         const result = await updateSlide(courseId, slideId, { data: newData });
         if (result.success) {
-            toast.success('Guardado', 'Slide actualizado correctamente');
             setSlides(prev => prev.map(s => s.id === slideId ? { ...s, data: newData } : s));
-            if (selectedSlide?.id === slideId) {
-                setSelectedSlide(prev => ({ ...prev, data: newData }));
-            }
+            setSelectedSlide(prev => prev?.id === slideId ? { ...prev, data: newData } : prev);
         } else {
             toast.error('Error', 'No se pudo guardar el slide');
         }
         setSaving(false);
+    }, [courseId, toast]);
+
+    // Eliminar un slide
+    const handleDeleteSlide = async (slideId) => {
+        const isConfirmed = await confirm({
+            title: '¿Eliminar Slide?',
+            message: 'Esta acción no se puede deshacer. ¿Deseas eliminar este slide permanente?',
+            confirmText: 'Eliminar',
+            cancelText: 'Cancelar',
+            variant: 'danger'
+        });
+
+        if (!isConfirmed) return;
+
+        setSaving(true);
+        const result = await deleteSlide(courseId, slideId);
+
+        if (result.success) {
+            toast.success('Eliminado', 'Slide eliminado del curso');
+            const updatedSlides = slides.filter(s => s.id !== slideId);
+            setSlides(updatedSlides);
+            const nextSelected = updatedSlides.length > 0 ? updatedSlides[0] : null;
+            setSelectedSlide(nextSelected);
+            setLivePreviewSlide(nextSelected);
+        } else {
+            toast.error('Error', result.error || 'No se pudo eliminar el slide');
+        }
+        setSaving(false);
     };
+
+    // Callback en tiempo real del formulario del editor → actualizar preview
+    const handleFormChange = useCallback((newFormData) => {
+        setLivePreviewSlide(prev => prev ? { ...prev, data: newFormData } : null);
+    }, []);
+
+    // Cambiar slide activo — resetear también el live preview
+    const handleSelectSlide = useCallback((slide) => {
+        setSelectedSlide(slide);
+        setLivePreviewSlide(slide); // inicia preview con data guardada
+    }, []);
+
+    // Reordenar slides (Drag & Drop)
+    const handleReorderSlides = useCallback(async (newOrderedSlides) => {
+        setSlides(newOrderedSlides);
+        await updateSlidesOrder(courseId, newOrderedSlides);
+    }, [courseId]);
 
     // Crear nuevo slide desde el modal
     const handleConfirmSlideType = async (type) => {
@@ -81,12 +127,19 @@ export default function EditorPage({ params }) {
             toast.success('Slide agregado', 'Se ha creado el nuevo slide');
             const newSlide = { id: result.id, ...result };
             setSlides(prev => [...prev, newSlide]);
-            setSelectedSlide(newSlide);
+            handleSelectSlide(newSlide);
         } else {
             toast.error('Error', result.error || 'No se pudo crear el slide');
         }
         setSaving(false);
     };
+
+    // Sincronizar livePreviewSlide cuando arranque (primer slide)
+    useEffect(() => {
+        if (!livePreviewSlide && slides.length > 0) {
+            setLivePreviewSlide(slides[0]);
+        }
+    }, [slides, livePreviewSlide]);
 
     if (loading) {
         return (
@@ -106,7 +159,7 @@ export default function EditorPage({ params }) {
                         onClick={() => router.push('/induccion')}
                         title="Volver a Inducción"
                     >
-                        <ArrowLeft size={20} />
+                        <IconArrowLeft size={20} />
                     </button>
                     <div>
                         <h1 className={styles.courseTitle}>{course?.title}</h1>
@@ -127,17 +180,46 @@ export default function EditorPage({ params }) {
                     <SlideList
                         slides={slides}
                         currentSlide={selectedSlide}
-                        onSelect={setSelectedSlide}
+                        onSelect={handleSelectSlide}
                         onAdd={() => setShowSlideModal(true)}
+                        onReorder={handleReorderSlides}
                     />
                 </aside>
 
-                <main className={styles.mainPanel}>
-                    <SlideEditorPanel
-                        slide={selectedSlide}
-                        onSave={handleSaveSlide}
-                    />
-                </main>
+                <div className={styles.mainContent}>
+                    <div className={styles.mainPanel}>
+                        <SlideEditorPanel
+                            slide={selectedSlide}
+                            onSave={handleSaveSlide}
+                            onDelete={handleDeleteSlide}
+                            onFormChange={handleFormChange}
+                        />
+                    </div>
+                    <div className={styles.previewPanel}>
+                        <span className={styles.previewLabel}>Vista Previa en Vivo</span>
+                        <div className={styles.previewWrapper}>
+                            {/* Overlay transparente para prevenir interacción con el preview */}
+                            <div style={{ position: 'absolute', inset: 0, zIndex: 100, cursor: 'default' }} />
+                            {livePreviewSlide ? (
+                                <CoursePlayer
+                                    course={course}
+                                    slides={[livePreviewSlide]}
+                                    onClose={() => { }}
+                                    inline={true}
+                                />
+                            ) : (
+                                <div style={{
+                                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                                    height: '100%', flexDirection: 'column', gap: 12,
+                                    color: 'var(--text-tertiary)', background: 'var(--bg-secondary)'
+                                }}>
+                                    <span style={{ fontSize: '2rem' }}>👁</span>
+                                    <span style={{ fontSize: '0.85rem' }}>Selecciona un slide para previsualizar</span>
+                                </div>
+                            )}
+                        </div>
+                    </div>
+                </div>
             </div>
 
             {/* ── Modal: Elegir tipo de slide ── */}
@@ -186,7 +268,7 @@ export default function EditorPage({ params }) {
                                     cursor: 'pointer', color: 'var(--text-secondary)',
                                 }}
                             >
-                                <X size={14} />
+                                <IconX size={14} />
                             </button>
                         </div>
 

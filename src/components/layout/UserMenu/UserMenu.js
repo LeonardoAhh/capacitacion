@@ -2,7 +2,7 @@
 
 import { useState, useRef, useEffect } from 'react';
 import Image from 'next/image';
-import { LogOut, ChevronDown, Check, User } from 'lucide-react';
+import { IconLogOut, IconChevronDown, IconCheck, IconUser } from '@/lib/icons';
 import { useTheme } from '@/contexts/ThemeContext';
 import styles from './UserMenu.module.css';
 import { formatDisplayName } from '@/utils/nameUtils';
@@ -61,7 +61,7 @@ export default function UserMenu({ user, onLogout, onAvatarClick, onThemeChange 
                     <span className={styles.userRole}>{user.position}</span>
                 </div>
 
-                <ChevronDown size={14} className={`${styles.chevron} ${isOpen ? styles.rotate : ''}`} />
+                <IconChevronDown size={14} className={`${styles.chevron} ${isOpen ? styles.rotate : ''}`} />
             </button>
 
             {isOpen && (
@@ -74,7 +74,7 @@ export default function UserMenu({ user, onLogout, onAvatarClick, onThemeChange 
                             }}
                             className={styles.menuItem}
                         >
-                            <User size={16} />
+                            <IconUser size={16} />
                             <span>Cambiar Avatar</span>
                         </button>
                     </div>
@@ -93,7 +93,7 @@ export default function UserMenu({ user, onLogout, onAvatarClick, onThemeChange 
                                         style={{ backgroundColor: value.color }}
                                     >
                                         {theme === key && (
-                                            <Check size={12} strokeWidth={3} color={key === 'dark' ? '#fff' : '#000'} />
+                                            <IconCheck size={12} strokeWidth={3} color={key === 'dark' ? '#fff' : '#000'} />
                                         )}
                                     </div>
                                     <span className={styles.themeLabel}>{value.name}</span>
@@ -104,7 +104,7 @@ export default function UserMenu({ user, onLogout, onAvatarClick, onThemeChange 
 
                     <div className={styles.menuSection}>
                         <button onClick={onLogout} className={styles.logoutBtn}>
-                            <LogOut size={16} />
+                            <IconLogOut size={16} />
                             <span>Cerrar Sesión</span>
                         </button>
                     </div>

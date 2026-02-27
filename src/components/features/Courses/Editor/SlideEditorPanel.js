@@ -1,32 +1,68 @@
-import { useState, useEffect } from 'react';
-import { Save, Plus, Trash2, ArrowLeft } from 'lucide-react';
+import { useState, useEffect, useRef } from 'react';
+import { IconSave, IconPlus, IconTrash2, IconArrowLeft, IconCheckCircle2, Loader2 } from '@/lib/icons';
 import ImageUploader from './ImageUploader';
+import MediaUploader from './MediaUploader';
 import styles from '@/app/induccion/cursos/[id]/editar/editor.module.css';
 
-export default function SlideEditorPanel({ slide, onSave }) {
+export default function SlideEditorPanel({ slide, onSave, onDelete, onFormChange }) {
     const [formData, setFormData] = useState({});
-    const [saving, setSaving] = useState(false);
+    const [savingState, setSavingState] = useState('idle'); // 'idle', 'saving', 'saved', 'error'
+    const timerRef = useRef(null);
 
+    // Initial load
     useEffect(() => {
         if (slide) {
             setFormData(JSON.parse(JSON.stringify(slide.data || {})));
+            setSavingState('idle');
         }
     }, [slide]);
 
-    const handleChange = (field, value) => {
-        setFormData(prev => ({ ...prev, [field]: value }));
-    };
+    // Auto-save logic
+    useEffect(() => {
+        if (!slide || Object.keys(formData).length === 0) return;
 
-    const handleSave = async () => {
-        setSaving(true);
-        await onSave(slide.id, formData);
-        setSaving(false);
+        // Evitamos guardar si los datos son iguales a los originales del slide
+        const originalDataStr = JSON.stringify(slide.data || {});
+        const currentDataStr = JSON.stringify(formData);
+
+        if (originalDataStr !== currentDataStr) {
+            setSavingState('saving');
+
+            if (timerRef.current) clearTimeout(timerRef.current);
+
+            timerRef.current = setTimeout(async () => {
+                try {
+                    await onSave(slide.id, formData);
+                    setSavingState('saved');
+                    // Reset to idle after 2s
+                    setTimeout(() => {
+                        setSavingState(curr => curr === 'saved' ? 'idle' : curr);
+                    }, 2000);
+                } catch (error) {
+                    console.error("Auto-save failed", error);
+                    setSavingState('error');
+                }
+            }, 800); // 800ms debounce
+        }
+
+        return () => {
+            if (timerRef.current) clearTimeout(timerRef.current);
+        };
+    }, [formData, slide, onSave]);
+
+    const handleChange = (field, value) => {
+        setFormData(prev => {
+            const next = { ...prev, [field]: value };
+            // Notificar al padre en tiempo real para actualizar el preview
+            if (onFormChange) onFormChange(next);
+            return next;
+        });
     };
 
     if (!slide) {
         return (
             <div className={styles.emptyState}>
-                <div className={styles.emptyIcon}><ArrowLeft size={32} /></div>
+                <div className={styles.emptyIcon}><IconArrowLeft size={32} /></div>
                 <p>Selecciona un slide para editar</p>
             </div>
         );
@@ -95,9 +131,9 @@ export default function SlideEditorPanel({ slide, onSave }) {
                 {/* Galería de imágenes */}
                 <div className={styles.formGroup}>
                     <label className={styles.label}>
-                        Imágenes ({images.length})
+                        Imágenes ({images.length}/6)
                         <span style={{ fontSize: '0.75rem', color: 'var(--text-tertiary)', marginLeft: 8 }}>
-                            Se mostrarán en cuadrícula si hay más de una
+                            Se mostrarán en diseño optimizado tipo galería.
                         </span>
                     </label>
 
@@ -119,11 +155,13 @@ export default function SlideEditorPanel({ slide, onSave }) {
                     )}
 
                     {/* Uploader para agregar más */}
-                    <ImageUploader
-                        currentImage={null}
-                        onImageChange={handleAddImage}
-                        label={images.length === 0 ? 'Agregar imagen' : '+ Agregar otra imagen'}
-                    />
+                    {images.length < 6 && (
+                        <ImageUploader
+                            currentImage={null}
+                            onImageChange={handleAddImage}
+                            label={images.length === 0 ? 'Agregar imagen' : '+ Agregar otra imagen'}
+                        />
+                    )}
                 </div>
 
                 {/* Bullets opcionales */}
@@ -149,7 +187,7 @@ export default function SlideEditorPanel({ slide, onSave }) {
                                             handleChange('bullets', newBullets);
                                         }}
                                     >
-                                        <Trash2 size={16} />
+                                        <IconTrash2 size={16} />
                                     </button>
                                 </div>
                             ))}
@@ -157,7 +195,7 @@ export default function SlideEditorPanel({ slide, onSave }) {
                                 className={styles.addItemBtn}
                                 onClick={() => handleChange('bullets', [...(formData.bullets || []), ''])}
                             >
-                                <Plus size={14} /> Agregar viñeta
+                                <IconPlus size={14} /> Agregar viñeta
                             </button>
                         </div>
                     </div>
@@ -217,7 +255,7 @@ export default function SlideEditorPanel({ slide, onSave }) {
                                         handleChange('items', newItems);
                                     }}
                                 >
-                                    <Trash2 size={16} />
+                                    <IconTrash2 size={16} />
                                 </button>
                             </div>
 
@@ -250,7 +288,7 @@ export default function SlideEditorPanel({ slide, onSave }) {
                         className={styles.addItemBtn}
                         onClick={() => handleChange('items', [...(formData.items || []), { label: '', icon: 'Circle', description: '' }])}
                     >
-                        <Plus size={14} /> Agregar Item
+                        <IconPlus size={14} /> Agregar Item
                     </button>
                 </div>
             </div>
@@ -298,7 +336,7 @@ export default function SlideEditorPanel({ slide, onSave }) {
                                         handleChange('left', { ...formData.left, items: newItems });
                                     }}
                                 >
-                                    <Trash2 size={16} />
+                                    <IconTrash2 size={16} />
                                 </button>
                             </div>
                         ))}
@@ -306,7 +344,7 @@ export default function SlideEditorPanel({ slide, onSave }) {
                             className={styles.addItemBtn}
                             onClick={() => handleChange('left', { ...formData.left, items: [...(formData.left?.items || []), ''] })}
                         >
-                            <Plus size={14} /> Agregar Item
+                            <IconPlus size={14} /> Agregar Item
                         </button>
                     </div>
                 </div>
@@ -341,7 +379,7 @@ export default function SlideEditorPanel({ slide, onSave }) {
                                         handleChange('right', { ...formData.right, items: newItems });
                                     }}
                                 >
-                                    <Trash2 size={16} />
+                                    <IconTrash2 size={16} />
                                 </button>
                             </div>
                         ))}
@@ -349,7 +387,7 @@ export default function SlideEditorPanel({ slide, onSave }) {
                             className={styles.addItemBtn}
                             onClick={() => handleChange('right', { ...formData.right, items: [...(formData.right?.items || []), ''] })}
                         >
-                            <Plus size={14} /> Agregar Item
+                            <IconPlus size={14} /> Agregar Item
                         </button>
                     </div>
                 </div>
@@ -418,7 +456,7 @@ export default function SlideEditorPanel({ slide, onSave }) {
                                                 handleChange('items', newItems);
                                             }}
                                         >
-                                            <Trash2 size={16} />
+                                            <IconTrash2 size={16} />
                                         </button>
                                     </div>
                                 ))}
@@ -426,7 +464,7 @@ export default function SlideEditorPanel({ slide, onSave }) {
                                     className={styles.addItemBtn}
                                     onClick={() => handleChange('items', [...(formData.items || []), { text: 'Nuevo beneficio' }])}
                                 >
-                                    <Plus size={14} /> Agregar Item
+                                    <IconPlus size={14} /> Agregar Item
                                 </button>
                             </div>
                         </div>
@@ -561,7 +599,7 @@ export default function SlideEditorPanel({ slide, onSave }) {
                                         if (isCorrect) handleChange('correctOptionId', '');
                                     }}
                                 >
-                                    <Trash2 size={16} />
+                                    <IconTrash2 size={16} />
                                 </button>
                             </div>
                         );
@@ -573,7 +611,7 @@ export default function SlideEditorPanel({ slide, onSave }) {
                             handleChange('options', [...(formData.options || []), { id: newId, text: '' }]);
                         }}
                     >
-                        <Plus size={14} /> Agregar Opción
+                        <IconPlus size={14} /> Agregar Opción
                     </button>
                 </div>
                 {!formData.correctOptionId && formData.options?.length > 0 && (
@@ -587,18 +625,60 @@ export default function SlideEditorPanel({ slide, onSave }) {
         <div className={styles.formContainer}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
                 <h2 className={styles.formTitle}>Editar Slide {slide.order} — {slide.type}</h2>
-                <button
-                    className={styles.primaryBtn}
-                    style={{ padding: '8px 16px', borderRadius: 8, border: 'none', cursor: 'pointer', fontSize: '0.9rem', display: 'flex', alignItems: 'center', gap: 6 }}
-                    onClick={handleSave}
-                    disabled={saving}
-                >
-                    <Save size={16} />
-                    {saving ? 'Guardando...' : 'Guardar Cambios'}
-                </button>
+                <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: '0.8rem', color: savingState === 'error' ? '#ef4444' : 'var(--text-tertiary)', background: 'var(--bg-secondary)', padding: '6px 12px', borderRadius: 20 }}>
+                        {savingState === 'saving' && <><Loader2 size={14} className={styles.spin} style={{ animation: 'spin 1s linear infinite' }} /> Guardando...</>}
+                        {savingState === 'saved' && <><IconCheckCircle2 size={14} style={{ color: 'var(--course-success, #22c55e)' }} /> Guardado</>}
+                        {savingState === 'error' && <>Error al guardar</>}
+                        {savingState === 'idle' && <span style={{ opacity: 0.7 }}>Cambios se guardan solos</span>}
+                    </div>
+                    <button
+                        className={styles.secondaryBtn}
+                        style={{ padding: '8px 12px', borderRadius: 8, border: '1px solid var(--border-color)', background: 'transparent', cursor: 'pointer', color: '#ef4444', display: 'flex', alignItems: 'center', gap: 6 }}
+                        onClick={() => onDelete(slide.id)}
+                        disabled={savingState === 'saving'}
+                        title="Eliminar Slide"
+                    >
+                        <IconTrash2 size={16} />
+                    </button>
+                </div>
             </div>
 
             {renderFields()}
+
+            {/* Multimedia Global para el Slide (Fondo o apoyo visual generico) */}
+            <div style={{ borderTop: '1px solid var(--border-color)', paddingTop: 20, marginTop: 20 }}>
+                {formData.bgMedia && formData.bgMedia.url && (
+                    <div className={styles.formGroup} style={{ marginBottom: 15 }}>
+                        <label className={styles.label}>Diseño del Multimedia</label>
+                        <div style={{ display: 'flex', gap: 10 }}>
+                            <button
+                                className={formData.bgMedia.layout !== 'split' ? styles.primaryBtn : styles.secondaryBtn}
+                                style={{ flex: 1, padding: '8px', borderRadius: 8, border: formData.bgMedia.layout !== 'split' ? 'none' : '1px solid var(--border-color)', background: formData.bgMedia.layout !== 'split' ? 'var(--course-accent)' : 'transparent', color: formData.bgMedia.layout !== 'split' ? 'white' : 'var(--text-primary)', cursor: 'pointer' }}
+                                onClick={() => handleChange('bgMedia', { ...formData.bgMedia, layout: 'full' })}
+                            >
+                                Fondo Completo
+                            </button>
+                            <button
+                                className={formData.bgMedia.layout === 'split' ? styles.primaryBtn : styles.secondaryBtn}
+                                style={{ flex: 1, padding: '8px', borderRadius: 8, border: formData.bgMedia.layout === 'split' ? 'none' : '1px solid var(--border-color)', background: formData.bgMedia.layout === 'split' ? 'var(--course-accent)' : 'transparent', color: formData.bgMedia.layout === 'split' ? 'white' : 'var(--text-primary)', cursor: 'pointer' }}
+                                onClick={() => handleChange('bgMedia', { ...formData.bgMedia, layout: 'split' })}
+                            >
+                                Mitad de Pantalla
+                            </button>
+                        </div>
+                    </div>
+                )}
+
+                <MediaUploader
+                    currentMedia={formData.bgMedia || null}
+                    onMediaChange={(mediaObj) => {
+                        if (!mediaObj) handleChange('bgMedia', null);
+                        else handleChange('bgMedia', { ...mediaObj, layout: formData.bgMedia?.layout || 'full' });
+                    }}
+                    label="Fondo / Apoyo Multimedia (Opcional)"
+                />
+            </div>
         </div>
     );
 }

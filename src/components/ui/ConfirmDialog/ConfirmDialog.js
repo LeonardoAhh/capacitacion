@@ -1,22 +1,22 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
-import { AlertTriangle, AlertCircle, Info, Trash2 } from 'lucide-react';
+import { IconAlertTriangle, IconAlertCircle, IconInfo, IconTrash } from '@/lib/icons';
 import styles from './ConfirmDialog.module.css';
 
 const VARIANT_CONFIG = {
     danger: {
-        Icon: Trash2,
+        Icon: IconTrash,
         iconColor: 'var(--color-danger)',
         confirmClass: 'danger',
     },
     warning: {
-        Icon: AlertTriangle,
+        Icon: IconAlertTriangle,
         iconColor: 'var(--color-warning)',
         confirmClass: 'warning',
     },
     info: {
-        Icon: Info,
+        Icon: IconInfo,
         iconColor: 'var(--color-info)',
         confirmClass: 'info',
     },
