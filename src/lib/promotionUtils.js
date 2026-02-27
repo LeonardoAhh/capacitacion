@@ -171,7 +171,7 @@ export const getExamEligibility = (examAttempts = [], temporalityMonths, positio
 };
 
 /**
- * Parse date string to Date object
+ * Parse date string to Date object (TimeZone Safe)
  */
 const parseDate = (dateStr) => {
     if (!dateStr) return new Date();
@@ -180,6 +180,13 @@ const parseDate = (dateStr) => {
         const [d, m, y] = dateStr.split('/');
         return new Date(y, m - 1, d);
     }
+    
+    // Si la cadena viene como YYYY-MM-DD sin T ni Z, JS asume UTC. 
+    // Al añadirle 'T00:00:00' sin factor Z forzamos TimeZone Local.
+    if (dateStr.length === 10 && dateStr.includes('-')) {
+        return new Date(`${dateStr}T00:00:00`);
+    }
+
     return new Date(dateStr);
 };
 
