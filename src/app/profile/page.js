@@ -156,7 +156,10 @@ export default function ProfilePage() {
                     ['admin', 'superadmin', 'super_admin'].includes(user.rol?.toLowerCase()) ||
                     ['ADMIN', 'SUPER_ADMIN'].includes(user.rol)
                 ) && (
-                        <AdminSection />
+                        <>
+                            <AdminSection />
+                            <AdminMuralSection />
+                        </>
                     )}
 
                 {/* Log de Auditoría de Inducción */}
@@ -169,7 +172,7 @@ export default function ProfilePage() {
 }
 
 // Subcomponente para evitar re-renders innecesarios y organizar código
-import { doc, setDoc, onSnapshot, collection, query, orderBy, limit, where, getDocs } from 'firebase/firestore';
+import { doc, getDoc, setDoc, onSnapshot, collection, query, orderBy, limit, where, getDocs } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import { Shield, AlertTriangle, BookOpen, Trash2, RefreshCw, UploadCloud, FileEdit } from 'lucide-react';
 
@@ -325,6 +328,339 @@ function AdminSection() {
         </div>
     );
 }
+
+// ── ADMIN MURAL SECTION ──
+import { Presentation, Save, RefreshCcw } from 'lucide-react';
+function AdminMuralSection() {
+    const [syncing, setSyncing] = useState(false);
+    const [loadingConfig, setLoadingConfig] = useState(true);
+    const [showManualForm, setShowManualForm] = useState(false);
+    const [manualData, setManualData] = useState({
+        employeeId: '', firstName: '', currentPosition: '', promotionTo: '', score: '', requiredScore: ''
+    });
+    const [messages, setMessages] = useState({
+        successMessage: '',
+        motivationalMessage: ''
+    });
+
+    // Cargar configuración de mensajes
+    useEffect(() => {
+        const fetchMuralConfig = async () => {
+            const docRef = doc(db, 'app_config', 'mural');
+            const docSnap = await getDoc(docRef);
+            if (docSnap.exists()) {
+                setMessages(prev => ({ ...prev, ...docSnap.data() }));
+            } else {
+                // Defaults
+                setMessages({
+                    successMessage: '¡Felicidades! Has aprobado tu examen teórico. Estás un paso más cerca de tu promoción.',
+                    motivationalMessage: 'El aprendizaje es un proceso constante. Te invitamos a repasar y prepararte para tu siguiente intento. ¡Confiamos en ti!'
+                });
+            }
+            setLoadingConfig(false);
+        };
+        fetchMuralConfig();
+    }, []);
+
+    // ── Lógica de Autocompletado del Formulario (M) ──
+    const [searchingM, setSearchingM] = useState(false);
+
+    const fetchEmployeeData = async () => {
+        const eid = manualData.employeeId?.trim();
+        if (!eid) return;
+
+        setSearchingM(true);
+        try {
+            // 1. Buscar en training_records (donde el usuario indicó que está el nombre y puesto real)
+            const trainingQuery = query(collection(db, 'training_records'), where('employeeId', '==', eid), limit(1));
+            const trainingSnap = await getDocs(trainingQuery);
+
+            let foundName = '';
+            let foundPosition = '';
+
+            if (!trainingSnap.empty) {
+                const data = trainingSnap.docs[0].data();
+                foundName = data.name || '';
+                foundPosition = data.position || '';
+            } else {
+                // Fallback: Buscar en employees
+                const empQuery = query(collection(db, 'employees'), where('employeeId', '==', eid), limit(1));
+                const empSnap = await getDocs(empQuery);
+                if (!empSnap.empty) {
+                    const eData = empSnap.docs[0].data();
+                    foundName = eData.name || '';
+                    foundPosition = eData.puesto || '';
+                }
+            }
+
+            if (!foundName && !foundPosition) {
+                alert("No se encontró al empleado con ese ID en los registros.");
+                setSearchingM(false);
+                return;
+            }
+
+            // 2. Buscar en promotion_rules para saber hacia dónve va y cuánto score requiere
+            let promoDest = '';
+            let reqScore = '';
+
+            if (foundPosition) {
+                const rulesQuery = query(collection(db, 'promotion_rules'), where('currentPosition', '==', foundPosition), limit(1));
+                const rulesSnap = await getDocs(rulesQuery);
+
+                if (!rulesSnap.empty) {
+                    const ruleData = rulesSnap.docs[0].data();
+                    promoDest = ruleData.promotionTo || '';
+                    reqScore = ruleData.examMinScore || 80;
+                }
+            }
+
+            setManualData(prev => ({
+                ...prev,
+                firstName: foundName.split(' ')[0] || foundName, // Solo el primer nombre por privacidad
+                currentPosition: foundPosition,
+                promotionTo: promoDest,
+                requiredScore: reqScore
+            }));
+
+        } catch (error) {
+            console.error("Error buscando datos del empleado:", error);
+            alert("Hubo un problema consultando la base de datos.");
+        } finally {
+            setSearchingM(false);
+        }
+    };
+
+    // Guardar mensajes
+    const saveMessages = async () => {
+        try {
+            await setDoc(doc(db, 'app_config', 'mural'), messages, { merge: true });
+            alert("Mensajes actualizados correctamente");
+        } catch (error) {
+            console.error("Error saving mural config:", error);
+            alert("No se pudieron guardar los mensajes");
+        }
+    };
+
+    // Script de Sincronización Segura
+    const handleSyncMural = async () => {
+        if (!confirm("Esto extraerá las calificaciones más recientes de todos los empleados y las hará públicas en el Mural (búsqueda por número de empleado). ¿Proceder?")) return;
+
+        setSyncing(true);
+        try {
+            // 1. Obtener Reglas de Promoción para saber a dónde va y cuánto necesita
+            const rulesSnapshot = await getDocs(collection(db, 'promotion_rules'));
+            const rulesMap = {};
+            rulesSnapshot.docs.forEach(doc => {
+                const data = doc.data();
+                if (data.currentPosition) {
+                    rulesMap[data.currentPosition.toLowerCase().trim()] = data;
+                }
+            });
+
+            // 2. Obtener Empleados
+            const empSnapshot = await getDocs(collection(db, 'employees'));
+            let syncedCount = 0;
+
+            // 3. Procesar e inyectar en mural_exams separando la DB
+            for (const docSnap of empSnapshot.docs) {
+                const emp = docSnap.data();
+                const examAttempts = emp.promotionData?.examAttempts || [];
+
+                if (examAttempts.length > 0 && emp.employeeId) {
+                    const lastExam = examAttempts[examAttempts.length - 1];
+
+                    // Buscar regla aplicable para el puesto actual del empleado
+                    const empPosition = emp.puesto?.toLowerCase().trim() || '';
+                    const appliedRule = rulesMap[empPosition];
+
+                    let isApproved = lastExam.passed || false;
+                    let requiredScore = 80; // default
+                    let promotionDest = 'Siguiente Nivel';
+
+                    if (appliedRule) {
+                        requiredScore = appliedRule.examMinScore || 80;
+                        promotionDest = appliedRule.promotionTo || 'Siguiente Nivel';
+
+                        // Recalcular status basado strictamente en la regla (por si pasaron con 80 pero la regla pedia 90)
+                        isApproved = (lastExam.score >= requiredScore);
+                    }
+
+                    const safeData = {
+                        employeeId: emp.employeeId,
+                        firstName: emp.name?.split(' ')[0] || 'Colaborador',
+                        fullName: emp.name || '',
+                        currentPosition: emp.puesto || 'Sin Puesto',
+                        promotionTo: promotionDest,
+                        passed: isApproved,
+                        score: lastExam.score || 0,
+                        requiredScore: requiredScore,
+                        date: lastExam.date || new Date().toISOString().split('T')[0],
+                        active: true,
+                        timestamp: new Date()
+                    };
+
+                    await setDoc(doc(db, 'mural_exams', emp.employeeId.toString()), safeData);
+                    syncedCount++;
+                }
+            }
+
+            alert(`✅ Sincronización Completa. ${syncedCount} empleados actualizados en el Mural.`);
+        } catch (error) {
+            console.error(error);
+            alert("Error durante la sincronización.");
+        } finally {
+            setSyncing(false);
+        }
+    };
+
+    // Guardar Manualmente Examen en Mural
+    const handleManualSubmit = async (e) => {
+        e.preventDefault();
+        try {
+            const scoreNum = Number(manualData.score);
+            const reqScoreNum = Number(manualData.requiredScore);
+            const isApproved = scoreNum >= reqScoreNum;
+
+            const safeData = {
+                employeeId: manualData.employeeId,
+                firstName: manualData.firstName,
+                currentPosition: manualData.currentPosition,
+                promotionTo: manualData.promotionTo,
+                passed: isApproved,
+                score: scoreNum,
+                requiredScore: reqScoreNum,
+                date: new Date().toISOString().split('T')[0],
+                active: true,
+                timestamp: new Date()
+            };
+
+            await setDoc(doc(db, 'mural_exams', manualData.employeeId.toString()), safeData);
+            alert("¡Examen guardado exitosamente en el Mural!");
+            setManualData({ employeeId: '', firstName: '', currentPosition: '', promotionTo: '', score: '', requiredScore: '' });
+            setShowManualForm(false);
+        } catch (error) {
+            console.error(error);
+            alert("Error al guardar examen manual.");
+        }
+    };
+
+    if (loadingConfig) return null;
+
+    return (
+        <div className={styles.card} style={{ marginTop: '20px' }}>
+            <h3 className={styles.cardTitle}>
+                <Presentation className={styles.cardIcon} />
+                Gestión del Mural de Reconocimiento
+            </h3>
+
+            <div style={{ padding: '10px 0', fontSize: '0.85rem', color: 'var(--text-secondary)' }}>
+                Configura los mensajes que verán los usuarios al buscar su calificación y mantén sincronizada su base pública para proteger la privacidad del empleado.
+            </div>
+
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', marginTop: '10px' }}>
+
+                {/* Inputs de Configuración */}
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '5px' }}>
+                    <label style={{ fontSize: '0.8rem', fontWeight: 600, color: 'var(--text-primary)' }}>Mensaje para APROBADOS</label>
+                    <textarea
+                        style={{ width: '100%', padding: '10px', borderRadius: '8px', border: '1px solid var(--border-color)', background: 'var(--bg-secondary)', color: 'var(--text-primary)', minHeight: '60px', resize: 'vertical' }}
+                        value={messages.successMessage}
+                        onChange={(e) => setMessages(m => ({ ...m, successMessage: e.target.value }))}
+                        placeholder="Usa [Nombre] para incluir el nombre del empleado..."
+                    />
+                </div>
+
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '5px' }}>
+                    <label style={{ fontSize: '0.8rem', fontWeight: 600, color: 'var(--text-primary)' }}>Mensaje para REPROBADOS (Motivacional)</label>
+                    <textarea
+                        style={{ width: '100%', padding: '10px', borderRadius: '8px', border: '1px solid var(--border-color)', background: 'var(--bg-secondary)', color: 'var(--text-primary)', minHeight: '60px', resize: 'vertical' }}
+                        value={messages.motivationalMessage}
+                        onChange={(e) => setMessages(m => ({ ...m, motivationalMessage: e.target.value }))}
+                        placeholder="Usa [Nombre] para incluir el nombre del empleado..."
+                    />
+                </div>
+
+                <div style={{ display: 'flex', gap: '10px', justifyContent: 'flex-end', marginTop: '5px' }}>
+                    <button
+                        onClick={saveMessages}
+                        style={{ padding: '8px 16px', background: 'var(--bg-secondary)', border: '1px solid var(--border-color)', borderRadius: '8px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--text-primary)' }}
+                    >
+                        <Save size={16} /> Guardar Mensajes
+                    </button>
+
+                    <button
+                        onClick={handleSyncMural}
+                        disabled={syncing}
+                        style={{ padding: '8px 16px', background: '#3b82f6', color: 'white', border: 'none', borderRadius: '8px', cursor: syncing ? 'not-allowed' : 'pointer', display: 'flex', alignItems: 'center', gap: '8px', fontWeight: 600 }}
+                    >
+                        <RefreshCcw size={16} className={syncing ? 'spinner' : ''} style={{ animation: syncing ? 'spin 1s linear infinite' : 'none' }} />
+                        {syncing ? '...' : 'Auto-Sincronizar Panel Exámenes'}
+                    </button>
+
+                    <button
+                        onClick={() => setShowManualForm(!showManualForm)}
+                        style={{ padding: '8px 16px', background: '#10b981', color: 'white', border: 'none', borderRadius: '8px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px', fontWeight: 600 }}
+                    >
+                        + Captura Manual Nuevo
+                    </button>
+                </div>
+
+                {/* ---------- FORMULARIO MANUAL ---------- */}
+                {showManualForm && (
+                    <form onSubmit={handleManualSubmit} style={{ marginTop: '1rem', padding: '1.5rem', background: 'var(--bg-primary)', borderRadius: '12px', border: '1px solid var(--border-color)', display: 'grid', gap: '1rem', gridTemplateColumns: '1fr 1fr' }}>
+                        <h4 style={{ gridColumn: 'span 2', margin: '0 0 10px 0', color: 'var(--text-primary)', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                            <BookOpen size={18} /> Registro Manual en Mural Público
+                        </h4>
+
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '5px' }}>
+                            <label style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>No. Empleado (Ej. 2950)*</label>
+                            <div style={{ display: 'flex', gap: '8px' }}>
+                                <input required type="text" value={manualData.employeeId} onChange={e => setManualData({ ...manualData, employeeId: e.target.value })} style={{ flex: 1, padding: '8px', borderRadius: '6px', border: '1px solid var(--border-color)', background: 'var(--bg-secondary)', color: 'var(--text-primary)' }} placeholder="Digita el ID" />
+                                <button type="button" onClick={fetchEmployeeData} disabled={!manualData.employeeId || searchingM} style={{ padding: '0 12px', background: 'var(--bg-secondary)', border: '1px solid var(--border-color)', borderRadius: '6px', cursor: (!manualData.employeeId || searchingM) ? 'not-allowed' : 'pointer', color: 'var(--text-primary)' }} title="Autorrellenar Info">
+                                    {searchingM ? '...' : '🔍'}
+                                </button>
+                            </div>
+                        </div>
+
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '5px' }}>
+                            <label style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>Primer Nombre (Público)*</label>
+                            <input required type="text" value={manualData.firstName} onChange={e => setManualData({ ...manualData, firstName: e.target.value })} style={{ padding: '8px', borderRadius: '6px', border: '1px solid var(--border-color)', background: 'var(--bg-secondary)', color: 'var(--text-primary)' }} />
+                        </div>
+
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '5px' }}>
+                            <label style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>Puesto Actual*</label>
+                            <input required type="text" value={manualData.currentPosition} onChange={e => setManualData({ ...manualData, currentPosition: e.target.value })} style={{ padding: '8px', borderRadius: '6px', border: '1px solid var(--border-color)', background: 'var(--bg-secondary)', color: 'var(--text-primary)' }} />
+                        </div>
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '5px' }}>
+                            <label style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>Aplica Para (Puesto Objetivo)*</label>
+                            <input required type="text" value={manualData.promotionTo} onChange={e => setManualData({ ...manualData, promotionTo: e.target.value })} style={{ padding: '8px', borderRadius: '6px', border: '1px solid var(--border-color)', background: 'var(--bg-secondary)', color: 'var(--text-primary)' }} />
+                        </div>
+
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '5px' }}>
+                            <label style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>Calificación Alcanzada (%)*</label>
+                            <input required type="number" min="0" max="100" value={manualData.score} onChange={e => setManualData({ ...manualData, score: e.target.value })} style={{ padding: '8px', borderRadius: '6px', border: '1px solid var(--border-color)', background: 'var(--bg-secondary)', color: 'var(--text-primary)' }} placeholder="Ej. 100" />
+                        </div>
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '5px' }}>
+                            <label style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>Calificación Requerida (%)*</label>
+                            <input required type="number" min="0" max="100" value={manualData.requiredScore} onChange={e => setManualData({ ...manualData, requiredScore: e.target.value })} style={{ padding: '8px', borderRadius: '6px', border: '1px solid var(--border-color)', background: 'var(--bg-secondary)', color: 'var(--text-primary)' }} placeholder="Ej. 85" />
+                        </div>
+
+                        <div style={{ gridColumn: 'span 2', display: 'flex', justifyContent: 'flex-end', gap: '10px', marginTop: '10px' }}>
+                            <button type="button" onClick={() => setShowManualForm(false)} style={{ padding: '8px 16px', background: 'transparent', color: '#ef4444', border: '1px solid #ef4444', borderRadius: '8px', cursor: 'pointer' }}>
+                                Cancelar
+                            </button>
+                            <button type="submit" style={{ padding: '8px 16px', background: '#f59e0b', color: 'white', border: 'none', borderRadius: '8px', cursor: 'pointer', fontWeight: 600 }}>
+                                Guardar y Publicar
+                            </button>
+                        </div>
+                    </form>
+                )}
+
+            </div>
+        </div>
+    );
+}
+
 
 // ── Iconos/colores por tipo de acción ──
 const ACTION_META = {

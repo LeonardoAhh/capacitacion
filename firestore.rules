@@ -37,16 +37,22 @@ service cloud.firestore {
     
     // ===== REGLAS POR COLECCIÓN =====
     
-    match /users/{userId} {
-      allow read: if isAuthenticated() && 
-                     (request.auth.uid == userId || hasAnyRole(['super_admin', 'rh']));
-      allow create: if hasRole('super_admin') || 
-                      (isAuthenticated() && 
-                       request.auth.uid == userId &&
-                       request.resource.data.email == request.auth.token.email);
-      allow update: if hasAnyRole(['super_admin', 'rh']) || request.auth.uid == userId;
-      allow delete: if hasRole('super_admin');
-    }
+		match /users/{userId} {
+  		allow read: if isAuthenticated() && 
+                 (request.auth.uid == userId || hasAnyRole(['super_admin', 'rh']));
+  		allow create: if hasRole('super_admin') || 
+                  (isAuthenticated() && 
+                   request.auth.uid == userId &&
+                   request.resource.data.email == request.auth.token.email);
+  		allow update: if hasAnyRole(['super_admin', 'rh']) || request.auth.uid == userId;
+			allow delete: if hasRole('super_admin');
+  // ✅ NUEVO — Progreso del usuario en cursos interactivos
+  // Ruta: users/{userId}/progress/{courseId}
+  	match /progress/{courseId} {
+    // El usuario solo puede leer y escribir su propio progreso
+			allow read, write: if isAuthenticated() && request.auth.uid == userId;
+  }
+}
     
     match /employees/{docId} {
       allow read: if true;
@@ -74,12 +80,14 @@ service cloud.firestore {
     
     match /induction_courses/{docId} {
       allow read: if true;
+      // ✅ instructor agregado
       allow write: if hasAnyRole(['super_admin', 'rh', 'instructor'])
                    && isValidString(request.resource.data.title);
     }
     
     match /cursos_induccion/{docId} {
       allow read: if true;
+      // ✅ instructor agregado
       allow write: if hasAnyRole(['super_admin', 'rh', 'instructor']);
     }
 
@@ -134,7 +142,11 @@ service cloud.firestore {
     }
     
     match /audit_logs/{docId} {
-      allow read, write: if hasRole('super_admin');
+      // Solo super_admin e instructor pueden leer el historial
+      allow read: if hasAnyRole(['super_admin', 'instructor']);
+      // ✅ Cualquier usuario autenticado puede CREAR entradas (no editar ni borrar)
+      allow create: if isAuthenticated();
+      allow update, delete: if hasRole('super_admin');
     }
     
     match /exam_questions/{docId} {
@@ -151,24 +163,32 @@ service cloud.firestore {
       allow read, write: if hasRole('super_admin');
     }
 
-    // ===== CONFIGURACIÓN GLOBAL (Modo Mantenimiento, etc.) =====
     match /app_config/{docId} {
-      allow read: if true; // Todo el mundo necesita saber si hay mantenimiento
+      allow read: if true;
       allow write: if hasAnyRole(['admin', 'superadmin', 'ADMIN', 'SUPER_ADMIN', 'super_admin']);
     }
 
     // ===== CURSOS INTERACTIVOS NATIVOS =====
-    // Colección `cursos` con subcolección `slides`
     match /cursos/{courseId} {
-      // Cualquier usuario autenticado puede ver los cursos publicados
       allow read: if isAuthenticated();
-      // super_admin e instructor pueden crear/editar/borrar cursos
+      // ✅ instructor agregado
       allow write: if hasAnyRole(['super_admin', 'instructor']);
 
       match /slides/{slideId} {
         allow read: if isAuthenticated();
+        // ✅ instructor agregado
         allow write: if hasAnyRole(['super_admin', 'instructor']);
       }
+    }
+    
+    // ✅ NUEVO — MURAL DE RECONOCIMIENTO (Protegido VS Búsqueda Pública Libre)
+    match /mural_exams/{employeeId} {
+      // Público puede visualizar solo si conoce el ID puntual 
+      allow get: if true; 
+      // Por seguridad: Nadie puede leer/exportar la lista de todos (evita scrapeo de datos)
+      allow list: if false; 
+      // Solo administrador publicadores pueden re-sincronizar esto
+      allow write: if hasAnyRole(['super_admin', 'admin', 'rh']);
     }
     
     // ===== REGLA POR DEFECTO (FALLBACK) =====
