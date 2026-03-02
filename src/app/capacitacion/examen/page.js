@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/Button/Button';
 import { useToast } from '@/components/ui/Toast/Toast';
 import { Card, CardContent } from '@/components/ui/Card/Card';
 import QuestionManager from '@/components/features/QuestionManager/QuestionManager'; // [NEW]
+import Link from 'next/link';
 import styles from './page.module.css';
 
 import { useAuth } from '@/contexts/AuthContext';
@@ -384,9 +385,16 @@ export default function ExamenPage() {
             <div className={styles.header}>
                 <div className={styles.titleRow}>
                     <BackButton href="/capacitacion" />
-                    <Button variant="outline" size="sm" onClick={() => setShowQuestionManager(true)}>
-                        Gestionar Preguntas
-                    </Button>
+                    <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
+                        <Button variant="outline" size="sm" onClick={() => setShowQuestionManager(true)}>
+                            Gestionar Preguntas
+                        </Button>
+                        <Link href="/capacitacion/examen/respuestas">
+                            <Button variant="outline" size="sm">
+                                📋 Ver Respuestas
+                            </Button>
+                        </Link>
+                    </div>
                 </div>
                 <h1 style={{ textAlign: 'center', margin: '1rem 0', color: 'var(--text-primary)' }}>Generador de Exámenes</h1>
             </div>
