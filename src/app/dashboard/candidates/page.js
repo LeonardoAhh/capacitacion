@@ -705,6 +705,7 @@ export default function CandidateMonitoringPage() {
                                     {/* Foto o Inicial */}
                                     <div className={styles.cardPhotoWrapper}>
                                         {candidate.photoUrl ? (
+                                            // eslint-disable-next-line @next/next/no-img-element
                                             <img
                                                 src={candidate.photoUrl}
                                                 alt={`Foto de ${candidate.name}`}
@@ -783,6 +784,7 @@ export default function CandidateMonitoringPage() {
                                             {/* Foto */}
                                             <div className={styles.qdPhotoWrapper}>
                                                 {c.photoUrl ? (
+                                                    // eslint-disable-next-line @next/next/no-img-element
                                                     <img
                                                         src={c.photoUrl}
                                                         alt={`Foto de ${c.name}`}
