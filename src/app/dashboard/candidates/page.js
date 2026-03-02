@@ -247,7 +247,7 @@ const MESSAGE_TEMPLATES = [
         id: 'welcome',
         title: '👋 Bienvenida',
         message: (name, c) =>
-            `¡Bienvenido/a ${name}! 🎉\n\nEs un placer tenerte en el equipo. Para comenzar tu proceso de inducción, ingresa a la plataforma con tu código de acceso:\n\n🔑 *${c?.accessCode || '-'}*\n\nSi tienes cualquier duda, escúbenos. ¡Mucho éxito! 💼\n\n_Recursos Humanos_`
+            `¡Bienvenido/a ${name}! 🎉\n\nEs un placer tenerte en el equipo. Para comenzar tu proceso de inducción, ingresa a la plataforma:\n\n🌐 *https://vertxk.xyz/*\n\nUsa tu código de acceso:\n\n🔑 *${c?.accessCode || '-'}*\n\nSi tienes cualquier duda, escríbenos. ¡Mucho éxito! 💼\n\n_Recursos Humanos_`
     },
     {
         id: 'progress_check',

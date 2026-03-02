@@ -10,13 +10,13 @@ import { safeGetLocalStorage, safeSetLocalStorage, safeRemoveLocalStorage } from
 import { createSession } from '@/lib/sessionApi';
 
 const CONFIG = {
-    MAX_ATTEMPTS: 5,
+    MAX_ATTEMPTS: 10,
     BLOCK_DURATION_MS: 30 * 1000,
     STORAGE_KEYS: {
         BLOCK: 'candidate_login_block',
         SESSION: 'candidate_session',
     },
-    MAX_CODE_USES: 5,
+    MAX_CODE_USES: 10,
     SUCCESS_REDIRECT_DELAY_MS: 1500,
 };
 
