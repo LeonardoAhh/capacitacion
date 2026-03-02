@@ -32,7 +32,8 @@ import {
     IconUploadCloud as UploadCloud,
     IconSearch as Search,
     IconFolderOpen as FolderOpen,
-    IconUsers as Users
+    IconUsers as Users,
+    IconArrowLeft as ArrowLeft
 } from '@/lib/icons';
 import Link from 'next/link';
 import ProfileDropdown from '@/components/layout/ProfileDropdown/ProfileDropdown';
@@ -505,6 +506,15 @@ export default function InductionPage() {
                 <div className={styles.profileContainer}>
                     <ProfileDropdown />
                 </div>
+
+                {/* ── Botón volver móvil (visible solo en mobile cuando el sidebar está oculto) ── */}
+                {user?.rol !== 'instructor' && (
+                    <Link href="/modulos" className={styles.mobileBackBtn}>
+                        <ArrowLeft size={15} />
+                        <span>Módulos</span>
+                    </Link>
+                )}
+
                 <div className={styles.bgDecoration} />
 
                 {/* ══════════════ GRID PRINCIPAL ══════════════ */}
@@ -579,6 +589,11 @@ export default function InductionPage() {
                     {/* ── HEADER ── */}
                     <header className={styles.header}>
                         <div className={styles.titleSection}>
+                            <nav className={styles.breadcrumb} aria-label="breadcrumb">
+                                <Link href="/modulos" className={styles.breadcrumbLink}>Módulos</Link>
+                                <ChevronRight size={12} className={styles.breadcrumbSep} />
+                                <span className={styles.breadcrumbCurrent}>Inducción</span>
+                            </nav>
                             <h1>Inducción</h1>
                             <p>Material y cursos de bienvenida para empleados y candidatos</p>
                             <div className={styles.headerActions}>
@@ -591,6 +606,16 @@ export default function InductionPage() {
                                         value={searchQuery}
                                         onChange={(e) => setSearchQuery(e.target.value)}
                                     />
+                                    {searchQuery && (
+                                        <button
+                                            type="button"
+                                            className={styles.searchClearBtn}
+                                            onClick={() => setSearchQuery('')}
+                                            aria-label="Limpiar búsqueda"
+                                        >
+                                            <X size={14} />
+                                        </button>
+                                    )}
                                 </div>
                             </div>
                         </div>
@@ -1013,6 +1038,13 @@ export default function InductionPage() {
 
                 {/* ══ BOTTOM NAV (Mobile) ══ */}
                 <nav className={styles.bottomNav}>
+                    {/* Botón volver a módulos en mobile */}
+                    {user?.rol !== 'instructor' && (
+                        <Link href="/modulos" className={styles.bottomNavBackTab}>
+                            <ArrowLeft size={18} />
+                            <span>Volver</span>
+                        </Link>
+                    )}
                     {canEdit && (
                         <button className={`${styles.bottomNavTab} ${activeTab === 'interactivos' ? styles.active : ''}`} onClick={() => setActiveTab('interactivos')}>
                             <Zap size={18} />

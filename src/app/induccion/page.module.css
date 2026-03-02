@@ -90,6 +90,36 @@
     z-index: 500;
 }
 
+/* ── Botón volver móvil (solo visible en mobile) ── */
+.mobileBackBtn {
+    display: none;
+    position: fixed;
+    top: 14px;
+    left: 14px;
+    z-index: 500;
+    align-items: center;
+    gap: 6px;
+    padding: 7px 14px 7px 10px;
+    background: var(--c-surface);
+    border: 1px solid var(--c-line);
+    border-radius: 20px;
+    color: var(--c-ink-3);
+    font-family: var(--font-body);
+    font-size: 0.78rem;
+    font-weight: 500;
+    text-decoration: none;
+    box-shadow: var(--sh-card);
+    transition: all var(--t) var(--ease);
+    white-space: nowrap;
+}
+
+.mobileBackBtn:hover {
+    background: var(--c-cream-2);
+    color: var(--c-ink);
+    border-color: var(--c-orange-mid);
+    transform: translateX(-2px);
+}
+
 /* Decoración de fondo */
 .bgDecoration {
     position: fixed;
@@ -257,6 +287,30 @@
     gap: 4px;
 }
 
+/* Override BackButton global para que encaje con el rail */
+.sidebarFooter a,
+.sidebarFooter button {
+    background: transparent !important;
+    border: 1px solid var(--sb-border) !important;
+    border-radius: var(--r-md) !important;
+    color: var(--sb-text-muted) !important;
+    font-size: 0.82rem !important;
+    padding: 8px 11px !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    width: 100%;
+    justify-content: flex-start;
+    gap: 8px;
+}
+
+.sidebarFooter a:hover,
+.sidebarFooter button:hover {
+    background: var(--sb-hover-bg) !important;
+    color: var(--sb-hover-text) !important;
+    border-color: var(--c-orange-mid) !important;
+    transform: none !important;
+}
+
 /* ================================================================
    HEADER
    ================================================================ */
@@ -264,6 +318,39 @@
     grid-column: 2;
     padding: 48px 48px 0;
     animation: indFadeUp 0.5s var(--ease) both;
+}
+
+/* ── Breadcrumb ── */
+.breadcrumb {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    margin-bottom: 12px;
+}
+
+.breadcrumbLink {
+    font-size: 0.75rem;
+    font-weight: 500;
+    color: var(--c-muted);
+    text-decoration: none;
+    font-family: var(--font-body);
+    transition: color var(--t);
+}
+
+.breadcrumbLink:hover {
+    color: var(--c-orange);
+}
+
+.breadcrumbSep {
+    color: var(--c-sand);
+    flex-shrink: 0;
+}
+
+.breadcrumbCurrent {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--c-ink-3);
+    font-family: var(--font-body);
 }
 
 .titleSection h1 {
@@ -2301,7 +2388,7 @@ textarea.input {
 
 .searchInput {
     width: 100%;
-    padding: 10px 14px 10px 40px;
+    padding: 10px 36px 10px 40px;
     border-radius: 20px;
     border: 1px solid var(--c-line);
     background: var(--c-surface);
@@ -2317,6 +2404,31 @@ textarea.input {
     box-shadow: 0 0 0 3px var(--c-orange-glow);
 }
 
+/* Botón para limpiar el search */
+.searchClearBtn {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: var(--c-cream-2);
+    border: none;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--c-muted);
+    cursor: pointer;
+    transition: all var(--t);
+    flex-shrink: 0;
+}
+
+.searchClearBtn:hover {
+    background: var(--c-orange-dim);
+    color: var(--c-orange);
+}
+
 /* ================================================================
    BOTTOM NAV — MOBILE PILL
    ================================================================ */
@@ -2327,7 +2439,7 @@ textarea.input {
     left: 50%;
     transform: translateX(-50%);
     width: calc(100% - 28px);
-    max-width: 420px;
+    max-width: 500px;
     background: var(--c-surface);
     border-radius: 30px;
     z-index: 200;
@@ -2379,6 +2491,33 @@ textarea.input {
     border: 1.5px solid var(--c-surface);
     line-height: 1.4;
     font-family: var(--font-mono);
+}
+
+/* Botón "Volver" dentro del bottom nav (tab estilo ghost) */
+.bottomNavBackTab {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3px;
+    background: transparent;
+    border: none;
+    color: var(--c-muted);
+    font-family: var(--font-body);
+    font-size: 0.60rem;
+    font-weight: 500;
+    cursor: pointer;
+    padding: 6px 12px;
+    border-radius: 22px;
+    text-decoration: none;
+    transition: color var(--t), background var(--t);
+    border-right: 1px solid var(--c-line);
+    margin-right: 2px;
+    padding-right: 14px;
+}
+
+.bottomNavBackTab:hover {
+    color: var(--c-orange);
+    background: var(--c-orange-dim);
 }
 
 /* ================================================================
@@ -2480,9 +2619,19 @@ textarea.input {
         display: none;
     }
 
+    /* Mostrar el botón móvil de regreso */
+    .mobileBackBtn {
+        display: flex;
+    }
+
+    /* Ocultar breadcrumb en mobile (ya hay el botón flotante) */
+    .breadcrumb {
+        display: none;
+    }
+
     .header {
         grid-column: 1;
-        padding: 76px 18px 0;
+        padding: 62px 18px 0;
     }
 
     .titleSection h1 {
