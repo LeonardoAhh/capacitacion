@@ -133,7 +133,7 @@ const parseExcelDate = (dateValue) => {
 /**
  * Normalize record to standard format
  */
-const normalizeRecord = (record) => {
+export const normalizeRecord = (record) => {
     // Normalize date - handle DD/MM/YYYY or YYYY-MM-DD
     let normalizedDate = null;
 
@@ -246,6 +246,39 @@ export const validateImportRecords = (records, employees) => {
     });
 
     return { valid, invalid, warnings };
+};
+
+/**
+ * Validate a single record against the employee list.
+ * Used for re-validation after inline editing in the import preview.
+ * @param {Object} record - Normalized record { employeeId, courseName, date, score }
+ * @param {Array}  employees - Available employees [{ id, employeeId, name }]
+ * @returns {{ valid: boolean, issues: string[], docId?: string, employeeName?: string }}
+ */
+export const validateSingleRecord = (record, employees) => {
+    const empLookup = {};
+    employees.forEach(emp => {
+        if (emp.employeeId) {
+            empLookup[emp.employeeId.toUpperCase().trim()] = emp;
+        }
+    });
+
+    const issues = [];
+    const empId = (record.employeeId || '').toUpperCase().trim();
+
+    if (!empId) issues.push('Falta ID de empleado');
+    if (!record.courseName) issues.push('Falta nombre del curso');
+    if (record.score < 0 || record.score > 100) issues.push('Calificación debe estar entre 0 y 100');
+
+    const matchedEmp = empLookup[empId];
+    if (!matchedEmp && empId) issues.push(`Empleado "${empId}" no encontrado`);
+
+    return {
+        valid: issues.length === 0,
+        issues,
+        docId: matchedEmp?.id,
+        employeeName: matchedEmp?.name,
+    };
 };
 
 /**

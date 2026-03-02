@@ -17,13 +17,6 @@
     background: transparent;
 }
 
-.profileContainer {
-    position: fixed;
-    top: 20px;
-    right: 20px;
-    z-index: 9999;
-}
-
 /* === BACKGROUND EFFECTS === */
 .bgDecoration {
     position: fixed;
@@ -175,7 +168,7 @@
 .modeBtn.active {
     background: var(--color-primary);
     color: white;
-    box-shadow: 0 4px 12px rgba(0, 122, 255, 0.3);
+    box-shadow: 0 4px 12px rgba(var(--color-primary-rgb, 245, 158, 11), 0.35);
 }
 
 /* ==================== MAIN CARD ==================== */
@@ -404,8 +397,9 @@
 
 /* ==================== PREVIEW STATS ==================== */
 .previewStats {
-    display: flex;
-    gap: 14px;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
     margin-bottom: var(--spacing-lg);
 }
 
@@ -426,8 +420,13 @@
     border-color: rgba(255, 255, 255, 0.08);
 }
 
-.previewStat.error .statNum {
+.previewStat.error .statNum,
+.previewStat.statError .statNum {
     color: #ef4444;
+}
+
+.previewStat.statSelected .statNum {
+    color: var(--color-primary);
 }
 
 .statNum {
@@ -579,8 +578,7 @@
     }
 
     .previewStats {
-        flex-direction: column;
-        gap: 10px;
+        gap: 8px;
     }
 
     .templateBtns {
@@ -610,5 +608,460 @@
     .dropZone svg {
         width: 36px;
         height: 36px;
+    }
+}
+
+/* ==================== FILE INFO CARD ==================== */
+.fileInfoCard {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 16px 20px;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: 16px;
+    transition: all 0.2s;
+}
+
+[data-theme="dark"] .fileInfoCard {
+    background: rgba(40, 40, 45, 0.6);
+    border-color: rgba(255, 255, 255, 0.08);
+}
+
+.fileIconWrap {
+    width: 46px;
+    height: 46px;
+    border-radius: 12px;
+    background: rgba(0, 122, 255, 0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--color-primary);
+    flex-shrink: 0;
+}
+
+[data-theme="dark"] .fileIconWrap {
+    background: rgba(10, 132, 255, 0.15);
+}
+
+.fileInfoDetails {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.fileName {
+    font-weight: 600;
+    font-size: 0.95rem;
+    color: var(--text-primary);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.fileMeta {
+    font-size: 0.78rem;
+    color: var(--text-tertiary);
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+}
+
+.fileRemoveBtn {
+    width: 36px;
+    height: 36px;
+    border: none;
+    border-radius: 10px;
+    background: rgba(239, 68, 68, 0.08);
+    color: #ef4444;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s;
+    flex-shrink: 0;
+}
+
+.fileRemoveBtn:hover {
+    background: rgba(239, 68, 68, 0.18);
+    transform: scale(1.08);
+}
+
+/* ==================== ERROR SECTION (editable) ==================== */
+.errorSection {
+    margin-bottom: var(--spacing-lg);
+    border: 1px solid rgba(239, 68, 68, 0.2);
+    border-radius: 16px;
+    overflow: hidden;
+}
+
+.errorSectionHeader {
+    padding: 12px 18px;
+    background: rgba(239, 68, 68, 0.05);
+    border-bottom: 1px solid rgba(239, 68, 68, 0.12);
+}
+
+[data-theme="dark"] .errorSectionHeader {
+    background: rgba(239, 68, 68, 0.08);
+}
+
+.errorSectionTitle {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #ef4444;
+}
+
+.errorTableWrap {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+.editTable {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.82rem;
+    min-width: 660px;
+}
+
+.editTable th {
+    padding: 10px 12px;
+    text-align: left;
+    background: rgba(239, 68, 68, 0.03);
+    color: var(--text-secondary);
+    font-weight: 700;
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border-bottom: 1px solid rgba(239, 68, 68, 0.1);
+    white-space: nowrap;
+}
+
+[data-theme="dark"] .editTable th {
+    background: rgba(239, 68, 68, 0.06);
+}
+
+.editTable td {
+    padding: 8px 10px;
+    border-bottom: 1px solid rgba(239, 68, 68, 0.06);
+    vertical-align: middle;
+}
+
+.editTable tr:last-child td {
+    border-bottom: none;
+}
+
+.errorRow {
+    background: rgba(239, 68, 68, 0.015);
+    transition: background 0.15s;
+}
+
+.errorRow:hover {
+    background: rgba(239, 68, 68, 0.045);
+}
+
+.editInput {
+    width: 100%;
+    min-width: 80px;
+    padding: 7px 10px;
+    border: 1px solid rgba(239, 68, 68, 0.25);
+    border-radius: 8px;
+    font-size: 0.82rem;
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    transition: border-color 0.2s, box-shadow 0.2s;
+    font-family: inherit;
+}
+
+[data-theme="dark"] .editInput {
+    background: rgba(30, 30, 35, 0.8);
+    border-color: rgba(239, 68, 68, 0.2);
+}
+
+.editInput:focus {
+    outline: none;
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 2px rgba(0, 122, 255, 0.12);
+}
+
+.scoreInput {
+    min-width: 60px;
+    max-width: 70px;
+}
+
+.errorMsgCell {
+    max-width: 200px;
+}
+
+.errorMsg {
+    display: block;
+    color: #ef4444;
+    font-size: 0.78rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 200px;
+}
+
+.applyCell {
+    white-space: nowrap;
+}
+
+.applyBtn {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 6px 13px;
+    background: #22c55e;
+    border: none;
+    border-radius: 8px;
+    color: white;
+    font-size: 0.8rem;
+    font-weight: 700;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: all 0.2s;
+    font-family: inherit;
+}
+
+.applyBtn:hover {
+    background: #16a34a;
+    transform: translateY(-1px);
+    box-shadow: 0 3px 8px rgba(34, 197, 94, 0.35);
+}
+
+.applyBtn:active {
+    transform: translateY(0);
+}
+
+.rowNum {
+    color: var(--text-tertiary);
+    font-size: 0.78rem;
+    font-weight: 700;
+    white-space: nowrap;
+    padding-right: 4px;
+}
+
+.showMoreBtn {
+    display: block;
+    width: 100%;
+    padding: 13px 16px;
+    background: transparent;
+    border: none;
+    border-top: 1px solid var(--border-color);
+    color: var(--color-primary);
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s;
+    text-align: center;
+    font-family: inherit;
+}
+
+.showMoreBtn:hover {
+    background: rgba(0, 122, 255, 0.05);
+}
+
+/* ==================== VALID SECTION (selectable) ==================== */
+.validSection {
+    margin-bottom: var(--spacing-lg);
+    border: 1px solid rgba(34, 197, 94, 0.2);
+    border-radius: 16px;
+    overflow: hidden;
+}
+
+.validSectionHeader {
+    padding: 12px 18px;
+    background: rgba(34, 197, 94, 0.05);
+    border-bottom: 1px solid rgba(34, 197, 94, 0.12);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+[data-theme="dark"] .validSectionHeader {
+    background: rgba(34, 197, 94, 0.07);
+}
+
+.validSectionTitle {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #22c55e;
+}
+
+.validCount {
+    font-size: 0.8rem;
+    color: var(--text-tertiary);
+    font-weight: 500;
+}
+
+.validTableWrap {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+.headerCheckbox,
+.rowCheckbox {
+    width: 17px;
+    height: 17px;
+    cursor: pointer;
+    accent-color: var(--color-primary);
+    flex-shrink: 0;
+}
+
+.validRow {
+    transition: background 0.15s, opacity 0.2s;
+}
+
+.validRow:hover {
+    background: var(--bg-secondary);
+}
+
+[data-theme="dark"] .validRow:hover {
+    background: rgba(255, 255, 255, 0.03);
+}
+
+.unselectedRow {
+    opacity: 0.38;
+}
+
+.courseCell {
+    max-width: 220px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/* ==================== SCORE BADGES ==================== */
+.scoreBadge {
+    display: inline-block;
+    padding: 3px 11px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 700;
+    letter-spacing: 0.2px;
+}
+
+.scoreGood {
+    background: rgba(34, 197, 94, 0.12);
+    color: #16a34a;
+}
+
+.scoreBad {
+    background: rgba(239, 68, 68, 0.12);
+    color: #dc2626;
+}
+
+[data-theme="dark"] .scoreGood {
+    background: rgba(34, 197, 94, 0.15);
+    color: #4ade80;
+}
+
+[data-theme="dark"] .scoreBad {
+    background: rgba(239, 68, 68, 0.15);
+    color: #f87171;
+}
+
+/* ==================== PROGRESS BAR ==================== */
+.progressContainer {
+    margin-bottom: var(--spacing-md);
+    padding: 14px 18px;
+    background: rgba(0, 122, 255, 0.05);
+    border: 1px solid rgba(0, 122, 255, 0.1);
+    border-radius: 14px;
+}
+
+[data-theme="dark"] .progressContainer {
+    background: rgba(10, 132, 255, 0.08);
+    border-color: rgba(10, 132, 255, 0.15);
+}
+
+.progressLabel {
+    font-size: 0.83rem;
+    color: var(--text-secondary);
+    font-weight: 500;
+    margin-bottom: 10px;
+}
+
+.progressTrack {
+    height: 6px;
+    background: rgba(0, 122, 255, 0.1);
+    border-radius: 100px;
+    overflow: hidden;
+}
+
+[data-theme="dark"] .progressTrack {
+    background: rgba(10, 132, 255, 0.15);
+}
+
+.progressFill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--color-primary), #22c55e);
+    border-radius: 100px;
+    transition: width 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+    min-width: 6px;
+}
+
+/* ==================== RESPONSIVE (additions) ==================== */
+@media (max-width: 640px) {
+    .fileInfoCard {
+        gap: 12px;
+        padding: 12px 14px;
+    }
+
+    .fileIconWrap {
+        width: 38px;
+        height: 38px;
+    }
+
+    .validSectionHeader,
+    .errorSectionHeader {
+        padding: 10px 14px;
+    }
+
+    .editTable th,
+    .editTable td {
+        padding: 7px 8px;
+    }
+
+    .applyBtn {
+        padding: 5px 10px;
+        font-size: 0.75rem;
+    }
+
+    .scoreBadge {
+        padding: 2px 8px;
+        font-size: 0.75rem;
+    }
+
+    .previewStats {
+        gap: 6px;
+    }
+
+    .previewStat {
+        padding: 12px 8px;
+    }
+
+    .statNum {
+        font-size: 1.6rem;
+    }
+}
+
+@media (max-width: 380px) {
+    .statLabel {
+        font-size: 0.7rem;
+    }
+
+    .statNum {
+        font-size: 1.4rem;
     }
 }
