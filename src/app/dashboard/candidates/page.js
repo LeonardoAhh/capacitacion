@@ -216,6 +216,27 @@ function getDeadlineInfo(candidate) {
 }
 
 
+// Convierte "APELLIDO1 APELLIDO2 NOMBRE1 NOMBRE2" → "Nombre1 Apellido1"
+// Maneja automáticamente 1, 2, 3 o 4+ palabras
+function getShortName(fullName) {
+    if (!fullName || typeof fullName !== 'string') return fullName || 'Colaborador';
+    const capitalize = (word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
+    const parts = fullName.trim().split(/\s+/).filter(Boolean);
+    if (parts.length === 1) return capitalize(parts[0]);
+    if (parts.length === 2) return `${capitalize(parts[0])} ${capitalize(parts[1])}`;
+    if (parts.length === 3) return `${capitalize(parts[2])} ${capitalize(parts[0])}`;
+    // 4+ palabras: APELLIDO1 APELLIDO2 NOMBRE1 NOMBRE2 → "Nombre1 Apellido1"
+    return `${capitalize(parts[2])} ${capitalize(parts[0])}`;
+}
+
+// Devuelve "ID - Nombre Apellido" o solo "Nombre Apellido" si no hay ID
+function getDisplayName(candidate) {
+    if (!candidate) return 'Colaborador';
+    const shortName = getShortName(candidate.name);
+    const id = candidate.employeeId;
+    return id ? `${id} - ${shortName}` : shortName;
+}
+
 export default function CandidateMonitoringPage() {
     const { user, loading: authLoading, updateUserProfile } = useAuth();
     const router = useRouter();
@@ -341,26 +362,6 @@ export default function CandidateMonitoringPage() {
         }
     }, [user?.uid, updateUserProfile]);
 
-    // Convierte "APELLIDO1 APELLIDO2 NOMBRE1 NOMBRE2" → "Nombre1 Apellido1"
-    // Maneja automáticamente 1, 2, 3 o 4+ palabras
-    function getShortName(fullName) {
-        if (!fullName || typeof fullName !== 'string') return fullName || 'Colaborador';
-        const capitalize = (word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
-        const parts = fullName.trim().split(/\s+/).filter(Boolean);
-        if (parts.length === 1) return capitalize(parts[0]);
-        if (parts.length === 2) return `${capitalize(parts[0])} ${capitalize(parts[1])}`;
-        if (parts.length === 3) return `${capitalize(parts[2])} ${capitalize(parts[0])}`;
-        // 4+ palabras: APELLIDO1 APELLIDO2 NOMBRE1 NOMBRE2 → "Nombre1 Apellido1"
-        return `${capitalize(parts[2])} ${capitalize(parts[0])}`;
-    }
-
-    // Devuelve "ID - Nombre Apellido" o solo "Nombre Apellido" si no hay ID
-    function getDisplayName(candidate) {
-        if (!candidate) return 'Colaborador';
-        const shortName = getShortName(candidate.name);
-        const id = candidate.employeeId;
-        return id ? `${id} - ${shortName}` : shortName;
-    }
 
     // Predefined WhatsApp message templates
     const messageTemplates = [
