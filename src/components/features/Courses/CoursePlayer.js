@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback, useRef } from 'react';
+import { useState, useEffect, useCallback, useRef, useMemo } from 'react';
 import { IconArrowLeft, IconArrowRight, IconMenu, IconExpand, IconCompress } from '@/lib/icons';
 import { AiOutlineClockCircle } from 'react-icons/ai';
 import SlideRenderer from './SlideRenderer';
@@ -9,15 +9,36 @@ import TableOfContents from './TableOfContents';
 import { saveUserProgress, getUserProgress } from '@/lib/courseService';
 import styles from './CoursePlayer.module.css';
 
+// ── Constantes ───────────────────────────────────────────────────────────────
+
+const WORDS_PER_MIN = 180;
+
+/**
+ * Mapa de badges por tipo de slide.
+ * Definido fuera del componente para evitar recrearlo en cada render.
+ */
+const SLIDE_BADGES = {
+    quiz: { emoji: '🧠', label: 'Quiz' },
+    group_quiz: { emoji: '🧠', label: 'Quiz' },
+    dynamic: { emoji: '🎯', label: 'Dinámica' },
+    group_dynamic: { emoji: '🎯', label: 'Dinámica' },
+    title: { emoji: '🎯', label: 'Portada' },
+    objective: { emoji: '🎓', label: 'Objetivo' },
+    benefits: { emoji: '✅', label: 'Beneficios' },
+    icon_grid: { emoji: '🔲', label: 'Íconos' },
+    comparison: { emoji: '⚖️', label: 'Comparación' },
+    definition: { emoji: '📖', label: 'Definición' },
+    content: { emoji: '📄', label: 'Contenido' },
+};
+
 // ── Utilidades ──────────────────────────────────────────────────────────────
 
 /**
- * Estima el tiempo de lectura en segundos, sumando las palabras de todos los slides.
+ * Estima el tiempo de lectura en minutos, sumando las palabras de todos los slides.
  * @param {Array} slides
- * @returns {number} Segundos estimados (mínimo 1 min por slide)
+ * @returns {number} Minutos estimados (mínimo 1 min por slide)
  */
 function estimateReadingTime(slides) {
-    const WORDS_PER_MIN = 180;
     let totalWords = 0;
     (slides || []).forEach(({ data = {} }) => {
         const text = [
@@ -28,8 +49,23 @@ function estimateReadingTime(slides) {
         ].filter(Boolean).join(' ');
         totalWords += text.split(/\s+/).filter(Boolean).length;
     });
-    const mins = Math.max(1, Math.ceil(totalWords / WORDS_PER_MIN));
-    return mins;
+    return Math.max(1, Math.ceil(totalWords / WORDS_PER_MIN));
+}
+
+// ── Subcomponente: Badge del tipo de slide ───────────────────────────────────
+
+/**
+ * Muestra un badge con el emoji y label del tipo de slide actual.
+ * Extraído del IIFE inline para evitar redefinición en cada render.
+ */
+function SlideBadge({ type }) {
+    const badge = SLIDE_BADGES[type];
+    if (!badge) return null;
+    return (
+        <span className={styles.slideBadge}>
+            {badge.emoji} {badge.label}
+        </span>
+    );
 }
 
 // ── Componente principal ─────────────────────────────────────────────────────
@@ -59,15 +95,25 @@ export default function CoursePlayer({ course, slides, onClose, inline = false, 
     const touchStartXRef = useRef(null);
     const saveTimerRef = useRef(null);
 
-    // ── Slides filtrados (se incluyen los quiz en el flujo) ──────────────────
-    const allSlides = slides || [];
+    // Refs estables para el keyboard handler (evita recrear el listener en cada render)
+    const isLastRef = useRef(false);
+    const showTOCRef = useRef(false);
+    const showCompletionRef = useRef(false);
+    const handleFinishRef = useRef(null);
+    const goNextRef = useRef(null);
+    const goPrevRef = useRef(null);
+    const toggleFullscreenRef = useRef(null);
+
+    // ── Slides normalizados con useMemo ──────────────────────────────────────
+    const allSlides = useMemo(() => slides || [], [slides]);
     const total = allSlides.length;
     const isFirst = current === 0;
     const isLast = current === total - 1;
-    const progress = total > 0 ? ((current + 1) / total) * 100 : 0;
     const currentSlide = allSlides[current];
     const bgMedia = currentSlide?.data?.bgMedia || null;
-    const estimatedMins = estimateReadingTime(allSlides);
+
+    // Tiempo estimado memoizado — solo recalcula si cambian los slides
+    const estimatedMins = useMemo(() => estimateReadingTime(allSlides), [allSlides]);
 
     // ── Cargar progreso guardado al montar (solo modo no-inline) ─────────────
     useEffect(() => {
@@ -75,16 +121,27 @@ export default function CoursePlayer({ course, slides, onClose, inline = false, 
             setProgressLoaded(true);
             return;
         }
-        getUserProgress(course.id, userId).then((saved) => {
-            if (saved && saved.slideIndex > 0 && saved.slideIndex < total) {
-                setCurrent(saved.slideIndex);
-            }
-            if (saved?.quizScore !== null && saved?.quizScore !== undefined) {
-                setQuizScore(saved.quizScore);
-            }
-            setProgressLoaded(true);
-        });
+        getUserProgress(course.id, userId)
+            .then((saved) => {
+                if (saved && saved.slideIndex > 0 && saved.slideIndex < total) {
+                    setCurrent(saved.slideIndex);
+                }
+                if (saved?.quizScore !== null && saved?.quizScore !== undefined) {
+                    setQuizScore(saved.quizScore);
+                }
+            })
+            .catch((err) => {
+                console.error('[CoursePlayer] Error al cargar progreso:', err);
+            })
+            .finally(() => {
+                setProgressLoaded(true);
+            });
     }, [course?.id, userId, inline, total]);
+
+    // ── Cleanup del saveTimer al desmontar ───────────────────────────────────
+    useEffect(() => {
+        return () => clearTimeout(saveTimerRef.current);
+    }, []);
 
     // ── Guardar progreso con debounce (solo modo no-inline) ──────────────────
     const persistProgress = useCallback((index, score = null) => {
@@ -134,11 +191,15 @@ export default function CoursePlayer({ course, slides, onClose, inline = false, 
     }, [isFirst, current, goTo]);
 
     // ── Finalizar curso ───────────────────────────────────────────────────────
+    // Usa el score más reciente vía ref funcional de setQuizScore para evitar stale closure
     const handleFinish = useCallback(() => {
         if (inline) { onClose(); return; }
         setShowCompletion(true);
-        persistProgress(current, quizScore);
-    }, [inline, onClose, current, quizScore, persistProgress]);
+        setQuizScore(latestScore => {
+            persistProgress(current, latestScore);
+            return latestScore;
+        });
+    }, [inline, onClose, current, persistProgress]);
 
     // ── Reiniciar curso ───────────────────────────────────────────────────────
     const handleRestart = useCallback(() => {
@@ -164,29 +225,37 @@ export default function CoursePlayer({ course, slides, onClose, inline = false, 
         return () => document.removeEventListener('fullscreenchange', handler);
     }, [inline]);
 
-    // ── Teclado ───────────────────────────────────────────────────────────────
+    // ── Sincronizar refs estables para el keyboard handler ───────────────────
+    useEffect(() => { isLastRef.current = isLast; }, [isLast]);
+    useEffect(() => { showTOCRef.current = showTOC; }, [showTOC]);
+    useEffect(() => { showCompletionRef.current = showCompletion; }, [showCompletion]);
+    useEffect(() => { handleFinishRef.current = handleFinish; }, [handleFinish]);
+    useEffect(() => { goNextRef.current = goNext; }, [goNext]);
+    useEffect(() => { goPrevRef.current = goPrev; }, [goPrev]);
+    useEffect(() => { toggleFullscreenRef.current = toggleFullscreen; }, [toggleFullscreen]);
+
+    // ── Teclado — listener único y estable via refs ───────────────────────────
     useEffect(() => {
         const handleKey = (e) => {
-            // No interferir con inputs/textareas
             if (['INPUT', 'TEXTAREA', 'SELECT'].includes(document.activeElement?.tagName)) return;
             switch (e.key) {
                 case 'ArrowRight':
                 case ' ':
                     e.preventDefault();
-                    if (isLast) handleFinish(); else goNext();
+                    if (isLastRef.current) handleFinishRef.current?.();
+                    else goNextRef.current?.();
                     break;
                 case 'ArrowLeft':
                     e.preventDefault();
-                    goPrev();
+                    goPrevRef.current?.();
                     break;
                 case 'Escape':
-                    if (showTOC) { setShowTOC(false); return; }
-                    if (showCompletion) { onClose(); return; }
+                    if (showTOCRef.current) { setShowTOC(false); return; }
                     onClose();
                     break;
                 case 'f':
                 case 'F':
-                    if (!inline) toggleFullscreen();
+                    if (!inline) toggleFullscreenRef.current?.();
                     break;
                 default:
                     break;
@@ -194,7 +263,8 @@ export default function CoursePlayer({ course, slides, onClose, inline = false, 
         };
         window.addEventListener('keydown', handleKey);
         return () => window.removeEventListener('keydown', handleKey);
-    }, [goNext, goPrev, isLast, handleFinish, onClose, showTOC, showCompletion, inline, toggleFullscreen]);
+        // Dependencias mínimas: solo lo que no va por ref
+    }, [inline, onClose]);
 
     // ── Swipe mobile ──────────────────────────────────────────────────────────
     const handleTouchStart = useCallback((e) => {
@@ -217,6 +287,9 @@ export default function CoursePlayer({ course, slides, onClose, inline = false, 
         inline ? styles.inlineMode : '',
         isFullscreen ? styles.fullscreen : '',
     ].filter(Boolean).join(' ');
+
+    // ── Guard: no renderizar hasta cargar el progreso guardado ────────────────
+    if (!progressLoaded) return null;
 
     // ── Estado vacío ──────────────────────────────────────────────────────────
     if (!allSlides.length) {
@@ -250,7 +323,6 @@ export default function CoursePlayer({ course, slides, onClose, inline = false, 
             {/* ── Header ── */}
             <header className={styles.header}>
                 <div className={styles.headerLeft}>
-                    {/* Botón TOC */}
                     {!inline && (
                         <button
                             className={styles.iconBtn}
@@ -274,7 +346,6 @@ export default function CoursePlayer({ course, slides, onClose, inline = false, 
                 <span className={styles.headerTitle}>{course?.title || 'Curso'}</span>
 
                 <div className={styles.headerRight}>
-                    {/* Tiempo estimado */}
                     {!inline && (
                         <span className={styles.readingTime} title="Tiempo estimado">
                             <AiOutlineClockCircle size={13} aria-hidden="true" />
@@ -282,48 +353,20 @@ export default function CoursePlayer({ course, slides, onClose, inline = false, 
                         </span>
                     )}
 
-                    {/* Contador + Badge de tipo */}
                     <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                        {/* Badge: tipo del slide actual */}
-                        {!inline && (() => {
-                            const type = currentSlide?.type;
-                            const BADGES = {
-                                quiz: { emoji: '🧠', label: 'Quiz' },
-                                group_quiz: { emoji: '🧠', label: 'Quiz' },
-                                dynamic: { emoji: '🎯', label: 'Dinámica' },
-                                group_dynamic: { emoji: '🎯', label: 'Dinámica' },
-                                title: { emoji: '🎯', label: 'Portada' },
-                                objective: { emoji: '🎓', label: 'Objetivo' },
-                                benefits: { emoji: '✅', label: 'Beneficios' },
-                                icon_grid: { emoji: '🔲', label: 'Íconos' },
-                                comparison: { emoji: '⚖️', label: 'Comparación' },
-                                definition: { emoji: '📖', label: 'Definición' },
-                                content: { emoji: '📄', label: 'Contenido' },
-                            };
-                            const badge = BADGES[type];
-                            if (!badge) return null;
-                            return (
-                                <span className={styles.slideBadge}>
-                                    {badge.emoji} {badge.label}
-                                </span>
-                            );
-                        })()}
+                        {!inline && <SlideBadge type={currentSlide?.type} />}
                         <span className={styles.counter} aria-label={`Slide ${current + 1} de ${total}`}>
                             {current + 1} / {total}
                         </span>
                     </div>
 
-                    {/* Fullscreen */}
                     {!inline && (
                         <button
                             className={styles.iconBtn}
                             onClick={toggleFullscreen}
                             aria-label={isFullscreen ? 'Salir de pantalla completa' : 'Pantalla completa'}
                         >
-                            {isFullscreen
-                                ? <IconCompress size={16} />
-                                : <IconExpand size={16} />
-                            }
+                            {isFullscreen ? <IconCompress size={16} /> : <IconExpand size={16} />}
                         </button>
                     )}
                 </div>
@@ -354,7 +397,6 @@ export default function CoursePlayer({ course, slides, onClose, inline = false, 
                     ))}
                 </div>
             ) : (
-                /* Barra lineal para cursos largos: más legible en mobile */
                 <div
                     className={styles.linearBar}
                     role="progressbar"
@@ -382,7 +424,7 @@ export default function CoursePlayer({ course, slides, onClose, inline = false, 
                     position: 'relative',
                 } : undefined}
             >
-                {/* Fondo multimedia (full) — dentro de main para contenerlo al área de contenido */}
+                {/* Fondo multimedia (full) */}
                 {bgMedia && bgMedia.layout !== 'split' && (
                     <>
                         {bgMedia.type === 'video' ? (
@@ -456,7 +498,6 @@ export default function CoursePlayer({ course, slides, onClose, inline = false, 
                     <span>Anterior</span>
                 </button>
 
-                {/* Dots (ocultos si hay muchos slides para no saturar) */}
                 {total <= 12 && (
                     <div className={styles.dots} role="tablist" aria-label="Slides del curso">
                         {allSlides.map((slide, i) => (
