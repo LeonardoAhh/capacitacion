@@ -903,7 +903,8 @@ export default function CandidateMonitoringPage() {
                                             className={styles.qdActivityBtn}
                                             onClick={() => {
                                                 setQuickDrawerOpen(false);
-                                                handleRowClick(c);
+                                                // Esperar que la animación de cierre termine antes de abrir
+                                                setTimeout(() => handleRowClick(c), 320);
                                             }}
                                         >
                                             <span>Ver Actividad Detallada</span>

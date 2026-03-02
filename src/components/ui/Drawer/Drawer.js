@@ -42,14 +42,22 @@ export function DrawerContent({ children, className = "" }) {
 
     React.useEffect(() => {
         if (open) {
+            // Contador global para soportar múltiples Drawers apilados
+            window.__drawerCount = (window.__drawerCount || 0) + 1;
             document.body.style.overflow = 'hidden';
-        } else {
-            document.body.style.overflow = '';
+            document.documentElement.style.overflow = 'hidden'; // PWA / standalone
         }
         return () => {
-            document.body.style.overflow = '';
+            if (open) {
+                window.__drawerCount = Math.max(0, (window.__drawerCount || 1) - 1);
+                if (window.__drawerCount === 0) {
+                    document.body.style.overflow = '';
+                    document.documentElement.style.overflow = '';
+                }
+            }
         };
     }, [open]);
+
 
     return (
         <AnimatePresence>
