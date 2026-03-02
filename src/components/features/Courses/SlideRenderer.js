@@ -22,7 +22,7 @@ const SLIDE_COMPONENTS = {
     dynamic: ContentSlide,
 };
 
-export default function SlideRenderer({ slide, inline = false, onQuizSubmit }) {
+export default function SlideRenderer({ slide, inline = false, hasBgMedia = false, onQuizSubmit }) {
     if (!slide) return null;
 
     let Component = SLIDE_COMPONENTS[slide.type];
@@ -84,5 +84,5 @@ export default function SlideRenderer({ slide, inline = false, onQuizSubmit }) {
         );
     }
 
-    return <Component data={slideData} inline={inline} onQuizSubmit={onQuizSubmit} />;
+    return <Component data={slideData} inline={inline} hasBgMedia={hasBgMedia} onQuizSubmit={onQuizSubmit} />;
 }

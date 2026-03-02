@@ -378,9 +378,11 @@ export default function CoursePlayer({ course, slides, onClose, inline = false, 
                     position: 'relative',
                     display: 'flex',
                     flexDirection: 'row',
+                } : bgMedia ? {
+                    position: 'relative',
                 } : undefined}
             >
-                {/* Fondo multimedia (full) */}
+                {/* Fondo multimedia (full) — dentro de main para contenerlo al área de contenido */}
                 {bgMedia && bgMedia.layout !== 'split' && (
                     <>
                         {bgMedia.type === 'video' ? (
@@ -393,7 +395,7 @@ export default function CoursePlayer({ course, slides, onClose, inline = false, 
                             /* eslint-disable-next-line @next/next/no-img-element */
                             <img src={bgMedia.url} alt="Fondo" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', zIndex: 0 }} />
                         )}
-                        <div style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.5)', backdropFilter: 'blur(10px)', zIndex: 0 }} />
+                        <div style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.5)', backdropFilter: 'blur(10px)', WebkitBackdropFilter: 'blur(10px)', zIndex: 0 }} />
                     </>
                 )}
 
@@ -409,18 +411,28 @@ export default function CoursePlayer({ course, slides, onClose, inline = false, 
                         overflowY: 'auto',
                         display: 'flex',
                         flexDirection: 'column',
+                    } : bgMedia ? {
+                        position: 'relative',
+                        zIndex: 1,
                     } : undefined}
                 >
                     <SlideRenderer
                         slide={currentSlide}
                         inline={inline}
+                        hasBgMedia={!!(bgMedia && bgMedia.layout !== 'split')}
                         onQuizSubmit={(score) => setQuizScore(score)}
                     />
                 </div>
 
                 {/* Media split */}
                 {bgMedia?.layout === 'split' && (
-                    <div style={{ width: '50%', height: '100%', position: 'relative', borderLeft: '1px solid var(--border-color)' }}>
+                    <div style={{
+                        width: '50%',
+                        height: '100%',
+                        position: 'relative',
+                        borderLeft: '1px solid var(--border-color)',
+                        flexShrink: 0,
+                    }}>
                         {bgMedia.type === 'video' ? (
                             <video src={bgMedia.url} autoPlay loop muted playsInline style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover' }} />
                         ) : (

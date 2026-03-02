@@ -4,15 +4,15 @@ export default function BenefitsSlide({ data }) {
     const accentColor = data.accent || 'var(--course-accent)';
 
     return (
-        <article 
+        <article
             className={`${styles.slide} ${styles.benefitsSlide}`}
             role="region"
             aria-label="Beneficios del curso"
         >
-            <div 
-                className={styles.accentBar} 
+            <div
+                className={styles.accentBar}
                 style={{ backgroundColor: accentColor }}
-                aria-hidden="true" 
+                aria-hidden="true"
             />
 
             {data.tag && (

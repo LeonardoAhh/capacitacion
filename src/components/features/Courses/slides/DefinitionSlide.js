@@ -2,7 +2,7 @@ import styles from './slides.module.css';
 
 export default function DefinitionSlide({ data }) {
     return (
-        <article 
+        <article
             className={`${styles.slide} ${styles.definitionSlide}`}
             role="region"
             aria-label={data.heading || 'Definición'}

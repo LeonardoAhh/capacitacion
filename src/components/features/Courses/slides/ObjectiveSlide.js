@@ -2,7 +2,7 @@ import styles from './slides.module.css';
 
 export default function ObjectiveSlide({ data }) {
     return (
-        <article 
+        <article
             className={`${styles.slide} ${styles.objectiveSlide}`}
             role="region"
             aria-label="Objetivo del curso"
