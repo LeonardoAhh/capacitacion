@@ -311,6 +311,34 @@
     background: var(--bg-secondary);
 }
 
+/* Botón de encabezado ordenable */
+.thSortBtn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0;
+    background: none;
+    border: none;
+    padding: 0;
+    font-size: inherit;
+    font-weight: inherit;
+    color: inherit;
+    text-transform: inherit;
+    letter-spacing: inherit;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: color var(--transition-fast);
+}
+
+.thSortBtn:hover {
+    color: var(--color-primary);
+}
+
+.thSortBtn:focus-visible {
+    outline: 2px solid var(--color-primary);
+    border-radius: 2px;
+    outline-offset: 2px;
+}
+
 .table td {
     padding: 0.875rem 1.25rem;
     border-bottom: 1px solid var(--border-color);
@@ -742,6 +770,7 @@
     max-height: 80vh;
     overflow-y: auto;
     box-shadow: var(--shadow-lg);
+    overscroll-behavior: contain;
 }
 
 .modalHeader {
@@ -1079,13 +1108,411 @@
     }
 }
 
-/* Desktop default */
-@media (min-width: 769px) {
-    .tableContainer {
-        display: block;
+/* =============================================
+   GRID DE CANDIDATOS — Cards
+   ============================================= */
+.candidateGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 1rem;
+    padding: 1.25rem;
+}
+
+.candidateCard {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 1.25rem 1rem 1rem;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-xl);
+    cursor: pointer;
+    text-align: center;
+    transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.candidateCard:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+    border-color: var(--color-primary);
+}
+
+.candidateCard:focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 2px;
+}
+
+/* Foto wrapper */
+.cardPhotoWrapper {
+    position: relative;
+    width: 80px;
+    height: 80px;
+    flex-shrink: 0;
+}
+
+.cardPhoto {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    object-fit: cover;
+    object-position: top center;
+    border: 2px solid var(--border-color);
+}
+
+.cardPhotoFallback {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--color-primary), var(--color-secondary, #8b5cf6));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: #fff;
+    border: 2px solid var(--border-color);
+    flex-shrink: 0;
+}
+
+/* Badge de estado flotante */
+.cardStatusDot {
+    position: absolute;
+    bottom: 4px;
+    right: 4px;
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    border: 2px solid var(--bg-secondary);
+}
+
+.dot_completed {
+    background: #22c55e;
+}
+
+.dot_inProgress {
+    background: #f59e0b;
+}
+
+.dot_inactive {
+    background: #ef4444;
+}
+
+.dot_notStarted {
+    background: var(--text-tertiary);
+}
+
+/* ID y nombre */
+.cardEmployeeId {
+    font-size: 0.72rem;
+    font-weight: 600;
+    color: var(--text-tertiary);
+    letter-spacing: 0.04em;
+}
+
+.cardName {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    line-height: 1.2;
+    text-align: center;
+    word-break: break-word;
+}
+
+/* Chip de tiempo restante */
+.cardDeadline {
+    font-size: 0.68rem;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 999px;
+    white-space: nowrap;
+}
+
+/* Mini barra de progreso */
+.cardProgressBar {
+    width: 100%;
+    height: 4px;
+    background: var(--bg-tertiary);
+    border-radius: 99px;
+    overflow: hidden;
+    margin-top: 0.25rem;
+}
+
+.cardProgressFill {
+    height: 100%;
+    background: var(--color-primary);
+    border-radius: 99px;
+    transition: width 0.4s ease;
+}
+
+.cardProgressComplete {
+    background: #22c55e;
+}
+
+.cardProgressLabel {
+    font-size: 0.7rem;
+    color: var(--text-tertiary);
+}
+
+/* =============================================
+   QUICK DRAWER — Info rápida del candidato
+   ============================================= */
+
+/* Header */
+.qdHeader {
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+    position: relative;
+}
+
+.qdPhotoWrapper {
+    position: relative;
+    flex-shrink: 0;
+}
+
+.qdPhoto {
+    width: 72px;
+    height: 72px;
+    border-radius: 50%;
+    object-fit: cover;
+    object-position: top center;
+    border: 2px solid var(--border-color);
+}
+
+.qdPhotoFallback {
+    width: 72px;
+    height: 72px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--color-primary), var(--color-secondary, #8b5cf6));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #fff;
+}
+
+.qdHeaderInfo {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.qdPosition {
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+    margin: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.qdEmployeeId {
+    font-size: 0.75rem;
+    color: var(--text-tertiary);
+    font-weight: 600;
+    margin: 0;
+}
+
+/* Body del QuickDrawer */
+.qdBody {
+    padding: 1rem 1.5rem 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    overflow-y: auto;
+    flex: 1;
+}
+
+/* Botón WhatsApp destacado */
+.qdWhatsappBtn {
+    display: flex;
+    align-items: center;
+    gap: 0.625rem;
+    width: 100%;
+    padding: 0.75rem 1rem;
+    background: #25d366;
+    color: #fff;
+    border: none;
+    border-radius: var(--radius-lg);
+    font-size: 0.9375rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.15s;
+}
+
+.qdWhatsappBtn:hover:not(:disabled) {
+    background: #1ebe5d;
+    transform: translateY(-1px);
+}
+
+.qdWhatsappBtn:disabled {
+    background: var(--bg-tertiary);
+    color: var(--text-tertiary);
+    cursor: not-allowed;
+    transform: none;
+}
+
+/* Chip de tiempo restante en drawer */
+.qdDeadline {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.625rem 0.875rem;
+    border-radius: var(--radius-lg);
+    border: 1px solid;
+    font-size: 0.875rem;
+    font-weight: 600;
+}
+
+/* Info grid 2 columnas */
+.qdInfoGrid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.75rem;
+    background: var(--bg-primary);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-lg);
+    padding: 0.875rem;
+}
+
+.qdInfoItem {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.qdInfoLabel {
+    font-size: 0.7rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--text-tertiary);
+}
+
+.qdInfoValue {
+    font-size: 0.875rem;
+    color: var(--text-primary);
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.25rem;
+}
+
+.qdInfoMeta {
+    font-size: 0.75rem;
+    color: var(--text-tertiary);
+}
+
+/* Sección de progreso */
+.qdProgressSection {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    background: var(--bg-primary);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-lg);
+    padding: 0.875rem;
+}
+
+.qdProgressHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.qdProgressLabel {
+    font-size: 0.8125rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+}
+
+.qdProgressPct {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--color-primary);
+}
+
+.qdProgressBarContainer {
+    width: 100%;
+    height: 8px;
+    background: var(--bg-tertiary);
+    border-radius: 99px;
+    overflow: hidden;
+}
+
+.qdProgressFill {
+    height: 100%;
+    background: var(--color-primary);
+    border-radius: 99px;
+    transition: width 0.5s ease;
+}
+
+.qdProgressComplete {
+    background: #22c55e;
+}
+
+.qdProgressDetail {
+    font-size: 0.8rem;
+    color: var(--text-tertiary);
+    margin: 0;
+}
+
+/* Botón de actividad detallada */
+.qdActivityBtn {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    padding: 0.875rem 1rem;
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-lg);
+    font-size: 0.9375rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s, border-color 0.2s, transform 0.15s;
+}
+
+.qdActivityBtn:hover {
+    background: var(--bg-tertiary);
+    border-color: var(--color-primary);
+    transform: translateY(-1px);
+}
+
+/* =============================================
+   RESPONSIVE
+   ============================================= */
+@media (max-width: 480px) {
+    .candidateGrid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 0.75rem;
+        padding: 1rem;
     }
 
-    .mobileCards {
-        display: none;
+    .qdInfoGrid {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (min-width: 1024px) {
+    .candidateGrid {
+        grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+
+    .candidateCard,
+    .qdWhatsappBtn,
+    .qdActivityBtn {
+        transition: none;
     }
 }
