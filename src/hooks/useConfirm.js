@@ -27,7 +27,6 @@ export function useConfirm() {
         cancelLabel: 'Cancelar',
     });
 
-    // Ref para resolver la promesa desde fuera del render
     const resolveRef = useRef(null);
 
     const showConfirm = useCallback((message, options = {}) => {
@@ -68,9 +67,9 @@ export function useConfirm() {
                     onClick={handleCancel}
                     style={{
                         position: 'absolute', inset: 0,
-                        background: 'rgba(0,0,0,0.6)',
-                        backdropFilter: 'blur(4px)',
-                        WebkitBackdropFilter: 'blur(4px)',
+                        background: 'rgba(0,0,0,0.55)',
+                        backdropFilter: 'blur(6px)',
+                        WebkitBackdropFilter: 'blur(6px)',
                     }}
                 />
 
@@ -82,31 +81,34 @@ export function useConfirm() {
                     aria-describedby="confirm-message"
                     style={{
                         position: 'relative',
-                        background: 'var(--card-background, #ffffff)',
-                        border: '1px solid var(--border-color, #e5e7eb)',
-                        borderRadius: 14,
+                        background: 'var(--card-background)',
+                        border: '1px solid var(--card-border)',
+                        borderRadius: 'var(--radius-lg)',
                         padding: '1.75rem',
                         maxWidth: 420,
                         width: '100%',
-                        boxShadow: '0 20px 60px rgba(0,0,0,0.5)',
-                        animation: 'confirmFadeIn 0.18s ease',
+                        boxShadow: 'var(--shadow-lg)',
+                        animation: 'confirmFadeIn 0.2s cubic-bezier(0.16, 1, 0.3, 1)',
                     }}
                 >
                     {/* Icono */}
                     <div style={{
-                        width: 44, height: 44, borderRadius: '50%',
-                        background: state.danger ? 'rgba(239,68,68,0.12)' : 'rgba(59,130,246,0.12)',
+                        width: 48, height: 48, borderRadius: '50%',
+                        background: state.danger
+                            ? 'color-mix(in srgb, var(--color-danger) 12%, transparent)'
+                            : 'color-mix(in srgb, var(--color-info) 12%, transparent)',
+                        color: state.danger ? 'var(--color-danger)' : 'var(--color-info)',
                         display: 'flex', alignItems: 'center', justifyContent: 'center',
                         marginBottom: '1rem',
                     }}>
                         {state.danger ? (
-                            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#ef4444" strokeWidth="2">
+                            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                                 <path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z" />
                                 <line x1="12" y1="9" x2="12" y2="13" />
                                 <line x1="12" y1="17" x2="12.01" y2="17" />
                             </svg>
                         ) : (
-                            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" strokeWidth="2">
+                            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                                 <circle cx="12" cy="12" r="10" />
                                 <line x1="12" y1="8" x2="12" y2="12" />
                                 <line x1="12" y1="16" x2="12.01" y2="16" />
@@ -122,7 +124,7 @@ export function useConfirm() {
                     </h2>
                     <p
                         id="confirm-message"
-                        style={{ margin: '0 0 1.5rem', fontSize: '0.9rem', color: 'var(--text-secondary)', lineHeight: 1.5 }}
+                        style={{ margin: '0 0 1.5rem', fontSize: '0.9rem', color: 'var(--text-secondary)', lineHeight: 1.5, maxWidth: 'none' }}
                     >
                         {state.message}
                     </p>
@@ -133,17 +135,19 @@ export function useConfirm() {
                         </Button>
                         <Button
                             onClick={handleConfirm}
-                            style={state.danger ? { background: '#ef4444', borderColor: '#ef4444' } : {}}
+                            style={state.danger
+                                ? { background: 'var(--color-danger)', borderColor: 'var(--color-danger)' }
+                                : {}
+                            }
                         >
                             {state.confirmLabel}
                         </Button>
                     </div>
                 </div>
 
-                {/* Animación */}
                 <style>{`
                     @keyframes confirmFadeIn {
-                        from { opacity: 0; transform: scale(0.95) translateY(8px); }
+                        from { opacity: 0; transform: scale(0.94) translateY(8px); }
                         to   { opacity: 1; transform: scale(1)   translateY(0); }
                     }
                 `}</style>

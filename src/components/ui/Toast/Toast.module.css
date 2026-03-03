@@ -33,11 +33,9 @@
     overflow: hidden;
 }
 
-/* Dark mode - actualizar variables */
-@media (prefers-color-scheme: dark) {
-    .toastContainer {
-        --toast-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-    }
+/* Dark mode - sincronizado con el sistema de temas */
+[data-theme="dark"] .toastContainer {
+    --toast-shadow: var(--shadow-lg);
 }
 
 .toastContainer> :global(*) {
@@ -288,23 +286,23 @@
     }
 
     .toast.success {
-        background: #2d7d32;
-        border-color: #4caf50;
+        background: var(--color-success);
+        color: white;
     }
 
     .toast.error {
-        background: #c62828;
-        border-color: #f44336;
+        background: var(--color-danger);
+        color: white;
     }
 
     .toast.warning {
-        background: #ef6c00;
-        border-color: #ff9800;
+        background: var(--color-warning);
+        color: var(--text-primary);
     }
 
     .toast.info {
-        background: #1565c0;
-        border-color: #2196f3;
+        background: var(--color-info);
+        color: white;
     }
 }
 

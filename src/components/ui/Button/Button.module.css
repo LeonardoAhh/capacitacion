@@ -72,7 +72,7 @@
 }
 
 .outline:hover:not(:disabled) {
-    background-color: rgba(59, 130, 246, 0.1);
+    background-color: color-mix(in srgb, var(--color-primary) 10%, transparent);
 }
 
 .ghost {
@@ -86,23 +86,25 @@
 }
 
 .danger {
-    background: linear-gradient(135deg, #ef4444, #dc2626);
+    background: var(--color-danger);
     color: white;
     box-shadow: var(--shadow-md);
 }
 
 .danger:hover:not(:disabled) {
+    filter: brightness(1.1);
     box-shadow: var(--shadow-lg);
     transform: translateY(-1px);
 }
 
 .success {
-    background: linear-gradient(135deg, #22c55e, #16a34a);
+    background: var(--color-success);
     color: white;
     box-shadow: var(--shadow-md);
 }
 
 .success:hover:not(:disabled) {
+    filter: brightness(1.08);
     box-shadow: var(--shadow-lg);
     transform: translateY(-1px);
 }
@@ -134,7 +136,7 @@
 .primary .spinner,
 .danger .spinner,
 .success .spinner {
-    border-color: rgba(255, 255, 255, 0.3);
+    border-color: rgba(255, 255, 255, 0.35);
     border-top-color: white;
 }
 
@@ -207,8 +209,8 @@
 }
 
 .iconDanger:hover:not(:disabled) {
-    background-color: rgba(239, 68, 68, 0.1);
-    color: #ef4444;
+    background-color: color-mix(in srgb, var(--color-danger) 10%, transparent);
+    color: var(--color-danger);
 }
 
 @keyframes spin {
