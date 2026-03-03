@@ -1,9 +1,9 @@
 import styles from './slides.module.css';
 
-export default function ComparisonSlide({ data }) {
+export default function ComparisonSlide({ data, hasBgMedia }) {
     return (
-        <article 
-            className={`${styles.slide} ${styles.comparisonSlide}`}
+        <article
+            className={`${styles.slide} ${styles.comparisonSlide} ${hasBgMedia ? styles.slideOverBg : ''}`}
             role="region"
             aria-label={data.heading || 'Comparación'}
         >
@@ -15,7 +15,7 @@ export default function ComparisonSlide({ data }) {
             )}
 
             <div className={styles.comparisonGrid} role="list">
-                <div 
+                <div
                     className={`${styles.comparisonCol} ${styles.comparisonLeft}`}
                     role="listitem"
                     aria-label={data.left?.label || 'Opción 1'}
@@ -39,7 +39,7 @@ export default function ComparisonSlide({ data }) {
 
                 <div className={styles.comparisonDivider} aria-hidden="true">VS</div>
 
-                <div 
+                <div
                     className={`${styles.comparisonCol} ${styles.comparisonRight}`}
                     role="listitem"
                     aria-label={data.right?.label || 'Opción 2'}

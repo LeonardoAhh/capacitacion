@@ -1,9 +1,9 @@
 import styles from './slides.module.css';
 
-export default function DefinitionSlide({ data }) {
+export default function DefinitionSlide({ data, hasBgMedia }) {
     return (
         <article
-            className={`${styles.slide} ${styles.definitionSlide}`}
+            className={`${styles.slide} ${styles.definitionSlide} ${hasBgMedia ? styles.slideOverBg : ''}`}
             role="region"
             aria-label={data.heading || 'Definición'}
         >

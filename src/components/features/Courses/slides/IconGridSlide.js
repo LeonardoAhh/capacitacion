@@ -47,7 +47,7 @@ const MAX_ITEMS = 6;
  * @param {Object} props.data - { heading, description, items[] }
  * @param {boolean} [props.inline] - Modo preview del editor
  */
-export default function IconGridSlide({ data, inline = false }) {
+export default function IconGridSlide({ data, inline = false, hasBgMedia }) {
     const { heading, description, items = [] } = data;
 
     // Aplicar límite de 6 ítems
@@ -67,7 +67,7 @@ export default function IconGridSlide({ data, inline = false }) {
 
     return (
         <article
-            className={`${styles.slide} ${styles.iconGridSlide} ${inline ? styles.slideInline : ''}`}
+            className={`${styles.slide} ${styles.iconGridSlide} ${hasBgMedia ? styles.slideOverBg : ''} ${inline ? styles.slideInline : ''}`}
             role="region"
             aria-label={heading || 'Íconos del contenido'}
         >

@@ -1,9 +1,9 @@
 import styles from './slides.module.css';
 
-export default function TitleSlide({ data, inline = false }) {
+export default function TitleSlide({ data, inline = false, hasBgMedia }) {
     return (
         <article
-            className={`${styles.slide} ${styles.titleSlide} ${inline ? styles.slideInline : ''}`}
+            className={`${styles.slide} ${styles.titleSlide} ${inline ? styles.slideInline : ''} ${hasBgMedia ? styles.slideOverBg : ''}`}
             role="region"
             aria-label={`Título del curso: ${data.title}`}
         >

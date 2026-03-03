@@ -21,7 +21,7 @@ function CharCounter({ current = 0, max }) {
     const color = pct >= 1
         ? 'var(--color-danger)'
         : pct >= 0.85
-            ? 'var(--color-warning, #f59e0b)'
+            ? 'var(--color-warning)'
             : 'var(--text-tertiary)';
 
     return (
@@ -64,8 +64,8 @@ function QuestionEditor({ qi, q, onUpdate, onRemove, onAddOption, onRemoveOption
             >
                 <span style={{
                     width: 22, height: 22, borderRadius: '50%',
-                    background: 'var(--color-primary, #6366f1)',
-                    color: '#fff', fontSize: '0.7rem', fontWeight: 700,
+                    background: 'var(--color-primary)',
+                    color: 'white', fontSize: '0.7rem', fontWeight: 700,
                     display: 'flex', alignItems: 'center', justifyContent: 'center',
                     flexShrink: 0,
                 }}>
@@ -129,10 +129,10 @@ function QuestionEditor({ qi, q, onUpdate, onRemove, onAddOption, onRemoveOption
                                         display: 'flex', alignItems: 'center', gap: 6,
                                         marginBottom: 6, padding: '4px 6px', borderRadius: 8,
                                         background: isCorrect
-                                            ? 'color-mix(in srgb, var(--color-success, #22c55e) 8%, transparent)'
+                                            ? 'color-mix(in srgb, var(--color-success) 8%, transparent)'
                                             : 'transparent',
                                         border: `1px solid ${isCorrect
-                                            ? 'color-mix(in srgb, var(--color-success, #22c55e) 35%, transparent)'
+                                            ? 'color-mix(in srgb, var(--color-success) 35%, transparent)'
                                             : 'transparent'}`,
                                         transition: 'background 0.15s, border-color 0.15s',
                                     }}
@@ -143,11 +143,11 @@ function QuestionEditor({ qi, q, onUpdate, onRemove, onAddOption, onRemoveOption
                                         title={isCorrect ? 'Respuesta correcta ✓' : 'Marcar como respuesta correcta'}
                                         style={{
                                             width: 20, height: 20, borderRadius: '50%',
-                                            border: `2px solid ${isCorrect ? 'var(--color-success, #22c55e)' : 'var(--border-color)'}`,
-                                            background: isCorrect ? 'var(--color-success, #22c55e)' : 'transparent',
+                                            border: `2px solid ${isCorrect ? 'var(--color-success)' : 'var(--border-color)'}`,
+                                            background: isCorrect ? 'var(--color-success)' : 'transparent',
                                             cursor: 'pointer', flexShrink: 0,
                                             display: 'flex', alignItems: 'center', justifyContent: 'center',
-                                            color: '#fff', fontSize: 10, fontWeight: 900,
+                                            color: 'white', fontSize: 10, fontWeight: 900,
                                             transition: 'all 0.15s',
                                         }}
                                         aria-pressed={isCorrect}
@@ -948,7 +948,7 @@ export default function SlideEditorPanel({ slide, onSave, onDelete, onFormChange
                         background: 'var(--bg-secondary)', padding: '6px 12px', borderRadius: 20,
                     }}>
                         {savingState === 'saving' && <><Loader2 size={14} className={styles.spin} style={{ animation: 'spin 1s linear infinite' }} /> Guardando...</>}
-                        {savingState === 'saved' && <><IconCheckCircle2 size={14} style={{ color: 'var(--color-success, #22c55e)' }} /> Guardado</>}
+                        {savingState === 'saved' && <><IconCheckCircle2 size={14} style={{ color: 'var(--color-success)' }} /> Guardado</>}
                         {savingState === 'error' && <>Error al guardar</>}
                         {savingState === 'idle' && <span style={{ opacity: 0.7 }}>Auto-guardado activo</span>}
                     </div>

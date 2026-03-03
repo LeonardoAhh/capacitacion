@@ -2,7 +2,7 @@
 import { useState } from 'react';
 import styles from './slides.module.css';
 
-export default function ContentSlide({ data, accentColor }) {
+export default function ContentSlide({ data, accentColor, hasBgMedia }) {
     const { heading, body, bullets, image, images, tag } = data;
     const [lightboxIdx, setLightboxIdx] = useState(null);
 
@@ -22,7 +22,7 @@ export default function ContentSlide({ data, accentColor }) {
 
     return (
         <article
-            className={`${styles.slide} ${styles.contentSlide}`}
+            className={`${styles.slide} ${styles.contentSlide} ${hasBgMedia ? styles.slideOverBg : ''}`}
             style={{ flexDirection: hasImages ? 'row' : 'column', gap: hasImages ? '3rem' : '1rem', alignItems: 'center' }}
             role="region"
             aria-label={heading || 'Contenido del slide'}
@@ -89,7 +89,7 @@ export default function ContentSlide({ data, accentColor }) {
                                             objectFit: 'cover',
                                             borderRadius: 12,
                                             cursor: 'zoom-in',
-                                            border: '1px solid rgba(255,255,255,0.08)',
+                                            border: '1px solid var(--border-color)',
                                             boxShadow: '0 4px 15px rgba(0,0,0,0.1)',
                                             transition: 'transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s',
                                             ...gridStyle

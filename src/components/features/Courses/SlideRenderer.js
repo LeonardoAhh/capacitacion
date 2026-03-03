@@ -84,5 +84,14 @@ export default function SlideRenderer({ slide, inline = false, hasBgMedia = fals
         );
     }
 
-    return <Component data={slideData} inline={inline} hasBgMedia={hasBgMedia} onQuizSubmit={onQuizSubmit} />;
+    return (
+        <div className={hasBgMedia ? "slideWrapperWithBg" : ""}>
+            <Component
+                data={slideData}
+                inline={inline}
+                hasBgMedia={hasBgMedia}
+                onQuizSubmit={onQuizSubmit}
+            />
+        </div>
+    );
 }

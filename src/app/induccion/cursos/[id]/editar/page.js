@@ -16,14 +16,14 @@ import CoursePlayer from '@/components/features/Courses/CoursePlayer';
 import styles from './editor.module.css';
 
 const SLIDE_TYPES = [
-    { type: 'title', label: 'Portada', icon: IconTarget, iconColor: '#E879F9', desc: 'Título principal del curso' },
-    { type: 'content', label: 'Contenido', icon: IconFileText, iconColor: '#C4B5FD', desc: 'Texto e imagen' },
-    { type: 'objective', label: 'Objetivo', icon: IconGraduationCap, iconColor: '#FDBA74', desc: 'Objetivo de aprendizaje' },
-    { type: 'benefits', label: 'Beneficios', icon: IconCheckSquare, iconColor: '#6EE7B7', desc: 'Lista de beneficios' },
-    { type: 'icon_grid', label: 'Íconos', icon: IconGrid, iconColor: '#D8B4FE', desc: 'Cuadrícula de íconos' },
-    { type: 'comparison', label: 'Comparación', icon: IconColumns, iconColor: '#FCD34D', desc: 'Dos columnas comparativas' },
-    { type: 'quiz', label: 'Quiz', icon: IconBookOpen, iconColor: '#FDA4AF', desc: 'Pregunta con opciones' },
-    { type: 'definition', label: 'Definición', icon: IconBookOpen, iconColor: '#93C5FD', desc: 'Término y definición' },
+    { type: 'title', label: 'Portada', icon: IconTarget, iconColor: 'var(--purple-500)', desc: 'Título principal del curso' },
+    { type: 'content', label: 'Contenido', icon: IconFileText, iconColor: 'var(--cyan-500)', desc: 'Texto e imagen' },
+    { type: 'objective', label: 'Objetivo', icon: IconGraduationCap, iconColor: 'var(--amber-500)', desc: 'Objetivo de aprendizaje' },
+    { type: 'benefits', label: 'Beneficios', icon: IconCheckSquare, iconColor: 'var(--green-500)', desc: 'Lista de beneficios' },
+    { type: 'icon_grid', label: 'Íconos', icon: IconGrid, iconColor: 'var(--color-accent)', desc: 'Cuadrícula de íconos' },
+    { type: 'comparison', label: 'Comparación', icon: IconColumns, iconColor: 'var(--color-warning)', desc: 'Dos columnas comparativas' },
+    { type: 'quiz', label: 'Quiz', icon: IconBookOpen, iconColor: 'var(--color-danger)', desc: 'Pregunta con opciones' },
+    { type: 'definition', label: 'Definición', icon: IconBookOpen, iconColor: 'var(--blue-500)', desc: 'Término y definición' },
 ];
 
 export default function EditorPage({ params }) {

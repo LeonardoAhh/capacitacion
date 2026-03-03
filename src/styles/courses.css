@@ -16,6 +16,8 @@
 :root {
     --course-accent: var(--color-primary);
     --course-accent-hover: color-mix(in srgb, var(--color-primary) 85%, white);
+    --course-label-color: var(--course-accent);
+    /* Por defecto igual al acento */
 
     --course-header-bg: var(--bg-secondary);
     --course-header-border: var(--border-color);
@@ -56,15 +58,36 @@
     --course-progress-fill: var(--color-primary);
 }
 
-/* Dark Theme Overrides */
+/* Dark Theme Overrides (Liquid Glass) */
 [data-theme="dark"] {
-    --course-header-bg: var(--bg-secondary);
-    --course-nav-bg: var(--bg-secondary);
-    --course-slide-bg: var(--bg-primary);
-    --course-overlay-bg: var(--bg-primary);
-    --course-content-bg: var(--bg-secondary);
-    --course-btn-bg: var(--bg-tertiary);
-    --course-btn-hover-bg: var(--bg-secondary);
+    /* Nav & Headers Base (Navy Semi-translúcido) */
+    --course-header-bg: rgba(6, 6, 18, 0.65);
+    --course-nav-bg: rgba(6, 6, 18, 0.65);
+
+    /* Overall Background con GlassMorphism */
+    --course-slide-bg: transparent;
+    --course-overlay-bg: rgba(10, 15, 46, 0.92);
+    /* Base Marina Translúcida */
+    --course-content-bg: transparent;
+
+    /* Componentes interactivos */
+    --course-btn-bg: rgba(77, 128, 255, 0.08);
+    /* Suave azul de fondo */
+    --course-btn-hover-bg: rgba(77, 128, 255, 0.15);
+    --course-btn-border: rgba(77, 128, 255, 0.25);
+    /* Bordes sutiles azules */
+
+    /* Textos acentuados pequeños */
+    --course-label-color: var(--color-accent);
+    /* Consume fluidamente el Azul Brillante corporativo del globals.css según el tema */
+}
+
+/* ── Efecto Glass global para contenedores superpuestos del Player ── */
+[data-theme="dark"] .overlay,
+[data-theme="dark"] .header,
+[data-theme="dark"] .nav {
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
 }
 
 /* ── Animation Tokens ── */

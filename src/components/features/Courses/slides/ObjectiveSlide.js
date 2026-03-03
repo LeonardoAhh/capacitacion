@@ -1,9 +1,9 @@
 import styles from './slides.module.css';
 
-export default function ObjectiveSlide({ data }) {
+export default function ObjectiveSlide({ data, hasBgMedia }) {
     return (
         <article
-            className={`${styles.slide} ${styles.objectiveSlide}`}
+            className={`${styles.slide} ${styles.objectiveSlide} ${hasBgMedia ? styles.slideOverBg : ''}`}
             role="region"
             aria-label="Objetivo del curso"
         >

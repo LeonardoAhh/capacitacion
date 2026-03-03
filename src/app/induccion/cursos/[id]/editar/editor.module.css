@@ -18,12 +18,12 @@
 }
 
 .container *::-webkit-scrollbar-thumb {
-    background: rgba(150, 150, 150, 0.2);
+    background: var(--scrollbar-thumb);
     border-radius: 10px;
 }
 
 .container *::-webkit-scrollbar-thumb:hover {
-    background: rgba(150, 150, 150, 0.4);
+    background: color-mix(in srgb, var(--text-tertiary) 30%, transparent);
 }
 
 .header {
@@ -151,8 +151,8 @@
 }
 
 .slideItem.active {
-    background: rgba(var(--color-primary-rgb), 0.08);
-    border-color: rgba(var(--color-primary-rgb), 0.3);
+    background: color-mix(in srgb, var(--color-primary) 8%, transparent);
+    border-color: color-mix(in srgb, var(--color-primary) 30%, transparent);
 }
 
 .slideItem.dragging {
@@ -185,7 +185,7 @@
     background: var(--bg-secondary) !important;
     border-color: var(--color-primary) !important;
     border-style: solid !important;
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+    box-shadow: var(--shadow-md);
     opacity: 1 !important;
     scale: 1.02;
 }
@@ -240,7 +240,7 @@
 }
 
 .addSlideBtn:hover {
-    background: rgba(var(--color-primary-rgb), 0.05);
+    background: color-mix(in srgb, var(--color-primary) 5%, transparent);
     border-color: var(--color-primary);
 }
 
@@ -372,7 +372,7 @@
     max-width: 800px;
     background: var(--bg-primary);
     border-radius: 12px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+    box-shadow: var(--shadow-md);
     padding: 32px;
     height: fit-content;
 }
@@ -415,7 +415,7 @@
 .textarea:focus {
     outline: none;
     border-color: var(--color-primary);
-    box-shadow: 0 0 0 3px rgba(var(--color-primary-rgb), 0.1);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-primary) 10%, transparent);
     background: var(--bg-primary);
 }
 
@@ -444,7 +444,7 @@
 .removeBtn {
     background: transparent;
     border: none;
-    color: #ef4444;
+    color: var(--color-danger);
     cursor: pointer;
     padding: 4px;
     border-radius: 4px;
@@ -454,7 +454,7 @@
 }
 
 .removeBtn:hover {
-    background: rgba(239, 68, 68, 0.1);
+    background: color-mix(in srgb, var(--color-danger) 10%, transparent);
 }
 
 .addItemBtn {
@@ -475,7 +475,7 @@
 }
 
 .addItemBtn:hover {
-    background: rgba(var(--color-primary-rgb), 0.05);
+    background: color-mix(in srgb, var(--color-primary) 5%, transparent);
     border-color: var(--color-primary);
 }
 
@@ -500,7 +500,7 @@
     color: var(--text-tertiary);
 }
 
-/* ── Premium Add Slide Modal (Redesign) ── */
+/* ── Add Slide Modal (Multi-tema adaptable) ── */
 .slideModalBackdrop {
     position: fixed;
     inset: 0;
@@ -508,7 +508,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    background: rgba(15, 23, 42, 0.45);
+    background: rgba(0, 0, 0, 0.5);
     backdrop-filter: blur(8px);
     -webkit-backdrop-filter: blur(8px);
     animation: fadeInModal 0.3s cubic-bezier(0.16, 1, 0.3, 1);
@@ -516,18 +516,18 @@
 }
 
 .slideModalBox {
-    background: #111111;
-    /* Dark premium background from screenshot */
-    border: 1px solid #2A2A2A;
+    background: color-mix(in srgb, var(--popover-background) 92%, transparent);
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+    border: 1px solid var(--card-border);
     border-radius: 16px;
     width: 100%;
     max-width: 580px;
-    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5),
-        0 0 0 1px rgba(255, 255, 255, 0.05);
+    box-shadow: var(--shadow-lg);
     padding: 24px;
     animation: slideUpScale 0.35s cubic-bezier(0.16, 1, 0.3, 1);
     position: relative;
-    color: #E2E8F0;
+    color: var(--text-primary);
 }
 
 .slideModalHeader {
@@ -541,21 +541,21 @@
     font-family: var(--font-heading);
     font-size: 1.25rem;
     font-weight: 700;
-    color: #F8FAFC;
+    color: var(--text-primary);
     margin: 0 0 4px 0;
     letter-spacing: -0.01em;
 }
 
 .slideModalSubtitle {
     font-size: 0.9rem;
-    color: #94A3B8;
+    color: var(--text-secondary);
     margin: 0;
 }
 
 .slideModalCloseBtn {
-    background: #1E1E1E;
-    border: 1px solid #333333;
-    color: #94A3B8;
+    background: color-mix(in srgb, var(--color-primary) 10%, transparent);
+    border: 1px solid color-mix(in srgb, var(--color-primary) 20%, transparent);
+    color: var(--text-secondary);
     width: 32px;
     height: 32px;
     border-radius: 8px;
@@ -567,8 +567,8 @@
 }
 
 .slideModalCloseBtn:hover {
-    background: #2D2D2D;
-    color: #F8FAFC;
+    background: color-mix(in srgb, var(--color-primary) 20%, transparent);
+    color: var(--text-primary);
 }
 
 .slideTypesGrid {
@@ -582,8 +582,8 @@
     align-items: center;
     gap: 16px;
     padding: 16px;
-    background: #1A1A1A;
-    border: 1px solid #2D2D2D;
+    background: var(--bg-secondary);
+    border: 1px solid var(--card-border);
     border-radius: 12px;
     cursor: pointer;
     transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
@@ -591,10 +591,10 @@
 }
 
 .slideTypeCard:hover {
-    background: #242424;
-    border-color: #4A4A4A;
+    background: color-mix(in srgb, var(--color-primary) 8%, var(--bg-secondary));
+    border-color: var(--color-primary);
     transform: translateY(-2px);
-    box-shadow: 0 8px 16px -8px rgba(0, 0, 0, 0.3);
+    box-shadow: var(--shadow-md);
 }
 
 .slideTypeIcon {
@@ -613,13 +613,13 @@
 .slideTypeName {
     font-size: 0.95rem;
     font-weight: 600;
-    color: #F8FAFC;
+    color: var(--text-primary);
     margin: 0 0 2px 0;
 }
 
 .slideTypeDesc {
     font-size: 0.75rem;
-    color: #94A3B8;
+    color: var(--text-secondary);
     margin: 0;
     line-height: 1.3;
 }

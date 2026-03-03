@@ -9,7 +9,7 @@ import styles from './slides.module.css';
  * @param {Object}   props.data           - Datos del quiz (heading, questions, passingScore)
  * @param {Function} [props.onQuizSubmit] - Callback con el score (0-100) al enviar
  */
-export default function QuizSlide({ data, onQuizSubmit }) {
+export default function QuizSlide({ data, onQuizSubmit, hasBgMedia }) {
     const [answers, setAnswers] = useState({});
     const [submitted, setSubmitted] = useState(false);
     const [shakeIdx, setShakeIdx] = useState(null); // {qi, oi} para shake animation
@@ -56,7 +56,7 @@ export default function QuizSlide({ data, onQuizSubmit }) {
 
     return (
         <article
-            className={`${styles.slide} ${styles.quizSlide}`}
+            className={`${styles.slide} ${styles.quizSlide} ${hasBgMedia ? styles.slideOverBg : ''}`}
             role="region"
             aria-label="Evaluación final"
         >

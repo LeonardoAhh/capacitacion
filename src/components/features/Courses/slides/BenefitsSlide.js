@@ -1,11 +1,11 @@
 import styles from './slides.module.css';
 
-export default function BenefitsSlide({ data }) {
+export default function BenefitsSlide({ data, hasBgMedia }) {
     const accentColor = data.accent || 'var(--course-accent)';
 
     return (
         <article
-            className={`${styles.slide} ${styles.benefitsSlide}`}
+            className={`${styles.slide} ${styles.benefitsSlide} ${hasBgMedia ? styles.slideOverBg : ''}`}
             role="region"
             aria-label="Beneficios del curso"
         >

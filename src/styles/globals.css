@@ -80,40 +80,50 @@
 }
 
 [data-theme="dark"] {
-  /* Dark Mode - Editorial Dark */
-  --bg-primary: #111110;
-  --bg-secondary: #1c1c1a;
-  --bg-tertiary: #272725;
-  --bg-primary-rgb: 17, 17, 16;
+  /* Dark Mode - Dark Glass VIÑOPLASTIC */
+  --bg-primary: #060612;
+  /* Deep Navy Base */
+  --bg-secondary: #0a0f2e;
+  /* Navy Elevado */
+  --bg-tertiary: #10163a;
+  /* Navy Superior */
+  --bg-primary-rgb: 6, 6, 18;
 
-  --app-background: #111110;
-  --card-background: rgba(28, 28, 26, 0.8);
-  --card-border: rgba(255, 255, 255, 0.06);
-  --popover-background: #1c1c1a;
+  --app-background: #060612;
+  --card-background: rgba(10, 15, 46, 0.75);
+  /* Liquid Glass Base */
+  --card-border: rgba(77, 128, 255, 0.15);
+  /* Subtly Blue Border */
+  --popover-background: #0a0f2e;
 
   /* Text Colors */
   --text-primary: #ffffff;
-  --text-secondary: #babab1;
-  --text-tertiary: #8b8b83;
+  --text-secondary: #94a3b8;
+  --text-tertiary: #64748b;
 
   /* Separator */
-  --border-color: rgba(255, 255, 255, 0.08);
-  --border-color-rgb: 255, 255, 255;
+  --border-color: rgba(77, 128, 255, 0.12);
+  --border-color-rgb: 77, 128, 255;
 
-  /* Shadows */
-  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.4);
-  --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.6);
-  --shadow-lg: 0 16px 48px rgba(0, 0, 0, 0.8);
+  /* Shadows (Tinte frío nocturno) */
+  --shadow-sm: 0 2px 8px rgba(0, 5, 20, 0.5);
+  --shadow-md: 0 8px 24px rgba(0, 5, 20, 0.7);
+  --shadow-lg: 0 16px 48px rgba(0, 5, 20, 0.9);
 
-  /* Vibrant Colors - Maintain Ambar */
-  --color-primary: #f59e0b;
-  --color-secondary: #fbbf24;
-  --color-accent: #fcd34d;
+  /* Vibrant Colors - VIÑOPLASTIC */
+  --color-primary: #003ccc;
+  /* Azul Corporativo (antes ambar) */
+  --color-secondary: #0050e0;
+  --color-accent: #3b82f6;
+  /* Azul brillante para hovers/selections */
+
   --color-warning: #f59e0b;
-  --color-danger: #ef4444;
+  /* Mantener para alertas de Cuidado */
+  --color-danger: #d40000;
+  /* Rojo Corporativo (antes red generico) */
 
   /* Scrollbar Dark */
-  --scrollbar-thumb: rgba(255, 255, 255, 0.15);
+  --scrollbar-thumb: rgba(77, 128, 255, 0.2);
   --scrollbar-track: transparent;
 }
 
