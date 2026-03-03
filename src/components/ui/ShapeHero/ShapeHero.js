@@ -44,16 +44,10 @@ function ShapeHeroComponent() {
             {/* Subtle grid texture */}
             <div className={styles.grid} aria-hidden="true" />
 
-            {/* Top bar */}
-            <header className={styles.topBar}>
-                <div className={styles.topBarBrand}>
-                    <span className={styles.topBarDot} aria-hidden="true" />
-                    <span className={styles.topBarLabel}>Viñoplastic · Planta Querétaro</span>
-                </div>
-                <div className={styles.controls}>
-                    <ThemeSelector />
-                </div>
-            </header>
+            {/* Pill de tema — esquina superior derecha */}
+            <div className={styles.themePill}>
+                <ThemeSelector />
+            </div>
 
             {/* Main content */}
             <div className={styles.content} id="main-content">

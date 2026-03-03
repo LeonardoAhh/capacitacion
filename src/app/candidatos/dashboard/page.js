@@ -22,11 +22,12 @@ import CoursesGrid from './components/CoursesGrid';
 import CourseViewer from './components/CourseViewer';
 import ExamModal from './components/ExamModal';
 import { DashboardSkeleton, useToast, CourseDeadlineTimer } from './components';
-import ModernPillNavbar from './components/ModernPillNavbar';
+import ProfileDropdown from '@/components/layout/ProfileDropdown/ProfileDropdown';
 import SupportButton from './components/SupportButton';
 
 import { useCandidateSession, useCourseProgress, useSessionTimer } from './hooks';
 import { useCandidateData } from '@/hooks/useCandidateData';
+import { extractFirstName } from './utils/helpers';
 import { loadCoursesForPosition } from './services/courseService';
 import { getCourseWithSlides } from '@/lib/courseService';
 import CoursePlayer from '@/components/features/Courses/CoursePlayer';
@@ -248,16 +249,14 @@ export default function CandidatoDashboard() {
                 onSelectTheme={updateTheme}
             />
 
-            <nav className={styles.navbar}>
-                <ModernPillNavbar
-                    candidate={candidate}
-                    onLogout={handleLogout}
-                    timeLeft={Math.floor(timeLeft / 1000)}
-                    toggleTheme={toggleTheme}
-                    onAvatarClick={() => setShowAvatarSelector(true)}
-                    onThemeClick={() => setShowThemeSelector(true)}
-                />
-            </nav>
+            <ProfileDropdown
+                userName={candidate?.nickname || extractFirstName(candidate?.name || candidate?.nombre)}
+                userAvatar={candidate?.avatar || candidate?.photoURL}
+                onLogout={handleLogout}
+                onAvatarClick={() => setShowAvatarSelector(true)}
+                onToggleTheme={() => updateTheme((candidate?.theme || 'light') === 'dark' ? 'light' : 'dark')}
+                showProfile={false}
+            />
 
             <div className={styles.scrollContent}>
                 <CourseDeadlineTimer
@@ -265,7 +264,7 @@ export default function CandidatoDashboard() {
                     courses={courses}
                     completedCourses={candidate?.cursosCompletados || []}
                 />
-                <ImportantInfoCards />
+
 
                 <div className={styles.infoColumns}>
                     <ContactInfo />

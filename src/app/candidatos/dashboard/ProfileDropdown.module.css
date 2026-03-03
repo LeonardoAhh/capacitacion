@@ -1,370 +1,201 @@
-.dropdownContainer {
-    position: relative;
-    display: inline-block;
-}
+/* =======================================================
+   ProfileDropdown Candidatos — Pill permanente iOS Glass
+   (mismo diseño que layout/ProfileDropdown)
+   ======================================================= */
 
-.triggerButton {
+.pill {
+    position: fixed;
+    bottom: 1.5rem;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 1000;
+
     display: flex;
     align-items: center;
-    gap: 12px;
-    padding: 6px 8px 6px 16px;
-    background: #ffffff;
-    border: 1px solid rgba(0, 0, 0, 0.08);
-    border-radius: 32px;
-    cursor: pointer;
-    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);
+    gap: 0.25rem;
+    padding: 0.5rem 0.875rem;
+    border-radius: 999px;
+    white-space: nowrap;
+
+    background: rgba(255, 255, 255, 0.82);
+    backdrop-filter: blur(28px) saturate(200%);
+    -webkit-backdrop-filter: blur(28px) saturate(200%);
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    box-shadow:
+        0 8px 32px rgba(0, 0, 0, 0.10),
+        0 2px 8px rgba(0, 0, 0, 0.05),
+        inset 0 1px 0 rgba(255, 255, 255, 1);
+
+    transition: box-shadow 0.3s ease, background 0.3s ease;
 }
 
-.triggerButton:hover {
-    background: #fdfaf6;
-    border-color: rgba(245, 158, 11, 0.3);
-    /* Ambar softly */
-    box-shadow: 0 4px 12px rgba(245, 158, 11, 0.08);
-    transform: translateY(-1px);
+[data-theme="dark"] .pill {
+    background: rgba(44, 44, 46, 0.88);
+    border-color: rgba(255, 255, 255, 0.10);
+    box-shadow:
+        0 8px 32px rgba(0, 0, 0, 0.55),
+        0 2px 8px rgba(0, 0, 0, 0.35),
+        inset 0 1px 0 rgba(255, 255, 255, 0.06);
 }
 
-.triggerButton[aria-expanded="true"] {
-    background: #fdfaf6;
-    border-color: rgba(245, 158, 11, 0.3);
+@supports (padding: max(0px)) {
+    .pill {
+        bottom: max(1.5rem, env(safe-area-inset-bottom));
+    }
 }
 
-.userInfo {
-    text-align: right;
+/* ─── Avatar button ─────────────────────────────────────── */
+
+.avatarBtn {
     display: flex;
-    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    background: none;
+    border: none;
+    padding: 0;
+    border-radius: 999px;
+    transition: opacity 0.15s ease;
 }
 
-/* Hide text on mobile */
-@media (max-width: 640px) {
-    .userInfo {
-        display: none;
-    }
-
-    .triggerButton {
-        padding: 4px;
-        border-radius: 50%;
-        background: transparent;
-        border: none;
-        box-shadow: none;
-        gap: 0;
-    }
-
-    .triggerButton:hover {
-        background: rgba(0, 0, 0, 0.05);
-        box-shadow: none;
-    }
-
-    .chevron {
-        display: none;
-    }
+.avatarBtn:hover {
+    opacity: 0.8;
 }
 
-.userName {
-    font-size: 14px;
-    font-weight: 600;
-    color: #111110;
-    line-height: 1.2;
-}
-
-.userEmail {
-    font-size: 11px;
-    color: #8c8c82;
-}
-
-.avatarContainer {
-    position: relative;
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    padding: 2px;
-    background: linear-gradient(135deg, #f59e0b, #d97706);
-    /* Ambar gradient */
-}
+/* ─── Avatar ────────────────────────────────────────────── */
 
 .avatar {
-    width: 100%;
-    height: 100%;
+    position: relative;
+    width: 30px;
+    height: 30px;
     border-radius: 50%;
     overflow: hidden;
-    background: white;
+    flex-shrink: 0;
+    background: var(--bg-secondary, #f5f5f5);
+    border: 1.5px solid rgba(245, 158, 11, 0.4);
     display: flex;
     align-items: center;
     justify-content: center;
 }
 
-.avatarImg {
+.avatarImage {
     width: 100%;
     height: 100%;
     object-fit: cover;
 }
 
-.chevron {
-    color: #a3a39a;
-    transition: transform 0.2s, color 0.3s ease;
-}
-
-.triggerButton:hover .chevron,
-.triggerButton[aria-expanded="true"] .chevron {
+.avatarFallback {
+    font-size: 0.65rem;
+    font-weight: 700;
     color: #f59e0b;
 }
 
-.dropdownMenu {
-    position: absolute;
-    top: calc(100% + 8px);
-    right: 0;
-    width: 240px;
-    background: #ffffff;
-    border: 1px solid rgba(0, 0, 0, 0.08);
-    border-radius: 20px;
-    padding: 8px;
-    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
-    z-index: 50;
-    transform-origin: top right;
-    animation: scaleIn 0.15s ease-out;
+/* ─── Nombre ────────────────────────────────────────────── */
+
+.name {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: rgba(60, 60, 67, 0.85);
+    letter-spacing: 0.01em;
+    max-width: 110px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
-/* Shimmer top line ambar */
-.dropdownMenu::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 10%;
-    width: 80%;
-    height: 2px;
-    background: linear-gradient(90deg, transparent, #f59e0b, transparent);
-    pointer-events: none;
-    opacity: 0.8;
+[data-theme="dark"] .name {
+    color: rgba(255, 255, 255, 0.85);
 }
 
-.mobileUserInfo {
-    display: none;
-    padding: 8px 12px;
-    margin-bottom: 8px;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+/* ─── Divisor ───────────────────────────────────────────── */
+
+.divider {
+    display: block;
+    width: 1px;
+    height: 18px;
+    background: rgba(0, 0, 0, 0.08);
+    border-radius: 1px;
+    flex-shrink: 0;
+    margin: 0 0.25rem;
 }
 
-@media (max-width: 640px) {
-    .mobileUserInfo {
-        display: block;
-    }
+[data-theme="dark"] .divider {
+    background: rgba(255, 255, 255, 0.12);
 }
 
-.mobileUserName {
-    font-size: 14px;
-    font-weight: 700;
-    color: #111110;
-}
+/* ─── Icon button ───────────────────────────────────────── */
 
-.mobileUserSubtitle {
-    font-size: 11px;
-    color: #8c8c82;
-    margin-top: 2px;
-}
-
-@keyframes scaleIn {
-    from {
-        opacity: 0;
-        transform: scale(0.95);
-    }
-
-    to {
-        opacity: 1;
-        transform: scale(1);
-    }
-}
-
-.menuItem {
+.iconBtn {
     display: flex;
     align-items: center;
-    gap: 10px;
-    width: 100%;
-    padding: 10px 12px;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
     border: none;
     background: transparent;
-    color: #111110;
-    font-size: 14px;
-    font-weight: 500;
-    border-radius: 12px;
     cursor: pointer;
-    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    color: rgba(60, 60, 67, 0.6);
     text-decoration: none;
+    transition: color 0.2s ease, background 0.2s ease, transform 0.2s ease;
+    flex-shrink: 0;
 }
 
-.menuItem:hover {
-    background: #fdfaf6;
-    color: #d97706;
-    /* Ambar */
+[data-theme="dark"] .iconBtn {
+    color: rgba(255, 255, 255, 0.6);
 }
 
-.menuItem:hover svg {
+.iconBtn:hover {
     color: #f59e0b;
+    background: rgba(245, 158, 11, 0.1);
+    transform: scale(1.12);
 }
 
-.separator {
-    height: 1px;
-    background: rgba(0, 0, 0, 0.06);
-    margin: 8px 4px;
+[data-theme="dark"] .iconBtn:hover {
+    background: rgba(245, 158, 11, 0.15);
 }
 
-.logoutButton {
-    color: #ef4444;
+.iconBtn:active {
+    transform: scale(0.88) rotate(10deg);
 }
 
-.logoutButton:hover {
-    background: rgba(239, 68, 68, 0.05);
-    color: #ef4444;
-}
-
-.timerItem {
-    background: #fdfaf6;
-    border: 1px solid rgba(245, 158, 11, 0.1);
-    color: #d97706;
-    margin-bottom: 8px;
-    cursor: default;
-}
-
-.timerItem svg {
-    color: #f59e0b;
-}
-
-.timerItem:hover {
-    background: #fdfaf6;
-    color: #d97706;
-}
-
-/* ==================== FOCUS VISIBLE STATES ==================== */
-
-.triggerButton:focus-visible {
-    outline: 2px solid #f59e0b;
+.iconBtn:focus-visible {
+    outline: 2px solid rgba(245, 158, 11, 0.7);
     outline-offset: 2px;
-    box-shadow: 0 0 0 4px rgba(245, 158, 11, 0.2);
 }
 
-.menuItem:focus-visible {
-    outline: 2px solid #f59e0b;
-    outline-offset: -2px;
-    background: #fdfaf6;
+/* ─── Sign out (rojo) ───────────────────────────────────── */
+
+.signOutBtn {
+    color: rgba(239, 68, 68, 0.7);
 }
 
-.logoutButton:focus-visible {
-    outline-color: #ef4444;
-    background: rgba(239, 68, 68, 0.05);
+.signOutBtn:hover {
+    color: #ef4444;
+    background: rgba(239, 68, 68, 0.08);
+    transform: scale(1.12);
 }
 
-/* ==================== TOUCH-FRIENDLY SIZING ==================== */
+/* ─── Responsive ────────────────────────────────────────── */
 
-/* ==================== BACKDROP & ANIMATIONS ==================== */
-.backdrop {
-    display: none;
-}
-
-@keyframes slideUp {
-    from {
-        transform: translateY(100%);
+@media (max-width: 480px) {
+    .name {
+        display: none;
     }
 
-    to {
-        transform: translateY(0);
+    .pill {
+        padding: 0.5rem 0.625rem;
     }
 }
 
-/* ==================== TOUCH-FRIENDLY SIZING (BOTTOM SHEET) ==================== */
-
-@media (max-width: 640px) {
-    .backdrop {
-        display: block;
-        position: fixed;
-        inset: 0;
-        background: rgba(0, 0, 0, 0.4);
-        backdrop-filter: blur(4px);
-        z-index: 90;
-        animation: fadeIn 0.2s ease-out;
-    }
-
-    .dropdownMenu {
-        position: fixed;
-        top: auto;
-        bottom: 0;
-        left: 0;
-        right: 0;
-        width: 100%;
-        max-width: 100%;
-        border-radius: 20px 20px 0 0;
-        padding: 20px 16px 32px;
-        /* Safe area handling */
-        transform-origin: bottom center;
-        animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-        z-index: 100;
-        border: none;
-        border-top: 1px solid rgba(0, 0, 0, 0.08);
-        /* Reemplazado card border var */
-        box-shadow: 0 -4px 24px rgba(0, 0, 0, 0.15);
-    }
-}
-
-@keyframes fadeIn {
-    from {
-        opacity: 0;
-    }
-
-    to {
-        opacity: 1;
-    }
-}
-
-@media (max-width: 640px) {
-    .menuItem {
-        min-height: 56px;
-        /* Larger touch target */
-        padding: 0 16px;
-        font-size: 16px;
-        background: rgba(0, 0, 0, 0.03);
-        margin-bottom: 8px;
-        border-radius: 12px;
-    }
-
-    .avatarContainer {
-        width: 44px;
-        height: 44px;
-    }
-
-    .mobileUserInfo {
-        text-align: center;
-        margin-bottom: 24px;
-        border-bottom: none;
-        padding: 0;
-    }
-
-    .mobileUserName {
-        font-size: 18px;
-        margin-bottom: 4px;
-    }
-
-    .mobileUserSubtitle {
-        font-size: 13px;
-        opacity: 0.7;
-    }
-}
-
-/* ==================== IMPROVED CONTRAST ==================== */
-
-.mobileUserSubtitle {
-    font-size: 11px;
-    color: #636366;
-    margin-top: 2px;
-}
-
-/* ==================== REDUCED MOTION ==================== */
+/* ─── Reduced motion ────────────────────────────────────── */
 
 @media (prefers-reduced-motion: reduce) {
-    .dropdownMenu {
-        animation: none;
+    .iconBtn {
+        transition: none;
     }
 
-    .triggerButton,
-    .menuItem,
-    .chevron {
-        transition: none;
+    .iconBtn:hover,
+    .iconBtn:active {
+        transform: none;
     }
 }

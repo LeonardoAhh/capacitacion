@@ -1,87 +1,171 @@
-/* ==========================================
-   COURSE DEADLINE TIMER
-   CSS Puro • Multi-tema • PWA • Accesible
-   ========================================== */
+/* =====================================================
+   CourseDeadlineTimer — iOS Liquid Glass
+   ===================================================== */
+
+/* ─── Contenedor principal glass ────────────────────── */
 
 .deadlineContainer {
-    background: var(--course-card-bg);
-    border: 1px solid var(--course-card-border);
-    border-radius: var(--course-radius-md);
-    padding: var(--course-spacing-md);
+    position: relative;
+    border-radius: 22px;
+    overflow: hidden;
+    padding: 1.25rem 1.5rem;
     display: flex;
     flex-direction: column;
-    gap: var(--course-spacing-sm);
-    margin-bottom: var(--course-spacing-md);
-    transition: all var(--course-transition-base);
+    gap: 1rem;
+    margin-bottom: 1.25rem;
+
+    background: rgba(255, 255, 255, 0.70);
+    backdrop-filter: blur(40px) saturate(180%);
+    -webkit-backdrop-filter: blur(40px) saturate(180%);
+    border: 1px solid rgba(255, 255, 255, 0.60);
+    box-shadow:
+        0 8px 32px rgba(0, 0, 0, 0.08),
+        0 2px 8px rgba(0, 0, 0, 0.04),
+        inset 0 1px 0 rgba(255, 255, 255, 0.95);
+
+    transition: box-shadow 0.3s ease, background 0.3s ease;
 }
 
-.deadlineContainer.urgent {
-    background: rgba(245, 158, 11, 0.08);
-    border-color: var(--color-warning);
-    animation: coursePulse 2s infinite;
+/* Glow top */
+.deadlineContainer::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 40%;
+    background: radial-gradient(ellipse 80% 60% at 20% 0%,
+            rgba(245, 158, 11, 0.10) 0%,
+            transparent 100%);
+    pointer-events: none;
+    border-radius: inherit;
 }
 
-.deadlineContainer.expired {
-    background: rgba(239, 68, 68, 0.08);
-    border-color: var(--course-danger);
+/* ─── Urgente ───────────────────────────────────────── */
+
+.urgent {
+    background: rgba(255, 250, 235, 0.80);
+    border-color: rgba(245, 158, 11, 0.30);
+    box-shadow:
+        0 8px 32px rgba(245, 158, 11, 0.15),
+        0 2px 8px rgba(245, 158, 11, 0.08),
+        inset 0 1px 0 rgba(255, 255, 255, 0.95);
+    animation: timerPulse 2s ease-in-out infinite;
 }
+
+@keyframes timerPulse {
+
+    0%,
+    100% {
+        box-shadow: 0 8px 32px rgba(245, 158, 11, 0.15), 0 2px 8px rgba(245, 158, 11, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.95);
+    }
+
+    50% {
+        box-shadow: 0 8px 40px rgba(245, 158, 11, 0.28), 0 2px 8px rgba(245, 158, 11, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.95);
+    }
+}
+
+/* ─── Vencido ───────────────────────────────────────── */
+
+.expired {
+    background: rgba(255, 243, 242, 0.80);
+    border-color: rgba(239, 68, 68, 0.25);
+    box-shadow:
+        0 8px 32px rgba(239, 68, 68, 0.12),
+        0 2px 8px rgba(239, 68, 68, 0.06),
+        inset 0 1px 0 rgba(255, 255, 255, 0.95);
+}
+
+/* ─── Dark mode ─────────────────────────────────────── */
+
+[data-theme="dark"] .deadlineContainer {
+    background: rgba(44, 44, 46, 0.85);
+    border-color: rgba(255, 255, 255, 0.08);
+    box-shadow:
+        0 8px 32px rgba(0, 0, 0, 0.55),
+        0 2px 8px rgba(0, 0, 0, 0.30),
+        inset 0 1px 0 rgba(255, 255, 255, 0.06);
+}
+
+[data-theme="dark"] .urgent {
+    background: rgba(55, 40, 15, 0.88);
+    border-color: rgba(245, 158, 11, 0.25);
+}
+
+[data-theme="dark"] .expired {
+    background: rgba(50, 20, 20, 0.88);
+    border-color: rgba(239, 68, 68, 0.20);
+}
+
+/* ─── Layout interior ───────────────────────────────── */
 
 .timerSide {
+    position: relative;
+    z-index: 1;
     display: flex;
-    gap: var(--course-spacing-md);
+    gap: 1rem;
     align-items: flex-start;
 }
+
+/* ─── Ícono badge ───────────────────────────────────── */
 
 .iconWrapper {
     width: 48px;
     height: 48px;
-    border-radius: var(--radius-md);
+    border-radius: 14px;
     display: flex;
     align-items: center;
     justify-content: center;
     flex-shrink: 0;
-    background: rgba(59, 130, 246, 0.1);
-    color: var(--course-accent);
-    transition: all var(--course-transition-fast);
+    background: rgba(245, 158, 11, 0.12);
+    color: #f59e0b;
+    border: 1px solid rgba(245, 158, 11, 0.20);
 }
 
 .urgent .iconWrapper {
-    background: rgba(245, 158, 11, 0.15);
-    color: var(--color-warning);
+    background: rgba(245, 158, 11, 0.18);
+    border-color: rgba(245, 158, 11, 0.35);
+    color: #f59e0b;
 }
 
 .expired .iconWrapper {
-    background: rgba(239, 68, 68, 0.15);
-    color: var(--course-danger);
+    background: rgba(239, 68, 68, 0.12);
+    border-color: rgba(239, 68, 68, 0.25);
+    color: #ef4444;
 }
+
+/* ─── Contenido timer ───────────────────────────────── */
 
 .content {
     flex: 1;
     display: flex;
     flex-direction: column;
-    gap: var(--course-spacing-sm);
+    gap: 0.5rem;
 }
 
 .title {
-    font-size: var(--course-font-base);
-    font-weight: 600;
+    font-size: 0.9375rem;
+    font-weight: 700;
     color: var(--text-primary);
     margin: 0;
-    transition: color var(--course-transition-fast);
+    letter-spacing: -0.01em;
+    font-family: inherit;
 }
 
 .urgent .title {
-    color: var(--color-warning);
+    color: #d97706;
 }
 
 .expired .title {
-    color: var(--course-danger);
+    color: #dc2626;
 }
+
+/* ─── Dígitos timer ─────────────────────────────────── */
 
 .timerDisplay {
     display: flex;
     align-items: center;
-    gap: var(--course-spacing-xs);
+    gap: 0.25rem;
     flex-wrap: wrap;
 }
 
@@ -89,66 +173,87 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    min-width: 50px;
+    min-width: 48px;
+    background: rgba(245, 158, 11, 0.08);
+    border-radius: 10px;
+    padding: 0.375rem 0.5rem;
+    border: 1px solid rgba(245, 158, 11, 0.14);
+}
+
+[data-theme="dark"] .timeUnit {
+    background: rgba(245, 158, 11, 0.10);
+    border-color: rgba(245, 158, 11, 0.18);
 }
 
 .timeValue {
-    font-size: 1.5rem;
-    font-weight: 700;
-    color: var(--course-accent);
-    line-height: 1.2;
+    font-size: 1.375rem;
+    font-weight: 800;
+    color: #f59e0b;
+    line-height: 1.1;
     font-variant-numeric: tabular-nums;
-    transition: color var(--course-transition-fast);
+    letter-spacing: -0.02em;
 }
 
 .urgent .timeValue {
-    color: var(--color-warning);
+    color: #d97706;
 }
 
 .timeLabel {
-    font-size: 0.625rem;
+    font-size: 0.5625rem;
     text-transform: uppercase;
     color: var(--text-tertiary);
-    font-weight: 500;
-    letter-spacing: 0.5px;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    margin-top: 0.125rem;
 }
 
 .separator {
     font-size: 1.25rem;
     font-weight: 700;
-    color: var(--text-secondary);
+    color: #f59e0b;
+    opacity: 0.5;
     margin-top: -0.5rem;
+    padding: 0 0.125rem;
 }
 
 .subtitle {
-    font-size: var(--course-font-xs);
-    color: var(--text-secondary);
+    font-size: 0.75rem;
+    color: var(--text-tertiary);
     margin: 0;
+    line-height: 1.4;
 }
 
 .subtitle strong {
-    color: var(--course-accent);
-    font-weight: 600;
+    color: #f59e0b;
+    font-weight: 700;
 }
 
 .message {
-    font-size: var(--course-font-sm);
+    font-size: 0.8125rem;
     color: var(--text-secondary);
     margin: 0;
     line-height: 1.5;
 }
 
 .message strong {
-    color: var(--course-danger);
+    color: #ef4444;
     font-weight: 600;
 }
 
+/* ─── Progress / Course list ────────────────────────── */
+
 .courseSummary {
-    border-top: 1px solid var(--border-color);
-    padding-top: var(--course-spacing-sm);
+    position: relative;
+    z-index: 1;
+    border-top: 1px solid rgba(0, 0, 0, 0.06);
+    padding-top: 0.875rem;
     display: flex;
     flex-direction: column;
-    gap: 0.375rem;
+    gap: 0.5rem;
+}
+
+[data-theme="dark"] .courseSummary {
+    border-top-color: rgba(255, 255, 255, 0.08);
 }
 
 .courseSummaryHeader {
@@ -158,33 +263,38 @@
 }
 
 .courseSummaryTitle {
-    font-size: var(--course-font-xs);
+    font-size: 0.75rem;
     font-weight: 600;
     color: var(--text-primary);
 }
 
 .courseSummaryCount {
-    font-size: var(--course-font-xs);
+    font-size: 0.6875rem;
     font-weight: 700;
-    color: var(--course-accent);
-    background: rgba(59, 130, 246, 0.1);
-    padding: 0.125rem var(--course-spacing-sm);
+    color: #f59e0b;
+    background: rgba(245, 158, 11, 0.10);
+    border: 1px solid rgba(245, 158, 11, 0.18);
+    padding: 0.1rem 0.5rem;
     border-radius: 999px;
 }
 
 .progressBar {
     width: 100%;
     height: 4px;
-    background: var(--border-color);
+    background: rgba(0, 0, 0, 0.06);
     border-radius: 999px;
     overflow: hidden;
 }
 
+[data-theme="dark"] .progressBar {
+    background: rgba(255, 255, 255, 0.08);
+}
+
 .progressFill {
     height: 100%;
-    background: var(--course-accent);
+    background: linear-gradient(90deg, #f59e0b, #fbbf24);
     border-radius: 999px;
-    transition: width var(--course-duration-slow) var(--course-ease-out);
+    transition: width 0.6s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .courseList {
@@ -200,13 +310,12 @@
     display: flex;
     align-items: center;
     gap: 0.375rem;
-    font-size: 0.6875rem;
+    font-size: 0.7rem;
     color: var(--text-secondary);
-    transition: opacity var(--course-transition-fast);
 }
 
 .courseCompleted {
-    opacity: 0.6;
+    opacity: 0.60;
 }
 
 .courseCompleted .courseName {
@@ -214,7 +323,7 @@
 }
 
 .courseIconDone {
-    color: var(--course-success);
+    color: #34c759;
     flex-shrink: 0;
 }
 
@@ -229,7 +338,8 @@
     text-overflow: ellipsis;
 }
 
-/* Mobile */
+/* ─── Responsive ────────────────────────────────────── */
+
 @media (max-width: 480px) {
     .timerSide {
         flex-direction: column;
@@ -242,7 +352,7 @@
     }
 
     .timeValue {
-        font-size: 1.25rem;
+        font-size: 1.125rem;
     }
 
     .timeUnit {
@@ -250,7 +360,6 @@
     }
 }
 
-/* Desktop */
 @media (min-width: 768px) {
     .deadlineContainer {
         flex-direction: row;
@@ -259,37 +368,33 @@
 
     .courseSummary {
         border-top: none;
-        border-left: 1px solid var(--border-color);
+        border-left: 1px solid rgba(0, 0, 0, 0.06);
         padding-top: 0;
-        padding-left: var(--course-spacing-md);
+        padding-left: 1.25rem;
         flex: 1;
+    }
+
+    [data-theme="dark"] .courseSummary {
+        border-left-color: rgba(255, 255, 255, 0.08);
     }
 
     .courseList {
         display: grid;
         grid-template-columns: 1fr 1fr;
-        gap: 0.25rem var(--course-spacing-md);
+        gap: 0.25rem 1rem;
     }
 }
 
-/* Accessibility */
+/* ─── Reduced motion ────────────────────────────────── */
+
 @media (prefers-reduced-motion: reduce) {
+
     .deadlineContainer,
-    .iconWrapper,
-    .title,
-    .timeValue,
-    .progressFill,
-    .courseItem {
+    .progressFill {
         transition: none;
     }
 
-    .deadlineContainer.urgent {
+    .urgent {
         animation: none;
-    }
-}
-
-@media (prefers-contrast: high) {
-    .deadlineContainer {
-        border-width: 2px;
     }
 }

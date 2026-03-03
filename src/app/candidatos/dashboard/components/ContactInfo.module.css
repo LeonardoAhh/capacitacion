@@ -1,7 +1,26 @@
+/* =====================================================
+   ContactInfo — iOS Liquid Glass
+   ===================================================== */
+
+.contactSection {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.sectionHeader {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin: 0 0 0.875rem 0;
+    letter-spacing: -0.01em;
+}
+
+/* ─── Grid ─────────────────────────────────────────── */
+
 .contactGrid {
     display: grid;
     gap: 0.75rem;
-    margin-top: 0.75rem;
     flex: 1;
 }
 
@@ -11,18 +30,46 @@
     }
 }
 
-.contactCard {
-    background: var(--bg-secondary);
-    border: 1px solid var(--border-color);
-    border-radius: var(--radius-lg);
+/* ─── Card glass ────────────────────────────────────── */
+
+.contactCard,
+.phonesCard {
+    position: relative;
+    border-radius: 18px;
     padding: 1rem;
+    overflow: hidden;
+
+    background: rgba(255, 255, 255, 0.65);
+    backdrop-filter: blur(40px) saturate(180%);
+    -webkit-backdrop-filter: blur(40px) saturate(180%);
+    border: 1px solid rgba(0, 0, 0, 0.06);
+    box-shadow:
+        0 6px 24px rgba(0, 0, 0, 0.07),
+        0 2px 6px rgba(0, 0, 0, 0.03),
+        inset 0 1px 0 rgba(255, 255, 255, 0.90);
 }
+
+.phonesCard {
+    margin-top: 0.75rem;
+}
+
+[data-theme="dark"] .contactCard,
+[data-theme="dark"] .phonesCard {
+    background: rgba(44, 44, 46, 0.80);
+    border-color: rgba(255, 255, 255, 0.08);
+    box-shadow:
+        0 6px 24px rgba(0, 0, 0, 0.45),
+        0 2px 6px rgba(0, 0, 0, 0.25),
+        inset 0 1px 0 rgba(255, 255, 255, 0.06);
+}
+
+/* ─── Contenido ─────────────────────────────────────── */
 
 .contactHeader {
     display: flex;
     justify-content: space-between;
     align-items: flex-start;
-    margin-bottom: 0.75rem;
+    margin-bottom: 0.625rem;
 }
 
 .contactTitle {
@@ -38,7 +85,11 @@
     text-transform: uppercase;
     letter-spacing: 0.05em;
     margin-bottom: 0.25rem;
-    margin-top: 0.75rem;
+    margin-top: 0.625rem;
+}
+
+.phonesCard .contactLabel {
+    margin-top: 0;
 }
 
 .contactText {
@@ -55,30 +106,7 @@
     flex-shrink: 0;
 }
 
-.sectionHeader {
-    font-size: 1rem;
-    font-weight: 600;
-    color: var(--text-primary);
-    margin: 0;
-}
-
-.contactSection {
-    display: flex;
-    flex-direction: column;
-    height: 100%;
-}
-
-.phonesCard {
-    background: var(--bg-secondary);
-    border: 1px solid var(--border-color);
-    border-radius: var(--radius-lg);
-    padding: 1rem;
-    margin-top: 0.75rem;
-}
-
-.phonesCard .contactLabel {
-    margin-top: 0;
-}
+/* ─── Teléfonos grid ────────────────────────────────── */
 
 .phonesGrid {
     display: grid;

@@ -1,13 +1,30 @@
 .page {
+    position: relative;
     min-height: 100vh;
-    background: var(--bg-primary);
+    isolation: isolate;
+
+    /* Light: mesh cálido crema/ámbar/lavanda */
+    background:
+        radial-gradient(ellipse 80% 60% at 10% 0%, rgba(253, 230, 138, 0.35) 0%, transparent 60%),
+        radial-gradient(ellipse 70% 50% at 90% 10%, rgba(221, 214, 254, 0.25) 0%, transparent 55%),
+        radial-gradient(ellipse 60% 40% at 50% 90%, rgba(186, 230, 253, 0.20) 0%, transparent 60%),
+        linear-gradient(155deg, #fafaf8 0%, #fef9ef 40%, #f5f3ff 70%, #f0f9ff 100%);
+}
+
+[data-theme="dark"] .page {
+    /* Dark: azul profundo / violeta oscuro (del design system de referencia) */
+    background:
+        radial-gradient(ellipse 80% 60% at 10% 0%, rgba(245, 158, 11, 0.08) 0%, transparent 55%),
+        radial-gradient(ellipse 70% 50% at 90% 10%, rgba(139, 92, 246, 0.07) 0%, transparent 55%),
+        radial-gradient(ellipse 60% 40% at 50% 90%, rgba(14, 165, 233, 0.06) 0%, transparent 60%),
+        linear-gradient(155deg, #111110 0%, #1a1614 35%, #16131f 65%, #0f1520 100%);
 }
 
 .scrollContent {
     position: relative;
     z-index: 10;
     min-height: 100vh;
-    padding: 5rem 1rem 2rem;
+    padding: 2rem 1rem 8rem;
     max-width: 1200px;
     margin: 0 auto;
     display: flex;

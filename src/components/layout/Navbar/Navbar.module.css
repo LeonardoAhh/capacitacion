@@ -1,247 +1,623 @@
-/* ==================== FLOATING DOCK NAVBAR ==================== */
-.navbar {
-    position: sticky;
-    top: 20px;
-    z-index: 1000;
-    width: 100%;
-    display: flex;
-    justify-content: center;
-    padding: 0 20px;
-    pointer-events: none;
-    /* Allows clicks to pass through empty side areas */
-    margin-bottom: 20px;
-    /* Add spacing to content below */
-}
+/* =======================================================
+   Navbar — iOS Liquid Glass Pill · Bottom Fixed
+   Temas con [data-theme="dark"]
+   ======================================================= */
 
-.container {
-    pointer-events: auto;
-    /* Re-enable interactions on the dock itself */
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 24px;
+/* ─── Keyframes ─────────────────────────────────────────── */
 
-    /* Dynamic width based on content, but with sane limits */
-    width: 100%;
-    max-width: 900px;
-    min-height: 64px;
-
-    padding: 6px 8px 6px 24px;
-    /* Less padding right for round buttons */
-
-    /* Glass Effect Light */
-    background: rgba(255, 255, 255, 0.75);
-    backdrop-filter: saturate(180%) blur(20px);
-    -webkit-backdrop-filter: saturate(180%) blur(20px);
-
-    border: 1px solid rgba(255, 255, 255, 0.4);
-    border-radius: 100px;
-    /* Full Capsule Shape */
-
-    box-shadow:
-        0 4px 20px -5px rgba(0, 0, 0, 0.1),
-        0 10px 40px -10px rgba(0, 0, 0, 0.05);
-
-    animation: floatIn 0.6s cubic-bezier(0.2, 0.8, 0.2, 1);
-    transition: all 0.3s ease;
-}
-
-[data-theme="dark"] .container {
-    /* Glass Effect Dark - Deep & Premium */
-    background: rgba(20, 20, 24, 0.75);
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    box-shadow:
-        0 4px 20px -5px rgba(0, 0, 0, 0.3),
-        inset 0 1px 0 rgba(255, 255, 255, 0.05);
-}
-
-/* ==================== LOGO SECTION ==================== */
-.logo {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    text-decoration: none;
-    transition: opacity 0.2s;
-    padding-right: 12px;
-}
-
-.logo:hover {
-    opacity: 0.8;
-}
-
-/* .logoIcon and .logoText removed */
-
-.logoImageContainer {
-    display: flex;
-    align-items: center;
-}
-
-.logoImg {
-    width: auto;
-    height: 48px;
-    max-width: 140px;
-    object-fit: contain;
-    transition: transform 0.2s;
-}
-
-.logoImg:hover {
-    transform: scale(1.05);
-}
-
-
-/* ==================== CONTROLS SECTION ==================== */
-.actions {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    background: rgba(0, 0, 0, 0.04);
-    padding: 5px;
-    border-radius: 50px;
-}
-
-[data-theme="dark"] .actions {
-    background: rgba(255, 255, 255, 0.06);
-}
-
-/* User Pill */
-.userInfo {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    padding: 4px 16px 4px 4px;
-    margin-right: 4px;
-    background: var(--bg-primary);
-    border-radius: 40px;
-    border: 1px solid rgba(0, 0, 0, 0.05);
-    transition: transform 0.2s;
-    cursor: default;
-}
-
-[data-theme="dark"] .userInfo {
-    border-color: rgba(255, 255, 255, 0.05);
-}
-
-.userInfo:hover {
-    transform: scale(1.02);
-}
-
-.userAvatar {
-    width: 32px;
-    height: 32px;
-    border-radius: 50%;
-    background: linear-gradient(135deg, #FF2D55, #FF9F0A);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: white;
-    font-size: 0.85rem;
-    font-weight: 700;
-}
-
-.userDetails {
-    display: flex;
-    flex-direction: column;
-    line-height: 1.1;
-    padding-right: 4px;
-}
-
-.userName {
-    font-size: 0.85rem;
-    font-weight: 600;
-    color: var(--text-primary);
-}
-
-.userRole {
-    font-size: 0.7rem;
-    color: var(--text-tertiary);
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    font-weight: 500;
-}
-
-/* Buttons - Inline Styles */
-.iconBtn {
-    width: 42px;
-    height: 42px;
-    border-radius: 50%;
-    background: transparent;
-    border: none;
-    color: var(--text-secondary);
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: all 0.25s cubic-bezier(0.3, 0, 0.2, 1);
-    position: relative;
-    overflow: hidden;
-}
-
-.iconBtn:hover {
-    color: #ef4444;
-    /* Red for logout */
-    background: rgba(239, 68, 68, 0.1);
-}
-
-.themeToggle {
-    width: 42px;
-    height: 42px;
-    border-radius: 50%;
-    background: transparent;
-    border: none;
-    color: var(--text-secondary);
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: all 0.25s cubic-bezier(0.3, 0, 0.2, 1);
-    position: relative;
-    overflow: hidden;
-}
-
-.themeToggle:hover {
-    color: #f59e0b;
-    background: rgba(245, 158, 11, 0.1);
-    transform: rotate(20deg);
-}
-
-/* ==================== ANIMATIONS ==================== */
-@keyframes floatIn {
+@keyframes pillSlideUp {
     from {
         opacity: 0;
-        transform: translateY(-20px) scale(0.95);
+        transform: translateX(-50%) translateY(24px);
     }
 
     to {
         opacity: 1;
-        transform: translateY(0) scale(1);
+        transform: translateX(-50%) translateY(0);
     }
 }
 
-/* ==================== RESPONSIVE ==================== */
-@media (max-width: 768px) {
-    .navbar {
-        top: 10px;
-        padding: 0 10px;
+@keyframes themeFlip {
+    from {
+        opacity: 0;
+        transform: rotate(-30deg) scale(0.6);
     }
 
-    .container {
-        padding: 6px 6px 6px 16px;
-        width: 100%;
-        max-width: 100%;
+    to {
+        opacity: 1;
+        transform: rotate(0deg) scale(1);
+    }
+}
+
+@keyframes drawerIn {
+    from {
+        transform: translateY(100%);
     }
 
-    .logoText {
+    to {
+        transform: translateY(0);
+    }
+}
+
+/* ─── Pill flotante ─────────────────────────────────────── */
+
+.pill {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 1000;
+    pointer-events: auto;
+
+    display: flex;
+    align-items: center;
+    gap: 16px;
+
+    padding: 6px 8px 6px 20px;
+    height: 56px;
+    max-width: min(860px, calc(100vw - 32px));
+    width: max-content;
+
+    /* Glass light */
+    background: rgba(255, 255, 255, 0.78);
+    backdrop-filter: blur(28px) saturate(200%);
+    -webkit-backdrop-filter: blur(28px) saturate(200%);
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    border-radius: 100px;
+    box-shadow:
+        0 8px 32px rgba(0, 0, 0, 0.1),
+        0 2px 8px rgba(0, 0, 0, 0.06),
+        inset 0 1px 0 rgba(255, 255, 255, 1);
+
+    animation: pillSlideUp 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+    transition:
+        background 0.3s ease,
+        box-shadow 0.3s ease,
+        border-color 0.3s ease;
+}
+
+[data-theme="dark"] .pill {
+    background: rgba(28, 28, 30, 0.82);
+    border-color: rgba(255, 255, 255, 0.1);
+    box-shadow:
+        0 8px 32px rgba(0, 0, 0, 0.5),
+        0 2px 8px rgba(0, 0, 0, 0.3),
+        inset 0 1px 0 rgba(255, 255, 255, 0.06);
+}
+
+/* Safe area PWA / Dynamic Island */
+@supports (padding: max(0px)) {
+    .pill {
+        bottom: max(20px, env(safe-area-inset-bottom));
+    }
+}
+
+/* ─── Logo ──────────────────────────────────────────────── */
+
+.logoWrap {
+    display: flex;
+    align-items: center;
+    flex-shrink: 0;
+    padding-right: 4px;
+}
+
+/* ─── Widget motivacional (solo visible en desktop) ─────── */
+
+.widgetWrap {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    justify-content: center;
+}
+
+@media (max-width: 640px) {
+    .widgetWrap {
         display: none;
-        /* Hide text on small mobile to fit everything */
+    }
+}
+
+/* ─── Controls (derecha) ────────────────────────────────── */
+
+.controls {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    background: rgba(0, 0, 0, 0.04);
+    padding: 4px;
+    border-radius: 50px;
+    flex-shrink: 0;
+}
+
+[data-theme="dark"] .controls {
+    background: rgba(255, 255, 255, 0.07);
+}
+
+/* ─── Divisor ───────────────────────────────────────────── */
+
+.divider {
+    display: block;
+    width: 1px;
+    height: 18px;
+    background: rgba(0, 0, 0, 0.1);
+    border-radius: 1px;
+    flex-shrink: 0;
+    margin: 0 2px;
+}
+
+[data-theme="dark"] .divider {
+    background: rgba(255, 255, 255, 0.12);
+}
+
+/* ─── Icon button (tema) ────────────────────────────────── */
+
+.iconBtn {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: rgba(60, 60, 67, 0.65);
+    transition: background 0.2s ease, color 0.2s ease, transform 0.2s ease;
+}
+
+[data-theme="dark"] .iconBtn {
+    color: rgba(235, 235, 245, 0.65);
+}
+
+.iconBtn:hover {
+    background: rgba(245, 158, 11, 0.12);
+    color: #f59e0b;
+    transform: scale(1.08);
+}
+
+.themeIcon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    animation: themeFlip 0.3s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+/* ─── Avatar button (abre drawer) ───────────────────────── */
+
+.avatarBtn {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 10px 4px 4px;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    border-radius: 50px;
+    transition: background 0.2s ease, transform 0.15s ease;
+    color: rgba(60, 60, 67, 0.55);
+}
+
+[data-theme="dark"] .avatarBtn {
+    color: rgba(235, 235, 245, 0.55);
+}
+
+.avatarBtn:hover {
+    background: rgba(0, 0, 0, 0.05);
+    transform: scale(1.03);
+}
+
+[data-theme="dark"] .avatarBtn:hover {
+    background: rgba(255, 255, 255, 0.08);
+}
+
+.avatarBtn:focus-visible {
+    outline: 2px solid #f59e0b;
+    outline-offset: 2px;
+}
+
+.avatarRing {
+    position: relative;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    overflow: hidden;
+    border: 1.5px solid rgba(245, 158, 11, 0.4);
+    flex-shrink: 0;
+    background: rgba(0, 0, 0, 0.06);
+}
+
+.avatarImg {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    position: relative;
+    z-index: 1;
+}
+
+.avatarFallback {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.7rem;
+    font-weight: 700;
+    color: #f59e0b;
+}
+
+.menuIconWrap {
+    display: flex;
+    align-items: center;
+}
+
+/* ─── Overlay ───────────────────────────────────────────── */
+
+.overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 1001;
+    background: rgba(0, 0, 0, 0);
+    backdrop-filter: blur(0px);
+    pointer-events: none;
+    transition:
+        background 0.35s ease,
+        backdrop-filter 0.35s ease;
+}
+
+.overlayVisible {
+    background: rgba(0, 0, 0, 0.35);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    pointer-events: auto;
+}
+
+/* ─── Drawer ────────────────────────────────────────────── */
+
+.drawer {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 1002;
+    max-height: 88dvh;
+    overflow-y: auto;
+
+    background: rgba(255, 255, 255, 0.88);
+    backdrop-filter: blur(40px) saturate(200%);
+    -webkit-backdrop-filter: blur(40px) saturate(200%);
+    border-top: 1px solid rgba(255, 255, 255, 0.6);
+    border-radius: 24px 24px 0 0;
+    box-shadow:
+        0 -8px 40px rgba(0, 0, 0, 0.12),
+        0 -2px 8px rgba(0, 0, 0, 0.06),
+        inset 0 1px 0 rgba(255, 255, 255, 1);
+
+    padding: 12px 20px 20px;
+
+    transform: translateY(100%);
+    transition: transform 0.4s cubic-bezier(0.32, 0.72, 0, 1);
+    will-change: transform;
+}
+
+[data-theme="dark"] .drawer {
+    background: rgba(28, 28, 30, 0.92);
+    border-top-color: rgba(255, 255, 255, 0.1);
+    box-shadow:
+        0 -8px 40px rgba(0, 0, 0, 0.5),
+        0 -2px 8px rgba(0, 0, 0, 0.3),
+        inset 0 1px 0 rgba(255, 255, 255, 0.07);
+}
+
+.drawerOpen {
+    transform: translateY(0);
+}
+
+/* Safe area bottom */
+@supports (padding: max(0px)) {
+    .drawer {
+        padding-bottom: max(20px, env(safe-area-inset-bottom));
+    }
+}
+
+/* ─── Handle ────────────────────────────────────────────── */
+
+.drawerHandle {
+    width: 36px;
+    height: 4px;
+    border-radius: 2px;
+    background: rgba(0, 0, 0, 0.14);
+    margin: 0 auto 16px;
+}
+
+[data-theme="dark"] .drawerHandle {
+    background: rgba(255, 255, 255, 0.18);
+}
+
+/* ─── Header del drawer ─────────────────────────────────── */
+
+.drawerHeader {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 8px;
+    padding-bottom: 4px;
+}
+
+.drawerAvatar {
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    overflow: hidden;
+    border: 2px solid rgba(245, 158, 11, 0.35);
+    flex-shrink: 0;
+    background: rgba(0, 0, 0, 0.06);
+}
+
+.drawerAvatarImg {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.drawerUserInfo {
+    flex: 1;
+    min-width: 0;
+}
+
+.drawerName {
+    display: block;
+    font-size: 1.0625rem;
+    font-weight: 700;
+    color: var(--text-primary, #1c1c1e);
+    letter-spacing: -0.015em;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.drawerEmail {
+    display: block;
+    font-size: 0.75rem;
+    color: var(--text-secondary, rgba(60, 60, 67, 0.6));
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin-top: 1px;
+}
+
+.drawerRole {
+    display: inline-block;
+    margin-top: 4px;
+    font-size: 0.625rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #f59e0b;
+    background: rgba(245, 158, 11, 0.1);
+    padding: 2px 8px;
+    border-radius: 999px;
+    border: 1px solid rgba(245, 158, 11, 0.2);
+}
+
+/* ─── Close button ──────────────────────────────────────── */
+
+.closeBtn {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: rgba(0, 0, 0, 0.06);
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-secondary, rgba(60, 60, 67, 0.6));
+    flex-shrink: 0;
+    transition: background 0.2s ease, transform 0.2s ease;
+    margin-left: auto;
+}
+
+[data-theme="dark"] .closeBtn {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.closeBtn:hover {
+    background: rgba(239, 68, 68, 0.1);
+    color: #ef4444;
+    transform: rotate(90deg);
+}
+
+/* ─── Widget en el drawer (visible en móvil) ────────────── */
+
+.drawerWidget {
+    display: none;
+    margin-bottom: 8px;
+}
+
+@media (max-width: 640px) {
+    .drawerWidget {
+        display: block;
+    }
+}
+
+/* ─── Divider interno ───────────────────────────────────── */
+
+.drawerDivider {
+    height: 1px;
+    background: rgba(0, 0, 0, 0.07);
+    margin: 10px 0;
+}
+
+[data-theme="dark"] .drawerDivider {
+    background: rgba(255, 255, 255, 0.08);
+}
+
+/* ─── Menú items ────────────────────────────────────────── */
+
+.drawerMenu {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.drawerItem {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 14px;
+    border-radius: 14px;
+    font-size: 0.9375rem;
+    font-weight: 500;
+    color: var(--text-primary, #1c1c1e);
+    text-decoration: none;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    transition: background 0.2s ease, color 0.2s ease;
+    width: 100%;
+    text-align: left;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.drawerItem:hover {
+    background: rgba(0, 0, 0, 0.05);
+    color: #f59e0b;
+}
+
+[data-theme="dark"] .drawerItem:hover {
+    background: rgba(255, 255, 255, 0.07);
+}
+
+.drawerItem:focus-visible {
+    outline: 2px solid #f59e0b;
+    outline-offset: -2px;
+}
+
+.drawerItemIcon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 34px;
+    height: 34px;
+    border-radius: 10px;
+    background: rgba(0, 0, 0, 0.05);
+    flex-shrink: 0;
+    color: var(--text-secondary, rgba(60, 60, 67, 0.6));
+    transition: background 0.2s ease, color 0.2s ease;
+}
+
+[data-theme="dark"] .drawerItemIcon {
+    background: rgba(255, 255, 255, 0.08);
+}
+
+.drawerItem:hover .drawerItemIcon {
+    background: rgba(245, 158, 11, 0.12);
+    color: #f59e0b;
+}
+
+.drawerBadge {
+    margin-left: auto;
+    font-size: 0.625rem;
+    font-weight: 600;
+    color: #f59e0b;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    background: rgba(245, 158, 11, 0.1);
+    border: 1px solid rgba(245, 158, 11, 0.2);
+    padding: 2px 8px;
+    border-radius: 999px;
+}
+
+/* ─── Sign out ──────────────────────────────────────────── */
+
+.drawerSignOut {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 14px;
+    border-radius: 14px;
+    font-size: 0.9375rem;
+    font-weight: 500;
+    color: #ef4444;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    transition: background 0.2s ease;
+    width: 100%;
+    text-align: left;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.drawerSignOut:hover {
+    background: rgba(239, 68, 68, 0.08);
+}
+
+.drawerSignOut:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.drawerSignOut:focus-visible {
+    outline: 2px solid #ef4444;
+    outline-offset: -2px;
+}
+
+/* ─── Responsive ────────────────────────────────────────── */
+
+@media (max-width: 480px) {
+    .pill {
+        padding: 6px 6px 6px 14px;
+        gap: 10px;
     }
 
-    .userDetails {
-        display: none;
+    .logoWrap {
+        padding-right: 0;
+    }
+}
+
+@media (min-width: 1024px) {
+    .drawer {
+        max-width: 480px;
+        left: 50%;
+        right: auto;
+        transform: translateX(-50%) translateY(100%);
+        border-radius: 24px 24px 0 0;
     }
 
-    .userInfo {
-        padding: 4px;
-        border: none;
-        background: transparent;
+    .drawerOpen {
+        transform: translateX(-50%) translateY(0);
+    }
+}
+
+/* ─── Reduced motion ────────────────────────────────────── */
+
+@media (prefers-reduced-motion: reduce) {
+    .pill {
+        animation: none;
+        opacity: 1;
+        transform: translateX(-50%) translateY(0);
+    }
+
+    .drawer {
+        transition: none;
+    }
+
+    .overlay {
+        transition: none;
+    }
+
+    .themeIcon {
+        animation: none;
+    }
+
+    .closeBtn:hover {
+        transform: none;
+    }
+
+    .iconBtn:hover {
+        transform: none;
+    }
+
+    .avatarBtn:hover {
+        transform: none;
     }
 }

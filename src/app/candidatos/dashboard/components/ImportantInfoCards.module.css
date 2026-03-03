@@ -1,38 +1,92 @@
-.importantGrid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-    gap: 0.75rem;
-    margin-top: 0.75rem;
+/* =====================================================
+   ImportantInfoCards — iOS Liquid Glass
+   ===================================================== */
+
+.sectionHeader {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin: 0 0 0.875rem 0;
+    letter-spacing: -0.01em;
 }
 
+/* ─── Grid ─────────────────────────────────────────── */
+
+.importantGrid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0.75rem;
+}
+
+@media (min-width: 560px) {
+    .importantGrid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (min-width: 900px) {
+    .importantGrid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+/* ─── Card glass ────────────────────────────────────── */
+
 .importantCard {
-    background: var(--card-background);
-    border: 1px solid var(--card-border);
-    border-radius: var(--radius-lg);
-    padding: 1rem;
+    position: relative;
+    border-radius: 18px;
+    overflow: hidden;
+    padding: 1.125rem;
     display: flex;
     flex-direction: column;
-    align-items: flex-start;
-    gap: 0.75rem;
-    transition: box-shadow var(--transition-fast), border-color var(--transition-fast);
-    box-shadow: var(--shadow-sm);
+    gap: 0.625rem;
+
+    background: rgba(255, 255, 255, 0.65);
+    backdrop-filter: blur(40px) saturate(180%);
+    -webkit-backdrop-filter: blur(40px) saturate(180%);
+    border: 1px solid rgba(0, 0, 0, 0.06);
+    box-shadow:
+        0 6px 24px rgba(0, 0, 0, 0.07),
+        0 2px 6px rgba(0, 0, 0, 0.03),
+        inset 0 1px 0 rgba(255, 255, 255, 0.90);
+
+    transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1),
+        box-shadow 0.25s ease;
 }
 
 .importantCard:hover {
-    border-color: var(--color-primary);
-    box-shadow: var(--shadow-md);
+    transform: translateY(-3px);
+    box-shadow:
+        0 12px 36px rgba(0, 0, 0, 0.10),
+        0 3px 8px rgba(0, 0, 0, 0.05),
+        inset 0 1px 0 rgba(255, 255, 255, 1);
 }
+
+[data-theme="dark"] .importantCard {
+    background: rgba(44, 44, 46, 0.80);
+    border-color: rgba(255, 255, 255, 0.08);
+    box-shadow:
+        0 6px 24px rgba(0, 0, 0, 0.45),
+        0 2px 6px rgba(0, 0, 0, 0.25),
+        inset 0 1px 0 rgba(255, 255, 255, 0.06);
+}
+
+/* ─── Ícono badge ───────────────────────────────────── */
 
 .importantCardIcon {
     width: 36px;
     height: 36px;
-    border-radius: var(--radius-md);
-    background: rgba(59, 130, 246, 0.1);
-    color: var(--color-primary);
+    border-radius: 10px;
+    background: rgba(245, 158, 11, 0.12);
+    color: #f59e0b;
+    border: 1px solid rgba(245, 158, 11, 0.20);
     display: flex;
     align-items: center;
     justify-content: center;
+    flex-shrink: 0;
 }
+
+/* ─── Texto ─────────────────────────────────────────── */
 
 .importantCardText {
     font-size: 0.8125rem;
@@ -52,28 +106,9 @@
     font-weight: 700;
     text-decoration: underline;
     text-underline-offset: 2px;
-    transition: opacity var(--transition-fast);
+    transition: opacity 0.2s ease;
 }
 
 .importantCardLink:hover {
-    opacity: 0.8;
-}
-
-.sectionHeader {
-    font-size: 1rem;
-    font-weight: 600;
-    color: var(--text-primary);
-    margin: 0 0 0.75rem 0;
-}
-
-@media (max-width: 480px) {
-    .importantGrid {
-        grid-template-columns: 1fr;
-    }
-}
-
-@media (min-width: 1024px) {
-    .importantGrid {
-        grid-template-columns: repeat(3, 1fr);
-    }
+    opacity: 0.75;
 }
