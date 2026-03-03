@@ -27,6 +27,7 @@ export default function ProfileDropdown({
     onLogout: onLogoutProp,
     onToggleTheme,        // override para candidatos (persiste en Firestore)
     showProfile = true,
+    quickAction,          // { icon, label, onClick } — acción extra de página (ej. iluo-manager)
 }) {
     const { user, signOut } = useAuth();
     const router = useRouter();
@@ -126,6 +127,21 @@ export default function ProfileDropdown({
                 >
                     <User size={17} />
                 </Link>
+            )}
+
+            {/* Acción rápida de página (ej. Nueva Competencia en iluo-manager) */}
+            {quickAction && (
+                <>
+                    <button
+                        type="button"
+                        className={styles.iconBtn}
+                        onClick={quickAction.onClick}
+                        aria-label={quickAction.label}
+                        title={quickAction.label}
+                    >
+                        {quickAction.icon}
+                    </button>
+                </>
             )}
 
             <span className={styles.divider} aria-hidden="true" />

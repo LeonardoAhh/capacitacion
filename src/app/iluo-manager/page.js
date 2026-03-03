@@ -4,8 +4,8 @@ import { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
-    Menu, X, Plus, Trash2, Search, ChevronRight,
-    Settings2, Users, Filter, Check, Sparkles, Download
+    Menu, X, Plus, Trash2, Search, ChevronRight, ChevronDown,
+    Settings2, Users, Filter, Check, Sparkles, Download, ArrowLeft
 } from 'lucide-react';
 import { db } from '@/lib/firebase';
 import { collection, query, getDocs, doc, updateDoc, arrayUnion } from 'firebase/firestore';
@@ -41,6 +41,7 @@ export default function IluoManagerPage() {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [isFilterOpen, setIsFilterOpen] = useState(false);
     const [activeFilter, setActiveFilter] = useState('Todos');
+    const [expandedDepts, setExpandedDepts] = useState(new Set());
     const [newSkill, setNewSkill] = useState({
         name: '',
         category: 'TÉCNICA',
@@ -153,6 +154,33 @@ export default function IluoManagerPage() {
             p.name.toLowerCase().includes(searchTerm.toLowerCase())
         ), [positionsList, searchTerm]);
 
+    // Agrupar por departamento
+    const groupedPositions = useMemo(() => {
+        const groups = {};
+        filteredPositions.forEach(pos => {
+            const dept = pos.department || 'General';
+            if (!groups[dept]) groups[dept] = [];
+            groups[dept].push(pos);
+        });
+        return Object.entries(groups).sort(([a], [b]) => a.localeCompare(b));
+    }, [filteredPositions]);
+
+    // Al buscar, auto-expandir todos los grupos con resultados
+    useEffect(() => {
+        if (searchTerm.trim()) {
+            setExpandedDepts(new Set(groupedPositions.map(([dept]) => dept)));
+        }
+    }, [searchTerm, groupedPositions]);
+
+    const toggleDept = useCallback((dept) => {
+        setExpandedDepts(prev => {
+            const next = new Set(prev);
+            if (next.has(dept)) next.delete(dept);
+            else next.add(dept);
+            return next;
+        });
+    }, []);
+
     /** Exporta solo los nombres de puestos visibles a CSV */
     const handleExportExcel = useCallback(() => {
         const rows = [['Puesto'], ...filteredPositions.map(pos => [pos.name])];
@@ -198,7 +226,9 @@ export default function IluoManagerPage() {
                         <span>ILUO Manager</span>
                     </div>
 
-                    <div style={{ minWidth: 64 }} />
+                    <Link href="/modulos" className={styles.topBarBack} aria-label="Volver a Módulos">
+                        <ArrowLeft size={18} />
+                    </Link>
                 </header>
 
                 <div className={styles.layout}>
@@ -240,31 +270,67 @@ export default function IluoManagerPage() {
                                     <div className={styles.positionsList}>
                                         {loading ? (
                                             <div className={styles.loadingDots}>Cargando...</div>
+                                        ) : groupedPositions.length === 0 ? (
+                                            <div className={styles.noResults}>Sin resultados</div>
                                         ) : (
-                                            filteredPositions.map(pos => (
-                                                <button
-                                                    key={pos.id}
-                                                    className={`${styles.positionBtn} ${selectedPosition?.id === pos.id ? styles.active : ''}`}
-                                                    onClick={() => handleSelectPosition(pos)}
-                                                >
-                                                    <div className={styles.positionInfo}>
-                                                        <span className={styles.positionName}>{pos.name}</span>
-                                                        <span className={styles.positionDept}>{pos.department}</span>
+                                            groupedPositions.map(([dept, positions]) => {
+                                                const isOpen = expandedDepts.has(dept);
+                                                const hasSelected = positions.some(p => p.id === selectedPosition?.id);
+                                                return (
+                                                    <div key={dept} className={styles.deptGroup}>
+                                                        <button
+                                                            className={`${styles.deptHeader} ${hasSelected ? styles.deptActive : ''}`}
+                                                            onClick={() => toggleDept(dept)}
+                                                        >
+                                                            <span className={styles.deptName}>{dept}</span>
+                                                            <div className={styles.deptMeta}>
+                                                                <span className={styles.deptCount}>{positions.length}</span>
+                                                                <ChevronDown
+                                                                    size={14}
+                                                                    className={`${styles.deptChevron} ${isOpen ? styles.deptChevronOpen : ''}`}
+                                                                />
+                                                            </div>
+                                                        </button>
+
+                                                        <AnimatePresence initial={false}>
+                                                            {isOpen && (
+                                                                <motion.div
+                                                                    initial={{ height: 0, opacity: 0 }}
+                                                                    animate={{ height: 'auto', opacity: 1 }}
+                                                                    exit={{ height: 0, opacity: 0 }}
+                                                                    transition={{ duration: 0.2, ease: [0.4, 0, 0.2, 1] }}
+                                                                    style={{ overflow: 'hidden' }}
+                                                                >
+                                                                    <div className={styles.deptPositions}>
+                                                                        {positions.map(pos => (
+                                                                            <button
+                                                                                key={pos.id}
+                                                                                className={`${styles.positionBtn} ${selectedPosition?.id === pos.id ? styles.active : ''}`}
+                                                                                onClick={() => handleSelectPosition(pos)}
+                                                                            >
+                                                                                <span className={styles.positionName}>{pos.name}</span>
+                                                                                <div className={styles.positionMeta}>
+                                                                                    {pos.iluoSkills?.length > 0 && (
+                                                                                        <span className={styles.skillBadge}>{pos.iluoSkills.length}</span>
+                                                                                    )}
+                                                                                    <ChevronRight size={14} />
+                                                                                </div>
+                                                                            </button>
+                                                                        ))}
+                                                                    </div>
+                                                                </motion.div>
+                                                            )}
+                                                        </AnimatePresence>
                                                     </div>
-                                                    <div className={styles.positionMeta}>
-                                                        {pos.iluoSkills?.length > 0 && (
-                                                            <span className={styles.skillBadge}>{pos.iluoSkills.length}</span>
-                                                        )}
-                                                        <ChevronRight size={16} />
-                                                    </div>
-                                                </button>
-                                            ))
+                                                );
+                                            })
                                         )}
                                     </div>
                                 </div>
 
                                 <div className={styles.drawerFooter}>
                                     <Link href="/modulos" className={styles.backLink}>
+                                        <ArrowLeft size={16} />
                                         Volver a Módulos
                                     </Link>
                                 </div>
@@ -375,23 +441,6 @@ export default function IluoManagerPage() {
                 </div>
 
                 <AnimatePresence>
-                    {selectedPosition && (
-                        <motion.button
-                            className={styles.fab}
-                            onClick={() => setIsModalOpen(true)}
-                            initial={{ scale: 0, opacity: 0 }}
-                            animate={{ scale: 1, opacity: 1 }}
-                            exit={{ scale: 0, opacity: 0 }}
-                            whileHover={{ scale: 1.05 }}
-                            whileTap={{ scale: 0.95 }}
-                            aria-label="Agregar habilidad"
-                        >
-                            <Plus size={24} />
-                        </motion.button>
-                    )}
-                </AnimatePresence>
-
-                <AnimatePresence>
                     {isModalOpen && (
                         <Modal onClose={() => setIsModalOpen(false)}>
                             <div className={styles.modalContent}>
@@ -461,7 +510,13 @@ export default function IluoManagerPage() {
             </div>
 
             {/* ProfileDropdown fijo al viewport — fuera de cualquier contexto de composición */}
-            <ProfileDropdown />
+            <ProfileDropdown
+                quickAction={selectedPosition ? {
+                    icon: <Plus size={17} />,
+                    label: 'Nueva Competencia',
+                    onClick: () => setIsModalOpen(true),
+                } : null}
+            />
         </>
     );
 }
@@ -477,13 +532,12 @@ function Modal({ children, onClose }) {
         >
             <motion.div
                 className={styles.modalSheet}
-                initial={{ y: '100%' }}
-                animate={{ y: 0 }}
-                exit={{ y: '100%' }}
-                transition={{ type: 'spring', damping: 30, stiffness: 300 }}
+                initial={{ opacity: 0, scale: 0.95, y: 12 }}
+                animate={{ opacity: 1, scale: 1, y: 0 }}
+                exit={{ opacity: 0, scale: 0.95, y: 12 }}
+                transition={{ type: 'spring', damping: 28, stiffness: 320 }}
                 onClick={(e) => e.stopPropagation()}
             >
-                <div className={styles.modalHandle} />
                 {children}
             </motion.div>
         </motion.div>
