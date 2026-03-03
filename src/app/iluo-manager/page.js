@@ -182,282 +182,287 @@ export default function IluoManagerPage() {
     if (user?.rol !== 'super_admin') return <AccessDenied />;
 
     return (
-        <div className={styles.container}>
-            <header className={styles.topBar}>
-                <button
-                    className={styles.menuBtn}
-                    onClick={() => setIsDrawerOpen(!isDrawerOpen)}
-                    aria-label={isDrawerOpen ? 'Cerrar menú' : 'Abrir menú'}
-                >
-                    {isDrawerOpen ? <X size={22} /> : <Menu size={22} />}
-                </button>
+        <>
+            <div className={styles.container}>
+                <header className={styles.topBar}>
+                    <button
+                        className={styles.menuBtn}
+                        onClick={() => setIsDrawerOpen(!isDrawerOpen)}
+                        aria-label={isDrawerOpen ? 'Cerrar menú' : 'Abrir menú'}
+                    >
+                        {isDrawerOpen ? <X size={22} /> : <Menu size={22} />}
+                    </button>
 
-                <div className={styles.topBarTitle}>
-                    <Settings2 size={20} />
-                    <span>ILUO Manager</span>
-                </div>
+                    <div className={styles.topBarTitle}>
+                        <Settings2 size={20} />
+                        <span>ILUO Manager</span>
+                    </div>
 
-                <ProfileDropdown />
-            </header>
+                    <div style={{ minWidth: 64 }} />
+                </header>
 
-            <div className={styles.layout}>
-                <AnimatePresence>
-                    {isDrawerOpen && (
-                        <motion.aside
-                            className={styles.drawer}
-                            initial={{ width: 0, opacity: 0 }}
-                            animate={{ width: 320, opacity: 1 }}
-                            exit={{ width: 0, opacity: 0 }}
-                            transition={{ duration: 0.25, ease: [0.4, 0, 0.2, 1] }}
-                        >
-                            <div className={styles.drawerContent}>
-                                <div className={styles.drawerHeader}>
-                                    <h2>Puestos</h2>
-                                    <div className={styles.drawerHeaderActions}>
-                                        <span className={styles.count}>{filteredPositions.length}</span>
-                                        <button
-                                            className={styles.exportBtn}
-                                            onClick={handleExportExcel}
-                                            title="Descargar como Excel"
-                                            aria-label="Exportar puestos a Excel"
-                                        >
-                                            <Download size={16} />
-                                        </button>
+                <div className={styles.layout}>
+                    <AnimatePresence>
+                        {isDrawerOpen && (
+                            <motion.aside
+                                className={styles.drawer}
+                                initial={{ width: 0, opacity: 0 }}
+                                animate={{ width: 320, opacity: 1 }}
+                                exit={{ width: 0, opacity: 0 }}
+                                transition={{ duration: 0.25, ease: [0.4, 0, 0.2, 1] }}
+                            >
+                                <div className={styles.drawerContent}>
+                                    <div className={styles.drawerHeader}>
+                                        <h2>Puestos</h2>
+                                        <div className={styles.drawerHeaderActions}>
+                                            <span className={styles.count}>{filteredPositions.length}</span>
+                                            <button
+                                                className={styles.exportBtn}
+                                                onClick={handleExportExcel}
+                                                title="Descargar como Excel"
+                                                aria-label="Exportar puestos a Excel"
+                                            >
+                                                <Download size={16} />
+                                            </button>
+                                        </div>
+                                    </div>
+
+                                    <div className={styles.searchBox}>
+                                        <Search size={18} />
+                                        <input
+                                            type="text"
+                                            placeholder="Buscar puesto..."
+                                            value={searchTerm}
+                                            onChange={(e) => setSearchTerm(e.target.value)}
+                                        />
+                                    </div>
+
+                                    <div className={styles.positionsList}>
+                                        {loading ? (
+                                            <div className={styles.loadingDots}>Cargando...</div>
+                                        ) : (
+                                            filteredPositions.map(pos => (
+                                                <button
+                                                    key={pos.id}
+                                                    className={`${styles.positionBtn} ${selectedPosition?.id === pos.id ? styles.active : ''}`}
+                                                    onClick={() => handleSelectPosition(pos)}
+                                                >
+                                                    <div className={styles.positionInfo}>
+                                                        <span className={styles.positionName}>{pos.name}</span>
+                                                        <span className={styles.positionDept}>{pos.department}</span>
+                                                    </div>
+                                                    <div className={styles.positionMeta}>
+                                                        {pos.iluoSkills?.length > 0 && (
+                                                            <span className={styles.skillBadge}>{pos.iluoSkills.length}</span>
+                                                        )}
+                                                        <ChevronRight size={16} />
+                                                    </div>
+                                                </button>
+                                            ))
+                                        )}
                                     </div>
                                 </div>
 
-                                <div className={styles.searchBox}>
-                                    <Search size={18} />
-                                    <input
-                                        type="text"
-                                        placeholder="Buscar puesto..."
-                                        value={searchTerm}
-                                        onChange={(e) => setSearchTerm(e.target.value)}
-                                    />
+                                <div className={styles.drawerFooter}>
+                                    <Link href="/modulos" className={styles.backLink}>
+                                        Volver a Módulos
+                                    </Link>
                                 </div>
+                            </motion.aside>
+                        )}
+                    </AnimatePresence>
 
-                                <div className={styles.positionsList}>
-                                    {loading ? (
-                                        <div className={styles.loadingDots}>Cargando...</div>
-                                    ) : (
-                                        filteredPositions.map(pos => (
-                                            <button
-                                                key={pos.id}
-                                                className={`${styles.positionBtn} ${selectedPosition?.id === pos.id ? styles.active : ''}`}
-                                                onClick={() => handleSelectPosition(pos)}
+                    <main ref={mainRef} className={styles.main}>
+                        {!selectedPosition ? (
+                            <EmptyState />
+                        ) : (
+                            <div className={styles.content}>
+                                <header className={styles.contentHeader}>
+                                    <div>
+                                        <h1>{selectedPosition.name}</h1>
+                                        <span className={styles.deptBadge}>{selectedPosition.department}</span>
+                                    </div>
+                                    <div className={styles.statsCard}>
+                                        <span className={styles.statsNumber}>{totalSkills}</span>
+                                        <span className={styles.statsLabel}>Competencias</span>
+                                    </div>
+                                </header>
+
+                                <div className={styles.filterBar}>
+                                    <button
+                                        className={`${styles.filterToggle} ${isFilterOpen ? styles.active : ''}`}
+                                        onClick={() => setIsFilterOpen(!isFilterOpen)}
+                                    >
+                                        <Filter size={16} />
+                                        <span>Filtrar</span>
+                                        {activeFilter !== 'Todos' && (
+                                            <span className={styles.filterBadge}>1</span>
+                                        )}
+                                    </button>
+
+                                    <AnimatePresence>
+                                        {isFilterOpen && (
+                                            <motion.div
+                                                className={styles.filterChips}
+                                                initial={{ height: 0, opacity: 0 }}
+                                                animate={{ height: 'auto', opacity: 1 }}
+                                                exit={{ height: 0, opacity: 0 }}
                                             >
-                                                <div className={styles.positionInfo}>
-                                                    <span className={styles.positionName}>{pos.name}</span>
-                                                    <span className={styles.positionDept}>{pos.department}</span>
-                                                </div>
-                                                <div className={styles.positionMeta}>
-                                                    {pos.iluoSkills?.length > 0 && (
-                                                        <span className={styles.skillBadge}>{pos.iluoSkills.length}</span>
-                                                    )}
-                                                    <ChevronRight size={16} />
-                                                </div>
-                                            </button>
-                                        ))
-                                    )}
+                                                <button
+                                                    className={`${styles.filterChip} ${activeFilter === 'Todos' ? styles.chipActive : ''}`}
+                                                    onClick={() => setActiveFilter('Todos')}
+                                                >
+                                                    Todos
+                                                </button>
+                                                {CATEGORIES.map(cat => (
+                                                    <button
+                                                        key={cat}
+                                                        className={`${styles.filterChip} ${activeFilter === cat ? styles.chipActive : ''}`}
+                                                        onClick={() => setActiveFilter(cat)}
+                                                        style={{ '--cat-color': CATEGORY_COLORS[cat] }}
+                                                    >
+                                                        {cat}
+                                                    </button>
+                                                ))}
+                                            </motion.div>
+                                        )}
+                                    </AnimatePresence>
                                 </div>
-                            </div>
 
-                            <div className={styles.drawerFooter}>
-                                <Link href="/modulos" className={styles.backLink}>
-                                    Volver a Módulos
-                                </Link>
+                                {Object.keys(groupedSkills).length === 0 ? (
+                                    <div className={styles.emptySkills}>
+                                        <Sparkles size={32} />
+                                        <p>Sin competencias configuradas</p>
+                                        <span>Toca el botón + para agregar</span>
+                                    </div>
+                                ) : (
+                                    Object.entries(groupedSkills).map(([groupName, groupSkills]) => (
+                                        <section key={groupName} className={styles.skillGroup}>
+                                            <div className={styles.groupHeader}>
+                                                <h3>{groupName}</h3>
+                                                <span>{groupSkills.length}</span>
+                                            </div>
+                                            <div className={styles.chipsGrid}>
+                                                {groupSkills.map(skill => (
+                                                    <motion.div
+                                                        key={skill.id}
+                                                        className={styles.skillChip}
+                                                        style={{ '--chip-color': CATEGORY_COLORS[skill.category] }}
+                                                        initial={{ scale: 0.9, opacity: 0 }}
+                                                        animate={{ scale: 1, opacity: 1 }}
+                                                        layout
+                                                    >
+                                                        <div className={styles.chipContent}>
+                                                            <span className={styles.chipCategory}>{skill.category}</span>
+                                                            <span className={styles.chipName}>{skill.name}</span>
+                                                        </div>
+                                                        <button
+                                                            className={styles.chipDelete}
+                                                            onClick={() => handleDeleteSkill(skill.id)}
+                                                            aria-label="Eliminar"
+                                                        >
+                                                            <Trash2 size={14} />
+                                                        </button>
+                                                    </motion.div>
+                                                ))}
+                                            </div>
+                                        </section>
+                                    ))
+                                )}
                             </div>
-                        </motion.aside>
+                        )}
+                    </main>
+                </div>
+
+                <AnimatePresence>
+                    {selectedPosition && (
+                        <motion.button
+                            className={styles.fab}
+                            onClick={() => setIsModalOpen(true)}
+                            initial={{ scale: 0, opacity: 0 }}
+                            animate={{ scale: 1, opacity: 1 }}
+                            exit={{ scale: 0, opacity: 0 }}
+                            whileHover={{ scale: 1.05 }}
+                            whileTap={{ scale: 0.95 }}
+                            aria-label="Agregar habilidad"
+                        >
+                            <Plus size={24} />
+                        </motion.button>
                     )}
                 </AnimatePresence>
 
-                <main ref={mainRef} className={styles.main}>
-                    {!selectedPosition ? (
-                        <EmptyState />
-                    ) : (
-                        <div className={styles.content}>
-                            <header className={styles.contentHeader}>
-                                <div>
-                                    <h1>{selectedPosition.name}</h1>
-                                    <span className={styles.deptBadge}>{selectedPosition.department}</span>
-                                </div>
-                                <div className={styles.statsCard}>
-                                    <span className={styles.statsNumber}>{totalSkills}</span>
-                                    <span className={styles.statsLabel}>Competencias</span>
-                                </div>
-                            </header>
+                <AnimatePresence>
+                    {isModalOpen && (
+                        <Modal onClose={() => setIsModalOpen(false)}>
+                            <div className={styles.modalContent}>
+                                <h2>Nueva Competencia</h2>
 
-                            <div className={styles.filterBar}>
-                                <button
-                                    className={`${styles.filterToggle} ${isFilterOpen ? styles.active : ''}`}
-                                    onClick={() => setIsFilterOpen(!isFilterOpen)}
-                                >
-                                    <Filter size={16} />
-                                    <span>Filtrar</span>
-                                    {activeFilter !== 'Todos' && (
-                                        <span className={styles.filterBadge}>1</span>
-                                    )}
-                                </button>
-
-                                <AnimatePresence>
-                                    {isFilterOpen && (
-                                        <motion.div
-                                            className={styles.filterChips}
-                                            initial={{ height: 0, opacity: 0 }}
-                                            animate={{ height: 'auto', opacity: 1 }}
-                                            exit={{ height: 0, opacity: 0 }}
+                                <div className={styles.formGroup}>
+                                    <label>Cliente</label>
+                                    <div className={styles.selectWrapper}>
+                                        <select
+                                            value={newSkill.group}
+                                            onChange={(e) => setNewSkill(prev => ({ ...prev, group: e.target.value }))}
                                         >
-                                            <button
-                                                className={`${styles.filterChip} ${activeFilter === 'Todos' ? styles.chipActive : ''}`}
-                                                onClick={() => setActiveFilter('Todos')}
-                                            >
-                                                Todos
-                                            </button>
-                                            {CATEGORIES.map(cat => (
-                                                <button
-                                                    key={cat}
-                                                    className={`${styles.filterChip} ${activeFilter === cat ? styles.chipActive : ''}`}
-                                                    onClick={() => setActiveFilter(cat)}
-                                                    style={{ '--cat-color': CATEGORY_COLORS[cat] }}
-                                                >
-                                                    {cat}
-                                                </button>
+                                            {CLIENTS.map(client => (
+                                                <option key={client} value={client}>{client}</option>
                                             ))}
-                                        </motion.div>
-                                    )}
-                                </AnimatePresence>
-                            </div>
-
-                            {Object.keys(groupedSkills).length === 0 ? (
-                                <div className={styles.emptySkills}>
-                                    <Sparkles size={32} />
-                                    <p>Sin competencias configuradas</p>
-                                    <span>Toca el botón + para agregar</span>
+                                        </select>
+                                    </div>
                                 </div>
-                            ) : (
-                                Object.entries(groupedSkills).map(([groupName, groupSkills]) => (
-                                    <section key={groupName} className={styles.skillGroup}>
-                                        <div className={styles.groupHeader}>
-                                            <h3>{groupName}</h3>
-                                            <span>{groupSkills.length}</span>
-                                        </div>
-                                        <div className={styles.chipsGrid}>
-                                            {groupSkills.map(skill => (
-                                                <motion.div
-                                                    key={skill.id}
-                                                    className={styles.skillChip}
-                                                    style={{ '--chip-color': CATEGORY_COLORS[skill.category] }}
-                                                    initial={{ scale: 0.9, opacity: 0 }}
-                                                    animate={{ scale: 1, opacity: 1 }}
-                                                    layout
-                                                >
-                                                    <div className={styles.chipContent}>
-                                                        <span className={styles.chipCategory}>{skill.category}</span>
-                                                        <span className={styles.chipName}>{skill.name}</span>
-                                                    </div>
-                                                    <button
-                                                        className={styles.chipDelete}
-                                                        onClick={() => handleDeleteSkill(skill.id)}
-                                                        aria-label="Eliminar"
-                                                    >
-                                                        <Trash2 size={14} />
-                                                    </button>
-                                                </motion.div>
-                                            ))}
-                                        </div>
-                                    </section>
-                                ))
-                            )}
-                        </div>
+
+                                <div className={styles.formGroup}>
+                                    <label>Nombre de la Habilidad</label>
+                                    <input
+                                        type="text"
+                                        placeholder="Ej. Operación de Grúa Viajera"
+                                        value={newSkill.name}
+                                        onChange={(e) => setNewSkill(prev => ({ ...prev, name: e.target.value }))}
+                                    />
+                                </div>
+
+                                <div className={styles.formGroup}>
+                                    <label>Categoría</label>
+                                    <div className={styles.categoryGrid}>
+                                        {CATEGORIES.map(cat => (
+                                            <button
+                                                key={cat}
+                                                className={`${styles.categoryBtn} ${newSkill.category === cat ? styles.catActive : ''}`}
+                                                onClick={() => setNewSkill(prev => ({ ...prev, category: cat }))}
+                                                style={{ '--cat-color': CATEGORY_COLORS[cat] }}
+                                            >
+                                                <span className={styles.checkIcon}>
+                                                    {newSkill.category === cat && <Check size={14} />}
+                                                </span>
+                                                {cat}
+                                            </button>
+                                        ))}
+                                    </div>
+                                </div>
+
+                                <div className={styles.formGroup}>
+                                    <label>Criterio de Evaluación</label>
+                                    <input
+                                        type="text"
+                                        placeholder="¿Qué se necesita para aprobar?"
+                                        value={newSkill.description}
+                                        onChange={(e) => setNewSkill(prev => ({ ...prev, description: e.target.value }))}
+                                    />
+                                </div>
+
+                                <button className={styles.submitBtn} onClick={handleAddSkill}>
+                                    <Plus size={18} />
+                                    Guardar Competencia
+                                </button>
+                            </div>
+                        </Modal>
                     )}
-                </main>
+                </AnimatePresence>
             </div>
 
-            <AnimatePresence>
-                {selectedPosition && (
-                    <motion.button
-                        className={styles.fab}
-                        onClick={() => setIsModalOpen(true)}
-                        initial={{ scale: 0, opacity: 0 }}
-                        animate={{ scale: 1, opacity: 1 }}
-                        exit={{ scale: 0, opacity: 0 }}
-                        whileHover={{ scale: 1.05 }}
-                        whileTap={{ scale: 0.95 }}
-                        aria-label="Agregar habilidad"
-                    >
-                        <Plus size={24} />
-                    </motion.button>
-                )}
-            </AnimatePresence>
-
-            <AnimatePresence>
-                {isModalOpen && (
-                    <Modal onClose={() => setIsModalOpen(false)}>
-                        <div className={styles.modalContent}>
-                            <h2>Nueva Competencia</h2>
-
-                            <div className={styles.formGroup}>
-                                <label>Cliente</label>
-                                <div className={styles.selectWrapper}>
-                                    <select
-                                        value={newSkill.group}
-                                        onChange={(e) => setNewSkill(prev => ({ ...prev, group: e.target.value }))}
-                                    >
-                                        {CLIENTS.map(client => (
-                                            <option key={client} value={client}>{client}</option>
-                                        ))}
-                                    </select>
-                                </div>
-                            </div>
-
-                            <div className={styles.formGroup}>
-                                <label>Nombre de la Habilidad</label>
-                                <input
-                                    type="text"
-                                    placeholder="Ej. Operación de Grúa Viajera"
-                                    value={newSkill.name}
-                                    onChange={(e) => setNewSkill(prev => ({ ...prev, name: e.target.value }))}
-                                />
-                            </div>
-
-                            <div className={styles.formGroup}>
-                                <label>Categoría</label>
-                                <div className={styles.categoryGrid}>
-                                    {CATEGORIES.map(cat => (
-                                        <button
-                                            key={cat}
-                                            className={`${styles.categoryBtn} ${newSkill.category === cat ? styles.catActive : ''}`}
-                                            onClick={() => setNewSkill(prev => ({ ...prev, category: cat }))}
-                                            style={{ '--cat-color': CATEGORY_COLORS[cat] }}
-                                        >
-                                            <span className={styles.checkIcon}>
-                                                {newSkill.category === cat && <Check size={14} />}
-                                            </span>
-                                            {cat}
-                                        </button>
-                                    ))}
-                                </div>
-                            </div>
-
-                            <div className={styles.formGroup}>
-                                <label>Criterio de Evaluación</label>
-                                <input
-                                    type="text"
-                                    placeholder="¿Qué se necesita para aprobar?"
-                                    value={newSkill.description}
-                                    onChange={(e) => setNewSkill(prev => ({ ...prev, description: e.target.value }))}
-                                />
-                            </div>
-
-                            <button className={styles.submitBtn} onClick={handleAddSkill}>
-                                <Plus size={18} />
-                                Guardar Competencia
-                            </button>
-                        </div>
-                    </Modal>
-                )}
-            </AnimatePresence>
-        </div>
+            {/* ProfileDropdown fijo al viewport — fuera de cualquier contexto de composición */}
+            <ProfileDropdown />
+        </>
     );
 }
 
