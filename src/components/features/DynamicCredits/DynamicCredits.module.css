@@ -1,81 +1,97 @@
 /* =========================================
-   DynamicCredits — Editorial White
-   Mismo sistema visual: Playfair + Geist + ámbar
+   DynamicCredits — Glass / Dual Theme
+   Mismo sistema visual del Hero VIÑOPLASTIC
    ========================================= */
 
-/* ─── Wrapper ───────────────────────────────────────────── */
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Geist:wght@400;500&display=swap');
+
+/* ─── Variables internas ────────────────────────────────── */
 
 .credits {
+    --dc-bar: #d40000;
+    --dc-label: rgba(10, 15, 46, 0.52);
+    --dc-author: #0a0f2e;
+    --dc-dot: rgba(0, 60, 204, 0.22);
+    --dc-dot-active: #003ccc;
+
     display: flex;
     flex-direction: column;
     align-items: flex-start;
-    gap: 0.75rem;
-    margin-top: 2rem;
-    animation: fadeIn 0.5s ease both;
-    animation-delay: 0.9s;
+    gap: 0.65rem;
+    margin-top: 1.75rem;
+    animation: dcFadeIn 0.5s ease both;
+    animation-delay: 0.95s;
 }
 
-@keyframes fadeIn {
+[data-theme="dark"] .credits {
+    --dc-bar: #d40000;
+    --dc-label: rgba(160, 180, 255, 0.60);
+    --dc-author: #e8eaff;
+    --dc-dot: rgba(77, 128, 255, 0.25);
+    --dc-dot-active: #4d80ff;
+}
+
+@keyframes dcFadeIn {
     from {
         opacity: 0;
+        transform: translateY(10px);
     }
 
     to {
         opacity: 1;
+        transform: translateY(0);
     }
 }
 
-/* ─── Row: línea + texto ────────────────────────────────── */
+/* ─── Pill contenedor ───────────────────────────────────── */
 
 .pill {
-    position: relative;
     display: flex;
     align-items: center;
     gap: 0.75rem;
     min-height: 1.6rem;
-    padding: 0;
-    border-radius: 0;
-    border: none;
-    background: transparent;
-    overflow: visible;
+    position: relative;
 }
 
-/* Línea ámbar vertical a la izquierda — igual que el accent bar de las cards */
-.pill::before {
-    content: '';
+/* Barra izquierda roja corporativa */
+.bar {
     display: block;
-    width: 2px;
-    height: 100%;
+    width: 2.5px;
     min-height: 1.6rem;
-    background: #f59e0b;
+    align-self: stretch;
+    background: var(--dc-bar);
     border-radius: 2px;
     flex-shrink: 0;
+    transition: background 0.3s ease;
 }
 
-/* ─── Texto ─────────────────────────────────────────────── */
+/* ─── Texto animado ─────────────────────────────────────── */
 
 .text {
     display: flex;
-    align-items: center;
-    gap: 0.35rem;
+    align-items: baseline;
+    gap: 0.3rem;
     flex-wrap: wrap;
-    white-space: nowrap;
 }
 
 .label {
     font-family: 'Geist', system-ui, sans-serif;
     font-size: 0.75rem;
     font-weight: 400;
-    letter-spacing: 0.03em;
-    color: var(--text-tertiary, #a3a39a);
+    letter-spacing: 0.02em;
+    color: var(--dc-label);
+    transition: color 0.3s ease;
+    white-space: nowrap;
 }
 
 .author {
     font-family: 'Playfair Display', Georgia, serif;
-    font-size: 0.8rem;
+    font-size: 0.82rem;
     font-weight: 700;
     letter-spacing: 0.01em;
-    color: var(--text-primary, #111110);
+    color: var(--dc-author);
+    transition: color 0.3s ease;
+    white-space: nowrap;
 }
 
 /* ─── Dots ──────────────────────────────────────────────── */
@@ -84,49 +100,58 @@
     display: flex;
     align-items: center;
     gap: 5px;
-    padding-left: 11px;
-    /* alinea visualmente con el texto (2px barra + 0.75rem gap) */
+    padding-left: calc(2.5px + 0.75rem);
+    /* Alinea con el texto (barra + gap) */
 }
 
 .dot {
     appearance: none;
     border: none;
-    width: 4px;
-    height: 4px;
-    border-radius: 50%;
-    background: var(--text-tertiary, #c4c4bb);
-    opacity: 0.35;
     padding: 0;
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: var(--dc-dot);
     cursor: pointer;
-    transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+    transition:
+        width 0.35s cubic-bezier(0.22, 1, 0.36, 1),
+        opacity 0.25s ease,
+        background 0.25s ease,
+        border-radius 0.35s ease;
 }
 
 .dot:hover {
-    opacity: 0.6;
+    background: var(--dc-dot-active);
+    opacity: 0.55;
 }
 
 .dot:focus-visible {
-    outline: 2px solid #f59e0b;
-    outline-offset: 2px;
+    outline: 2px solid var(--dc-dot-active);
+    outline-offset: 3px;
     border-radius: 2px;
 }
 
 .dotActive {
+    width: 18px;
+    border-radius: 3px;
+    background: var(--dc-dot-active);
     opacity: 1;
-    width: 16px;
-    border-radius: 2px;
-    background: #f59e0b;
 }
 
 /* ─── Responsive ────────────────────────────────────────── */
 
 @media (max-width: 480px) {
+    .credits {
+        gap: 0.5rem;
+        margin-top: 1.4rem;
+    }
+
     .label {
-        font-size: 0.7rem;
+        font-size: 0.68rem;
     }
 
     .author {
-        font-size: 0.75rem;
+        font-size: 0.74rem;
     }
 
     .dots {
@@ -134,38 +159,39 @@
     }
 
     .dot {
-        width: 3.5px;
-        height: 3.5px;
+        width: 4px;
+        height: 4px;
     }
 
     .dotActive {
-        width: 12px;
+        width: 14px;
     }
 }
 
 @media (max-height: 600px) and (orientation: landscape) {
     .credits {
-        gap: 0.45rem;
+        gap: 0.4rem;
         margin-top: 1rem;
     }
 
     .label,
     .author {
-        font-size: 0.6875rem;
+        font-size: 0.68rem;
     }
 }
 
 /* ─── Reduced Motion ────────────────────────────────────── */
 
 @media (prefers-reduced-motion: reduce) {
-
-    .dot,
-    .dotActive {
-        transition: none;
-    }
-
     .credits {
         animation: none;
         opacity: 1;
+        transform: none;
+    }
+
+    .dot,
+    .dotActive,
+    .bar {
+        transition: none;
     }
 }

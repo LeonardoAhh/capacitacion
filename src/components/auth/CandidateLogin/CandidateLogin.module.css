@@ -1,10 +1,7 @@
-/* ═══════════════════════════════════════════════════════════════
-   CandidateLogin — Portal de Candidatos  |  Esmeralda / Teal
-   ═══════════════════════════════════════════════════════════════ */
-
+/* Portal Candidatos — Verde azulado (diferenciado del RRHH) */
 .container {
-    --login-accent: #10b981;
-    --login-accent-rgb: 16, 185, 129;
-    --login-gradient-from: #10b981;
-    --login-gradient-to: #14b8a6;
+    --login-accent: #0070c0;
+    --login-accent-rgb: 0, 112, 192;
+    --login-gradient-from: #0070c0;
+    --login-gradient-to: #00a0e0;
 }

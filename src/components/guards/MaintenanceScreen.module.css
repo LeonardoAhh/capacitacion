@@ -1,5 +1,5 @@
 /* =========================================
-   MaintenanceScreen — Editorial White
+   MaintenanceScreen — Dark Glass VIÑOPLASTIC
    ========================================= */
 
 @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Geist:wght@300;400;500;600&display=swap');
@@ -10,7 +10,8 @@
     inset: 0;
     width: 100vw;
     height: 100vh;
-    background-color: #fafaf8;
+    background-color: #060612;
+    /* Dark Navy Background */
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -18,7 +19,7 @@
     z-index: 99999;
     overflow: hidden;
     font-family: 'Geist', system-ui, sans-serif;
-    color: #111110;
+    color: #ffffff;
 }
 
 /* ── Grid texture ── */
@@ -26,8 +27,8 @@
     position: absolute;
     inset: 0;
     background-image:
-        linear-gradient(rgba(0, 0, 0, 0.04) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(0, 0, 0, 0.04) 1px, transparent 1px);
+        linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
     background-size: 48px 48px;
     pointer-events: none;
     mask-image: radial-gradient(ellipse 80% 80% at 50% 50%, black 40%, transparent 100%);
@@ -44,7 +45,7 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.07);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
 }
 
 .logo {
@@ -54,7 +55,7 @@
     font-size: 0.82rem;
     font-weight: 600;
     letter-spacing: 0.04em;
-    color: #111110;
+    color: #ffffff;
     text-transform: uppercase;
 }
 
@@ -64,9 +65,10 @@
     gap: 0.45rem;
     font-size: 0.72rem;
     font-weight: 500;
-    color: #d97706;
-    background: #fef3c7;
-    border: 1px solid #fde68a;
+    color: #ef4444;
+    /* Red for alert */
+    background: rgba(220, 38, 38, 0.1);
+    border: 1px solid rgba(220, 38, 38, 0.2);
     padding: 0.3rem 0.85rem;
     border-radius: 999px;
     letter-spacing: 0.02em;
@@ -76,7 +78,7 @@
     width: 6px;
     height: 6px;
     border-radius: 50%;
-    background: #f59e0b;
+    background: #d40000;
     animation: blink 2s ease-in-out infinite;
 }
 
@@ -108,7 +110,7 @@
     font-weight: 500;
     letter-spacing: 0.12em;
     text-transform: uppercase;
-    color: #a3a39a;
+    color: #8a8f98;
     margin-bottom: 1.2rem;
 }
 
@@ -119,12 +121,12 @@
     font-weight: 900;
     line-height: 1.05;
     letter-spacing: -0.02em;
-    color: #111110;
+    color: #ffffff;
     margin-bottom: 1.8rem;
 }
 
 .headingAccent {
-    color: #111110;
+    color: #ffffff;
     position: relative;
     display: inline-block;
 }
@@ -136,7 +138,8 @@
     left: 0;
     right: 0;
     height: 4px;
-    background: #f59e0b;
+    background: #003ccc;
+    /* Corporative Blue */
     border-radius: 2px;
     transform: scaleX(0);
     transform-origin: left;
@@ -153,7 +156,7 @@
 .description {
     font-size: 1rem;
     line-height: 1.75;
-    color: #6b6b63;
+    color: #a1a1aa;
     max-width: 480px;
     font-weight: 400;
     margin-bottom: 0;
@@ -163,7 +166,8 @@
 .divider {
     width: 100%;
     height: 1px;
-    background: rgba(0, 0, 0, 0.09);
+    background: rgba(255, 255, 255, 0.08);
+    /* Dark Divider */
     margin: 2.2rem 0;
 }
 
@@ -180,7 +184,7 @@
     font-weight: 600;
     letter-spacing: 0.1em;
     text-transform: uppercase;
-    color: #a3a39a;
+    color: #8a8f98;
     margin-bottom: 1.1rem;
 }
 
@@ -202,7 +206,7 @@
     font-size: clamp(2.4rem, 5vw, 3.6rem);
     font-weight: 700;
     line-height: 1;
-    color: #111110;
+    color: #ffffff;
     font-variant-numeric: tabular-nums;
     letter-spacing: -0.02em;
 }
@@ -212,7 +216,7 @@
     font-weight: 500;
     letter-spacing: 0.1em;
     text-transform: uppercase;
-    color: #a3a39a;
+    color: #8a8f98;
     margin-top: 0.3rem;
 }
 
@@ -220,7 +224,7 @@
     font-family: 'Playfair Display', Georgia, serif;
     font-size: clamp(2rem, 4vw, 3rem);
     font-weight: 700;
-    color: #d4d4cc;
+    color: #3f3f46;
     line-height: 1;
     padding-bottom: 1.4rem;
     padding-left: 0.1rem;
@@ -231,7 +235,7 @@
     font-family: 'Playfair Display', Georgia, serif;
     font-size: 2.4rem;
     font-weight: 700;
-    color: #a3a39a;
+    color: #52525b;
 }
 
 /* ── Alert note ── */
@@ -241,12 +245,12 @@
     gap: 0.45rem;
     font-size: 0.78rem;
     font-weight: 500;
-    color: #a3a39a;
+    color: #a1a1aa;
     margin-top: 2rem;
     padding: 0.6rem 1rem;
-    border: 1px solid rgba(0, 0, 0, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    background: rgba(255, 255, 255, 0.03);
     border-radius: 8px;
-    background: rgba(0, 0, 0, 0.02);
 }
 
 /* ── Footer ── */
@@ -254,7 +258,7 @@
     position: absolute;
     bottom: 1.8rem;
     font-size: 0.72rem;
-    color: #c4c4bb;
+    color: #52525b;
     letter-spacing: 0.03em;
 }
 

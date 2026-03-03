@@ -9,12 +9,8 @@ const ThemeContext = createContext({});
 export const useTheme = () => useContext(ThemeContext);
 
 export const THEMES = {
-    light: { name: 'Light', color: '#ffffff', class: 'light' },
-    dark: { name: 'Dark', color: '#09090b', class: 'dark' },
-    vinoplastic: { name: 'Blue', color: '#eef2ff', class: 'vinoplastic' },
-    forest: { name: 'Forest', color: '#f0fdf4', class: 'forest' },
-    ocean: { name: 'Ocean', color: '#f0f9ff', class: 'ocean' },
-    sunset: { name: 'Sunset', color: '#fff7ed', class: 'sunset' },
+    light: { name: 'Claro', color: '#ffffff', class: 'light' },
+    dark: { name: 'Oscuro', color: '#09090b', class: 'dark' },
 };
 
 export function ThemeProvider({ children }) {

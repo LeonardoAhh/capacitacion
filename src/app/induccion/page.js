@@ -38,8 +38,10 @@ import {
 import Link from 'next/link';
 import ProfileDropdown from '@/components/layout/ProfileDropdown/ProfileDropdown';
 import BackButton from '@/components/ui/BackButton/BackButton';
-import CoursePlayer from '@/components/features/Courses/CoursePlayer';
+import NextImage from 'next/image';
+
 import CourseWizardModal from '@/components/features/Courses/CourseWizardModal';
+import CoursePlayer from '@/components/features/Courses/CoursePlayer';
 import {
     importCourseFromJSON,
     getAllCourses,
@@ -507,13 +509,6 @@ export default function InductionPage() {
                     <ProfileDropdown />
                 </div>
 
-                {/* ── Botón volver móvil (visible solo en mobile cuando el sidebar está oculto) ── */}
-                {user?.rol !== 'instructor' && (
-                    <Link href="/modulos" className={styles.mobileBackBtn}>
-                        <ArrowLeft size={15} />
-                        <span>Módulos</span>
-                    </Link>
-                )}
 
                 <div className={styles.bgDecoration} />
 
@@ -580,10 +575,6 @@ export default function InductionPage() {
                                 <span className={styles.sidebarBadge}>{galleryItems.length}</span>
                             </button>
                         </nav>
-
-                        <div className={styles.sidebarFooter}>
-                            <BackButton href="/modulos" hidden={user?.rol === 'instructor'} />
-                        </div>
                     </aside>
 
                     {/* ── HEADER ── */}
@@ -1005,7 +996,7 @@ export default function InductionPage() {
                                             <div key={item.id} className={styles.galleryCard}>
                                                 <div onClick={() => setSelectedMedia(item)} className={styles.galleryThumbWrap} style={{ cursor: 'pointer' }}>
                                                     {item.tipo === 'imagen' ? (
-                                                        <img src={item.viewLink} alt={item.nombre} className={styles.galleryThumb} onError={e => { e.target.style.display = 'none'; e.target.nextSibling.style.display = 'flex'; }} />
+                                                        <NextImage unoptimized fill src={item.viewLink} alt={item.nombre} className={styles.galleryThumb} onError={e => { e.target.style.display = 'none'; e.target.nextSibling.style.display = 'flex'; }} />
                                                     ) : null}
                                                     <div className={styles.galleryVideoPlaceholder} style={{ display: item.tipo === 'video' ? 'flex' : 'none' }}>
                                                         <Video size={32} style={{ color: 'var(--c-orange)', opacity: 0.7 }} />

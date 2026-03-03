@@ -1,10 +1,7 @@
-/* ═══════════════════════════════════════════════════════════════
-   TrainingLogin — Módulo de Capacitación  |  Rosa / Púrpura
-   ═══════════════════════════════════════════════════════════════ */
-
+/* Portal Training — Azul profundo / Indigo VIÑOPLASTIC */
 .container {
-    --login-accent: #ec4899;
-    --login-accent-rgb: 236, 72, 153;
-    --login-gradient-from: #ec4899;
-    --login-gradient-to: #a855f7;
+    --login-accent: #1a2ecc;
+    --login-accent-rgb: 26, 46, 204;
+    --login-gradient-from: #1a2ecc;
+    --login-gradient-to: #2a3ee0;
 }

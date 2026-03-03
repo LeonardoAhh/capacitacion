@@ -14,6 +14,7 @@
 }
 
 .modal {
+    --color-primary: #003ccc;
     background: var(--bg-primary);
     width: 100%;
     max-width: 600px;
@@ -25,6 +26,23 @@
     overflow: hidden;
     animation: slideUpModal 0.4s cubic-bezier(0.16, 1, 0.3, 1);
     position: relative;
+    transition: background 0.3s, border-color 0.3s;
+}
+
+/* Liquid Glass para dark mode */
+[data-theme="dark"] .overlay {
+    background: rgba(4, 5, 12, 0.65);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+}
+
+[data-theme="dark"] .modal {
+    --color-primary: #6699ff;
+    background: #0a0c23;
+    border: 1px solid rgba(77, 128, 255, 0.20);
+    box-shadow:
+        0 8px 32px rgba(0, 0, 0, 0.5),
+        0 1px 0 rgba(255, 255, 255, 0.05) inset;
 }
 
 /* ── Progress Bar ── */
@@ -47,7 +65,7 @@
 .progressFill {
     width: 100%;
     height: 100%;
-    background: var(--c-orange, #f97316);
+    background: var(--color-primary, #003ccc);
     transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
     transform-origin: left;
 }
@@ -96,13 +114,13 @@
     width: 72px;
     height: 72px;
     margin: 0 auto 1.5rem;
-    background: linear-gradient(135deg, color-mix(in srgb, var(--c-orange) 20%, transparent), transparent);
+    background: linear-gradient(135deg, color-mix(in srgb, var(--color-primary) 20%, transparent), transparent);
     border-radius: 24px;
     display: flex;
     align-items: center;
     justify-content: center;
-    color: var(--c-orange, #f97316);
-    box-shadow: 0 8px 16px -4px color-mix(in srgb, var(--c-orange) 20%, transparent);
+    color: var(--color-primary, #003ccc);
+    box-shadow: 0 8px 16px -4px color-mix(in srgb, var(--color-primary) 20%, transparent);
 }
 
 .heroTitle {
@@ -130,6 +148,11 @@
     display: flex;
     flex-direction: column;
     gap: 1.25rem;
+}
+
+[data-theme="dark"] .featuresList {
+    background: rgba(255, 255, 255, 0.03);
+    border-color: rgba(77, 128, 255, 0.1);
 }
 
 .featureItem {
@@ -195,6 +218,12 @@
     box-shadow: 0 1px 2px rgba(0, 0, 0, 0.02);
 }
 
+[data-theme="dark"] .input,
+[data-theme="dark"] .select {
+    background: rgba(255, 255, 255, 0.04);
+    border-color: rgba(77, 128, 255, 0.12);
+}
+
 .input:focus,
 .select:focus {
     outline: none;
@@ -230,6 +259,11 @@
     cursor: pointer;
     transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
     position: relative;
+}
+
+[data-theme="dark"] .templateCard {
+    background: rgba(255, 255, 255, 0.03);
+    border-color: rgba(77, 128, 255, 0.1);
 }
 
 .templateCard:hover {
@@ -312,6 +346,11 @@
     align-items: center;
 }
 
+[data-theme="dark"] .footer {
+    background: rgba(0, 0, 0, 0.2);
+    border-top-color: rgba(77, 128, 255, 0.1);
+}
+
 .footerLeft {
     display: flex;
     align-items: center;
@@ -374,13 +413,14 @@
 }
 
 .btnFinish {
-    background: var(--c-orange, #f97316);
-    border-color: var(--c-orange, #f97316);
-    box-shadow: 0 4px 12px -4px color-mix(in srgb, var(--c-orange) 50%, transparent);
+    background: var(--color-primary, #003ccc);
+    border-color: var(--color-primary, #003ccc);
+    box-shadow: 0 4px 12px -4px color-mix(in srgb, var(--color-primary) 50%, transparent);
+    color: white;
 }
 
 .btnFinish:hover:not(:disabled) {
-    box-shadow: 0 6px 16px -4px color-mix(in srgb, var(--c-orange) 60%, transparent);
+    box-shadow: 0 6px 16px -4px color-mix(in srgb, var(--color-primary) 60%, transparent);
 }
 
 /* ── Animations ── */

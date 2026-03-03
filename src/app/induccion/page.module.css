@@ -8,7 +8,7 @@
 
 @import url('https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@300;400;500;600;700&family=Geist+Mono:wght@400;500;600&display=swap');
 
-/* ── Tokens de diseño ── */
+/* ── Tokens de diseño — Paleta corporativa VIÑOPLASTIC ── */
 .main {
     /* ── Mapped Global Theme Tokens ── */
     --c-cream: var(--app-background);
@@ -21,10 +21,11 @@
     --c-ink-3: var(--text-secondary);
     --c-muted: var(--text-secondary);
 
-    --c-orange: var(--color-primary);
-    --c-orange-dim: color-mix(in srgb, var(--color-primary) 10%, transparent);
-    --c-orange-mid: color-mix(in srgb, var(--color-primary) 22%, transparent);
-    --c-orange-glow: color-mix(in srgb, var(--color-primary) 35%, transparent);
+    /* Azul corporativo VIÑOPLASTIC */
+    --c-orange: #003ccc;
+    --c-orange-dim: rgba(0, 60, 204, 0.08);
+    --c-orange-mid: rgba(0, 60, 204, 0.20);
+    --c-orange-glow: rgba(0, 60, 204, 0.30);
 
     --c-green: var(--color-success);
     --c-green-dim: color-mix(in srgb, var(--color-success) 10%, transparent);
@@ -54,34 +55,133 @@
     --font-body: 'Geist', system-ui, sans-serif;
     --font-mono: 'Geist Mono', monospace;
 
-    /* Semantic Sidebar Variables (Mapped to Global Theme) */
-    --sb-bg: var(--bg-primary);
-    --sb-border: var(--border-color);
+    /* Semantic Sidebar Variables — transparente para fundirse con el fondo */
+    --sb-bg: transparent;
+    --sb-border: rgba(0, 60, 204, 0.08);
     --sb-text: var(--text-primary);
     --sb-text-muted: var(--text-secondary);
-    --sb-hover-bg: var(--bg-tertiary);
+    --sb-hover-bg: rgba(0, 60, 204, 0.06);
     --sb-hover-text: var(--text-primary);
-    --sb-badge-bg: var(--bg-secondary);
+    --sb-badge-bg: rgba(0, 60, 204, 0.07);
     --sb-badge-text: var(--text-secondary);
 
-    /* Surface for Cards/Inputs - Reverting to solid colors to prevent inherit transparency bugs */
+    /* Surface for Cards/Inputs */
     --c-surface: #FFFFFF;
 }
 
-/* Dark Mode Overrides */
-:global([data-theme="dark"]) .main {
-    --c-surface: #1c1c1a;
+/* Dark Mode Overrides — Liquid Glass VIÑOPLASTIC */
+[data-theme="dark"] .main {
+    /* Superficies translúcidas navy en lugar de grises sólidos */
+    --c-surface: rgba(10, 12, 35, 0.68);
+    --c-cream: rgba(6, 6, 18, 0.0);
+    --c-cream-2: rgba(77, 128, 255, 0.06);
+    --c-cream-3: rgba(77, 128, 255, 0.10);
+
+    --c-line: rgba(77, 128, 255, 0.10);
+    --c-line-strong: rgba(77, 128, 255, 0.16);
+    --c-sand: rgba(160, 180, 255, 0.40);
+    --c-muted: rgba(160, 180, 255, 0.55);
+    --c-ink-3: rgba(200, 215, 255, 0.75);
+
+    /* Sidebar — transparente en dark para fundirse con el fondo */
+    --sb-bg: transparent;
+    --sb-border: rgba(77, 128, 255, 0.08);
+    --sb-hover-bg: rgba(0, 60, 204, 0.10);
+    --sb-badge-bg: rgba(77, 128, 255, 0.10);
+    --sb-badge-text: rgba(160, 190, 255, 0.70);
+
+    /* Azul brilla más en oscuro */
+    --c-orange-glow: rgba(77, 128, 255, 0.35);
 }
+
+/* Secciones principales — liquid glass */
+[data-theme="dark"] .nativeSection,
+[data-theme="dark"] .columnSection {
+    background: rgba(10, 12, 35, 0.60);
+    backdrop-filter: blur(20px) saturate(140%);
+    -webkit-backdrop-filter: blur(20px) saturate(140%);
+    border-color: rgba(77, 128, 255, 0.10);
+    box-shadow:
+        0 1px 0 rgba(255, 255, 255, 0.04) inset,
+        0 8px 32px rgba(0, 0, 0, 0.30);
+}
+
+/* Cards de cursos */
+[data-theme="dark"] .nativeCard {
+    background: rgba(255, 255, 255, 0.03);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-color: rgba(77, 128, 255, 0.08);
+}
+
+[data-theme="dark"] .nativeCard:hover {
+    background: rgba(0, 60, 204, 0.08);
+    border-color: rgba(0, 60, 204, 0.20);
+}
+
+/* Cards de candidatos / galería */
+[data-theme="dark"] .courseCard,
+[data-theme="dark"] .galleryItem,
+[data-theme="dark"] .candidateCard {
+    background: rgba(255, 255, 255, 0.03);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-color: rgba(77, 128, 255, 0.08);
+}
+
+/* Sidebar glass */
+[data-theme="dark"] .sidebar {
+    background: transparent;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    border-right: 1px solid rgba(77, 128, 255, 0.06);
+}
+
+/* Buscador */
+[data-theme="dark"] .searchInputWrapper {
+    background: rgba(255, 255, 255, 0.04);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-color: rgba(77, 128, 255, 0.12);
+}
+
+[data-theme="dark"] .searchInput {
+    background: transparent;
+    color: rgba(200, 215, 255, 0.90);
+}
+
+/* Formularios / contenedores de edición */
+[data-theme="dark"] .createCourseContainer {
+    background: rgba(10, 12, 35, 0.70);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border-color: rgba(77, 128, 255, 0.10);
+}
+
+/* Skeleton en dark */
+[data-theme="dark"] .skeletonCard {
+    background: rgba(77, 128, 255, 0.05);
+    background-image: linear-gradient(90deg,
+            rgba(77, 128, 255, 0.04) 25%,
+            rgba(77, 128, 255, 0.10) 50%,
+            rgba(77, 128, 255, 0.04) 75%);
+}
+
 
 /* ── Shell ── */
 .main {
     min-height: 100vh;
-    background: var(--c-cream);
+    background: #f5f7ff;
     font-family: var(--font-body);
     color: var(--c-ink);
     position: relative;
     overflow-x: hidden;
 }
+
+[data-theme="dark"] .main {
+    background: #060612;
+}
+
 
 .profileContainer {
     position: fixed;
@@ -120,16 +220,16 @@
     transform: translateX(-2px);
 }
 
-/* Decoración de fondo */
+/* Decoración de fondo — azul corporativo */
 .bgDecoration {
     position: fixed;
     inset: 0;
     pointer-events: none;
     z-index: 0;
     background:
-        radial-gradient(ellipse 70% 55% at 85% 5%, rgba(212, 98, 42, 0.055) 0%, transparent 55%),
-        radial-gradient(ellipse 55% 45% at 5% 90%, rgba(45, 122, 79, 0.045) 0%, transparent 55%),
-        radial-gradient(ellipse 45% 35% at 50% 50%, rgba(212, 98, 42, 0.025) 0%, transparent 60%);
+        radial-gradient(ellipse 70% 55% at 85% 5%, rgba(0, 60, 204, 0.07) 0%, transparent 55%),
+        radial-gradient(ellipse 55% 45% at 5% 90%, rgba(0, 80, 224, 0.05) 0%, transparent 55%),
+        radial-gradient(ellipse 45% 35% at 50% 50%, rgba(0, 60, 204, 0.03) 0%, transparent 60%);
 }
 
 /* ================================================================
@@ -181,22 +281,25 @@
 }
 
 .sidebarBrandName {
-    font-family: var(--font-serif);
-    font-size: 0.98rem;
+    font-family: 'Playfair Display', Georgia, serif;
+    font-size: 1.05rem;
+    font-weight: 700;
     color: var(--sb-text);
-    letter-spacing: 0.01em;
-    font-style: italic;
+    letter-spacing: -0.01em;
+    font-style: normal;
 }
 
 .sidebarLabel {
     display: block;
-    font-size: 0.62rem;
-    font-weight: 600;
+    font-family: var(--font-body);
+    font-size: 0.60rem;
+    font-weight: 700;
     color: var(--sb-text-muted);
     text-transform: uppercase;
-    letter-spacing: 0.12em;
-    padding: 0 6px;
-    margin-bottom: 5px;
+    letter-spacing: 0.14em;
+    padding: 0 8px;
+    margin-bottom: 6px;
+    opacity: 0.55;
 }
 
 .sidebarNav {
@@ -218,17 +321,18 @@
     align-items: center;
     justify-content: space-between;
     gap: 8px;
-    padding: 9px 11px;
+    padding: 8px 10px;
     border-radius: var(--r-md);
     background: transparent;
     border: none;
     color: var(--sb-text-muted);
     font-family: var(--font-body);
-    font-size: 0.83rem;
+    font-size: 0.825rem;
     font-weight: 500;
     cursor: pointer;
     text-align: left;
     width: 100%;
+    letter-spacing: -0.005em;
     transition: background var(--t) var(--ease), color var(--t) var(--ease);
 }
 
@@ -264,18 +368,19 @@
 }
 
 .sidebarBadge {
-    font-size: 0.62rem;
+    font-size: 0.60rem;
     font-weight: 700;
     font-family: var(--font-mono);
     background: var(--sb-badge-bg);
     color: var(--sb-badge-text);
-    padding: 1px 6px;
+    padding: 1px 7px;
     border-radius: 20px;
-    line-height: 1.7;
+    line-height: 1.8;
+    letter-spacing: 0.02em;
 }
 
 .sidebarItem.active .sidebarBadge {
-    background: rgba(255, 255, 255, 0.22);
+    background: rgba(255, 255, 255, 0.20);
     color: #fff;
 }
 
@@ -1483,6 +1588,19 @@ textarea.input {
     flex-direction: column;
     gap: 14px;
 }
+
+[data-theme="dark"] .galleryModalBox {
+    background: #0a0c23 !important;
+    opacity: 1 !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    border: 1px solid rgba(77, 128, 255, 0.25);
+    box-shadow:
+        0 8px 32px rgba(0, 0, 0, 0.6),
+        0 4px 6px rgba(0, 0, 0, 0.4),
+        0 1px 0 rgba(255, 255, 255, 0.05) inset;
+}
+
 
 .galleryModalHeader {
     text-align: center;

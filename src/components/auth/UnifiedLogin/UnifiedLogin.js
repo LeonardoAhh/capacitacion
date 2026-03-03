@@ -2,12 +2,11 @@
 
 import { useId } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { AlertCircle, Loader2 } from 'lucide-react';
+import { AlertCircle, Loader2, Lock } from 'lucide-react';
 import BackButton from '@/components/ui/BackButton/BackButton';
 import baseStyles from '../LoginBase/LoginBase.module.css';
 import componentStyles from './UnifiedLogin.module.css';
 import { mergeStyles } from '../LoginBase/mergeStyles';
-import { BackgroundLines } from '../../ui/BackgroundLines/BackgroundLines';
 import { FADE_UP_LOGIN, CARD_ENTER, ERROR_VARIANTS, SUCCESS_ENTER } from '../LoginBase/loginAnimations';
 
 const styles = mergeStyles(baseStyles, componentStyles);
@@ -87,12 +86,6 @@ export default function UnifiedLogin({
 
     return (
         <div className={styles.container}>
-            <BackgroundLines
-                colors={["#f59e0b", "#f97316", "#d97706", "#c2410c"]}
-                style={{ position: 'absolute', inset: 0, zIndex: 0, opacity: 0.5 }}
-                svgOptions={{ duration: 10 }}
-            />
-
             <div style={{ position: 'absolute', top: '1rem', left: '1rem', zIndex: 50 }}>
                 <BackButton href={backHref} label={backLabel} />
             </div>
@@ -121,7 +114,7 @@ export default function UnifiedLogin({
                 ) : (
                     <>
                         <motion.header variants={FADE_UP_LOGIN} custom={0} className={styles.header}>
-                            {portal && <div className={styles.iconWrapper} aria-hidden="true"><span className={styles.icon}>🔓</span></div>}
+                            {portal && <div className={styles.iconWrapper} aria-hidden="true"><Lock className={styles.icon} /></div>}
                             <h1 className={styles.title}>{title}</h1>
                             {subtitle && <p className={styles.subtitle}>{subtitle}</p>}
                         </motion.header>

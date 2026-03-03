@@ -1,0 +1,649 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 600" width="900" height="600">
+  <defs>
+
+    <!-- === BACKGROUNDS === -->
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#03070f"/>
+      <stop offset="40%" stop-color="#060e1c"/>
+      <stop offset="100%" stop-color="#081428"/>
+    </linearGradient>
+
+    <radialGradient id="bgBloom" cx="55%" cy="50%" r="55%">
+      <stop offset="0%" stop-color="#0a2a6e" stop-opacity="0.4"/>
+      <stop offset="60%" stop-color="#041020" stop-opacity="0.1"/>
+      <stop offset="100%" stop-color="#000" stop-opacity="0"/>
+    </radialGradient>
+
+    <radialGradient id="floorGlow" cx="50%" cy="100%" r="60%">
+      <stop offset="0%" stop-color="#1040a0" stop-opacity="0.25"/>
+      <stop offset="100%" stop-color="#000" stop-opacity="0"/>
+    </radialGradient>
+
+    <!-- === MACHINE MATERIALS === -->
+    <linearGradient id="machineBody" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1c2d45"/>
+      <stop offset="30%" stop-color="#142038"/>
+      <stop offset="70%" stop-color="#0e1828"/>
+      <stop offset="100%" stop-color="#0a1220"/>
+    </linearGradient>
+
+    <linearGradient id="machineSide" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#253a58"/>
+      <stop offset="40%" stop-color="#1a2d45"/>
+      <stop offset="100%" stop-color="#0c1828"/>
+    </linearGradient>
+
+    <linearGradient id="metalTop" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#3a5a80"/>
+      <stop offset="20%" stop-color="#2a4060"/>
+      <stop offset="100%" stop-color="#0e1e32"/>
+    </linearGradient>
+
+    <linearGradient id="chrome" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#8ab0d0"/>
+      <stop offset="25%" stop-color="#4a7090"/>
+      <stop offset="50%" stop-color="#c0d8f0"/>
+      <stop offset="75%" stop-color="#3a5878"/>
+      <stop offset="100%" stop-color="#6090b8"/>
+    </linearGradient>
+
+    <linearGradient id="chromeH" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#6090b8"/>
+      <stop offset="25%" stop-color="#c0d8f0"/>
+      <stop offset="50%" stop-color="#4a7090"/>
+      <stop offset="75%" stop-color="#8ab0d0"/>
+      <stop offset="100%" stop-color="#3a5878"/>
+    </linearGradient>
+
+    <linearGradient id="barrel" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#2a4060"/>
+      <stop offset="15%" stop-color="#4a7098"/>
+      <stop offset="30%" stop-color="#1e3250"/>
+      <stop offset="50%" stop-color="#3a6080"/>
+      <stop offset="70%" stop-color="#1a2840"/>
+      <stop offset="100%" stop-color="#0e1e30"/>
+    </linearGradient>
+
+    <!-- === PLASTIC PART MATERIALS === -->
+    <linearGradient id="plasticBlue" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1a4a8a"/>
+      <stop offset="35%" stop-color="#0d2d60"/>
+      <stop offset="65%" stop-color="#0a2050"/>
+      <stop offset="100%" stop-color="#071530"/>
+    </linearGradient>
+
+    <linearGradient id="plasticBlueSide" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#0d2a5a"/>
+      <stop offset="50%" stop-color="#091e48"/>
+      <stop offset="100%" stop-color="#060e28"/>
+    </linearGradient>
+
+    <linearGradient id="plasticHighlight" x1="0%" y1="0%" x2="80%" y2="100%">
+      <stop offset="0%" stop-color="#4a90d0" stop-opacity="0.6"/>
+      <stop offset="50%" stop-color="#1a50a0" stop-opacity="0.3"/>
+      <stop offset="100%" stop-color="#0a2060" stop-opacity="0"/>
+    </linearGradient>
+
+    <linearGradient id="plasticDark" x1="100%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#1a3d7a"/>
+      <stop offset="100%" stop-color="#0a1840"/>
+    </linearGradient>
+
+    <!-- === ORANGE/MOLTEN === -->
+    <radialGradient id="molten" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#ff8800" stop-opacity="1"/>
+      <stop offset="40%" stop-color="#ff4400" stop-opacity="0.9"/>
+      <stop offset="80%" stop-color="#cc2200" stop-opacity="0.5"/>
+      <stop offset="100%" stop-color="#880000" stop-opacity="0"/>
+    </radialGradient>
+
+    <linearGradient id="heatBand" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#ff6600" stop-opacity="0.3"/>
+      <stop offset="50%" stop-color="#ff8800" stop-opacity="0.6"/>
+      <stop offset="100%" stop-color="#cc4400" stop-opacity="0.3"/>
+    </linearGradient>
+
+    <!-- === FLOOR REFLECTION === -->
+    <linearGradient id="floor" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#0d1e38"/>
+      <stop offset="100%" stop-color="#050c18"/>
+    </linearGradient>
+
+    <linearGradient id="reflectionFade" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#0a1828" stop-opacity="0.6"/>
+      <stop offset="100%" stop-color="#050c18" stop-opacity="0"/>
+    </linearGradient>
+
+    <!-- === NEON COLORS === -->
+    <linearGradient id="neonLine" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#1e90ff" stop-opacity="0"/>
+      <stop offset="30%" stop-color="#1e90ff" stop-opacity="1"/>
+      <stop offset="70%" stop-color="#00c8ff" stop-opacity="1"/>
+      <stop offset="100%" stop-color="#1e90ff" stop-opacity="0"/>
+    </linearGradient>
+
+    <linearGradient id="neonOrange" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#ff6600" stop-opacity="0"/>
+      <stop offset="50%" stop-color="#ff8800" stop-opacity="1"/>
+      <stop offset="100%" stop-color="#ff6600" stop-opacity="0"/>
+    </linearGradient>
+
+    <!-- === FILTERS === -->
+    <filter id="glow2" x="-40%" y="-40%" width="180%" height="180%">
+      <feGaussianBlur stdDeviation="5" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+
+    <filter id="superGlow" x="-60%" y="-60%" width="220%" height="220%">
+      <feGaussianBlur stdDeviation="12" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="b"/><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+
+    <filter id="softBlur" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="2.5"/>
+    </filter>
+
+    <filter id="medGlow" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="6" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+
+    <filter id="ambientShadow">
+      <feDropShadow dx="0" dy="20" stdDeviation="20" flood-color="#000" flood-opacity="0.8"/>
+    </filter>
+
+    <filter id="innerGlow" x="-10%" y="-10%" width="120%" height="120%">
+      <feGaussianBlur stdDeviation="3" result="b"/>
+      <feComposite in="b" in2="SourceGraphic" operator="in"/>
+    </filter>
+
+    <!-- Noise texture -->
+    <filter id="noise">
+      <feTurbulence type="fractalNoise" baseFrequency="0.65" numOctaves="3" stitchTiles="stitch"/>
+      <feColorMatrix type="saturate" values="0"/>
+      <feBlend in="SourceGraphic" mode="overlay" result="blend"/>
+      <feComposite in="blend" in2="SourceGraphic" operator="in"/>
+    </filter>
+
+    <clipPath id="mainClip">
+      <rect width="900" height="600" rx="20" ry="20"/>
+    </clipPath>
+
+    <clipPath id="machineClip">
+      <rect x="80" y="140" width="580" height="400"/>
+    </clipPath>
+
+    <mask id="fadeMask">
+      <linearGradient id="maskGrad" x1="0%" y1="100%" x2="0%" y2="0%">
+        <stop offset="0%" stop-color="white" stop-opacity="1"/>
+        <stop offset="100%" stop-color="white" stop-opacity="0"/>
+      </linearGradient>
+      <rect width="900" height="600" fill="url(#maskGrad)"/>
+    </mask>
+
+  </defs>
+
+  <g clip-path="url(#mainClip)">
+
+  <!-- ==================== BACKGROUND ==================== -->
+  <rect width="900" height="600" fill="url(#bg)"/>
+  <rect width="900" height="600" fill="url(#bgBloom)"/>
+
+  <!-- Subtle grid -->
+  <g opacity="0.04" stroke="#4a90ff" stroke-width="0.6">
+    <line x1="0" y1="60" x2="900" y2="60"/>
+    <line x1="0" y1="120" x2="900" y2="120"/>
+    <line x1="0" y1="180" x2="900" y2="180"/>
+    <line x1="0" y1="240" x2="900" y2="240"/>
+    <line x1="0" y1="300" x2="900" y2="300"/>
+    <line x1="0" y1="360" x2="900" y2="360"/>
+    <line x1="0" y1="420" x2="900" y2="420"/>
+    <line x1="0" y1="480" x2="900" y2="480"/>
+    <line x1="0" y1="540" x2="900" y2="540"/>
+    <line x1="60" y1="0" x2="60" y2="600"/>
+    <line x1="120" y1="0" x2="120" y2="600"/>
+    <line x1="180" y1="0" x2="180" y2="600"/>
+    <line x1="240" y1="0" x2="240" y2="600"/>
+    <line x1="300" y1="0" x2="300" y2="600"/>
+    <line x1="360" y1="0" x2="360" y2="600"/>
+    <line x1="420" y1="0" x2="420" y2="600"/>
+    <line x1="480" y1="0" x2="480" y2="600"/>
+    <line x1="540" y1="0" x2="540" y2="600"/>
+    <line x1="600" y1="0" x2="600" y2="600"/>
+    <line x1="660" y1="0" x2="660" y2="600"/>
+    <line x1="720" y1="0" x2="720" y2="600"/>
+    <line x1="780" y1="0" x2="780" y2="600"/>
+    <line x1="840" y1="0" x2="840" y2="600"/>
+  </g>
+
+  <!-- ==================== FLOOR ==================== -->
+  <rect x="0" y="490" width="900" height="110" fill="url(#floor)"/>
+  <rect x="0" y="488" width="900" height="4" fill="url(#neonLine)" filter="url(#glow2)" opacity="0.7"/>
+  <rect x="0" y="490" width="900" height="110" fill="url(#floorGlow)"/>
+
+  <!-- Floor reflection lines (perspective) -->
+  <g opacity="0.06" stroke="#4a90ff" stroke-width="0.8">
+    <line x1="0" y1="492" x2="900" y2="492"/>
+    <line x1="0" y1="510" x2="900" y2="510"/>
+    <line x1="0" y1="530" x2="900" y2="530"/>
+    <line x1="0" y1="555" x2="900" y2="555"/>
+    <line x1="0" y1="585" x2="900" y2="585"/>
+  </g>
+
+
+  <!-- ==================== INJECTION MOLDING MACHINE (3D PERSPECTIVE) ==================== -->
+
+  <!-- === MACHINE BASE === -->
+  <!-- Base bottom face (3D) -->
+  <polygon points="95,505 680,505 695,495 110,495" fill="#0a1628" stroke="#142238" stroke-width="1"/>
+  <!-- Base front face -->
+  <rect x="95" y="455" width="585" height="52" rx="4" fill="#0f1e34" stroke="#1a2e4a" stroke-width="1.5"/>
+  <!-- Base top edge highlight -->
+  <rect x="95" y="453" width="585" height="5" rx="2" fill="#1e3a5a"/>
+  <!-- Feet -->
+  <rect x="110" y="500" width="40" height="8" rx="2" fill="#0a1628"/>
+  <rect x="620" y="500" width="40" height="8" rx="2" fill="#0a1628"/>
+  <rect x="270" y="500" width="40" height="8" rx="2" fill="#0a1628"/>
+  <rect x="460" y="500" width="40" height="8" rx="2" fill="#0a1628"/>
+
+  <!-- === MAIN MACHINE BODY === -->
+  <!-- Back/top face perspective (3D top) -->
+  <polygon points="110,200 680,200 695,188 125,188" fill="url(#metalTop)" stroke="#1e3a5a" stroke-width="1"/>
+  <!-- Right side face (3D depth) -->
+  <polygon points="680,200 695,188 695,492 680,505" fill="url(#machineSide)" stroke="#1a2e48" stroke-width="1"/>
+  <!-- Main front face -->
+  <rect x="95" y="200" width="585" height="260" fill="url(#machineBody)" stroke="#1a3050" stroke-width="1.5"/>
+
+  <!-- Machine front panel detail lines -->
+  <rect x="95" y="200" width="585" height="3" fill="#2a4060" opacity="0.8"/>
+  <line x1="95" y1="280" x2="680" y2="280" stroke="#1a2e48" stroke-width="1" opacity="0.6"/>
+  <line x1="95" y1="380" x2="680" y2="380" stroke="#1a2e48" stroke-width="1" opacity="0.6"/>
+
+  <!-- Vertical panel seams -->
+  <line x1="280" y1="200" x2="280" y2="460" stroke="#1a2e48" stroke-width="1.5" opacity="0.7"/>
+  <line x1="500" y1="200" x2="500" y2="460" stroke="#1a2e48" stroke-width="1.5" opacity="0.7"/>
+
+  <!-- === CLAMPING UNIT (right section) === -->
+  <!-- Platens -->
+  <rect x="510" y="220" width="155" height="230" rx="6" fill="#0e1e34" stroke="#1e3a58" stroke-width="2"/>
+  <!-- Fixed platen surface detail -->
+  <rect x="520" y="232" width="55" height="206" rx="3" fill="#0a1828" stroke="#152a44" stroke-width="1"/>
+  <!-- Moving platen -->
+  <rect x="590" y="232" width="68" height="206" rx="3" fill="#0c1c32" stroke="#1a3050" stroke-width="1"/>
+
+  <!-- Platen face detail (T-slots) -->
+  <rect x="524" y="240" width="44" height="8" rx="1" fill="#0e2240"/>
+  <rect x="524" y="260" width="44" height="8" rx="1" fill="#0e2240"/>
+  <rect x="524" y="300" width="44" height="8" rx="1" fill="#0e2240"/>
+  <rect x="524" y="340" width="44" height="8" rx="1" fill="#0e2240"/>
+  <rect x="524" y="380" width="44" height="8" rx="1" fill="#0e2240"/>
+  <rect x="524" y="420" width="44" height="8" rx="1" fill="#0e2240"/>
+
+  <!-- Tie bars — 4 chrome rods -->
+  <!-- Top-left tie bar -->
+  <rect x="516" y="228" width="14" height="215" rx="5" fill="url(#chrome)" stroke="#2a5070" stroke-width="0.5"/>
+  <!-- Top-right tie bar -->
+  <rect x="638" y="228" width="14" height="215" rx="5" fill="url(#chrome)" stroke="#2a5070" stroke-width="0.5"/>
+  <!-- End caps -->
+  <ellipse cx="523" cy="228" rx="7" ry="4" fill="#8ab0d0"/>
+  <ellipse cx="645" cy="228" rx="7" ry="4" fill="#8ab0d0"/>
+  <ellipse cx="523" cy="443" rx="7" ry="4" fill="#6090b0"/>
+  <ellipse cx="645" cy="443" rx="7" ry="4" fill="#6090b0"/>
+
+  <!-- Hydraulic cylinder (on top) -->
+  <rect x="590" y="160" width="38" height="68" rx="8" fill="#1a2e48" stroke="#2a4a68" stroke-width="1.5"/>
+  <ellipse cx="609" cy="160" rx="19" ry="7" fill="#2a4a68"/>
+  <rect x="602" y="155" width="14" height="12" rx="3" fill="#1e3a58"/>
+
+  <!-- Cylinder rod -->
+  <rect x="604" y="225" width="10" height="20" rx="3" fill="url(#chrome)"/>
+
+  <!-- === INJECTION UNIT (left section) === -->
+  <!-- Injection carriage -->
+  <rect x="100" y="295" width="195" height="115" rx="6" fill="#0c1c32" stroke="#1a3050" stroke-width="1.5"/>
+
+  <!-- Barrel assembly - CHROME CYLINDER -->
+  <rect x="105" y="320" width="175" height="55" rx="14" fill="url(#barrel)" stroke="#2a4a68" stroke-width="1.5"/>
+  <!-- Barrel highlight strip -->
+  <rect x="110" y="322" width="165" height="8" rx="4" fill="#4a7098" opacity="0.5"/>
+  <!-- Barrel seam lines -->
+  <line x1="140" y1="320" x2="140" y2="375" stroke="#1a3050" stroke-width="0.8"/>
+  <line x1="180" y1="320" x2="180" y2="375" stroke="#1a3050" stroke-width="0.8"/>
+  <line x1="220" y1="320" x2="220" y2="375" stroke="#1a3050" stroke-width="0.8"/>
+  <line x1="260" y1="320" x2="260" y2="375" stroke="#1a3050" stroke-width="0.8"/>
+
+  <!-- Heating bands on barrel (glowing orange) -->
+  <rect x="138" y="321" width="18" height="53" rx="1" fill="url(#heatBand)" stroke="#ff6600" stroke-width="0.8" filter="url(#glow2)" opacity="0.85"/>
+  <rect x="178" y="321" width="18" height="53" rx="1" fill="url(#heatBand)" stroke="#ff6600" stroke-width="0.8" filter="url(#glow2)" opacity="0.85"/>
+  <rect x="218" y="321" width="18" height="53" rx="1" fill="url(#heatBand)" stroke="#ff5500" stroke-width="0.8" filter="url(#glow2)" opacity="0.85"/>
+  <rect x="258" y="321" width="18" height="53" rx="1" fill="url(#heatBand)" stroke="#ff4400" stroke-width="0.8" filter="url(#glow2)" opacity="0.9"/>
+
+  <!-- Nozzle tip -->
+  <polygon points="280,334 300,340 300,356 280,362" fill="url(#chromeH)" stroke="#3a6080" stroke-width="1"/>
+  <!-- Nozzle glow -->
+  <circle cx="302" cy="348" r="8" fill="url(#molten)" filter="url(#superGlow)" opacity="0.9"/>
+
+  <!-- === HOPPER (funnel) === -->
+  <!-- Hopper stand -->
+  <rect x="170" y="240" width="8" height="58" rx="2" fill="#1a2e48"/>
+  <rect x="195" y="240" width="8" height="58" rx="2" fill="#1a2e48"/>
+  <!-- Hopper funnel body -->
+  <polygon points="155,242 210,242 225,298 140,298" fill="#162438" stroke="#1e3858" stroke-width="1.5"/>
+  <!-- Hopper top rim -->
+  <ellipse cx="182" cy="242" rx="28" ry="8" fill="#1e3450" stroke="#2a4870" stroke-width="1.5"/>
+  <!-- Hopper content (pellets visible) -->
+  <ellipse cx="182" cy="242" rx="22" ry="5" fill="#0d1e34"/>
+  <!-- Pellet dots -->
+  <g opacity="0.8" filter="url(#softBlur)">
+    <ellipse cx="172" cy="248" rx="4" ry="2.5" fill="#1e90ff"/>
+    <ellipse cx="185" cy="246" rx="4" ry="2.5" fill="#2080e0"/>
+    <ellipse cx="198" cy="249" rx="3.5" ry="2" fill="#1870c0"/>
+    <ellipse cx="177" cy="253" rx="3.5" ry="2" fill="#1e90ff"/>
+    <ellipse cx="190" cy="252" rx="4" ry="2.5" fill="#2080e0"/>
+  </g>
+  <!-- Hopper neck -->
+  <rect x="168" y="296" width="26" height="12" rx="2" fill="#142030"/>
+
+  <!-- === CONTROL PANEL (center section) === -->
+  <rect x="295" y="215" width="200" height="230" rx="6" fill="#080e1c" stroke="#1a2e48" stroke-width="1.5"/>
+  <!-- Screen display -->
+  <rect x="305" y="225" width="180" height="120" rx="4" fill="#050a18"/>
+  <!-- Screen content - process data -->
+  <rect x="305" y="225" width="180" height="3" fill="#1e90ff" filter="url(#glow2)" opacity="0.8"/>
+
+  <!-- Screen graph bars -->
+  <rect x="315" y="295" width="12" height="45" rx="2" fill="#1e90ff" opacity="0.7"/>
+  <rect x="333" y="278" width="12" height="62" rx="2" fill="#1e90ff" opacity="0.8"/>
+  <rect x="351" y="265" width="12" height="75" rx="2" fill="#00c8ff" opacity="0.9" filter="url(#glow2)"/>
+  <rect x="369" y="270" width="12" height="70" rx="2" fill="#1e90ff" opacity="0.8"/>
+  <rect x="387" y="288" width="12" height="52" rx="2" fill="#1e90ff" opacity="0.7"/>
+  <rect x="405" y="275" width="12" height="65" rx="2" fill="#00c8ff" opacity="0.85"/>
+  <rect x="423" y="285" width="12" height="55" rx="2" fill="#1e90ff" opacity="0.7"/>
+  <rect x="441" y="263" width="12" height="77" rx="2" fill="#00c8ff" opacity="0.9" filter="url(#glow2)"/>
+  <rect x="459" y="280" width="12" height="60" rx="2" fill="#1e90ff" opacity="0.75"/>
+
+  <!-- Screen scan line effect -->
+  <rect x="305" y="225" width="180" height="120" fill="none" opacity="0.15">
+    <animate attributeName="y" values="225;345;225" dur="3s" repeatCount="indefinite"/>
+  </rect>
+
+  <!-- Screen labels -->
+  <text x="316" y="243" font-family="'Courier New', monospace" font-size="7" fill="#1e90ff" opacity="0.9">PROCESO ACTIVO</text>
+  <text x="395" y="243" font-family="'Courier New', monospace" font-size="7" fill="#00cc66">● EN LÍNEA</text>
+  <text x="316" y="256" font-family="'Courier New', monospace" font-size="6" fill="#4a80c0">T: 235°C  P: 1480bar  t: 18.2s</text>
+
+  <!-- Control buttons row -->
+  <g transform="translate(310, 358)">
+    <rect x="0" y="0" width="35" height="18" rx="4" fill="#0d2040" stroke="#1e90ff" stroke-width="1"/>
+    <text x="5" y="13" font-family="'Courier New', monospace" font-size="7" fill="#1e90ff">START</text>
+    <rect x="42" y="0" width="35" height="18" rx="4" fill="#200a0a" stroke="#ff4444" stroke-width="1"/>
+    <text x="49" y="13" font-family="'Courier New', monospace" font-size="7" fill="#ff4444">STOP</text>
+    <rect x="84" y="0" width="35" height="18" rx="4" fill="#0d2000" stroke="#00cc66" stroke-width="1"/>
+    <text x="88" y="13" font-family="'Courier New', monospace" font-size="7" fill="#00cc66">AUTO</text>
+    <rect x="126" y="0" width="35" height="18" rx="4" fill="#1a1000" stroke="#f5a623" stroke-width="1"/>
+    <text x="131" y="13" font-family="'Courier New', monospace" font-size="7" fill="#f5a623">MAN.</text>
+  </g>
+
+  <!-- Status lights -->
+  <circle cx="316" cy="395" r="5" fill="#00cc66" filter="url(#glow2)"/>
+  <circle cx="336" cy="395" r="5" fill="#00cc66" filter="url(#glow2)"/>
+  <circle cx="356" cy="395" r="5" fill="#f5a623" filter="url(#medGlow)"/>
+  <circle cx="376" cy="395" r="5" fill="#1e90ff" filter="url(#glow2)"/>
+
+  <!-- Touchscreen area -->
+  <rect x="308" y="408" width="174" height="30" rx="3" fill="#0a1828" stroke="#1a2e48" stroke-width="1"/>
+  <text x="322" y="421" font-family="'Courier New', monospace" font-size="6.5" fill="#4a90d9">OEE: 94.7%  PZAS/H: 203  SCRAP: 0.3%</text>
+  <text x="326" y="432" font-family="'Courier New', monospace" font-size="6" fill="#3a6090">TURNO: A  OP: 847  META: 1850</text>
+
+  <!-- === MOLD VISIBLE BETWEEN PLATENS === -->
+  <!-- Mold half A -->
+  <rect x="573" y="248" width="22" height="188" rx="3" fill="#0d2040" stroke="#1e4080" stroke-width="1.5"/>
+  <!-- Mold half B -->
+  <rect x="595" y="248" width="22" height="188" rx="3" fill="#0a1830" stroke="#1a3870" stroke-width="1.5"/>
+  <!-- Parting line glow -->
+  <line x1="594" y1="248" x2="594" y2="436" stroke="#1e90ff" stroke-width="2" filter="url(#superGlow)" opacity="1"/>
+  <!-- Mold cooling channels visible -->
+  <g opacity="0.5">
+    <circle cx="580" cy="270" r="3.5" fill="none" stroke="#1e90ff" stroke-width="1"/>
+    <circle cx="580" cy="295" r="3.5" fill="none" stroke="#1e90ff" stroke-width="1"/>
+    <circle cx="580" cy="320" r="3.5" fill="none" stroke="#1e90ff" stroke-width="1"/>
+    <circle cx="580" cy="345" r="3.5" fill="none" stroke="#1e90ff" stroke-width="1"/>
+    <circle cx="580" cy="370" r="3.5" fill="none" stroke="#1e90ff" stroke-width="1"/>
+    <circle cx="580" cy="395" r="3.5" fill="none" stroke="#1e90ff" stroke-width="1"/>
+    <circle cx="580" cy="420" r="3.5" fill="none" stroke="#1e90ff" stroke-width="1"/>
+  </g>
+
+  <!-- Cavity glow (hot plastic inside) -->
+  <ellipse cx="594" cy="342" rx="6" ry="60" fill="url(#molten)" filter="url(#superGlow)" opacity="0.6"/>
+
+  <!-- ==================== AUTOMOTIVE PLASTIC PARTS (3D Perspective) ==================== -->
+
+  <!-- === BUMPER / FASCIA — Main hero part, right side === -->
+  <g filter="url(#ambientShadow)">
+    <!-- Bumper 3D top face -->
+    <polygon points="680,155 870,155 875,145 685,145" fill="#1e3d78" stroke="#2a4e8a" stroke-width="1"/>
+    <!-- Bumper 3D right face -->
+    <polygon points="870,155 875,145 875,310 870,320" fill="url(#plasticBlueSide)" stroke="#152a5a" stroke-width="1"/>
+    <!-- Bumper main front face -->
+    <path d="M680,155 Q695,148 760,145 L840,145 Q865,148 870,155 L870,320 Q855,330 800,335 L750,335 Q700,330 680,320 Z"
+          fill="url(#plasticBlue)" stroke="#1e3a6a" stroke-width="1.5"/>
+    <!-- Surface highlight (simulates gloss) -->
+    <path d="M685,158 Q700,151 760,148 L840,148 Q862,151 866,158"
+          fill="none" stroke="#4a90d0" stroke-width="1.5" opacity="0.6"/>
+    <path d="M690,165 Q705,159 760,157 L840,157 Q858,159 863,165"
+          fill="none" stroke="#6ab0f0" stroke-width="0.8" opacity="0.35"/>
+
+    <!-- Bumper lower lip (3D) -->
+    <polygon points="680,320 870,320 875,312 685,312" fill="#0d2050" stroke="#142a5a" stroke-width="1"/>
+
+    <!-- Grille opening left -->
+    <path d="M693,210 Q697,200 730,196 L755,196 Q775,200 780,210 L780,270 Q775,280 755,282 L730,282 Q705,280 693,270 Z"
+          fill="#04080f" stroke="#1a3a6a" stroke-width="1.2"/>
+    <!-- Grille mesh lines -->
+    <g stroke="#1a3868" stroke-width="0.7" opacity="0.8">
+      <line x1="695" y1="210" x2="778" y2="210"/>
+      <line x1="695" y1="222" x2="778" y2="222"/>
+      <line x1="695" y1="234" x2="778" y2="234"/>
+      <line x1="695" y1="246" x2="778" y2="246"/>
+      <line x1="695" y1="258" x2="778" y2="258"/>
+      <line x1="695" y1="270" x2="778" y2="270"/>
+      <line x1="710" y1="197" x2="710" y2="281"/>
+      <line x1="725" y1="197" x2="725" y2="281"/>
+      <line x1="740" y1="197" x2="740" y2="281"/>
+      <line x1="755" y1="197" x2="755" y2="281"/>
+      <line x1="770" y1="197" x2="770" y2="281"/>
+    </g>
+
+    <!-- Grille opening right -->
+    <path d="M793,210 Q797,200 825,196 L848,196 Q865,200 868,210 L868,270 Q865,280 848,282 L825,282 Q800,280 793,270 Z"
+          fill="#04080f" stroke="#1a3a6a" stroke-width="1.2"/>
+    <!-- Grille mesh right -->
+    <g stroke="#1a3868" stroke-width="0.7" opacity="0.8">
+      <line x1="795" y1="210" x2="867" y2="210"/>
+      <line x1="795" y1="222" x2="867" y2="222"/>
+      <line x1="795" y1="234" x2="867" y2="234"/>
+      <line x1="795" y1="246" x2="867" y2="246"/>
+      <line x1="795" y1="258" x2="867" y2="258"/>
+      <line x1="795" y1="270" x2="867" y2="270"/>
+      <line x1="808" y1="197" x2="808" y2="281"/>
+      <line x1="822" y1="197" x2="822" y2="281"/>
+      <line x1="836" y1="197" x2="836" y2="281"/>
+      <line x1="850" y1="197" x2="850" y2="281"/>
+      <line x1="864" y1="197" x2="864" y2="281"/>
+    </g>
+
+    <!-- Center badge area -->
+    <ellipse cx="775" cy="175" rx="18" ry="12" fill="#0a1a38" stroke="#2a4a80" stroke-width="1.5"/>
+    <text x="762" y="179" font-family="Arial Black" font-size="7" font-weight="900" fill="#4a90d9">OEM</text>
+
+    <!-- Fog light left -->
+    <ellipse cx="720" cy="300" rx="22" ry="12" fill="#0a1828" stroke="#2a4a80" stroke-width="1"/>
+    <ellipse cx="720" cy="300" rx="15" ry="8" fill="#0d2040" stroke="#1e3a6a" stroke-width="0.8"/>
+    <ellipse cx="720" cy="300" rx="8" ry="4" fill="#1e90ff" filter="url(#medGlow)" opacity="0.7"/>
+
+    <!-- Fog light right -->
+    <ellipse cx="842" cy="300" rx="22" ry="12" fill="#0a1828" stroke="#2a4a80" stroke-width="1"/>
+    <ellipse cx="842" cy="300" rx="15" ry="8" fill="#0d2040" stroke="#1e3a6a" stroke-width="0.8"/>
+    <ellipse cx="842" cy="300" rx="8" ry="4" fill="#1e90ff" filter="url(#medGlow)" opacity="0.7"/>
+
+    <!-- PDC sensors -->
+    <circle cx="700" cy="318" r="6" fill="#0a1828" stroke="#2060a0" stroke-width="1"/>
+    <circle cx="700" cy="318" r="3" fill="#1e90ff" opacity="0.4" filter="url(#glow2)"/>
+    <circle cx="736" cy="323" r="6" fill="#0a1828" stroke="#2060a0" stroke-width="1"/>
+    <circle cx="736" cy="323" r="3" fill="#1e90ff" opacity="0.4" filter="url(#glow2)"/>
+    <circle cx="775" cy="325" r="6" fill="#0a1828" stroke="#2060a0" stroke-width="1"/>
+    <circle cx="775" cy="325" r="3" fill="#1e90ff" opacity="0.4" filter="url(#glow2)"/>
+    <circle cx="814" cy="323" r="6" fill="#0a1828" stroke="#2060a0" stroke-width="1"/>
+    <circle cx="814" cy="323" r="3" fill="#1e90ff" opacity="0.4" filter="url(#glow2)"/>
+    <circle cx="850" cy="318" r="6" fill="#0a1828" stroke="#2060a0" stroke-width="1"/>
+    <circle cx="850" cy="318" r="3" fill="#1e90ff" opacity="0.4" filter="url(#glow2)"/>
+
+    <!-- Bumper floor shadow / reflection -->
+    <ellipse cx="775" cy="495" rx="105" ry="12" fill="#0a1840" filter="url(#softBlur)" opacity="0.8"/>
+    <!-- Reflection on floor -->
+    <path d="M680,496 Q695,498 760,499 L840,499 Q862,498 870,496 L870,510 Q855,512 800,514 L750,514 Q700,512 680,510 Z"
+          fill="#0a1e40" opacity="0.3"/>
+  </g>
+
+  <!-- === INSTRUMENT PANEL / DASHBOARD PIECE (elevated left) === -->
+  <g filter="url(#ambientShadow)" transform="translate(0, -10)">
+    <!-- Dashboard 3D top -->
+    <polygon points="40,110 200,110 208,102 48,102" fill="#1a3468" stroke="#243e72" stroke-width="1"/>
+    <!-- Dashboard 3D right -->
+    <polygon points="200,110 208,102 208,220 200,228" fill="#0d2050" stroke="#152a5a" stroke-width="1"/>
+    <!-- Dashboard main surface -->
+    <path d="M40,110 Q55,104 120,102 L175,102 Q195,104 200,110 L200,228 Q185,238 140,240 L100,240 Q55,238 40,228 Z"
+          fill="url(#plasticBlue)" stroke="#1e3a6a" stroke-width="1.5"/>
+    <!-- Surface gloss highlight -->
+    <path d="M45,112 Q60,106 120,104 L175,104 Q192,106 197,112"
+          fill="none" stroke="#5090d0" stroke-width="1.2" opacity="0.55"/>
+
+    <!-- Instrument cluster cavity -->
+    <rect x="52" y="120" width="80" height="60" rx="6" fill="#030608" stroke="#1e3868" stroke-width="1"/>
+    <!-- Gauges -->
+    <circle cx="75" cy="150" r="20" fill="#050a14" stroke="#1e3868" stroke-width="0.8"/>
+    <circle cx="75" cy="150" r="14" fill="#040810" stroke="#1a3260" stroke-width="0.5"/>
+    <circle cx="75" cy="150" r="10" fill="none" stroke="#1e90ff" stroke-width="0.6" opacity="0.6"/>
+    <!-- Speedometer needle -->
+    <line x1="75" y1="150" x2="82" y2="138" stroke="#ff4400" stroke-width="1.5" filter="url(#glow2)"/>
+    <circle cx="75" cy="150" r="2.5" fill="#f5a623"/>
+
+    <circle cx="115" cy="150" r="20" fill="#050a14" stroke="#1e3868" stroke-width="0.8"/>
+    <circle cx="115" cy="150" r="14" fill="#040810" stroke="#1a3260" stroke-width="0.5"/>
+    <circle cx="115" cy="150" r="10" fill="none" stroke="#00cc66" stroke-width="0.6" opacity="0.6"/>
+    <line x1="115" y1="150" x2="122" y2="140" stroke="#00cc66" stroke-width="1.5" filter="url(#glow2)"/>
+    <circle cx="115" cy="150" r="2.5" fill="#f5a623"/>
+
+    <!-- Climate controls -->
+    <rect x="52" y="190" width="140" height="32" rx="4" fill="#030810" stroke="#162a50" stroke-width="0.8"/>
+    <circle cx="70" cy="206" r="9" fill="#0a1828" stroke="#1e3a60" stroke-width="1"/>
+    <circle cx="70" cy="206" r="5" fill="none" stroke="#1e90ff" stroke-width="0.8"/>
+    <circle cx="70" cy="206" r="2" fill="#1e90ff" opacity="0.6" filter="url(#glow2)"/>
+    <rect x="90" y="198" width="50" height="16" rx="3" fill="#060e1e" stroke="#1a2e4a" stroke-width="0.8"/>
+    <text x="94" y="209" font-family="'Courier New', monospace" font-size="7" fill="#1e90ff">22°C AUTO</text>
+    <circle cx="160" cy="206" r="9" fill="#0a1828" stroke="#1e3a60" stroke-width="1"/>
+    <circle cx="160" cy="206" r="5" fill="none" stroke="#f5a623" stroke-width="0.8"/>
+
+    <!-- Texture on dashboard soft zones -->
+    <g opacity="0.08" fill="#4a90d9">
+      <circle cx="60" cy="118" r="1"/>
+      <circle cx="66" cy="118" r="1"/>
+      <circle cx="72" cy="118" r="1"/>
+      <circle cx="78" cy="118" r="1"/>
+      <circle cx="84" cy="118" r="1"/>
+      <circle cx="60" cy="124" r="1"/>
+      <circle cx="66" cy="124" r="1"/>
+      <circle cx="72" cy="124" r="1"/>
+      <circle cx="78" cy="124" r="1"/>
+      <circle cx="84" cy="124" r="1"/>
+    </g>
+
+    <!-- Dashboard floor shadow -->
+    <ellipse cx="130" cy="495" rx="80" ry="8" fill="#0a1840" filter="url(#softBlur)" opacity="0.6"/>
+  </g>
+
+  <!-- ==================== AMBIENT GLOW EFFECTS ==================== -->
+
+  <!-- Nozzle heat bloom -->
+  <circle cx="302" cy="348" r="30" fill="url(#molten)" opacity="0.15" filter="url(#superGlow)"/>
+
+  <!-- Machine status indicator lights -->
+  <circle cx="145" cy="212" r="5" fill="#00cc66" filter="url(#superGlow)"/>
+  <circle cx="162" cy="212" r="5" fill="#00cc66" filter="url(#superGlow)"/>
+  <circle cx="179" cy="212" r="5" fill="#f5a623" filter="url(#medGlow)"/>
+
+  <!-- Ambient machine backlight (blue rim light) -->
+  <rect x="93" y="198" width="590" height="268" rx="8" fill="none" stroke="#1e90ff" stroke-width="1" filter="url(#medGlow)" opacity="0.25"/>
+
+  <!-- ==================== CERTIFICATION BADGES — TOP RIGHT ==================== -->
+  <g transform="translate(675, 370)">
+    <!-- IATF badge -->
+    <rect x="0" y="0" width="70" height="52" rx="6" fill="#060e1c" fill-opacity="0.95" stroke="#f5a623" stroke-width="1.5"/>
+    <rect x="0" y="0" width="70" height="18" rx="6" fill="#1a1000" fill-opacity="0.9"/>
+    <rect x="0" y="12" width="70" height="6" fill="#1a1000" fill-opacity="0.9"/>
+    <text x="8" y="13" font-family="Arial Black" font-size="9" font-weight="900" fill="#f5a623" letter-spacing="0.5">IATF</text>
+    <text x="5" y="27" font-family="Arial" font-size="7" fill="#c08030">16949:2016</text>
+    <text x="5" y="39" font-family="Arial" font-size="6" fill="#806020">CERTIFICADO</text>
+    <text x="5" y="49" font-family="Arial" font-size="5.5" fill="#806020">Automotriz</text>
+
+    <!-- ISO badge -->
+    <rect x="78" y="0" width="70" height="52" rx="6" fill="#060e1c" fill-opacity="0.95" stroke="#00cc66" stroke-width="1.5"/>
+    <rect x="78" y="0" width="70" height="18" rx="6" fill="#001a08" fill-opacity="0.9"/>
+    <rect x="78" y="12" width="70" height="6" fill="#001a08" fill-opacity="0.9"/>
+    <text x="84" y="13" font-family="Arial Black" font-size="9" font-weight="900" fill="#00cc66" letter-spacing="0.5">ISO</text>
+    <text x="83" y="27" font-family="Arial" font-size="7" fill="#009944">14001:2015</text>
+    <text x="83" y="39" font-family="Arial" font-size="6" fill="#007733">CERTIFICADO</text>
+    <text x="83" y="49" font-family="Arial" font-size="5.5" fill="#007733">Ambiental</text>
+  </g>
+
+  <!-- ==================== PROCESS DATA — FLOATING HUD ==================== -->
+  <g transform="translate(675, 440)">
+    <rect x="0" y="0" width="148" height="48" rx="5" fill="#030810" fill-opacity="0.92" stroke="#1e3a60" stroke-width="1"/>
+    <text x="8" y="13" font-family="'Courier New', monospace" font-size="7" fill="#4a90d9">PRODUCCIÓN TURNO A</text>
+    <line x1="5" y1="17" x2="143" y2="17" stroke="#1a2e48" stroke-width="0.5"/>
+    <text x="8" y="28" font-family="'Courier New', monospace" font-size="8" font-weight="bold" fill="#00cc66">1,847 pzas</text>
+    <text x="95" y="28" font-family="'Courier New', monospace" font-size="6" fill="#4a80c0">/ 1,850</text>
+    <!-- Progress bar -->
+    <rect x="8" y="33" width="132" height="5" rx="2" fill="#0a1828"/>
+    <rect x="8" y="33" width="130" height="5" rx="2" fill="#00cc66" filter="url(#glow2)" opacity="0.9"/>
+    <text x="8" y="45" font-family="'Courier New', monospace" font-size="6" fill="#3a7040">OEE 94.7% ● Scrap 0.3% ● Uptime 98.1%</text>
+  </g>
+
+  <!-- ==================== NEON ACCENT LINES ==================== -->
+  <line x1="0" y1="32" x2="900" y2="32" stroke="url(#neonLine)" stroke-width="1" filter="url(#glow2)" opacity="0.5"/>
+  <line x1="0" y1="568" x2="900" y2="568" stroke="url(#neonLine)" stroke-width="1" filter="url(#glow2)" opacity="0.5"/>
+
+  <!-- Side vertical accents -->
+  <line x1="30" y1="80" x2="30" y2="520" stroke="#1e90ff" stroke-width="0.8" opacity="0.12"/>
+  <line x1="870" y1="80" x2="870" y2="520" stroke="#1e90ff" stroke-width="0.8" opacity="0.12"/>
+
+  <!-- ==================== FLOATING PARTICLES ==================== -->
+  <g filter="url(#glow2)" opacity="0.7">
+    <circle cx="660" cy="80" r="2" fill="#1e90ff"/>
+    <circle cx="650" cy="92" r="1.2" fill="#60c0ff"/>
+    <circle cx="672" cy="95" r="1.5" fill="#1e90ff"/>
+    <circle cx="40" cy="280" r="2" fill="#1e90ff"/>
+    <circle cx="55" cy="295" r="1.2" fill="#60c0ff"/>
+    <circle cx="28" cy="310" r="1.5" fill="#1e90ff"/>
+    <circle cx="800" cy="460" r="2" fill="#1e90ff"/>
+    <circle cx="350" cy="70" r="1.5" fill="#60c0ff"/>
+    <circle cx="450" cy="55" r="2" fill="#1e90ff"/>
+    <circle cx="220" cy="80" r="1.2" fill="#60c0ff"/>
+  </g>
+
+  <!-- ==================== BOTTOM CLIENT STRIP ==================== -->
+  <rect x="0" y="568" width="900" height="32" fill="#020810" fill-opacity="0.97"/>
+  <rect x="0" y="568" width="900" height="1.5" fill="url(#neonLine)" filter="url(#glow2)" opacity="0.6"/>
+  <text x="450" y="581" font-family="'Arial Narrow', Arial" font-size="7.5" fill="#2a50a0" text-anchor="middle" letter-spacing="3" font-weight="bold">CLIENTES CERTIFICADOS OEM</text>
+  <text x="450" y="594" font-family="'Arial Narrow', Arial" font-size="8.5" fill="#4a7ab0" text-anchor="middle" letter-spacing="4" font-weight="bold">BMW · TESLA · NISSAN · CADILLAC · VALEO · HELLA · BCS · GRAMMER</text>
+
+  <!-- ==================== CORNER BRACKETS ==================== -->
+  <g stroke="#1e60b0" stroke-width="1.5" fill="none" opacity="0.7">
+    <path d="M10,10 L42,10 M10,10 L10,42"/>
+    <path d="M890,10 L858,10 M890,10 L890,42"/>
+    <path d="M10,590 L42,590 M10,590 L10,558"/>
+    <path d="M890,590 L858,590 M890,590 L890,558"/>
+  </g>
+
+  </g>
+</svg>

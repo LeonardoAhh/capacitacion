@@ -1,11 +1,9 @@
 /* ═══════════════════════════════════════════════════════════════
-   LOGIN BASE — Editorial White System
-   Mismo lenguaje: Playfair Display + Geist + ámbar como acento base
-   Cada página sobreescribe via custom properties:
-     --login-accent
-     --login-accent-rgb
-     --login-gradient-from
-     --login-gradient-to
+   LOGIN BASE — Dark Glass VIÑOPLASTIC
+   Mismo lenguaje visual del Hero: azul #003ccc + rojo #d40000
+   Cada portal sobreescribe:
+     --login-accent | --login-accent-rgb
+     --login-gradient-from | --login-gradient-to
    ═══════════════════════════════════════════════════════════════ */
 
 @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Geist:wght@300;400;500;600&display=swap');
@@ -64,9 +62,29 @@
     }
 }
 
+@keyframes orbFloat {
+
+    0%,
+    100% {
+        transform: translate(0, 0) scale(1);
+    }
+
+    50% {
+        transform: translate(2%, 3%) scale(1.04);
+    }
+}
+
 /* ─── Container ─────────────────────────────────────────────── */
 
 .container {
+    /* Custom properties default (azul VIÑOPLASTIC) */
+    --login-accent: #003ccc;
+    --login-accent-rgb: 0, 60, 204;
+    --login-gradient-from: #003ccc;
+    --login-gradient-to: #0050e0;
+    --login-bar: #d40000;
+
+    /* Layout */
     position: relative;
     display: flex;
     min-height: 100dvh;
@@ -74,25 +92,63 @@
     align-items: center;
     justify-content: center;
     overflow: hidden;
-    background: #fafaf8;
-    padding: env(safe-area-inset-top, 0) env(safe-area-inset-right, 0) env(safe-area-inset-bottom, 0) env(safe-area-inset-left, 0);
+
+    /* Light background — mismo que Hero */
+    background: #f5f7ff;
+
+    padding:
+        env(safe-area-inset-top, 0) env(safe-area-inset-right, 0) env(safe-area-inset-bottom, 0) env(safe-area-inset-left, 0);
     font-family: 'Geist', system-ui, sans-serif;
 }
 
-/* Grid texture igual al ShapeHero */
+/* Grid sutil — idéntico al Hero */
 .container::before {
     content: '';
     position: absolute;
     inset: 0;
     background-image:
-        linear-gradient(rgba(0, 0, 0, 0.04) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(0, 0, 0, 0.04) 1px, transparent 1px);
+        linear-gradient(rgba(0, 60, 204, 0.045) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0, 60, 204, 0.045) 1px, transparent 1px);
     background-size: 52px 52px;
     pointer-events: none;
-    mask-image: radial-gradient(ellipse 80% 80% at 50% 50%, black 30%, transparent 100%);
-    -webkit-mask-image: radial-gradient(ellipse 80% 80% at 50% 50%, black 30%, transparent 100%);
-    opacity: 0.55;
+    opacity: 0.7;
     z-index: 0;
+}
+
+/* Orb de luz — misma lógica que Hero */
+.container::after {
+    content: '';
+    position: absolute;
+    width: 70vmax;
+    height: 70vmax;
+    border-radius: 50%;
+    background: radial-gradient(circle,
+            rgba(0, 60, 204, 0.09) 0%,
+            transparent 70%);
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+    animation: orbFloat 12s ease-in-out infinite;
+    z-index: 0;
+}
+
+/* Dark theme */
+[data-theme="dark"] .container {
+    background: #060612;
+}
+
+[data-theme="dark"] .container::before {
+    background-image:
+        linear-gradient(rgba(77, 128, 255, 0.06) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(77, 128, 255, 0.06) 1px, transparent 1px);
+    opacity: 0.8;
+}
+
+[data-theme="dark"] .container::after {
+    background: radial-gradient(circle,
+            rgba(0, 60, 204, 0.18) 0%,
+            transparent 70%);
 }
 
 /* ─── Overlay ───────────────────────────────────────────────── */
@@ -101,35 +157,23 @@
     pointer-events: none;
     position: absolute;
     inset: 0;
-    /* Desvanece los bordes de los BackgroundLines */
     background: linear-gradient(to bottom,
-            #fafaf8 0%,
-            transparent 25%,
-            transparent 75%,
-            #fafaf8 100%);
+            rgba(245, 247, 255, 0.6) 0%,
+            transparent 30%,
+            transparent 70%,
+            rgba(245, 247, 255, 0.6) 100%);
     z-index: 1;
-}
-
-/* Dark themes */
-[data-theme="dark"] .container {
-    background: #0a0a0f;
-}
-
-[data-theme="dark"] .container::before {
-    background-image:
-        linear-gradient(rgba(255, 255, 255, 0.04) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(255, 255, 255, 0.04) 1px, transparent 1px);
 }
 
 [data-theme="dark"] .overlay {
     background: linear-gradient(to bottom,
-            #0a0a0f 0%,
-            transparent 25%,
-            transparent 75%,
-            #0a0a0f 100%);
+            rgba(6, 6, 18, 0.6) 0%,
+            transparent 30%,
+            transparent 70%,
+            rgba(6, 6, 18, 0.6) 100%);
 }
 
-/* ─── Login Card ────────────────────────────────────────────── */
+/* ─── Login Card ─── Liquid Glass ───────────────────────────── */
 
 .loginCard {
     position: relative;
@@ -138,23 +182,29 @@
     max-width: 420px;
     margin: 0 1.5rem;
     padding: 2.8rem 2.5rem 2.5rem;
-    background: rgba(255, 255, 255, 0.88);
-    backdrop-filter: blur(24px) saturate(160%);
-    -webkit-backdrop-filter: blur(24px) saturate(160%);
-    border: 1px solid rgba(0, 0, 0, 0.07);
+
+    /* Liquid glass — light */
+    background: rgba(255, 255, 255, 0.72);
+    backdrop-filter: blur(28px) saturate(180%);
+    -webkit-backdrop-filter: blur(28px) saturate(180%);
+    border: 1px solid rgba(255, 255, 255, 0.85);
+    border-bottom-color: rgba(0, 60, 204, 0.12);
+    border-right-color: rgba(0, 60, 204, 0.08);
     border-radius: 1.5rem;
     box-shadow:
         0 1px 0 rgba(255, 255, 255, 0.9) inset,
-        0 24px 64px rgba(0, 0, 0, 0.07),
-        0 4px 16px rgba(0, 0, 0, 0.04);
+        0 32px 80px rgba(0, 40, 180, 0.12),
+        0 8px 24px rgba(0, 0, 0, 0.06);
 }
 
 [data-theme="dark"] .loginCard {
-    background: rgba(15, 15, 25, 0.85);
-    border: 1px solid rgba(255, 255, 255, 0.07);
+    background: rgba(10, 12, 30, 0.72);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-top-color: rgba(77, 128, 255, 0.18);
     box-shadow:
         0 1px 0 rgba(255, 255, 255, 0.05) inset,
-        0 24px 64px rgba(0, 0, 0, 0.5);
+        0 32px 80px rgba(0, 0, 0, 0.55),
+        0 0 0 1px rgba(0, 60, 204, 0.12);
 }
 
 /* ─── Header ────────────────────────────────────────────────── */
@@ -163,13 +213,13 @@
     margin-bottom: 2.2rem;
 }
 
-/* Línea ámbar superior — igual que .portal::before en ShapeHero */
+/* Línea roja corporativa — igual que Hero portal */
 .header::before {
     content: '';
     display: block;
     width: 32px;
     height: 2px;
-    background: var(--login-accent, #f59e0b);
+    background: var(--login-bar, #d40000);
     border-radius: 2px;
     margin-bottom: 1.4rem;
     transform-origin: left;
@@ -185,15 +235,15 @@
     height: 3.2rem;
     margin-bottom: 1.1rem;
     background: linear-gradient(135deg,
-            var(--login-gradient-from, #f59e0b) 0%,
-            var(--login-gradient-to, #f97316) 100%);
+            var(--login-gradient-from, #003ccc) 0%,
+            var(--login-gradient-to, #0050e0) 100%);
     border-radius: 12px;
-    box-shadow: 0 6px 20px rgba(var(--login-accent-rgb, 245, 158, 11), 0.28);
+    box-shadow: 0 6px 20px rgba(var(--login-accent-rgb, 0, 60, 204), 0.30);
 }
 
 .icon {
-    width: 1.5rem;
-    height: 1.5rem;
+    width: 1.4rem;
+    height: 1.4rem;
     color: white;
 }
 
@@ -204,11 +254,11 @@
     font-size: 2rem;
     letter-spacing: -0.025em;
     line-height: 1.1;
-    color: #111110;
+    color: #0a0f2e;
 }
 
 [data-theme="dark"] .title {
-    color: #f0f4ff;
+    color: #e8eaff;
 }
 
 .subtitle {
@@ -216,7 +266,11 @@
     font-size: 0.82rem;
     font-weight: 400;
     letter-spacing: 0.03em;
-    color: #a3a39a;
+    color: rgba(10, 15, 46, 0.50);
+}
+
+[data-theme="dark"] .subtitle {
+    color: rgba(160, 180, 255, 0.55);
 }
 
 /* ─── Error Message ─────────────────────────────────────────── */
@@ -227,18 +281,18 @@
     gap: 0.5rem;
     margin-bottom: 1.5rem;
     padding: 0.85rem 1rem;
-    background: rgba(239, 68, 68, 0.05);
-    border: 1px solid rgba(239, 68, 68, 0.18);
-    border-left: 3px solid #ef4444;
+    background: rgba(212, 0, 0, 0.05);
+    border: 1px solid rgba(212, 0, 0, 0.18);
+    border-left: 3px solid #d40000;
     border-radius: 0 8px 8px 0;
-    color: #dc2626;
+    color: #c00000;
     font-size: 0.82rem;
     text-align: left;
 }
 
 [data-theme="dark"] .errorMessage {
-    background: rgba(239, 68, 68, 0.08);
-    color: #fca5a5;
+    background: rgba(212, 0, 0, 0.08);
+    color: #ff8080;
 }
 
 /* ─── Blocked Message ───────────────────────────────────────── */
@@ -246,18 +300,18 @@
 .blockedMessage {
     margin-bottom: 1.5rem;
     padding: 0.85rem 1rem;
-    background: rgba(245, 158, 11, 0.06);
-    border: 1px solid rgba(245, 158, 11, 0.2);
-    border-left: 3px solid #f59e0b;
+    background: rgba(0, 60, 204, 0.05);
+    border: 1px solid rgba(0, 60, 204, 0.15);
+    border-left: 3px solid var(--login-accent, #003ccc);
     border-radius: 0 8px 8px 0;
-    color: #d97706;
+    color: #003ccc;
     font-size: 0.82rem;
     font-weight: 500;
 }
 
 [data-theme="dark"] .blockedMessage {
-    color: #fbbf24;
-    background: rgba(245, 158, 11, 0.08);
+    color: #80a8ff;
+    background: rgba(0, 60, 204, 0.08);
 }
 
 /* ─── Rate Limit Banner ─────────────────────────────────────── */
@@ -268,11 +322,11 @@
     gap: 0.5rem;
     margin-bottom: 1.5rem;
     padding: 0.85rem 1rem;
-    background: rgba(245, 158, 11, 0.06);
-    border: 1px solid rgba(245, 158, 11, 0.2);
-    border-left: 3px solid #f59e0b;
+    background: rgba(0, 60, 204, 0.05);
+    border: 1px solid rgba(0, 60, 204, 0.15);
+    border-left: 3px solid var(--login-accent, #003ccc);
     border-radius: 0 8px 8px 0;
-    color: #d97706;
+    color: #003ccc;
     font-size: 0.82rem;
 }
 
@@ -295,11 +349,11 @@
     font-weight: 600;
     letter-spacing: 0.1em;
     text-transform: uppercase;
-    color: #a3a39a;
+    color: rgba(10, 15, 46, 0.45);
 }
 
 [data-theme="dark"] .label {
-    color: rgba(200, 210, 255, 0.5);
+    color: rgba(160, 180, 255, 0.50);
 }
 
 .inputWrapper {
@@ -313,19 +367,23 @@
     left: 0.9rem;
     width: 1.1rem;
     height: 1.1rem;
-    color: #c4c4bb;
+    color: rgba(10, 15, 46, 0.30);
     pointer-events: none;
     transition: color 0.2s ease;
+}
+
+[data-theme="dark"] .inputIcon {
+    color: rgba(160, 180, 255, 0.30);
 }
 
 .input {
     width: 100%;
     padding: 0.8rem 1rem 0.8rem 2.7rem;
-    background: rgba(0, 0, 0, 0.02);
-    border: 1px solid rgba(0, 0, 0, 0.09);
-    border-bottom: 2px solid rgba(0, 0, 0, 0.09);
+    background: rgba(255, 255, 255, 0.55);
+    border: 1px solid rgba(0, 60, 204, 0.12);
+    border-bottom: 2px solid rgba(0, 60, 204, 0.12);
     border-radius: 10px;
-    color: #111110;
+    color: #0a0f2e;
     font-family: 'Geist', system-ui, sans-serif;
     font-size: 0.95rem;
     transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
@@ -333,35 +391,34 @@
 }
 
 [data-theme="dark"] .input {
-    background: rgba(255, 255, 255, 0.04);
-    border-color: rgba(255, 255, 255, 0.08);
-    border-bottom-color: rgba(255, 255, 255, 0.12);
-    color: #f0f4ff;
+    background: rgba(255, 255, 255, 0.05);
+    border-color: rgba(77, 128, 255, 0.12);
+    border-bottom-color: rgba(77, 128, 255, 0.18);
+    color: #e8eaff;
 }
 
 .input::placeholder {
-    color: #d4d4cc;
+    color: rgba(10, 15, 46, 0.25);
     font-weight: 300;
 }
 
 [data-theme="dark"] .input::placeholder {
-    color: rgba(200, 210, 255, 0.25);
+    color: rgba(160, 180, 255, 0.22);
 }
 
 .input:focus {
-    background: #fff;
-    border-color: rgba(var(--login-accent-rgb, 245, 158, 11), 0.3);
-    border-bottom-color: var(--login-accent, #f59e0b);
-    box-shadow: 0 2px 12px rgba(var(--login-accent-rgb, 245, 158, 11), 0.1);
+    background: rgba(255, 255, 255, 0.85);
+    border-color: rgba(var(--login-accent-rgb, 0, 60, 204), 0.35);
+    border-bottom-color: var(--login-accent, #003ccc);
+    box-shadow: 0 2px 12px rgba(var(--login-accent-rgb, 0, 60, 204), 0.12);
 }
 
 [data-theme="dark"] .input:focus {
     background: rgba(255, 255, 255, 0.07);
 }
 
-/* Icon color on focus — uses sibling selector trick */
 .inputWrapper:focus-within .inputIcon {
-    color: var(--login-accent, #f59e0b);
+    color: var(--login-accent, #003ccc);
 }
 
 .input:disabled {
@@ -370,15 +427,19 @@
 }
 
 .inputError {
-    border-color: rgba(239, 68, 68, 0.4) !important;
-    border-bottom-color: #ef4444 !important;
+    border-color: rgba(212, 0, 0, 0.4) !important;
+    border-bottom-color: #d40000 !important;
 }
 
 .helperText {
     margin: 0;
     font-size: 0.7rem;
-    color: #c4c4bb;
+    color: rgba(10, 15, 46, 0.35);
     letter-spacing: 0.02em;
+}
+
+[data-theme="dark"] .helperText {
+    color: rgba(160, 180, 255, 0.35);
 }
 
 /* ─── Submit Button ─────────────────────────────────────────── */
@@ -394,13 +455,13 @@
     letter-spacing: 0.02em;
     color: white;
     background: linear-gradient(135deg,
-            var(--login-gradient-from, #f59e0b) 0%,
-            var(--login-gradient-to, #f97316) 100%);
+            var(--login-gradient-from, #003ccc) 0%,
+            var(--login-gradient-to, #0050e0) 100%);
     border: none;
     border-radius: 10px;
     cursor: pointer;
     transition: box-shadow 0.25s ease, transform 0.2s ease;
-    box-shadow: 0 4px 16px rgba(var(--login-accent-rgb, 245, 158, 11), 0.28);
+    box-shadow: 0 4px 20px rgba(var(--login-accent-rgb, 0, 60, 204), 0.35);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -416,7 +477,7 @@
     inset: 0;
     background: linear-gradient(105deg,
             transparent 40%,
-            rgba(255, 255, 255, 0.18) 50%,
+            rgba(255, 255, 255, 0.2) 50%,
             transparent 60%);
     transform: translateX(-100%);
     transition: transform 0.55s ease;
@@ -427,7 +488,7 @@
 }
 
 .submitButton:hover:not(:disabled) {
-    box-shadow: 0 8px 28px rgba(var(--login-accent-rgb, 245, 158, 11), 0.38);
+    box-shadow: 0 8px 30px rgba(var(--login-accent-rgb, 0, 60, 204), 0.45);
     transform: translateY(-1px);
 }
 
@@ -441,7 +502,7 @@
 }
 
 .submitButton:focus-visible {
-    outline: 2px solid var(--login-accent, #f59e0b);
+    outline: 2px solid var(--login-accent, #003ccc);
     outline-offset: 3px;
 }
 
@@ -457,13 +518,13 @@
     animation: spin 0.7s linear infinite;
 }
 
-/* ─── Divider (ModernLogin) ─────────────────────────────────── */
+/* ─── Divider ───────────────────────────────────────────────── */
 
 .divider {
     display: flex;
     align-items: center;
     gap: 0.75rem;
-    color: #c4c4bb;
+    color: rgba(10, 15, 46, 0.35);
     font-size: 0.72rem;
     font-weight: 500;
     letter-spacing: 0.08em;
@@ -475,15 +536,19 @@
     content: '';
     flex: 1;
     height: 1px;
-    background: rgba(0, 0, 0, 0.08);
+    background: rgba(0, 60, 204, 0.10);
+}
+
+[data-theme="dark"] .divider {
+    color: rgba(160, 180, 255, 0.35);
 }
 
 [data-theme="dark"] .divider::before,
 [data-theme="dark"] .divider::after {
-    background: rgba(255, 255, 255, 0.07);
+    background: rgba(77, 128, 255, 0.10);
 }
 
-/* ─── Google Button (ModernLogin) ───────────────────────────── */
+/* ─── Google Button ─────────────────────────────────────────── */
 
 .googleButton {
     display: flex;
@@ -495,9 +560,9 @@
     font-family: 'Geist', system-ui, sans-serif;
     font-weight: 500;
     font-size: 0.9rem;
-    color: #111110;
-    background: transparent;
-    border: 1px solid rgba(0, 0, 0, 0.1);
+    color: #0a0f2e;
+    background: rgba(255, 255, 255, 0.55);
+    border: 1px solid rgba(0, 60, 204, 0.12);
     border-radius: 10px;
     cursor: pointer;
     transition: all 0.2s ease;
@@ -505,18 +570,19 @@
 }
 
 .googleButton:hover:not(:disabled) {
-    background: rgba(0, 0, 0, 0.03);
-    border-color: rgba(0, 0, 0, 0.16);
+    background: rgba(255, 255, 255, 0.80);
+    border-color: rgba(0, 60, 204, 0.22);
     transform: translateY(-1px);
 }
 
 [data-theme="dark"] .googleButton {
-    color: #f0f4ff;
-    border-color: rgba(255, 255, 255, 0.1);
+    color: #e8eaff;
+    background: rgba(255, 255, 255, 0.05);
+    border-color: rgba(77, 128, 255, 0.12);
 }
 
 [data-theme="dark"] .googleButton:hover:not(:disabled) {
-    background: rgba(255, 255, 255, 0.04);
+    background: rgba(255, 255, 255, 0.08);
 }
 
 .googleButton:disabled {
@@ -530,7 +596,7 @@
     flex-shrink: 0;
 }
 
-/* ─── WhatsApp Link (CandidateLogin) ───────────────────────── */
+/* ─── WhatsApp Link ─────────────────────────────────────────── */
 
 .whatsappLink {
     display: inline-flex;
@@ -538,7 +604,7 @@
     gap: 0.4rem;
     font-size: 0.82rem;
     font-weight: 600;
-    color: var(--login-accent, #f59e0b);
+    color: var(--login-accent, #003ccc);
     text-decoration: none;
     padding: 0.3rem 0;
     border-bottom: 1px solid transparent;
@@ -546,7 +612,7 @@
 }
 
 .whatsappLink:hover {
-    border-bottom-color: var(--login-accent, #f59e0b);
+    border-bottom-color: var(--login-accent, #003ccc);
 }
 
 /* ─── Success Container ─────────────────────────────────────── */
@@ -566,19 +632,23 @@
 .footer {
     margin-top: 1.8rem;
     padding-top: 1.5rem;
-    border-top: 1px solid rgba(0, 0, 0, 0.07);
+    border-top: 1px solid rgba(0, 60, 204, 0.08);
     text-align: center;
 }
 
 [data-theme="dark"] .footer {
-    border-top-color: rgba(255, 255, 255, 0.06);
+    border-top-color: rgba(77, 128, 255, 0.08);
 }
 
 .footerText {
     margin: 0 0 0.6rem;
     font-size: 0.78rem;
     line-height: 1.6;
-    color: #c4c4bb;
+    color: rgba(10, 15, 46, 0.40);
+}
+
+[data-theme="dark"] .footerText {
+    color: rgba(160, 180, 255, 0.40);
 }
 
 /* ─── Screen Reader Only ────────────────────────────────────── */
@@ -599,8 +669,8 @@
 
 .input:focus-visible {
     outline: none;
-    border-bottom-color: var(--login-accent, #f59e0b);
-    box-shadow: 0 2px 12px rgba(var(--login-accent-rgb, 245, 158, 11), 0.15);
+    border-bottom-color: var(--login-accent, #003ccc);
+    box-shadow: 0 2px 12px rgba(var(--login-accent-rgb, 0, 60, 204), 0.15);
 }
 
 /* ═══════════════════════════════════════════════════════════════
@@ -700,6 +770,10 @@
         animation: none;
         transform: scaleX(1);
         opacity: 1;
+    }
+
+    .container::after {
+        animation: none;
     }
 
     .input,

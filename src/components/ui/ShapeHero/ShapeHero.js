@@ -10,23 +10,20 @@ const NAV_LINKS = [
     {
         href: '/login',
         label: 'RRHH',
-        ariaLabel: 'Acceder al portal de empleados',
-        description: 'Portal de Empleados',
-        index: '01',
+        ariaLabel: 'Acceder al portal de Recursos Humanos',
+        description: 'Recursos Humanos',
     },
     {
         href: '/candidatos',
         label: 'Candidatos',
         ariaLabel: 'Acceder al portal de candidatos',
-        description: 'Portal de Reclutamiento',
-        index: '02',
+        description: 'Reclutamiento',
     },
     {
         href: '/training/login',
         label: 'Empleados',
         ariaLabel: 'Acceder al módulo de capacitación',
-        description: 'Módulo de Capacitación',
-        index: '03',
+        description: 'Capacitación',
     },
 ];
 
@@ -41,49 +38,75 @@ function ShapeHeroComponent() {
                 Saltar al contenido principal
             </a>
 
-            {/* Subtle grid texture */}
+            {/* Grid texture */}
             <div className={styles.grid} aria-hidden="true" />
 
-            {/* Pill de tema — esquina superior derecha */}
+            {/* Glow orb */}
+            <div className={styles.glowOrb} aria-hidden="true" />
+
+            {/* ThemeSelector — esquina inferior derecha */}
             <div className={styles.themePill}>
                 <ThemeSelector />
             </div>
 
-            {/* Main content */}
+            {/* Main content — 2 columnas */}
             <div className={styles.content} id="main-content">
 
-                {/* Brand block */}
-                <div className={styles.brand}>
-                    <span className={styles.portal}>Portal Corporativo</span>
-                    <h1 className={styles.title}>
-                        VIÑO<span className={styles.titleAccent}>PLASTIC</span>
-                    </h1>
-                    <span className={styles.location}>Planta Querétaro</span>
+                {/* ── Columna izquierda ── */}
+                <div className={styles.left}>
+
+                    {/* Brand block */}
+                    <div className={styles.brand}>
+                        <span className={styles.portal}>Portal Corporativo</span>
+                        <h1 className={styles.title}>
+                            VIÑO<span className={styles.titleAccent}>PLASTIC</span>
+                        </h1>
+                        <span className={styles.location}>
+                            Planta Querétaro
+                        </span>
+                    </div>
+
+                    {/* Divider */}
+                    <div className={styles.divider} aria-hidden="true" />
+
+                    {/* Pill navbar única */}
+                    <nav className={styles.nav} aria-label="Navegación principal">
+                        <div className={styles.navPill}>
+                            {NAV_LINKS.map((link, i) => (
+                                <span key={link.href} className={styles.navGroup}>
+                                    {i > 0 && (
+                                        <span className={styles.navSep} aria-hidden="true" />
+                                    )}
+                                    <Link
+                                        href={link.href}
+                                        className={styles.navItem}
+                                        aria-label={link.ariaLabel}
+                                    >
+                                        <span className={styles.navItemLabel}>{link.label}</span>
+                                    </Link>
+                                </span>
+                            ))}
+                        </div>
+                    </nav>
+
+                    {/* Créditos dinámicos */}
+                    <DynamicCredits />
+
                 </div>
 
-                {/* Divider */}
-                <div className={styles.divider} aria-hidden="true" />
-
-                {/* Nav cards */}
-                <nav className={styles.nav} aria-label="Navegación principal">
-                    {NAV_LINKS.map((link) => (
-                        <Link
-                            key={link.href}
-                            href={link.href}
-                            className={styles.card}
-                            aria-label={link.ariaLabel}
-                        >
-                            <span className={styles.cardIndex} aria-hidden="true">{link.index}</span>
-                            <span className={styles.cardBody}>
-                                <span className={styles.cardDescription}>{link.description}</span>
-                                <span className={styles.cardLabel}>{link.label}</span>
-                            </span>
-                            <span className={styles.cardArrow} aria-hidden="true">→</span>
-                        </Link>
-                    ))}
-                </nav>
-
-                <DynamicCredits />
+                {/* ── Columna derecha — Visual SVG ── */}
+                <div className={styles.right} aria-hidden="true">
+                    <div className={styles.visualWrapper}>
+                        <img
+                            src="/hero-visual.svg"
+                            alt="Máquina de inyección VIÑOPLASTIC"
+                            className={styles.visualImg}
+                            loading="eager"
+                            decoding="async"
+                        />
+                        <div className={styles.visualFade} />
+                    </div>
+                </div>
 
             </div>
 

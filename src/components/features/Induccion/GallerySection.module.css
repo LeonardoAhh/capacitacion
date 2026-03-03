@@ -303,15 +303,35 @@
     padding: 16px;
 }
 
+[data-theme="dark"] .modalBackdrop {
+    background: rgba(4, 5, 12, 0.65);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+}
+
 .modalBox {
-    background: var(--surface-primary, #ffffff);
-    border: 1px solid var(--border-color);
+    --color-primary: #003ccc;
+    background: #ffffff;
+    border: 1px solid rgba(0, 60, 204, 0.12);
     border-radius: 18px;
     padding: 28px 28px 24px;
     width: 100%;
     max-width: 440px;
     position: relative;
     box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+}
+
+[data-theme="dark"] .modalBox {
+    --color-primary: #6699ff;
+    background: #0a0c23 !important;
+    opacity: 1 !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    border: 1px solid rgba(77, 128, 255, 0.25);
+    box-shadow:
+        0 8px 32px rgba(0, 0, 0, 0.6),
+        0 4px 6px rgba(0, 0, 0, 0.4),
+        0 1px 0 rgba(255, 255, 255, 0.05) inset;
 }
 
 .modalHeader {
@@ -366,6 +386,10 @@
     padding: 4px;
 }
 
+[data-theme="dark"] .typeSelector {
+    background: rgba(255, 255, 255, 0.03);
+}
+
 .typeBtn {
     flex: 1;
     display: flex;
@@ -387,6 +411,12 @@
     background: var(--bg-primary);
     color: var(--text-primary);
     box-shadow: 0 1px 4px rgba(0, 0, 0, 0.15);
+}
+
+[data-theme="dark"] .typeBtnActive {
+    background: rgba(77, 128, 255, 0.1);
+    color: #6699ff;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
 }
 
 .inputGroup {
@@ -420,6 +450,16 @@
     border-color: var(--color-primary);
 }
 
+[data-theme="dark"] .input {
+    background: rgba(255, 255, 255, 0.04);
+    border-color: rgba(77, 128, 255, 0.12);
+}
+
+[data-theme="dark"] .input:focus {
+    border-color: #6699ff;
+    background: rgba(0, 60, 204, 0.08);
+}
+
 /* ── Zona drag & drop ── */
 .fileLabel {
     display: flex;
@@ -446,6 +486,17 @@
 .fileLabelActive {
     border-color: var(--color-primary);
     color: var(--color-primary);
+}
+
+[data-theme="dark"] .fileLabel {
+    border-color: rgba(77, 128, 255, 0.15);
+    background: rgba(255, 255, 255, 0.02);
+}
+
+[data-theme="dark"] .fileLabel:hover {
+    border-color: #6699ff;
+    color: #6699ff;
+    background: rgba(77, 128, 255, 0.08);
 }
 
 .fileLabelDrag {

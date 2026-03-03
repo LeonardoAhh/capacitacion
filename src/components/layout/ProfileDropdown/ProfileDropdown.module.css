@@ -32,8 +32,8 @@
 }
 
 [data-theme="dark"] .pill {
-    background: rgba(44, 44, 46, 0.88);
-    border-color: rgba(255, 255, 255, 0.10);
+    background: rgba(10, 12, 35, 0.82);
+    border-color: rgba(77, 128, 255, 0.14);
     box-shadow:
         0 8px 32px rgba(0, 0, 0, 0.55),
         0 2px 8px rgba(0, 0, 0, 0.35),
@@ -95,7 +95,7 @@
     overflow: hidden;
     flex-shrink: 0;
     background: var(--bg-secondary);
-    border: 1.5px solid rgba(245, 158, 11, 0.4);
+    border: 1.5px solid rgba(0, 60, 204, 0.35);
 }
 
 .avatarImage {
@@ -114,7 +114,7 @@
     justify-content: center;
     font-size: 0.65rem;
     font-weight: 700;
-    color: #f59e0b;
+    color: #003ccc;
     background: var(--bg-secondary);
 }
 
@@ -171,13 +171,14 @@
 }
 
 .iconBtn:hover {
-    color: #f59e0b;
-    background: rgba(245, 158, 11, 0.1);
+    color: #003ccc;
+    background: rgba(0, 60, 204, 0.08);
     transform: scale(1.12);
 }
 
 [data-theme="dark"] .iconBtn:hover {
-    background: rgba(245, 158, 11, 0.15);
+    color: #6699ff;
+    background: rgba(0, 60, 204, 0.14);
 }
 
 .iconBtn:active {
@@ -185,7 +186,7 @@
 }
 
 .iconBtn:focus-visible {
-    outline: 2px solid rgba(245, 158, 11, 0.7);
+    outline: 2px solid rgba(0, 60, 204, 0.60);
     outline-offset: 2px;
 }
 

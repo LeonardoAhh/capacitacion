@@ -51,11 +51,15 @@
     align-items: center;
     justify-content: center;
     padding: 5rem 2rem 2rem;
-    background: var(--bg-primary);
+    background: #f5f7ff;
     position: relative;
     font-family: 'Geist', system-ui, sans-serif;
     overflow: hidden;
     isolation: isolate;
+}
+
+[data-theme="dark"] .page {
+    background: #060612;
 }
 
 /* Grid texture */
@@ -126,9 +130,11 @@
     position: relative;
     z-index: 1;
     width: 100%;
-    max-width: 560px;
+    max-width: 680px;
     display: flex;
     flex-direction: column;
+    align-items: center;
+    text-align: center;
 }
 
 /* ─── Header ────────────────────────────────────────────────── */
@@ -136,17 +142,17 @@
 .header {
     display: flex;
     flex-direction: column;
-    align-items: flex-start;
+    align-items: center;
     margin-bottom: 2.4rem;
 }
 
-/* Línea ámbar — igual que portal::before en ShapeHero */
+/* Línea roja corporativa — igual que .header::before en ShapeHero */
 .header::before {
     content: '';
     display: block;
     width: 28px;
     height: 2px;
-    background: #f59e0b;
+    background: #d40000;
     border-radius: 2px;
     margin-bottom: 1rem;
     transform-origin: left;
@@ -182,7 +188,7 @@
     display: inline;
 }
 
-/* Subrayado ámbar animado en el nombre */
+/* Subrayado azul corporativo animado en el nombre */
 .userName::after {
     content: '';
     position: absolute;
@@ -190,7 +196,7 @@
     left: 0;
     right: 0;
     height: 3px;
-    background: #f59e0b;
+    background: #003ccc;
     border-radius: 2px;
     transform: scaleX(0);
     transform-origin: left;
@@ -217,14 +223,56 @@
     animation-delay: 0.45s;
 }
 
-/* ─── Modules list ──────────────────────────────────────────── */
+/* ─── NavPill de Módulos ───────────────────────────────── */
 
 .modulesList {
-    display: flex;
-    flex-direction: column;
+    /* Píldora contenedora — igual al navPill del Hero */
+    display: inline-flex;
+    align-items: center;
     gap: 0;
+
+    /* Liquid glass */
+    background: rgba(255, 255, 255, 0.60);
+    backdrop-filter: blur(24px) saturate(180%);
+    -webkit-backdrop-filter: blur(24px) saturate(180%);
+    border: 1px solid rgba(255, 255, 255, 0.80);
+    border-bottom-color: rgba(0, 60, 204, 0.12);
+    border-radius: 9999px;
+    padding: 6px;
+    box-shadow:
+        0 1px 0 rgba(255, 255, 255, 0.9) inset,
+        0 12px 40px rgba(0, 40, 180, 0.12),
+        0 2px 8px rgba(0, 0, 0, 0.06);
+
     animation: fadeSlideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
     animation-delay: 0.5s;
+}
+
+[data-theme="dark"] .modulesList {
+    background: rgba(10, 12, 35, 0.65);
+    border: 1px solid rgba(255, 255, 255, 0.07);
+    border-top-color: rgba(77, 128, 255, 0.18);
+    box-shadow:
+        0 1px 0 rgba(255, 255, 255, 0.05) inset,
+        0 12px 40px rgba(0, 0, 0, 0.45),
+        0 0 0 1px rgba(0, 60, 204, 0.10);
+}
+
+/* Separador vertical entre ítems */
+.modulesList>*+*::before {
+    content: '';
+    display: block;
+    position: absolute;
+    left: 0;
+    top: 14px;
+    bottom: 14px;
+    width: 1px;
+    background: rgba(0, 60, 204, 0.12);
+    pointer-events: none;
+}
+
+[data-theme="dark"] .modulesList>*+*::before {
+    background: rgba(77, 128, 255, 0.12);
 }
 
 /* ─── Footer ────────────────────────────────────────────────── */
