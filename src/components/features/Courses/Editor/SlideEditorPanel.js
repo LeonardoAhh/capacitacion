@@ -3,6 +3,7 @@ import { IconSave, IconPlus, IconTrash2, IconArrowLeft, IconCheckCircle2, Loader
 import ImageUploader from './ImageUploader';
 import MediaUploader from './MediaUploader';
 import IconPicker from './IconPicker';
+import RichTextEditor from './RichTextEditor';
 import styles from '@/app/induccion/cursos/[id]/editar/editor.module.css';
 
 /** Límite de ítems para slides de tipo icon_grid */
@@ -222,17 +223,15 @@ function QuestionEditor({ qi, q, onUpdate, onRemove, onAddOption, onRemoveOption
  * @param {Function} [props.onFormChange] - Callback en tiempo real (newData) => void (live preview)
  */
 export default function SlideEditorPanel({ slide, onSave, onDelete, onFormChange }) {
-    const [formData, setFormData] = useState({});
-    const [savingState, setSavingState] = useState('idle'); // 'idle' | 'saving' | 'saved' | 'error'
+    // Inicializar directamente con slide.data para que RichTextEditor
+    // reciba el valor correcto en su primer render (mount).
+    // Si se inicializa con {} y se actualiza después en useEffect,
+    // RichTextEditor ya habrá corrido su useEffect con valor vacío.
+    const [formData, setFormData] = useState(() =>
+        JSON.parse(JSON.stringify(slide?.data || {}))
+    );
+    const [savingState, setSavingState] = useState('idle');
     const timerRef = useRef(null);
-
-    // Carga inicial del slide
-    useEffect(() => {
-        if (slide) {
-            setFormData(JSON.parse(JSON.stringify(slide.data || {})));
-            setSavingState('idle');
-        }
-    }, [slide]);
 
     // Auto-save con debounce
     useEffect(() => {
@@ -267,7 +266,12 @@ export default function SlideEditorPanel({ slide, onSave, onDelete, onFormChange
     const handleChange = useCallback((field, value) => {
         setFormData(prev => {
             const next = { ...prev, [field]: value };
-            if (onFormChange) onFormChange(next);
+            // IMPORTANTE: onFormChange no puede llamarse dentro del updater de
+            // setState (viola React: "setState during render"). Se difiere con
+            // queueMicrotask para que se ejecute DESPUÉS del commit de React.
+            if (onFormChange) {
+                queueMicrotask(() => onFormChange(next));
+            }
             return next;
         });
     }, [onFormChange]);
@@ -333,15 +337,13 @@ export default function SlideEditorPanel({ slide, onSave, onDelete, onFormChange
                     />
                 </div>
                 <div className={styles.formGroup}>
-                    <label className={styles.label}>
-                        Cuerpo de texto
-                        <CharCounter current={formData.body?.length ?? 0} max={BODY_MAX_CHARS} />
-                    </label>
-                    <textarea
-                        className={styles.textarea}
+                    <label className={styles.label}>Cuerpo de texto</label>
+                    <RichTextEditor
                         value={formData.body || ''}
-                        onChange={e => handleChange('body', e.target.value)}
+                        onChange={(html) => handleChange('body', html)}
+                        placeholder="Escribe el cuerpo del slide..."
                         maxLength={BODY_MAX_CHARS}
+                        minRows={4}
                     />
                 </div>
 
@@ -835,16 +837,13 @@ export default function SlideEditorPanel({ slide, onSave, onDelete, onFormChange
                                     <div>
                                         <label style={{ fontSize: '0.75rem', fontWeight: 600, color: 'var(--text-secondary)', display: 'block', marginBottom: 4 }}>
                                             Descripción
-                                            <CharCounter current={step.desc?.length ?? 0} max={TEXTAREA_MAX_CHARS} />
                                         </label>
-                                        <textarea
-                                            className={styles.textarea}
+                                        <RichTextEditor
                                             value={step.desc || ''}
-                                            onChange={e => updateStep(idx, 'desc', e.target.value)}
+                                            onChange={(html) => updateStep(idx, 'desc', html)}
                                             placeholder="Explica lo que se hace en este paso..."
                                             maxLength={TEXTAREA_MAX_CHARS}
-                                            rows={2}
-                                            style={{ resize: 'vertical' }}
+                                            minRows={2}
                                         />
                                     </div>
                                     <div>
@@ -982,15 +981,13 @@ export default function SlideEditorPanel({ slide, onSave, onDelete, onFormChange
                             />
                         </div>
                         <div className={styles.formGroup}>
-                            <label className={styles.label}>
-                                Cuerpo de texto
-                                <CharCounter current={formData.body?.length ?? 0} max={BODY_MAX_CHARS} />
-                            </label>
-                            <textarea
-                                className={styles.textarea}
+                            <label className={styles.label}>Cuerpo de texto</label>
+                            <RichTextEditor
                                 value={formData.body || ''}
-                                onChange={e => handleChange('body', e.target.value)}
+                                onChange={(html) => handleChange('body', html)}
+                                placeholder="Escribe el objetivo del curso..."
                                 maxLength={BODY_MAX_CHARS}
+                                minRows={4}
                             />
                         </div>
                     </>

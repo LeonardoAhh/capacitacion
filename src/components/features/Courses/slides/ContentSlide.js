@@ -35,9 +35,16 @@ export default function ContentSlide({ data, accentColor, hasBgMedia }) {
                 {tag && <span className={styles.slideLabel}>{tag}</span>}
                 {heading && <h2>{heading}</h2>}
                 {body && (
-                    <div className={styles.contentBody}>
-                        {body.split('\n').map((p, i) => <p key={i}>{p}</p>)}
-                    </div>
+                    <div
+                        className={styles.contentBody}
+                        dangerouslySetInnerHTML={{
+                            // Si contiene etiquetas HTML (rich text), renderizar directamente.
+                            // Si es texto plano, convertir saltos de línea a <br>.
+                            __html: /<[a-z][\s\S]*>/i.test(body)
+                                ? body
+                                : body.split('\n').map(p => `<p>${p}</p>`).join('')
+                        }}
+                    />
                 )}
                 {bullets && bullets.length > 0 && (
                     <ul className={styles.bulletList} role="list">

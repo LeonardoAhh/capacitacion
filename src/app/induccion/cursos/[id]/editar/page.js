@@ -7,7 +7,7 @@ import {
     IconTarget, IconFileText, IconGraduationCap,
     IconCheckSquare, IconGrid, IconColumns, IconBookOpen, IconList
 } from '@/lib/icons';
-import { getCourseWithSlides, updateSlide, addSlide, deleteSlide, updateSlidesOrder, duplicateSlide } from '@/lib/courseService';
+import { getCourseWithSlides, updateSlide, addSlide, deleteSlide, updateSlidesOrder, duplicateSlide, updateCourseFields } from '@/lib/courseService';
 import { useToast } from '@/components/ui/Toast/Toast';
 import { useConfirm } from '@/hooks/useConfirm';
 import SlideList from '@/components/features/Courses/Editor/SlideList';
@@ -61,6 +61,18 @@ export default function EditorPage({ params }) {
         loadData();
     }, [courseId, router, toast]);
 
+    // Helper: sincroniza slideCount y duration en Firestore cuando cambia el número de slides
+    const syncCourseMetadata = useCallback(async (newSlides) => {
+        const count = newSlides.length;
+        // Estimación: ~3 min por slide, redondeada al múltiplo de 5 más cercano
+        const rawMins = count * 3;
+        const estMins = Math.max(5, Math.ceil(rawMins / 5) * 5);
+        await updateCourseFields(courseId, {
+            slideCount: count,
+            duration: `${estMins} min`,
+        }).catch(err => console.error('[Editor] Error sincronizando metadatos:', err));
+    }, [courseId]);
+
     // Guardar cambios en un slide
     const handleSaveSlide = useCallback(async (slideId, newData) => {
         setSaving(true);
@@ -95,6 +107,8 @@ export default function EditorPage({ params }) {
             const nextSelected = updatedSlides.length > 0 ? updatedSlides[0] : null;
             setSelectedSlide(nextSelected);
             setLivePreviewSlide(nextSelected);
+            // Sincronizar metadatos
+            syncCourseMetadata(updatedSlides);
         } else {
             toast.error('Error', result.error || 'No se pudo eliminar el slide');
         }
@@ -129,6 +143,8 @@ export default function EditorPage({ params }) {
             if (refreshed.success) {
                 setSlides(refreshed.data.slides);
                 handleSelectSlide(result.newSlide);
+                // Sincronizar metadatos
+                syncCourseMetadata(refreshed.data.slides);
             }
         } else {
             toast.error('Error', result.error || 'No se pudo duplicar el slide');
@@ -181,8 +197,11 @@ export default function EditorPage({ params }) {
         if (result.success) {
             toast.success('Slide agregado', 'Se ha creado el nuevo slide');
             const newSlide = { id: result.id, ...result };
-            setSlides(prev => [...prev, newSlide]);
+            const newSlides = [...slides, newSlide];
+            setSlides(newSlides);
             handleSelectSlide(newSlide);
+            // Sincronizar metadatos
+            syncCourseMetadata(newSlides);
         } else {
             toast.error('Error', result.error || 'No se pudo crear el slide');
         }
@@ -246,6 +265,7 @@ export default function EditorPage({ params }) {
                 <div className={styles.mainContent}>
                     <div className={styles.mainPanel}>
                         <SlideEditorPanel
+                            key={selectedSlide?.id}
                             slide={selectedSlide}
                             onSave={handleSaveSlide}
                             onDelete={handleDeleteSlide}

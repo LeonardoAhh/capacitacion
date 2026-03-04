@@ -117,7 +117,15 @@ export async function createEmptyCourse(title, userId) {
  */
 export async function createCourseFromWizard(courseData, firstSlideType, userId) {
     try {
-        const courseId = `course-${Date.now()}`;
+        // Generar ID legible a partir del título
+        const slug = (courseData.title || 'nuevo-curso')
+            .toLowerCase()
+            .normalize('NFD').replace(/[\u0300-\u036f]/g, '') // quitar acentos
+            .replace(/[^a-z0-9\s-]/g, '')
+            .trim()
+            .replace(/\s+/g, '-')
+            .slice(0, 40);
+        const courseId = `${slug}-${Date.now()}`;
         const courseRef = doc(db, COURSES_COLLECTION, courseId);
 
         const newCourse = {

@@ -1,0 +1,124 @@
+/* ====================================================
+   RICH TEXT EDITOR — Toolbar + área editable
+   ==================================================== */
+
+.wrapper {
+    display: flex;
+    flex-direction: column;
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md, 10px);
+    overflow: hidden;
+    background: var(--bg-primary);
+    transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+.wrapper:focus-within {
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-primary) 12%, transparent);
+}
+
+/* ── Toolbar ── */
+.toolbar {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    padding: 5px 8px;
+    background: var(--bg-secondary);
+    border-bottom: 1px solid var(--border-color);
+    flex-shrink: 0;
+}
+
+.toolBtn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 28px;
+    height: 26px;
+    padding: 0 6px;
+    border: 1px solid transparent;
+    border-radius: 5px;
+    background: transparent;
+    cursor: pointer;
+    color: var(--text-secondary);
+    font-size: 0.8rem;
+    transition: background 0.12s, border-color 0.12s, color 0.12s;
+    font-family: inherit;
+    line-height: 1;
+}
+
+.toolBtn:hover {
+    background: var(--bg-primary);
+    border-color: var(--border-color);
+    color: var(--text-primary);
+}
+
+.toolBtn:active {
+    background: color-mix(in srgb, var(--color-primary) 12%, transparent);
+    border-color: var(--color-primary);
+    color: var(--color-primary);
+    transform: scale(0.94);
+}
+
+.toolBtnActive {
+    background: color-mix(in srgb, var(--color-primary) 12%, transparent);
+    border-color: color-mix(in srgb, var(--color-primary) 30%, transparent);
+    color: var(--color-primary);
+}
+
+.toolbarDivider {
+    width: 1px;
+    height: 16px;
+    background: var(--border-color);
+    margin: 0 4px;
+    flex-shrink: 0;
+}
+
+/* ── Área editable ── */
+.editor {
+    padding: 10px 12px;
+    font-size: 0.875rem;
+    line-height: 1.7;
+    color: var(--text-primary);
+    outline: none;
+    overflow-y: auto;
+    word-break: break-word;
+    white-space: pre-wrap;
+    /* Estilos del texto formateado */
+}
+
+/* Placeholder cuando está vacío */
+.editor:empty::before {
+    content: attr(data-placeholder);
+    color: var(--text-tertiary);
+    pointer-events: none;
+    font-style: italic;
+}
+
+/* Asegurar que los estilos inline se vean bien */
+.editor strong,
+.editor b {
+    font-weight: 700;
+    color: inherit;
+}
+
+.editor em,
+.editor i {
+    font-style: italic;
+    color: inherit;
+}
+
+.editor u {
+    text-decoration: underline;
+    color: inherit;
+}
+
+/* ── Contador de caracteres ── */
+.counter {
+    padding: 3px 10px 4px;
+    font-size: 0.7rem;
+    color: var(--text-tertiary);
+    text-align: right;
+    background: var(--bg-secondary);
+    border-top: 1px solid var(--border-color);
+    flex-shrink: 0;
+}

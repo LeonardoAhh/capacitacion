@@ -11,7 +11,14 @@ export default function ObjectiveSlide({ data, hasBgMedia }) {
 
             <h2>{data.heading}</h2>
 
-            <p className={styles.objectiveBody}>{data.body}</p>
+            <p
+                className={styles.objectiveBody}
+                dangerouslySetInnerHTML={{
+                    __html: /<[a-z][\s\S]*>/i.test(data.body || '')
+                        ? data.body
+                        : (data.body || '').split('\n').join('<br/>')
+                }}
+            />
 
             {data.badge && (
                 <div className={styles.badgeRow}>

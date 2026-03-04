@@ -13,7 +13,14 @@ export default function DefinitionSlide({ data, hasBgMedia }) {
 
             <h2>{data.heading}</h2>
 
-            <p className={styles.definitionBody}>{data.body}</p>
+            <p
+                className={styles.definitionBody}
+                dangerouslySetInnerHTML={{
+                    __html: /<[a-z][\s\S]*>/i.test(data.body || '')
+                        ? data.body
+                        : (data.body || '').split('\n').join('<br/>')
+                }}
+            />
 
             {data.highlights && data.highlights.length > 0 && (
                 <div className={styles.highlights} role="list">

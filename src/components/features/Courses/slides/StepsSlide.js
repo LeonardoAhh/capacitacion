@@ -49,7 +49,14 @@ export default function StepsSlide({ data, hasBgMedia }) {
                                 <h3 className={styles.stepTitle}>{step.title}</h3>
                             )}
                             {step.desc && (
-                                <p className={styles.stepDesc}>{step.desc}</p>
+                                <p
+                                    className={styles.stepDesc}
+                                    dangerouslySetInnerHTML={{
+                                        __html: /<[a-z][\s\S]*>/i.test(step.desc)
+                                            ? step.desc
+                                            : step.desc.split('\n').join('<br/>')
+                                    }}
+                                />
                             )}
                             {step.image && (
                                 <img

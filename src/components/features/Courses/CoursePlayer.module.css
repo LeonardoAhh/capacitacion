@@ -519,11 +519,10 @@
 
     .content {
         padding: var(--course-spacing-xs);
-        align-items: flex-start;
     }
 
     .content>* {
-        margin: 0 auto;
+        margin: auto;
     }
 
     .nav {
