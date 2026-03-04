@@ -1,6 +1,17 @@
 import styles from './slides.module.css';
 
 export default function ComparisonSlide({ data, hasBgMedia }) {
+    // Soporte para múltiples formatos de datos:
+    // Nuevo: { left: { title, items }, right: { title, items } }
+    // Legado: { col1Title, col1Items, col2Title, col2Items }
+    // Mixto: { left: { label, items }, right: { label, items } }
+    const leftTitle = data.left?.title || data.left?.label || data.col1Title || '';
+    const rightTitle = data.right?.title || data.right?.label || data.col2Title || '';
+    const leftItems = data.left?.items || data.col1Items || [];
+    const rightItems = data.right?.items || data.col2Items || [];
+    const leftDesc = data.left?.description || '';
+    const rightDesc = data.right?.description || '';
+
     return (
         <article
             className={`${styles.slide} ${styles.comparisonSlide} ${hasBgMedia ? styles.slideOverBg : ''}`}
@@ -15,48 +26,50 @@ export default function ComparisonSlide({ data, hasBgMedia }) {
             )}
 
             <div className={styles.comparisonGrid} role="list">
+                {/* Columna Izquierda */}
                 <div
                     className={`${styles.comparisonCol} ${styles.comparisonLeft}`}
                     role="listitem"
-                    aria-label={data.left?.label || 'Opción 1'}
+                    aria-label={leftTitle || 'Opción 1'}
                 >
                     <div className={styles.comparisonColHeader}>
-                        <span className={styles.comparisonColLabel}>{data.left?.label}</span>
+                        <span className={styles.comparisonColLabel}>{leftTitle}</span>
                     </div>
                     <div className={styles.comparisonColBody}>
-                        {data.left?.items?.length > 0 && (
+                        {leftItems.length > 0 && (
                             <ul className={styles.comparisonList}>
-                                {data.left.items.map((item, i) => (
+                                {leftItems.map((item, i) => (
                                     <li key={i}>{item}</li>
                                 ))}
                             </ul>
                         )}
-                        {data.left?.description && (
-                            <p className={styles.comparisonColDesc}>{data.left.description}</p>
+                        {leftDesc && (
+                            <p className={styles.comparisonColDesc}>{leftDesc}</p>
                         )}
                     </div>
                 </div>
 
                 <div className={styles.comparisonDivider} aria-hidden="true">VS</div>
 
+                {/* Columna Derecha */}
                 <div
                     className={`${styles.comparisonCol} ${styles.comparisonRight}`}
                     role="listitem"
-                    aria-label={data.right?.label || 'Opción 2'}
+                    aria-label={rightTitle || 'Opción 2'}
                 >
                     <div className={styles.comparisonColHeader}>
-                        <span className={styles.comparisonColLabel}>{data.right?.label}</span>
+                        <span className={styles.comparisonColLabel}>{rightTitle}</span>
                     </div>
                     <div className={styles.comparisonColBody}>
-                        {data.right?.items?.length > 0 && (
+                        {rightItems.length > 0 && (
                             <ul className={styles.comparisonList}>
-                                {data.right.items.map((item, i) => (
+                                {rightItems.map((item, i) => (
                                     <li key={i}>{item}</li>
                                 ))}
                             </ul>
                         )}
-                        {data.right?.description && (
-                            <p className={styles.comparisonColDesc}>{data.right.description}</p>
+                        {rightDesc && (
+                            <p className={styles.comparisonColDesc}>{rightDesc}</p>
                         )}
                     </div>
                 </div>
@@ -64,3 +77,4 @@ export default function ComparisonSlide({ data, hasBgMedia }) {
         </article>
     );
 }
+
