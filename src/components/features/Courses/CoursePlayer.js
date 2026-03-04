@@ -22,6 +22,7 @@ const SLIDE_BADGES = {
     group_quiz: { emoji: '🧠', label: 'Quiz' },
     dynamic: { emoji: '🎯', label: 'Dinámica' },
     group_dynamic: { emoji: '🎯', label: 'Dinámica' },
+    steps: { emoji: '📋', label: 'Paso a Paso' },
     title: { emoji: '🎯', label: 'Portada' },
     objective: { emoji: '🎓', label: 'Objetivo' },
     benefits: { emoji: '✅', label: 'Beneficios' },

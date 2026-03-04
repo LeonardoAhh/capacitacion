@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import {
     IconBookOpen, IconCheck, IconTarget, IconUsers, IconLayout,
-    IconFileText, IconBars, IconCheckSquare, IconZap
+    IconFileText, IconBars, IconCheckSquare, IconZap, IconList
 } from '@/lib/icons';
 import styles from './CourseWizardModal.module.css';
 
@@ -149,6 +149,7 @@ export default function CourseWizardModal({ onComplete, onCancel }) {
                                 { id: 'objective', icon: IconTarget, label: 'Objetivo', desc: 'Define las metas claras de aprendizaje.' },
                                 { id: 'content', icon: IconFileText, label: 'Lectura', desc: 'Bloque de texto e imágenes descriptivo.' },
                                 { id: 'benefits', icon: IconBars, label: 'Viñetas', desc: 'Lista estructurada de conceptos rápidos.' },
+                                { id: 'steps', icon: IconList, label: 'Paso a Paso', desc: 'Secuencia numerada de pasos del proceso.' },
                                 { id: 'quiz', icon: IconCheckSquare, label: 'Quiz', desc: 'Añade una pregunta de opción múltiple.' }
                             ].map(tpl => (
                                 <div

@@ -6,6 +6,7 @@ import IconGridSlide from './slides/IconGridSlide';
 import BenefitsSlide from './slides/BenefitsSlide';
 import ComparisonSlide from './slides/ComparisonSlide';
 import QuizSlide from './slides/QuizSlide';
+import StepsSlide from './slides/StepsSlide';
 
 const SLIDE_COMPONENTS = {
     title: TitleSlide,
@@ -16,6 +17,7 @@ const SLIDE_COMPONENTS = {
     benefits: BenefitsSlide,
     comparison: ComparisonSlide,
     quiz: QuizSlide,
+    steps: StepsSlide,
     // Mapeos para tipos especiales
     group_quiz: QuizSlide,
     group_dynamic: ContentSlide,

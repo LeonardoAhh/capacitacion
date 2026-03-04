@@ -1239,3 +1239,129 @@
         padding: var(--course-spacing-xs) var(--course-spacing-sm);
     }
 }
+
+/* ==========================================
+   STEPS SLIDE — Paso a Paso
+   ========================================== */
+.stepsSlide {
+    align-items: flex-start;
+    gap: var(--course-spacing-lg);
+    background: var(--course-slide-bg);
+}
+
+.stepsHeading {
+    font-size: clamp(1.5rem, 3.5vw, 2.25rem);
+    font-weight: 800;
+    color: var(--course-slide-text);
+    letter-spacing: -0.02em;
+    margin: 0 0 var(--course-spacing-md);
+}
+
+.stepsList {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    max-width: 760px;
+}
+
+.stepItem {
+    display: flex;
+    gap: var(--course-spacing-lg);
+    align-items: flex-start;
+    animation: courseFadeIn var(--course-duration-slow) var(--course-ease-out) both;
+}
+
+/* Track: número + línea conectora */
+.stepTrack {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    flex-shrink: 0;
+}
+
+.stepNumber {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: var(--course-accent);
+    color: #ffffff;
+    font-size: 0.9rem;
+    font-weight: 800;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    box-shadow: 0 4px 12px color-mix(in srgb, var(--course-accent) 35%, transparent);
+    position: relative;
+    z-index: 1;
+}
+
+.stepConnector {
+    width: 2px;
+    flex: 1;
+    min-height: 28px;
+    background: color-mix(in srgb, var(--course-accent) 25%, var(--border-color));
+    border-radius: 2px;
+    margin: 4px 0;
+}
+
+/* Contenido textual del paso */
+.stepBody {
+    flex: 1;
+    padding-bottom: var(--course-spacing-xl);
+    display: flex;
+    flex-direction: column;
+    gap: var(--course-spacing-xs);
+}
+
+.stepTitle {
+    font-size: var(--course-font-base);
+    font-weight: 700;
+    color: var(--course-slide-text);
+    margin: 0;
+    line-height: 1.35;
+    padding-top: 6px; /* alinear verticalmente con el círculo */
+}
+
+.stepDesc {
+    font-size: var(--course-font-sm);
+    color: var(--course-slide-text-secondary);
+    line-height: 1.7;
+    margin: 0;
+}
+
+.stepImage {
+    margin-top: var(--course-spacing-sm);
+    max-width: 100%;
+    max-height: 220px;
+    object-fit: cover;
+    border-radius: var(--course-radius-md);
+    border: 1px solid var(--border-color);
+    box-shadow: var(--shadow-sm);
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s;
+}
+
+.stepImage:hover {
+    transform: scale(1.03);
+    opacity: 0.95;
+}
+
+/* ── Responsive ── */
+@media (max-width: 600px) {
+    .stepsSlide {
+        padding: var(--course-spacing-xl) 1.5rem;
+    }
+
+    .stepNumber {
+        width: 28px;
+        height: 28px;
+        font-size: 0.75rem;
+    }
+
+    .stepItem {
+        gap: var(--course-spacing-md);
+    }
+}

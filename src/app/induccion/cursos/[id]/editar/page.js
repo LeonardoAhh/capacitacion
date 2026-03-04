@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import {
     IconArrowLeft, IconX,
     IconTarget, IconFileText, IconGraduationCap,
-    IconCheckSquare, IconGrid, IconColumns, IconBookOpen
+    IconCheckSquare, IconGrid, IconColumns, IconBookOpen, IconList
 } from '@/lib/icons';
 import { getCourseWithSlides, updateSlide, addSlide, deleteSlide, updateSlidesOrder, duplicateSlide } from '@/lib/courseService';
 import { useToast } from '@/components/ui/Toast/Toast';
@@ -22,6 +22,7 @@ const SLIDE_TYPES = [
     { type: 'benefits', label: 'Beneficios', icon: IconCheckSquare, iconColor: 'var(--green-500)', desc: 'Lista de beneficios' },
     { type: 'icon_grid', label: 'Íconos', icon: IconGrid, iconColor: 'var(--color-accent)', desc: 'Cuadrícula de íconos' },
     { type: 'comparison', label: 'Comparación', icon: IconColumns, iconColor: 'var(--color-warning)', desc: 'Dos columnas comparativas' },
+    { type: 'steps', label: 'Paso a Paso', icon: IconList, iconColor: 'var(--teal-500, #14b8a6)', desc: 'Secuencia numerada de pasos' },
     { type: 'quiz', label: 'Quiz', icon: IconBookOpen, iconColor: 'var(--color-danger)', desc: 'Pregunta con opciones' },
     { type: 'definition', label: 'Definición', icon: IconBookOpen, iconColor: 'var(--blue-500)', desc: 'Término y definición' },
 ];
@@ -139,9 +140,9 @@ export default function EditorPage({ params }) {
     const handleConfirmSlideType = async (type) => {
         setShowSlideModal(false);
         setSaving(true);
-        
+
         let defaultData = { heading: 'Nuevo Slide' };
-        
+
         if (type === 'quiz') {
             defaultData = {
                 heading: 'Evaluación Final',
@@ -160,6 +161,14 @@ export default function EditorPage({ params }) {
             defaultData = { heading: 'Comparativa', col1Title: 'Antes', col1Items: ['Item A'], col2Title: 'Después', col2Items: ['Item B'] };
         } else if (type === 'definition') {
             defaultData = { heading: 'Concepto Clave', term: 'Término', definition: 'Su definición breve aquí' };
+        } else if (type === 'steps') {
+            defaultData = {
+                heading: 'Cómo hacerlo',
+                steps: [
+                    { title: 'Paso 1', desc: 'Describe el primer paso aquí...', image: '' },
+                    { title: 'Paso 2', desc: 'Describe el segundo paso aquí...', image: '' },
+                ],
+            };
         } else {
             defaultData = { heading: 'Nuevo Slide', body: 'Contenido inicial...' }; // Title & Content
         }

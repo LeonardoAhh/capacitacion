@@ -1,34 +1,174 @@
 'use client';
 
 import styles from './slides.module.css';
-import { AiOutlineEye, AiOutlineSearch, AiOutlineMessage, AiOutlineStar, AiOutlineCheckCircle, AiOutlineBulb, AiOutlineTrophy, AiOutlineThunderbolt, AiOutlineUser, AiOutlineTeam, AiOutlineSafety, AiOutlineRise, AiOutlineGlobal, AiOutlineHeart, AiOutlineBook, AiOutlineTool, AiOutlineCalendar, AiOutlineBell, AiOutlineLock, AiOutlineSmile } from 'react-icons/ai';
+import {
+    AiOutlineEye, AiOutlineSearch, AiOutlineMessage, AiOutlineStar,
+    AiOutlineCheckCircle, AiOutlineBulb, AiOutlineTrophy, AiOutlineThunderbolt,
+    AiOutlineUser, AiOutlineTeam, AiOutlineSafety, AiOutlineRise,
+    AiOutlineGlobal, AiOutlineHeart, AiOutlineBook, AiOutlineTool,
+    AiOutlineCalendar, AiOutlineBell, AiOutlineLock, AiOutlineSmile,
+    AiOutlineFlag, AiOutlineCrown, AiOutlineRocket, AiOutlineFire,
+    AiOutlineAim, AiOutlineClockCircle, AiOutlineComment, AiOutlineLike,
+    AiOutlineDislike, AiOutlineBarChart, AiOutlineLineChart,
+    AiOutlineWifi, AiOutlineMail, AiOutlinePhone, AiOutlineEnvironment,
+    // Nuevos
+    AiOutlineFileText, AiOutlineFolder, AiOutlineCloud, AiOutlineCamera,
+    AiOutlineVideoCamera, AiOutlineSound, AiOutlinePlayCircle,
+    AiOutlineDownload, AiOutlineUpload, AiOutlineShareAlt,
+    AiOutlineEdit, AiOutlineCheckSquare, AiOutlineInfoCircle, AiOutlineWarning,
+    AiOutlineHome, AiOutlineAppstore, AiOutlineLayout, AiOutlineDashboard,
+    AiOutlineBars, AiOutlineLogin, AiOutlineLogout,
+    AiOutlineSetting, AiOutlineControl, AiOutlineTag,
+    AiOutlineIdcard, AiOutlineKey, AiOutlinePrinter,
+    AiOutlineMonitor, AiOutlineMobile, AiOutlineTablet,
+    AiOutlineDatabase, AiOutlineApi, AiOutlineCode,
+    AiOutlineBug, AiOutlineExperiment, AiOutlineFormatPainter,
+    AiOutlineGift, AiOutlineCoffee, AiOutlineMedicineBox,
+    AiOutlineBank, AiOutlineBuild, AiOutlineApartment,
+    AiOutlineShopping, AiOutlineShoppingCart, AiOutlineCreditCard,
+    AiOutlineReconciliation, AiOutlineFileDone, AiOutlineFileSearch,
+    AiOutlineContacts, AiOutlineSchedule,
+    AiOutlineBoxPlot, AiOutlinePieChart, AiOutlineAreaChart,
+    AiOutlineFundProjectionScreen,
+    AiOutlineUserAdd, AiOutlineUserSwitch,
+    AiOutlineDisconnect, AiOutlineInbox,
+    AiOutlineSend,
+} from 'react-icons/ai';
 
-// Mapa de íconos disponibles para icon grid slides.
-// Mapea nombres semánticos (heredados de lucide) a react-icons/ai.
+/**
+ * Mapa canónico de íconos: nombre guardado en Firestore → componente react-icon.
+ * DEBE estar sincronizado con ICON_CATALOG de IconPicker.js.
+ */
 const ICON_MAP = {
+    // Personas / Equipo
+    User: AiOutlineUser,
+    Team: AiOutlineTeam,
+    Users: AiOutlineTeam,       // alias legado
+    UserAdd: AiOutlineUserAdd,
+    UserSwitch: AiOutlineUserSwitch,
+    Contacts: AiOutlineContacts,
+    Idcard: AiOutlineIdcard,
+    Crown: AiOutlineCrown,
+
+    // Comunicación
+    Message: AiOutlineMessage,
+    MessageCircle: AiOutlineMessage,    // alias legado
+    Comment: AiOutlineComment,
+    Mail: AiOutlineMail,
+    Bell: AiOutlineBell,
+    Phone: AiOutlinePhone,
+    Send: AiOutlineSend,
+    Share: AiOutlineShareAlt,
+    Inbox: AiOutlineInbox,
+    Wifi: AiOutlineWifi,
+    Disconnect: AiOutlineDisconnect,
+
+    // Logros / Motivación
+    Star: AiOutlineStar,
+    Trophy: AiOutlineTrophy,
+    Fire: AiOutlineFire,
+    Rocket: AiOutlineRocket,
+    Heart: AiOutlineHeart,
+    Like: AiOutlineLike,
+    ThumbsUp: AiOutlineLike,       // alias legado
+    Gift: AiOutlineGift,
+    Flag: AiOutlineFlag,
+    Smile: AiOutlineSmile,
+    Dislike: AiOutlineDislike,
+
+    // Aprendizaje / Conocimiento
+    Bulb: AiOutlineBulb,
+    Lightbulb: AiOutlineBulb,       // alias legado
+    Book: AiOutlineBook,
+    Experiment: AiOutlineExperiment,
     Eye: AiOutlineEye,
     Search: AiOutlineSearch,
-    MessageCircle: AiOutlineMessage,
-    Star: AiOutlineStar,
-    CheckCircle: AiOutlineCheckCircle,
-    Lightbulb: AiOutlineBulb,
-    Bulb: AiOutlineBulb,
-    Trophy: AiOutlineTrophy,
-    Zap: AiOutlineThunderbolt,
+    FileSearch: AiOutlineFileSearch,
+    Clipboard: AiOutlineFileDone,
+    FileDone: AiOutlineFileDone,
+    Schedule: AiOutlineSchedule,
+
+    // Objetivos / Productividad
+    Aim: AiOutlineAim,
     Thunderbolt: AiOutlineThunderbolt,
-    User: AiOutlineUser,
-    Users: AiOutlineTeam,
-    Shield: AiOutlineSafety,
-    Safety: AiOutlineSafety,
-    TrendingUp: AiOutlineRise,
-    Globe: AiOutlineGlobal,
-    Heart: AiOutlineHeart,
-    Book: AiOutlineBook,
-    Tool: AiOutlineTool,
+    Zap: AiOutlineThunderbolt, // alias legado
+    Rise: AiOutlineRise,
+    TrendingUp: AiOutlineRise,        // alias legado
+    CheckCircle: AiOutlineCheckCircle,
+    CheckSquare: AiOutlineCheckSquare,
+    Clock: AiOutlineClockCircle,
     Calendar: AiOutlineCalendar,
-    Bell: AiOutlineBell,
+    FundScreen: AiOutlineFundProjectionScreen,
+
+    // Seguridad / Salud
+    Safety: AiOutlineSafety,
+    Shield: AiOutlineSafety,      // alias legado
     Lock: AiOutlineLock,
-    Smile: AiOutlineSmile,
+    Key: AiOutlineKey,
+    Medicine: AiOutlineMedicineBox,
+    Warning: AiOutlineWarning,
+    Info: AiOutlineInfoCircle,
+    Bug: AiOutlineBug,
+
+    // Tecnología / Sistemas
+    Monitor: AiOutlineMonitor,
+    Mobile: AiOutlineMobile,
+    Tablet: AiOutlineTablet,
+    Database: AiOutlineDatabase,
+    Api: AiOutlineApi,
+    Code: AiOutlineCode,
+    Cloud: AiOutlineCloud,
+    Upload: AiOutlineUpload,
+    Download: AiOutlineDownload,
+    Printer: AiOutlinePrinter,
+
+    // Negocio / Operaciones
+    Tool: AiOutlineTool,
+    Build: AiOutlineBuild,
+    Bank: AiOutlineBank,
+    Shopping: AiOutlineShopping,
+    Cart: AiOutlineShoppingCart,
+    CreditCard: AiOutlineCreditCard,
+    Reconciliation: AiOutlineReconciliation,
+    Setting: AiOutlineSetting,
+    Control: AiOutlineControl,
+    Apartment: AiOutlineApartment,
+    Location: AiOutlineEnvironment,
+    Globe: AiOutlineGlobal,      // alias legado
+    Global: AiOutlineGlobal,
+
+    // Datos / Análisis
+    BarChart: AiOutlineBarChart,
+    LineChart: AiOutlineLineChart,
+    PieChart: AiOutlinePieChart,
+    AreaChart: AiOutlineAreaChart,
+    BoxPlot: AiOutlineBoxPlot,
+
+    // Archivos / Contenido
+    FileText: AiOutlineFileText,
+    Folder: AiOutlineFolder,
+    Tag: AiOutlineTag,
+
+    // Multimedia
+    Camera: AiOutlineCamera,
+    Video: AiOutlineVideoCamera,
+    Sound: AiOutlineSound,
+    Play: AiOutlinePlayCircle,
+
+    // UI / Navegación
+    Home: AiOutlineHome,
+    Dashboard: AiOutlineDashboard,
+    Appstore: AiOutlineAppstore,
+    Layout: AiOutlineLayout,
+    List: AiOutlineBars,
+    Edit: AiOutlineEdit,
+    FormatPainter: AiOutlineFormatPainter,
+    Login: AiOutlineLogin,
+    Logout: AiOutlineLogout,
+    Coffee: AiOutlineCoffee,
+
+    // Iconos específicos de slides tipo Courses (alias legados)
+    IconStar: AiOutlineStar,
 };
 
 /** Número máximo de ítems permitidos en un IconGridSlide */
@@ -42,10 +182,6 @@ const MAX_ITEMS = 6;
  *   3 ítems → 3 col
  *   4 ítems → 2 col × 2 filas
  *   5-6 ítems → 3 col × 2 filas
- *
- * @param {Object} props
- * @param {Object} props.data - { heading, description, items[] }
- * @param {boolean} [props.inline] - Modo preview del editor
  */
 export default function IconGridSlide({ data, inline = false, hasBgMedia }) {
     const { heading, description, items = [] } = data;
@@ -80,6 +216,7 @@ export default function IconGridSlide({ data, inline = false, hasBgMedia }) {
                 data-count={count}
             >
                 {visibleItems.map((item, idx) => {
+                    // Buscar el ícono — fallback a Bulb si no existe
                     const IconComponent = ICON_MAP[item.icon] || AiOutlineBulb;
 
                     return (
