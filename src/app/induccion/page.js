@@ -67,6 +67,7 @@ export default function InductionPage() {
 
     // ── Tab activo (PC sidebar + Mobile bottom nav) ──
     const [activeTab, setActiveTab] = useState('interactivos');
+    const [showMobileMenu, setShowMobileMenu] = useState(false);
 
     // ── Colecciones existentes ──
     const [courses, setCourses] = useState([]);
@@ -1029,36 +1030,72 @@ export default function InductionPage() {
 
                 {/* ══ BOTTOM NAV (Mobile) ══ */}
                 <nav className={styles.bottomNav}>
-                    {/* Botón volver a módulos en mobile */}
+                    {/* Boton Volver a módulos */}
                     {user?.rol !== 'instructor' && (
                         <Link href="/modulos" className={styles.bottomNavBackTab}>
                             <ArrowLeft size={18} />
                             <span>Volver</span>
                         </Link>
                     )}
-                    {canEdit && (
-                        <button className={`${styles.bottomNavTab} ${activeTab === 'interactivos' ? styles.active : ''}`} onClick={() => setActiveTab('interactivos')}>
-                            <Zap size={18} />
-                            Cursos
-                            {nativeCourses.length > 0 && <span className={styles.bottomNavItemCount}>{nativeCourses.length}</span>}
-                        </button>
-                    )}
-                    {canEdit && (
-                        <button className={`${styles.bottomNavTab} ${activeTab === 'candidatos' ? styles.active : ''}`} onClick={() => setActiveTab('candidatos')}>
-                            <BookOpen size={18} />
-                            Candidatos
-                        </button>
-                    )}
-                    <button className={`${styles.bottomNavTab} ${activeTab === 'material' ? styles.active : ''}`} onClick={() => setActiveTab('material')}>
-                        <FileText size={18} />
-                        Material
-                    </button>
-                    <button className={`${styles.bottomNavTab} ${activeTab === 'galeria' ? styles.active : ''}`} onClick={() => setActiveTab('galeria')}>
-                        <Image size={18} />
-                        Galería
-                        {galleryItems.length > 0 && <span className={styles.bottomNavItemCount}>{galleryItems.length}</span>}
+
+                    {/* ProfileDropdown integrado */}
+                    <div className={styles.bottomNavProfile}>
+                        <ProfileDropdown />
+                    </div>
+
+                    {/* Boton + para abrir el drawer de secciones */}
+                    <button
+                        className={`${styles.bottomNavPlusBtn} ${showMobileMenu ? styles.plusBtnActive : ''}`}
+                        onClick={() => setShowMobileMenu(v => !v)}
+                        aria-label="Navegar secciones"
+                        aria-expanded={showMobileMenu}
+                    >
+                        <Plus size={20} />
                     </button>
                 </nav>
+
+                {/* ══ MOBILE SECTION DRAWER ══ */}
+                {showMobileMenu && (
+                    <div className={styles.mobileSectionOverlay} onClick={() => setShowMobileMenu(false)}>
+                        <div className={styles.mobileSectionDrawer} onClick={e => e.stopPropagation()}>
+                            <p className={styles.mobileSectionTitle}>Ir a sección</p>
+                            {canEdit && (
+                                <button
+                                    className={`${styles.mobileSectionItem} ${activeTab === 'interactivos' ? styles.activeSectionItem : ''}`}
+                                    onClick={() => { setActiveTab('interactivos'); setShowMobileMenu(false); }}
+                                >
+                                    <Zap size={16} />
+                                    <span>Interactivos</span>
+                                    {nativeCourses.length > 0 && <span className={styles.mobileSectionBadge}>{nativeCourses.length}</span>}
+                                </button>
+                            )}
+                            {canEdit && (
+                                <button
+                                    className={`${styles.mobileSectionItem} ${activeTab === 'candidatos' ? styles.activeSectionItem : ''}`}
+                                    onClick={() => { setActiveTab('candidatos'); setShowMobileMenu(false); }}
+                                >
+                                    <BookOpen size={16} />
+                                    <span>Candidatos</span>
+                                </button>
+                            )}
+                            <button
+                                className={`${styles.mobileSectionItem} ${activeTab === 'material' ? styles.activeSectionItem : ''}`}
+                                onClick={() => { setActiveTab('material'); setShowMobileMenu(false); }}
+                            >
+                                <FileText size={16} />
+                                <span>Material</span>
+                            </button>
+                            <button
+                                className={`${styles.mobileSectionItem} ${activeTab === 'galeria' ? styles.activeSectionItem : ''}`}
+                                onClick={() => { setActiveTab('galeria'); setShowMobileMenu(false); }}
+                            >
+                                <Image size={16} />
+                                <span>Galería</span>
+                                {galleryItems.length > 0 && <span className={styles.mobileSectionBadge}>{galleryItems.length}</span>}
+                            </button>
+                        </div>
+                    </div>
+                )}
                 {/* ══ MODAL: Nuevo Curso Interactivo (Wizard) ══ */}
                 {showNewCourseModal && (
                     <CourseWizardModal

@@ -2766,9 +2766,129 @@ textarea.input {
         gap: 18px;
     }
 
+    /* Ocultar el ProfileDropdown global en mobile (se integra en el bottomNav) */
+    .profileContainer {
+        display: none !important;
+    }
+
     .bottomNav {
         display: flex;
+        align-items: center;
+        gap: 8px;
+        justify-content: space-between;
+        padding: 8px 14px;
     }
+
+    /* ProfileDropdown integrado dentro del bottomNav */
+    .bottomNavProfile {
+        display: flex;
+        align-items: center;
+        flex: 1;
+    }
+
+    /* Botón + para abrir el drawer de secciones */
+    .bottomNavPlusBtn {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background: var(--color-primary);
+        color: #ffffff;
+        border: none;
+        cursor: pointer;
+        flex-shrink: 0;
+        transition: transform 0.2s var(--ease-spring), background 0.2s;
+        box-shadow: 0 4px 14px rgba(0, 60, 204, 0.4);
+    }
+
+    .bottomNavPlusBtn.plusBtnActive {
+        transform: rotate(45deg);
+        background: var(--color-danger, #d40000);
+    }
+
+    /* Overlay del drawer de secciones */
+    .mobileSectionOverlay {
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.5);
+        backdrop-filter: blur(4px);
+        -webkit-backdrop-filter: blur(4px);
+        z-index: 190;
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-end;
+        padding-bottom: 90px;
+        animation: indFadeIn 0.2s var(--ease-spring);
+    }
+
+    /* Contenedor del drawer */
+    .mobileSectionDrawer {
+        background: var(--bg-secondary);
+        border: 1px solid var(--border-color);
+        border-radius: 24px 24px 0 0;
+        padding: 20px 16px 16px;
+        margin: 0 8px;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        box-shadow: 0 -8px 40px rgba(0, 0, 0, 0.25);
+        animation: indFadeUp 0.25s var(--ease-spring);
+    }
+
+    .mobileSectionTitle {
+        font-size: 0.72rem;
+        font-weight: 700;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        color: var(--text-tertiary);
+        margin-bottom: 4px;
+    }
+
+    /* Cada item de sección en el drawer */
+    .mobileSectionItem {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 13px 16px;
+        border-radius: 14px;
+        background: transparent;
+        border: 1px solid transparent;
+        color: var(--text-primary);
+        font-size: 0.95rem;
+        font-weight: 500;
+        cursor: pointer;
+        text-align: left;
+        width: 100%;
+        transition: background 0.18s, border-color 0.18s;
+        position: relative;
+    }
+
+    .mobileSectionItem:hover {
+        background: var(--bg-tertiary);
+    }
+
+    /* Sección activa en el drawer */
+    .activeSectionItem {
+        background: var(--color-primary) !important;
+        color: #ffffff !important;
+        border-color: transparent !important;
+    }
+
+    /* Badge de contador en el drawer */
+    .mobileSectionBadge {
+        margin-left: auto;
+        background: var(--color-danger, #d40000);
+        color: #fff;
+        font-size: 0.65rem;
+        font-weight: 700;
+        padding: 2px 6px;
+        border-radius: 8px;
+        font-family: var(--font-mono);
+        line-height: 1.4;
+    }
+
 
     .columnsContainer {
         grid-template-columns: 1fr;
