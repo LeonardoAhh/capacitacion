@@ -34,19 +34,6 @@ function MoonIcon() {
 }
 
 export default function ThemeSelector() {
-    const { theme, toggleTheme, isDark } = useTheme();
-
-    return (
-        <button
-            className={styles.toggleBtn}
-            onClick={toggleTheme}
-            aria-label={isDark ? 'Cambiar a modo claro' : 'Cambiar a modo oscuro'}
-            title={isDark ? 'Modo Claro' : 'Modo Oscuro'}
-            type="button"
-        >
-            <span className={styles.iconWrap}>
-                {isDark ? <SunIcon /> : <MoonIcon />}
-            </span>
-        </button>
-    );
+    // Temporalmente desactivado — el cambio de tema está bloqueado
+    return null;
 }

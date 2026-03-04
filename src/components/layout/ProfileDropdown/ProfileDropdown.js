@@ -1,11 +1,10 @@
 "use client";
 
 import * as React from "react";
-import { LogOut, User, Moon, Sun } from "lucide-react";
+import { LogOut, User } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useAuth } from "@/contexts/AuthContext";
-import { useTheme } from "@/contexts/ThemeContext";
 import { useRouter } from "next/navigation";
 import styles from './ProfileDropdown.module.css';
 
@@ -32,7 +31,6 @@ export default function ProfileDropdown({
     const { user, signOut } = useAuth();
     const router = useRouter();
     const [isSigningOut, setIsSigningOut] = React.useState(false);
-    const { theme, toggleTheme } = useTheme();
     const [isMounted, setIsMounted] = React.useState(false);
 
     React.useEffect(() => { setIsMounted(true); }, []);
@@ -105,17 +103,6 @@ export default function ProfileDropdown({
             </button>
 
             <span className={styles.divider} aria-hidden="true" />
-
-            {/* Tema */}
-            <button
-                type="button"
-                className={styles.iconBtn}
-                onClick={onToggleTheme || toggleTheme}
-                aria-label={theme === 'dark' ? 'Cambiar a modo claro' : 'Cambiar a modo oscuro'}
-                title="Cambiar tema"
-            >
-                {theme === 'dark' ? <Sun size={17} /> : <Moon size={17} />}
-            </button>
 
             {/* Perfil — solo si showProfile=true */}
             {showProfile && (

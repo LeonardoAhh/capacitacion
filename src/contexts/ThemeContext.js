@@ -31,34 +31,23 @@ export function ThemeProvider({ children }) {
         metaThemeColor.setAttribute('content', color);
     };
 
-    const setTheme = (newTheme) => {
-        if (!THEMES[newTheme]) return;
-
-        setThemeState(newTheme);
-        if (typeof window !== 'undefined') {
-            localStorage.setItem('theme', newTheme);
-            document.documentElement.setAttribute('data-theme', newTheme);
-        }
-        updateThemeColor(newTheme);
+    const setTheme = (_newTheme) => {
+        // Desactivado temporalmente — el cambio de tema está bloqueado
     };
-
-    useEffect(() => {
-        if (typeof window === 'undefined') return;
-
-        const savedTheme = localStorage.getItem('theme') || 'light';
-        const effectiveTheme = THEMES[savedTheme] ? savedTheme : 'light';
-
-        setThemeState(effectiveTheme);
-        document.documentElement.setAttribute('data-theme', effectiveTheme);
-        updateThemeColor(effectiveTheme);
-    }, []);
 
     const toggleTheme = () => {
-        // Simple toggle for header button (cycling or just light/dark)
-        // For advanced selection we will use setTheme directly
-        const newTheme = theme === 'dark' ? 'light' : 'dark';
-        setTheme(newTheme);
+        // Desactivado temporalmente — el cambio de tema está bloqueado
     };
+
+    // Forzar tema claro al montar (selector de tema desactivado)
+    useEffect(() => {
+        if (typeof window === 'undefined') return;
+        setThemeState('light');
+        document.documentElement.setAttribute('data-theme', 'light');
+        localStorage.setItem('theme', 'light');
+        updateThemeColor('light');
+    }, []);
+
 
     const value = {
         theme,
