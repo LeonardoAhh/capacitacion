@@ -8,6 +8,7 @@ import { createAvatar } from '@dicebear/core';
 import { lorelei } from '@dicebear/collection';
 import { Eye, EyeOff } from 'lucide-react';
 import BackButton from '@/components/ui/BackButton/BackButton';
+import { useToast } from '@/components/ui/Toast/Toast';
 
 export default function ProfilePage() {
     const { user, loading, updateUserProfile } = useAuth();
@@ -177,6 +178,7 @@ import { db } from '@/lib/firebase';
 import { Shield, AlertTriangle, BookOpen, Trash2, RefreshCw, UploadCloud, FileEdit } from 'lucide-react';
 
 function AdminSection() {
+    const { toast } = useToast();
     const [isMaintenance, setIsMaintenance] = useState(false);
     const [duration, setDuration] = useState(2); // Horas por defecto
     const [loading, setLoading] = useState(true);
@@ -218,7 +220,7 @@ function AdminSection() {
         } catch (error) {
             console.error("Error updating maintenance mode:", error);
             setIsMaintenance(!newState);
-            alert("Error al actualizar el modo mantenimiento");
+            toast.error("Error al actualizar el modo mantenimiento");
         }
     };
 
@@ -331,7 +333,21 @@ function AdminSection() {
 
 // ── ADMIN MURAL SECTION ──
 import { Presentation, Save, RefreshCcw } from 'lucide-react';
+
+// Helper para extraer nombre(s) asumiendo formato "ApellidoPaterno ApellidoMaterno Nombre(s)"
+const extractFirstName = (fullName) => {
+    if (!fullName) return '';
+    const parts = fullName.trim().split(/\s+/);
+    if (parts.length >= 3) {
+        return parts.slice(2).join(' '); // Retorna los nombres, ignorando los dos apellidos
+    } else if (parts.length === 2) {
+        return parts[1]; // Si son 2 palabras asume [Apellido] [Nombre]
+    }
+    return parts[0];
+};
+
 function AdminMuralSection() {
+    const { toast } = useToast();
     const [syncing, setSyncing] = useState(false);
     const [loadingConfig, setLoadingConfig] = useState(true);
     const [showManualForm, setShowManualForm] = useState(false);
@@ -394,7 +410,7 @@ function AdminMuralSection() {
             }
 
             if (!foundName && !foundPosition) {
-                alert("No se encontró al empleado con ese ID en los registros.");
+                toast.warning("No se encontró al empleado con ese ID en los registros.");
                 setSearchingM(false);
                 return;
             }
@@ -416,7 +432,7 @@ function AdminMuralSection() {
 
             setManualData(prev => ({
                 ...prev,
-                firstName: foundName.split(' ')[0] || foundName, // Solo el primer nombre por privacidad
+                firstName: extractFirstName(foundName), // Solo el nombre real extraído
                 currentPosition: foundPosition,
                 promotionTo: promoDest,
                 requiredScore: reqScore
@@ -424,7 +440,7 @@ function AdminMuralSection() {
 
         } catch (error) {
             console.error("Error buscando datos del empleado:", error);
-            alert("Hubo un problema consultando la base de datos.");
+            toast.error("Hubo un problema consultando la base de datos.");
         } finally {
             setSearchingM(false);
         }
@@ -434,10 +450,10 @@ function AdminMuralSection() {
     const saveMessages = async () => {
         try {
             await setDoc(doc(db, 'app_config', 'mural'), messages, { merge: true });
-            alert("Mensajes actualizados correctamente");
+            toast.success("Mensajes actualizados correctamente");
         } catch (error) {
             console.error("Error saving mural config:", error);
-            alert("No se pudieron guardar los mensajes");
+            toast.error("No se pudieron guardar los mensajes");
         }
     };
 
@@ -487,7 +503,7 @@ function AdminMuralSection() {
 
                     const safeData = {
                         employeeId: emp.employeeId,
-                        firstName: emp.name?.split(' ')[0] || 'Colaborador',
+                        firstName: extractFirstName(emp.name) || 'Colaborador',
                         fullName: emp.name || '',
                         currentPosition: emp.puesto || 'Sin Puesto',
                         promotionTo: promotionDest,
@@ -504,10 +520,10 @@ function AdminMuralSection() {
                 }
             }
 
-            alert(`✅ Sincronización Completa. ${syncedCount} empleados actualizados en el Mural.`);
+            toast.success(`Sincronización Completa. ${syncedCount} empleados actualizados en el Mural.`);
         } catch (error) {
             console.error(error);
-            alert("Error durante la sincronización.");
+            toast.error("Error durante la sincronización.");
         } finally {
             setSyncing(false);
         }
@@ -535,12 +551,12 @@ function AdminMuralSection() {
             };
 
             await setDoc(doc(db, 'mural_exams', manualData.employeeId.toString()), safeData);
-            alert("¡Examen guardado exitosamente en el Mural!");
+            toast.success("¡Examen guardado exitosamente en el Mural!");
             setManualData({ employeeId: '', firstName: '', currentPosition: '', promotionTo: '', score: '', requiredScore: '' });
             setShowManualForm(false);
         } catch (error) {
             console.error(error);
-            alert("Error al guardar examen manual.");
+            toast.error("Error al guardar examen manual.");
         }
     };
 
