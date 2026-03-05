@@ -1,16 +1,239 @@
 ﻿'use client';
 
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useCallback } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useRouter } from 'next/navigation';
 import ProfileDropdown from '@/components/layout/ProfileDropdown/ProfileDropdown';
 import BackButton from '@/components/ui/BackButton/BackButton';
 import { Button } from '@/components/ui/Button/Button';
 import { db } from '@/lib/firebase';
-import { collection, getDocs, addDoc, deleteDoc, doc } from 'firebase/firestore';
+import { collection, getDocs, addDoc, deleteDoc, doc, getDoc, query, where } from 'firebase/firestore';
 import { useToast } from '@/components/ui/Toast/Toast';
 import { Dialog, DialogHeader, DialogTitle, DialogBody, DialogFooter, DialogClose } from '@/components/ui/Dialog/Dialog';
+import { UserPlus, X, Download } from 'lucide-react';
 import styles from './page.module.css';
+
+// ─── Constantes ────────────────────────────────────────────────────────────
+const EMPTY_EVENT = {
+    title: '',
+    date: '',
+    startTime: '',
+    endTime: '',
+    instructor: '',
+    location: '',
+    duration: '',
+    objective: '',
+};
+
+// ─── Paleta del PDF (centralizada, sin hardcodear en la función) ────────────
+const PDF_COLORS = {
+    primary: [30, 64, 175],  // Azul institucional
+    secondary: [71, 85, 105],  // Gris oscuro
+    accent: [249, 115, 22],  // Naranja (color del botón de la app)
+    light: [248, 250, 252],  // Fondo claro
+    border: [226, 232, 240],  // Borde sutil
+    white: [255, 255, 255],
+    text: [15, 23, 42],
+    textLight: [100, 116, 139],
+};
+
+// ─── Genera invitación PDF de estilo ejecutivo ─────────────────────────────
+function generateInvitacionPDF(event, personal) {
+    // Importación dinámica evita error SSR
+    const { jsPDF } = require('jspdf');
+    const pdf = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'letter' });
+    const W = pdf.internal.pageSize.getWidth();
+    const H = pdf.internal.pageSize.getHeight();
+    const margin = 20;
+    const contentW = W - margin * 2;
+
+    // ── Header band ──────────────────────────────────────────────────────────
+    pdf.setFillColor(...PDF_COLORS.primary);
+    pdf.rect(0, 0, W, 38, 'F');
+
+    // Franja de acento inferior del header
+    pdf.setFillColor(...PDF_COLORS.accent);
+    pdf.rect(0, 38, W, 3, 'F');
+
+    // Título en el header
+    pdf.setTextColor(...PDF_COLORS.white);
+    pdf.setFont('helvetica', 'bold');
+    pdf.setFontSize(16);
+    pdf.text('INVITACIÓN A CURSO DE CAPACITACIÓN', W / 2, 22, { align: 'center' });
+    pdf.setFontSize(9);
+    pdf.setFont('helvetica', 'normal');
+    pdf.text('Departamento de Recursos Humanos · Capacitación y Desarrollo', W / 2, 32, { align: 'center' });
+
+    // ── Nombre del curso ─────────────────────────────────────────────────────
+    let y = 55;
+    pdf.setTextColor(...PDF_COLORS.text);
+    pdf.setFont('helvetica', 'bold');
+    pdf.setFontSize(15);
+    pdf.text(event.title.toUpperCase(), margin, y);
+    y += 2;
+
+    // Línea decorativa bajo el nombre
+    pdf.setDrawColor(...PDF_COLORS.accent);
+    pdf.setLineWidth(0.8);
+    pdf.line(margin, y + 3, margin + contentW, y + 3);
+    y += 12;
+
+    // ── Bloque de detalles (2 columnas) ───────────────────────────────────────
+    const colA = margin;
+    const colB = W / 2 + 4;
+    const colW = contentW / 2 - 4;
+
+    const drawDetail = (label, value, cx, cy) => {
+        pdf.setFontSize(7.5);
+        pdf.setFont('helvetica', 'bold');
+        pdf.setTextColor(...PDF_COLORS.textLight);
+        pdf.text(label.toUpperCase(), cx, cy);
+        pdf.setFontSize(9.5);
+        pdf.setFont('helvetica', 'normal');
+        pdf.setTextColor(...PDF_COLORS.text);
+        pdf.text(value || '—', cx, cy + 5);
+    };
+
+    // Fondo de bloque
+    pdf.setFillColor(...PDF_COLORS.light);
+    pdf.roundedRect(margin - 2, y - 4, contentW + 4, 52, 3, 3, 'F');
+    pdf.setDrawColor(...PDF_COLORS.border);
+    pdf.setLineWidth(0.3);
+    pdf.roundedRect(margin - 2, y - 4, contentW + 4, 52, 3, 3, 'S');
+
+    // Formatea la fecha
+    const dateFormatted = event.date
+        ? new Date(event.date + 'T12:00:00').toLocaleDateString('es-MX',
+            { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })
+        : '—';
+
+    const timeRange = event.startTime && event.endTime
+        ? `${event.startTime} – ${event.endTime}`
+        : event.startTime || '—';
+
+    drawDetail('Fecha', dateFormatted, colA, y + 4);
+    drawDetail('Horario', timeRange, colB, y + 4);
+    drawDetail('Duración', event.duration ? `${event.duration} horas` : '—', colA, y + 18);
+    drawDetail('Lugar / Sede', event.location, colB, y + 18);
+    drawDetail('Instructor', event.instructor, colA, y + 32);
+    y += 58;
+
+    // ── Objetivo (si existe) ──────────────────────────────────────────────────
+    if (event.objective) {
+        pdf.setFontSize(8);
+        pdf.setFont('helvetica', 'bolditalic');
+        pdf.setTextColor(...PDF_COLORS.textLight);
+        pdf.text('OBJETIVO DEL CURSO', margin, y);
+        y += 5;
+        pdf.setFont('helvetica', 'normal');
+        pdf.setTextColor(...PDF_COLORS.text);
+        pdf.setFontSize(9);
+        const lines = pdf.splitTextToSize(event.objective, contentW);
+        pdf.text(lines, margin, y);
+        y += lines.length * 5 + 6;
+    }
+
+    // ── Tabla de personal requerido ───────────────────────────────────────────
+    pdf.setFontSize(9);
+    pdf.setFont('helvetica', 'bold');
+    pdf.setTextColor(...PDF_COLORS.textLight);
+    pdf.text('PERSONAL REQUERIDO', margin, y);
+    y += 2;
+
+    // Encabezado de tabla
+    pdf.setFillColor(...PDF_COLORS.primary);
+    pdf.rect(margin, y, contentW, 8, 'F');
+    pdf.setTextColor(...PDF_COLORS.white);
+    pdf.setFontSize(8);
+    pdf.setFont('helvetica', 'bold');
+    pdf.text('#', margin + 3, y + 5.5);
+    pdf.text('ID', margin + 10, y + 5.5);
+    pdf.text('Nombre', margin + 28, y + 5.5);
+    pdf.text('Puesto', margin + 95, y + 5.5);
+    pdf.text('Firma', margin + 152, y + 5.5);
+    y += 8;
+
+    if (personal.length === 0) {
+        pdf.setFillColor(...PDF_COLORS.light);
+        pdf.rect(margin, y, contentW, 10, 'F');
+        pdf.setTextColor(...PDF_COLORS.textLight);
+        pdf.setFontSize(8.5);
+        pdf.setFont('helvetica', 'italic');
+        pdf.text('No se especificó personal requerido', W / 2, y + 6.5, { align: 'center' });
+        y += 10;
+    } else {
+        personal.forEach((emp, i) => {
+            const rowH = 10;
+            const bg = i % 2 === 0 ? PDF_COLORS.white : PDF_COLORS.light;
+            pdf.setFillColor(...bg);
+            pdf.rect(margin, y, contentW, rowH, 'F');
+
+            pdf.setTextColor(...PDF_COLORS.text);
+            pdf.setFontSize(8);
+            pdf.setFont('helvetica', 'normal');
+            pdf.text(String(i + 1), margin + 3, y + 6.5);
+            pdf.text(emp.employeeId ?? '—', margin + 10, y + 6.5);
+            pdf.text(emp.name ?? '—', margin + 28, y + 6.5);
+            const position = pdf.splitTextToSize(emp.position ?? '—', 50);
+            pdf.text(position, margin + 95, y + 6.5);
+
+            // Línea de firma
+            pdf.setDrawColor(...PDF_COLORS.border);
+            pdf.setLineWidth(0.3);
+            pdf.line(margin + 152, y + 8.5, margin + contentW - 2, y + 8.5);
+
+            y += rowH;
+        });
+    }
+
+    // Borde exterior tabla
+    pdf.setDrawColor(...PDF_COLORS.border);
+    pdf.setLineWidth(0.3);
+    const tableTop = y - (Math.max(personal.length, 1) * 10) - 8;
+    pdf.rect(margin, tableTop, contentW, y - tableTop, 'S');
+
+    // ── Sección de autorización ───────────────────────────────────────────────
+    y += 12;
+    if (y > H - 55) { pdf.addPage(); y = 20; }
+
+    pdf.setFillColor(...PDF_COLORS.light);
+    pdf.roundedRect(margin - 2, y - 4, contentW + 4, 40, 3, 3, 'F');
+
+    const signCols = [margin + 10, W / 2 + 4];
+    const signLabels = [
+        ['Firma del Responsable / Instructor', 'Nombre y Puesto'],
+        ['Autorización RRHH / Capacitación', 'Nombre y Puesto']
+    ];
+    signLabels.forEach(([title, subtitle], ci) => {
+        const sx = signCols[ci];
+        pdf.setDrawColor(...PDF_COLORS.secondary);
+        pdf.setLineWidth(0.4);
+        pdf.line(sx, y + 25, sx + 75, y + 25);
+        pdf.setFontSize(7.5);
+        pdf.setFont('helvetica', 'bold');
+        pdf.setTextColor(...PDF_COLORS.text);
+        pdf.text(title, sx, y + 30);
+        pdf.setFont('helvetica', 'normal');
+        pdf.setTextColor(...PDF_COLORS.textLight);
+        pdf.text(subtitle, sx, y + 35);
+    });
+    y += 44;
+
+    // ── Footer ────────────────────────────────────────────────────────────────
+    pdf.setFillColor(...PDF_COLORS.primary);
+    pdf.rect(0, H - 14, W, 14, 'F');
+    pdf.setFontSize(7.5);
+    pdf.setFont('helvetica', 'normal');
+    pdf.setTextColor(...PDF_COLORS.white);
+    const folio = `Folio: CAP-${Date.now().toString().slice(-6)}`;
+    const generated = `Generado: ${new Date().toLocaleString('es-MX')}`;
+    pdf.text(folio, margin, H - 5);
+    pdf.text(generated, W - margin, H - 5, { align: 'right' });
+
+    // ── Descarga ──────────────────────────────────────────────────────────────
+    const safeName = event.title.replace(/[^a-zA-Z0-9\s]/g, '').replace(/\s+/g, '_');
+    pdf.save(`Invitacion_${safeName}_${event.date}.pdf`);
+}
 
 
 export default function CalendarPage() {
@@ -23,8 +246,14 @@ export default function CalendarPage() {
 
     // Modals
     const [createModalOpen, setCreateModalOpen] = useState(false);
-    const [detailModal, setDetailModal] = useState(null); // { date, events }
-    const [newEvent, setNewEvent] = useState({ title: '', date: '', type: 'PLANNED' });
+    const [detailModal, setDetailModal] = useState(null);
+    const [newEvent, setNewEvent] = useState(EMPTY_EVENT);
+
+    // Personal requerido
+    const [personalList, setPersonalList] = useState([]);
+    const [personalIdInput, setPersonalIdInput] = useState('');
+    const [searchingPersonal, setSearchingPersonal] = useState(false);
+    const [generatingPDF, setGeneratingPDF] = useState(false);
 
     // Calendar days
     const [calendarDays, setCalendarDays] = useState([]);
@@ -173,27 +402,90 @@ export default function CalendarPage() {
         }
     };
 
-    const handleCreateEvent = async () => {
-        if (!canWrite()) {
-            toast.error("Acceso Denegado", "Tu rol no permite crear eventos.");
+    // Buscar empleado por ID para personal requerido
+    const handleSearchPersonal = useCallback(async () => {
+        const id = personalIdInput.trim();
+        if (!id) return;
+        if (personalList.some(p => (p.employeeId ?? p.id) === id)) {
+            toast.warning('Duplicado', 'Este empleado ya está en la lista');
             return;
         }
+        setSearchingPersonal(true);
+        try {
+            const directSnap = await getDoc(doc(db, 'training_records', id));
+            if (directSnap.exists()) {
+                setPersonalList(prev => [...prev, { id: directSnap.id, ...directSnap.data() }]);
+                setPersonalIdInput('');
+                return;
+            }
+            const q = query(collection(db, 'training_records'), where('employeeId', '==', id));
+            const snap = await getDocs(q);
+            if (!snap.empty) {
+                setPersonalList(prev => [...prev, { id: snap.docs[0].id, ...snap.docs[0].data() }]);
+                setPersonalIdInput('');
+            } else {
+                toast.warning('No encontrado', `No existe empleado con ID ${id}`);
+            }
+        } catch (err) {
+            console.error('[CalendarPage] handleSearchPersonal:', err);
+            toast.error('Error', 'No se pudo buscar el empleado');
+        } finally {
+            setSearchingPersonal(false);
+        }
+    }, [personalIdInput, personalList, toast]);
 
-        if (!newEvent.title || !newEvent.date) return;
+    const removePersonal = (empId) =>
+        setPersonalList(prev => prev.filter(p => (p.employeeId ?? p.id) !== empId));
+
+    const handleCreateEvent = async () => {
+        if (!canWrite()) {
+            toast.error('Acceso Denegado', 'Tu rol no permite crear eventos.');
+            return;
+        }
+        if (!newEvent.title || !newEvent.date) {
+            toast.warning('Campos requeridos', 'Nombre del curso y fecha son obligatorios');
+            return;
+        }
         try {
             await addDoc(collection(db, 'calendar_events'), {
                 title: newEvent.title,
                 date: newEvent.date,
-                createdAt: new Date()
+                startTime: newEvent.startTime,
+                endTime: newEvent.endTime,
+                instructor: newEvent.instructor,
+                location: newEvent.location,
+                duration: newEvent.duration,
+                objective: newEvent.objective,
+                personal: personalList.map(p => ({
+                    employeeId: p.employeeId ?? p.id,
+                    name: p.name,
+                    position: p.position,
+                })),
+                createdAt: new Date(),
             });
-            toast.success("Evento Creado");
+            toast.success('Evento Creado', newEvent.title);
             setCreateModalOpen(false);
-            setNewEvent({ title: '', date: '', type: 'PLANNED' });
+            setNewEvent(EMPTY_EVENT);
+            setPersonalList([]);
             loadEvents();
         } catch (e) {
-            toast.error("Error al guardar");
+            console.error('[CalendarPage] handleCreateEvent:', e);
+            toast.error('Error al guardar', 'Intenta de nuevo');
         }
     };
+
+    const handleGeneratePDF = useCallback(() => {
+        if (!newEvent.title || !newEvent.date) {
+            toast.warning('Campos requeridos', 'Completa el nombre y fecha antes de generar el PDF');
+            return;
+        }
+        setGeneratingPDF(true);
+        try {
+            generateInvitacionPDF(newEvent, personalList);
+        } finally {
+            setGeneratingPDF(false);
+        }
+    }, [newEvent, personalList, toast]);
 
     const handleDeleteEvent = async (eventId) => {
         if (!canWrite()) return;
@@ -334,36 +626,148 @@ export default function CalendarPage() {
                 </div>
             </main>
 
-            {/* Create Event Modal */}
-            <Dialog open={createModalOpen} onOpenChange={setCreateModalOpen}>
+            {/* ── Modal: Agendar Curso ──────────────────────────────────── */}
+            <Dialog
+                open={createModalOpen}
+                onOpenChange={(open) => { if (!open) { setCreateModalOpen(false); setNewEvent(EMPTY_EVENT); setPersonalList([]); } }}
+            >
                 <DialogHeader>
                     <DialogTitle>Agendar Curso</DialogTitle>
-                    <DialogClose onClose={() => setCreateModalOpen(false)} />
+                    <DialogClose onClose={() => { setCreateModalOpen(false); setNewEvent(EMPTY_EVENT); setPersonalList([]); }} />
                 </DialogHeader>
                 <DialogBody>
-                    <div className={styles.formGroup}>
-                        <label>Nombre del Curso</label>
-                        <input
-                            type="text"
-                            className={styles.input}
-                            value={newEvent.title}
-                            onChange={e => setNewEvent({ ...newEvent, title: e.target.value })}
-                            placeholder="Ej. Curso de Alturas - Grupo A"
-                        />
-                    </div>
-                    <div className={styles.formGroup}>
-                        <label>Fecha</label>
-                        <input
-                            type="date"
-                            className={styles.input}
-                            value={newEvent.date}
-                            onChange={e => setNewEvent({ ...newEvent, date: e.target.value })}
-                        />
+                    <div className={styles.formStack}>
+
+                        {/* Nombre */}
+                        <div className={styles.formGroup}>
+                            <label htmlFor="ev-title" className={styles.label}>Nombre del Curso *</label>
+                            <input
+                                id="ev-title"
+                                type="text"
+                                className={styles.input}
+                                value={newEvent.title}
+                                onChange={e => setNewEvent({ ...newEvent, title: e.target.value })}
+                                placeholder="Ej. Curso de Alturas – Grupo A"
+                                autoFocus
+                            />
+                        </div>
+
+                        {/* Fecha + Horario */}
+                        <div className={styles.formRow}>
+                            <div className={styles.formGroup}>
+                                <label htmlFor="ev-date" className={styles.label}>Fecha *</label>
+                                <input id="ev-date" type="date" className={styles.input}
+                                    value={newEvent.date}
+                                    onChange={e => setNewEvent({ ...newEvent, date: e.target.value })} />
+                            </div>
+                            <div className={styles.formGroup}>
+                                <label htmlFor="ev-start" className={styles.label}>Hora inicio</label>
+                                <input id="ev-start" type="time" className={styles.input}
+                                    value={newEvent.startTime}
+                                    onChange={e => setNewEvent({ ...newEvent, startTime: e.target.value })} />
+                            </div>
+                            <div className={styles.formGroup}>
+                                <label htmlFor="ev-end" className={styles.label}>Hora fin</label>
+                                <input id="ev-end" type="time" className={styles.input}
+                                    value={newEvent.endTime}
+                                    onChange={e => setNewEvent({ ...newEvent, endTime: e.target.value })} />
+                            </div>
+                        </div>
+
+                        {/* Instructor + Lugar */}
+                        <div className={styles.formRow}>
+                            <div className={styles.formGroup}>
+                                <label htmlFor="ev-instructor" className={styles.label}>Instructor</label>
+                                <input id="ev-instructor" type="text" className={styles.input}
+                                    value={newEvent.instructor}
+                                    onChange={e => setNewEvent({ ...newEvent, instructor: e.target.value })}
+                                    placeholder="Nombre del instructor" />
+                            </div>
+                            <div className={styles.formGroup}>
+                                <label htmlFor="ev-location" className={styles.label}>Lugar / Sede</label>
+                                <input id="ev-location" type="text" className={styles.input}
+                                    value={newEvent.location}
+                                    onChange={e => setNewEvent({ ...newEvent, location: e.target.value })}
+                                    placeholder="Sala de juntas, Planta baja…" />
+                            </div>
+                            <div className={styles.formGroup}>
+                                <label htmlFor="ev-duration" className={styles.label}>Duración (h)</label>
+                                <input id="ev-duration" type="number" min="0.5" step="0.5" className={styles.input}
+                                    value={newEvent.duration}
+                                    onChange={e => setNewEvent({ ...newEvent, duration: e.target.value })}
+                                    placeholder="8" />
+                            </div>
+                        </div>
+
+                        {/* Objetivo */}
+                        <div className={styles.formGroup}>
+                            <label htmlFor="ev-objective" className={styles.label}>Objetivo (opcional)</label>
+                            <textarea id="ev-objective" className={`${styles.input} ${styles.textarea}`}
+                                rows={2}
+                                value={newEvent.objective}
+                                onChange={e => setNewEvent({ ...newEvent, objective: e.target.value })}
+                                placeholder="Capacitar al personal en…" />
+                        </div>
+
+                        {/* Personal requerido */}
+                        <div className={styles.formGroup}>
+                            <span className={styles.label}>Personal requerido ({personalList.length})</span>
+                            <div className={styles.personalSearchRow}>
+                                <input
+                                    type="text"
+                                    className={styles.input}
+                                    value={personalIdInput}
+                                    onChange={e => setPersonalIdInput(e.target.value)}
+                                    onKeyDown={e => { if (e.key === 'Enter') { e.preventDefault(); handleSearchPersonal(); } }}
+                                    placeholder="ID de empleado — Enter para agregar"
+                                />
+                                <button
+                                    type="button"
+                                    className={styles.addPersonalBtn}
+                                    onClick={handleSearchPersonal}
+                                    disabled={searchingPersonal}
+                                    aria-label="Agregar empleado"
+                                >
+                                    {searchingPersonal ? '…' : <UserPlus size={16} />}
+                                </button>
+                            </div>
+
+                            {personalList.length > 0 && (
+                                <ul className={styles.personalList} role="list">
+                                    {personalList.map(emp => {
+                                        const empId = emp.employeeId ?? emp.id;
+                                        return (
+                                            <li key={empId} className={styles.personalItem}>
+                                                <div className={styles.personalAvatar}>
+                                                    {(emp.name ?? '?')[0].toUpperCase()}
+                                                </div>
+                                                <div className={styles.personalInfo}>
+                                                    <span className={styles.personalName}>{emp.name}</span>
+                                                    <span className={styles.personalMeta}>{empId} · {emp.position ?? '—'}</span>
+                                                </div>
+                                                <button
+                                                    type="button"
+                                                    className={styles.removePersonalBtn}
+                                                    onClick={() => removePersonal(empId)}
+                                                    aria-label={`Quitar a ${emp.name}`}
+                                                >
+                                                    <X size={13} />
+                                                </button>
+                                            </li>
+                                        );
+                                    })}
+                                </ul>
+                            )}
+                        </div>
                     </div>
                 </DialogBody>
                 <DialogFooter>
-                    <Button variant="secondary" onClick={() => setCreateModalOpen(false)}>Cancelar</Button>
-                    <Button onClick={handleCreateEvent}>Guardar</Button>
+                    <Button variant="secondary" onClick={() => { setCreateModalOpen(false); setNewEvent(EMPTY_EVENT); setPersonalList([]); }}>Cancelar</Button>
+                    <Button variant="secondary" onClick={handleGeneratePDF} disabled={generatingPDF}>
+                        <Download size={15} />
+                        {generatingPDF ? 'Generando…' : 'Vista previa PDF'}
+                    </Button>
+                    <Button variant="primary" onClick={handleCreateEvent}>Guardar</Button>
                 </DialogFooter>
             </Dialog>
 

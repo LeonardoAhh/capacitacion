@@ -395,6 +395,152 @@
     box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.1);
 }
 
+/* ── Formulario extendido ── */
+.formStack {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-md);
+}
+
+.formRow {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+    gap: var(--spacing-sm);
+}
+
+/* label semántico como clase */
+.label {
+    display: block;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+    color: var(--text-secondary);
+    margin-bottom: 0.35rem;
+}
+
+.textarea {
+    resize: vertical;
+    min-height: 56px;
+    font-family: inherit;
+    line-height: 1.5;
+}
+
+/* ── Personal requerido ── */
+.personalSearchRow {
+    display: flex;
+    gap: var(--spacing-sm);
+}
+
+.personalSearchRow .input {
+    flex: 1;
+}
+
+.addPersonalBtn {
+    width: 44px;
+    height: 44px;
+    flex-shrink: 0;
+    border-radius: var(--radius-md);
+    border: none;
+    background: var(--color-primary);
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: opacity var(--transition-fast);
+}
+
+.addPersonalBtn:hover:not(:disabled) {
+    opacity: 0.85;
+}
+
+.addPersonalBtn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.personalList {
+    list-style: none;
+    padding: 0;
+    margin: 0.5rem 0 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+}
+
+.personalItem {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.55rem 0.75rem;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+}
+
+[data-theme="dark"] .personalItem {
+    background: #2C2C2E;
+    border-color: rgba(84, 84, 88, .4);
+}
+
+.personalAvatar {
+    width: 30px;
+    height: 30px;
+    min-width: 30px;
+    border-radius: 50%;
+    background: var(--color-primary);
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 0.8rem;
+}
+
+.personalInfo {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+.personalName {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.personalMeta {
+    font-size: 0.72rem;
+    color: var(--text-secondary);
+}
+
+.removePersonalBtn {
+    width: 26px;
+    height: 26px;
+    min-width: 26px;
+    border-radius: var(--radius-sm);
+    border: none;
+    background: transparent;
+    color: var(--text-tertiary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+}
+
+.removePersonalBtn:hover {
+    background: rgba(255, 59, 48, .1);
+    color: var(--color-danger, #FF3B30);
+}
+
+
+
 /* ==================== DETAIL MODAL ==================== */
 .detailContent {
     display: flex;
@@ -505,12 +651,12 @@
         padding: var(--spacing-lg) 0;
     }
 
-.profileContainer {
-    position: fixed;
-    top: 20px;
-    right: 20px;
-    z-index: 9999;
-}
+    .profileContainer {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        z-index: 9999;
+    }
 
     .container {
         padding: 0 var(--spacing-md);
