@@ -332,7 +332,9 @@ function AdminSection() {
 }
 
 // ── ADMIN MURAL SECTION ──
-import { Presentation, Save, RefreshCcw } from 'lucide-react';
+import { Presentation, Save, RefreshCcw, Download, Pencil, Check, X as CancelIcon } from 'lucide-react';
+import { deleteDoc } from 'firebase/firestore';
+import QRCode from 'qrcode';
 
 // Helper para extraer nombre(s) asumiendo formato "ApellidoPaterno ApellidoMaterno Nombre(s)"
 const extractFirstName = (fullName) => {
@@ -351,6 +353,10 @@ function AdminMuralSection() {
     const [syncing, setSyncing] = useState(false);
     const [loadingConfig, setLoadingConfig] = useState(true);
     const [showManualForm, setShowManualForm] = useState(false);
+    const [muralList, setMuralList] = useState([]);
+    const [editingMuralId, setEditingMuralId] = useState(null);
+    const [editData, setEditData] = useState({});
+
     const [manualData, setManualData] = useState({
         employeeId: '', firstName: '', currentPosition: '', promotionTo: '', score: '', requiredScore: ''
     });
@@ -376,6 +382,16 @@ function AdminMuralSection() {
             setLoadingConfig(false);
         };
         fetchMuralConfig();
+
+        // Listener para la tabla del Mural
+        const unsubMural = onSnapshot(collection(db, 'mural_exams'), (snap) => {
+            const arr = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+            // Ordenar por fecha descendente o nombre
+            arr.sort((a, b) => (b.date || '').localeCompare(a.date || ''));
+            setMuralList(arr);
+        });
+
+        return () => unsubMural();
     }, []);
 
     // ── Lógica de Autocompletado del Formulario (M) ──
@@ -560,6 +576,228 @@ function AdminMuralSection() {
         }
     };
 
+    // Funciones de Listado, Edición y PDF
+    const handleEditClick = (mural) => {
+        setEditingMuralId(mural.id);
+        setEditData({ ...mural });
+    };
+
+    const handleCancelEdit = () => {
+        setEditingMuralId(null);
+        setEditData({});
+    };
+
+    const handleSaveEdit = async () => {
+        try {
+            const scoreNum = Number(editData.score);
+            const reqScoreNum = Number(editData.requiredScore);
+            const isApproved = scoreNum >= reqScoreNum;
+
+            const safeData = {
+                ...editData,
+                score: scoreNum,
+                requiredScore: reqScoreNum,
+                passed: isApproved
+            };
+
+            delete safeData.id; // no guardar el ID dentro del doc
+
+            await setDoc(doc(db, 'mural_exams', editingMuralId), safeData, { merge: true });
+            toast.success("Registro actualizado correctamente.");
+            setEditingMuralId(null);
+        } catch (error) {
+            console.error("Error al actualizar:", error);
+            toast.error("No se pudo actualizar el registro.");
+        }
+    };
+
+    const handleDeleteMural = async (id) => {
+        if (!confirm("¿Estás seguro de eliminar este registro público del Mural?")) return;
+        try {
+            await deleteDoc(doc(db, 'mural_exams', id));
+            toast.success("Registro eliminado.");
+        } catch (error) {
+            console.error("Error al eliminar:", error);
+            toast.error("No se pudo eliminar.");
+        }
+    };
+
+    const handleGenerateQR = async (emp) => {
+        try {
+            const { jsPDF } = await import('jspdf');
+            const targetUrl = `https://vertxk.xyz/mural`;
+
+            const qrDataUrl = await QRCode.toDataURL(targetUrl, {
+                width: 600,
+                margin: 0,
+                color: { dark: '#1e1e1e', light: '#FFFFFF' }
+            });
+
+            const pdf = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'letter' });
+            const W = pdf.internal.pageSize.getWidth();   // 215.9mm
+            const H = pdf.internal.pageSize.getHeight();  // 279.4mm
+            const CX = W / 2; // Centro horizontal
+
+            const C = {
+                black: [30, 30, 30],
+                orange: [204, 73, 22],
+                gray: [110, 110, 110],
+                lightGray: [210, 210, 210],
+                white: [255, 255, 255],
+            };
+
+            // ─── Borde perimetral ───
+            pdf.setDrawColor(...C.black);
+            pdf.setLineWidth(0.5);
+            pdf.rect(12, 12, W - 24, H - 24);
+
+            // ─── Badge "AVISO IMPORTANTE" ───
+            const badgeW = 58, badgeH = 8, badgeX = CX - badgeW / 2, badgeY = 23;
+            pdf.setDrawColor(...C.black);
+            pdf.setLineWidth(0.25);
+            pdf.roundedRect(badgeX, badgeY, badgeW, badgeH, 4, 4, 'S');
+            pdf.setFont('helvetica', 'bold');
+            pdf.setFontSize(6.5);
+            pdf.setTextColor(...C.black);
+            pdf.text('A V I S O   I M P O R T A N T E', CX, badgeY + 5.2, { align: 'center' });
+
+            // ─── Título principal (posiciones absolutas) ───
+            pdf.setFont('times', 'bold');
+            pdf.setFontSize(34);
+            pdf.setTextColor(...C.black);
+            pdf.text('¿Realizaste la', CX, 50, { align: 'center' });
+            pdf.text('evaluación de', CX, 63, { align: 'center' });
+
+            pdf.setFont('times', 'bolditalic');
+            pdf.setTextColor(...C.orange);
+            pdf.text('conocimientos?', CX, 77, { align: 'center' });
+
+            // ─── Línea divisora corta ───
+            pdf.setDrawColor(...C.black);
+            pdf.setLineWidth(1.2);
+            pdf.line(CX - 10, 84, CX + 10, 84);
+
+            // ─── Subtítulo ───
+            pdf.setFont('helvetica', 'normal');
+            pdf.setFontSize(9);
+            pdf.setTextColor(...C.gray);
+            pdf.text('L O S   R E S U L T A D O S   E S T Á N   L I S T O S', CX, 94, { align: 'center' });
+
+            // ─── Marco del QR (posición absolutamente fija) ───
+            const QR_SIZE = 90;           // tamaño imagen QR
+            const QR_PAD = 5;            // padding entre imagen y marco
+            const QR_IMG_X = CX - QR_SIZE / 2;
+            const QR_IMG_Y = 105;         // tope superior del QR (absoluto)
+            const FRAME_X = QR_IMG_X - QR_PAD;
+            const FRAME_Y = QR_IMG_Y - QR_PAD;
+            const FRAME_W = QR_SIZE + QR_PAD * 2;
+            const FRAME_H = QR_SIZE + QR_PAD * 2;
+
+            // Marco fino
+            pdf.setDrawColor(...C.black);
+            pdf.setLineWidth(0.3);
+            pdf.roundedRect(FRAME_X, FRAME_Y, FRAME_W, FRAME_H, 1.5, 1.5, 'S');
+
+            // Imagen QR
+            pdf.addImage(qrDataUrl, 'PNG', QR_IMG_X, QR_IMG_Y, QR_SIZE, QR_SIZE);
+
+            // Adornos naranjas — 4 esquinas, fuera del marco
+            const ARM = 7;
+            const OX = FRAME_X - 1;
+            const OY = FRAME_Y - 1;
+            const OW = FRAME_W + 2;
+            const OH = FRAME_H + 2;
+            pdf.setDrawColor(...C.orange);
+            pdf.setLineWidth(1.8);
+            // Superior izquierda
+            pdf.line(OX, OY, OX + ARM, OY);
+            pdf.line(OX, OY, OX, OY + ARM);
+            // Superior derecha
+            pdf.line(OX + OW, OY, OX + OW - ARM, OY);
+            pdf.line(OX + OW, OY, OX + OW, OY + ARM);
+            // Inferior izquierda
+            pdf.line(OX, OY + OH, OX + ARM, OY + OH);
+            pdf.line(OX, OY + OH, OX, OY + OH - ARM);
+            // Inferior derecha
+            pdf.line(OX + OW, OY + OH, OX + OW - ARM, OY + OH);
+            pdf.line(OX + OW, OY + OH, OX + OW, OY + OH - ARM);
+
+            // ─── URL (fija, debajo del marco) ───
+            const URL_Y = FRAME_Y + FRAME_H + 12; // ~212mm
+            pdf.setFont('helvetica', 'bold');
+            pdf.setFontSize(13);
+            const wBlack = pdf.getTextWidth('vertxk.xyz');
+            const wOrange = pdf.getTextWidth('/mural');
+            const urlStartX = CX - (wBlack + wOrange) / 2;
+            pdf.setTextColor(...C.black);
+            pdf.text('vertxk.xyz', urlStartX, URL_Y);
+            pdf.setTextColor(...C.orange);
+            pdf.text('/mural', urlStartX + wBlack, URL_Y);
+
+            // Texto pequeño
+            pdf.setFont('helvetica', 'italic');
+            pdf.setFontSize(7.5);
+            pdf.setTextColor(...C.gray);
+            pdf.text('Si no puedes escanear, ingresa la dirección en tu navegador', CX, URL_Y + 6, { align: 'center' });
+
+            // ─── Separador tenue ───
+            pdf.setDrawColor(...C.lightGray);
+            pdf.setLineWidth(0.25);
+            pdf.line(22, URL_Y + 13, W - 22, URL_Y + 13);
+
+            // ─── "ESCANEA EL CÓDIGO QR" ───
+            const SCAN_Y = URL_Y + 21;
+            pdf.setFont('helvetica', 'bold');
+            pdf.setFontSize(10);
+            pdf.setTextColor(...C.black);
+            pdf.text('E S C A N E A   E L   C Ó D I G O   Q R', CX, SCAN_Y, { align: 'center' });
+
+            pdf.setFont('helvetica', 'italic');
+            pdf.setFontSize(8.5);
+            pdf.setTextColor(...C.gray);
+            pdf.text('Usa la cámara de tu celular para acceder', CX, SCAN_Y + 6, { align: 'center' });
+
+            // ─── Pasos 1, 2, 3 ───
+            const STEP_Y = SCAN_Y + 18;
+            const steps = [
+                { num: '1', l1: 'Escanea el', l2: 'código QR' },
+                { num: '2', l1: 'Ingresa tu no.', l2: 'de empleado' },
+                { num: '3', l1: 'Consulta tus', l2: 'resultados' },
+            ];
+
+            const colPositions = [CX - 60, CX, CX + 60]; // centros de cada paso
+
+            steps.forEach((step, i) => {
+                const sx = colPositions[i];
+
+                // Círculo negro
+                pdf.setFillColor(...C.black);
+                pdf.circle(sx, STEP_Y, 4, 'F');
+
+                // Número en el círculo
+                pdf.setTextColor(...C.white);
+                pdf.setFont('helvetica', 'bold');
+                pdf.setFontSize(8);
+                pdf.text(step.num, sx, STEP_Y + 1.2, { align: 'center' });
+
+                // Texto del paso (centrado debajo del círculo)
+                pdf.setTextColor(...C.black);
+                pdf.setFont('helvetica', 'normal');
+                pdf.setFontSize(8);
+                pdf.text(step.l1, sx, STEP_Y + 9, { align: 'center' });
+                pdf.text(step.l2, sx, STEP_Y + 14, { align: 'center' });
+            });
+
+            const safeName = (emp.fullName || String(emp.employeeId)).replace(/[^a-zA-Z0-9]/g, '_');
+            pdf.save(`QR_Poster_${safeName}.pdf`);
+            toast.success("PDF generado exitosamente");
+
+        } catch (error) {
+            console.error(error);
+            toast.error("Error al generar el PDF");
+        }
+    };
+
     if (loadingConfig) return null;
 
     return (
@@ -672,11 +910,100 @@ function AdminMuralSection() {
                     </form>
                 )}
 
+                {/* ---------- TABLA DE REGISTROS MURAL ---------- */}
+                <div style={{ marginTop: '2rem' }}>
+                    <h4 style={{ margin: '0 0 10px 0', color: 'var(--text-primary)', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                        <Presentation size={18} /> Registros Públicos Actuales ({muralList.length})
+                    </h4>
+
+                    <div style={{ overflowX: 'auto', borderRadius: '8px', border: '1px solid var(--border-color)' }}>
+                        <table style={{ minWidth: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '0.85rem' }}>
+                            <thead>
+                                <tr style={{ backgroundColor: 'var(--bg-secondary)', color: 'var(--text-secondary)' }}>
+                                    <th style={{ padding: '12px', borderBottom: '1px solid var(--border-color)' }}>ID</th>
+                                    <th style={{ padding: '12px', borderBottom: '1px solid var(--border-color)' }}>Nombre</th>
+                                    <th style={{ padding: '12px', borderBottom: '1px solid var(--border-color)' }}>Actual</th>
+                                    <th style={{ padding: '12px', borderBottom: '1px solid var(--border-color)' }}>Destino</th>
+                                    <th style={{ padding: '12px', borderBottom: '1px solid var(--border-color)' }}>Score %</th>
+                                    <th style={{ padding: '12px', borderBottom: '1px solid var(--border-color)' }}>Req. %</th>
+                                    <th style={{ padding: '12px', borderBottom: '1px solid var(--border-color)' }}>Status</th>
+                                    <th style={{ padding: '12px', borderBottom: '1px solid var(--border-color)', textAlign: 'right' }}>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {muralList.map(item => {
+                                    const isEditing = editingMuralId === item.id;
+
+                                    if (isEditing) {
+                                        return (
+                                            <tr key={item.id} style={{ backgroundColor: 'var(--bg-secondary)', borderBottom: '1px solid var(--border-color)' }}>
+                                                <td style={{ padding: '12px' }}>{item.employeeId}</td>
+                                                <td style={{ padding: '12px' }}>
+                                                    <input type="text" value={editData.firstName} onChange={e => setEditData({ ...editData, firstName: e.target.value })} style={{ width: '100%', padding: '4px', background: 'var(--bg-primary)', border: '1px solid var(--border-color)', color: 'var(--text-primary)' }} />
+                                                </td>
+                                                <td style={{ padding: '12px' }}>
+                                                    <input type="text" value={editData.currentPosition} onChange={e => setEditData({ ...editData, currentPosition: e.target.value })} style={{ width: '100%', padding: '4px', background: 'var(--bg-primary)', border: '1px solid var(--border-color)', color: 'var(--text-primary)' }} />
+                                                </td>
+                                                <td style={{ padding: '12px' }}>
+                                                    <input type="text" value={editData.promotionTo} onChange={e => setEditData({ ...editData, promotionTo: e.target.value })} style={{ width: '100%', padding: '4px', background: 'var(--bg-primary)', border: '1px solid var(--border-color)', color: 'var(--text-primary)' }} />
+                                                </td>
+                                                <td style={{ padding: '12px' }}>
+                                                    <input type="number" value={editData.score} onChange={e => setEditData({ ...editData, score: e.target.value })} style={{ width: '50px', padding: '4px', background: 'var(--bg-primary)', border: '1px solid var(--border-color)', color: 'var(--text-primary)' }} />
+                                                </td>
+                                                <td style={{ padding: '12px' }}>
+                                                    <input type="number" value={editData.requiredScore} onChange={e => setEditData({ ...editData, requiredScore: e.target.value })} style={{ width: '50px', padding: '4px', background: 'var(--bg-primary)', border: '1px solid var(--border-color)', color: 'var(--text-primary)' }} />
+                                                </td>
+                                                <td style={{ padding: '12px' }}>—</td>
+                                                <td style={{ padding: '12px', display: 'flex', gap: '8px', justifyContent: 'flex-end' }}>
+                                                    <button onClick={handleSaveEdit} title="Guardar" style={{ padding: '6px', background: '#22c55e', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' }}><Check size={14} /></button>
+                                                    <button onClick={handleCancelEdit} title="Cancelar" style={{ padding: '6px', background: '#ef4444', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' }}><CancelIcon size={14} /></button>
+                                                </td>
+                                            </tr>
+                                        )
+                                    }
+
+                                    return (
+                                        <tr key={item.id} style={{ borderBottom: '1px solid var(--border-color)', color: 'var(--text-primary)' }}>
+                                            <td style={{ padding: '12px' }}>{item.employeeId}</td>
+                                            <td style={{ padding: '12px', fontWeight: 600 }}>{item.firstName}</td>
+                                            <td style={{ padding: '12px', color: 'var(--text-secondary)' }}>{item.currentPosition}</td>
+                                            <td style={{ padding: '12px', color: 'var(--text-secondary)' }}>{item.promotionTo}</td>
+                                            <td style={{ padding: '12px', fontWeight: 'bold' }}>{item.score}%</td>
+                                            <td style={{ padding: '12px', color: 'var(--text-secondary)' }}>{item.requiredScore}%</td>
+                                            <td style={{ padding: '12px' }}>
+                                                {item.passed
+                                                    ? <span style={{ color: '#10b981', background: 'rgba(16,185,129,0.1)', padding: '2px 8px', borderRadius: '12px', fontSize: '0.75rem', fontWeight: 'bold' }}>APROBADO</span>
+                                                    : <span style={{ color: '#ef4444', background: 'rgba(239,68,68,0.1)', padding: '2px 8px', borderRadius: '12px', fontSize: '0.75rem', fontWeight: 'bold' }}>REPROBADO</span>
+                                                }
+                                            </td>
+                                            <td style={{ padding: '12px', display: 'flex', gap: '8px', justifyContent: 'flex-end' }}>
+                                                <button onClick={() => handleGenerateQR(item)} title="Descargar Invitación QR" style={{ padding: '6px', background: 'transparent', color: '#3b82f6', border: '1px solid #3b82f6', borderRadius: '4px', cursor: 'pointer' }}>
+                                                    <Download size={14} />
+                                                </button>
+                                                <button onClick={() => handleEditClick(item)} title="Editar Registro" style={{ padding: '6px', background: 'transparent', color: '#f59e0b', border: '1px solid #f59e0b', borderRadius: '4px', cursor: 'pointer' }}>
+                                                    <Pencil size={14} />
+                                                </button>
+                                                <button onClick={() => handleDeleteMural(item.id)} title="Eliminar del Mural" style={{ padding: '6px', background: 'transparent', color: '#ef4444', border: '1px solid #ef4444', borderRadius: '4px', cursor: 'pointer' }}>
+                                                    <Trash2 size={14} />
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    );
+                                })}
+                                {muralList.length === 0 && (
+                                    <tr>
+                                        <td colSpan="8" style={{ padding: '20px', textAlign: 'center', color: 'var(--text-tertiary)' }}>No hay resultados en el mural.</td>
+                                    </tr>
+                                )}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
             </div>
         </div>
     );
 }
-
 
 // ── Iconos/colores por tipo de acción ──
 const ACTION_META = {
