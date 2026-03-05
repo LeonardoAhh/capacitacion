@@ -485,6 +485,11 @@
     padding: 0.5rem 0;
 }
 
+.sessionPanelHidden {
+    display: none;
+}
+
+
 .sessionRow {
     display: grid;
     grid-template-columns: 1.2rem 1fr auto auto 1.6rem;
@@ -752,6 +757,25 @@
     background: rgba(255, 59, 48, 0.1);
     color: #FF3B30;
 }
+
+.editBtn {
+    background: transparent;
+    border: none;
+    color: var(--text-tertiary);
+    cursor: pointer;
+    padding: 6px;
+    border-radius: var(--radius-sm);
+    transition: all var(--transition-fast);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.editBtn:hover {
+    background: color-mix(in srgb, var(--color-primary) 10%, transparent);
+    color: var(--color-primary);
+}
+
 
 /* ==================== RESPONSIVE ==================== */
 @media (max-width: 1024px) {

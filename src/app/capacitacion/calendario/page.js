@@ -7,10 +7,10 @@ import ProfileDropdown from '@/components/layout/ProfileDropdown/ProfileDropdown
 import BackButton from '@/components/ui/BackButton/BackButton';
 import { Button } from '@/components/ui/Button/Button';
 import { db } from '@/lib/firebase';
-import { collection, getDocs, addDoc, deleteDoc, doc, getDoc, query, where } from 'firebase/firestore';
+import { collection, getDocs, addDoc, deleteDoc, doc, getDoc, query, where, updateDoc } from 'firebase/firestore';
 import { useToast } from '@/components/ui/Toast/Toast';
 import { Dialog, DialogHeader, DialogTitle, DialogBody, DialogFooter, DialogClose } from '@/components/ui/Dialog/Dialog';
-import { UserPlus, X, Download } from 'lucide-react';
+import { UserPlus, X, Download, Pencil } from 'lucide-react';
 import styles from './page.module.css';
 
 // ─── Constantes ────────────────────────────────────────────────────────────
@@ -28,21 +28,19 @@ const EMPTY_EVENT = {
     ],
 };
 
-// ─── Paleta del PDF (centralizada, sin hardcodear en la función) ────────────
+// ─── Paleta ejecutiva del PDF (centralizada — cero valores hardcodeados fuera de aquí) ─
 const PDF_COLORS = {
-    primary: [30, 64, 175],  // Azul institucional
-    secondary: [71, 85, 105],  // Gris oscuro
-    accent: [249, 115, 22],  // Naranja (color del botón de la app)
-    light: [248, 250, 252],  // Fondo claro
-    border: [226, 232, 240],  // Borde sutil
-    white: [255, 255, 255],
-    text: [15, 23, 42],
-    textLight: [100, 116, 139],
+    black: [15, 23, 42],   // Texto principal
+    dark: [51, 65, 85],   // Texto secundario / etiquetas
+    mid: [100, 116, 139],  // Texto terciario / subtítulos
+    border: [203, 213, 225],  // Líneas y bordes
+    rowAlt: [248, 250, 252],  // Fila alternada (muy sutil)
+    white: [255, 255, 255],  // Fondo blanco
+    accent: [30, 64, 175],  // Acento institucional (solo header y línea)
 };
 
 // ─── Genera invitación PDF de estilo ejecutivo ─────────────────────────────
 function generateInvitacionPDF(event, personal) {
-    // Importación dinámica evita error SSR
     const { jsPDF } = require('jspdf');
     const pdf = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'letter' });
     const W = pdf.internal.pageSize.getWidth();
@@ -50,193 +48,238 @@ function generateInvitacionPDF(event, personal) {
     const margin = 20;
     const contentW = W - margin * 2;
 
-    // ── Header band ──────────────────────────────────────────────────────────
-    pdf.setFillColor(...PDF_COLORS.primary);
-    pdf.rect(0, 0, W, 38, 'F');
+    // ── Helper: hora 24h → 12h ────────────────────────────────────────────
+    const fmt12h = (t) => {
+        if (!t) return '—';
+        const [hRaw, mRaw = '00'] = t.split(':');
+        const h = parseInt(hRaw, 10);
+        const per = h >= 12 ? 'p.m.' : 'a.m.';
+        const h12 = h === 0 ? 12 : h > 12 ? h - 12 : h;
+        return `${h12}:${mRaw} ${per}`;
+    };
 
-    // Franja de acento inferior del header
-    pdf.setFillColor(...PDF_COLORS.accent);
-    pdf.rect(0, 38, W, 3, 'F');
-
-    // Título en el header
-    pdf.setTextColor(...PDF_COLORS.white);
-    pdf.setFont('helvetica', 'bold');
-    pdf.setFontSize(16);
-    pdf.text('INVITACIÓN A CURSO DE CAPACITACIÓN', W / 2, 22, { align: 'center' });
-    pdf.setFontSize(9);
-    pdf.setFont('helvetica', 'normal');
-    pdf.text('Departamento de Recursos Humanos · Capacitación y Desarrollo', W / 2, 32, { align: 'center' });
-
-    // ── Nombre del curso ─────────────────────────────────────────────────────
-    let y = 55;
-    pdf.setTextColor(...PDF_COLORS.text);
-    pdf.setFont('helvetica', 'bold');
-    pdf.setFontSize(15);
-    pdf.text(event.title.toUpperCase(), margin, y);
-    y += 2;
-
-    // Línea decorativa bajo el nombre
-    pdf.setDrawColor(...PDF_COLORS.accent);
-    pdf.setLineWidth(0.8);
-    pdf.line(margin, y + 3, margin + contentW, y + 3);
-    y += 12;
-
-    // ── Bloque de detalles (2 columnas) ───────────────────────────────────────
-    const colA = margin;
-    const colB = W / 2 + 4;
-    const colW = contentW / 2 - 4;
-
-    const drawDetail = (label, value, cx, cy) => {
-        pdf.setFontSize(7.5);
+    // ── Helper: dibuja campo etiqueta + valor ─────────────────────────────
+    const drawField = (label, value, cx, cy) => {
+        pdf.setFontSize(7);
         pdf.setFont('helvetica', 'bold');
-        pdf.setTextColor(...PDF_COLORS.textLight);
+        pdf.setTextColor(...PDF_COLORS.mid);
         pdf.text(label.toUpperCase(), cx, cy);
-        pdf.setFontSize(9.5);
+        pdf.setFontSize(9);
         pdf.setFont('helvetica', 'normal');
-        pdf.setTextColor(...PDF_COLORS.text);
+        pdf.setTextColor(...PDF_COLORS.black);
         pdf.text(value || '—', cx, cy + 5);
     };
 
-    // Fondo de bloque
-    pdf.setFillColor(...PDF_COLORS.light);
-    pdf.roundedRect(margin - 2, y - 4, contentW + 4, 52, 3, 3, 'F');
+    // ── Header minimalista ────────────────────────────────────────────────
+    // Banda superior delgada (acento)
+    pdf.setFillColor(...PDF_COLORS.accent);
+    pdf.rect(0, 0, W, 1.5, 'F');
+
+    // Fondo blanco del header
+    pdf.setFillColor(...PDF_COLORS.white);
+    pdf.rect(0, 1.5, W, 34, 'F');
+
+    // Título y subtítulo
+    pdf.setTextColor(...PDF_COLORS.black);
+    pdf.setFont('helvetica', 'bold');
+    pdf.setFontSize(14);
+    pdf.text('INVITACIÓN A CURSO DE CAPACITACIÓN', W / 2, 16, { align: 'center' });
+
+    pdf.setFont('helvetica', 'normal');
+    pdf.setFontSize(8.5);
+    pdf.setTextColor(...PDF_COLORS.mid);
+    pdf.text('Departamento de Recursos Humanos · Capacitación y Desarrollo', W / 2, 24, { align: 'center' });
+
+    // Línea separadora bajo el header
+    pdf.setDrawColor(...PDF_COLORS.border);
+    pdf.setLineWidth(0.4);
+    pdf.line(0, 35.5, W, 35.5);
+
+    // ── Nombre del curso ──────────────────────────────────────────────────
+    let y = 48;
+    pdf.setTextColor(...PDF_COLORS.black);
+    pdf.setFont('helvetica', 'bold');
+    pdf.setFontSize(14);
+    pdf.text(event.title.toUpperCase(), margin, y);
+    y += 2;
+
+    // Línea fina bajo el nombre (acento)
+    pdf.setDrawColor(...PDF_COLORS.accent);
+    pdf.setLineWidth(0.6);
+    pdf.line(margin, y + 3, margin + contentW, y + 3);
+    y += 12;
+
+    // ── Bloque de detalles: Instructor / Lugar / Duración ─────────────────
+    // borde sutil alrededor del bloque
     pdf.setDrawColor(...PDF_COLORS.border);
     pdf.setLineWidth(0.3);
-    pdf.roundedRect(margin - 2, y - 4, contentW + 4, 52, 3, 3, 'S');
+    pdf.setFillColor(...PDF_COLORS.white);
+    pdf.roundedRect(margin - 2, y - 4, contentW + 4, 32, 2, 2, 'FD');
 
-    // Formatea la fecha
-    const dateFormatted = event.date
-        ? new Date(event.date + 'T12:00:00').toLocaleDateString('es-MX',
-            { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })
-        : '—';
+    const colA = margin + 2;
+    const colB = W / 2 + 4;
 
-    const timeRange = event.startTime && event.endTime
-        ? `${event.startTime} – ${event.endTime}`
-        : event.startTime || '—';
+    drawField('Instructor', event.instructor || '—', colA, y + 4);
+    drawField('Lugar / Sede', event.location || '—', colB, y + 4);
+    drawField('Duración', event.duration ? `${event.duration} h` : '—', colA, y + 18);
+    y += 38;
 
-    drawDetail('Fecha', dateFormatted, colA, y + 4);
-    drawDetail('Horario', timeRange, colB, y + 4);
-    drawDetail('Duración', event.duration ? `${event.duration} horas` : '—', colA, y + 18);
-    drawDetail('Lugar / Sede', event.location, colB, y + 18);
-    drawDetail('Instructor', event.instructor, colA, y + 32);
-    y += 58;
-
-    // ── Objetivo (si existe) ──────────────────────────────────────────────────
+    // ── Objetivo ──────────────────────────────────────────────────────────
     if (event.objective) {
-        pdf.setFontSize(8);
-        pdf.setFont('helvetica', 'bolditalic');
-        pdf.setTextColor(...PDF_COLORS.textLight);
+        pdf.setFontSize(7);
+        pdf.setFont('helvetica', 'bold');
+        pdf.setTextColor(...PDF_COLORS.mid);
         pdf.text('OBJETIVO DEL CURSO', margin, y);
         y += 5;
         pdf.setFont('helvetica', 'normal');
-        pdf.setTextColor(...PDF_COLORS.text);
+        pdf.setTextColor(...PDF_COLORS.black);
         pdf.setFontSize(9);
-        const lines = pdf.splitTextToSize(event.objective, contentW);
-        pdf.text(lines, margin, y);
-        y += lines.length * 5 + 6;
+        const objLines = pdf.splitTextToSize(event.objective, contentW);
+        pdf.text(objLines, margin, y);
+        y += objLines.length * 5 + 6;
     }
 
-    // ── Tabla de personal requerido ───────────────────────────────────────────
-    pdf.setFontSize(9);
-    pdf.setFont('helvetica', 'bold');
-    pdf.setTextColor(...PDF_COLORS.textLight);
-    pdf.text('PERSONAL REQUERIDO', margin, y);
+    // ── Propuestas de horario ─────────────────────────────────────────────
+    const proposals = event.proposals ?? [];
+    const validProposals = proposals.filter(p => p.sessions?.some(s => s.date));
+
+    validProposals.forEach((prop, pi) => {
+        if (y > H - 60) { pdf.addPage(); y = 20; }
+
+        // Separador entre propuestas
+        if (pi > 0) { y += 4; }
+
+        // Etiqueta de propuesta — solo texto con línea lateral
+        pdf.setDrawColor(...PDF_COLORS.accent);
+        pdf.setLineWidth(1.5);
+        pdf.line(margin, y + 3, margin, y + 10);
+        pdf.setLineWidth(0.3);
+
+        pdf.setFont('helvetica', 'bold');
+        pdf.setFontSize(9);
+        pdf.setTextColor(...PDF_COLORS.black);
+        const propLabel = prop.label ? prop.label.toUpperCase() : `PROPUESTA ${pi + 1}`;
+        pdf.text(propLabel, margin + 4, y + 8);
+        y += 14;
+
+        // Encabezado de columnas
+        pdf.setFillColor(...PDF_COLORS.rowAlt);
+        pdf.rect(margin, y, contentW, 7, 'F');
+        pdf.setDrawColor(...PDF_COLORS.border);
+        pdf.setLineWidth(0.3);
+        pdf.rect(margin, y, contentW, 7, 'S');
+
+        pdf.setFont('helvetica', 'bold');
+        pdf.setFontSize(7);
+        pdf.setTextColor(...PDF_COLORS.mid);
+        pdf.text('#', margin + 3, y + 4.8);
+        pdf.text('FECHA', margin + 14, y + 4.8);
+        pdf.text('INICIO', margin + 110, y + 4.8);
+        pdf.text('FIN', margin + 140, y + 4.8);
+        y += 7;
+
+        const sessionsWithDate = prop.sessions.filter(s => s.date);
+        sessionsWithDate.forEach((sess, si) => {
+            const isAlt = si % 2 !== 0;
+            if (isAlt) {
+                pdf.setFillColor(...PDF_COLORS.rowAlt);
+                pdf.rect(margin, y, contentW, 8, 'F');
+            }
+
+            const dateStr = new Date(sess.date + 'T12:00:00').toLocaleDateString('es-MX',
+                { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' });
+
+            pdf.setFont('helvetica', 'normal');
+            pdf.setFontSize(8.5);
+            pdf.setTextColor(...PDF_COLORS.black);
+            pdf.text(String(si + 1), margin + 3, y + 5.5);
+            pdf.text(dateStr, margin + 14, y + 5.5);
+            pdf.text(fmt12h(sess.startTime), margin + 110, y + 5.5);
+            pdf.text(fmt12h(sess.endTime), margin + 140, y + 5.5);
+
+            // Línea inferior de fila
+            pdf.setDrawColor(...PDF_COLORS.border);
+            pdf.setLineWidth(0.15);
+            pdf.line(margin, y + 8, margin + contentW, y + 8);
+
+            y += 8;
+        });
+
+        // Borde exterior de la tabla
+        const tblTop = y - sessionsWithDate.length * 8 - 7;
+        pdf.setDrawColor(...PDF_COLORS.border);
+        pdf.setLineWidth(0.3);
+        pdf.rect(margin, tblTop, contentW, y - tblTop, 'S');
+        y += 6;
+    });
+
+    // ── Personal requerido ────────────────────────────────────────────────
+    if (y > H - 60) { pdf.addPage(); y = 20; }
     y += 2;
 
-    // Encabezado de tabla
-    pdf.setFillColor(...PDF_COLORS.primary);
-    pdf.rect(margin, y, contentW, 8, 'F');
-    pdf.setTextColor(...PDF_COLORS.white);
-    pdf.setFontSize(8);
     pdf.setFont('helvetica', 'bold');
+    pdf.setFontSize(7);
+    pdf.setTextColor(...PDF_COLORS.mid);
+    pdf.text('PERSONAL REQUERIDO', margin, y);
+    y += 4;
+
+    // Encabezado de tabla
+    pdf.setFillColor(...PDF_COLORS.rowAlt);
+    pdf.rect(margin, y, contentW, 8, 'F');
+    pdf.setDrawColor(...PDF_COLORS.border);
+    pdf.setLineWidth(0.3);
+    pdf.rect(margin, y, contentW, 8, 'S');
+
+    pdf.setFont('helvetica', 'bold');
+    pdf.setFontSize(7);
+    pdf.setTextColor(...PDF_COLORS.mid);
     pdf.text('#', margin + 3, y + 5.5);
-    pdf.text('ID', margin + 10, y + 5.5);
-    pdf.text('Nombre', margin + 28, y + 5.5);
-    pdf.text('Puesto', margin + 95, y + 5.5);
-    pdf.text('Firma', margin + 152, y + 5.5);
+    pdf.text('ID', margin + 12, y + 5.5);
+    pdf.text('NOMBRE', margin + 32, y + 5.5);
+    pdf.text('PUESTO', margin + 100, y + 5.5);
     y += 8;
 
     if (personal.length === 0) {
-        pdf.setFillColor(...PDF_COLORS.light);
+        pdf.setFillColor(...PDF_COLORS.white);
         pdf.rect(margin, y, contentW, 10, 'F');
-        pdf.setTextColor(...PDF_COLORS.textLight);
-        pdf.setFontSize(8.5);
         pdf.setFont('helvetica', 'italic');
-        pdf.text('No se especificó personal requerido', W / 2, y + 6.5, { align: 'center' });
+        pdf.setFontSize(8.5);
+        pdf.setTextColor(...PDF_COLORS.mid);
+        pdf.text('Sin personal especificado', W / 2, y + 6.5, { align: 'center' });
         y += 10;
     } else {
         personal.forEach((emp, i) => {
-            const rowH = 10;
-            const bg = i % 2 === 0 ? PDF_COLORS.white : PDF_COLORS.light;
-            pdf.setFillColor(...bg);
-            pdf.rect(margin, y, contentW, rowH, 'F');
-
-            pdf.setTextColor(...PDF_COLORS.text);
-            pdf.setFontSize(8);
+            if (i % 2 !== 0) {
+                pdf.setFillColor(...PDF_COLORS.rowAlt);
+                pdf.rect(margin, y, contentW, 10, 'F');
+            }
             pdf.setFont('helvetica', 'normal');
+            pdf.setFontSize(8);
+            pdf.setTextColor(...PDF_COLORS.black);
             pdf.text(String(i + 1), margin + 3, y + 6.5);
-            pdf.text(emp.employeeId ?? '—', margin + 10, y + 6.5);
-            pdf.text(emp.name ?? '—', margin + 28, y + 6.5);
-            const position = pdf.splitTextToSize(emp.position ?? '—', 50);
-            pdf.text(position, margin + 95, y + 6.5);
+            pdf.text(emp.employeeId ?? '—', margin + 12, y + 6.5);
+            pdf.text(emp.name ?? '—', margin + 32, y + 6.5);
+            const pos = pdf.splitTextToSize(emp.position ?? '—', 52);
+            pdf.text(pos, margin + 100, y + 6.5);
 
-            // Línea de firma
-            pdf.setDrawColor(...PDF_COLORS.border);
-            pdf.setLineWidth(0.3);
-            pdf.line(margin + 152, y + 8.5, margin + contentW - 2, y + 8.5);
-
-            y += rowH;
+            // Divisor de fila
+            pdf.setLineWidth(0.15);
+            pdf.line(margin, y + 10, margin + contentW, y + 10);
+            y += 10;
         });
     }
 
-    // Borde exterior tabla
+    // Borde exterior
+    const tblTop = y - Math.max(personal.length, 1) * 10 - 8;
     pdf.setDrawColor(...PDF_COLORS.border);
     pdf.setLineWidth(0.3);
-    const tableTop = y - (Math.max(personal.length, 1) * 10) - 8;
-    pdf.rect(margin, tableTop, contentW, y - tableTop, 'S');
+    pdf.rect(margin, tblTop, contentW, y - tblTop, 'S');
 
-    // ── Sección de autorización ───────────────────────────────────────────────
-    y += 12;
-    if (y > H - 55) { pdf.addPage(); y = 20; }
-
-    pdf.setFillColor(...PDF_COLORS.light);
-    pdf.roundedRect(margin - 2, y - 4, contentW + 4, 40, 3, 3, 'F');
-
-    const signCols = [margin + 10, W / 2 + 4];
-    const signLabels = [
-        ['Firma del Responsable / Instructor', 'Nombre y Puesto'],
-        ['Autorización RRHH / Capacitación', 'Nombre y Puesto']
-    ];
-    signLabels.forEach(([title, subtitle], ci) => {
-        const sx = signCols[ci];
-        pdf.setDrawColor(...PDF_COLORS.secondary);
-        pdf.setLineWidth(0.4);
-        pdf.line(sx, y + 25, sx + 75, y + 25);
-        pdf.setFontSize(7.5);
-        pdf.setFont('helvetica', 'bold');
-        pdf.setTextColor(...PDF_COLORS.text);
-        pdf.text(title, sx, y + 30);
-        pdf.setFont('helvetica', 'normal');
-        pdf.setTextColor(...PDF_COLORS.textLight);
-        pdf.text(subtitle, sx, y + 35);
-    });
-    y += 44;
-
-    // ── Footer ────────────────────────────────────────────────────────────────
-    pdf.setFillColor(...PDF_COLORS.primary);
-    pdf.rect(0, H - 14, W, 14, 'F');
-    pdf.setFontSize(7.5);
-    pdf.setFont('helvetica', 'normal');
-    pdf.setTextColor(...PDF_COLORS.white);
-    const folio = `Folio: CAP-${Date.now().toString().slice(-6)}`;
-    const generated = `Generado: ${new Date().toLocaleString('es-MX')}`;
-    pdf.text(folio, margin, H - 5);
-    pdf.text(generated, W - margin, H - 5, { align: 'right' });
-
-    // ── Descarga ──────────────────────────────────────────────────────────────
+    // ── Descarga ──────────────────────────────────────────────────────────
     const safeName = event.title.replace(/[^a-zA-Z0-9\s]/g, '').replace(/\s+/g, '_');
-    pdf.save(`Invitacion_${safeName}_${event.date}.pdf`);
+    pdf.save(`Invitacion_${safeName}.pdf`);
 }
+
 
 
 export default function CalendarPage() {
@@ -258,6 +301,7 @@ export default function CalendarPage() {
     const [searchingPersonal, setSearchingPersonal] = useState(false);
     const [generatingPDF, setGeneratingPDF] = useState(false);
     const [activeProposal, setActiveProposal] = useState(0);
+    const [editingEventId, setEditingEventId] = useState(null);
 
     // Calendar days
     const [calendarDays, setCalendarDays] = useState([]);
@@ -324,13 +368,17 @@ export default function CalendarPage() {
             const planSnap = await getDocs(planRef);
             planSnap.forEach(docSnap => {
                 const d = docSnap.data();
+                // Guardamos el documento completo para poder editar
+                const firstSession = d.proposals?.[0]?.sessions?.[0];
                 tempEvents.push({
                     id: docSnap.id,
                     type: 'PLANNED',
                     title: d.title,
-                    date: d.date,
+                    date: firstSession?.date ?? d.date ?? '',
                     courseName: d.title,
-                    employeeName: null
+                    employeeName: null,
+                    // datos completos para edición
+                    _raw: d,
                 });
             });
 
@@ -432,6 +480,45 @@ export default function CalendarPage() {
     const removePersonal = (empId) =>
         setPersonalList(prev => prev.filter(p => (p.employeeId ?? p.id) !== empId));
 
+    // Abre el modal de edición precargado con datos del evento existente
+    const openEditModal = useCallback((ev) => {
+        const raw = ev._raw ?? {};
+        setNewEvent({
+            title: raw.title ?? '',
+            instructor: raw.instructor ?? '',
+            location: raw.location ?? '',
+            duration: raw.duration ?? '',
+            objective: raw.objective ?? '',
+            proposals: (raw.proposals ?? []).length > 0
+                ? raw.proposals.map(p => ({
+                    label: p.label ?? 'Propuesta',
+                    sessions: (p.sessions ?? []).length > 0 ? p.sessions : [{ ...EMPTY_SESSION }],
+                }))
+                : EMPTY_EVENT.proposals.map(p => ({ ...p, sessions: [{ ...EMPTY_SESSION }] })),
+        });
+        setPersonalList(
+            (raw.personal ?? []).map(p => ({
+                id: p.employeeId,
+                employeeId: p.employeeId,
+                name: p.name,
+                position: p.position,
+            }))
+        );
+        setEditingEventId(ev.id);
+        setActiveProposal(0);
+        setCreateModalOpen(true);
+        setDetailModal(null); // cierra el detail modal
+    }, []);
+
+    // Cierra y limpia el modal (tanto nuevo como edición)
+    const closeModal = useCallback(() => {
+        setCreateModalOpen(false);
+        setNewEvent(EMPTY_EVENT);
+        setPersonalList([]);
+        setEditingEventId(null);
+        setActiveProposal(0);
+    }, []);
+
     // ── Handlers de sesiones ──────────────────────────────────────────────────
     const addSession = useCallback((proposalIdx) => {
         setNewEvent(prev => {
@@ -480,29 +567,31 @@ export default function CalendarPage() {
             toast.warning('Campos requeridos', 'El nombre del curso es obligatorio');
             return;
         }
+        const payload = {
+            title: newEvent.title,
+            instructor: newEvent.instructor,
+            location: newEvent.location,
+            duration: newEvent.duration,
+            objective: newEvent.objective,
+            proposals: newEvent.proposals.map(p => ({
+                label: p.label,
+                sessions: p.sessions.filter(s => s.date),
+            })),
+            personal: personalList.map(p => ({
+                employeeId: p.employeeId ?? p.id,
+                name: p.name,
+                position: p.position,
+            })),
+        };
         try {
-            await addDoc(collection(db, 'calendar_events'), {
-                title: newEvent.title,
-                instructor: newEvent.instructor,
-                location: newEvent.location,
-                duration: newEvent.duration,
-                objective: newEvent.objective,
-                proposals: newEvent.proposals.map(p => ({
-                    label: p.label,
-                    sessions: p.sessions.filter(s => s.date),
-                })),
-                personal: personalList.map(p => ({
-                    employeeId: p.employeeId ?? p.id,
-                    name: p.name,
-                    position: p.position,
-                })),
-                createdAt: new Date(),
-            });
-            toast.success('Evento Creado', newEvent.title);
-            setCreateModalOpen(false);
-            setNewEvent(EMPTY_EVENT);
-            setPersonalList([]);
-            setActiveProposal(0);
+            if (editingEventId) {
+                await updateDoc(doc(db, 'calendar_events', editingEventId), payload);
+                toast.success('Curso Actualizado', newEvent.title);
+            } else {
+                await addDoc(collection(db, 'calendar_events'), { ...payload, createdAt: new Date() });
+                toast.success('Evento Creado', newEvent.title);
+            }
+            closeModal();
             loadEvents();
         } catch (e) {
             console.error('[CalendarPage] handleCreateEvent:', e);
@@ -522,6 +611,21 @@ export default function CalendarPage() {
             setGeneratingPDF(false);
         }
     }, [newEvent, personalList, toast]);
+
+    // Genera PDF directamente desde un evento guardado en el detail modal
+    const handleGeneratePDFForEvent = useCallback((ev) => {
+        const raw = ev._raw ?? {};
+        const eventData = {
+            title: raw.title ?? ev.title ?? '',
+            instructor: raw.instructor ?? '',
+            location: raw.location ?? '',
+            duration: raw.duration ?? '',
+            objective: raw.objective ?? '',
+            proposals: raw.proposals ?? [],
+        };
+        const personal = (raw.personal ?? []);
+        generateInvitacionPDF(eventData, personal);
+    }, []);
 
     const handleDeleteEvent = async (eventId) => {
         if (!canWrite()) return;
@@ -727,8 +831,7 @@ export default function CalendarPage() {
                                 <div
                                     key={pi}
                                     role="tabpanel"
-                                    hidden={activeProposal !== pi}
-                                    className={styles.sessionPanel}
+                                    className={`${styles.sessionPanel} ${activeProposal !== pi ? styles.sessionPanelHidden : ''}`}
                                 >
                                     {prop.sessions.map((sess, si) => (
                                         <div key={si} className={styles.sessionRow}>
@@ -864,12 +967,14 @@ export default function CalendarPage() {
                     </div>
                 </DialogBody>
                 <DialogFooter>
-                    <Button variant="secondary" onClick={() => { setCreateModalOpen(false); setNewEvent(EMPTY_EVENT); setPersonalList([]); }}>Cancelar</Button>
+                    <Button variant="secondary" onClick={closeModal}>Cancelar</Button>
                     <Button variant="secondary" onClick={handleGeneratePDF} disabled={generatingPDF}>
                         <Download size={15} />
                         {generatingPDF ? 'Generando…' : 'Vista previa PDF'}
                     </Button>
-                    <Button variant="primary" onClick={handleCreateEvent}>Guardar</Button>
+                    <Button variant="primary" onClick={handleCreateEvent}>
+                        {editingEventId ? 'Actualizar' : 'Guardar'}
+                    </Button>
                 </DialogFooter>
             </Dialog>
 
@@ -914,15 +1019,34 @@ export default function CalendarPage() {
                                                         )}
                                                     </div>
                                                     {type === 'PLANNED' && canWrite() && (
-                                                        <button
-                                                            className={styles.deleteBtn}
-                                                            onClick={() => handleDeleteEvent(ev.id)}
-                                                        >
-                                                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                                                <polyline points="3 6 5 6 21 6" />
-                                                                <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
-                                                            </svg>
-                                                        </button>
+                                                        <div style={{ display: 'flex', gap: '0.35rem' }}>
+                                                            <button
+                                                                className={styles.editBtn}
+                                                                onClick={() => openEditModal(ev)}
+                                                                aria-label={`Editar ${ev.title}`}
+                                                                title="Editar curso"
+                                                            >
+                                                                <Pencil size={14} />
+                                                            </button>
+                                                            <button
+                                                                className={styles.editBtn}
+                                                                onClick={() => handleGeneratePDFForEvent(ev)}
+                                                                aria-label={`PDF ${ev.title}`}
+                                                                title="Descargar PDF"
+                                                            >
+                                                                <Download size={14} />
+                                                            </button>
+                                                            <button
+                                                                className={styles.deleteBtn}
+                                                                onClick={() => handleDeleteEvent(ev.id)}
+                                                                aria-label={`Eliminar ${ev.title}`}
+                                                            >
+                                                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                                                    <polyline points="3 6 5 6 21 6" />
+                                                                    <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
+                                                                </svg>
+                                                            </button>
+                                                        </div>
                                                     )}
                                                 </div>
                                             ))}
