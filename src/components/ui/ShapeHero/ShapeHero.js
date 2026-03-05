@@ -2,6 +2,7 @@
 
 import { memo } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import DynamicCredits from '@/components/features/DynamicCredits/DynamicCredits';
 import ThemeSelector from '@/components/layout/ThemeSelector/ThemeSelector';
 import styles from './ShapeHero.module.css';
@@ -97,12 +98,14 @@ function ShapeHeroComponent() {
                 {/* ── Columna derecha — Visual SVG ── */}
                 <div className={styles.right} aria-hidden="true">
                     <div className={styles.visualWrapper}>
-                        <img
+                        <Image
                             src="/hero-visual.svg"
                             alt="Máquina de inyección VIÑOPLASTIC"
                             className={styles.visualImg}
-                            loading="eager"
-                            decoding="async"
+                            width={600}
+                            height={500}
+                            priority
+                            unoptimized
                         />
                         <div className={styles.visualFade} />
                     </div>

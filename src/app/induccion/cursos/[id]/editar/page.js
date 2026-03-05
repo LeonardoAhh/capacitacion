@@ -150,7 +150,7 @@ export default function EditorPage({ params }) {
             toast.error('Error', result.error || 'No se pudo duplicar el slide');
         }
         setSaving(false);
-    }, [courseId, slides, toast, handleSelectSlide]);
+    }, [courseId, slides, toast, handleSelectSlide, syncCourseMetadata]);
 
     // Crear nuevo slide desde el modal
     const handleConfirmSlideType = async (type) => {

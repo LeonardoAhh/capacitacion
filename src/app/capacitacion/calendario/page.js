@@ -14,15 +14,18 @@ import { UserPlus, X, Download } from 'lucide-react';
 import styles from './page.module.css';
 
 // ─── Constantes ────────────────────────────────────────────────────────────
+const EMPTY_SESSION = { date: '', startTime: '', endTime: '' };
+
 const EMPTY_EVENT = {
     title: '',
-    date: '',
-    startTime: '',
-    endTime: '',
     instructor: '',
     location: '',
     duration: '',
     objective: '',
+    proposals: [
+        { label: 'Propuesta 1', sessions: [{ ...EMPTY_SESSION }] },
+        { label: 'Propuesta 2', sessions: [{ ...EMPTY_SESSION }] },
+    ],
 };
 
 // ─── Paleta del PDF (centralizada, sin hardcodear en la función) ────────────
@@ -254,6 +257,7 @@ export default function CalendarPage() {
     const [personalIdInput, setPersonalIdInput] = useState('');
     const [searchingPersonal, setSearchingPersonal] = useState(false);
     const [generatingPDF, setGeneratingPDF] = useState(false);
+    const [activeProposal, setActiveProposal] = useState(0);
 
     // Calendar days
     const [calendarDays, setCalendarDays] = useState([]);
@@ -287,15 +291,6 @@ export default function CalendarPage() {
         }
     }, [user, authLoading, router]);
 
-    if (authLoading || !user) {
-        return (
-            <div className={styles.main}>
-                <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', color: 'var(--text-primary)' }}>
-                    <div className="spinner"></div>
-                </div>
-            </div>
-        );
-    }
 
     const generateCalendar = () => {
         const year = date.getFullYear();
@@ -437,25 +432,65 @@ export default function CalendarPage() {
     const removePersonal = (empId) =>
         setPersonalList(prev => prev.filter(p => (p.employeeId ?? p.id) !== empId));
 
+    // ── Handlers de sesiones ──────────────────────────────────────────────────
+    const addSession = useCallback((proposalIdx) => {
+        setNewEvent(prev => {
+            const proposals = prev.proposals.map((p, i) =>
+                i === proposalIdx
+                    ? { ...p, sessions: [...p.sessions, { ...EMPTY_SESSION }] }
+                    : p
+            );
+            return { ...prev, proposals };
+        });
+    }, []);
+
+    const removeSession = useCallback((proposalIdx, sessionIdx) => {
+        setNewEvent(prev => {
+            const proposals = prev.proposals.map((p, i) =>
+                i === proposalIdx
+                    ? { ...p, sessions: p.sessions.filter((_, si) => si !== sessionIdx) }
+                    : p
+            );
+            return { ...prev, proposals };
+        });
+    }, []);
+
+    const updateSession = useCallback((proposalIdx, sessionIdx, field, value) => {
+        setNewEvent(prev => {
+            const proposals = prev.proposals.map((p, i) =>
+                i === proposalIdx
+                    ? {
+                        ...p,
+                        sessions: p.sessions.map((s, si) =>
+                            si === sessionIdx ? { ...s, [field]: value } : s
+                        ),
+                    }
+                    : p
+            );
+            return { ...prev, proposals };
+        });
+    }, []);
+
     const handleCreateEvent = async () => {
         if (!canWrite()) {
             toast.error('Acceso Denegado', 'Tu rol no permite crear eventos.');
             return;
         }
-        if (!newEvent.title || !newEvent.date) {
-            toast.warning('Campos requeridos', 'Nombre del curso y fecha son obligatorios');
+        if (!newEvent.title) {
+            toast.warning('Campos requeridos', 'El nombre del curso es obligatorio');
             return;
         }
         try {
             await addDoc(collection(db, 'calendar_events'), {
                 title: newEvent.title,
-                date: newEvent.date,
-                startTime: newEvent.startTime,
-                endTime: newEvent.endTime,
                 instructor: newEvent.instructor,
                 location: newEvent.location,
                 duration: newEvent.duration,
                 objective: newEvent.objective,
+                proposals: newEvent.proposals.map(p => ({
+                    label: p.label,
+                    sessions: p.sessions.filter(s => s.date),
+                })),
                 personal: personalList.map(p => ({
                     employeeId: p.employeeId ?? p.id,
                     name: p.name,
@@ -467,6 +502,7 @@ export default function CalendarPage() {
             setCreateModalOpen(false);
             setNewEvent(EMPTY_EVENT);
             setPersonalList([]);
+            setActiveProposal(0);
             loadEvents();
         } catch (e) {
             console.error('[CalendarPage] handleCreateEvent:', e);
@@ -475,8 +511,8 @@ export default function CalendarPage() {
     };
 
     const handleGeneratePDF = useCallback(() => {
-        if (!newEvent.title || !newEvent.date) {
-            toast.warning('Campos requeridos', 'Completa el nombre y fecha antes de generar el PDF');
+        if (!newEvent.title) {
+            toast.warning('Campos requeridos', 'Completa el nombre del curso antes de generar el PDF');
             return;
         }
         setGeneratingPDF(true);
@@ -537,6 +573,17 @@ export default function CalendarPage() {
     const formatDisplayDate = (d) => {
         return d.toLocaleDateString('es-MX', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
     };
+
+    // Early return de auth — DEBE ir después de todos los hooks
+    if (authLoading || !user) {
+        return (
+            <div className={styles.main}>
+                <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', color: 'var(--text-primary)' }}>
+                    <div className="spinner"></div>
+                </div>
+            </div>
+        );
+    }
 
     return (
         <>
@@ -652,26 +699,81 @@ export default function CalendarPage() {
                             />
                         </div>
 
-                        {/* Fecha + Horario */}
-                        <div className={styles.formRow}>
-                            <div className={styles.formGroup}>
-                                <label htmlFor="ev-date" className={styles.label}>Fecha *</label>
-                                <input id="ev-date" type="date" className={styles.input}
-                                    value={newEvent.date}
-                                    onChange={e => setNewEvent({ ...newEvent, date: e.target.value })} />
+                        {/* ── Tabs Propuesta 1 / Propuesta 2 ── */}
+                        <div className={styles.formGroup}>
+                            <span className={styles.label}>Sesiones por propuesta</span>
+
+                            {/* Tab bar */}
+                            <div className={styles.proposalTabs} role="tablist">
+                                {newEvent.proposals.map((prop, pi) => (
+                                    <button
+                                        key={pi}
+                                        role="tab"
+                                        type="button"
+                                        aria-selected={activeProposal === pi}
+                                        className={`${styles.proposalTab} ${activeProposal === pi ? styles.proposalTabActive : ''}`}
+                                        onClick={() => setActiveProposal(pi)}
+                                    >
+                                        {prop.label}
+                                        <span className={styles.sessionCount}>
+                                            {prop.sessions.filter(s => s.date).length} ses.
+                                        </span>
+                                    </button>
+                                ))}
                             </div>
-                            <div className={styles.formGroup}>
-                                <label htmlFor="ev-start" className={styles.label}>Hora inicio</label>
-                                <input id="ev-start" type="time" className={styles.input}
-                                    value={newEvent.startTime}
-                                    onChange={e => setNewEvent({ ...newEvent, startTime: e.target.value })} />
-                            </div>
-                            <div className={styles.formGroup}>
-                                <label htmlFor="ev-end" className={styles.label}>Hora fin</label>
-                                <input id="ev-end" type="time" className={styles.input}
-                                    value={newEvent.endTime}
-                                    onChange={e => setNewEvent({ ...newEvent, endTime: e.target.value })} />
-                            </div>
+
+                            {/* Sesiones de la propuesta activa */}
+                            {newEvent.proposals.map((prop, pi) => (
+                                <div
+                                    key={pi}
+                                    role="tabpanel"
+                                    hidden={activeProposal !== pi}
+                                    className={styles.sessionPanel}
+                                >
+                                    {prop.sessions.map((sess, si) => (
+                                        <div key={si} className={styles.sessionRow}>
+                                            <span className={styles.sessionNum}>{si + 1}</span>
+                                            <input
+                                                type="date"
+                                                className={styles.input}
+                                                value={sess.date}
+                                                onChange={e => updateSession(pi, si, 'date', e.target.value)}
+                                                aria-label={`Fecha sesión ${si + 1}`}
+                                            />
+                                            <input
+                                                type="time"
+                                                className={styles.input}
+                                                value={sess.startTime}
+                                                onChange={e => updateSession(pi, si, 'startTime', e.target.value)}
+                                                aria-label={`Hora inicio sesión ${si + 1}`}
+                                            />
+                                            <input
+                                                type="time"
+                                                className={styles.input}
+                                                value={sess.endTime}
+                                                onChange={e => updateSession(pi, si, 'endTime', e.target.value)}
+                                                aria-label={`Hora fin sesión ${si + 1}`}
+                                            />
+                                            <button
+                                                type="button"
+                                                className={styles.removeSessionBtn}
+                                                onClick={() => removeSession(pi, si)}
+                                                disabled={prop.sessions.length === 1}
+                                                aria-label="Eliminar sesión"
+                                            >
+                                                <X size={13} />
+                                            </button>
+                                        </div>
+                                    ))}
+                                    <button
+                                        type="button"
+                                        className={styles.addSessionBtn}
+                                        onClick={() => addSession(pi)}
+                                    >
+                                        + Agregar sesión
+                                    </button>
+                                </div>
+                            ))}
                         </div>
 
                         {/* Instructor + Lugar */}

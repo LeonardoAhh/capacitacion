@@ -426,6 +426,125 @@
     line-height: 1.5;
 }
 
+/* ── Tabs de Propuesta ── */
+.proposalTabs {
+    display: flex;
+    gap: 0.4rem;
+    margin-bottom: 0.5rem;
+    border-bottom: 2px solid var(--border-color);
+    padding-bottom: 0;
+}
+
+.proposalTab {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.45rem 1rem;
+    border: none;
+    background: transparent;
+    color: var(--text-secondary);
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    border-radius: var(--radius-md) var(--radius-md) 0 0;
+    border-bottom: 2px solid transparent;
+    margin-bottom: -2px;
+    transition: all var(--transition-fast);
+}
+
+.proposalTab:hover:not(.proposalTabActive) {
+    background: var(--bg-secondary);
+    color: var(--text-primary);
+}
+
+.proposalTabActive {
+    color: var(--color-primary);
+    border-bottom-color: var(--color-primary);
+    background: color-mix(in srgb, var(--color-primary) 6%, transparent);
+}
+
+.sessionCount {
+    font-size: 0.7rem;
+    font-weight: 700;
+    padding: 1px 6px;
+    border-radius: 999px;
+    background: var(--bg-tertiary);
+    color: var(--text-secondary);
+}
+
+.proposalTabActive .sessionCount {
+    background: color-mix(in srgb, var(--color-primary) 15%, transparent);
+    color: var(--color-primary);
+}
+
+/* ── Panel de sesiones ── */
+.sessionPanel {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    padding: 0.5rem 0;
+}
+
+.sessionRow {
+    display: grid;
+    grid-template-columns: 1.2rem 1fr auto auto 1.6rem;
+    align-items: center;
+    gap: 0.4rem;
+}
+
+.sessionNum {
+    font-size: 0.7rem;
+    font-weight: 700;
+    color: var(--text-tertiary, var(--text-secondary));
+    text-align: center;
+}
+
+.removeSessionBtn {
+    width: 26px;
+    height: 26px;
+    min-width: 26px;
+    border: none;
+    background: transparent;
+    color: var(--text-tertiary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+}
+
+.removeSessionBtn:hover:not(:disabled) {
+    background: rgba(255, 59, 48, .1);
+    color: var(--color-danger, #FF3B30);
+}
+
+.removeSessionBtn:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+}
+
+.addSessionBtn {
+    align-self: flex-start;
+    padding: 0.35rem 0.9rem;
+    border: 1px dashed var(--border-color);
+    background: transparent;
+    color: var(--color-primary);
+    font-size: 0.8rem;
+    font-weight: 600;
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    margin-top: 0.25rem;
+    transition: all var(--transition-fast);
+}
+
+.addSessionBtn:hover {
+    background: color-mix(in srgb, var(--color-primary) 6%, transparent);
+    border-color: var(--color-primary);
+}
+
+
+
 /* ── Personal requerido ── */
 .personalSearchRow {
     display: flex;
