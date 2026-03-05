@@ -11,26 +11,22 @@ let toastId = 0;
 const generateId = () => ++toastId;
 
 // Toast Component
+// `message` puede ser un string simple o un objeto { title, body }
 function Toast({ id, message, type = 'info', onClose, duration = 3000 }) {
     const [isClosing, setIsClosing] = useState(false);
     const timeoutRef = useRef(null);
 
     const handleClose = useCallback(() => {
         setIsClosing(true);
-        setTimeout(() => onClose(id), 200); // Wait for animation
+        setTimeout(() => onClose(id), 200);
     }, [id, onClose]);
 
-    // Auto-dismiss effect
     useEffect(() => {
         if (duration > 0) {
             timeoutRef.current = setTimeout(handleClose, duration);
         }
-
-        // Cleanup timeout on unmount or duration change
         return () => {
-            if (timeoutRef.current) {
-                clearTimeout(timeoutRef.current);
-            }
+            if (timeoutRef.current) clearTimeout(timeoutRef.current);
         };
     }, [duration, handleClose]);
 
@@ -41,6 +37,11 @@ function Toast({ id, message, type = 'info', onClose, duration = 3000 }) {
         info: <IconInfo size={20} />
     };
 
+    // Soporte para { title, body } o string plano
+    const isRich = message && typeof message === 'object';
+    const title = isRich ? message.title : null;
+    const body = isRich ? message.body : message;
+
     return (
         <div
             className={`${styles.toast} ${styles[type]} ${isClosing ? styles.closing : ''}`}
@@ -50,7 +51,10 @@ function Toast({ id, message, type = 'info', onClose, duration = 3000 }) {
             <div className={`${styles.icon} ${styles[type]}`}>
                 {icons[type]}
             </div>
-            <div className={styles.message}>{message}</div>
+            <div className={styles.message}>
+                {title && <strong className={styles.messageTitle}>{title}</strong>}
+                {body && <span className={styles.messageBody}>{body}</span>}
+            </div>
             <button
                 onClick={handleClose}
                 className={styles.closeBtn}
@@ -87,20 +91,37 @@ export function ToastProvider({ children, maxToasts = 5 }) {
         setToasts([]);
     }, []);
 
+    // Convierte la firma (title, body) o (message) en un objeto { title, body } o string
+    const buildMessage = useCallback((titleOrMsg, maybeBody) => {
+        if (typeof maybeBody === 'string') {
+            // Firma: toast.success('Título', 'Descripción')
+            return { title: titleOrMsg, body: maybeBody };
+        }
+        // Firma: toast.success('Mensaje') → string plano
+        return titleOrMsg;
+    }, []);
+
     // Memoize toast helpers to prevent recreation on each render
     const toastHelpers = useMemo(() => ({
-        success: (message, options = {}) =>
-            showToast(message, 'success', options.duration ?? 3000),
-        error: (message, options = {}) =>
-            showToast(message, 'error', options.duration ?? 5000), // Longer for errors
-        warning: (message, options = {}) =>
-            showToast(message, 'warning', options.duration ?? 4000),
-        info: (message, options = {}) =>
-            showToast(message, 'info', options.duration ?? 3000),
-        // Raw access
+        success: (titleOrMsg, maybeBodyOrOpts = {}) =>
+            showToast(buildMessage(titleOrMsg, maybeBodyOrOpts), 'success',
+                typeof maybeBodyOrOpts === 'object' && !Array.isArray(maybeBodyOrOpts)
+                    ? (maybeBodyOrOpts.duration ?? 3000) : 3000),
+        error: (titleOrMsg, maybeBodyOrOpts = {}) =>
+            showToast(buildMessage(titleOrMsg, maybeBodyOrOpts), 'error',
+                typeof maybeBodyOrOpts === 'object' && !Array.isArray(maybeBodyOrOpts)
+                    ? (maybeBodyOrOpts.duration ?? 5000) : 5000),
+        warning: (titleOrMsg, maybeBodyOrOpts = {}) =>
+            showToast(buildMessage(titleOrMsg, maybeBodyOrOpts), 'warning',
+                typeof maybeBodyOrOpts === 'object' && !Array.isArray(maybeBodyOrOpts)
+                    ? (maybeBodyOrOpts.duration ?? 4000) : 4000),
+        info: (titleOrMsg, maybeBodyOrOpts = {}) =>
+            showToast(buildMessage(titleOrMsg, maybeBodyOrOpts), 'info',
+                typeof maybeBodyOrOpts === 'object' && !Array.isArray(maybeBodyOrOpts)
+                    ? (maybeBodyOrOpts.duration ?? 3000) : 3000),
         show: showToast,
         clear: clearAllToasts
-    }), [showToast, clearAllToasts]);
+    }), [showToast, clearAllToasts, buildMessage]);
 
     const contextValue = useMemo(() => ({
         toast: toastHelpers,

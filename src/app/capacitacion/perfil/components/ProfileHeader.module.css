@@ -96,6 +96,64 @@
     color: #818cf8;
 }
 
+/* === Insignias de Grupos === */
+.groupsWrap {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.5rem;
+    margin-top: 0.75rem;
+}
+
+/* Hereda el sistema de data-color, o usa primario por defecto */
+.groupBadge {
+    --bg-tint: color-mix(in srgb, var(--gc, var(--color-primary)) 15%, transparent);
+
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.35rem 0.8rem;
+    border-radius: 9999px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    background: var(--bg-tint);
+    color: var(--gc, var(--color-primary));
+    border: 1px solid color-mix(in srgb, var(--gc, var(--color-primary)) 30%, transparent);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    cursor: default;
+}
+
+.groupBadge:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px color-mix(in srgb, var(--gc, var(--color-primary)) 15%, transparent);
+}
+
+/* Paleta de colores heredada para insignias en Perfil */
+.groupBadge[data-color="blue"] {
+    --gc: #3b82f6;
+}
+
+.groupBadge[data-color="green"] {
+    --gc: #16a34a;
+}
+
+.groupBadge[data-color="purple"] {
+    --gc: #7c3aed;
+}
+
+.groupBadge[data-color="orange"] {
+    --gc: #ea580c;
+}
+
+.groupBadge[data-color="rose"] {
+    --gc: #e11d48;
+}
+
+.groupBadge[data-color="teal"] {
+    --gc: #0d9488;
+}
+
 @media (max-width: 640px) {
     .headerCard {
         padding: 1.5rem;

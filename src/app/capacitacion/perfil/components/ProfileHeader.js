@@ -1,7 +1,8 @@
 import { motion } from 'framer-motion';
+import { Shield } from 'lucide-react';
 import styles from './ProfileHeader.module.css';
 
-export default function ProfileHeader({ employee, onBack }) {
+export default function ProfileHeader({ employee, onBack, employeeGroups = [] }) {
     const getInitials = (name) => {
         if (!name) return '??';
         const parts = name.split(' ').filter(Boolean);
@@ -44,6 +45,22 @@ export default function ProfileHeader({ employee, onBack }) {
                 <div className={styles.idBadge}>
                     ID: {employee.employeeId || employee.id}
                 </div>
+
+                {employeeGroups.length > 0 && (
+                    <div className={styles.groupsWrap}>
+                        {employeeGroups.map(group => (
+                            <span
+                                key={group.id}
+                                className={styles.groupBadge}
+                                data-color={group.color ?? 'blue'}
+                                title={group.description || group.name}
+                            >
+                                <Shield size={12} strokeWidth={2.5} />
+                                {group.name}
+                            </span>
+                        ))}
+                    </div>
+                )}
             </div>
         </motion.div>
     );

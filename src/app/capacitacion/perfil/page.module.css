@@ -1135,6 +1135,24 @@
     z-index: 50;
 }
 
+/* === SEARCH ROW (debajo del topBar) === */
+.searchRow {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 1.5rem;
+}
+
+.searchRow .searchPill {
+    max-width: 480px;
+    width: 100%;
+}
+
+@media (max-width: 480px) {
+    .searchRow .searchPill {
+        max-width: 100%;
+    }
+}
+
 /* === SEARCH PILL === */
 
 .searchPill {

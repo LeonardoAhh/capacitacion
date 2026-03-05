@@ -229,6 +229,76 @@ export default function CumplimientoPage() {
         toast.success("Éxito", `Reporte de ${courseEmployees.length} empleados descargado`);
     };
 
+    const downloadPDF = () => {
+        if (!selectedCourse || courseEmployees.length === 0) {
+            toast.error("Error", "No hay datos para descargar");
+            return;
+        }
+
+        const now = new Date().toLocaleDateString('es-MX', { year: 'numeric', month: 'long', day: 'numeric' });
+        const rows = courseEmployees.map(emp => {
+            const statusLabel = emp.status === 'approved' ? 'Aprobado' : emp.status === 'failed' ? 'Reprobado' : 'Pendiente';
+            const statusColor = emp.status === 'approved' ? '#16a34a' : emp.status === 'failed' ? '#dc2626' : '#d97706';
+            const badgeBg = emp.status === 'approved' ? '#dcfce7' : emp.status === 'failed' ? '#fee2e2' : '#fef9c3';
+            return `<tr>
+                <td>${emp.id}</td>
+                <td>${emp.name}</td>
+                <td>${emp.department}</td>
+                <td>${emp.position}</td>
+                <td>${emp.date}</td>
+                <td style="font-weight:700;color:${emp.score !== '-' && emp.score >= 70 ? '#16a34a' : emp.score !== '-' ? '#dc2626' : '#94a3b8'}">${emp.score}</td>
+                <td><span style="background:${badgeBg};color:${statusColor};padding:3px 10px;border-radius:20px;font-size:0.75rem;font-weight:600">${statusLabel}</span></td>
+            </tr>`;
+        }).join('');
+
+        const html = `<!DOCTYPE html>
+<html lang="es"><head><meta charset="UTF-8"/>
+<title>Cumplimiento — ${selectedCourse}</title>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:'Segoe UI',Arial,sans-serif;color:#1e293b;padding:32px}
+  header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:24px;padding-bottom:16px;border-bottom:2px solid #e2e8f0}
+  .logo{font-size:1.3rem;font-weight:800;color:#3b82f6}
+  .title{font-size:1.4rem;font-weight:700;margin-top:6px}
+  .meta{text-align:right;font-size:0.85rem;color:#64748b}
+  .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:24px}
+  .stat{padding:14px;border-radius:10px;text-align:center}
+  .stat .num{font-size:1.8rem;font-weight:800}
+  .stat .lbl{font-size:0.72rem;text-transform:uppercase;letter-spacing:.5px;margin-top:4px}
+  .blue{background:#eff6ff}.blue .num{color:#2563eb}.blue .lbl{color:#2563eb}
+  .green{background:#f0fdf4}.green .num{color:#16a34a}.green .lbl{color:#16a34a}
+  .yellow{background:#fffbeb}.yellow .num{color:#d97706}.yellow .lbl{color:#d97706}
+  .purple{background:#f5f3ff}.purple .num{color:#7c3aed}.purple .lbl{color:#7c3aed}
+  table{width:100%;border-collapse:collapse;font-size:.85rem}
+  th{background:#f8fafc;padding:10px 12px;text-align:left;font-weight:600;color:#64748b;font-size:.72rem;text-transform:uppercase;letter-spacing:.5px}
+  td{padding:10px 12px;border-bottom:1px solid #f1f5f9;color:#1e293b}
+  tr:last-child td{border-bottom:none}
+  footer{margin-top:28px;padding-top:14px;border-top:1px solid #e2e8f0;font-size:.78rem;color:#94a3b8;text-align:center}
+  @media print{body{padding:16px}}
+</style></head><body>
+<header>
+  <div><div class="logo">ViñaPlastic — Capacitación</div><div class="title">${selectedCourse}</div></div>
+  <div class="meta"><div>Reporte de Cumplimiento</div><div style="margin-top:4px">${now}</div></div>
+</header>
+<div class="stats">
+  <div class="stat blue"><div class="num">${stats.assigned}</div><div class="lbl">Asignados</div></div>
+  <div class="stat green"><div class="num">${stats.approved}</div><div class="lbl">Aprobados</div></div>
+  <div class="stat yellow"><div class="num">${stats.pending}</div><div class="lbl">Pendientes</div></div>
+  <div class="stat purple"><div class="num">${stats.percentage}%</div><div class="lbl">Cumplimiento</div></div>
+</div>
+<table><thead><tr><th>ID</th><th>Nombre</th><th>Departamento</th><th>Puesto</th><th>Fecha</th><th>Calificación</th><th>Estado</th></tr></thead>
+<tbody>${rows}</tbody></table>
+<footer>Documento Interno Capacitación — ${now}</footer>
+</body></html>`;
+
+        const win = window.open('', '_blank', 'width=1000,height=750');
+        if (!win) return;
+        win.document.write(html);
+        win.document.close();
+        win.focus();
+        setTimeout(() => win.print(), 500);
+    };
+
     return (
         <>
             <div className={styles.profileContainer}>
@@ -273,18 +343,32 @@ export default function CumplimientoPage() {
                                         </select>
                                     </div>
                                     {selectedCourse && courseEmployees.length > 0 && (
-                                        <Button
-                                            variant="outline"
-                                            onClick={downloadReport}
-                                            style={{ marginTop: 'auto' }}
-                                        >
-                                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
-                                                <polyline points="7 10 12 15 17 10" />
-                                                <line x1="12" y1="15" x2="12" y2="3" />
-                                            </svg>
-                                            Xlxs
-                                        </Button>
+                                        <div style={{ display: 'flex', gap: '0.5rem', marginTop: 'auto' }}>
+                                            <Button
+                                                variant="outline"
+                                                onClick={downloadReport}
+                                            >
+                                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                                                    <polyline points="7 10 12 15 17 10" />
+                                                    <line x1="12" y1="15" x2="12" y2="3" />
+                                                </svg>
+                                                CSV
+                                            </Button>
+                                            <Button
+                                                variant="primary"
+                                                onClick={downloadPDF}
+                                            >
+                                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                                                    <polyline points="14 2 14 8 20 8" />
+                                                    <line x1="16" y1="13" x2="8" y2="13" />
+                                                    <line x1="16" y1="17" x2="8" y2="17" />
+                                                    <polyline points="10 9 9 9 8 9" />
+                                                </svg>
+                                                PDF
+                                            </Button>
+                                        </div>
                                     )}
                                 </div>
                             </div>

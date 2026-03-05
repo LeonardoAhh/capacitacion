@@ -1,21 +1,130 @@
+import { useCallback } from 'react';
 import { motion } from 'framer-motion';
-import { CheckCircle, XCircle, Clock, BarChart } from 'lucide-react';
+import { CheckCircle, XCircle, Clock, BarChart, Download } from 'lucide-react';
 import BackButton from '@/components/ui/BackButton/BackButton';
 import styles from './TrainingView.module.css';
 
-export default function TrainingView({ trainingStats, matrixCompliance, onBack }) {
+function generateTrainingReport(employee, trainingStats, complianceValue) {
+    const now = new Date().toLocaleDateString('es-MX', {
+        year: 'numeric', month: 'long', day: 'numeric'
+    });
 
-    // Convert matrixCompliance to a number safely
+    const rowsApproved = trainingStats.approved.map(c => `
+        <tr>
+            <td>${c.name || '—'}</td>
+            <td class="score approved">${c.score}%</td>
+            <td>${c.date ? new Date(c.date).toLocaleDateString('es-MX') : '—'}</td>
+            <td><span class="badge badge-green">Aprobado</span></td>
+        </tr>`).join('');
+
+    const rowsFailed = trainingStats.failed.map(c => `
+        <tr>
+            <td>${c.name || '—'}</td>
+            <td class="score failed">${c.score}%</td>
+            <td>${c.date ? new Date(c.date).toLocaleDateString('es-MX') : '—'}</td>
+            <td><span class="badge badge-red">Reprobado</span></td>
+        </tr>`).join('');
+
+    const rowsPending = trainingStats.pending.map(c => `
+        <tr>
+            <td>${typeof c === 'string' ? c : c.name || '—'}</td>
+            <td class="score pending">—</td>
+            <td>—</td>
+            <td><span class="badge badge-yellow">Pendiente</span></td>
+        </tr>`).join('');
+
+    return `<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"/>
+<title>Historial de Capacitación — ${employee?.name || 'Empleado'}</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Segoe UI', Arial, sans-serif; color: #1e293b; background: #fff; padding: 32px; }
+  header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 28px; padding-bottom: 20px; border-bottom: 2px solid #e2e8f0; }
+  .logo { font-size: 1.4rem; font-weight: 800; color: #3b82f6; letter-spacing: -0.5px; }
+  .emp-info h1 { font-size: 1.5rem; font-weight: 700; margin-bottom: 4px; }
+  .emp-info p { font-size: 0.9rem; color: #64748b; }
+  .meta { text-align: right; font-size: 0.85rem; color: #64748b; }
+  .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 28px; }
+  .stat { padding: 16px; border-radius: 10px; text-align: center; }
+  .stat .num { font-size: 2rem; font-weight: 800; }
+  .stat .lbl { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.5px; margin-top: 4px; }
+  .green { background: #f0fdf4; } .green .num { color: #16a34a; } .green .lbl { color: #16a34a; }
+  .red   { background: #fef2f2; } .red .num { color: #dc2626; }   .red .lbl { color: #dc2626; }
+  .yellow{ background: #fffbeb; } .yellow .num { color: #d97706; } .yellow .lbl { color: #d97706; }
+  .purple{ background: #f5f3ff; } .purple .num { color: #7c3aed; } .purple .lbl { color: #7c3aed; }
+  h3 { font-size: 1rem; font-weight: 700; margin: 20px 0 10px; display: flex; align-items: center; gap: 6px; }
+  table { width: 100%; border-collapse: collapse; margin-bottom: 20px; font-size: 0.875rem; }
+  th { background: #f8fafc; padding: 10px 14px; text-align: left; font-weight: 600; color: #64748b; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.5px; }
+  td { padding: 10px 14px; border-bottom: 1px solid #f1f5f9; color: #1e293b; }
+  tr:last-child td { border-bottom: none; }
+  .score { font-weight: 700; }
+  .approved { color: #16a34a; } .failed { color: #dc2626; } .pending { color: #d97706; }
+  .badge { padding: 3px 10px; border-radius: 20px; font-size: 0.75rem; font-weight: 600; }
+  .badge-green { background: #dcfce7; color: #16a34a; }
+  .badge-red   { background: #fee2e2; color: #dc2626; }
+  .badge-yellow{ background: #fef9c3; color: #d97706; }
+  footer { margin-top: 32px; padding-top: 16px; border-top: 1px solid #e2e8f0; font-size: 0.8rem; color: #94a3b8; text-align: center; }
+  @media print { body { padding: 16px; } button { display: none !important; } }
+</style>
+</head>
+<body>
+<header>
+  <div class="emp-info">
+    <div class="logo">ViñaPlastic — Capacitación</div>
+    <h1 style="margin-top:8px">${employee?.name || 'N/A'}</h1>
+    <p>ID: ${employee?.employeeId || employee?.id || '—'} &nbsp;|&nbsp; Puesto: ${employee?.position || '—'}</p>
+    <p>Área: ${employee?.area || '—'} &nbsp;|&nbsp; Turno: ${employee?.shift || '—'}</p>
+  </div>
+  <div class="meta">
+    <div>Reporte de Capacitación</div>
+    <div style="margin-top:4px">${now}</div>
+  </div>
+</header>
+
+<div class="stats">
+  <div class="stat green"><div class="num">${trainingStats.approved.length}</div><div class="lbl">Aprobados</div></div>
+  <div class="stat red">  <div class="num">${trainingStats.failed.length}</div><div class="lbl">Reprobados</div></div>
+  <div class="stat yellow"><div class="num">${trainingStats.pending.length}</div><div class="lbl">Pendientes</div></div>
+  <div class="stat purple"><div class="num">${complianceValue}%</div><div class="lbl">Cumplimiento</div></div>
+</div>
+
+${rowsApproved ? `<h3>✅ Cursos Aprobados</h3>
+<table><thead><tr><th>Curso</th><th>Calificación</th><th>Fecha</th><th>Estado</th></tr></thead>
+<tbody>${rowsApproved}</tbody></table>` : ''}
+
+${rowsFailed ? `<h3>❌ Cursos Reprobados</h3>
+<table><thead><tr><th>Curso</th><th>Calificación</th><th>Fecha</th><th>Estado</th></tr></thead>
+<tbody>${rowsFailed}</tbody></table>` : ''}
+
+${rowsPending ? `<h3>⏳ Cursos Pendientes</h3>
+<table><thead><tr><th>Curso</th><th>Calificación</th><th>Fecha</th><th>Estado</th></tr></thead>
+<tbody>${rowsPending}</tbody></table>` : ''}
+
+<footer>Documento Interno Capacitación — ${now}</footer>
+</body></html>`;
+}
+
+export default function TrainingView({ trainingStats, matrixCompliance, onBack, employee }) {
+
     const complianceValue = typeof matrixCompliance === 'object'
         ? (matrixCompliance?.compliancePercentage ?? 0)
         : (matrixCompliance ?? 0);
 
+    const handleDownload = useCallback(() => {
+        const html = generateTrainingReport(employee, trainingStats, complianceValue);
+        const win = window.open('', '_blank', 'width=900,height=700');
+        if (!win) return;
+        win.document.write(html);
+        win.document.close();
+        win.focus();
+        setTimeout(() => win.print(), 500);
+    }, [employee, trainingStats, complianceValue]);
+
     const containerVariants = {
         hidden: { opacity: 0 },
-        visible: {
-            opacity: 1,
-            transition: { staggerChildren: 0.1 }
-        }
+        visible: { opacity: 1, transition: { staggerChildren: 0.1 } }
     };
 
     const itemVariants = {
@@ -31,9 +140,20 @@ export default function TrainingView({ trainingStats, matrixCompliance, onBack }
             animate="visible"
             exit="hidden"
         >
-            <div style={{ display: 'flex', alignItems: 'center', marginBottom: '1.5rem' }}>
-                <BackButton onClick={onBack} />
-                <h2 className={styles.viewTitle}>Capacitación</h2>
+            {/* Header con botón de descarga */}
+            <div className={styles.viewHeader}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                    <BackButton onClick={onBack} />
+                    <h2 className={styles.viewTitle}>Capacitación</h2>
+                </div>
+                <button
+                    className={styles.downloadBtn}
+                    onClick={handleDownload}
+                    title="Descargar historial como PDF"
+                >
+                    <Download size={16} strokeWidth={2.5} />
+                    <span>Descargar</span>
+                </button>
             </div>
 
             <motion.div variants={itemVariants} className={styles.statsRow}>
@@ -112,7 +232,7 @@ export default function TrainingView({ trainingStats, matrixCompliance, onBack }
                     <div className={styles.courseList}>
                         {trainingStats.pending.map((c, i) => (
                             <div key={i} className={styles.courseItem}>
-                                <span className={styles.courseName}>{c}</span>
+                                <span className={styles.courseName}>{typeof c === 'string' ? c : c.name}</span>
                                 <span className={styles.courseScore} style={{ color: '#f59e0b' }}>Pendiente</span>
                             </div>
                         ))}

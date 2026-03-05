@@ -120,6 +120,11 @@ export default function MatrizPage() {
     const [showBulkModal, setShowBulkModal] = useState(false);
     const [bulkCourseSearch, setBulkCourseSearch] = useState('');
 
+    // Copy Matrix State
+    const [showCopyModal, setShowCopyModal] = useState(false);
+    const [sourcePositionId, setSourcePositionId] = useState('');
+    const [copySearchTerm, setCopySearchTerm] = useState('');
+
     // Employee Match Logic
     const [matchingEmployees, setMatchingEmployees] = useState([]);
     const [loadingEmployees, setLoadingEmployees] = useState(false);
@@ -180,6 +185,42 @@ export default function MatrizPage() {
         } catch (error) {
             console.error(error);
             toast.error('Error', 'Falló la asignación masiva.');
+        }
+    };
+
+    // Copiar toda la matriz de un puesto origen a los puestos seleccionados
+    const handleCopyMatrix = async () => {
+        if (!sourcePositionId) {
+            toast.error('Error', 'Selecciona el puesto de origen');
+            return;
+        }
+        const source = positions.find(p => p.id === sourcePositionId);
+        if (!source || !source.requiredCourses?.length) {
+            toast.error('Error', 'El puesto origen no tiene cursos asignados');
+            return;
+        }
+        try {
+            const batch = writeBatch(db);
+            const targets = positions.filter(p => selectedPositions.has(p.id) && p.id !== sourcePositionId);
+            if (targets.length === 0) {
+                toast.error('Error', 'No hay puestos destino seleccionados (o solo seleccionaste el origen)');
+                return;
+            }
+            targets.forEach(pos => {
+                // Merge: union de cursos sin duplicados, ordenados
+                const merged = Array.from(new Set([...(pos.requiredCourses || []), ...source.requiredCourses])).sort();
+                const docRef = doc(db, 'positions', pos.id);
+                batch.update(docRef, { requiredCourses: merged });
+            });
+            await batch.commit();
+            toast.success('Éxito', `Matriz copiada a ${targets.length} puesto(s). Los cursos existentes se conservaron.`);
+            setShowCopyModal(false);
+            setSourcePositionId('');
+            setSelectedPositions(new Set());
+            loadData();
+        } catch (error) {
+            console.error(error);
+            toast.error('Error', 'No se pudo copiar la matriz.');
         }
     };
 
@@ -312,6 +353,27 @@ export default function MatrizPage() {
                                 <Button variant="secondary" onClick={() => setSelectedPositions(new Set())}>
                                     Cancelar
                                 </Button>
+                                <button
+                                    onClick={() => { setShowCopyModal(true); setSourcePositionId(''); setCopySearchTerm(''); }}
+                                    style={{
+                                        display: 'inline-flex', alignItems: 'center', gap: '0.4rem',
+                                        padding: '0.55rem 1rem',
+                                        background: 'rgba(255,255,255,0.2)',
+                                        color: 'white',
+                                        border: '1.5px solid rgba(255,255,255,0.6)',
+                                        borderRadius: '50px',
+                                        fontWeight: 600, fontSize: '0.875rem',
+                                        cursor: 'pointer',
+                                        whiteSpace: 'nowrap',
+                                        transition: 'background 0.2s',
+                                    }}
+                                >
+                                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                                        <rect x="9" y="9" width="13" height="13" rx="2" />
+                                        <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
+                                    </svg>
+                                    Copiar Matriz de...
+                                </button>
                                 <Button variant="primary" onClick={() => setShowBulkModal(true)}>
                                     Agregar Curso a Selección
                                 </Button>
@@ -559,6 +621,103 @@ export default function MatrizPage() {
                         setBulkCourseSearch('');
                     }}>
                         Cancelar
+                    </Button>
+                </DialogFooter>
+            </Dialog>
+
+            {/* Copy Matrix Modal */}
+            <Dialog open={showCopyModal} onOpenChange={setShowCopyModal}>
+                <DialogHeader>
+                    <DialogTitle>Copiar Matriz a {selectedPositions.size} Puesto(s)</DialogTitle>
+                    <DialogClose onClose={() => setShowCopyModal(false)} />
+                </DialogHeader>
+                <DialogBody>
+                    <div className={styles.bulkModalContent}>
+                        <p className={styles.bulkModalDescription}>
+                            Selecciona el puesto <strong>origen</strong> cuyos cursos quieres copiar.
+                            Los cursos existentes en los puestos destino se conservarán (se hace una unión).
+                        </p>
+
+                        {/* Buscador */}
+                        <div className={styles.autocomplete} style={{ marginBottom: '1rem' }}>
+                            <input
+                                type="text"
+                                placeholder="Buscar puesto origen..."
+                                value={copySearchTerm}
+                                onChange={(e) => setCopySearchTerm(e.target.value)}
+                                className={styles.searchInput}
+                                autoFocus
+                            />
+                        </div>
+
+                        {/* Lista de puestos origen */}
+                        <div style={{ maxHeight: '300px', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                            {positions
+                                .filter(p =>
+                                    !selectedPositions.has(p.id) && // excluir los destino
+                                    (p.requiredCourses?.length || 0) > 0 && // solo los que tienen cursos
+                                    p.name.toLowerCase().includes(copySearchTerm.toLowerCase())
+                                )
+                                .map(p => (
+                                    <button
+                                        key={p.id}
+                                        onClick={() => setSourcePositionId(p.id)}
+                                        style={{
+                                            display: 'flex',
+                                            justifyContent: 'space-between',
+                                            alignItems: 'center',
+                                            padding: '0.75rem 1rem',
+                                            borderRadius: '10px',
+                                            border: `2px solid ${sourcePositionId === p.id ? 'var(--color-primary)' : 'var(--card-border)'}`,
+                                            background: sourcePositionId === p.id ? 'rgba(var(--color-primary-rgb,59,130,246),0.08)' : 'var(--card-background)',
+                                            cursor: 'pointer',
+                                            textAlign: 'left',
+                                            transition: 'all 0.15s',
+                                            width: '100%',
+                                        }}
+                                    >
+                                        <div>
+                                            <div style={{ fontWeight: 600, color: 'var(--text-primary)', fontSize: '0.9rem' }}>{p.name}</div>
+                                            <div style={{ fontSize: '0.78rem', color: 'var(--text-secondary)', marginTop: '2px' }}>{p.department}</div>
+                                        </div>
+                                        <span style={{
+                                            fontSize: '0.78rem', fontWeight: 700,
+                                            color: sourcePositionId === p.id ? 'var(--color-primary)' : '#f59e0b',
+                                            background: sourcePositionId === p.id ? 'rgba(59,130,246,0.1)' : 'rgba(245,158,11,0.1)',
+                                            padding: '2px 8px', borderRadius: '20px'
+                                        }}>
+                                            {p.requiredCourses.length} cursos
+                                        </span>
+                                    </button>
+                                ))
+                            }
+                        </div>
+
+                        {/* Preview cursos a copiar */}
+                        {sourcePositionId && (() => {
+                            const src = positions.find(p => p.id === sourcePositionId);
+                            return src ? (
+                                <div style={{ marginTop: '1rem', padding: '0.75rem', background: 'var(--bg-secondary)', borderRadius: '10px' }}>
+                                    <p style={{ fontSize: '0.8rem', fontWeight: 600, color: 'var(--text-secondary)', marginBottom: '0.5rem' }}>
+                                        Se copiarán {src.requiredCourses.length} cursos de <strong>{src.name}</strong>:
+                                    </p>
+                                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.35rem' }}>
+                                        {src.requiredCourses.slice(0, 10).map((c, i) => (
+                                            <span key={i} style={{ fontSize: '0.72rem', padding: '2px 8px', background: 'var(--card-background)', border: '1px solid var(--card-border)', borderRadius: '20px', color: 'var(--text-primary)' }}>{c}</span>
+                                        ))}
+                                        {src.requiredCourses.length > 10 && (
+                                            <span style={{ fontSize: '0.72rem', color: 'var(--text-secondary)' }}>+{src.requiredCourses.length - 10} más</span>
+                                        )}
+                                    </div>
+                                </div>
+                            ) : null;
+                        })()}
+                    </div>
+                </DialogBody>
+                <DialogFooter>
+                    <Button variant="secondary" onClick={() => setShowCopyModal(false)}>Cancelar</Button>
+                    <Button variant="primary" onClick={handleCopyMatrix} disabled={!sourcePositionId}>
+                        Copiar Cursos
                     </Button>
                 </DialogFooter>
             </Dialog>

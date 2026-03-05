@@ -3,7 +3,7 @@
 import { useState, useCallback, useMemo, useEffect } from 'react';
 import Link from 'next/link';
 import { AnimatePresence } from 'framer-motion';
-import { Search, ArrowLeft } from 'lucide-react';
+import { Search, ArrowLeft, Shield } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useRouter } from 'next/navigation';
 
@@ -40,6 +40,7 @@ export default function PerfilPage() {
     const [positionData, setPositionData] = useState(null);
     const [promotionRule, setPromotionRule] = useState(null);
     const [notFound, setNotFound] = useState(false);
+    const [employeeGroups, setEmployeeGroups] = useState([]);
 
     // Auth
     const { user, loading: authLoading } = useAuth();
@@ -83,6 +84,7 @@ export default function PerfilPage() {
         setPositionData(null);
         setPromotionRule(null);
         setNotFound(false);
+        setEmployeeGroups([]);
         setActiveView('profile');
 
         try {
@@ -109,28 +111,35 @@ export default function PerfilPage() {
             if (empData) {
                 setEmployee(empData);
 
-                // Fetch position and promotion data in parallel (performance optimization)
+                // Fetch position, promotion data and groups in parallel
+                const empId = empData.employeeId ?? empData.id;
+                const fetchPromises = [];
+
                 if (empData.position) {
                     const posName = empData.position.toUpperCase().trim();
+                    fetchPromises.push(
+                        getDocs(query(collection(db, 'positions'), where('name', '==', posName))),
+                        getDocs(query(collection(db, 'promotion_rules'), where('currentPosition', '==', posName)))
+                    );
+                } else {
+                    fetchPromises.push(Promise.resolve(null), Promise.resolve(null));
+                }
 
-                    const [posSnap, rulesSnap] = await Promise.all([
-                        getDocs(query(
-                            collection(db, 'positions'),
-                            where('name', '==', posName)
-                        )),
-                        getDocs(query(
-                            collection(db, 'promotion_rules'),
-                            where('currentPosition', '==', posName)
-                        ))
-                    ]);
+                // Busca los grupos donde el empleado es miembro
+                fetchPromises.push(
+                    getDocs(query(collection(db, 'groups'), where('members', 'array-contains', empId)))
+                );
 
-                    if (!posSnap.empty) {
-                        setPositionData({ id: posSnap.docs[0].id, ...posSnap.docs[0].data() });
-                    }
+                const [posSnap, rulesSnap, groupsSnap] = await Promise.all(fetchPromises);
 
-                    if (!rulesSnap.empty) {
-                        setPromotionRule({ id: rulesSnap.docs[0].id, ...rulesSnap.docs[0].data() });
-                    }
+                if (posSnap && !posSnap.empty) {
+                    setPositionData({ id: posSnap.docs[0].id, ...posSnap.docs[0].data() });
+                }
+                if (rulesSnap && !rulesSnap.empty) {
+                    setPromotionRule({ id: rulesSnap.docs[0].id, ...rulesSnap.docs[0].data() });
+                }
+                if (groupsSnap && !groupsSnap.empty) {
+                    setEmployeeGroups(groupsSnap.docs.map((d) => ({ id: d.id, ...d.data() })));
                 }
 
                 toast.success('✓', empData.name);
@@ -248,44 +257,45 @@ export default function PerfilPage() {
                         <span className={styles.topBarTitle}>Perfil</span>
                     </div>
 
-                    <div className={styles.topBarCenter}>
-                        <div className={styles.searchPill}>
-                            <Search className={styles.searchPillIcon} size={16} strokeWidth={2.5} />
-                            <label htmlFor="employee-search" className={styles.srOnly}>
-                                Buscar empleado por ID
-                            </label>
-                            <input
-                                id="employee-search"
-                                type="text"
-                                placeholder="ID"
-                                value={searchId}
-                                onChange={(e) => setSearchId(e.target.value)}
-                                onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
-                                className={styles.searchPillInput}
-                                maxLength={MAX_SEARCH_ID_LENGTH}
-                                aria-label="ID del empleado"
-                                aria-describedby="search-instructions"
-                                disabled={loading}
-                            />
-                            <span id="search-instructions" className={styles.srOnly}>
-                                Ingresa el ID del empleado (máximo {MAX_SEARCH_ID_LENGTH} caracteres) y presiona Enter o el botón Buscar
-                            </span>
-                            <button
-                                onClick={handleSearch}
-                                disabled={loading}
-                                className={styles.searchPillBtn}
-                                aria-label={loading ? 'Buscando empleado...' : 'Buscar empleado'}
-                                aria-busy={loading}
-                            >
-                                {loading ? <div className={styles.spinner} aria-hidden="true" /> : 'Buscar'}
-                            </button>
-                        </div>
-                    </div>
-
                     <div className={styles.topBarRight}>
                         <ProfileDropdown />
                     </div>
                 </header>
+
+                {/* Barra de búsqueda debajo del ProfileDropdown */}
+                <div className={styles.searchRow}>
+                    <div className={styles.searchPill}>
+                        <Search className={styles.searchPillIcon} size={16} strokeWidth={2.5} />
+                        <label htmlFor="employee-search" className={styles.srOnly}>
+                            Buscar empleado por ID
+                        </label>
+                        <input
+                            id="employee-search"
+                            type="text"
+                            placeholder="ID"
+                            value={searchId}
+                            onChange={(e) => setSearchId(e.target.value)}
+                            onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
+                            className={styles.searchPillInput}
+                            maxLength={MAX_SEARCH_ID_LENGTH}
+                            aria-label="ID del empleado"
+                            aria-describedby="search-instructions"
+                            disabled={loading}
+                        />
+                        <span id="search-instructions" className={styles.srOnly}>
+                            Ingresa el ID del empleado (máximo {MAX_SEARCH_ID_LENGTH} caracteres) y presiona Enter o el botón Buscar
+                        </span>
+                        <button
+                            onClick={handleSearch}
+                            disabled={loading}
+                            className={styles.searchPillBtn}
+                            aria-label={loading ? 'Buscando empleado...' : 'Buscar empleado'}
+                            aria-busy={loading}
+                        >
+                            {loading ? <div className={styles.spinner} aria-hidden="true" /> : 'Buscar'}
+                        </button>
+                    </div>
+                </div>
 
                 {/* Live region for screen readers */}
                 <div
@@ -327,7 +337,11 @@ export default function PerfilPage() {
                         <>
                             {/* Left Column: Profile Card */}
                             <div className={`${styles.colProfile} ${styles.stickyProfile}`}>
-                                <ProfileHeader employee={employee} onBack={() => { }} />
+                                <ProfileHeader
+                                    employee={employee}
+                                    onBack={() => { }}
+                                    employeeGroups={employeeGroups}
+                                />
                             </div>
 
                             {/* Right Column: Views */}
@@ -350,6 +364,7 @@ export default function PerfilPage() {
                                         {activeView === 'training' && (
                                             <TrainingView
                                                 key="training"
+                                                employee={employee}
                                                 trainingStats={training}
                                                 matrixCompliance={training.matrixCompliance}
                                                 onBack={() => setActiveView('profile')}

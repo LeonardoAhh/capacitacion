@@ -11,7 +11,7 @@ import { useComplianceRecalc } from '@/hooks/useComplianceRecalc';
 import {
     Users, FileText, Award, TrendingUp, GitCompareArrows, Calendar,
     ClipboardPen, UserCircle, PieChart, LayoutGrid,
-    CalendarDays, Star, CheckCircle2
+    CalendarDays, Star, CheckCircle2, Shield
 } from 'lucide-react';
 import styles from './page.module.css';
 
@@ -46,6 +46,7 @@ export default function CapacitacionPage() {
         { href: '/capacitacion/comparacion', title: 'Comparación', icon: GitCompareArrows },
         { href: '/capacitacion/examen', title: 'Exámenes para Categorías', icon: Calendar },
         { href: '/capacitacion/empleados', title: 'Plantilla Activa', icon: Users },
+        { href: '/capacitacion/grupos', title: 'Grupos y Certificaciones', icon: Shield },
         { href: '/capacitacion/matriz', title: 'Matriz de Capacitación', icon: LayoutGrid },
         { href: '/capacitacion/perfil', title: 'Perfil de Empleado', icon: UserCircle },
         { href: '/dashboard/programacion', title: 'Programación', icon: FileText },

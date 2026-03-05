@@ -158,7 +158,41 @@
     font-size: 1.5rem;
     font-weight: 700;
     color: var(--text-primary);
-    margin-left: 1rem;
 }
 
+/* === VIEW HEADER con botón descarga === */
+.viewHeader {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1.5rem;
+    gap: 1rem;
+}
 
+.downloadBtn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.55rem 1.1rem;
+    background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+    color: white;
+    border: none;
+    border-radius: 50px;
+    font-size: 0.875rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 8px rgba(59, 130, 246, 0.3);
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+.downloadBtn:hover {
+    background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+    box-shadow: 0 4px 14px rgba(59, 130, 246, 0.45);
+    transform: translateY(-1px);
+}
+
+.downloadBtn:active {
+    transform: translateY(0);
+}

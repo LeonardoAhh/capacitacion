@@ -211,7 +211,25 @@
     line-height: 1.4;
     word-wrap: break-word;
     color: var(--text-primary);
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
 }
+
+.messageTitle {
+    font-weight: 700;
+    font-size: 13px;
+    color: var(--text-primary);
+    display: block;
+}
+
+.messageBody {
+    font-weight: 400;
+    font-size: 13px;
+    color: var(--text-secondary);
+    display: block;
+}
+
 
 .closeBtn {
     flex-shrink: 0;
