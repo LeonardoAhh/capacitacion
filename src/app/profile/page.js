@@ -6,9 +6,13 @@ import ProfileDropdown from '@/components/layout/ProfileDropdown/ProfileDropdown
 import styles from './page.module.css';
 import { createAvatar } from '@dicebear/core';
 import { lorelei } from '@dicebear/collection';
-import { Eye, EyeOff } from 'lucide-react';
+import { Eye, EyeOff, RefreshCw, Briefcase, Building2, Calendar, User2, User, Shield, BookOpen } from 'lucide-react';
 import BackButton from '@/components/ui/BackButton/BackButton';
 import { useToast } from '@/components/ui/Toast/Toast';
+import { Badge } from '@/components/ui/Badge/Badge';
+import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/Card/Card';
+import { TabsComplete } from '@/components/ui/Tabs/Tabs';
+import { Skeleton } from '@/components/ui/Skeleton/Skeleton';
 
 export default function ProfilePage() {
     const { user, loading, updateUserProfile } = useAuth();
@@ -52,121 +56,143 @@ export default function ProfilePage() {
 
     if (loading || !user) {
         return (
-            <div style={{ display: 'flex', height: '100vh', alignItems: 'center', justifyContent: 'center', backgroundColor: 'var(--bg-primary)' }}>
-                <span>Cargando perfil...</span>
+            <div style={{ minHeight: '100vh', backgroundColor: 'var(--bg-primary)' }}>
+                <main className={styles.container}>
+                    <div className={styles.headerCard}>
+                        <Skeleton variant="rectangular" height={120} className={styles.bannerSkeleton} />
+                        <div className={styles.avatarSection}>
+                            <Skeleton variant="circular" width={120} height={120} style={{ marginTop: '-60px', border: '4px solid var(--card-background)', flexShrink: 0 }} />
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                                <Skeleton variant="text" width={220} height={32} />
+                                <Skeleton variant="text" width={180} height={18} />
+                                <Skeleton variant="text" width={90} height={22} />
+                            </div>
+                        </div>
+                    </div>
+                    <Skeleton variant="rectangular" height={48} style={{ borderRadius: 'var(--radius-lg)' }} />
+                    <Skeleton variant="rectangular" height={200} style={{ borderRadius: 'var(--radius-xl)' }} />
+                </main>
             </div>
         );
     }
 
+    // Role badge
+    const ROLE_BADGE_VARIANT = { super_admin: 'danger', SUPER_ADMIN: 'danger', admin: 'secondary', ADMIN: 'secondary' };
+    const roleBadgeVariant = ROLE_BADGE_VARIANT[user?.rol] ?? 'info';
+    const isAdmin = ['admin', 'superadmin', 'super_admin', 'ADMIN', 'SUPER_ADMIN'].includes(user?.rol);
+    const isAuditor = ['super_admin', 'instructor'].includes(user?.rol);
+
+    // Detail rows declarativos
+    const detailRows = [
+        { icon: <Briefcase size={16} />, label: 'Puesto',        value: user?.puesto        || 'No definido' },
+        { icon: <Building2 size={16} />, label: 'Departamento',  value: user?.departamento  || 'No definido' },
+        { icon: <Calendar  size={16} />, label: 'Fecha Ingreso', value: user?.fechaIngreso  || 'No definida'  },
+        { icon: <User2     size={16} />, label: 'Género',        value: user?.genero        || 'No definido' },
+    ];
+
+    // Tabs dinámicas
+    const profileTabs = [
+        {
+            value: 'perfil', label: 'Perfil', icon: <User size={16} />,
+            content: (
+                <Card hover={false} className={styles.detailsCard}>
+                    <CardHeader><CardTitle as="h3" className={styles.detailsTitle}>Detalles del Perfil</CardTitle></CardHeader>
+                    <CardContent className={styles.detailsContent}>
+                        {detailRows.map(({ icon, label, value }) => (
+                            <div key={label} className={styles.detailRow}>
+                                <span className={styles.detailIcon}>{icon}</span>
+                                <span className={styles.detailLabel}>{label}</span>
+                                <span className={styles.detailValue}>{value}</span>
+                            </div>
+                        ))}
+                    </CardContent>
+                </Card>
+            ),
+        },
+        ...(isAdmin ? [{
+            value: 'administracion', label: 'Administración', icon: <Shield size={16} />,
+            content: <div className={styles.tabSection}><AdminSection /><AdminMuralSection /></div>,
+        }] : []),
+        ...(isAuditor ? [{
+            value: 'auditoria', label: 'Auditoría', icon: <BookOpen size={16} />,
+            content: <div className={styles.tabSection}><InduccionAuditSection /></div>,
+        }] : []),
+    ];
+
     return (
         <div style={{ minHeight: '100vh', backgroundColor: 'var(--bg-primary)' }}>
-            <div className={styles.profileContainer}>
-                <ProfileDropdown />
-            </div>
+            <div className={styles.profileContainer}><ProfileDropdown /></div>
 
-
-
-            <main className={styles.container}>
-
+            <main className={styles.container} id="main-content">
                 <BackButton onClick={() => router.back()} />
 
-                {/* Header Card (Avatar + Info) */}
+                {/* ── Header Card Premium ── */}
                 <div className={styles.headerCard}>
+                    <div className={styles.banner} aria-hidden="true" />
 
-                    {/* Avatar */}
-                    <div className={styles.avatarContainer}>
-                        <div
-                            className={styles.avatar}
-                            dangerouslySetInnerHTML={{ __html: avatarSvg }}
-                            style={{ overflow: 'hidden' }}
-                        />
-                        <button
-                            onClick={handleRandomizeAvatar}
-                            className={styles.changeAvatarBtn}
-                            title="Cambiar Avatar"
-                        >
-                            <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-                            </svg>
-                        </button>
-                        <div className={styles.statusIndicator} title="Activo"></div>
-                    </div>
-
-                    {/* Basic Info */}
-                    <div className={styles.userInfo}>
-                        <h1 className={styles.userName}>
-                            {user.name || user.displayName || 'Usuario'}
-                        </h1>
-
-                        {/* Email Reveal Section */}
-                        <div className={styles.emailSection}>
+                    <div className={styles.avatarSection}>
+                        {/* Avatar con ring + hover overlay */}
+                        <div className={styles.avatarWrapper}>
                             <div
-                                className={styles.emailWrapper}
-                                onClick={() => setIsRevealed(!isRevealed)}
-                                style={{ cursor: 'pointer' }}
-                                title={isRevealed ? "Click para ocultar" : "Click para ver"}
+                                className={styles.avatar}
+                                dangerouslySetInnerHTML={{ __html: avatarSvg }}
+                                style={{ overflow: 'hidden' }}
+                                role="img"
+                                aria-label={`Avatar de ${user.name || user.displayName || 'Usuario'}`}
+                            />
+                            <button
+                                onClick={handleRandomizeAvatar}
+                                className={styles.changeAvatarBtn}
+                                aria-label="Cambiar avatar aleatorio"
+                                title="Cambiar Avatar"
                             >
-                                <span className={styles.revealIcon}>
-                                    {isRevealed ? <Eye size={18} /> : <EyeOff size={18} />}
-                                </span>
+                                <RefreshCw size={18} />
+                            </button>
+                            <div className={styles.statusIndicator} role="status" aria-label="Estado: Activo" title="Activo" />
+                        </div>
 
-                                <span className={`${styles.emailText} ${isRevealed ? styles.noBlur : styles.blur}`}>
-                                    {user.email || 'correo@ejemplo.com'}
-                                </span>
+                        {/* Texto: meta, nombre, email pill, badge */}
+                        <div className={styles.headerContent}>
+                            {(user.puesto || user.departamento) && (
+                                <p className={styles.headerMeta}>
+                                    {[user.puesto, user.departamento].filter(Boolean).join(' · ')}
+                                </p>
+                            )}
+
+                            <h1 className={styles.userName}>
+                                {user.name || user.displayName || 'Usuario'}
+                            </h1>
+
+                            <div className={styles.emailSection}>
+                                <div
+                                    className={styles.emailPill}
+                                    onClick={() => setIsRevealed(!isRevealed)}
+                                    role="button"
+                                    tabIndex={0}
+                                    aria-pressed={isRevealed}
+                                    title={isRevealed ? 'Click para ocultar' : 'Click para ver email'}
+                                    onKeyDown={(e) => e.key === 'Enter' && setIsRevealed(!isRevealed)}
+                                >
+                                    <span className={styles.revealIcon} aria-hidden="true">
+                                        {isRevealed ? <Eye size={15} /> : <EyeOff size={15} />}
+                                    </span>
+                                    <span className={`${styles.emailText} ${isRevealed ? styles.noBlur : styles.blur}`}>
+                                        {user.email || 'correo@ejemplo.com'}
+                                    </span>
+                                </div>
+                            </div>
+
+                            <div className={styles.badgeContainer}>
+                                <Badge variant={roleBadgeVariant} size="md" dot>
+                                    {user.rol || 'Empleado'}
+                                </Badge>
                             </div>
                         </div>
-
-                        <div className={styles.badgeContainer}>
-                            <span className={`${styles.badge} ${styles.badgePrimary}`}>
-                                {user.rol || 'Empleado'}
-                            </span>
-                        </div>
                     </div>
                 </div>
 
-                {/* Details Card */}
-                <div className={styles.card}>
-                    <h3 className={styles.cardTitle}>
-                        <svg className={styles.cardIcon} fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                        </svg>
-                        Detalles del Perfil
-                    </h3>
-                    <ul className={styles.detailsList}>
-                        <li className={styles.detailsItem}>
-                            <span className={styles.label}>Puesto</span>
-                            <span className={styles.value}>{user.puesto || 'No definido'}</span>
-                        </li>
-                        <li className={styles.detailsItem}>
-                            <span className={styles.label}>Departamento</span>
-                            <span className={styles.value}>{user.departamento || 'No definido'}</span>
-                        </li>
-                        <li className={styles.detailsItem}>
-                            <span className={styles.label}>Fecha Ingreso</span>
-                            <span className={styles.value}>{user.fechaIngreso || 'No definida'}</span>
-                        </li>
-                        <li className={styles.detailsItem}>
-                            <span className={styles.label}>Género</span>
-                            <span className={styles.value}>{user.genero || 'No definido'}</span>
-                        </li>
-                    </ul>
-                </div>
-
-                {/* Administration Section (Only for Admins) */}
-                {(
-                    ['admin', 'superadmin', 'super_admin'].includes(user.rol?.toLowerCase()) ||
-                    ['ADMIN', 'SUPER_ADMIN'].includes(user.rol)
-                ) && (
-                        <>
-                            <AdminSection />
-                            <AdminMuralSection />
-                        </>
-                    )}
-
-                {/* Log de Auditoría de Inducción */}
-                {(['super_admin', 'instructor'].includes(user.rol)) && (
-                    <InduccionAuditSection />
-                )}
+                {/* ── Tabs organizadas ── */}
+                <TabsComplete tabs={profileTabs} defaultValue="perfil" className={styles.tabsContainer} />
             </main>
         </div>
     );
@@ -175,13 +201,14 @@ export default function ProfilePage() {
 // Subcomponente para evitar re-renders innecesarios y organizar código
 import { doc, getDoc, setDoc, onSnapshot, collection, query, orderBy, limit, where, getDocs } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
-import { Shield, AlertTriangle, BookOpen, Trash2, RefreshCw, UploadCloud, FileEdit } from 'lucide-react';
+import { AlertTriangle, Trash2, UploadCloud, FileEdit, ChevronDown, ChevronUp } from 'lucide-react';
 
 function AdminSection() {
     const { toast } = useToast();
     const [isMaintenance, setIsMaintenance] = useState(false);
     const [duration, setDuration] = useState(2); // Horas por defecto
     const [loading, setLoading] = useState(true);
+    const [isOpen, setIsOpen] = useState(false);
 
     useEffect(() => {
         const configRef = doc(db, 'app_config', 'general');
@@ -227,100 +254,119 @@ function AdminSection() {
     if (loading) return null;
 
     return (
-        <div className={styles.card} style={{ borderColor: isMaintenance ? '#ef4444' : 'var(--border-color)' }}>
-            <h3 className={styles.cardTitle} style={{ color: isMaintenance ? '#ef4444' : 'inherit' }}>
-                <Shield className={styles.cardIcon} />
-                Administración del Sistema
-            </h3>
+        <div className={styles.card} style={{
+            borderColor: isMaintenance ? '#ef4444' : 'var(--border-color)',
+            padding: isOpen ? '20px' : '0',
+            overflow: 'hidden'
+        }}>
+            <div
+                onClick={() => setIsOpen(!isOpen)}
+                style={{
+                    padding: isOpen ? '0 0 15px 0' : '20px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    cursor: 'pointer',
+                    borderBottom: isOpen ? '1px solid var(--border-color)' : 'none'
+                }}
+            >
+                <h3 className={styles.cardTitle} style={{ color: isMaintenance ? '#ef4444' : 'inherit', margin: 0 }}>
+                    <Shield className={styles.cardIcon} />
+                    Administración del Sistema
+                </h3>
+                {isOpen ? <ChevronUp size={20} color="var(--text-secondary)" /> : <ChevronDown size={20} color="var(--text-secondary)" />}
+            </div>
 
-            <div style={{
-                display: 'flex',
-                flexDirection: 'column',
-                gap: '1rem',
-                padding: '1rem',
-                backgroundColor: isMaintenance ? '#fef2f2' : 'var(--bg-secondary)',
-                borderRadius: '8px',
-                marginTop: '1rem'
-            }}>
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                    <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
-                        <div style={{
-                            padding: '0.5rem',
-                            borderRadius: '50%',
-                            backgroundColor: isMaintenance ? '#fee2e2' : '#e2e8f0',
-                            color: isMaintenance ? '#ef4444' : '#64748b'
-                        }}>
-                            <AlertTriangle size={24} />
+            {isOpen && (
+                <div style={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    gap: '1rem',
+                    padding: '1rem',
+                    backgroundColor: isMaintenance ? '#fef2f2' : 'var(--bg-secondary)',
+                    borderRadius: '8px',
+                    marginTop: '1rem'
+                }}>
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                        <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
+                            <div style={{
+                                padding: '0.5rem',
+                                borderRadius: '50%',
+                                backgroundColor: isMaintenance ? '#fee2e2' : '#e2e8f0',
+                                color: isMaintenance ? '#ef4444' : '#64748b'
+                            }}>
+                                <AlertTriangle size={24} />
+                            </div>
+                            <div>
+                                <h4 style={{ margin: 0, fontSize: '0.95rem', fontWeight: 600, color: 'var(--text-primary)' }}>
+                                    Modo Mantenimiento
+                                </h4>
+                                <p style={{ margin: 0, fontSize: '0.8rem', color: 'var(--text-secondary)' }}>
+                                    {isMaintenance
+                                        ? 'La plataforma está bloqueada para usuarios.'
+                                        : 'La plataforma está accesible para todos.'}
+                                </p>
+                            </div>
                         </div>
-                        <div>
-                            <h4 style={{ margin: 0, fontSize: '0.95rem', fontWeight: 600, color: 'var(--text-primary)' }}>
-                                Modo Mantenimiento
-                            </h4>
-                            <p style={{ margin: 0, fontSize: '0.8rem', color: 'var(--text-secondary)' }}>
-                                {isMaintenance
-                                    ? 'La plataforma está bloqueada para usuarios.'
-                                    : 'La plataforma está accesible para todos.'}
-                            </p>
-                        </div>
-                    </div>
 
-                    <label style={{ position: 'relative', display: 'inline-block', width: '50px', height: '26px', cursor: 'pointer' }}>
-                        <input
-                            type="checkbox"
-                            checked={isMaintenance}
-                            onChange={toggleMaintenance}
-                            style={{ opacity: 0, width: 0, height: 0 }}
-                        />
-                        <span style={{
-                            position: 'absolute',
-                            cursor: 'pointer',
-                            top: 0, left: 0, right: 0, bottom: 0,
-                            backgroundColor: isMaintenance ? '#ef4444' : '#ccc',
-                            transition: '.4s',
-                            borderRadius: '34px'
-                        }}>
+                        <label style={{ position: 'relative', display: 'inline-block', width: '50px', height: '26px', cursor: 'pointer' }}>
+                            <input
+                                type="checkbox"
+                                checked={isMaintenance}
+                                onChange={toggleMaintenance}
+                                style={{ opacity: 0, width: 0, height: 0 }}
+                            />
                             <span style={{
                                 position: 'absolute',
-                                content: '""',
-                                height: '20px', width: '20px',
-                                left: isMaintenance ? '26px' : '4px',
-                                bottom: '3px',
-                                backgroundColor: 'white',
+                                cursor: 'pointer',
+                                top: 0, left: 0, right: 0, bottom: 0,
+                                backgroundColor: isMaintenance ? '#ef4444' : '#ccc',
                                 transition: '.4s',
-                                borderRadius: '50%'
-                            }}></span>
-                        </span>
-                    </label>
-                </div>
-
-                {!isMaintenance && (
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginLeft: '3.5rem' }}>
-                        <label style={{ fontSize: '0.85rem', color: 'var(--text-secondary)' }}>
-                            Duración estimada:
+                                borderRadius: '34px'
+                            }}>
+                                <span style={{
+                                    position: 'absolute',
+                                    content: '""',
+                                    height: '20px', width: '20px',
+                                    left: isMaintenance ? '26px' : '4px',
+                                    bottom: '3px',
+                                    backgroundColor: 'white',
+                                    transition: '.4s',
+                                    borderRadius: '50%'
+                                }}></span>
+                            </span>
                         </label>
-                        <select
-                            value={duration}
-                            onChange={(e) => setDuration(e.target.value)}
-                            style={{
-                                padding: '4px 8px',
-                                borderRadius: '4px',
-                                border: '1px solid var(--border-color)',
-                                fontSize: '0.85rem',
-                                backgroundColor: 'var(--bg-primary)',
-                                color: 'var(--text-primary)'
-                            }}
-                        >
-                            <option value="1">1 hora</option>
-                            <option value="2">2 horas</option>
-                            <option value="4">4 horas</option>
-                            <option value="8">8 horas</option>
-                            <option value="12">12 horas</option>
-                            <option value="24">24 horas</option>
-                            <option value="48">48 horas</option>
-                        </select>
                     </div>
-                )}
-            </div>
+
+                    {!isMaintenance && (
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginLeft: '3.5rem' }}>
+                            <label style={{ fontSize: '0.85rem', color: 'var(--text-secondary)' }}>
+                                Duración estimada:
+                            </label>
+                            <select
+                                value={duration}
+                                onChange={(e) => setDuration(e.target.value)}
+                                style={{
+                                    padding: '4px 8px',
+                                    borderRadius: '4px',
+                                    border: '1px solid var(--border-color)',
+                                    fontSize: '0.85rem',
+                                    backgroundColor: 'var(--bg-primary)',
+                                    color: 'var(--text-primary)'
+                                }}
+                            >
+                                <option value="1">1 hora</option>
+                                <option value="2">2 horas</option>
+                                <option value="4">4 horas</option>
+                                <option value="8">8 horas</option>
+                                <option value="12">12 horas</option>
+                                <option value="24">24 horas</option>
+                                <option value="48">48 horas</option>
+                            </select>
+                        </div>
+                    )}
+                </div>
+            )}
 
             {isMaintenance && (
                 <div style={{ marginTop: '10px', fontSize: '0.75rem', color: '#ef4444', fontWeight: 500 }}>
@@ -356,10 +402,12 @@ function AdminMuralSection() {
     const [muralList, setMuralList] = useState([]);
     const [editingMuralId, setEditingMuralId] = useState(null);
     const [editData, setEditData] = useState({});
+    const [isOpen, setIsOpen] = useState(false);
 
     const [manualData, setManualData] = useState({
-        employeeId: '', firstName: '', currentPosition: '', promotionTo: '', score: '', requiredScore: ''
+        employeeId: '', firstName: '', currentPosition: '', promotionTo: '', score: '', requiredScore: '', recommendations: []
     });
+    const [availableThemes, setAvailableThemes] = useState([]);
     const [messages, setMessages] = useState({
         successMessage: '',
         motivationalMessage: ''
@@ -390,6 +438,21 @@ function AdminMuralSection() {
             arr.sort((a, b) => (b.date || '').localeCompare(a.date || ''));
             setMuralList(arr);
         });
+
+        const fetchThemes = async () => {
+            try {
+                const qSnap = await getDocs(collection(db, 'exam_questions'));
+                const themes = new Set();
+                qSnap.forEach(doc => {
+                    const t = doc.data().theme;
+                    if (t) themes.add(t.trim().toUpperCase());
+                });
+                setAvailableThemes(Array.from(themes).sort());
+            } catch (error) {
+                console.error("Error fetching themes", error);
+            }
+        };
+        fetchThemes();
 
         return () => unsubMural();
     }, []);
@@ -561,6 +624,7 @@ function AdminMuralSection() {
                 passed: isApproved,
                 score: scoreNum,
                 requiredScore: reqScoreNum,
+                recommendations: Array.isArray(manualData.recommendations) ? manualData.recommendations : [],
                 date: new Date().toISOString().split('T')[0],
                 active: true,
                 timestamp: new Date()
@@ -568,7 +632,7 @@ function AdminMuralSection() {
 
             await setDoc(doc(db, 'mural_exams', manualData.employeeId.toString()), safeData);
             toast.success("¡Examen guardado exitosamente en el Mural!");
-            setManualData({ employeeId: '', firstName: '', currentPosition: '', promotionTo: '', score: '', requiredScore: '' });
+            setManualData({ employeeId: '', firstName: '', currentPosition: '', promotionTo: '', score: '', requiredScore: '', recommendations: [] });
             setShowManualForm(false);
         } catch (error) {
             console.error(error);
@@ -579,7 +643,10 @@ function AdminMuralSection() {
     // Funciones de Listado, Edición y PDF
     const handleEditClick = (mural) => {
         setEditingMuralId(mural.id);
-        setEditData({ ...mural });
+        const recs = Array.isArray(mural.recommendations)
+            ? mural.recommendations
+            : (typeof mural.recommendations === 'string' && mural.recommendations ? [mural.recommendations] : []);
+        setEditData({ ...mural, recommendations: recs });
     };
 
     const handleCancelEdit = () => {
@@ -801,206 +868,265 @@ function AdminMuralSection() {
     if (loadingConfig) return null;
 
     return (
-        <div className={styles.card} style={{ marginTop: '20px' }}>
-            <h3 className={styles.cardTitle}>
-                <Presentation className={styles.cardIcon} />
-                Gestión del Mural de Reconocimiento
-            </h3>
-
-            <div style={{ padding: '10px 0', fontSize: '0.85rem', color: 'var(--text-secondary)' }}>
-                Configura los mensajes que verán los usuarios al buscar su calificación y mantén sincronizada su base pública para proteger la privacidad del empleado.
+        <div className={styles.card} style={{ marginTop: '20px', padding: isOpen ? '20px' : '0', overflow: 'hidden' }}>
+            <div
+                onClick={() => setIsOpen(!isOpen)}
+                style={{
+                    padding: isOpen ? '0 0 15px 0' : '20px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    cursor: 'pointer',
+                    borderBottom: isOpen ? '1px solid var(--border-color)' : 'none'
+                }}
+            >
+                <h3 className={styles.cardTitle} style={{ margin: 0 }}>
+                    <Presentation className={styles.cardIcon} />
+                    Gestión del Mural de Reconocimiento
+                </h3>
+                {isOpen ? <ChevronUp size={20} color="var(--text-secondary)" /> : <ChevronDown size={20} color="var(--text-secondary)" />}
             </div>
 
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', marginTop: '10px' }}>
+            {isOpen && (
+                <div style={{ marginTop: '10px' }}>
+                    <div style={{ padding: '0 0 10px 0', fontSize: '0.85rem', color: 'var(--text-secondary)' }}>
+                        Configura los mensajes que verán los usuarios al buscar su calificación y mantén sincronizada su base pública para proteger la privacidad del empleado.
+                    </div>
 
-                {/* Inputs de Configuración */}
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '5px' }}>
-                    <label style={{ fontSize: '0.8rem', fontWeight: 600, color: 'var(--text-primary)' }}>Mensaje para APROBADOS</label>
-                    <textarea
-                        style={{ width: '100%', padding: '10px', borderRadius: '8px', border: '1px solid var(--border-color)', background: 'var(--bg-secondary)', color: 'var(--text-primary)', minHeight: '60px', resize: 'vertical' }}
-                        value={messages.successMessage}
-                        onChange={(e) => setMessages(m => ({ ...m, successMessage: e.target.value }))}
-                        placeholder="Usa [Nombre] para incluir el nombre del empleado..."
-                    />
-                </div>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', marginTop: '10px' }}>
 
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '5px' }}>
-                    <label style={{ fontSize: '0.8rem', fontWeight: 600, color: 'var(--text-primary)' }}>Mensaje para REPROBADOS (Motivacional)</label>
-                    <textarea
-                        style={{ width: '100%', padding: '10px', borderRadius: '8px', border: '1px solid var(--border-color)', background: 'var(--bg-secondary)', color: 'var(--text-primary)', minHeight: '60px', resize: 'vertical' }}
-                        value={messages.motivationalMessage}
-                        onChange={(e) => setMessages(m => ({ ...m, motivationalMessage: e.target.value }))}
-                        placeholder="Usa [Nombre] para incluir el nombre del empleado..."
-                    />
-                </div>
-
-                <div style={{ display: 'flex', gap: '10px', justifyContent: 'flex-end', marginTop: '5px' }}>
-                    <button
-                        onClick={saveMessages}
-                        style={{ padding: '8px 16px', background: 'var(--bg-secondary)', border: '1px solid var(--border-color)', borderRadius: '8px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--text-primary)' }}
-                    >
-                        <Save size={16} /> Guardar Mensajes
-                    </button>
-
-                    <button
-                        onClick={handleSyncMural}
-                        disabled={syncing}
-                        style={{ padding: '8px 16px', background: '#3b82f6', color: 'white', border: 'none', borderRadius: '8px', cursor: syncing ? 'not-allowed' : 'pointer', display: 'flex', alignItems: 'center', gap: '8px', fontWeight: 600 }}
-                    >
-                        <RefreshCcw size={16} className={syncing ? 'spinner' : ''} style={{ animation: syncing ? 'spin 1s linear infinite' : 'none' }} />
-                        {syncing ? '...' : 'Auto-Sincronizar Panel Exámenes'}
-                    </button>
-
-                    <button
-                        onClick={() => setShowManualForm(!showManualForm)}
-                        style={{ padding: '8px 16px', background: '#10b981', color: 'white', border: 'none', borderRadius: '8px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px', fontWeight: 600 }}
-                    >
-                        + Captura Manual Nuevo
-                    </button>
-                </div>
-
-                {/* ---------- FORMULARIO MANUAL ---------- */}
-                {showManualForm && (
-                    <form onSubmit={handleManualSubmit} style={{ marginTop: '1rem', padding: '1.5rem', background: 'var(--bg-primary)', borderRadius: '12px', border: '1px solid var(--border-color)', display: 'grid', gap: '1rem', gridTemplateColumns: '1fr 1fr' }}>
-                        <h4 style={{ gridColumn: 'span 2', margin: '0 0 10px 0', color: 'var(--text-primary)', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                            <BookOpen size={18} /> Registro Manual en Mural Público
-                        </h4>
+                        {/* Inputs de Configuración */}
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '5px' }}>
+                            <label style={{ fontSize: '0.8rem', fontWeight: 600, color: 'var(--text-primary)' }}>Mensaje para APROBADOS</label>
+                            <textarea
+                                style={{ width: '100%', padding: '10px', borderRadius: '8px', border: '1px solid var(--border-color)', background: 'var(--bg-secondary)', color: 'var(--text-primary)', minHeight: '60px', resize: 'vertical' }}
+                                value={messages.successMessage}
+                                onChange={(e) => setMessages(m => ({ ...m, successMessage: e.target.value }))}
+                                placeholder="Usa [Nombre] para incluir el nombre del empleado..."
+                            />
+                        </div>
 
                         <div style={{ display: 'flex', flexDirection: 'column', gap: '5px' }}>
-                            <label style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>No. Empleado (Ej. 2950)*</label>
-                            <div style={{ display: 'flex', gap: '8px' }}>
-                                <input required type="text" value={manualData.employeeId} onChange={e => setManualData({ ...manualData, employeeId: e.target.value })} style={{ flex: 1, padding: '8px', borderRadius: '6px', border: '1px solid var(--border-color)', background: 'var(--bg-secondary)', color: 'var(--text-primary)' }} placeholder="Digita el ID" />
-                                <button type="button" onClick={fetchEmployeeData} disabled={!manualData.employeeId || searchingM} style={{ padding: '0 12px', background: 'var(--bg-secondary)', border: '1px solid var(--border-color)', borderRadius: '6px', cursor: (!manualData.employeeId || searchingM) ? 'not-allowed' : 'pointer', color: 'var(--text-primary)' }} title="Autorrellenar Info">
-                                    {searchingM ? '...' : '🔍'}
-                                </button>
+                            <label style={{ fontSize: '0.8rem', fontWeight: 600, color: 'var(--text-primary)' }}>Mensaje para REPROBADOS (Motivacional)</label>
+                            <textarea
+                                style={{ width: '100%', padding: '10px', borderRadius: '8px', border: '1px solid var(--border-color)', background: 'var(--bg-secondary)', color: 'var(--text-primary)', minHeight: '60px', resize: 'vertical' }}
+                                value={messages.motivationalMessage}
+                                onChange={(e) => setMessages(m => ({ ...m, motivationalMessage: e.target.value }))}
+                                placeholder="Usa [Nombre] para incluir el nombre del empleado..."
+                            />
+                        </div>
+
+                        <div style={{ display: 'flex', gap: '10px', justifyContent: 'flex-end', marginTop: '5px' }}>
+                            <button
+                                onClick={saveMessages}
+                                style={{ padding: '8px 16px', background: 'var(--bg-secondary)', border: '1px solid var(--border-color)', borderRadius: '8px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--text-primary)' }}
+                            >
+                                <Save size={16} /> Guardar Mensajes
+                            </button>
+
+                            <button
+                                onClick={handleSyncMural}
+                                disabled={syncing}
+                                style={{ padding: '8px 16px', background: '#3b82f6', color: 'white', border: 'none', borderRadius: '8px', cursor: syncing ? 'not-allowed' : 'pointer', display: 'flex', alignItems: 'center', gap: '8px', fontWeight: 600 }}
+                            >
+                                <RefreshCcw size={16} className={syncing ? 'spinner' : ''} style={{ animation: syncing ? 'spin 1s linear infinite' : 'none' }} />
+                                {syncing ? '...' : 'Auto-Sincronizar Panel Exámenes'}
+                            </button>
+
+                            <button
+                                onClick={() => setShowManualForm(!showManualForm)}
+                                style={{ padding: '8px 16px', background: '#10b981', color: 'white', border: 'none', borderRadius: '8px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px', fontWeight: 600 }}
+                            >
+                                + Captura Manual Nuevo
+                            </button>
+                        </div>
+
+                        {/* ---------- FORMULARIO MANUAL ---------- */}
+                        {showManualForm && (
+                            <form onSubmit={handleManualSubmit} style={{ marginTop: '1rem', padding: '1.5rem', background: 'var(--bg-primary)', borderRadius: '12px', border: '1px solid var(--border-color)', display: 'grid', gap: '1rem', gridTemplateColumns: '1fr 1fr' }}>
+                                <h4 style={{ gridColumn: 'span 2', margin: '0 0 10px 0', color: 'var(--text-primary)', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                    <BookOpen size={18} /> Registro Manual en Mural Público
+                                </h4>
+
+                                <div style={{ display: 'flex', flexDirection: 'column', gap: '5px' }}>
+                                    <label style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>No. Empleado (Ej. 2950)*</label>
+                                    <div style={{ display: 'flex', gap: '8px' }}>
+                                        <input required type="text" value={manualData.employeeId} onChange={e => setManualData({ ...manualData, employeeId: e.target.value })} style={{ flex: 1, padding: '8px', borderRadius: '6px', border: '1px solid var(--border-color)', background: 'var(--bg-secondary)', color: 'var(--text-primary)' }} placeholder="Digita el ID" />
+                                        <button type="button" onClick={fetchEmployeeData} disabled={!manualData.employeeId || searchingM} style={{ padding: '0 12px', background: 'var(--bg-secondary)', border: '1px solid var(--border-color)', borderRadius: '6px', cursor: (!manualData.employeeId || searchingM) ? 'not-allowed' : 'pointer', color: 'var(--text-primary)' }} title="Autorrellenar Info">
+                                            {searchingM ? '...' : '🔍'}
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <div style={{ display: 'flex', flexDirection: 'column', gap: '5px' }}>
+                                    <label style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>Primer Nombre (Público)*</label>
+                                    <input required type="text" value={manualData.firstName} onChange={e => setManualData({ ...manualData, firstName: e.target.value })} style={{ padding: '8px', borderRadius: '6px', border: '1px solid var(--border-color)', background: 'var(--bg-secondary)', color: 'var(--text-primary)' }} />
+                                </div>
+
+                                <div style={{ display: 'flex', flexDirection: 'column', gap: '5px' }}>
+                                    <label style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>Puesto Actual*</label>
+                                    <input required type="text" value={manualData.currentPosition} onChange={e => setManualData({ ...manualData, currentPosition: e.target.value })} style={{ padding: '8px', borderRadius: '6px', border: '1px solid var(--border-color)', background: 'var(--bg-secondary)', color: 'var(--text-primary)' }} />
+                                </div>
+                                <div style={{ display: 'flex', flexDirection: 'column', gap: '5px' }}>
+                                    <label style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>Aplica Para (Puesto Objetivo)*</label>
+                                    <input required type="text" value={manualData.promotionTo} onChange={e => setManualData({ ...manualData, promotionTo: e.target.value })} style={{ padding: '8px', borderRadius: '6px', border: '1px solid var(--border-color)', background: 'var(--bg-secondary)', color: 'var(--text-primary)' }} />
+                                </div>
+
+                                <div style={{ display: 'flex', flexDirection: 'column', gap: '5px' }}>
+                                    <label style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>Calificación Alcanzada (%)*</label>
+                                    <input required type="number" min="0" max="100" value={manualData.score} onChange={e => setManualData({ ...manualData, score: e.target.value })} style={{ padding: '8px', borderRadius: '6px', border: '1px solid var(--border-color)', background: 'var(--bg-secondary)', color: 'var(--text-primary)' }} placeholder="Ej. 100" />
+                                </div>
+                                <div style={{ display: 'flex', flexDirection: 'column', gap: '5px' }}>
+                                    <label style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>Calificación Requerida (%)*</label>
+                                    <input required type="number" min="0" max="100" value={manualData.requiredScore} onChange={e => setManualData({ ...manualData, requiredScore: e.target.value })} style={{ padding: '8px', borderRadius: '6px', border: '1px solid var(--border-color)', background: 'var(--bg-secondary)', color: 'var(--text-primary)' }} placeholder="Ej. 85" />
+                                </div>
+
+                                <div style={{ gridColumn: 'span 2', display: 'flex', flexDirection: 'column', gap: '5px' }}>
+                                    <label style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>Recomendaciones o Feedback (Si no aprobó)*</label>
+                                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', padding: '10px', background: 'var(--bg-secondary)', borderRadius: '6px', border: '1px solid var(--border-color)' }}>
+                                        {availableThemes.map(theme => {
+                                            const isSel = (manualData.recommendations || []).includes(theme);
+                                            return (
+                                                <span key={theme}
+                                                    onClick={() => setManualData(prev => ({
+                                                        ...prev,
+                                                        recommendations: isSel ? prev.recommendations.filter(t => t !== theme) : [...(prev.recommendations || []), theme]
+                                                    }))}
+                                                    style={{ padding: '4px 10px', borderRadius: '16px', fontSize: '0.75rem', cursor: 'pointer', background: isSel ? '#3b82f6' : 'var(--bg-primary)', color: isSel ? '#fff' : 'var(--text-secondary)', border: `1px solid ${isSel ? '#3b82f6' : 'var(--border-color)'}` }}
+                                                >
+                                                    {theme}
+                                                </span>
+                                            );
+                                        })}
+                                        {availableThemes.length === 0 && <span style={{ fontSize: '0.75rem', color: 'var(--text-tertiary)' }}>No hay temas disponibles.</span>}
+                                    </div>
+                                </div>
+
+                                <div style={{ gridColumn: 'span 2', display: 'flex', justifyContent: 'flex-end', gap: '10px', marginTop: '10px' }}>
+                                    <button type="button" onClick={() => setShowManualForm(false)} style={{ padding: '8px 16px', background: 'transparent', color: '#ef4444', border: '1px solid #ef4444', borderRadius: '8px', cursor: 'pointer' }}>
+                                        Cancelar
+                                    </button>
+                                    <button type="submit" style={{ padding: '8px 16px', background: '#f59e0b', color: 'white', border: 'none', borderRadius: '8px', cursor: 'pointer', fontWeight: 600 }}>
+                                        Guardar y Publicar
+                                    </button>
+                                </div>
+                            </form>
+                        )}
+
+                        {/* ---------- TABLA DE REGISTROS MURAL ---------- */}
+                        <div style={{ marginTop: '2rem' }}>
+                            <h4 style={{ margin: '0 0 10px 0', color: 'var(--text-primary)', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                <Presentation size={18} /> Registros Públicos Actuales ({muralList.length})
+                            </h4>
+
+                            <div style={{ overflowX: 'auto', borderRadius: '8px', border: '1px solid var(--border-color)' }}>
+                                <table style={{ minWidth: '750px', width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '0.85rem' }}>
+                                    <thead>
+                                        <tr style={{ backgroundColor: 'var(--bg-secondary)', color: 'var(--text-secondary)' }}>
+                                            <th style={{ padding: '12px', borderBottom: '1px solid var(--border-color)' }}>ID</th>
+                                            <th style={{ padding: '12px', borderBottom: '1px solid var(--border-color)' }}>Nombre</th>
+                                            <th style={{ padding: '12px', borderBottom: '1px solid var(--border-color)' }}>Actual</th>
+                                            <th style={{ padding: '12px', borderBottom: '1px solid var(--border-color)' }}>Destino</th>
+                                            <th style={{ padding: '12px', borderBottom: '1px solid var(--border-color)' }}>Estado</th>
+                                            <th style={{ padding: '12px', borderBottom: '1px solid var(--border-color)', minWidth: '150px' }}>Feedback / Recomendación</th>
+                                            <th style={{ padding: '12px', borderBottom: '1px solid var(--border-color)', textAlign: 'right' }}>Acciones</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {muralList.map(item => {
+                                            const isEditing = editingMuralId === item.id;
+
+                                            if (isEditing) {
+                                                return (
+                                                    <tr key={item.id} style={{ backgroundColor: 'var(--bg-secondary)', borderBottom: '1px solid var(--border-color)' }}>
+                                                        <td style={{ padding: '12px' }}>{item.employeeId}</td>
+                                                        <td style={{ padding: '12px' }}>
+                                                            <input type="text" value={editData.firstName} onChange={e => setEditData({ ...editData, firstName: e.target.value })} style={{ width: '100%', padding: '4px', background: 'var(--bg-primary)', border: '1px solid var(--border-color)', color: 'var(--text-primary)' }} />
+                                                        </td>
+                                                        <td style={{ padding: '12px' }}>
+                                                            <input type="text" value={editData.currentPosition} onChange={e => setEditData({ ...editData, currentPosition: e.target.value })} style={{ width: '100%', padding: '4px', background: 'var(--bg-primary)', border: '1px solid var(--border-color)', color: 'var(--text-primary)' }} />
+                                                        </td>
+                                                        <td style={{ padding: '12px' }}>
+                                                            <input type="text" value={editData.promotionTo} onChange={e => setEditData({ ...editData, promotionTo: e.target.value })} style={{ width: '100%', padding: '4px', background: 'var(--bg-primary)', border: '1px solid var(--border-color)', color: 'var(--text-primary)' }} />
+                                                        </td>
+                                                        <td style={{ padding: '12px' }}>—</td>
+                                                        <td style={{ padding: '12px', verticalAlign: 'top' }}>
+                                                            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '4px', width: '250px', maxHeight: '150px', overflowY: 'auto', padding: '6px', background: 'var(--bg-primary)', border: '1px solid var(--border-color)', borderRadius: '6px' }}>
+                                                                {availableThemes.map(theme => {
+                                                                    const isSel = (editData.recommendations || []).includes(theme);
+                                                                    return (
+                                                                        <span key={theme}
+                                                                            onClick={() => setEditData(prev => ({
+                                                                                ...prev,
+                                                                                recommendations: isSel ? prev.recommendations.filter(t => t !== theme) : [...(prev.recommendations || []), theme]
+                                                                            }))}
+                                                                            style={{ padding: '2px 8px', borderRadius: '12px', fontSize: '0.7rem', cursor: 'pointer', background: isSel ? '#22c55e' : 'var(--bg-primary)', color: isSel ? '#fff' : 'var(--text-secondary)', border: `1px solid ${isSel ? '#22c55e' : 'var(--border-color)'}` }}
+                                                                        >
+                                                                            {theme}
+                                                                        </span>
+                                                                    );
+                                                                })}
+                                                                {availableThemes.length === 0 && <span style={{ fontSize: '0.7rem' }}>Sin temas.</span>}
+                                                            </div>
+                                                        </td>
+                                                        <td style={{ padding: '12px', display: 'flex', gap: '8px', justifyContent: 'flex-end' }}>
+                                                            <button onClick={handleSaveEdit} title="Guardar" style={{ padding: '6px', background: '#22c55e', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' }}><Check size={14} /></button>
+                                                            <button onClick={handleCancelEdit} title="Cancelar" style={{ padding: '6px', background: '#ef4444', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' }}><CancelIcon size={14} /></button>
+                                                        </td>
+                                                    </tr>
+                                                )
+                                            }
+
+                                            return (
+                                                <tr key={item.id} style={{ borderBottom: '1px solid var(--border-color)', color: 'var(--text-primary)' }}>
+                                                    <td style={{ padding: '12px' }}>{item.employeeId}</td>
+                                                    <td style={{ padding: '12px', fontWeight: 600 }}>{item.firstName}</td>
+                                                    <td style={{ padding: '12px', color: 'var(--text-secondary)' }}>{item.currentPosition}</td>
+                                                    <td style={{ padding: '12px', color: 'var(--text-secondary)' }}>{item.promotionTo}</td>
+                                                    <td style={{ padding: '12px' }}>
+                                                        {item.passed
+                                                            ? <span style={{ color: '#10b981', background: 'rgba(16,185,129,0.1)', padding: '2px 8px', borderRadius: '12px', fontSize: '0.75rem', fontWeight: 'bold' }}>APROBADO</span>
+                                                            : <span style={{ color: '#ef4444', background: 'rgba(239,68,68,0.1)', padding: '2px 8px', borderRadius: '12px', fontSize: '0.75rem', fontWeight: 'bold' }}>REPROBADO</span>
+                                                        }
+                                                    </td>
+                                                    <td style={{ padding: '12px', color: 'var(--text-secondary)', fontSize: '0.8rem' }}>
+                                                        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '4px', maxWidth: '250px' }}>
+                                                            {Array.isArray(item.recommendations) && item.recommendations.length > 0
+                                                                ? item.recommendations.map((rec, i) => (
+                                                                    <span key={i} style={{ padding: '2px 8px', background: 'var(--bg-secondary)', borderRadius: '12px', fontSize: '0.7rem', border: '1px solid var(--border-color)', color: 'var(--text-primary)' }}>
+                                                                        {rec}
+                                                                    </span>
+                                                                ))
+                                                                : (item.recommendations ? <span style={{ fontStyle: 'italic' }}>{item.recommendations}</span> : '—')}
+                                                        </div>
+                                                    </td>
+                                                    <td style={{ padding: '12px', display: 'flex', gap: '8px', justifyContent: 'flex-end' }}>
+                                                        <button onClick={() => handleGenerateQR(item)} title="Descargar Invitación QR" style={{ padding: '6px', background: 'transparent', color: '#3b82f6', border: '1px solid #3b82f6', borderRadius: '4px', cursor: 'pointer' }}>
+                                                            <Download size={14} />
+                                                        </button>
+                                                        <button onClick={() => handleEditClick(item)} title="Editar Registro" style={{ padding: '6px', background: 'transparent', color: '#f59e0b', border: '1px solid #f59e0b', borderRadius: '4px', cursor: 'pointer' }}>
+                                                            <Pencil size={14} />
+                                                        </button>
+                                                        <button onClick={() => handleDeleteMural(item.id)} title="Eliminar del Mural" style={{ padding: '6px', background: 'transparent', color: '#ef4444', border: '1px solid #ef4444', borderRadius: '4px', cursor: 'pointer' }}>
+                                                            <Trash2 size={14} />
+                                                        </button>
+                                                    </td>
+                                                </tr>
+                                            );
+                                        })}
+                                        {muralList.length === 0 && (
+                                            <tr>
+                                                <td colSpan="8" style={{ padding: '20px', textAlign: 'center', color: 'var(--text-tertiary)' }}>No hay resultados en el mural.</td>
+                                            </tr>
+                                        )}
+                                    </tbody>
+                                </table>
                             </div>
                         </div>
 
-                        <div style={{ display: 'flex', flexDirection: 'column', gap: '5px' }}>
-                            <label style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>Primer Nombre (Público)*</label>
-                            <input required type="text" value={manualData.firstName} onChange={e => setManualData({ ...manualData, firstName: e.target.value })} style={{ padding: '8px', borderRadius: '6px', border: '1px solid var(--border-color)', background: 'var(--bg-secondary)', color: 'var(--text-primary)' }} />
-                        </div>
-
-                        <div style={{ display: 'flex', flexDirection: 'column', gap: '5px' }}>
-                            <label style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>Puesto Actual*</label>
-                            <input required type="text" value={manualData.currentPosition} onChange={e => setManualData({ ...manualData, currentPosition: e.target.value })} style={{ padding: '8px', borderRadius: '6px', border: '1px solid var(--border-color)', background: 'var(--bg-secondary)', color: 'var(--text-primary)' }} />
-                        </div>
-                        <div style={{ display: 'flex', flexDirection: 'column', gap: '5px' }}>
-                            <label style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>Aplica Para (Puesto Objetivo)*</label>
-                            <input required type="text" value={manualData.promotionTo} onChange={e => setManualData({ ...manualData, promotionTo: e.target.value })} style={{ padding: '8px', borderRadius: '6px', border: '1px solid var(--border-color)', background: 'var(--bg-secondary)', color: 'var(--text-primary)' }} />
-                        </div>
-
-                        <div style={{ display: 'flex', flexDirection: 'column', gap: '5px' }}>
-                            <label style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>Calificación Alcanzada (%)*</label>
-                            <input required type="number" min="0" max="100" value={manualData.score} onChange={e => setManualData({ ...manualData, score: e.target.value })} style={{ padding: '8px', borderRadius: '6px', border: '1px solid var(--border-color)', background: 'var(--bg-secondary)', color: 'var(--text-primary)' }} placeholder="Ej. 100" />
-                        </div>
-                        <div style={{ display: 'flex', flexDirection: 'column', gap: '5px' }}>
-                            <label style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>Calificación Requerida (%)*</label>
-                            <input required type="number" min="0" max="100" value={manualData.requiredScore} onChange={e => setManualData({ ...manualData, requiredScore: e.target.value })} style={{ padding: '8px', borderRadius: '6px', border: '1px solid var(--border-color)', background: 'var(--bg-secondary)', color: 'var(--text-primary)' }} placeholder="Ej. 85" />
-                        </div>
-
-                        <div style={{ gridColumn: 'span 2', display: 'flex', justifyContent: 'flex-end', gap: '10px', marginTop: '10px' }}>
-                            <button type="button" onClick={() => setShowManualForm(false)} style={{ padding: '8px 16px', background: 'transparent', color: '#ef4444', border: '1px solid #ef4444', borderRadius: '8px', cursor: 'pointer' }}>
-                                Cancelar
-                            </button>
-                            <button type="submit" style={{ padding: '8px 16px', background: '#f59e0b', color: 'white', border: 'none', borderRadius: '8px', cursor: 'pointer', fontWeight: 600 }}>
-                                Guardar y Publicar
-                            </button>
-                        </div>
-                    </form>
-                )}
-
-                {/* ---------- TABLA DE REGISTROS MURAL ---------- */}
-                <div style={{ marginTop: '2rem' }}>
-                    <h4 style={{ margin: '0 0 10px 0', color: 'var(--text-primary)', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                        <Presentation size={18} /> Registros Públicos Actuales ({muralList.length})
-                    </h4>
-
-                    <div style={{ overflowX: 'auto', borderRadius: '8px', border: '1px solid var(--border-color)' }}>
-                        <table style={{ minWidth: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '0.85rem' }}>
-                            <thead>
-                                <tr style={{ backgroundColor: 'var(--bg-secondary)', color: 'var(--text-secondary)' }}>
-                                    <th style={{ padding: '12px', borderBottom: '1px solid var(--border-color)' }}>ID</th>
-                                    <th style={{ padding: '12px', borderBottom: '1px solid var(--border-color)' }}>Nombre</th>
-                                    <th style={{ padding: '12px', borderBottom: '1px solid var(--border-color)' }}>Actual</th>
-                                    <th style={{ padding: '12px', borderBottom: '1px solid var(--border-color)' }}>Destino</th>
-                                    <th style={{ padding: '12px', borderBottom: '1px solid var(--border-color)' }}>Score %</th>
-                                    <th style={{ padding: '12px', borderBottom: '1px solid var(--border-color)' }}>Req. %</th>
-                                    <th style={{ padding: '12px', borderBottom: '1px solid var(--border-color)' }}>Status</th>
-                                    <th style={{ padding: '12px', borderBottom: '1px solid var(--border-color)', textAlign: 'right' }}>Acciones</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {muralList.map(item => {
-                                    const isEditing = editingMuralId === item.id;
-
-                                    if (isEditing) {
-                                        return (
-                                            <tr key={item.id} style={{ backgroundColor: 'var(--bg-secondary)', borderBottom: '1px solid var(--border-color)' }}>
-                                                <td style={{ padding: '12px' }}>{item.employeeId}</td>
-                                                <td style={{ padding: '12px' }}>
-                                                    <input type="text" value={editData.firstName} onChange={e => setEditData({ ...editData, firstName: e.target.value })} style={{ width: '100%', padding: '4px', background: 'var(--bg-primary)', border: '1px solid var(--border-color)', color: 'var(--text-primary)' }} />
-                                                </td>
-                                                <td style={{ padding: '12px' }}>
-                                                    <input type="text" value={editData.currentPosition} onChange={e => setEditData({ ...editData, currentPosition: e.target.value })} style={{ width: '100%', padding: '4px', background: 'var(--bg-primary)', border: '1px solid var(--border-color)', color: 'var(--text-primary)' }} />
-                                                </td>
-                                                <td style={{ padding: '12px' }}>
-                                                    <input type="text" value={editData.promotionTo} onChange={e => setEditData({ ...editData, promotionTo: e.target.value })} style={{ width: '100%', padding: '4px', background: 'var(--bg-primary)', border: '1px solid var(--border-color)', color: 'var(--text-primary)' }} />
-                                                </td>
-                                                <td style={{ padding: '12px' }}>
-                                                    <input type="number" value={editData.score} onChange={e => setEditData({ ...editData, score: e.target.value })} style={{ width: '50px', padding: '4px', background: 'var(--bg-primary)', border: '1px solid var(--border-color)', color: 'var(--text-primary)' }} />
-                                                </td>
-                                                <td style={{ padding: '12px' }}>
-                                                    <input type="number" value={editData.requiredScore} onChange={e => setEditData({ ...editData, requiredScore: e.target.value })} style={{ width: '50px', padding: '4px', background: 'var(--bg-primary)', border: '1px solid var(--border-color)', color: 'var(--text-primary)' }} />
-                                                </td>
-                                                <td style={{ padding: '12px' }}>—</td>
-                                                <td style={{ padding: '12px', display: 'flex', gap: '8px', justifyContent: 'flex-end' }}>
-                                                    <button onClick={handleSaveEdit} title="Guardar" style={{ padding: '6px', background: '#22c55e', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' }}><Check size={14} /></button>
-                                                    <button onClick={handleCancelEdit} title="Cancelar" style={{ padding: '6px', background: '#ef4444', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' }}><CancelIcon size={14} /></button>
-                                                </td>
-                                            </tr>
-                                        )
-                                    }
-
-                                    return (
-                                        <tr key={item.id} style={{ borderBottom: '1px solid var(--border-color)', color: 'var(--text-primary)' }}>
-                                            <td style={{ padding: '12px' }}>{item.employeeId}</td>
-                                            <td style={{ padding: '12px', fontWeight: 600 }}>{item.firstName}</td>
-                                            <td style={{ padding: '12px', color: 'var(--text-secondary)' }}>{item.currentPosition}</td>
-                                            <td style={{ padding: '12px', color: 'var(--text-secondary)' }}>{item.promotionTo}</td>
-                                            <td style={{ padding: '12px', fontWeight: 'bold' }}>{item.score}%</td>
-                                            <td style={{ padding: '12px', color: 'var(--text-secondary)' }}>{item.requiredScore}%</td>
-                                            <td style={{ padding: '12px' }}>
-                                                {item.passed
-                                                    ? <span style={{ color: '#10b981', background: 'rgba(16,185,129,0.1)', padding: '2px 8px', borderRadius: '12px', fontSize: '0.75rem', fontWeight: 'bold' }}>APROBADO</span>
-                                                    : <span style={{ color: '#ef4444', background: 'rgba(239,68,68,0.1)', padding: '2px 8px', borderRadius: '12px', fontSize: '0.75rem', fontWeight: 'bold' }}>REPROBADO</span>
-                                                }
-                                            </td>
-                                            <td style={{ padding: '12px', display: 'flex', gap: '8px', justifyContent: 'flex-end' }}>
-                                                <button onClick={() => handleGenerateQR(item)} title="Descargar Invitación QR" style={{ padding: '6px', background: 'transparent', color: '#3b82f6', border: '1px solid #3b82f6', borderRadius: '4px', cursor: 'pointer' }}>
-                                                    <Download size={14} />
-                                                </button>
-                                                <button onClick={() => handleEditClick(item)} title="Editar Registro" style={{ padding: '6px', background: 'transparent', color: '#f59e0b', border: '1px solid #f59e0b', borderRadius: '4px', cursor: 'pointer' }}>
-                                                    <Pencil size={14} />
-                                                </button>
-                                                <button onClick={() => handleDeleteMural(item.id)} title="Eliminar del Mural" style={{ padding: '6px', background: 'transparent', color: '#ef4444', border: '1px solid #ef4444', borderRadius: '4px', cursor: 'pointer' }}>
-                                                    <Trash2 size={14} />
-                                                </button>
-                                            </td>
-                                        </tr>
-                                    );
-                                })}
-                                {muralList.length === 0 && (
-                                    <tr>
-                                        <td colSpan="8" style={{ padding: '20px', textAlign: 'center', color: 'var(--text-tertiary)' }}>No hay resultados en el mural.</td>
-                                    </tr>
-                                )}
-                            </tbody>
-                        </table>
                     </div>
                 </div>
-
-            </div>
+            )}
         </div>
     );
 }
@@ -1019,6 +1145,7 @@ const ACTION_META = {
 function InduccionAuditSection() {
     const [logs, setLogs] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [isOpen, setIsOpen] = useState(false);
 
     useEffect(() => {
         const q = query(
@@ -1041,45 +1168,63 @@ function InduccionAuditSection() {
     };
 
     return (
-        <div className={styles.card}>
-            <h3 className={styles.cardTitle}>
-                <BookOpen className={styles.cardIcon} style={{ width: 18, height: 18 }} />
-                Actividad en Inducción
-            </h3>
+        <div className={styles.card} style={{ marginTop: '20px', padding: isOpen ? '20px' : '0', overflow: 'hidden' }}>
+            <div
+                onClick={() => setIsOpen(!isOpen)}
+                style={{
+                    padding: isOpen ? '0 0 15px 0' : '20px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    cursor: 'pointer',
+                    borderBottom: isOpen ? '1px solid var(--border-color)' : 'none'
+                }}
+            >
+                <h3 className={styles.cardTitle} style={{ margin: 0 }}>
+                    <BookOpen className={styles.cardIcon} style={{ width: 18, height: 18 }} />
+                    Actividad en Inducción
+                </h3>
+                {isOpen ? <ChevronUp size={20} color="var(--text-secondary)" /> : <ChevronDown size={20} color="var(--text-secondary)" />}
+            </div>
 
-            {loading ? (
-                <p style={{ fontSize: '0.8rem', color: 'var(--text-tertiary)', padding: '1rem 0' }}>Cargando historial...</p>
-            ) : logs.length === 0 ? (
-                <p style={{ fontSize: '0.8rem', color: 'var(--text-tertiary)', padding: '1rem 0' }}>No hay actividad registrada aún.</p>
-            ) : (
-                <ul style={{ listStyle: 'none', padding: 0, margin: '0.75rem 0 0', display: 'flex', flexDirection: 'column', gap: 8 }}>
-                    {logs.map(log => {
-                        const meta = ACTION_META[log.action] || { label: log.action, color: 'var(--text-tertiary)', icon: RefreshCw };
-                        const Icon = meta.icon;
-                        return (
-                            <li key={log.id} style={{ display: 'flex', alignItems: 'flex-start', gap: 10, padding: '8px 10px', borderRadius: 8, background: 'var(--bg-secondary)', border: '1px solid var(--border-color)' }}>
-                                <span style={{ marginTop: 2, color: meta.color, flexShrink: 0 }}>
-                                    <Icon size={14} />
-                                </span>
-                                <div style={{ flex: 1, minWidth: 0 }}>
-                                    <p style={{ margin: 0, fontSize: '0.8rem', color: 'var(--text-primary)', lineHeight: 1.4 }}>
-                                        <strong style={{ color: meta.color }}>{meta.label}</strong>
-                                        {' '}
-                                        <span style={{ fontWeight: 600 }}>{log.userName}</span>
-                                        {' — '}
-                                        <span style={{ color: 'var(--text-secondary)' }}>{log.target}</span>
-                                    </p>
-                                    {log.detail && (
-                                        <p style={{ margin: 0, fontSize: '0.72rem', color: 'var(--text-tertiary)', marginTop: 2 }}>{log.detail}</p>
-                                    )}
-                                </div>
-                                <span style={{ fontSize: '0.7rem', color: 'var(--text-tertiary)', flexShrink: 0, whiteSpace: 'nowrap' }}>
-                                    {formatTime(log.timestamp)}
-                                </span>
-                            </li>
-                        );
-                    })}
-                </ul>
+            {isOpen && (
+                <div style={{ marginTop: '10px' }}>
+
+                    {loading ? (
+                        <p style={{ fontSize: '0.8rem', color: 'var(--text-tertiary)', padding: '1rem 0' }}>Cargando historial...</p>
+                    ) : logs.length === 0 ? (
+                        <p style={{ fontSize: '0.8rem', color: 'var(--text-tertiary)', padding: '1rem 0' }}>No hay actividad registrada aún.</p>
+                    ) : (
+                        <ul style={{ listStyle: 'none', padding: 0, margin: '0.75rem 0 0', display: 'flex', flexDirection: 'column', gap: 8 }}>
+                            {logs.map(log => {
+                                const meta = ACTION_META[log.action] || { label: log.action, color: 'var(--text-tertiary)', icon: RefreshCw };
+                                const Icon = meta.icon;
+                                return (
+                                    <li key={log.id} style={{ display: 'flex', alignItems: 'flex-start', gap: 10, padding: '8px 10px', borderRadius: 8, background: 'var(--bg-secondary)', border: '1px solid var(--border-color)' }}>
+                                        <span style={{ marginTop: 2, color: meta.color, flexShrink: 0 }}>
+                                            <Icon size={14} />
+                                        </span>
+                                        <div style={{ flex: 1, minWidth: 0 }}>
+                                            <p style={{ margin: 0, fontSize: '0.8rem', color: 'var(--text-primary)', lineHeight: 1.4 }}>
+                                                <strong style={{ color: meta.color }}>{meta.label}</strong>
+                                                {' '}
+                                                <span style={{ fontWeight: 600 }}>{log.userName}</span>
+                                                {' — '}
+                                                <span style={{ color: 'var(--text-secondary)' }}>{log.target}</span>
+                                            </p>
+                                            {log.detail && (
+                                                <p style={{ margin: 0, fontSize: '0.72rem', color: 'var(--text-tertiary)', marginTop: 2 }}>{log.detail}</p>
+                                            )}
+                                        </div>
+                                        <span style={{ fontSize: '0.7rem', color: 'var(--text-tertiary)', flexShrink: 0, whiteSpace: 'nowrap' }}>
+                                            {formatTime(log.timestamp)}
+                                        </span>
+                                    </li>
+                                );
+                            })}
+                        </ul>
+                    )}
+                </div>
             )}
         </div>
     );

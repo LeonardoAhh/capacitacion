@@ -5,7 +5,7 @@ import { db } from '@/lib/firebase';
 import { doc, getDoc, getDocs, collection, query, limit } from 'firebase/firestore';
 import styles from './page.module.css';
 
-import { Search, Award, Star, Target, Calendar, CheckCircle2, AlertCircle, RefreshCw } from 'lucide-react';
+import { Search, Award, Star, Target, Calendar, CheckCircle2, AlertCircle, RefreshCw, BookOpen } from 'lucide-react';
 
 // Lightweight component for confetti (optional, can use a real library if requested later)
 // Creating a simple CSS-based particle emitter for Success Card
@@ -207,6 +207,52 @@ export default function MuralPage() {
                                     </div>
                                 </div>
                             </div>
+
+                            {/* FEEDBACK / RECOMENDACIONES (SOLO SI NO APROBÓ Y EXISTE) */}
+                            {!result.data.passed && result.data.recommendations && (
+                                <div style={{
+                                    marginTop: '1.2rem',
+                                    padding: '1rem',
+                                    backgroundColor: 'rgba(239, 68, 68, 0.05)',
+                                    border: '1px solid rgba(239, 68, 68, 0.2)',
+                                    borderRadius: '8px',
+                                    textAlign: 'left'
+                                }}>
+                                    <h4 style={{
+                                        color: '#ef4444',
+                                        fontSize: '0.85rem',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        gap: '6px',
+                                        margin: '0 0 8px 0',
+                                        fontWeight: '600'
+                                    }}>
+                                        <BookOpen size={16} /> Recomendaciones de Estudio
+                                    </h4>
+                                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
+                                        {Array.isArray(result.data.recommendations) && result.data.recommendations.length > 0
+                                            ? result.data.recommendations.map((rec, i) => (
+                                                <span key={i} style={{
+                                                    padding: '2px 8px',
+                                                    background: '#fee2e2',
+                                                    color: '#991b1b',
+                                                    borderRadius: '12px',
+                                                    fontSize: '0.75rem',
+                                                    border: '1px solid #fecaca',
+                                                    fontWeight: '500'
+                                                }}>
+                                                    {rec}
+                                                </span>
+                                            ))
+                                            : (
+                                                <p style={{ margin: 0, fontSize: '0.85rem', color: 'var(--text-secondary)', lineHeight: '1.5', whiteSpace: 'pre-wrap' }}>
+                                                    {result.data.recommendations}
+                                                </p>
+                                            )
+                                        }
+                                    </div>
+                                </div>
+                            )}
                         </div>
 
                         <div className={styles.cardFooter}>

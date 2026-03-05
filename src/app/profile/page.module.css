@@ -1,4 +1,47 @@
-/* Container Layout */
+/* =========================================================
+   Profile page — Design tokens (patrón ShapeHero)
+   Colores corporativos VP: Azul #003ccc · Verde success
+   ========================================================= */
+
+/* ─── Tokens light mode ─────────────────────────────────── */
+.container {
+    /* VP Brand */
+    --vp-blue:       #003ccc;
+    --vp-blue-light: #1a55e0;
+    --vp-white:      #ffffff;
+
+    /* Banner & ring */
+    --profile-banner:      linear-gradient(135deg, var(--vp-blue) 0%, #001a6e 100%);
+    --profile-ring:        linear-gradient(135deg, var(--vp-blue-light), var(--vp-blue));
+    --profile-ring-shadow: var(--shadow-md);
+
+    /* Avatar overlay button */
+    --profile-overlay-bg:    rgba(0, 0, 0, 0.45);
+    --profile-overlay-color: var(--vp-white);
+
+    /* Status pulse glow */
+    --profile-status-glow: color-mix(in srgb, var(--color-success) 40%, transparent);
+
+    /* Header text (sobre el banner azul) */
+    --profile-header-name: var(--vp-white);
+    --profile-header-meta: color-mix(in srgb, var(--vp-white) 70%, transparent);
+
+    /* Email pill */
+    --profile-pill-hover-bg:     color-mix(in srgb, var(--vp-blue) 8%, var(--bg-secondary));
+    --profile-pill-hover-border: color-mix(in srgb, var(--vp-blue) 30%, var(--border-color));
+    --profile-pill-focus:        var(--vp-blue);
+}
+
+/* ─── Tokens dark mode ──────────────────────────────────── */
+[data-theme="dark"] .container {
+    --vp-blue:       #4d80ff;
+    --vp-blue-light: #7ba8ff;
+
+    --profile-banner: linear-gradient(135deg, var(--bg-tertiary) 0%, var(--bg-primary) 100%);
+    --profile-ring:   linear-gradient(135deg, var(--vp-blue), color-mix(in srgb, var(--vp-blue) 50%, var(--bg-tertiary)));
+}
+
+/* ─── Layout ─────────────────────────────────────────────── */
 .profileContainer {
     position: fixed;
     top: 20px;
@@ -9,279 +52,197 @@
 .container {
     padding-top: 1rem;
     padding-bottom: 3rem;
-    max-width: 1200px;
+    max-width: 1100px;
     margin: 0 auto;
-    padding-left: 1rem;
-    padding-right: 1rem;
+    padding-left: 1.25rem;
+    padding-right: 1.25rem;
     display: flex;
     flex-direction: column;
     gap: 1.5rem;
 }
 
-.backButton {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    background: none;
-    border: none;
-    cursor: pointer;
-    color: var(--text-secondary);
-    font-size: 0.9rem;
-    margin-top: 1.5rem;
-    margin-bottom: 0.5rem;
-    padding: 0;
-    transition: color 0.2s ease, transform 0.2s ease;
-}
-
-.backButton:hover {
-    color: var(--text-primary);
-    transform: translateX(-3px);
-}
-
-/* Profile Header Card */
+/* ─── Header Card ───────────────────────────────────────── */
 .headerCard {
     background: var(--card-background);
     border-radius: var(--radius-xl);
     box-shadow: var(--shadow-md);
-    margin-top: 0;
-    margin-bottom: 0;
+    border: 1px solid var(--border-color);
+    overflow: hidden;
     position: relative;
-    z-index: 10;
-    padding: 2rem;
+}
+
+/* Banner gradient strip */
+.banner {
+    height: 120px;
+    background: var(--profile-banner);
+}
+
+/* Avatar + text row */
+.avatarSection {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 1.5rem;
-    border: 1px solid var(--border-color);
+    gap: 1rem;
+    padding: 0 1.5rem 1.5rem;
+    margin-top: -60px;
 }
 
-@media (min-width: 768px) {
-    .headerCard {
+@media (min-width: 600px) {
+    .avatarSection {
         flex-direction: row;
         align-items: flex-end;
-        padding: 2.5rem;
-        text-align: left;
     }
 }
 
-/* Avatar */
-.avatarContainer {
+/* Avatar ring wrapper */
+.avatarWrapper {
     position: relative;
     flex-shrink: 0;
+    border-radius: 50%;
+    padding: 3px;
+    background: var(--profile-ring);
+    box-shadow: var(--profile-ring-shadow);
 }
 
 .avatar {
     width: 120px;
     height: 120px;
     border-radius: 50%;
+    border: 4px solid var(--card-background);
     background: var(--bg-tertiary);
-    border: 5px solid var(--bg-secondary);
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 3rem;
-    font-weight: bold;
-    color: var(--text-secondary);
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
 }
 
-.statusIndicator {
-    width: 20px;
-    height: 20px;
-    background-color: var(--color-success);
-    border: 3px solid var(--bg-secondary);
-    border-radius: 50%;
-    position: absolute;
-    bottom: 5px;
-    right: 5px;
-}
-
+/* Overlay button — visible on hover */
 .changeAvatarBtn {
     position: absolute;
-    bottom: 0;
-    right: -10px;
-    background: var(--bg-secondary);
-    border: 1px solid var(--border-color);
+    inset: 4px;
     border-radius: 50%;
-    width: 32px;
-    height: 32px;
+    background: var(--profile-overlay-bg);
+    border: none;
+    cursor: pointer;
+    color: var(--profile-overlay-color);
     display: flex;
     align-items: center;
     justify-content: center;
-    cursor: pointer;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    color: var(--text-secondary);
-    transition: all 0.2s;
-    z-index: 5;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+    backdrop-filter: blur(2px);
 }
 
-.changeAvatarBtn:hover {
-    background: var(--color-primary);
-    color: white;
-    transform: scale(1.1);
+.avatarWrapper:hover .changeAvatarBtn {
+    opacity: 1;
 }
 
-/* User Info Text */
-.userInfo {
-    flex: 1;
-    text-align: center;
+/* Online status dot */
+.statusIndicator {
+    width: 16px;
+    height: 16px;
+    background-color: var(--color-success);
+    border: 3px solid var(--card-background);
+    border-radius: 50%;
+    position: absolute;
+    bottom: 4px;
+    right: 4px;
+    animation: pulseStatus 2s ease-in-out infinite;
 }
 
-@media (min-width: 768px) {
-    .userInfo {
-        text-align: left;
+@keyframes pulseStatus {
+    0%, 100% { box-shadow: 0 0 0 0 var(--profile-status-glow); }
+    50%       { box-shadow: 0 0 0 5px transparent; }
+}
+
+/* ─── Header text ───────────────────────────────────────── */
+.headerContent {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.4rem;
+    padding-top: 0.75rem;
+}
+
+@media (min-width: 600px) {
+    .headerContent {
+        align-items: flex-start;
+        padding-top: 0;
+        padding-bottom: 0.25rem;
     }
+}
+
+.headerMeta {
+    margin: 0;
+    font-size: 0.7rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--profile-header-meta);
 }
 
 .userName {
     margin: 0;
-    font-size: 2rem;
+    font-size: 1.875rem;
     font-family: 'Playfair Display', Georgia, serif;
     font-weight: 700;
-    color: var(--text-primary);
+    letter-spacing: -0.02em;
+    color: var(--profile-header-name);
+    line-height: 1.2;
 }
 
-.userEmail {
-    margin: 0.5rem 0 1rem;
-    color: var(--text-secondary);
-    font-size: 1rem;
-}
-
-.badgeContainer {
-    display: flex;
-    gap: 0.5rem;
-    justify-content: center;
-    flex-wrap: wrap;
-}
-
-@media (min-width: 768px) {
-    .badgeContainer {
-        justify-content: flex-start;
-    }
-}
-
-.badge {
-    padding: 0.25rem 0.75rem;
-    border-radius: 999px;
-    font-size: 0.8rem;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-}
-
-.badgePrimary {
-    background-color: rgba(0, 122, 255, 0.1);
-    /* blue-500 optimized opacity */
-    color: var(--blue-500);
-}
-
-.badgeSecondary {
-    background-color: rgba(88, 86, 214, 0.1);
-    /* purple-500 opacity */
-    color: var(--purple-500);
-}
-
-/* Content Layout - Single Column */
-.grid {
-    max-width: 700px;
-    margin: 0 auto;
-}
-
-
-/* Common Card Styles */
-.card {
-    background: var(--card-background);
-    border-radius: var(--radius-xl);
-    border: 1px solid var(--card-border);
-    padding: 1.5rem;
-    box-shadow: var(--shadow-sm);
-}
-
-.cardTitle {
-    margin-top: 0;
-    margin-bottom: 1.5rem;
-    font-size: 1.25rem;
-    font-weight: 600;
-    color: var(--text-primary);
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    padding-bottom: 0.75rem;
-    border-bottom: 1px solid var(--border-color);
-}
-
-.cardIcon {
-    width: 24px;
-    height: 24px;
-    color: var(--text-secondary);
-}
-
-/* Details List */
-.detailsList {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-}
-
-.detailsItem {
-    display: flex;
-    justify-content: space-between;
-    padding: 0.75rem 0;
-    border-bottom: 1px solid var(--border-color);
-    font-size: 0.95rem;
-}
-
-.detailsItem:last-child {
-    border-bottom: none;
-}
-
-.label {
-    color: var(--text-secondary);
-}
-
-.value {
-    color: var(--text-primary);
-    font-weight: 500;
-}
-
-/* Email Reveal Section */
+/* ─── Email Pill ─────────────────────────────────────────── */
 .emailSection {
-    margin: 0.5rem 0 1rem;
     display: flex;
-    align-items: center;
     justify-content: center;
-    gap: 1rem;
-    flex-wrap: wrap;
+    margin: 0.1rem 0;
 }
 
-@media (min-width: 768px) {
+@media (min-width: 600px) {
     .emailSection {
         justify-content: flex-start;
     }
 }
 
-.emailWrapper {
+.emailPill {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.3rem 0.75rem;
+    border-radius: var(--radius-full);
+    border: 1px solid var(--border-color);
+    background: var(--bg-secondary);
+    cursor: pointer;
+    transition: background var(--transition-fast), border-color var(--transition-fast);
+    outline-offset: 2px;
+}
+
+.emailPill:hover {
+    background: var(--profile-pill-hover-bg);
+    border-color: var(--profile-pill-hover-border);
+}
+
+.emailPill:focus-visible {
+    outline: 2px solid var(--profile-pill-focus);
+}
+
+.revealIcon {
     display: flex;
     align-items: center;
-    gap: 0.5rem;
-    background-color: transparent;
-    padding: 0;
-    border: none;
+    color: var(--text-secondary);
+    flex-shrink: 0;
 }
 
 .emailText {
     font-family: monospace;
-    font-size: 1rem;
-    transition: filter 0.3s ease, color 0.3s ease;
+    font-size: 0.875rem;
     color: var(--text-primary);
+    transition: filter var(--transition-base);
 }
 
 .blur {
     filter: blur(5px);
     user-select: none;
     -webkit-user-select: none;
-    cursor: pointer;
-    opacity: 0.7;
 }
 
 .noBlur {
@@ -290,49 +251,152 @@
     -webkit-user-select: none;
 }
 
-.revealIcon {
+/* ─── Badge ──────────────────────────────────────────────── */
+.badgeContainer {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-top: 0.1rem;
+}
+
+/* ─── Tabs ───────────────────────────────────────────────── */
+.tabsContainer {
+    width: 100%;
+}
+
+.tabSection {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+}
+
+/* ─── Perfil — Details Card ──────────────────────────────── */
+.detailsTitle {
+    font-size: 0.7rem !important;
+    font-weight: 700 !important;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text-secondary) !important;
+}
+
+.detailsContent {
+    display: flex;
+    flex-direction: column;
+}
+
+.detailRow {
     display: flex;
     align-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem 0;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.detailRow:last-child {
+    border-bottom: none;
+}
+
+.detailIcon {
+    width: 32px;
+    height: 32px;
+    flex-shrink: 0;
+    border-radius: var(--radius-md);
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    color: var(--text-secondary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.detailLabel {
+    flex: 1;
+    font-size: 0.9rem;
     color: var(--text-secondary);
 }
 
-.revealBtn {
-    background: none;
-    border: none;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    color: var(--text-secondary);
-    padding: 0;
-    transition: color 0.2s;
-}
-
-.revealBtn:hover {
+.detailValue {
+    font-size: 0.9rem;
+    font-weight: 600;
     color: var(--text-primary);
+    text-align: right;
 }
 
-.copyBtn {
+/* ─── Subcomponents: Card shell ──────────────────────────── */
+/* Usado por AdminSection, AdminMuralSection, InduccionAuditSection */
+.card {
+    background: var(--card-background);
+    border-radius: var(--radius-xl);
+    border: 1px solid var(--border-color);
+    box-shadow: var(--shadow-sm);
+    overflow: hidden;
+}
+
+.cardTitle {
+    margin: 0;
+    font-size: 1rem;
+    font-weight: 600;
+    font-family: 'Playfair Display', Georgia, serif;
+    color: var(--text-primary);
     display: flex;
     align-items: center;
     gap: 0.5rem;
-    background: var(--bg-secondary);
-    border: 1px solid var(--border-color);
-    padding: 0.4rem 0.8rem;
-    border-radius: var(--radius-md);
-    cursor: pointer;
-    font-size: 0.85rem;
-    font-weight: 500;
+    letter-spacing: -0.01em;
+}
+
+.cardIcon {
+    width: 18px;
+    height: 18px;
     color: var(--text-secondary);
-    transition: all 0.2s;
+    flex-shrink: 0;
 }
 
-.copyBtn:hover {
-    background: var(--bg-tertiary);
-    color: var(--text-primary);
+/* ─── Skeleton ───────────────────────────────────────────── */
+.bannerSkeleton {
+    border-radius: var(--radius-xl) var(--radius-xl) 0 0 !important;
 }
 
-.copyBtn.copied {
-    border-color: var(--color-success);
-    color: var(--color-success);
-    background: rgba(52, 199, 89, 0.1);
+/* ─── Responsive ─────────────────────────────────────────── */
+@media (max-width: 768px) {
+    .container {
+        padding-left: 1rem;
+        padding-right: 1rem;
+        gap: 1.25rem;
+    }
+
+    .userName {
+        font-size: 1.5rem;
+    }
+
+    .cardTitle {
+        font-size: 0.95rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .banner {
+        height: 96px;
+    }
+
+    .avatarSection {
+        margin-top: -48px;
+    }
+
+    .avatar {
+        width: 96px;
+        height: 96px;
+    }
+
+    .userName {
+        font-size: 1.25rem;
+    }
+
+    .headerMeta {
+        font-size: 0.65rem;
+    }
+
+    .detailLabel,
+    .detailValue {
+        font-size: 0.85rem;
+    }
 }
