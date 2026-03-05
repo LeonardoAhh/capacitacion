@@ -1,6 +1,9 @@
 /* ==================== MURAL VISTA PUBLICA - PREMIUM MINIMALISTA ==================== */
+
+/* @keyframes confettiFall está declarado en globals.css */
+
 .main {
-    min-height: 100vh;
+    min-height: 100dvh;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -8,15 +11,15 @@
     position: relative;
     overflow-x: hidden;
     background: #09090b;
-    /* Zinc 950 muy oscuro */
-    padding: var(--spacing-xl) var(--spacing-md);
+    padding: 2rem 1rem;
     font-family: 'Inter', system-ui, sans-serif;
     color: #f8fafc;
+    box-sizing: border-box;
 }
 
-/* Background Animated Blobs Modernos */
+/* Background Animated Blobs */
 .bgDecoration {
-    position: absolute;
+    position: fixed;
     width: 100vw;
     height: 100vh;
     top: 0;
@@ -37,56 +40,44 @@
 .blob {
     position: absolute;
     border-radius: 50%;
-    filter: blur(120px);
-    opacity: 0.25;
+    filter: blur(100px);
+    opacity: 0.2;
     animation: float 25s infinite ease-in-out;
+    will-change: transform;
 }
 
 .blob1 {
-    width: 500px;
-    height: 500px;
+    width: clamp(200px, 40vw, 500px);
+    height: clamp(200px, 40vw, 500px);
     background: #d97706;
-    /* Amber suave */
     top: -10%;
     right: -10%;
     animation-delay: 0s;
 }
 
 .blob2 {
-    width: 400px;
-    height: 400px;
+    width: clamp(160px, 35vw, 400px);
+    height: clamp(160px, 35vw, 400px);
     background: #2563eb;
-    /* Royal Blue */
     bottom: -15%;
     left: -5%;
     animation-delay: -5s;
 }
 
 .blob3 {
-    width: 300px;
-    height: 300px;
+    width: clamp(120px, 25vw, 300px);
+    height: clamp(120px, 25vw, 300px);
     background: #059669;
-    /* Emerald */
     top: 40%;
     left: 30%;
     animation-delay: -10s;
-    opacity: 0.1;
+    opacity: 0.08;
 }
 
 @keyframes float {
-
-    0%,
-    100% {
-        transform: translateY(0) scale(1);
-    }
-
-    33% {
-        transform: translateY(-40px) scale(1.05);
-    }
-
-    66% {
-        transform: translateY(20px) scale(0.95);
-    }
+    0%, 100% { transform: translateY(0) scale(1); }
+    33%       { transform: translateY(-40px) scale(1.05); }
+    66%       { transform: translateY(20px) scale(0.95); }
 }
 
 .container {
@@ -96,9 +87,10 @@
     max-width: 640px;
     display: flex;
     flex-direction: column;
-    gap: 2.5rem;
+    gap: 2rem;
 }
 
+/* Header */
 .header {
     text-align: center;
     display: flex;
@@ -108,46 +100,40 @@
 }
 
 .headerIconWrapper {
-    width: 80px;
-    height: 80px;
+    width: 72px;
+    height: 72px;
     background: linear-gradient(135deg, rgba(245, 158, 11, 0.2), rgba(217, 119, 6, 0.05));
     border: 1px solid rgba(245, 158, 11, 0.3);
-    border-radius: 24px;
+    border-radius: 20px;
     display: flex;
     align-items: center;
     justify-content: center;
     color: #f59e0b;
     box-shadow: 0 10px 30px rgba(245, 158, 11, 0.1);
+    flex-shrink: 0;
 }
 
 .header h1 {
-    font-size: 2.5rem;
+    font-size: clamp(1.75rem, 5vw, 2.5rem);
     font-weight: 800;
     color: #f8fafc;
     margin: 0;
     letter-spacing: -1px;
+    word-break: break-word;
 }
 
-.header p {
-    color: #94a3b8;
-    font-size: 1.1rem;
-    margin: 0;
-    font-weight: 400;
-}
-
-/* Search Box Premium Minimalista */
+/* Search Box */
 .searchBox {
     background: rgba(24, 24, 27, 0.6);
-    /* Zinc 900 trans */
     backdrop-filter: blur(24px);
     -webkit-backdrop-filter: blur(24px);
     border: 1px solid rgba(255, 255, 255, 0.08);
     border-radius: 32px;
-    padding: 1rem;
+    padding: 0.875rem;
     box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.05);
     display: flex;
     align-items: center;
-    gap: 1rem;
+    gap: 0.75rem;
     transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.3s;
 }
 
@@ -161,17 +147,20 @@
     flex: 1;
     display: flex;
     align-items: center;
-    gap: 12px;
-    padding-left: 1rem;
+    gap: 10px;
+    padding-left: 0.75rem;
+    min-width: 0;
 }
 
 .searchIcon {
     color: #64748b;
+    flex-shrink: 0;
 }
 
 .searchInput {
     width: 100%;
-    font-size: 1.25rem;
+    min-width: 0;
+    font-size: clamp(1rem, 3vw, 1.25rem);
     border: none;
     background: transparent;
     color: #f8fafc;
@@ -189,22 +178,29 @@
     background: #f8fafc;
     color: #0f172a;
     font-weight: 700;
-    font-size: 1rem;
-    padding: 0.8rem 1.5rem;
+    font-size: 0.95rem;
+    padding: 0.75rem 1.25rem;
     border-radius: 24px;
     border: none;
     cursor: pointer;
-    transition: all 0.2s ease;
+    transition: background 0.2s ease, transform 0.2s ease;
     display: flex;
     align-items: center;
     justify-content: center;
     gap: 8px;
-    min-width: 120px;
+    min-width: 100px;
+    white-space: nowrap;
+    flex-shrink: 0;
+    touch-action: manipulation;
 }
 
 .searchBtn:hover:not(:disabled) {
     background: #e2e8f0;
     transform: scale(1.02);
+}
+
+.searchBtn:active:not(:disabled) {
+    transform: scale(0.98);
 }
 
 .searchBtn:disabled {
@@ -213,7 +209,7 @@
     cursor: not-allowed;
 }
 
-/* -------------------- RESULT CARDS PREMIUM -------------------- */
+/* -------------------- RESULT CARDS -------------------- */
 .resultCard {
     width: 100%;
     animation: slideUpFade 0.7s cubic-bezier(0.16, 1, 0.3, 1) forwards;
@@ -222,7 +218,7 @@
     background: rgba(24, 24, 27, 0.8);
     backdrop-filter: blur(30px);
     -webkit-backdrop-filter: blur(30px);
-    border-radius: 32px;
+    border-radius: 28px;
     overflow: hidden;
     position: relative;
     border: 1px solid rgba(255, 255, 255, 0.05);
@@ -230,104 +226,82 @@
 }
 
 @keyframes slideUpFade {
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
+    to { opacity: 1; transform: translateY(0); }
 }
 
-.cardSuccess {
-    box-shadow: 0 25px 50px -12px rgba(16, 185, 129, 0.15);
-}
+.cardSuccess      { box-shadow: 0 25px 50px -12px rgba(16, 185, 129, 0.15); }
+.cardMotivational { box-shadow: 0 25px 50px -12px rgba(59, 130, 246, 0.15); }
 
-.cardMotivational {
-    box-shadow: 0 25px 50px -12px rgba(59, 130, 246, 0.15);
-}
-
-/* Header de la Tarjeta */
+/* Card Header */
 .cardHeader {
-    padding: 3rem 2rem 2rem 2rem;
+    padding: 3rem 1.5rem 2rem;
     display: flex;
     flex-direction: column;
     align-items: center;
     text-align: center;
     position: relative;
     border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    gap: 0.5rem;
 }
 
-.cardSuccess .cardHeader {
-    background: linear-gradient(180deg, rgba(16, 185, 129, 0.1) 0%, transparent 100%);
-}
-
-.cardMotivational .cardHeader {
-    background: linear-gradient(180deg, rgba(59, 130, 246, 0.1) 0%, transparent 100%);
-}
+.cardSuccess      .cardHeader { background: linear-gradient(180deg, rgba(16, 185, 129, 0.1) 0%, transparent 100%); }
+.cardMotivational .cardHeader { background: linear-gradient(180deg, rgba(59, 130, 246, 0.1) 0%, transparent 100%); }
 
 .statusBadge {
     position: absolute;
-    top: 1.5rem;
+    top: 1.25rem;
+    left: 50%;
+    transform: translateX(-50%);
     display: inline-flex;
     align-items: center;
     gap: 6px;
-    padding: 6px 16px;
+    padding: 5px 14px;
     border-radius: 20px;
-    font-size: 0.85rem;
+    font-size: 0.78rem;
     font-weight: 600;
     letter-spacing: 0.5px;
     text-transform: uppercase;
+    white-space: nowrap;
 }
 
-.cardSuccess .statusBadge {
-    background: rgba(16, 185, 129, 0.15);
-    color: #34d399;
-    border: 1px solid rgba(16, 185, 129, 0.3);
-}
+.cardSuccess      .statusBadge { background: rgba(16, 185, 129, 0.15); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.3); }
+.cardMotivational .statusBadge { background: rgba(59, 130, 246, 0.15); color: #60a5fa; border: 1px solid rgba(59, 130, 246, 0.3); }
 
-.cardMotivational .statusBadge {
-    background: rgba(59, 130, 246, 0.15);
-    color: #60a5fa;
-    border: 1px solid rgba(59, 130, 246, 0.3);
-}
-
-/* Score Circle Minimalista */
+/* Score */
 .scoreCircle {
     display: flex;
     align-items: baseline;
     justify-content: center;
-    margin: 1rem 0;
+    margin: 0.75rem 0 0.25rem;
 }
 
 .scoreValue {
-    font-size: 5rem;
+    font-size: clamp(3.5rem, 12vw, 5rem);
     font-weight: 900;
     line-height: 1;
     letter-spacing: -2px;
 }
 
 .scoreUnit {
-    font-size: 2rem;
+    font-size: clamp(1.5rem, 5vw, 2rem);
     font-weight: 700;
     color: #64748b;
     margin-left: 2px;
 }
 
-.cardSuccess .scoreValue {
-    color: #34d399;
-}
-
-.cardMotivational .scoreValue {
-    color: #f8fafc;
-}
+.cardSuccess      .scoreValue { color: #34d399; }
+.cardMotivational .scoreValue { color: #f8fafc; }
 
 .employeeName {
-    font-size: 1.75rem;
+    font-size: clamp(1.25rem, 4vw, 1.75rem);
     font-weight: 800;
     color: #f8fafc;
-    margin: 0.5rem 0 0.25rem 0;
+    margin: 0;
+    word-break: break-word;
 }
 
 .employeePosition {
-    font-size: 1.1rem;
+    font-size: clamp(0.9rem, 2.5vw, 1.1rem);
     color: #94a3b8;
     font-weight: 500;
     margin: 0;
@@ -335,48 +309,44 @@
 
 /* Card Body */
 .cardBody {
-    padding: 2.5rem 2rem;
+    padding: 2rem 1.5rem;
     display: flex;
     flex-direction: column;
-    gap: 2rem;
+    gap: 1.5rem;
 }
 
 .messageBox {
     text-align: center;
-    font-size: 1.15rem;
-    line-height: 1.6;
+    font-size: clamp(0.95rem, 2.5vw, 1.15rem);
+    line-height: 1.65;
     color: #cbd5e1;
-    font-weight: 400;
 }
 
 .metricsGrid {
     display: grid;
     grid-template-columns: 1fr;
-    gap: 1rem;
+    gap: 0.75rem;
 }
 
 .metricItem {
     background: rgba(255, 255, 255, 0.03);
     border: 1px solid rgba(255, 255, 255, 0.05);
-    border-radius: 16px;
-    padding: 1.25rem 2rem;
+    border-radius: 14px;
+    padding: 1.1rem 1.5rem;
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 1.2rem;
+    gap: 1rem;
     text-align: left;
     transition: background 0.2s;
 }
 
-.metricItem>div {
+.metricItem > div {
     flex-grow: 1;
     min-width: 0;
-    /* Permite que el texto fluya libremente */
 }
 
-.metricItem:hover {
-    background: rgba(255, 255, 255, 0.05);
-}
+.metricItem:hover { background: rgba(255, 255, 255, 0.05); }
 
 .metricIcon {
     color: #64748b;
@@ -384,7 +354,7 @@
 }
 
 .metricLabel {
-    font-size: 0.75rem;
+    font-size: 0.72rem;
     text-transform: uppercase;
     font-weight: 600;
     color: #64748b;
@@ -392,38 +362,76 @@
     letter-spacing: 0.5px;
 }
 
-.metricValue {
-    font-size: 1.1rem;
-    font-weight: 700;
-    color: #f8fafc;
-}
-
 .metricValueHighlight {
-    font-size: 1rem;
+    font-size: 0.95rem;
     font-weight: 700;
     color: #f59e0b;
-    /* Amber */
     word-break: break-word;
-    /* Forza la ruptura si el texto es muy largo */
     white-space: normal;
     line-height: 1.4;
+}
+
+/* Recommendations */
+.recommendations {
+    margin-top: 0.25rem;
+    padding: 1rem;
+    background-color: rgba(239, 68, 68, 0.05);
+    border: 1px solid rgba(239, 68, 68, 0.2);
+    border-radius: 10px;
+    text-align: left;
+}
+
+.recommendationsTitle {
+    color: #ef4444;
+    font-size: 0.82rem;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin: 0 0 10px;
+    font-weight: 600;
+}
+
+.recommendationTags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+.recommendationTag {
+    padding: 3px 10px;
+    background: #fee2e2;
+    color: #991b1b;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    border: 1px solid #fecaca;
+    font-weight: 500;
+}
+
+.recommendationText {
+    margin: 0;
+    font-size: 0.85rem;
+    color: #94a3b8;
+    line-height: 1.55;
+    white-space: pre-wrap;
 }
 
 /* Card Footer */
 .cardFooter {
     background: rgba(0, 0, 0, 0.2);
-    padding: 1.5rem 2rem;
+    padding: 1.25rem 1.5rem;
     display: flex;
     justify-content: space-between;
     align-items: center;
     border-top: 1px solid rgba(255, 255, 255, 0.05);
+    gap: 0.75rem;
+    flex-wrap: wrap;
 }
 
 .dateInfo {
     display: flex;
     align-items: center;
     gap: 6px;
-    font-size: 0.85rem;
+    font-size: 0.82rem;
     color: #64748b;
     font-weight: 500;
 }
@@ -433,77 +441,74 @@
     border: none;
     color: #94a3b8;
     font-weight: 600;
-    font-size: 0.9rem;
+    font-size: 0.88rem;
     cursor: pointer;
     transition: color 0.2s;
+    touch-action: manipulation;
+    padding: 4px 0;
 }
 
-.resetBtnAction:hover {
-    color: #f8fafc;
-}
+.resetBtnAction:hover { color: #f8fafc; }
 
-/* Loading State */
+/* Loading */
 .loadingState {
     display: flex;
     flex-direction: column;
     align-items: center;
     gap: 1rem;
     color: #94a3b8;
-    margin-top: 2rem;
+    margin-top: 1.5rem;
 }
 
 .spinner {
-    width: 48px;
-    height: 48px;
+    width: 44px;
+    height: 44px;
     border: 3px solid rgba(255, 255, 255, 0.1);
     border-top-color: #f59e0b;
     border-radius: 50%;
-    animation: spinner-spin 1s linear infinite;
+    animation: spinnerSpin 1s linear infinite;
 }
 
-@keyframes spinner-spin {
-    to {
-        transform: rotate(360deg);
-    }
+@keyframes spinnerSpin {
+    to { transform: rotate(360deg); }
 }
 
 .spinIcon {
-    animation: spinner-spin 1.5s linear infinite;
+    animation: spinnerSpin 1.5s linear infinite;
 }
 
-/* Not Found Error */
+/* Error / Not Found */
 .notFound {
     background: rgba(239, 68, 68, 0.1);
     border: 1px solid rgba(239, 68, 68, 0.2);
-    border-radius: 20px;
-    padding: 2rem;
+    border-radius: 18px;
+    padding: 1.75rem 1.5rem;
     text-align: center;
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 1rem;
+    gap: 0.875rem;
     color: #fca5a5;
     animation: slideUpFade 0.4s ease forwards;
 }
 
-.errorIcon {
-    color: #ef4444;
-}
+.errorIcon { color: #ef4444; }
 
 .resetBtnMinimal {
-    margin-top: 0.5rem;
+    margin-top: 0.25rem;
     background: rgba(239, 68, 68, 0.15);
     color: #fca5a5;
     border: 1px solid rgba(239, 68, 68, 0.3);
-    padding: 8px 16px;
+    padding: 8px 18px;
     border-radius: 12px;
     cursor: pointer;
-    font-size: 0.9rem;
+    font-size: 0.88rem;
     font-weight: 600;
     display: flex;
     align-items: center;
     gap: 6px;
-    transition: all 0.2s;
+    transition: background 0.2s, color 0.2s;
+    touch-action: manipulation;
 }
 
 .resetBtnMinimal:hover {
@@ -511,28 +516,60 @@
     color: #fff;
 }
 
-/* Responsive */
-@media (max-width: 640px) {
-    .header h1 {
-        font-size: 2rem;
-    }
+/* ==================== RESPONSIVE ==================== */
 
-    .metricsGrid {
-        grid-template-columns: 1fr;
-    }
+/* Tablet */
+@media (max-width: 768px) {
+    .container { gap: 1.75rem; }
+    .cardHeader { padding: 3rem 1.25rem 1.75rem; }
+    .cardBody   { padding: 1.75rem 1.25rem; gap: 1.25rem; }
+    .cardFooter { padding: 1.1rem 1.25rem; }
+}
 
-    .cardFooter {
-        flex-direction: column;
-        gap: 1rem;
-        text-align: center;
-    }
+/* Mobile */
+@media (max-width: 480px) {
+    .main { padding: 1.5rem 0.75rem; justify-content: flex-start; padding-top: 2rem; }
+
+    .headerIconWrapper { width: 60px; height: 60px; border-radius: 16px; }
 
     .searchBox {
-        padding: 0.75rem;
-        border-radius: 24px;
+        padding: 0.625rem;
+        border-radius: 20px;
+        gap: 0.5rem;
     }
 
-    .searchInput {
-        font-size: 1.1rem;
+    .inputWrapper { padding-left: 0.5rem; gap: 8px; }
+    .searchIcon  { width: 18px; height: 18px; }
+
+    .searchBtn {
+        padding: 0.65rem 1rem;
+        min-width: 80px;
+        font-size: 0.875rem;
+        border-radius: 16px;
     }
+
+    .cardHeader { padding: 3rem 1rem 1.5rem; }
+    .cardBody   { padding: 1.5rem 1rem; gap: 1rem; }
+    .cardFooter { padding: 1rem; flex-direction: column; text-align: center; }
+
+    .metricItem  { padding: 0.875rem 1rem; }
+    .statusBadge { font-size: 0.72rem; padding: 4px 12px; }
+}
+
+/* Very small (< 360px) */
+@media (max-width: 360px) {
+    .searchBtn  { min-width: 72px; padding: 0.6rem 0.75rem; }
+    .cardHeader { padding: 2.75rem 0.75rem 1.25rem; }
+    .cardBody   { padding: 1.25rem 0.75rem; }
+    .cardFooter { padding: 0.875rem 0.75rem; }
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+    .blob, .spinner, .spinIcon, .resultCard, .notFound {
+        animation: none;
+    }
+    .resultCard { opacity: 1; transform: none; }
+    .notFound   { opacity: 1; }
+    .spinner    { border-color: #f59e0b; }
 }

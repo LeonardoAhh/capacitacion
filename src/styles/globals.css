@@ -1,5 +1,10 @@
 /* Tailwind directives removed - Using Pure CSS */
 
+/* Confetti animation — referenced by inline styles en /mural */
+@keyframes confettiFall {
+    to { transform: translateY(120vh) rotate(720deg); opacity: 0; }
+}
+
 /* Import Course Design System */
 @import './courses.css';
 @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700;900&display=swap');
