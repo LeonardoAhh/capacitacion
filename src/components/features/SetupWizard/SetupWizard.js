@@ -70,7 +70,7 @@ export default function SetupWizard({ isOpen, onClose, user, onUpdateAvatar, onU
         <div className={styles.overlay}>
             <div className={styles.container}>
                 <div className={styles.progressContainer}>
-                    <div className={styles.progressBar} style={{ width: `${(step / 4) * 100}%` }} />
+                    <div className={styles.progressBar} style={{ width: `${(step / 3) * 100}%` }} />
                 </div>
 
                 <div className={styles.content}>
@@ -155,41 +155,7 @@ export default function SetupWizard({ isOpen, onClose, user, onUpdateAvatar, onU
                                 ))}
                             </div>
 
-                            <button className={styles.primaryBtn} onClick={handleNext}>
-                                Siguiente <ArrowRight size={18} />
-                            </button>
-                        </div>
-                    )}
-
-                    {/* STEP 4: THEME */}
-                    {step === 4 && (
-                        <div className={styles.step}>
-                            <div className={styles.headerRow}>
-                                <Palette size={20} className={styles.stepIcon} />
-                                <h3>Personaliza tu Tema</h3>
-                            </div>
-
-                            <div className={styles.themesGrid}>
-                                {Object.entries(availableThemes).map(([key, theme]) => (
-                                    <button
-                                        key={key}
-                                        className={`${styles.themeOption} ${selectedTheme === key ? styles.selectedTheme : ''}`}
-                                        onClick={() => handleThemeSelect(key)}
-                                        style={{
-                                            backgroundColor: theme.color,
-                                            color: key === 'dark' ? 'white' : 'black',
-                                            border: key === 'light' ? '1px solid #e2e8f0' : 'none'
-                                        }}
-                                    >
-                                        <div className={styles.checkCircle}>
-                                            {selectedTheme === key && <Check size={12} />}
-                                        </div>
-                                        <span className={styles.themeName}>{theme.name}</span>
-                                    </button>
-                                ))}
-                            </div>
-
-                            <div className={styles.actions}>
+                            <div className={styles.actions} style={{ marginTop: '1rem' }}>
                                 <button className={styles.primaryBtn} onClick={handleFinish}>
                                     Terminar y Entrar <Check size={18} />
                                 </button>

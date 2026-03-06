@@ -1,12 +1,18 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { X } from 'lucide-react';
 import styles from './DataCenter.module.css';
 import { DATA_CENTER_ITEMS } from '../config/constants';
 
 export default function DataCenter() {
     const [selectedData, setSelectedData] = useState(null);
+    const [mounted, setMounted] = useState(false);
+
+    useEffect(() => {
+        setMounted(true);
+    }, []);
 
     return (
         <section className={styles.dataCenterSection}>
@@ -29,7 +35,7 @@ export default function DataCenter() {
                 ))}
             </div>
 
-            {selectedData && (
+            {mounted && selectedData && createPortal(
                 <div className={styles.modal} onClick={() => setSelectedData(null)}>
                     <div className={styles.modalContent} onClick={(e) => e.stopPropagation()}>
                         <div className={styles.modalHeader}>
@@ -47,7 +53,8 @@ export default function DataCenter() {
                             {selectedData.content}
                         </div>
                     </div>
-                </div>
+                </div>,
+                document.body
             )}
         </section>
     );

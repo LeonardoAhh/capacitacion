@@ -11,7 +11,6 @@ import { destroySession } from '@/lib/sessionApi';
 import SetupWizard from '@/components/features/SetupWizard/SetupWizard';
 import AvatarSelector from '@/components/ui/AvatarSelector/AvatarSelector';
 import ThemeSelectorModal from '@/components/layout/ThemeSelectorModal/ThemeSelectorModal';
-import PWAPrompt from '@/components/guards/PWAPrompt/PWAPrompt';
 import WelcomeScreen from './components/WelcomeScreen';
 import ImportantInfoCards from './components/ImportantInfoCards';
 // import RoadmapTimeline from './components/RoadmapTimeline'; // Oculto temporalmente
@@ -241,7 +240,6 @@ export default function CandidatoDashboard() {
                 onUpdateNickname={updateNickname}
             />
 
-            <PWAPrompt />
 
             <ThemeSelectorModal
                 isOpen={showThemeSelector}

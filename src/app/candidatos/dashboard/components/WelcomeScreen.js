@@ -11,8 +11,6 @@ export default function WelcomeScreen({ candidate, onStart }) {
 
     const firstName = candidate?.nickname?.trim() || extractFirstName(candidate?.name || candidate?.nombre);
     const photoUrl = getCandidatePhotoUrl(candidate);
-    const position = candidate?.position || candidate?.puesto || 'Por asignar';
-    const area = candidate?.area || 'Por asignar';
 
     return (
         <div className={styles.overlay} role="main">
@@ -51,17 +49,6 @@ export default function WelcomeScreen({ candidate, onStart }) {
                         A continuación encontrarás los cursos de inducción que deberás completar
                         para conocer nuestra empresa, políticas y tu puesto de trabajo.
                     </p>
-                </div>
-
-                <div className={styles.infoGrid}>
-                    <div className={styles.infoItem}>
-                        <span className={styles.infoLabel}>Puesto</span>
-                        <span className={styles.infoValue}>{position}</span>
-                    </div>
-                    <div className={styles.infoItem}>
-                        <span className={styles.infoLabel}>Área</span>
-                        <span className={styles.infoValue}>{area}</span>
-                    </div>
                 </div>
 
                 <button

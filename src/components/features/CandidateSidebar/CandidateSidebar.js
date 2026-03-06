@@ -1,8 +1,9 @@
 import React from 'react';
 import Link from 'next/link';
 import NextImage from 'next/image';
-import { LogOut, LayoutDashboard, X, MessageCircle } from 'lucide-react';
+import { LogOut, LayoutDashboard, X, MessageCircle, Download } from 'lucide-react';
 import styles from './CandidateSidebar.module.css';
+import { usePWAInstall } from '@/hooks/usePWAInstall';
 
 export default function CandidateSidebar({
     user,
@@ -10,6 +11,8 @@ export default function CandidateSidebar({
     isOpen,
     onClose
 }) {
+    const { isInstallable, promptInstall } = usePWAInstall();
+
     const getInitialsLocal = (name) => {
         if (!name) return 'US';
         const words = name.trim().split(' ');
@@ -70,6 +73,22 @@ export default function CandidateSidebar({
                             Dashboard
                         </span>
                     </button>
+
+                    {isInstallable && (
+                        <button
+                            type="button"
+                            className={styles.sidebarItem}
+                            onClick={promptInstall}
+                            title="Instalar como Aplicación NATIVA"
+                        >
+                            <span className={styles.sidebarItemLeft}>
+                                <span className={styles.sidebarItemIcon} aria-hidden="true">
+                                    <Download size={15} />
+                                </span>
+                                Instalar App
+                            </span>
+                        </button>
+                    )}
                 </nav>
 
                 <div className={styles.sidebarProfile}>
