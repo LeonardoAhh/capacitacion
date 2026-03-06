@@ -21,20 +21,12 @@
     --sb-overlay-bg: rgba(0, 0, 0, 0.4);
     --sb-shadow: rgba(0, 0, 0, 0.12);
 
-    /* Fondo mesh suave en light */
-    background-image:
-        radial-gradient(ellipse 80% 60% at 0% 0%, rgba(245, 158, 11, 0.04) 0%, transparent 60%),
-        radial-gradient(ellipse 60% 50% at 100% 100%, rgba(99, 102, 241, 0.04) 0%, transparent 60%);
 }
 
 [data-theme="dark"] .layoutPage {
     --sb-bg: transparent;
     --sb-border: rgba(245, 158, 11, 0.08);
     --sb-hover-bg: rgba(245, 158, 11, 0.10);
-
-    background-image:
-        radial-gradient(ellipse 80% 60% at 0% 0%, rgba(245, 158, 11, 0.06) 0%, transparent 60%),
-        radial-gradient(ellipse 60% 50% at 100% 100%, rgba(99, 102, 241, 0.06) 0%, transparent 60%);
 }
 
 @media (min-width: 768px) {

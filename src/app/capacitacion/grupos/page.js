@@ -72,6 +72,7 @@ export default function GruposPage() {
     // â”€â”€ Auth guard â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     useEffect(() => {
         if (!authLoading && !user) router.push('/login');
+        else if (user?.rol === 'demo' || user?.email?.includes('demo')) router.push('/induccion');
         else if (user) loadGroups();
     }, [user, authLoading]); // eslint-disable-line react-hooks/exhaustive-deps
 

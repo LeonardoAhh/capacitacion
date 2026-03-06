@@ -1,8 +1,7 @@
-﻿'use client';
+'use client';
 
 import { useState, useEffect, useMemo, useCallback } from 'react';
 import AdminLayout from '@/components/layout/AdminLayout/AdminLayout';
-import BackButton from '@/components/ui/BackButton/BackButton';
 import { useAuth } from '@/contexts/AuthContext';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/Button/Button';
@@ -73,6 +72,8 @@ export default function CumplimientoPage() {
     useEffect(() => {
         if (!authLoading && !user) {
             router.push('/login');
+        } else if (user?.rol === 'demo' || user?.email?.includes('demo')) {
+            router.push('/induccion');
         } else if (user) {
             loadData();
         }
@@ -305,7 +306,6 @@ export default function CumplimientoPage() {
             <div className={styles.container}>
                 <div className={styles.header}>
                     <div className={styles.headerLeft}>
-                        <BackButton href="/dashboard" />
                         <h1>Cumplimiento por Curso</h1>
                         <p className={styles.subtitle}>Visualiza el progreso de capacitación por cada curso</p>
                     </div>

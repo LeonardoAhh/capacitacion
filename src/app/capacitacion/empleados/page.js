@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 
 import { useState, useEffect } from 'react';
 
@@ -6,13 +6,13 @@ import AdminLayout from '@/components/layout/AdminLayout/AdminLayout';
 import { useAuth } from '@/contexts/AuthContext';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import BackButton from '@/components/ui/BackButton/BackButton';
 import { Card, CardContent } from '@/components/ui/Card/Card';
 import { Button } from '@/components/ui/Button/Button';
 import { useToast } from '@/components/ui/Toast/Toast';
 import { db } from '@/lib/firebase';
 import { uploadFile } from '@/lib/upload';
 import { collection, getDocs, query, orderBy, doc, updateDoc, setDoc, getDoc, deleteDoc, where, limit, writeBatch } from 'firebase/firestore';
+import { Users, CheckCircle, AlertTriangle } from 'lucide-react';
 
 import { Dialog, DialogHeader, DialogTitle, DialogBody, DialogFooter, DialogClose } from '@/components/ui/Dialog/Dialog';
 import { Avatar } from '@/components/ui/Avatar/Avatar';
@@ -53,6 +53,8 @@ export default function EmpleadosPage() {
     useEffect(() => {
         if (!authLoading && !user) {
             router.push('/login');
+        } else if (!authLoading && user && (user.rol === 'demo' || user.email?.includes('demo'))) {
+            router.push('/induccion');
         }
     }, [user, authLoading, router]);
 
@@ -445,7 +447,6 @@ export default function EmpleadosPage() {
                 {/* Header */}
                 <div className={styles.header}>
                     <div className={styles.headerLeft}>
-                        <BackButton href="/dashboard" />
                         <div className={styles.headerContent}>
                             <h1>Gestión de Empleados</h1>
                             <p>Administración de personal y datos maestros</p>
@@ -454,34 +455,37 @@ export default function EmpleadosPage() {
                     </div>
                 </div>
 
-                {/* Stats Summary */}
+                {/* Stats Summary & Search Bar */}
                 <div className={styles.topSection}>
                     <div className={styles.statCard}>
-                        <div className={`${styles.statIcon} ${styles.statIconBlue}`}>👥</div>
+                        <div className={`${styles.statIcon} ${styles.statIconBlue}`}>
+                            <Users size={18} />
+                        </div>
                         <div className={styles.statInfo}>
                             <span className={styles.statValue}>{filteredEmployees.length}</span>
                             <span className={styles.statLabel}>Empleados</span>
                         </div>
                     </div>
                     <div className={styles.statCard}>
-                        <div className={`${styles.statIcon} ${styles.statIconGreen}`}>✓</div>
+                        <div className={`${styles.statIcon} ${styles.statIconGreen}`}>
+                            <CheckCircle size={18} />
+                        </div>
                         <div className={styles.statInfo}>
                             <span className={styles.statValue}>{filteredEmployees.filter(e => (e.matrix?.compliancePercentage || 0) >= 80).length}</span>
                             <span className={styles.statLabel}>Cumplimiento ≥80%</span>
                         </div>
                     </div>
                     <div className={styles.statCard}>
-                        <div className={`${styles.statIcon} ${styles.statIconOrange}`}>⚠</div>
+                        <div className={`${styles.statIcon} ${styles.statIconOrange}`}>
+                            <AlertTriangle size={18} />
+                        </div>
                         <div className={styles.statInfo}>
                             <span className={styles.statValue}>{filteredEmployees.filter(e => (e.matrix?.compliancePercentage || 0) < 70).length}</span>
                             <span className={styles.statLabel}>Requieren Atención</span>
                         </div>
                     </div>
-                </div>
 
-                {/* Search Bar */}
-                <div className={styles.searchSection}>
-                    <div style={{ flex: 1 }}>
+                    <div className={styles.searchWrapper}>
                         <EmployeeSearchBar
                             searchTerm={searchTerm}
                             onSearchChange={setSearchTerm}
@@ -490,6 +494,8 @@ export default function EmpleadosPage() {
                         />
                     </div>
                 </div>
+
+
 
                 {/* Filters */}
                 <div className={styles.filterCard}>

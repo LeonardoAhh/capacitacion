@@ -1,8 +1,7 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
-import Navbar from '@/components/layout/Navbar/Navbar';
-import BackButton from '@/components/ui/BackButton/BackButton';
+import AdminLayout from '@/components/layout/AdminLayout/AdminLayout';
 import { useAuth } from '@/contexts/AuthContext';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/Button/Button';
@@ -58,6 +57,8 @@ export default function CatalogPage() {
     useEffect(() => {
         if (!authLoading && !user) {
             router.push('/login');
+        } else if (user?.rol === 'demo' || user?.email?.includes('demo')) {
+            router.push('/induccion');
         } else if (user) {
             loadCourses();
         }
@@ -182,13 +183,11 @@ export default function CatalogPage() {
     };
 
     return (
-        <>
-            <Navbar />
+        <AdminLayout title="Catálogo de Cursos">
             <main className={styles.main}>
                 <div className={styles.container}>
                     <div className={styles.header}>
                         <div className={styles.headerLeft}>
-                            <BackButton href="/dashboard" />
                             <h1>Catálogo de Cursos</h1>
                         </div>
                         <div className={styles.headerRight}>
@@ -385,6 +384,6 @@ export default function CatalogPage() {
                     <Button variant="danger" onClick={confirmDelete}>Eliminar</Button>
                 </DialogFooter>
             </Dialog>
-        </>
+        </AdminLayout>
     );
 }

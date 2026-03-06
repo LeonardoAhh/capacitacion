@@ -25,6 +25,8 @@ export default function ExamenPage() {
     useEffect(() => {
         if (!authLoading && !user) {
             router.push('/login');
+        } else if (!authLoading && user && (user.rol === 'demo' || user.email?.includes('demo'))) {
+            router.push('/induccion');
         }
     }, [user, authLoading, router]);
 

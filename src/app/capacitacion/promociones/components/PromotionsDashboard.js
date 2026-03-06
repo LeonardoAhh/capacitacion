@@ -1,8 +1,9 @@
 import React, { useMemo } from 'react';
 import { checkPromotionCriteria, normalizePromotionRule } from '@/lib/promotionUtils';
+import { Users, Rocket, Construction } from 'lucide-react';
 import styles from './PromotionsDashboard.module.css';
 
-export default function PromotionsDashboard({ employees, promotionRules }) {
+export default function PromotionsDashboard({ employees, promotionRules, children }) {
     const stats = useMemo(() => {
         let totalValidos = 0;
         let aptos = 0;
@@ -63,22 +64,26 @@ export default function PromotionsDashboard({ employees, promotionRules }) {
     return (
         <div className={styles.dashboardContainer}>
             <div className={`${styles.statCard} ${styles.blueCard}`}>
-                <div className={styles.statIcon}>👥</div>
-                <div className={styles.statInfo}>
-                    <span className={styles.statLabel}>Total en Proceso</span>
+                <div className={`${styles.statIcon} ${styles.blueIcon}`}>
+                    <Users size={20} strokeWidth={2.5} />
+                </div>
+                <div className={styles.statContent}>
                     <span className={styles.statValue}>{stats.total}</span>
+                    <span className={styles.statLabel}>Total en Proceso</span>
                     <span className={styles.statDesc}>Empleados con ruta de promoción</span>
                 </div>
             </div>
 
             <div className={`${styles.statCard} ${styles.greenCard}`}>
-                <div className={styles.statIcon}>🚀</div>
-                <div className={styles.statInfo}>
-                    <span className={styles.statLabel}>Tasa de Aptitud</span>
+                <div className={`${styles.statIcon} ${styles.greenIcon}`}>
+                    <Rocket size={20} strokeWidth={2.5} />
+                </div>
+                <div className={styles.statContent}>
                     <div className={styles.statValueRow}>
                         <span className={styles.statValue}>{stats.porcentajeAptitud}%</span>
                         <div className={styles.pillBadge}>{stats.aptos} Listos</div>
                     </div>
+                    <span className={styles.statLabel}>Tasa de Aptitud</span>
                     <div className={styles.miniProgressBar}>
                         <div className={styles.miniProgressFill} style={{ width: `${stats.porcentajeAptitud}%` }} />
                     </div>
@@ -86,13 +91,21 @@ export default function PromotionsDashboard({ employees, promotionRules }) {
             </div>
 
             <div className={`${styles.statCard} ${styles.orangeCard}`}>
-                <div className={styles.statIcon}>🚧</div>
-                <div className={styles.statInfo}>
-                    <span className={styles.statLabel}>Principal Bloqueo</span>
+                <div className={`${styles.statIcon} ${styles.orangeIcon}`}>
+                    <Construction size={20} strokeWidth={2.5} />
+                </div>
+                <div className={styles.statContent}>
                     <span className={styles.statValueText}>{stats.cuelloDeBotella}</span>
+                    <span className={styles.statLabel}>Principal Bloqueo</span>
                     <span className={styles.statDesc}>Frena a {stats.cuelloValor} personas</span>
                 </div>
             </div>
+
+            {children && (
+                <div className={styles.dashboardActions}>
+                    {children}
+                </div>
+            )}
         </div>
     );
 }

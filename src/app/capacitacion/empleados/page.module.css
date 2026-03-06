@@ -17,12 +17,7 @@
 
 /* === BACKGROUND EFFECTS === */
 .bgDecoration {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    z-index: 0;
+    display: none;
     pointer-events: none;
 }
 
@@ -75,15 +70,18 @@
 .container {
     position: relative;
     z-index: 10;
-    max-width: 900px;
-    margin: 0 auto;
-    padding: var(--spacing-xl);
+    width: 100%;
+    margin: 0;
+    padding: var(--spacing-md) var(--spacing-xl);
+    flex: 1;
+    display: flex;
+    flex-direction: column;
 }
 
 /* === MASTER-DETAIL LAYOUT FOR LARGE SCREENS === */
 @media (min-width: 1024px) {
     .container {
-        max-width: 1400px;
+        width: 100%;
         padding: 24px 40px;
     }
 
@@ -238,6 +236,7 @@
 
 .headerContent h1 {
     font-size: 2rem;
+    font-family: var(--font-serif);
     font-weight: 800;
     color: var(--text-primary);
     margin: 0 0 6px 0;
@@ -258,48 +257,60 @@
 .topSection {
     display: flex;
     flex-wrap: wrap;
-    gap: 12px;
+    align-items: center; /* Asegura alineado vertical al centro con la barra de búsqueda */
+    gap: 24px;
     margin-bottom: var(--spacing-lg);
 }
 
 .statCard {
     display: flex;
     align-items: center;
-    gap: 10px;
-    padding: 14px 18px;
-    background: rgba(255, 255, 255, 0.5);
-    backdrop-filter: blur(12px);
-    border: 1px solid rgba(255, 255, 255, 0.25);
-    border-radius: 14px;
-    flex: 1;
-    min-width: 140px;
+    gap: 12px;
+    padding: 10px 20px 10px 14px;
+    background: rgba(255, 255, 255, 0.72);
+    backdrop-filter: blur(28px) saturate(180%);
+    -webkit-backdrop-filter: blur(28px) saturate(180%);
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    border-radius: 999px; /* Forma de píldora */
+    min-width: max-content;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04), inset 0 1px 0 rgba(255, 255, 255, 1);
 }
 
 [data-theme="dark"] .statCard {
-    background: rgba(35, 35, 40, 0.5);
-    border-color: rgba(255, 255, 255, 0.06);
+    background: rgba(35, 35, 40, 0.72);
+    border-color: rgba(255, 255, 255, 0.08);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.06);
 }
 
 .statIcon {
-    width: 38px;
-    height: 38px;
-    border-radius: 10px;
+    width: 42px;
+    height: 42px;
+    border-radius: 50%; /* Icono circular */
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 1.1rem;
+    color: var(--text-primary);
 }
 
 .statIconBlue {
     background: rgba(59, 130, 246, 0.12);
+    color: #3b82f6;
 }
 
 .statIconGreen {
     background: rgba(34, 197, 94, 0.12);
+    color: #22c55e;
 }
 
 .statIconOrange {
     background: rgba(249, 115, 22, 0.12);
+    color: #f97316;
+}
+
+.searchWrapper {
+    flex: 1;
+    min-width: 300px;
+    margin-left: auto; /* Empuja la barra al extremo derecho */
 }
 
 .statInfo {
@@ -465,6 +476,7 @@
 }
 
 .empName {
+    font-family: var(--font-serif);
     font-size: 0.95rem;
     font-weight: 600;
     color: var(--text-primary);
@@ -731,6 +743,7 @@
 .table th {
     background: var(--bg-tertiary);
     font-size: 0.75rem;
+    font-family: var(--font-serif);
     text-transform: uppercase;
     color: var(--text-secondary);
 }

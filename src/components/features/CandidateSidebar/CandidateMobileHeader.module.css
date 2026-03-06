@@ -62,7 +62,7 @@
 }
 
 /* Solo revelar en mobile */
-@media (max-width: 1024px) {
+@media (max-width: 767px) {
     .header {
         display: flex;
         /* Separar del borde superior de la pantalla / navegador */

@@ -13,8 +13,8 @@ export default function MainSidebar({ user, handleLogout, isOpen, onClose }) {
     const isDemo = user?.rol === 'demo' || user?.email?.includes('demo');
 
     const [expandedMenu, setExpandedMenu] = useState(
-        pathname.startsWith('/capacitacion') ? 'capacitacion' :
-            (pathname.startsWith('/dashboard') || pathname.startsWith('/employees') ? 'nuevos_ingresos' : null)
+        (pathname.startsWith('/capacitacion') || pathname.startsWith('/dashboard/candidates')) ? 'capacitacion' :
+            ((pathname === '/dashboard' || pathname.startsWith('/employees')) ? 'nuevos_ingresos' : null)
     );
 
     const toggleMenu = (menuId) => {
@@ -59,7 +59,8 @@ export default function MainSidebar({ user, handleLogout, isOpen, onClose }) {
                 { id: 'perfil', title: 'Perfiles de Puesto', href: '/capacitacion/perfil', icon: UserCheck },
                 { id: 'promociones', title: 'Promociones', href: '/capacitacion/promociones', icon: Briefcase },
                 { id: 'examen', title: 'Exámenes', href: '/capacitacion/examen', icon: FileText },
-                { id: 'calendario', title: 'Calendario', href: '/capacitacion/calendario', icon: Calendar }
+                { id: 'calendario', title: 'Calendario', href: '/capacitacion/calendario', icon: Calendar },
+                { id: 'postulantes', title: 'Postulantes', href: '/dashboard/candidates', icon: Users }
             ]
         },
         {

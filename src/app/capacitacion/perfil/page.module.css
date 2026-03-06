@@ -40,12 +40,7 @@
 
 /* === BACKGROUND EFFECTS === */
 .bgDecoration {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    z-index: 0;
+    display: none;
     pointer-events: none;
 }
 
@@ -250,9 +245,9 @@
 }
 
 .pageTitle {
-    font-size: 32px;
+    font-size: 2rem;
     font-family: var(--font-serif);
-    font-weight: 700;
+    font-weight: 800;
     color: var(--text-primary);
     margin: 0;
     letter-spacing: -0.5px;

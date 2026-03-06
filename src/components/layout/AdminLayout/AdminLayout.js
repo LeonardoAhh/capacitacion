@@ -36,7 +36,7 @@ export default function AdminLayout({ children, title = 'Viñoplastic RH' }) {
             {/* Header móvil adaptativo */}
             <CandidateMobileHeader
                 user={user}
-                onMenuClick={() => setIsSidebarOpen(true)}
+                onOpenSidebar={() => setIsSidebarOpen(true)}
                 title={title}
             />
 

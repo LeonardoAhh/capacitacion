@@ -122,9 +122,9 @@
 .container {
     position: relative;
     z-index: 10;
-    max-width: 100%;
+    width: 100%;
     margin: 0 auto;
-    padding: 0 var(--spacing-lg);
+    padding: 0 var(--spacing-xl);
 }
 
 /* ==================== HEADER ==================== */
@@ -173,11 +173,12 @@
 }
 
 .header h1 {
-    font-size: 2.25rem;
+    font-size: 2rem;
+    font-family: var(--font-serif);
     font-weight: 800;
     color: var(--text-primary);
     margin: 0;
-    letter-spacing: -0.02em;
+    letter-spacing: -0.5px;
 }
 
 .subtitle {
@@ -764,9 +765,6 @@
         padding: 0 var(--spacing-md);
     }
 
-    .header h1 {
-        font-size: 1.75rem;
-    }
 
     .selectorRow {
         flex-direction: column;

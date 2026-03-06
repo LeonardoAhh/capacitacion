@@ -31,6 +31,8 @@ export default function ComparacionPage() {
     useEffect(() => {
         if (!authLoading && !user) {
             router.push('/login');
+        } else if (!authLoading && user && (user.rol === 'demo' || user.email?.includes('demo'))) {
+            router.push('/induccion');
         }
     }, [user, authLoading, router]);
 
@@ -154,6 +156,10 @@ export default function ComparacionPage() {
                 </div>
 
                 <div className={styles.container}>
+                    <div className={styles.pageHeader}>
+                        <h1 className={styles.pageTitle}>Comparación de Perfiles</h1>
+                    </div>
+
                     {/* Search Section */}
                     <motion.div
                         className={styles.searchSection}

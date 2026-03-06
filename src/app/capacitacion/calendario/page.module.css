@@ -6,7 +6,7 @@
 .container {
     position: relative;
     z-index: 10;
-    max-width: 1400px;
+    width: 100%;
     margin: 0 auto;
     padding: 1.5rem 2rem;
     display: flex;
@@ -55,9 +55,11 @@
 
 .titleGroup h1 {
     font-size: 2rem;
-    font-weight: 700;
+    font-family: var(--font-serif);
+    font-weight: 800;
     margin: 0;
     color: var(--text-primary);
+    letter-spacing: -0.5px;
 }
 
 .titleGroup p {

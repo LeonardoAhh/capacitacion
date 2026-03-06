@@ -15,7 +15,6 @@
     flex-direction: column;
     background: var(--sb-bg, transparent);
     overflow: hidden;
-    z-index: 50;
     border-right: 1px solid var(--sb-border);
     transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
     padding-left: env(safe-area-inset-left, 0px);
@@ -356,7 +355,7 @@
     background: var(--sb-overlay-bg);
     backdrop-filter: blur(3px);
     -webkit-backdrop-filter: blur(3px);
-    z-index: 40;
+    z-index: 9998;
     opacity: 0;
     visibility: hidden;
     transition: opacity 0.3s ease, visibility 0.3s ease;
@@ -375,9 +374,10 @@
         bottom: 0;
         width: 280px;
         transform: translateX(-100%);
-        background: var(--bg-primary);
+        background: var(--bg-primary, #ffffff);
         box-shadow: 4px 0 24px var(--sb-shadow);
         border-right: none;
+        z-index: 9999;
     }
 
     .sidebar.open {

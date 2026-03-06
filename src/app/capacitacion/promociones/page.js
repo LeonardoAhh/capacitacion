@@ -1,8 +1,8 @@
-﻿'use client';
+'use client';
 
 import { useState, useEffect, useCallback } from 'react';
+import { Download, SlidersHorizontal } from 'lucide-react';
 import AdminLayout from '@/components/layout/AdminLayout/AdminLayout';
-import BackButton from '@/components/ui/BackButton/BackButton';
 import { Button } from '@/components/ui/Button/Button';
 import { useToast } from '@/components/ui/Toast/Toast';
 import { useAuth } from '@/contexts/AuthContext';
@@ -409,23 +409,19 @@ export default function PromocionesPage() {
         );
     }
 
+    if (user.rol === 'demo' || user.email?.includes('demo')) {
+        router.push('/induccion');
+        return null;
+    }
+
     return (
         <>
             <AdminLayout title="Promociones">
                 <div className={styles.container}>
                     <div className={styles.header}>
                         <div>
-                            <BackButton href="/dashboard" />
                             <h1>Control de Promociones</h1>
                             <p>Monitoreo de elegibilidad para cambio de categoría</p>
-                        </div>
-                        <div style={{ display: 'flex', gap: '0.75rem' }}>
-                            <button className={styles.headerActionBtn} onClick={handleExportExcel}>
-                                <span style={{ fontSize: '1.1rem' }}></span> Exportar Excel
-                            </button>
-                            <button className={styles.headerActionBtn} onClick={() => setRulesModal(true)}>
-                                <span style={{ fontSize: '1.1rem' }}></span> Reglas ({promotionRules.length})
-                            </button>
                         </div>
                     </div>
 
@@ -433,7 +429,14 @@ export default function PromocionesPage() {
                     <PromotionsDashboard
                         employees={employees}
                         promotionRules={promotionRules}
-                    />
+                    >
+                        <button className={styles.headerActionBtn} onClick={handleExportExcel}>
+                            <Download size={18} /> Exportar Excel
+                        </button>
+                        <button className={styles.headerActionBtn} onClick={() => setRulesModal(true)}>
+                            <SlidersHorizontal size={18} /> Reglas ({promotionRules.length})
+                        </button>
+                    </PromotionsDashboard>
 
                     {/* Filters */}
                     <FiltersBar

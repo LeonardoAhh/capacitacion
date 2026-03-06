@@ -84,6 +84,8 @@
 .checkboxItem {
     display: flex;
     align-items: center;
+    justify-content: flex-start;
+    text-align: left;
     gap: 12px;
     padding: 10px 12px;
     cursor: pointer;

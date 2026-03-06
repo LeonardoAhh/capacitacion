@@ -52,6 +52,8 @@ export default function PerfilPage() {
     useEffect(() => {
         if (!authLoading && !user) {
             router.push('/login');
+        } else if (!authLoading && user && (user.rol === 'demo' || user.email?.includes('demo'))) {
+            router.push('/induccion');
         }
     }, [authLoading, user, router]);
 

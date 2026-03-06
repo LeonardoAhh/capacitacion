@@ -8,7 +8,6 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/components/ui/Toast/Toast';
 import { Drawer, DrawerContent, DrawerHeader, DrawerTitle, DrawerClose } from '@/components/ui/Drawer/Drawer';
 import styles from './page.module.css';
-import BackButton from '@/components/ui/BackButton/BackButton';
 import { Search, Users, CheckCircle, Clock, AlertCircle, Bell, MessageCircle, Key, Filter, X, ChevronRight, Phone, ArrowUpDown, ArrowUp, ArrowDown } from 'lucide-react';
 import { useTheme } from '@/contexts/ThemeContext';
 import CandidateDrawer from '@/components/features/Dashboard/CandidateDrawer';
@@ -554,11 +553,11 @@ export default function CandidateMonitoringPage() {
                 userName={user?.name || user?.displayName || 'Usuario'}
             />
 
-            {/* Stats Overview */}
-            <div className={styles.statsGrid}>
+            {/* Stats, Search and Filters Row */}
+            <div className={styles.topControls}>
                 <div className={styles.statCard}>
                     <div className={`${styles.statIcon} ${styles.blue}`}>
-                        <Users />
+                        <Users size={20} strokeWidth={2.5} />
                     </div>
                     <div className={styles.statContent}>
                         <h3 className={styles.statValue}>{stats.total}</h3>
@@ -567,7 +566,7 @@ export default function CandidateMonitoringPage() {
                 </div>
                 <div className={styles.statCard}>
                     <div className={`${styles.statIcon} ${styles.green}`}>
-                        <CheckCircle />
+                        <CheckCircle size={20} strokeWidth={2.5} />
                     </div>
                     <div className={styles.statContent}>
                         <h3 className={styles.statValue}>{stats.completed}</h3>
@@ -576,7 +575,7 @@ export default function CandidateMonitoringPage() {
                 </div>
                 <div className={styles.statCard}>
                     <div className={`${styles.statIcon} ${styles.orange}`}>
-                        <Clock />
+                        <Clock size={20} strokeWidth={2.5} />
                     </div>
                     <div className={styles.statContent}>
                         <h3 className={styles.statValue}>{stats.avgProgress}%</h3>
@@ -585,69 +584,47 @@ export default function CandidateMonitoringPage() {
                 </div>
                 <div className={styles.statCard}>
                     <div className={`${styles.statIcon} ${styles.red}`}>
-                        <AlertCircle />
+                        <AlertCircle size={20} strokeWidth={2.5} />
                     </div>
                     <div className={styles.statContent}>
                         <h3 className={styles.statValue}>{stats.inactive}</h3>
                         <p className={styles.statLabel}>Sin Actividad (+2 días)</p>
                     </div>
                 </div>
-            </div>
 
-            {/* Search and Filters */}
-            <div className={styles.filterBar}>
-                <div className={styles.filterContent}>
-                    <div className={styles.searchContainer}>
-                        <Search className={styles.searchIcon} size={18} aria-hidden="true" />
-                        <input
-                            type="text"
-                            placeholder="Buscar por nombre, ID o puesto..."
-                            className={styles.searchInput}
-                            value={searchTerm}
-                            onChange={(e) => setSearchTerm(e.target.value)}
-                            aria-label="Buscar candidatos"
-                        />
-                        {searchTerm && (
-                            <button
-                                onClick={() => setSearchTerm('')}
-                                className={styles.clearSearch}
-                                aria-label="Limpiar búsqueda"
-                            >
-                                <X size={16} />
-                            </button>
-                        )}
-                    </div>
-
-                    {/* Desktop Filters */}
-                    <div className={styles.desktopFilters}>
-                        <select
-                            value={statusFilter}
-                            onChange={(e) => setStatusFilter(e.target.value)}
-                            className={styles.statusFilter}
-                            aria-label="Filtrar por estado"
+                {/* Filter Bar Inline */}
+                <div className={styles.searchContainer}>
+                    <Search className={styles.searchIcon} size={18} aria-hidden="true" />
+                    <input
+                        type="text"
+                        placeholder=""
+                        className={styles.searchInput}
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                        aria-label="Buscar candidatos"
+                    />
+                    {searchTerm && (
+                        <button
+                            onClick={() => setSearchTerm('')}
+                            className={styles.clearSearch}
+                            aria-label="Limpiar búsqueda"
                         >
-                            <option value="all">Todos los estados</option>
-                            <option value="completed">Completados</option>
-                            <option value="inProgress">En Proceso</option>
-                            <option value="inactive">Inactivos</option>
-                            <option value="notStarted">Sin Iniciar</option>
-                            <option value="archived">🗄️ Archivados</option>
-                        </select>
-                    </div>
-
-                    {/* Mobile Filter Toggle */}
-                    <button
-                        onClick={() => setShowMobileFilters(!showMobileFilters)}
-                        className={styles.mobileFilterToggle}
-                        aria-label="Mostrar filtros"
-                    >
-                        <Filter size={18} />
-                    </button>
+                            <X size={16} />
+                        </button>
+                    )}
                 </div>
 
-                {/* Mobile Filters Panel */}
-                {showMobileFilters && (
-                    <div className={styles.mobileFiltersPanel}>
+                <button
+                    onClick={() => setShowMobileFilters(!showMobileFilters)}
+                    className={`${styles.filterToggleButton} ${statusFilter !== 'all' ? styles.filterActive : ''}`}
+                    aria-label="Filtrar por estados"
+                    title="Filtrar candidatos"
+                >
+                    <Filter size={18} />
+                </button>
+            </div>
+            {showMobileFilters && (
+                <div className={styles.mobileFiltersPanel}>
                         <select
                             value={statusFilter}
                             onChange={(e) => setStatusFilter(e.target.value)}
@@ -662,8 +639,6 @@ export default function CandidateMonitoringPage() {
                         </select>
                     </div>
                 )}
-            </div>
-
             {/* Results Summary */}
             <div className={styles.resultsInfo}>
                 <span>

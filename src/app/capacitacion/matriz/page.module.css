@@ -24,7 +24,7 @@
 }
 
 .container {
-    max-width: 1400px;
+    width: 100%;
     margin: 0 auto;
     padding: 0 var(--spacing-lg);
 }
@@ -46,9 +46,11 @@
 
 .headerLeft h1 {
     font-size: 2rem;
-    font-weight: 700;
+    font-family: var(--font-serif);
+    font-weight: 800;
     color: var(--text-primary);
     margin: 0;
+    letter-spacing: -0.5px;
 }
 
 .backBtn {
@@ -206,7 +208,7 @@
 /* ==================== GRID VIEW ==================== */
 .grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
     gap: var(--spacing-lg);
 }
 
@@ -227,6 +229,11 @@
     justify-content: space-between;
     align-items: flex-start;
     gap: var(--spacing-sm);
+}
+
+.cardTitleRow h3 {
+    font-family: var(--font-serif);
+    margin: 0;
 }
 
 .department {
@@ -333,6 +340,7 @@
 .table th {
     background: var(--bg-tertiary);
     font-weight: 600;
+    font-family: var(--font-serif); /* Editorial White Headers */
     color: var(--text-secondary);
     font-size: 0.85rem;
     text-transform: uppercase;

@@ -1,8 +1,7 @@
-﻿'use client';
+'use client';
 
 import { useState, useEffect } from 'react';
 import AdminLayout from '@/components/layout/AdminLayout/AdminLayout';
-import BackButton from '@/components/ui/BackButton/BackButton';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card/Card';
 import { Button } from '@/components/ui/Button/Button';
 import { useToast } from '@/components/ui/Toast/Toast';
@@ -38,6 +37,8 @@ export default function MatrizPage() {
     useEffect(() => {
         if (!authLoading && !user) {
             router.push('/login');
+        } else if (user?.rol === 'demo' || user?.email?.includes('demo')) {
+            router.push('/induccion');
         } else if (user) {
             loadData();
         }
@@ -275,7 +276,6 @@ export default function MatrizPage() {
                 <div className={styles.container}>
                     <div className={styles.header}>
                         <div className={styles.headerLeft}>
-                            <BackButton href="/dashboard" />
                             <h1>Matriz de Capacitación</h1>
                         </div>
 
@@ -413,14 +413,6 @@ export default function MatrizPage() {
                                             <CardContent>
                                                 <div className={styles.courseCount}>
                                                     <strong>{pos.requiredCourses?.length || 0}</strong> Cursos Asignados
-                                                </div>
-                                                <div className={styles.previewCourses}>
-                                                    {pos.requiredCourses?.slice(0, 3).map((c, i) => (
-                                                        <span key={i} className={styles.badge}>{c}</span>
-                                                    ))}
-                                                    {(pos.requiredCourses?.length || 0) > 3 && (
-                                                        <span className={styles.moreBadge}>+{pos.requiredCourses.length - 3} más</span>
-                                                    )}
                                                 </div>
                                                 {/* Select Indicator */}
                                                 {selectedPositions.has(pos.id) && (

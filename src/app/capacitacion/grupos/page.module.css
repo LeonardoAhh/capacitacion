@@ -104,10 +104,12 @@
 }
 
 .title {
-    font-size: 1.85rem;
+    font-size: 2rem;
+    font-family: var(--font-serif);
     font-weight: 800;
     color: var(--text-primary);
     margin: 0;
+    letter-spacing: -0.5px;
 }
 
 .subtitle {
@@ -705,9 +707,6 @@
         flex-direction: column;
     }
 
-    .title {
-        font-size: 1.45rem;
-    }
 
     .groupHeader {
         padding: 1rem;

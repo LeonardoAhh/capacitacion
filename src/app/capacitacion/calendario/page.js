@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { collection, getDocs, doc, setDoc, updateDoc, deleteDoc } from 'firebase/firestore';
@@ -10,7 +10,6 @@ import es from 'date-fns/locale/es';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 import 'react-big-calendar/lib/addons/dragAndDrop/styles.css';
 import AdminLayout from '@/components/layout/AdminLayout/AdminLayout';
-import BackButton from '@/components/ui/BackButton/BackButton';
 import { Button } from '@/components/ui/Button/Button';
 import { Dialog, DialogHeader, DialogTitle, DialogBody, DialogFooter, DialogClose } from '@/components/ui/Dialog/Dialog';
 import { Pencil, Download, X, UserPlus } from 'lucide-react';
@@ -338,6 +337,8 @@ export default function CalendarPage() {
     useEffect(() => {
         if (!authLoading && !user) {
             router.push('/login');
+        } else if (!authLoading && user && (user.rol === 'demo' || user.email?.includes('demo'))) {
+            router.push('/induccion');
         }
     }, [user, authLoading, router]);
 
@@ -700,7 +701,6 @@ export default function CalendarPage() {
             <div className={styles.container}>
                 {/* Header */}
                 <div className={styles.headerSection}>
-                    <BackButton href="/dashboard" />
                     <div className={styles.header}>
                         <div className={styles.titleGroup}>
                             <h1>Calendario de Capacitación</h1>

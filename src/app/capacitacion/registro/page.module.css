@@ -1,9 +1,10 @@
 /* ==================== BASE LAYOUT ==================== */
 .main {
-    min-height: 100vh;
-    background: transparent;
-    position: relative;
-    overflow-x: hidden;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-height: calc(100vh - 80px);
+    width: 100%;
 }
 
 .profileContainer {
@@ -19,13 +20,7 @@
 
 /* === BACKGROUND EFFECTS === */
 .bgDecoration {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    z-index: 0;
-    pointer-events: none;
+    display: none;
 }
 
 .blob {
@@ -76,18 +71,23 @@
 .container {
     position: relative;
     z-index: 10;
-    max-width: 100%;
-    margin: 0 auto;
-    padding: var(--spacing-xl);
+    width: 100%;
+    margin: 0;
+    padding: var(--spacing-md) var(--spacing-xl);
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
 }
 
 /* ==================== HEADER ==================== */
 .header {
-    margin-bottom: var(--spacing-xl);
+    margin-bottom: 0;
 }
 
 .header h1 {
     font-size: 2rem;
+    font-family: var(--font-serif);
     font-weight: 800;
     color: var(--text-primary);
     margin: var(--spacing-md) 0 var(--spacing-xs);
@@ -132,7 +132,7 @@
 .modeToggle {
     display: flex;
     gap: 8px;
-    margin-bottom: var(--spacing-lg);
+    margin-bottom: 0px;
     background: rgba(255, 255, 255, 0.55);
     backdrop-filter: blur(16px);
     border: 1px solid rgba(255, 255, 255, 0.3);

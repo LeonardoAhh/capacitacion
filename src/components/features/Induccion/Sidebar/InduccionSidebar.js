@@ -157,12 +157,12 @@ export default function InduccionSidebar({
                             />
                             {/* Fallback visible únicamente si la imagen falla — controlado por CSS */}
                             <span className={styles.sidebarAvatarFallback} aria-hidden="true">
-                                {getInitials(user?.name || user?.displayName)}
+                                {getInitials(user?.nombre || user?.nickname || user?.name || user?.displayName)}
                             </span>
                         </div>
                         <div className={styles.sidebarUserDetails}>
                             <span className={styles.sidebarUserName}>
-                                {user?.name?.split(' ')[0] || user?.displayName?.split(' ')[0] || 'Usuario'}
+                                {(user?.nombre || user?.nickname || user?.name || user?.displayName || 'Usuario').split(' ')[0]}
                             </span>
                         </div>
                     </div>

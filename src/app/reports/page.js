@@ -6,7 +6,6 @@ import { useRouter } from 'next/navigation';
 import { collection, getDocs } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import AdminLayout from '@/components/layout/AdminLayout/AdminLayout';
-import BackButton from '@/components/ui/BackButton/BackButton';
 import styles from './page.module.css';
 
 // UI Components
@@ -473,7 +472,6 @@ export default function ReportsPage() {
                 <div className={styles.container}>
                     <div className={styles.header}>
                         <div className={styles.headerLeft}>
-                            <BackButton href="/dashboard" />
                             <h1>Cumplimiento Plan de Formacion</h1>
                         </div>
                         <div className={styles.yearSelector}>

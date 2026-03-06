@@ -6,6 +6,20 @@
     z-index: 1;
 }
 
+/* Page Header */
+.pageHeader {
+    margin-bottom: 2rem;
+}
+
+.pageTitle {
+    font-size: 2rem;
+    font-family: var(--font-serif);
+    font-weight: 800;
+    color: var(--text-primary);
+    margin: 0;
+    letter-spacing: -0.5px;
+}
+
 /* Search Section */
 .searchSection {
     display: grid;

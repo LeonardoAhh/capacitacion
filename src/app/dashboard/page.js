@@ -144,7 +144,7 @@ export default function DashboardPage() {
 
             <CandidateMobileHeader
                 user={user}
-                onMenuClick={() => setIsSidebarOpen(true)}
+                onOpenSidebar={() => setIsSidebarOpen(true)}
                 title="Dashboard"
             />
 
