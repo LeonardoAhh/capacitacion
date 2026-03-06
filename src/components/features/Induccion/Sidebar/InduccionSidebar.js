@@ -32,10 +32,12 @@ export default function InduccionSidebar({
                 aria-label="Navegación principal"
             >
                 <div className={styles.sidebarTop}>
-                    <Link href="/dashboard" className={styles.sidebarBrand} style={{ textDecoration: 'none', gap: '8px', padding: '6px 8px', borderRadius: 'var(--r-md)', display: 'flex', alignItems: 'center', transition: 'background-color var(--t)' }}>
-                        <ArrowLeft size={18} style={{ color: 'var(--c-muted)', flexShrink: 0 }} />
-                        <span style={{ fontSize: '0.9rem', fontWeight: 600, color: 'var(--c-ink)' }}>Volver</span>
-                    </Link>
+                    {(user?.rol !== 'Instructor' && user?.rol !== 'instructor') && (
+                        <Link href="/dashboard" className={styles.sidebarBrand} style={{ textDecoration: 'none', gap: '8px', padding: '6px 8px', borderRadius: 'var(--r-md)', display: 'flex', alignItems: 'center', transition: 'background-color var(--t)' }}>
+                            <ArrowLeft size={18} style={{ color: 'var(--c-muted)', flexShrink: 0 }} />
+                            <span style={{ fontSize: '0.9rem', fontWeight: 600, color: 'var(--c-ink)' }}>Volver</span>
+                        </Link>
+                    )}
 
                     {/* Botón de cierre — solo visible en móvil vía CSS */}
                     <button

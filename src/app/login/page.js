@@ -93,7 +93,7 @@ function validateLoginFields(identifier, password) {
 
 export default function LoginPage() {
     const [state, dispatch] = useReducer(loginReducer, initialLoginState);
-    const { signIn, signInWithUsername, signInWithGoogle } = useAuth();
+    const { user, signIn, signInWithUsername, signInWithGoogle } = useAuth();
     const router = useRouter();
     const timerRef = useRef(null);
 
@@ -210,8 +210,12 @@ export default function LoginPage() {
     }, [signInWithGoogle, checkRateLimit, failedAttempts]);
 
     const handleSuccessComplete = useCallback(() => {
-        router.push('/dashboard');
-    }, [router]);
+        if (user?.rol === 'Instructor' || user?.rol === 'instructor') {
+            router.push('/induccion');
+        } else {
+            router.push('/dashboard');
+        }
+    }, [router, user]);
 
     useEffect(() => {
         if (isSuccess) {
