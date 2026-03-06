@@ -36,7 +36,7 @@ export default function GalleryView({
             <div className={styles.coursesHeader}>
                 <h2 className={styles.sectionTitle} onClick={() => setGalleryExpanded(!galleryExpanded)} style={{ cursor: 'pointer' }}>
                     <ChevronRight size={16} className={`${styles.chevronIcon} ${galleryExpanded ? styles.expanded : ''}`} />
-                    <Image size={14} style={{ color: 'var(--c-orange)', flexShrink: 0 }} />
+                    <Image size={14} style={{ color: 'var(--c-orange)', flexShrink: 0 }} alt="" />
                     Galería
                     <span className={styles.sectionCount}>{galleryItems.length}</span>
                 </h2>
@@ -51,7 +51,7 @@ export default function GalleryView({
             {galleryExpanded && (
                 filteredGallery.length === 0 ? (
                     <div className={styles.emptyState}>
-                        <Image size={48} opacity={0.15} style={{ marginBottom: '10px' }} />
+                        <Image size={48} opacity={0.15} style={{ marginBottom: '10px' }} alt="" />
                         <p>{searchQuery ? 'No hay resultados en la galería.' : 'No hay elementos en la galería. Sube imágenes o videos.'}</p>
                     </div>
                 ) : (
@@ -72,7 +72,7 @@ export default function GalleryView({
                                 <div className={styles.galleryCardFooter}>
                                     <span className={styles.galleryItemName} title={item.nombre}>
                                         {item.tipo === 'imagen'
-                                            ? <Image size={11} style={{ color: 'var(--c-orange)', flexShrink: 0 }} />
+                                            ? <Image size={11} style={{ color: 'var(--c-orange)', flexShrink: 0 }} alt="" />
                                             : <Video size={11} style={{ color: '#6366f1', flexShrink: 0 }} />
                                         }
                                         {item.nombre}
