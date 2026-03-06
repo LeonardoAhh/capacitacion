@@ -15,7 +15,7 @@ import { collection, getDocs, query, where, doc, getDoc } from 'firebase/firesto
 import { checkPromotionCriteria, calculateMonthsInPosition } from '@/lib/promotionUtils';
 
 // Components
-import ProfileDropdown from '@/components/layout/ProfileDropdown/ProfileDropdown';
+import AdminLayout from '@/components/layout/AdminLayout/AdminLayout';
 import { BackgroundLines } from '@/components/ui/BackgroundLines';
 import { useToast } from '@/components/ui/Toast/Toast';
 import ProfileHeader from './components/ProfileHeader';
@@ -231,16 +231,16 @@ export default function PerfilPage() {
 
     if (authLoading || !user) {
         return (
-            <div className={styles.main}>
+            <AdminLayout title="Módulo">
                 <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', color: 'var(--text-primary)' }}>
                     <div className="spinner"></div>
                 </div>
-            </div>
+            </AdminLayout>
         );
     }
 
     return (
-        <div className={styles.main}>
+        <AdminLayout title="Módulo">
             <BackgroundLines className={styles.bgDecoration} />
 
             <div className={styles.container}>
@@ -258,7 +258,7 @@ export default function PerfilPage() {
                     </div>
 
                     <div className={styles.topBarRight}>
-                        <ProfileDropdown />
+
                     </div>
                 </header>
 
@@ -406,6 +406,7 @@ export default function PerfilPage() {
                     ) : null}
                 </main>
             </div>
-        </div>
+        </AdminLayout>
     );
 }
+

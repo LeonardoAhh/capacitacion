@@ -1,32 +1,17 @@
-/* ==================== BASE LAYOUT ==================== */
-.main {
-    min-height: calc(100vh - 60px);
-    padding: var(--spacing-xl) 0;
-    background: transparent;
-}
+/* =======================================================
+   Calendario de Capacitación - Estilos Base AdminLayout
+   ======================================================= */
 
-.profileContainer {
-    position: fixed;
-    top: 20px;
-    right: 20px;
-    z-index: 9999;
-}
-
-[data-theme="dark"] .main {
-    background: transparent;
-}
-
-.profileContainer {
-    position: fixed;
-    top: 20px;
-    right: 20px;
-    z-index: 9999;
-}
-
+/* CONTENEDOR PRINCIPAL */
 .container {
+    position: relative;
+    z-index: 10;
     max-width: 1400px;
     margin: 0 auto;
-    padding: 0 var(--spacing-lg);
+    padding: 1.5rem 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
 }
 
 /* ==================== HEADER ==================== */

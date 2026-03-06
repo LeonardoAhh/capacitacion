@@ -40,7 +40,7 @@ export default function CompleteProfilePage() {
             });
 
             if (result.success) {
-                router.push('/modulos');
+                router.push('/dashboard');
             } else {
                 setError(result.error || 'Error al actualizar perfil');
             }

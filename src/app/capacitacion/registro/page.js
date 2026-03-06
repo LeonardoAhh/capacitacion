@@ -1,7 +1,7 @@
-'use client';
+﻿'use client';
 
 import { useState, useEffect, useRef, useCallback, useMemo } from 'react';
-import ProfileDropdown from '@/components/layout/ProfileDropdown/ProfileDropdown';
+import AdminLayout from '@/components/layout/AdminLayout/AdminLayout';
 import BackButton from '@/components/ui/BackButton/BackButton';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/Button/Button';
@@ -22,7 +22,7 @@ import {
 import styles from './page.module.css';
 import multiStyles from './multi-styles.module.css';
 
-// Convert DD/MM/YYYY → YYYY-MM-DD for <input type="date">
+// Convert DD/MM/YYYY â†’ YYYY-MM-DD for <input type="date">
 const toInputDate = (str) => {
     if (!str) return '';
     if (str.includes('/')) {
@@ -75,7 +75,7 @@ export default function RegistroPage() {
     const [fileInfo, setFileInfo] = useState(null); // { name, size, ext }
 
     // Editable preview state
-    const [invalidEdits, setInvalidEdits] = useState({}); // rowNum → { employeeId, courseName, date, score }
+    const [invalidEdits, setInvalidEdits] = useState({}); // rowNum â†’ { employeeId, courseName, date, score }
     const [selectedValidRows, setSelectedValidRows] = useState(null); // Set<row> | null (null = all)
     const [showAllErrors, setShowAllErrors] = useState(false);
     const [showAllValid, setShowAllValid] = useState(false);
@@ -200,7 +200,7 @@ export default function RegistroPage() {
         e.preventDefault();
 
         if (selectedEmps.length === 0) {
-            toast.error("Atención", "Selecciona al menos un empleado.");
+            toast.error("AtenciÃ³n", "Selecciona al menos un empleado.");
             return;
         }
 
@@ -213,18 +213,18 @@ export default function RegistroPage() {
             }
             finalCourses = [newCourseName.trim().toUpperCase()];
         } else if (finalCourses.length === 0) {
-            toast.error("Atención", "Selecciona al menos un curso.");
+            toast.error("AtenciÃ³n", "Selecciona al menos un curso.");
             return;
         }
 
         if (!qualification || !date) {
-            toast.error("Atención", "Faltan datos de calificación o fecha.");
+            toast.error("AtenciÃ³n", "Faltan datos de calificaciÃ³n o fecha.");
             return;
         }
 
         const score = parseFloat(qualification);
         if (isNaN(score) || score < 0 || score > 100) {
-            toast.error("Error", "La calificación debe ser un número entre 0 y 100.");
+            toast.error("Error", "La calificaciÃ³n debe ser un nÃºmero entre 0 y 100.");
             return;
         }
 
@@ -312,7 +312,7 @@ export default function RegistroPage() {
             await Promise.all(selectedEmps.map(processEmployee));
 
             const totalRecs = selectedEmps.length * finalCourses.length;
-            toast.success("Éxito", `Se registraron ${totalRecs} capacitaciones.`);
+            toast.success("Ã‰xito", `Se registraron ${totalRecs} capacitaciones.`);
 
             setSelectedEmps([]);
             setSelectedCourses([]);
@@ -324,7 +324,7 @@ export default function RegistroPage() {
 
         } catch (error) {
             console.error(error);
-            toast.error("Error", "Falló la carga masiva.");
+            toast.error("Error", "FallÃ³ la carga masiva.");
         } finally {
             setSubmitting(false);
         }
@@ -418,7 +418,7 @@ export default function RegistroPage() {
                 next.add(rec.row);
                 return next;
             });
-            toast.success("Corregido", `Fila ${rec.row} es ahora válida.`);
+            toast.success("Corregido", `Fila ${rec.row} es ahora vÃ¡lida.`);
         } else {
             // Update the base record with normalized data + new issues
             setImportPreview(prev => ({
@@ -429,7 +429,7 @@ export default function RegistroPage() {
                         : r
                 ),
             }));
-            toast.error("Aún inválido", validation.issues.join(' • '));
+            toast.error("AÃºn invÃ¡lido", validation.issues.join(' â€¢ '));
         }
     };
 
@@ -534,13 +534,13 @@ export default function RegistroPage() {
                 successCount++;
             }
 
-            toast.success("Importación Exitosa", `Se importaron ${successCount} registros correctamente`);
+            toast.success("ImportaciÃ³n Exitosa", `Se importaron ${successCount} registros correctamente`);
             resetImport();
             loadData();
 
         } catch (error) {
             console.error(error);
-            toast.error("Error", "Falló la importación de datos");
+            toast.error("Error", "FallÃ³ la importaciÃ³n de datos");
         } finally {
             setImportProgress(null);
             setImporting(false);
@@ -551,11 +551,11 @@ export default function RegistroPage() {
 
     if (authLoading || !user) {
         return (
-            <div className={styles.main}>
-                <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+            <AdminLayout title="Módulo">
+                <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', color: 'var(--text-primary)' }}>
                     <div className="spinner"></div>
                 </div>
-            </div>
+            </AdminLayout>
         );
     }
 
@@ -566,607 +566,603 @@ export default function RegistroPage() {
         : false;
 
     return (
-        <>
-            <div className={styles.profileContainer}>
-                <ProfileDropdown />
+        <AdminLayout title="Registro de Capacitación">
+            {/* Background Effects */}
+            <div className={styles.bgDecoration}>
+                <div className={`${styles.blob} ${styles.blob1}`}></div>
+                <div className={`${styles.blob} ${styles.blob2}`}></div>
             </div>
-            <main className={styles.main} id="main-content">
-                {/* Background Effects */}
-                <div className={styles.bgDecoration}>
-                    <div className={`${styles.blob} ${styles.blob1}`}></div>
-                    <div className={`${styles.blob} ${styles.blob2}`}></div>
+
+            <div className={styles.container}>
+                <div className={styles.header}>
+                    <BackButton href="/dashboard" />
+                    <h1>Carga Masiva de CapacitaciÃ³n</h1>
+                    <p>Registra uno o varios cursos para mÃºltiples empleados simultÃ¡neamente.</p>
                 </div>
 
-                <div className={styles.container}>
-                    <div className={styles.header}>
-                        <BackButton href="/capacitacion" />
-                        <h1>Carga Masiva de Capacitación</h1>
-                        <p>Registra uno o varios cursos para múltiples empleados simultáneamente.</p>
-                    </div>
+                {/* Mode Toggle */}
+                <div className={styles.modeToggle}>
+                    <button
+                        type="button"
+                        className={`${styles.modeBtn} ${importMode === 'manual' ? styles.active : ''}`}
+                        onClick={() => setImportMode('manual')}
+                    >
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                            <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
+                            <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
+                        </svg>
+                        Registro Manual
+                    </button>
+                    <button
+                        type="button"
+                        className={`${styles.modeBtn} ${importMode === 'file' ? styles.active : ''}`}
+                        onClick={() => setImportMode('file')}
+                    >
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                            <polyline points="17 8 12 3 7 8" />
+                            <line x1="12" y1="3" x2="12" y2="15" />
+                        </svg>
+                        Importar Archivo
+                    </button>
+                </div>
 
-                    {/* Mode Toggle */}
-                    <div className={styles.modeToggle}>
-                        <button
-                            type="button"
-                            className={`${styles.modeBtn} ${importMode === 'manual' ? styles.active : ''}`}
-                            onClick={() => setImportMode('manual')}
-                        >
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
-                                <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
-                            </svg>
-                            Registro Manual
-                        </button>
-                        <button
-                            type="button"
-                            className={`${styles.modeBtn} ${importMode === 'file' ? styles.active : ''}`}
-                            onClick={() => setImportMode('file')}
-                        >
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
-                                <polyline points="17 8 12 3 7 8" />
-                                <line x1="12" y1="3" x2="12" y2="15" />
-                            </svg>
-                            Importar Archivo
-                        </button>
-                    </div>
+                <div className={styles.mainCard}>
+                    {loading ? (
+                        <div style={{ display: 'flex', justifyContent: 'center', padding: '3rem' }}>
+                            <div className="spinner"></div>
+                        </div>
+                    ) : importMode === 'file' ? (
 
-                    <div className={styles.mainCard}>
-                        {loading ? (
-                            <div style={{ display: 'flex', justifyContent: 'center', padding: '3rem' }}>
-                                <div className="spinner"></div>
+                        /* ===== FILE IMPORT MODE ===== */
+                        <div className={styles.importSection}>
+
+                            {/* STEP 1: Download Templates */}
+                            <div>
+                                <div className={styles.sectionTitle}>
+                                    <span className={styles.sectionNumber}>1</span>
+                                    Descargar Plantilla
+                                </div>
+                                <div className={styles.templateBtns}>
+                                    <button
+                                        type="button"
+                                        className={styles.templateBtn}
+                                        onClick={generateExcelTemplate}
+                                    >
+                                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                                            <polyline points="7 10 12 15 17 10" />
+                                            <line x1="12" y1="15" x2="12" y2="3" />
+                                        </svg>
+                                        Excel (.xlsx)
+                                    </button>
+                                    <a
+                                        href="/templates/plantilla_capacitaciones.json"
+                                        download
+                                        className={styles.templateBtn}
+                                    >
+                                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                                            <polyline points="7 10 12 15 17 10" />
+                                            <line x1="12" y1="15" x2="12" y2="3" />
+                                        </svg>
+                                        JSON (.json)
+                                    </a>
+                                </div>
                             </div>
-                        ) : importMode === 'file' ? (
 
-                            /* ===== FILE IMPORT MODE ===== */
-                            <div className={styles.importSection}>
-
-                                {/* STEP 1: Download Templates */}
-                                <div>
-                                    <div className={styles.sectionTitle}>
-                                        <span className={styles.sectionNumber}>1</span>
-                                        Descargar Plantilla
-                                    </div>
-                                    <div className={styles.templateBtns}>
-                                        <button
-                                            type="button"
-                                            className={styles.templateBtn}
-                                            onClick={generateExcelTemplate}
-                                        >
-                                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
-                                                <polyline points="7 10 12 15 17 10" />
-                                                <line x1="12" y1="15" x2="12" y2="3" />
-                                            </svg>
-                                            Excel (.xlsx)
-                                        </button>
-                                        <a
-                                            href="/templates/plantilla_capacitaciones.json"
-                                            download
-                                            className={styles.templateBtn}
-                                        >
-                                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
-                                                <polyline points="7 10 12 15 17 10" />
-                                                <line x1="12" y1="15" x2="12" y2="3" />
-                                            </svg>
-                                            JSON (.json)
-                                        </a>
-                                    </div>
+                            {/* STEP 2: Upload File */}
+                            <div>
+                                <div className={styles.sectionTitle}>
+                                    <span className={styles.sectionNumber}>2</span>
+                                    Subir Archivo
                                 </div>
 
-                                {/* STEP 2: Upload File */}
+                                {fileInfo ? (
+                                    /* File info card (replaces drop zone after selection) */
+                                    <div className={styles.fileInfoCard}>
+                                        <div className={styles.fileIconWrap}>
+                                            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+                                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                                                <polyline points="14 2 14 8 20 8" />
+                                                <line x1="16" y1="13" x2="8" y2="13" />
+                                                <line x1="16" y1="17" x2="8" y2="17" />
+                                            </svg>
+                                        </div>
+                                        <div className={styles.fileInfoDetails}>
+                                            <span className={styles.fileName}>{fileInfo.name}</span>
+                                            <span className={styles.fileMeta}>{fileInfo.ext} Â· {fileInfo.size}</span>
+                                        </div>
+                                        <button
+                                            type="button"
+                                            className={styles.fileRemoveBtn}
+                                            onClick={resetImport}
+                                            aria-label="Quitar archivo seleccionado"
+                                        >
+                                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                                                <line x1="18" y1="6" x2="6" y2="18" />
+                                                <line x1="6" y1="6" x2="18" y2="18" />
+                                            </svg>
+                                        </button>
+                                    </div>
+                                ) : (
+                                    /* Drop Zone */
+                                    <div
+                                        className={styles.dropZone}
+                                        onClick={() => fileInputRef.current?.click()}
+                                        onDragOver={(e) => {
+                                            e.preventDefault();
+                                            e.currentTarget.classList.add(styles.dragOver);
+                                        }}
+                                        onDragLeave={(e) => {
+                                            e.currentTarget.classList.remove(styles.dragOver);
+                                        }}
+                                        onDrop={async (e) => {
+                                            e.preventDefault();
+                                            e.currentTarget.classList.remove(styles.dragOver);
+                                            const file = e.dataTransfer.files[0];
+                                            if (file) await handleFileSelect(file);
+                                        }}
+                                        role="button"
+                                        tabIndex={0}
+                                        aria-label="Zona de carga de archivos"
+                                        onKeyDown={(e) => {
+                                            if (e.key === 'Enter' || e.key === ' ') fileInputRef.current?.click();
+                                        }}
+                                    >
+                                        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+                                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                                            <polyline points="17 8 12 3 7 8" />
+                                            <line x1="12" y1="3" x2="12" y2="15" />
+                                        </svg>
+                                        <p>Arrastra tu archivo aquÃ­ o haz clic para seleccionar</p>
+                                        <span>Formatos soportados: .xlsx Â· .json</span>
+                                    </div>
+                                )}
+
+                                <input
+                                    ref={fileInputRef}
+                                    type="file"
+                                    accept=".xlsx,.xls,.json"
+                                    style={{ display: 'none' }}
+                                    onChange={async (e) => {
+                                        const file = e.target.files?.[0];
+                                        if (file) await handleFileSelect(file);
+                                    }}
+                                />
+                            </div>
+
+                            {/* STEP 3: Preview + Edit + Select */}
+                            {importPreview && (
                                 <div>
                                     <div className={styles.sectionTitle}>
-                                        <span className={styles.sectionNumber}>2</span>
-                                        Subir Archivo
+                                        <span className={styles.sectionNumber}>3</span>
+                                        Vista Previa y CorrecciÃ³n
                                     </div>
 
-                                    {fileInfo ? (
-                                        /* File info card (replaces drop zone after selection) */
-                                        <div className={styles.fileInfoCard}>
-                                            <div className={styles.fileIconWrap}>
-                                                <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-                                                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
-                                                    <polyline points="14 2 14 8 20 8" />
-                                                    <line x1="16" y1="13" x2="8" y2="13" />
-                                                    <line x1="16" y1="17" x2="8" y2="17" />
-                                                </svg>
-                                            </div>
-                                            <div className={styles.fileInfoDetails}>
-                                                <span className={styles.fileName}>{fileInfo.name}</span>
-                                                <span className={styles.fileMeta}>{fileInfo.ext} · {fileInfo.size}</span>
-                                            </div>
-                                            <button
-                                                type="button"
-                                                className={styles.fileRemoveBtn}
-                                                onClick={resetImport}
-                                                aria-label="Quitar archivo seleccionado"
-                                            >
-                                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                                                    <line x1="18" y1="6" x2="6" y2="18" />
-                                                    <line x1="6" y1="6" x2="18" y2="18" />
-                                                </svg>
-                                            </button>
+                                    {/* Stats row */}
+                                    <div className={styles.previewStats}>
+                                        <div className={styles.previewStat}>
+                                            <span className={styles.statNum}>{importPreview.valid.length}</span>
+                                            <span className={styles.statLabel}>VÃ¡lidos</span>
                                         </div>
-                                    ) : (
-                                        /* Drop Zone */
-                                        <div
-                                            className={styles.dropZone}
-                                            onClick={() => fileInputRef.current?.click()}
-                                            onDragOver={(e) => {
-                                                e.preventDefault();
-                                                e.currentTarget.classList.add(styles.dragOver);
-                                            }}
-                                            onDragLeave={(e) => {
-                                                e.currentTarget.classList.remove(styles.dragOver);
-                                            }}
-                                            onDrop={async (e) => {
-                                                e.preventDefault();
-                                                e.currentTarget.classList.remove(styles.dragOver);
-                                                const file = e.dataTransfer.files[0];
-                                                if (file) await handleFileSelect(file);
-                                            }}
-                                            role="button"
-                                            tabIndex={0}
-                                            aria-label="Zona de carga de archivos"
-                                            onKeyDown={(e) => {
-                                                if (e.key === 'Enter' || e.key === ' ') fileInputRef.current?.click();
-                                            }}
-                                        >
-                                            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-                                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
-                                                <polyline points="17 8 12 3 7 8" />
-                                                <line x1="12" y1="3" x2="12" y2="15" />
-                                            </svg>
-                                            <p>Arrastra tu archivo aquí o haz clic para seleccionar</p>
-                                            <span>Formatos soportados: .xlsx · .json</span>
+                                        <div className={`${styles.previewStat} ${styles.statError}`}>
+                                            <span className={styles.statNum}>{importPreview.invalid.length}</span>
+                                            <span className={styles.statLabel}>Con errores</span>
+                                        </div>
+                                        <div className={`${styles.previewStat} ${styles.statSelected}`}>
+                                            <span className={styles.statNum}>{rowsToImport.length}</span>
+                                            <span className={styles.statLabel}>Seleccionados</span>
+                                        </div>
+                                    </div>
+
+                                    {/* â”€â”€ ERROR SECTION (editable) â”€â”€ */}
+                                    {importPreview.invalid.length > 0 && (
+                                        <div className={styles.errorSection}>
+                                            <div className={styles.errorSectionHeader}>
+                                                <span className={styles.errorSectionTitle}>
+                                                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                                        <circle cx="12" cy="12" r="10" />
+                                                        <line x1="12" y1="8" x2="12" y2="12" />
+                                                        <line x1="12" y1="16" x2="12.01" y2="16" />
+                                                    </svg>
+                                                    Registros con errores â€” edita y aplica correcciones
+                                                </span>
+                                            </div>
+
+                                            <div className={styles.errorTableWrap}>
+                                                <table className={styles.editTable}>
+                                                    <thead>
+                                                        <tr>
+                                                            <th>#</th>
+                                                            <th>ID Empleado</th>
+                                                            <th>Nombre Curso</th>
+                                                            <th>Fecha</th>
+                                                            <th>Cal.</th>
+                                                            <th>Error detectado</th>
+                                                            <th></th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        {(showAllErrors
+                                                            ? importPreview.invalid
+                                                            : importPreview.invalid.slice(0, 5)
+                                                        ).map((rec) => {
+                                                            const vals = getRowValues(rec);
+                                                            const hasEdits = rowHasEdits(rec.row);
+                                                            return (
+                                                                <tr key={rec.row} className={styles.errorRow}>
+                                                                    <td className={styles.rowNum}>{rec.row}</td>
+                                                                    <td>
+                                                                        <input
+                                                                            type="text"
+                                                                            className={styles.editInput}
+                                                                            value={vals.employeeId}
+                                                                            onChange={(e) => handleInvalidEdit(rec.row, 'employeeId', e.target.value)}
+                                                                            placeholder="ID Empleado"
+                                                                            aria-label={`ID Empleado fila ${rec.row}`}
+                                                                        />
+                                                                    </td>
+                                                                    <td>
+                                                                        <input
+                                                                            type="text"
+                                                                            className={styles.editInput}
+                                                                            value={vals.courseName}
+                                                                            onChange={(e) => handleInvalidEdit(rec.row, 'courseName', e.target.value)}
+                                                                            placeholder="Nombre del Curso"
+                                                                            aria-label={`Curso fila ${rec.row}`}
+                                                                        />
+                                                                    </td>
+                                                                    <td>
+                                                                        <input
+                                                                            type="date"
+                                                                            className={styles.editInput}
+                                                                            value={vals.date}
+                                                                            onChange={(e) => handleInvalidEdit(rec.row, 'date', e.target.value)}
+                                                                            aria-label={`Fecha fila ${rec.row}`}
+                                                                        />
+                                                                    </td>
+                                                                    <td>
+                                                                        <input
+                                                                            type="number"
+                                                                            className={`${styles.editInput} ${styles.scoreInput}`}
+                                                                            value={vals.score}
+                                                                            min="0"
+                                                                            max="100"
+                                                                            onChange={(e) => handleInvalidEdit(rec.row, 'score', e.target.value)}
+                                                                            aria-label={`CalificaciÃ³n fila ${rec.row}`}
+                                                                        />
+                                                                    </td>
+                                                                    <td className={styles.errorMsgCell}>
+                                                                        <span className={styles.errorMsg} title={rec.issues?.join(' â€¢ ')}>
+                                                                            {rec.issues?.join(' â€¢ ')}
+                                                                        </span>
+                                                                    </td>
+                                                                    <td className={styles.applyCell}>
+                                                                        {hasEdits && (
+                                                                            <button
+                                                                                type="button"
+                                                                                className={styles.applyBtn}
+                                                                                onClick={() => applyCorrection(rec)}
+                                                                                aria-label={`Aplicar correcciÃ³n fila ${rec.row}`}
+                                                                            >
+                                                                                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3">
+                                                                                    <polyline points="20 6 9 17 4 12" />
+                                                                                </svg>
+                                                                                Aplicar
+                                                                            </button>
+                                                                        )}
+                                                                    </td>
+                                                                </tr>
+                                                            );
+                                                        })}
+                                                    </tbody>
+                                                </table>
+                                            </div>
+
+                                            {importPreview.invalid.length > 5 && (
+                                                <button
+                                                    type="button"
+                                                    className={styles.showMoreBtn}
+                                                    onClick={() => setShowAllErrors(v => !v)}
+                                                >
+                                                    {showAllErrors
+                                                        ? 'Mostrar menos'
+                                                        : `Ver ${importPreview.invalid.length - 5} errores mÃ¡s`
+                                                    }
+                                                </button>
+                                            )}
                                         </div>
                                     )}
 
-                                    <input
-                                        ref={fileInputRef}
-                                        type="file"
-                                        accept=".xlsx,.xls,.json"
-                                        style={{ display: 'none' }}
-                                        onChange={async (e) => {
-                                            const file = e.target.files?.[0];
-                                            if (file) await handleFileSelect(file);
-                                        }}
-                                    />
+                                    {/* â”€â”€ VALID SECTION (selectable) â”€â”€ */}
+                                    {importPreview.valid.length > 0 && (
+                                        <div className={styles.validSection}>
+                                            <div className={styles.validSectionHeader}>
+                                                <span className={styles.validSectionTitle}>
+                                                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                                                        <polyline points="20 6 9 17 4 12" />
+                                                    </svg>
+                                                    Registros vÃ¡lidos
+                                                </span>
+                                                <span className={styles.validCount}>
+                                                    {rowsToImport.length} de {importPreview.valid.length} seleccionados
+                                                </span>
+                                            </div>
+
+                                            <div className={styles.validTableWrap}>
+                                                <table className={styles.previewTable}>
+                                                    <thead>
+                                                        <tr>
+                                                            <th>
+                                                                <input
+                                                                    type="checkbox"
+                                                                    className={styles.headerCheckbox}
+                                                                    checked={allValidSelected}
+                                                                    onChange={toggleAllValidRows}
+                                                                    aria-label="Seleccionar todos los registros vÃ¡lidos"
+                                                                />
+                                                            </th>
+                                                            <th>#</th>
+                                                            <th>Empleado</th>
+                                                            <th>Curso</th>
+                                                            <th>Fecha</th>
+                                                            <th>Cal.</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        {(showAllValid
+                                                            ? importPreview.valid
+                                                            : importPreview.valid.slice(0, 8)
+                                                        ).map((rec) => {
+                                                            const isSelected = effectiveSelected.has(rec.row);
+                                                            return (
+                                                                <tr
+                                                                    key={rec.row}
+                                                                    className={`${styles.validRow} ${!isSelected ? styles.unselectedRow : ''}`}
+                                                                >
+                                                                    <td>
+                                                                        <input
+                                                                            type="checkbox"
+                                                                            className={styles.rowCheckbox}
+                                                                            checked={isSelected}
+                                                                            onChange={() => toggleValidRow(rec.row)}
+                                                                            aria-label={`Incluir fila ${rec.row}`}
+                                                                        />
+                                                                    </td>
+                                                                    <td className={styles.rowNum}>{rec.row}</td>
+                                                                    <td>{rec.employeeName || rec.employeeId}</td>
+                                                                    <td className={styles.courseCell} title={rec.courseName}>
+                                                                        {rec.courseName}
+                                                                    </td>
+                                                                    <td>{rec.date}</td>
+                                                                    <td>
+                                                                        <span className={`${styles.scoreBadge} ${rec.score >= 70 ? styles.scoreGood : styles.scoreBad}`}>
+                                                                            {rec.score}
+                                                                        </span>
+                                                                    </td>
+                                                                </tr>
+                                                            );
+                                                        })}
+                                                    </tbody>
+                                                </table>
+                                            </div>
+
+                                            {importPreview.valid.length > 8 && (
+                                                <button
+                                                    type="button"
+                                                    className={styles.showMoreBtn}
+                                                    onClick={() => setShowAllValid(v => !v)}
+                                                >
+                                                    {showAllValid
+                                                        ? 'Mostrar menos'
+                                                        : `Ver ${importPreview.valid.length - 8} registros mÃ¡s`
+                                                    }
+                                                </button>
+                                            )}
+                                        </div>
+                                    )}
+
+                                    {/* Progress Bar */}
+                                    {importProgress && (
+                                        <div className={styles.progressContainer}>
+                                            <div className={styles.progressLabel}>
+                                                Importando registro {importProgress.current} de {importProgress.total}â€¦
+                                            </div>
+                                            <div className={styles.progressTrack}>
+                                                <div
+                                                    className={styles.progressFill}
+                                                    style={{ width: `${Math.round((importProgress.current / importProgress.total) * 100)}%` }}
+                                                />
+                                            </div>
+                                        </div>
+                                    )}
+
+                                    {/* Action Buttons */}
+                                    <div className={styles.importActions}>
+                                        <Button variant="ghost" onClick={resetImport} disabled={importing}>
+                                            Cancelar
+                                        </Button>
+                                        <Button
+                                            onClick={handleImportConfirm}
+                                            disabled={importing || rowsToImport.length === 0}
+                                        >
+                                            {importing
+                                                ? `Importando ${importProgress?.current ?? 0}/${importProgress?.total ?? rowsToImport.length}â€¦`
+                                                : `Importar ${rowsToImport.length} registro${rowsToImport.length !== 1 ? 's' : ''}`
+                                            }
+                                        </Button>
+                                    </div>
                                 </div>
+                            )}
+                        </div>
 
-                                {/* STEP 3: Preview + Edit + Select */}
-                                {importPreview && (
-                                    <div>
-                                        <div className={styles.sectionTitle}>
-                                            <span className={styles.sectionNumber}>3</span>
-                                            Vista Previa y Corrección
+                    ) : (
+
+                        /* ===== MANUAL MODE ===== */
+                        <form onSubmit={handleSubmit} className={styles.form}>
+                            <div className={styles.gridTwoCols}>
+                                {/* Col 1: Empleados */}
+                                <div className={styles.formGroup}>
+                                    <label>1. Seleccionar Empleados ({selectedEmps.length})</label>
+                                    <div className={multiStyles.multiSelectContainer}>
+                                        <div className={multiStyles.searchHeader}>
+                                            <input
+                                                type="text"
+                                                placeholder="Buscar por Nombre o IDâ€¦"
+                                                className={multiStyles.searchInput}
+                                                value={empSearch}
+                                                onChange={(e) => setEmpSearch(e.target.value)}
+                                            />
                                         </div>
-
-                                        {/* Stats row */}
-                                        <div className={styles.previewStats}>
-                                            <div className={styles.previewStat}>
-                                                <span className={styles.statNum}>{importPreview.valid.length}</span>
-                                                <span className={styles.statLabel}>Válidos</span>
-                                            </div>
-                                            <div className={`${styles.previewStat} ${styles.statError}`}>
-                                                <span className={styles.statNum}>{importPreview.invalid.length}</span>
-                                                <span className={styles.statLabel}>Con errores</span>
-                                            </div>
-                                            <div className={`${styles.previewStat} ${styles.statSelected}`}>
-                                                <span className={styles.statNum}>{rowsToImport.length}</span>
-                                                <span className={styles.statLabel}>Seleccionados</span>
-                                            </div>
-                                        </div>
-
-                                        {/* ── ERROR SECTION (editable) ── */}
-                                        {importPreview.invalid.length > 0 && (
-                                            <div className={styles.errorSection}>
-                                                <div className={styles.errorSectionHeader}>
-                                                    <span className={styles.errorSectionTitle}>
-                                                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                                            <circle cx="12" cy="12" r="10" />
-                                                            <line x1="12" y1="8" x2="12" y2="12" />
-                                                            <line x1="12" y1="16" x2="12.01" y2="16" />
-                                                        </svg>
-                                                        Registros con errores — edita y aplica correcciones
-                                                    </span>
-                                                </div>
-
-                                                <div className={styles.errorTableWrap}>
-                                                    <table className={styles.editTable}>
-                                                        <thead>
-                                                            <tr>
-                                                                <th>#</th>
-                                                                <th>ID Empleado</th>
-                                                                <th>Nombre Curso</th>
-                                                                <th>Fecha</th>
-                                                                <th>Cal.</th>
-                                                                <th>Error detectado</th>
-                                                                <th></th>
-                                                            </tr>
-                                                        </thead>
-                                                        <tbody>
-                                                            {(showAllErrors
-                                                                ? importPreview.invalid
-                                                                : importPreview.invalid.slice(0, 5)
-                                                            ).map((rec) => {
-                                                                const vals = getRowValues(rec);
-                                                                const hasEdits = rowHasEdits(rec.row);
-                                                                return (
-                                                                    <tr key={rec.row} className={styles.errorRow}>
-                                                                        <td className={styles.rowNum}>{rec.row}</td>
-                                                                        <td>
-                                                                            <input
-                                                                                type="text"
-                                                                                className={styles.editInput}
-                                                                                value={vals.employeeId}
-                                                                                onChange={(e) => handleInvalidEdit(rec.row, 'employeeId', e.target.value)}
-                                                                                placeholder="ID Empleado"
-                                                                                aria-label={`ID Empleado fila ${rec.row}`}
-                                                                            />
-                                                                        </td>
-                                                                        <td>
-                                                                            <input
-                                                                                type="text"
-                                                                                className={styles.editInput}
-                                                                                value={vals.courseName}
-                                                                                onChange={(e) => handleInvalidEdit(rec.row, 'courseName', e.target.value)}
-                                                                                placeholder="Nombre del Curso"
-                                                                                aria-label={`Curso fila ${rec.row}`}
-                                                                            />
-                                                                        </td>
-                                                                        <td>
-                                                                            <input
-                                                                                type="date"
-                                                                                className={styles.editInput}
-                                                                                value={vals.date}
-                                                                                onChange={(e) => handleInvalidEdit(rec.row, 'date', e.target.value)}
-                                                                                aria-label={`Fecha fila ${rec.row}`}
-                                                                            />
-                                                                        </td>
-                                                                        <td>
-                                                                            <input
-                                                                                type="number"
-                                                                                className={`${styles.editInput} ${styles.scoreInput}`}
-                                                                                value={vals.score}
-                                                                                min="0"
-                                                                                max="100"
-                                                                                onChange={(e) => handleInvalidEdit(rec.row, 'score', e.target.value)}
-                                                                                aria-label={`Calificación fila ${rec.row}`}
-                                                                            />
-                                                                        </td>
-                                                                        <td className={styles.errorMsgCell}>
-                                                                            <span className={styles.errorMsg} title={rec.issues?.join(' • ')}>
-                                                                                {rec.issues?.join(' • ')}
-                                                                            </span>
-                                                                        </td>
-                                                                        <td className={styles.applyCell}>
-                                                                            {hasEdits && (
-                                                                                <button
-                                                                                    type="button"
-                                                                                    className={styles.applyBtn}
-                                                                                    onClick={() => applyCorrection(rec)}
-                                                                                    aria-label={`Aplicar corrección fila ${rec.row}`}
-                                                                                >
-                                                                                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3">
-                                                                                        <polyline points="20 6 9 17 4 12" />
-                                                                                    </svg>
-                                                                                    Aplicar
-                                                                                </button>
-                                                                            )}
-                                                                        </td>
-                                                                    </tr>
-                                                                );
-                                                            })}
-                                                        </tbody>
-                                                    </table>
-                                                </div>
-
-                                                {importPreview.invalid.length > 5 && (
-                                                    <button
-                                                        type="button"
-                                                        className={styles.showMoreBtn}
-                                                        onClick={() => setShowAllErrors(v => !v)}
-                                                    >
-                                                        {showAllErrors
-                                                            ? 'Mostrar menos'
-                                                            : `Ver ${importPreview.invalid.length - 5} errores más`
-                                                        }
-                                                    </button>
-                                                )}
-                                            </div>
-                                        )}
-
-                                        {/* ── VALID SECTION (selectable) ── */}
-                                        {importPreview.valid.length > 0 && (
-                                            <div className={styles.validSection}>
-                                                <div className={styles.validSectionHeader}>
-                                                    <span className={styles.validSectionTitle}>
-                                                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                                                            <polyline points="20 6 9 17 4 12" />
-                                                        </svg>
-                                                        Registros válidos
-                                                    </span>
-                                                    <span className={styles.validCount}>
-                                                        {rowsToImport.length} de {importPreview.valid.length} seleccionados
-                                                    </span>
-                                                </div>
-
-                                                <div className={styles.validTableWrap}>
-                                                    <table className={styles.previewTable}>
-                                                        <thead>
-                                                            <tr>
-                                                                <th>
-                                                                    <input
-                                                                        type="checkbox"
-                                                                        className={styles.headerCheckbox}
-                                                                        checked={allValidSelected}
-                                                                        onChange={toggleAllValidRows}
-                                                                        aria-label="Seleccionar todos los registros válidos"
-                                                                    />
-                                                                </th>
-                                                                <th>#</th>
-                                                                <th>Empleado</th>
-                                                                <th>Curso</th>
-                                                                <th>Fecha</th>
-                                                                <th>Cal.</th>
-                                                            </tr>
-                                                        </thead>
-                                                        <tbody>
-                                                            {(showAllValid
-                                                                ? importPreview.valid
-                                                                : importPreview.valid.slice(0, 8)
-                                                            ).map((rec) => {
-                                                                const isSelected = effectiveSelected.has(rec.row);
-                                                                return (
-                                                                    <tr
-                                                                        key={rec.row}
-                                                                        className={`${styles.validRow} ${!isSelected ? styles.unselectedRow : ''}`}
-                                                                    >
-                                                                        <td>
-                                                                            <input
-                                                                                type="checkbox"
-                                                                                className={styles.rowCheckbox}
-                                                                                checked={isSelected}
-                                                                                onChange={() => toggleValidRow(rec.row)}
-                                                                                aria-label={`Incluir fila ${rec.row}`}
-                                                                            />
-                                                                        </td>
-                                                                        <td className={styles.rowNum}>{rec.row}</td>
-                                                                        <td>{rec.employeeName || rec.employeeId}</td>
-                                                                        <td className={styles.courseCell} title={rec.courseName}>
-                                                                            {rec.courseName}
-                                                                        </td>
-                                                                        <td>{rec.date}</td>
-                                                                        <td>
-                                                                            <span className={`${styles.scoreBadge} ${rec.score >= 70 ? styles.scoreGood : styles.scoreBad}`}>
-                                                                                {rec.score}
-                                                                            </span>
-                                                                        </td>
-                                                                    </tr>
-                                                                );
-                                                            })}
-                                                        </tbody>
-                                                    </table>
-                                                </div>
-
-                                                {importPreview.valid.length > 8 && (
-                                                    <button
-                                                        type="button"
-                                                        className={styles.showMoreBtn}
-                                                        onClick={() => setShowAllValid(v => !v)}
-                                                    >
-                                                        {showAllValid
-                                                            ? 'Mostrar menos'
-                                                            : `Ver ${importPreview.valid.length - 8} registros más`
-                                                        }
-                                                    </button>
-                                                )}
-                                            </div>
-                                        )}
-
-                                        {/* Progress Bar */}
-                                        {importProgress && (
-                                            <div className={styles.progressContainer}>
-                                                <div className={styles.progressLabel}>
-                                                    Importando registro {importProgress.current} de {importProgress.total}…
-                                                </div>
-                                                <div className={styles.progressTrack}>
-                                                    <div
-                                                        className={styles.progressFill}
-                                                        style={{ width: `${Math.round((importProgress.current / importProgress.total) * 100)}%` }}
+                                        <div className={multiStyles.listBody}>
+                                            {filteredEmployees.map(emp => (
+                                                <label key={emp.id} className={multiStyles.checkboxItem}>
+                                                    <input
+                                                        type="checkbox"
+                                                        checked={selectedEmps.includes(emp.id)}
+                                                        onChange={() => toggleEmp(emp.id)}
                                                     />
-                                                </div>
+                                                    <div style={{ display: 'flex', flexDirection: 'column', lineHeight: '1.2' }}>
+                                                        <span>{emp.name}</span>
+                                                        <small style={{ opacity: 0.7, fontSize: '0.75em' }}>{emp.employeeId}</small>
+                                                    </div>
+                                                </label>
+                                            ))}
+                                            {filteredEmployees.length === 0 && (
+                                                <p className="text-muted p-2">Sin resultados.</p>
+                                            )}
+                                        </div>
+                                        <div className={multiStyles.selectionSummary}>
+                                            <span>{selectedEmps.length} seleccionados</span>
+                                            <div style={{ display: 'flex', gap: '10px' }}>
+                                                <button type="button" onClick={selectAllFilteredEmps} className={multiStyles.selectAllBtn}>
+                                                    Todo Visible
+                                                </button>
+                                                <button type="button" onClick={clearSelection} className={multiStyles.selectAllBtn}>
+                                                    Limpiar
+                                                </button>
                                             </div>
-                                        )}
-
-                                        {/* Action Buttons */}
-                                        <div className={styles.importActions}>
-                                            <Button variant="ghost" onClick={resetImport} disabled={importing}>
-                                                Cancelar
-                                            </Button>
-                                            <Button
-                                                onClick={handleImportConfirm}
-                                                disabled={importing || rowsToImport.length === 0}
-                                            >
-                                                {importing
-                                                    ? `Importando ${importProgress?.current ?? 0}/${importProgress?.total ?? rowsToImport.length}…`
-                                                    : `Importar ${rowsToImport.length} registro${rowsToImport.length !== 1 ? 's' : ''}`
-                                                }
-                                            </Button>
                                         </div>
                                     </div>
-                                )}
-                            </div>
+                                </div>
 
-                        ) : (
+                                {/* Col 2: Cursos */}
+                                <div className={styles.formGroup}>
+                                    <label>2. Seleccionar Cursos ({isNewCourse ? '1 Nuevo' : selectedCourses.length})</label>
+                                    <div style={{ marginBottom: '0.5rem' }}>
+                                        <button
+                                            type="button"
+                                            className={styles.toggleBtn}
+                                            onClick={() => setIsNewCourse(!isNewCourse)}
+                                        >
+                                            {isNewCourse ? 'â† Volver a Lista' : '+ Crear Nuevo Curso'}
+                                        </button>
+                                    </div>
 
-                            /* ===== MANUAL MODE ===== */
-                            <form onSubmit={handleSubmit} className={styles.form}>
-                                <div className={styles.gridTwoCols}>
-                                    {/* Col 1: Empleados */}
-                                    <div className={styles.formGroup}>
-                                        <label>1. Seleccionar Empleados ({selectedEmps.length})</label>
+                                    {isNewCourse ? (
+                                        <input
+                                            type="text"
+                                            placeholder="Nombre del Nuevo Curso"
+                                            className={styles.input}
+                                            value={newCourseName}
+                                            onChange={e => setNewCourseName(e.target.value)}
+                                        />
+                                    ) : (
                                         <div className={multiStyles.multiSelectContainer}>
                                             <div className={multiStyles.searchHeader}>
                                                 <input
                                                     type="text"
-                                                    placeholder="Buscar por Nombre o ID…"
+                                                    placeholder="Buscar cursoâ€¦"
                                                     className={multiStyles.searchInput}
-                                                    value={empSearch}
-                                                    onChange={(e) => setEmpSearch(e.target.value)}
+                                                    value={courseSearch}
+                                                    onChange={(e) => setCourseSearch(e.target.value)}
                                                 />
                                             </div>
                                             <div className={multiStyles.listBody}>
-                                                {filteredEmployees.map(emp => (
-                                                    <label key={emp.id} className={multiStyles.checkboxItem}>
+                                                {filteredCourses.map(c => (
+                                                    <label key={c} className={multiStyles.checkboxItem}>
                                                         <input
                                                             type="checkbox"
-                                                            checked={selectedEmps.includes(emp.id)}
-                                                            onChange={() => toggleEmp(emp.id)}
+                                                            checked={selectedCourses.includes(c)}
+                                                            onChange={() => toggleCourse(c)}
                                                         />
-                                                        <div style={{ display: 'flex', flexDirection: 'column', lineHeight: '1.2' }}>
-                                                            <span>{emp.name}</span>
-                                                            <small style={{ opacity: 0.7, fontSize: '0.75em' }}>{emp.employeeId}</small>
-                                                        </div>
+                                                        {c}
                                                     </label>
                                                 ))}
-                                                {filteredEmployees.length === 0 && (
+                                                {filteredCourses.length === 0 && (
                                                     <p className="text-muted p-2">Sin resultados.</p>
                                                 )}
                                             </div>
                                             <div className={multiStyles.selectionSummary}>
-                                                <span>{selectedEmps.length} seleccionados</span>
+                                                <span>{selectedCourses.length} seleccionados</span>
                                                 <div style={{ display: 'flex', gap: '10px' }}>
-                                                    <button type="button" onClick={selectAllFilteredEmps} className={multiStyles.selectAllBtn}>
+                                                    <button type="button" onClick={selectAllFilteredCourses} className={multiStyles.selectAllBtn}>
                                                         Todo Visible
                                                     </button>
-                                                    <button type="button" onClick={clearSelection} className={multiStyles.selectAllBtn}>
+                                                    <button type="button" onClick={clearCourseSelection} className={multiStyles.selectAllBtn}>
                                                         Limpiar
                                                     </button>
                                                 </div>
                                             </div>
                                         </div>
-                                    </div>
-
-                                    {/* Col 2: Cursos */}
-                                    <div className={styles.formGroup}>
-                                        <label>2. Seleccionar Cursos ({isNewCourse ? '1 Nuevo' : selectedCourses.length})</label>
-                                        <div style={{ marginBottom: '0.5rem' }}>
-                                            <button
-                                                type="button"
-                                                className={styles.toggleBtn}
-                                                onClick={() => setIsNewCourse(!isNewCourse)}
-                                            >
-                                                {isNewCourse ? '← Volver a Lista' : '+ Crear Nuevo Curso'}
-                                            </button>
-                                        </div>
-
-                                        {isNewCourse ? (
-                                            <input
-                                                type="text"
-                                                placeholder="Nombre del Nuevo Curso"
-                                                className={styles.input}
-                                                value={newCourseName}
-                                                onChange={e => setNewCourseName(e.target.value)}
-                                            />
-                                        ) : (
-                                            <div className={multiStyles.multiSelectContainer}>
-                                                <div className={multiStyles.searchHeader}>
-                                                    <input
-                                                        type="text"
-                                                        placeholder="Buscar curso…"
-                                                        className={multiStyles.searchInput}
-                                                        value={courseSearch}
-                                                        onChange={(e) => setCourseSearch(e.target.value)}
-                                                    />
-                                                </div>
-                                                <div className={multiStyles.listBody}>
-                                                    {filteredCourses.map(c => (
-                                                        <label key={c} className={multiStyles.checkboxItem}>
-                                                            <input
-                                                                type="checkbox"
-                                                                checked={selectedCourses.includes(c)}
-                                                                onChange={() => toggleCourse(c)}
-                                                            />
-                                                            {c}
-                                                        </label>
-                                                    ))}
-                                                    {filteredCourses.length === 0 && (
-                                                        <p className="text-muted p-2">Sin resultados.</p>
-                                                    )}
-                                                </div>
-                                                <div className={multiStyles.selectionSummary}>
-                                                    <span>{selectedCourses.length} seleccionados</span>
-                                                    <div style={{ display: 'flex', gap: '10px' }}>
-                                                        <button type="button" onClick={selectAllFilteredCourses} className={multiStyles.selectAllBtn}>
-                                                            Todo Visible
-                                                        </button>
-                                                        <button type="button" onClick={clearCourseSelection} className={multiStyles.selectAllBtn}>
-                                                            Limpiar
-                                                        </button>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        )}
-                                    </div>
-                                </div>
-
-                                {/* 3. Common Data */}
-                                <div className={styles.row}>
-                                    <div className={styles.formGroup}>
-                                        <label>Calificación (0-100)</label>
-                                        <input
-                                            type="number"
-                                            min="0"
-                                            max="100"
-                                            value={qualification}
-                                            onChange={(e) => setQualification(e.target.value)}
-                                            className={styles.input}
-                                            required
-                                        />
-                                    </div>
-                                    <div className={styles.formGroup}>
-                                        <label>Fecha de Aplicación</label>
-                                        <input
-                                            type="date"
-                                            value={date}
-                                            onChange={(e) => setDate(e.target.value)}
-                                            className={styles.input}
-                                            required
-                                        />
-                                    </div>
-                                </div>
-
-                                <div className={styles.infoBox}>
-                                    <p>
-                                        Se crearán{' '}
-                                        <strong>{selectedEmps.length * (isNewCourse ? 1 : selectedCourses.length)}</strong>
-                                        {' '}registros en total.
-                                    </p>
-                                </div>
-
-                                <div className={styles.actions}>
-                                    {canWrite() ? (
-                                        <Button
-                                            type="submit"
-                                            disabled={submitting || selectedEmps.length === 0}
-                                        >
-                                            {submitting ? 'Procesando…' : 'Confirmar Carga Masiva'}
-                                        </Button>
-                                    ) : (
-                                        <p style={{ color: 'var(--text-muted)', fontStyle: 'italic' }}>
-                                            Solo lectura — No tienes permisos para registrar capacitaciones
-                                        </p>
                                     )}
                                 </div>
-                            </form>
-                        )}
-                    </div>
+                            </div>
+
+                            {/* 3. Common Data */}
+                            <div className={styles.row}>
+                                <div className={styles.formGroup}>
+                                    <label>CalificaciÃ³n (0-100)</label>
+                                    <input
+                                        type="number"
+                                        min="0"
+                                        max="100"
+                                        value={qualification}
+                                        onChange={(e) => setQualification(e.target.value)}
+                                        className={styles.input}
+                                        required
+                                    />
+                                </div>
+                                <div className={styles.formGroup}>
+                                    <label>Fecha de AplicaciÃ³n</label>
+                                    <input
+                                        type="date"
+                                        value={date}
+                                        onChange={(e) => setDate(e.target.value)}
+                                        className={styles.input}
+                                        required
+                                    />
+                                </div>
+                            </div>
+
+                            <div className={styles.infoBox}>
+                                <p>
+                                    Se crearÃ¡n{' '}
+                                    <strong>{selectedEmps.length * (isNewCourse ? 1 : selectedCourses.length)}</strong>
+                                    {' '}registros en total.
+                                </p>
+                            </div>
+
+                            <div className={styles.actions}>
+                                {canWrite() ? (
+                                    <Button
+                                        type="submit"
+                                        disabled={submitting || selectedEmps.length === 0}
+                                    >
+                                        {submitting ? 'Procesandoâ€¦' : 'Confirmar Carga Masiva'}
+                                    </Button>
+                                ) : (
+                                    <p style={{ color: 'var(--text-muted)', fontStyle: 'italic' }}>
+                                        Solo lectura â€” No tienes permisos para registrar capacitaciones
+                                        Solo lectura — No tienes permisos para registrar capacitaciones
+                                    </p>
+                                )}
+                            </div>
+                        </form>
+                    )}
                 </div>
-            </main>
-        </>
+            </div>
+        </AdminLayout>
     );
 }

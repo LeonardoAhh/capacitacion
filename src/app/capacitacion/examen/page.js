@@ -384,7 +384,7 @@ export default function ExamenPage() {
         <div className={styles.container}>
             <div className={styles.header}>
                 <div className={styles.titleRow}>
-                    <BackButton href="/capacitacion" />
+                    <BackButton href="/dashboard" />
                     <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
                         <Button variant="outline" size="sm" onClick={() => setShowQuestionManager(true)}>
                             Gestionar Preguntas

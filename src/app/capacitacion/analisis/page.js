@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useRouter } from 'next/navigation';
-import ProfileDropdown from '@/components/layout/ProfileDropdown/ProfileDropdown';
+import AdminLayout from '@/components/layout/AdminLayout/AdminLayout';
 import BackButton from '@/components/ui/BackButton/BackButton';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card/Card';
 import { Button } from '@/components/ui/Button/Button';
@@ -398,19 +398,17 @@ export default function AnalisisPage() {
 
     if (authLoading || !user) {
         return (
-            <div className={styles.main}>
+            <AdminLayout title="Módulo">
                 <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', color: 'var(--text-primary)' }}>
                     <div className="spinner"></div>
                 </div>
-            </div>
+            </AdminLayout>
         );
     }
 
     return (
         <>
-            <div className={styles.profileContainer}>
-                <ProfileDropdown />
-            </div>
+
             <main className={styles.main} id="main-content">
                 {/* Background Effects */}
                 <div className={styles.bgDecoration}>
@@ -421,7 +419,7 @@ export default function AnalisisPage() {
                 <div className={styles.container}>
                     <div className={styles.header}>
                         <div className={styles.headerLeft}>
-                            <BackButton href="/capacitacion" />
+                            <BackButton href="/dashboard" />
                             <h1>Análisis de Cumplimiento</h1>
                         </div>
                         <div className={styles.headerRight}>
@@ -1021,3 +1019,4 @@ export default function AnalisisPage() {
         </>
     );
 }
+

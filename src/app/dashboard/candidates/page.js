@@ -15,6 +15,7 @@ import CandidateDrawer from '@/components/features/Dashboard/CandidateDrawer';
 import ProfileDropdown from '@/components/layout/ProfileDropdown/ProfileDropdown';
 import AvatarSelector from '@/components/ui/AvatarSelector/AvatarSelector';
 import { useConfirm } from '@/hooks/useConfirm';
+import AdminLayout from '@/components/layout/AdminLayout/AdminLayout';
 
 // Custom hook for data fetching
 function useDataFetching() {
@@ -528,7 +529,7 @@ export default function CandidateMonitoringPage() {
     // Error state
     if (error) {
         return (
-            <div className={styles.page}>
+            <AdminLayout title="Monitoreo">
                 <div className={styles.errorContainer}>
                     <AlertCircle size={48} className={styles.errorIcon} />
                     <h2>Error al cargar datos</h2>
@@ -540,446 +541,426 @@ export default function CandidateMonitoringPage() {
                         Intentar de nuevo
                     </button>
                 </div>
-            </div>
+            </AdminLayout>
         );
     }
 
     return (
-        <>
-            <div className={styles.page}>
-                <AvatarSelector
-                    isOpen={showAvatarSelector}
-                    onClose={() => setShowAvatarSelector(false)}
-                    onSave={handleAvatarSave}
-                    userName={user?.name || user?.displayName || 'Usuario'}
-                />
+        <AdminLayout title="Candidatos en Inducción">
+            <AvatarSelector
+                isOpen={showAvatarSelector}
+                onClose={() => setShowAvatarSelector(false)}
+                onSave={handleAvatarSave}
+                userName={user?.name || user?.displayName || 'Usuario'}
+            />
 
-                <header className={styles.header}>
-                    <div className={styles.headerContent}>
-                        <div className={styles.headerLeft}>
-                            <BackButton href="/dashboard" />
-                            <div className={styles.title}>
-                                <h1>Monitoreo de Candidatos</h1>
-                                <p className={styles.subtitle}>Supervisa el avance de inducción en tiempo real</p>
-                            </div>
-                        </div>
-                        <div className={styles.headerActions}>
-                            <ProfileDropdown
-                                className={styles.profileDropdown}
-                                onAvatarClick={() => setShowAvatarSelector(true)}
-                            />
-                        </div>
+            {/* Stats Overview */}
+            <div className={styles.statsGrid}>
+                <div className={styles.statCard}>
+                    <div className={`${styles.statIcon} ${styles.blue}`}>
+                        <Users />
                     </div>
-                </header>
-
-                {/* Stats Overview */}
-                <div className={styles.statsGrid}>
-                    <div className={styles.statCard}>
-                        <div className={`${styles.statIcon} ${styles.blue}`}>
-                            <Users />
-                        </div>
-                        <div className={styles.statContent}>
-                            <h3 className={styles.statValue}>{stats.total}</h3>
-                            <p className={styles.statLabel}>Candidatos Totales</p>
-                        </div>
-                    </div>
-                    <div className={styles.statCard}>
-                        <div className={`${styles.statIcon} ${styles.green}`}>
-                            <CheckCircle />
-                        </div>
-                        <div className={styles.statContent}>
-                            <h3 className={styles.statValue}>{stats.completed}</h3>
-                            <p className={styles.statLabel}>Inducción Completada</p>
-                        </div>
-                    </div>
-                    <div className={styles.statCard}>
-                        <div className={`${styles.statIcon} ${styles.orange}`}>
-                            <Clock />
-                        </div>
-                        <div className={styles.statContent}>
-                            <h3 className={styles.statValue}>{stats.avgProgress}%</h3>
-                            <p className={styles.statLabel}>Progreso Promedio</p>
-                        </div>
-                    </div>
-                    <div className={styles.statCard}>
-                        <div className={`${styles.statIcon} ${styles.red}`}>
-                            <AlertCircle />
-                        </div>
-                        <div className={styles.statContent}>
-                            <h3 className={styles.statValue}>{stats.inactive}</h3>
-                            <p className={styles.statLabel}>Sin Actividad (+2 días)</p>
-                        </div>
+                    <div className={styles.statContent}>
+                        <h3 className={styles.statValue}>{stats.total}</h3>
+                        <p className={styles.statLabel}>Candidatos Totales</p>
                     </div>
                 </div>
+                <div className={styles.statCard}>
+                    <div className={`${styles.statIcon} ${styles.green}`}>
+                        <CheckCircle />
+                    </div>
+                    <div className={styles.statContent}>
+                        <h3 className={styles.statValue}>{stats.completed}</h3>
+                        <p className={styles.statLabel}>Inducción Completada</p>
+                    </div>
+                </div>
+                <div className={styles.statCard}>
+                    <div className={`${styles.statIcon} ${styles.orange}`}>
+                        <Clock />
+                    </div>
+                    <div className={styles.statContent}>
+                        <h3 className={styles.statValue}>{stats.avgProgress}%</h3>
+                        <p className={styles.statLabel}>Progreso Promedio</p>
+                    </div>
+                </div>
+                <div className={styles.statCard}>
+                    <div className={`${styles.statIcon} ${styles.red}`}>
+                        <AlertCircle />
+                    </div>
+                    <div className={styles.statContent}>
+                        <h3 className={styles.statValue}>{stats.inactive}</h3>
+                        <p className={styles.statLabel}>Sin Actividad (+2 días)</p>
+                    </div>
+                </div>
+            </div>
 
-                {/* Search and Filters */}
-                <div className={styles.filterBar}>
-                    <div className={styles.filterContent}>
-                        <div className={styles.searchContainer}>
-                            <Search className={styles.searchIcon} size={18} aria-hidden="true" />
-                            <input
-                                type="text"
-                                placeholder="Buscar por nombre, ID o puesto..."
-                                className={styles.searchInput}
-                                value={searchTerm}
-                                onChange={(e) => setSearchTerm(e.target.value)}
-                                aria-label="Buscar candidatos"
-                            />
-                            {searchTerm && (
-                                <button
-                                    onClick={() => setSearchTerm('')}
-                                    className={styles.clearSearch}
-                                    aria-label="Limpiar búsqueda"
-                                >
-                                    <X size={16} />
-                                </button>
-                            )}
-                        </div>
-
-                        {/* Desktop Filters */}
-                        <div className={styles.desktopFilters}>
-                            <select
-                                value={statusFilter}
-                                onChange={(e) => setStatusFilter(e.target.value)}
-                                className={styles.statusFilter}
-                                aria-label="Filtrar por estado"
+            {/* Search and Filters */}
+            <div className={styles.filterBar}>
+                <div className={styles.filterContent}>
+                    <div className={styles.searchContainer}>
+                        <Search className={styles.searchIcon} size={18} aria-hidden="true" />
+                        <input
+                            type="text"
+                            placeholder="Buscar por nombre, ID o puesto..."
+                            className={styles.searchInput}
+                            value={searchTerm}
+                            onChange={(e) => setSearchTerm(e.target.value)}
+                            aria-label="Buscar candidatos"
+                        />
+                        {searchTerm && (
+                            <button
+                                onClick={() => setSearchTerm('')}
+                                className={styles.clearSearch}
+                                aria-label="Limpiar búsqueda"
                             >
-                                <option value="all">Todos los estados</option>
-                                <option value="completed">Completados</option>
-                                <option value="inProgress">En Proceso</option>
-                                <option value="inactive">Inactivos</option>
-                                <option value="notStarted">Sin Iniciar</option>
-                                <option value="archived">🗄️ Archivados</option>
-                            </select>
-                        </div>
+                                <X size={16} />
+                            </button>
+                        )}
+                    </div>
 
-                        {/* Mobile Filter Toggle */}
-                        <button
-                            onClick={() => setShowMobileFilters(!showMobileFilters)}
-                            className={styles.mobileFilterToggle}
-                            aria-label="Mostrar filtros"
+                    {/* Desktop Filters */}
+                    <div className={styles.desktopFilters}>
+                        <select
+                            value={statusFilter}
+                            onChange={(e) => setStatusFilter(e.target.value)}
+                            className={styles.statusFilter}
+                            aria-label="Filtrar por estado"
                         >
-                            <Filter size={18} />
-                        </button>
+                            <option value="all">Todos los estados</option>
+                            <option value="completed">Completados</option>
+                            <option value="inProgress">En Proceso</option>
+                            <option value="inactive">Inactivos</option>
+                            <option value="notStarted">Sin Iniciar</option>
+                            <option value="archived">🗄️ Archivados</option>
+                        </select>
                     </div>
 
-                    {/* Mobile Filters Panel */}
-                    {showMobileFilters && (
-                        <div className={styles.mobileFiltersPanel}>
-                            <select
-                                value={statusFilter}
-                                onChange={(e) => setStatusFilter(e.target.value)}
-                                className={styles.statusFilter}
-                            >
-                                <option value="all">Todos los estados</option>
-                                <option value="completed">Completados</option>
-                                <option value="inProgress">En Proceso</option>
-                                <option value="inactive">Inactivos</option>
-                                <option value="notStarted">Sin Iniciar</option>
-                                <option value="archived">🗄️ Archivados</option>
-                            </select>
-                        </div>
-                    )}
-                </div>
-
-                {/* Results Summary */}
-                <div className={styles.resultsInfo}>
-                    <span>
-                        Mostrando {filteredCandidates.length} de {candidates.length} candidatos
-                    </span>
-                </div>
-
-                {/* Grid de Candidatos */}
-                {filteredCandidates.length > 0 ? (
-                    <div className={styles.candidateGrid}>
-                        {filteredCandidates.map((candidate) => {
-                            const dl = getDeadlineInfo(candidate);
-                            const hasDl = dl && candidate.status !== 'completed';
-                            return (
-                                <button
-                                    key={candidate.id}
-                                    className={styles.candidateCard}
-                                    onClick={() => handleCardClick(candidate)}
-                                    aria-label={`Ver detalles de ${candidate.name}`}
-                                >
-                                    {/* Foto o Inicial */}
-                                    <div className={styles.cardPhotoWrapper}>
-                                        {candidate.photoUrl ? (
-                                            // eslint-disable-next-line @next/next/no-img-element
-                                            <img
-                                                src={candidate.photoUrl}
-                                                alt={`Foto de ${candidate.name}`}
-                                                className={styles.cardPhoto}
-                                                onError={(e) => {
-                                                    e.currentTarget.style.display = 'none';
-                                                    e.currentTarget.nextSibling.style.display = 'flex';
-                                                }}
-                                            />
-                                        ) : null}
-                                        <div
-                                            className={styles.cardPhotoFallback}
-                                            style={{ display: candidate.photoUrl ? 'none' : 'flex' }}
-                                            aria-hidden="true"
-                                        >
-                                            {getShortName(candidate.name).charAt(0).toUpperCase()}
-                                        </div>
-                                        {/* Badge de estado flotante */}
-                                        <span
-                                            className={`${styles.cardStatusDot} ${styles[`dot_${candidate.status}`]}`}
-                                            title={
-                                                candidate.status === 'completed' ? 'Completado' :
-                                                    candidate.status === 'inProgress' ? 'En Proceso' :
-                                                        candidate.status === 'inactive' ? 'Inactivo' : 'Sin Iniciar'
-                                            }
-                                        />
-                                    </div>
-                                    {/* ID Empleado */}
-                                    <span className={styles.cardEmployeeId}>
-                                        {candidate.employeeId || 'Sin ID'}
-                                    </span>
-                                    {/* Nombre formateado */}
-                                    <span className={styles.cardName}>
-                                        {getShortName(candidate.name)}
-                                    </span>
-                                    {/* Tiempo restante */}
-                                    {hasDl && (
-                                        <span
-                                            className={styles.cardDeadline}
-                                            style={{
-                                                background: dl.isExpired ? 'rgba(239,68,68,0.15)' : dl.isUrgent ? 'rgba(251,146,60,0.15)' : 'rgba(34,197,94,0.12)',
-                                                color: dl.isExpired ? '#ef4444' : dl.isUrgent ? '#f97316' : '#16a34a',
-                                            }}
-                                        >
-                                            {'\u23f1'} {dl.label}
-                                        </span>
-                                    )}
-                                    {/* Mini barra de progreso */}
-                                    <div className={styles.cardProgressBar} aria-label={`Progreso: ${candidate.progress}%`}>
-                                        <div
-                                            className={`${styles.cardProgressFill} ${candidate.progress >= 100 ? styles.cardProgressComplete : ''}`}
-                                            style={{ width: `${candidate.progress}%` }}
-                                        />
-                                    </div>
-                                    <span className={styles.cardProgressLabel}>{candidate.progress}%</span>
-                                </button>
-                            );
-                        })}
-                    </div>
-                ) : (
-                    <div className={styles.emptyState}>
-                        No se encontraron candidatos que coincidan con la b\u00fasqueda.
-                    </div>
-                )}
-
-                {/* QuickDrawer — slide-up al hacer click en una card */}
-                <Drawer open={quickDrawerOpen} onOpenChange={setQuickDrawerOpen}>
-                    <DrawerContent>
-                        {quickDrawerCandidate && (() => {
-                            const c = quickDrawerCandidate;
-                            const dl = getDeadlineInfo(c);
-                            return (
-                                <>
-                                    <DrawerHeader>
-                                        <div className={styles.qdHeader}>
-                                            {/* Foto */}
-                                            <div className={styles.qdPhotoWrapper}>
-                                                {c.photoUrl ? (
-                                                    // eslint-disable-next-line @next/next/no-img-element
-                                                    <img
-                                                        src={c.photoUrl}
-                                                        alt={`Foto de ${c.name}`}
-                                                        className={styles.qdPhoto}
-                                                        onError={(e) => {
-                                                            e.currentTarget.style.display = 'none';
-                                                            e.currentTarget.nextSibling.style.display = 'flex';
-                                                        }}
-                                                    />
-                                                ) : null}
-                                                <div
-                                                    className={styles.qdPhotoFallback}
-                                                    style={{ display: c.photoUrl ? 'none' : 'flex' }}
-                                                    aria-hidden="true"
-                                                >
-                                                    {getShortName(c.name).charAt(0).toUpperCase()}
-                                                </div>
-                                            </div>
-                                            {/* Info */}
-                                            <div className={styles.qdHeaderInfo}>
-                                                <DrawerTitle>{c.name}</DrawerTitle>
-                                                <p className={styles.qdPosition}>{c.position}</p>
-                                                <p className={styles.qdEmployeeId}>ID: {c.employeeId || 'N/A'}</p>
-                                                <span className={`${styles.badge} ${styles[c.status]}`}>
-                                                    {c.status === 'completed' ? '\u2713 Completado' :
-                                                        c.status === 'inProgress' ? '\u23f3 En Proceso' :
-                                                            c.status === 'inactive' ? '\u26a0 Inactivo' : '\u25cb Sin Iniciar'}
-                                                </span>
-                                            </div>
-                                            <DrawerClose />
-                                        </div>
-                                    </DrawerHeader>
-
-                                    <div className={styles.qdBody}>
-                                        {/* WhatsApp CTA */}
-                                        <button
-                                            className={styles.qdWhatsappBtn}
-                                            onClick={() => {
-                                                setQuickDrawerOpen(false);
-                                                handleWhatsApp(c);
-                                            }}
-                                            disabled={!c.phone}
-                                            title={c.phone
-                                                ? `Enviar WhatsApp a ${getShortName(c.name)}`
-                                                : 'Sin tel\u00e9fono registrado \u2014 edita el perfil'}
-                                        >
-                                            <MessageCircle size={20} aria-hidden="true" />
-                                            {c.phone
-                                                ? `WhatsApp \u2014 ${getDisplayName(c)}`
-                                                : 'Sin tel\u00e9fono registrado'}
-                                        </button>
-
-                                        {/* Tiempo restante */}
-                                        {dl && c.status !== 'completed' && (
-                                            <div
-                                                className={styles.qdDeadline}
-                                                style={{
-                                                    background: dl.isExpired ? 'rgba(239,68,68,0.10)' : dl.isUrgent ? 'rgba(251,146,60,0.10)' : 'rgba(34,197,94,0.08)',
-                                                    borderColor: dl.isExpired ? 'rgba(239,68,68,0.3)' : dl.isUrgent ? 'rgba(251,146,60,0.3)' : 'rgba(34,197,94,0.3)',
-                                                    color: dl.isExpired ? '#ef4444' : dl.isUrgent ? '#f97316' : '#16a34a',
-                                                }}
-                                            >
-                                                <Clock size={16} />
-                                                <span>Tiempo restante: <strong>{dl.label}</strong></span>
-                                            </div>
-                                        )}
-
-                                        {/* Info Grid */}
-                                        <div className={styles.qdInfoGrid}>
-                                            <div className={styles.qdInfoItem}>
-                                                <span className={styles.qdInfoLabel}>Puesto</span>
-                                                <span className={styles.qdInfoValue}>{c.position}</span>
-                                            </div>
-                                            <div className={styles.qdInfoItem}>
-                                                <span className={styles.qdInfoLabel}>\u00daltimo acceso</span>
-                                                <span className={styles.qdInfoValue}>
-                                                    {c.daysSinceLastLogin !== null && c.daysSinceLastLogin > 2 && c.status !== 'completed' && (
-                                                        <Bell size={14} className={styles.inactiveIcon} style={{ marginRight: 4 }} />
-                                                    )}
-                                                    {c.lastLogin}
-                                                </span>
-                                            </div>
-                                            <div className={styles.qdInfoItem}>
-                                                <span className={styles.qdInfoLabel}>C\u00f3digo de acceso</span>
-                                                <span className={styles.qdInfoValue}>
-                                                    <Key size={14} style={{ marginRight: 4 }} />
-                                                    <strong>{c.accessCode}</strong>
-                                                    <span className={styles.qdInfoMeta}> ({c.accessCodeUses} usos)</span>
-                                                </span>
-                                            </div>
-                                            <div className={styles.qdInfoItem}>
-                                                <span className={styles.qdInfoLabel}>Presentaciones vistas</span>
-                                                <span className={styles.qdInfoValue}>{c.presentationsViewed}</span>
-                                            </div>
-                                        </div>
-
-                                        {/* Progreso general */}
-                                        <div className={styles.qdProgressSection}>
-                                            <div className={styles.qdProgressHeader}>
-                                                <span className={styles.qdProgressLabel}>Progreso de Inducci\u00f3n</span>
-                                                <span className={styles.qdProgressPct}>{c.progress}%</span>
-                                            </div>
-                                            <div className={styles.qdProgressBarContainer}>
-                                                <div
-                                                    className={`${styles.qdProgressFill} ${c.progress >= 100 ? styles.qdProgressComplete : ''}`}
-                                                    style={{ width: `${Math.min(c.progress, 100)}%` }}
-                                                />
-                                            </div>
-                                            <p className={styles.qdProgressDetail}>
-                                                {c.completedCount} de {c.requiredCount} cursos completados
-                                            </p>
-                                        </div>
-
-                                        {/* Actividad detallada \u2192 abre CandidateDrawer */}
-                                        <button
-                                            className={styles.qdActivityBtn}
-                                            onClick={() => {
-                                                setQuickDrawerOpen(false);
-                                                // Esperar que la animación de cierre termine antes de abrir
-                                                setTimeout(() => handleRowClick(c), 320);
-                                            }}
-                                        >
-                                            <span>Ver Actividad Detallada</span>
-                                            <ChevronRight size={18} />
-                                        </button>
-                                    </div>
-                                </>
-                            );
-                        })()}
-                    </DrawerContent>
-                </Drawer>
-
-                {/* Global Candidate Drawer */}
-                <CandidateDrawer
-                    candidate={selectedCandidate}
-                    coursesMap={coursesMapRef}
-                    open={isDrawerOpen}
-                    onOpenChange={setIsDrawerOpen}
-                    onArchive={() => handleArchiveCandidate(selectedCandidate)}
-                />
-
-                {/* WhatsApp Modal */}
-                {whatsappModal.isOpen && (
-                    <div
-                        className={styles.modalOverlay}
-                        onClick={() => setWhatsappModal({ isOpen: false, candidate: null })}
-                        role="dialog"
-                        aria-modal="true"
-                        aria-labelledby="modal-title"
-                        style={{ position: 'fixed', inset: 0, zIndex: 1000 }}
+                    {/* Mobile Filter Toggle */}
+                    <button
+                        onClick={() => setShowMobileFilters(!showMobileFilters)}
+                        className={styles.mobileFilterToggle}
+                        aria-label="Mostrar filtros"
                     >
-                        <div className={styles.modalContent} onClick={(e) => e.stopPropagation()}>
-                            <div className={styles.modalHeader}>
-                                <h3 id="modal-title">
-                                    <MessageCircle size={24} style={{ marginRight: '8px' }} aria-hidden="true" />
-                                    Selecciona un Mensaje
-                                </h3>
-                                <button
-                                    className={styles.modalCloseBtn}
-                                    onClick={() => setWhatsappModal({ isOpen: false, candidate: null })}
-                                    aria-label="Cerrar modal"
-                                >
-                                    &times;
-                                </button>
-                            </div>
+                        <Filter size={18} />
+                    </button>
+                </div>
 
-                            <div className={styles.modalBody}>
-                                <p className={styles.modalSubtitle}>
-                                    Enviando mensaje a: <strong>{getDisplayName(whatsappModal.candidate)}</strong>
-                                </p>
-
-                                <div className={styles.messageTemplates}>
-                                    {MESSAGE_TEMPLATES.map((template, idx) => (
-                                        <button
-                                            key={template.id}
-                                            ref={idx === 0 ? firstTemplateRef : null}
-                                            className={styles.templateButton}
-                                            onClick={(e) => {
-                                                e.stopPropagation();
-                                                sendWhatsAppMessage(template);
-                                            }}
-                                        >
-                                            <div className={styles.templateTitle}>{template.title}</div>
-                                            <div className={styles.templatePreview}>
-                                                {template.message(getDisplayName(whatsappModal.candidate) || 'Candidato', whatsappModal.candidate)}
-                                            </div>
-                                        </button>
-                                    ))}
-                                </div>
-                            </div>
-                        </div>
+                {/* Mobile Filters Panel */}
+                {showMobileFilters && (
+                    <div className={styles.mobileFiltersPanel}>
+                        <select
+                            value={statusFilter}
+                            onChange={(e) => setStatusFilter(e.target.value)}
+                            className={styles.statusFilter}
+                        >
+                            <option value="all">Todos los estados</option>
+                            <option value="completed">Completados</option>
+                            <option value="inProgress">En Proceso</option>
+                            <option value="inactive">Inactivos</option>
+                            <option value="notStarted">Sin Iniciar</option>
+                            <option value="archived">🗄️ Archivados</option>
+                        </select>
                     </div>
                 )}
             </div>
+
+            {/* Results Summary */}
+            <div className={styles.resultsInfo}>
+                <span>
+                    Mostrando {filteredCandidates.length} de {candidates.length} candidatos
+                </span>
+            </div>
+
+            {/* Grid de Candidatos */}
+            {filteredCandidates.length > 0 ? (
+                <div className={styles.candidateGrid}>
+                    {filteredCandidates.map((candidate) => {
+                        const dl = getDeadlineInfo(candidate);
+                        const hasDl = dl && candidate.status !== 'completed';
+                        return (
+                            <button
+                                key={candidate.id}
+                                className={styles.candidateCard}
+                                onClick={() => handleCardClick(candidate)}
+                                aria-label={`Ver detalles de ${candidate.name}`}
+                            >
+                                {/* Foto o Inicial */}
+                                <div className={styles.cardPhotoWrapper}>
+                                    {candidate.photoUrl ? (
+                                        // eslint-disable-next-line @next/next/no-img-element
+                                        <img
+                                            src={candidate.photoUrl}
+                                            alt={`Foto de ${candidate.name}`}
+                                            className={styles.cardPhoto}
+                                            onError={(e) => {
+                                                e.currentTarget.style.display = 'none';
+                                                e.currentTarget.nextSibling.style.display = 'flex';
+                                            }}
+                                        />
+                                    ) : null}
+                                    <div
+                                        className={styles.cardPhotoFallback}
+                                        style={{ display: candidate.photoUrl ? 'none' : 'flex' }}
+                                        aria-hidden="true"
+                                    >
+                                        {getShortName(candidate.name).charAt(0).toUpperCase()}
+                                    </div>
+                                    {/* Badge de estado flotante */}
+                                    <span
+                                        className={`${styles.cardStatusDot} ${styles[`dot_${candidate.status}`]}`}
+                                        title={
+                                            candidate.status === 'completed' ? 'Completado' :
+                                                candidate.status === 'inProgress' ? 'En Proceso' :
+                                                    candidate.status === 'inactive' ? 'Inactivo' : 'Sin Iniciar'
+                                        }
+                                    />
+                                </div>
+                                {/* ID Empleado */}
+                                <span className={styles.cardEmployeeId}>
+                                    {candidate.employeeId || 'Sin ID'}
+                                </span>
+                                {/* Nombre formateado */}
+                                <span className={styles.cardName}>
+                                    {getShortName(candidate.name)}
+                                </span>
+                                {/* Tiempo restante */}
+                                {hasDl && (
+                                    <span
+                                        className={styles.cardDeadline}
+                                        style={{
+                                            background: dl.isExpired ? 'rgba(239,68,68,0.15)' : dl.isUrgent ? 'rgba(251,146,60,0.15)' : 'rgba(34,197,94,0.12)',
+                                            color: dl.isExpired ? '#ef4444' : dl.isUrgent ? '#f97316' : '#16a34a',
+                                        }}
+                                    >
+                                        {'\u23f1'} {dl.label}
+                                    </span>
+                                )}
+                                {/* Mini barra de progreso */}
+                                <div className={styles.cardProgressBar} aria-label={`Progreso: ${candidate.progress}%`}>
+                                    <div
+                                        className={`${styles.cardProgressFill} ${candidate.progress >= 100 ? styles.cardProgressComplete : ''}`}
+                                        style={{ width: `${candidate.progress}%` }}
+                                    />
+                                </div>
+                                <span className={styles.cardProgressLabel}>{candidate.progress}%</span>
+                            </button>
+                        );
+                    })}
+                </div>
+            ) : (
+                <div className={styles.emptyState}>
+                    No se encontraron candidatos que coincidan con la b\u00fasqueda.
+                </div>
+            )}
+
+            {/* QuickDrawer — slide-up al hacer click en una card */}
+            <Drawer open={quickDrawerOpen} onOpenChange={setQuickDrawerOpen}>
+                <DrawerContent>
+                    {quickDrawerCandidate && (() => {
+                        const c = quickDrawerCandidate;
+                        const dl = getDeadlineInfo(c);
+                        return (
+                            <>
+                                <DrawerHeader>
+                                    <div className={styles.qdHeader}>
+                                        {/* Foto */}
+                                        <div className={styles.qdPhotoWrapper}>
+                                            {c.photoUrl ? (
+                                                // eslint-disable-next-line @next/next/no-img-element
+                                                <img
+                                                    src={c.photoUrl}
+                                                    alt={`Foto de ${c.name}`}
+                                                    className={styles.qdPhoto}
+                                                    onError={(e) => {
+                                                        e.currentTarget.style.display = 'none';
+                                                        e.currentTarget.nextSibling.style.display = 'flex';
+                                                    }}
+                                                />
+                                            ) : null}
+                                            <div
+                                                className={styles.qdPhotoFallback}
+                                                style={{ display: c.photoUrl ? 'none' : 'flex' }}
+                                                aria-hidden="true"
+                                            >
+                                                {getShortName(c.name).charAt(0).toUpperCase()}
+                                            </div>
+                                        </div>
+                                        {/* Info */}
+                                        <div className={styles.qdHeaderInfo}>
+                                            <DrawerTitle>{c.name}</DrawerTitle>
+                                            <p className={styles.qdPosition}>{c.position}</p>
+                                            <p className={styles.qdEmployeeId}>ID: {c.employeeId || 'N/A'}</p>
+                                            <span className={`${styles.badge} ${styles[c.status]}`}>
+                                                {c.status === 'completed' ? '\u2713 Completado' :
+                                                    c.status === 'inProgress' ? '\u23f3 En Proceso' :
+                                                        c.status === 'inactive' ? '\u26a0 Inactivo' : '\u25cb Sin Iniciar'}
+                                            </span>
+                                        </div>
+                                        <DrawerClose />
+                                    </div>
+                                </DrawerHeader>
+
+                                <div className={styles.qdBody}>
+                                    {/* WhatsApp CTA */}
+                                    <button
+                                        className={styles.qdWhatsappBtn}
+                                        onClick={() => {
+                                            setQuickDrawerOpen(false);
+                                            handleWhatsApp(c);
+                                        }}
+                                        disabled={!c.phone}
+                                        title={c.phone
+                                            ? `Enviar WhatsApp a ${getShortName(c.name)}`
+                                            : 'Sin tel\u00e9fono registrado \u2014 edita el perfil'}
+                                    >
+                                        <MessageCircle size={20} aria-hidden="true" />
+                                        {c.phone
+                                            ? `WhatsApp \u2014 ${getDisplayName(c)}`
+                                            : 'Sin tel\u00e9fono registrado'}
+                                    </button>
+
+                                    {/* Tiempo restante */}
+                                    {dl && c.status !== 'completed' && (
+                                        <div
+                                            className={styles.qdDeadline}
+                                            style={{
+                                                background: dl.isExpired ? 'rgba(239,68,68,0.10)' : dl.isUrgent ? 'rgba(251,146,60,0.10)' : 'rgba(34,197,94,0.08)',
+                                                borderColor: dl.isExpired ? 'rgba(239,68,68,0.3)' : dl.isUrgent ? 'rgba(251,146,60,0.3)' : 'rgba(34,197,94,0.3)',
+                                                color: dl.isExpired ? '#ef4444' : dl.isUrgent ? '#f97316' : '#16a34a',
+                                            }}
+                                        >
+                                            <Clock size={16} />
+                                            <span>Tiempo restante: <strong>{dl.label}</strong></span>
+                                        </div>
+                                    )}
+
+                                    {/* Info Grid */}
+                                    <div className={styles.qdInfoGrid}>
+                                        <div className={styles.qdInfoItem}>
+                                            <span className={styles.qdInfoLabel}>Puesto</span>
+                                            <span className={styles.qdInfoValue}>{c.position}</span>
+                                        </div>
+                                        <div className={styles.qdInfoItem}>
+                                            <span className={styles.qdInfoLabel}>\u00daltimo acceso</span>
+                                            <span className={styles.qdInfoValue}>
+                                                {c.daysSinceLastLogin !== null && c.daysSinceLastLogin > 2 && c.status !== 'completed' && (
+                                                    <Bell size={14} className={styles.inactiveIcon} style={{ marginRight: 4 }} />
+                                                )}
+                                                {c.lastLogin}
+                                            </span>
+                                        </div>
+                                        <div className={styles.qdInfoItem}>
+                                            <span className={styles.qdInfoLabel}>C\u00f3digo de acceso</span>
+                                            <span className={styles.qdInfoValue}>
+                                                <Key size={14} style={{ marginRight: 4 }} />
+                                                <strong>{c.accessCode}</strong>
+                                                <span className={styles.qdInfoMeta}> ({c.accessCodeUses} usos)</span>
+                                            </span>
+                                        </div>
+                                        <div className={styles.qdInfoItem}>
+                                            <span className={styles.qdInfoLabel}>Presentaciones vistas</span>
+                                            <span className={styles.qdInfoValue}>{c.presentationsViewed}</span>
+                                        </div>
+                                    </div>
+
+                                    {/* Progreso general */}
+                                    <div className={styles.qdProgressSection}>
+                                        <div className={styles.qdProgressHeader}>
+                                            <span className={styles.qdProgressLabel}>Progreso de Inducci\u00f3n</span>
+                                            <span className={styles.qdProgressPct}>{c.progress}%</span>
+                                        </div>
+                                        <div className={styles.qdProgressBarContainer}>
+                                            <div
+                                                className={`${styles.qdProgressFill} ${c.progress >= 100 ? styles.qdProgressComplete : ''}`}
+                                                style={{ width: `${Math.min(c.progress, 100)}%` }}
+                                            />
+                                        </div>
+                                        <p className={styles.qdProgressDetail}>
+                                            {c.completedCount} de {c.requiredCount} cursos completados
+                                        </p>
+                                    </div>
+
+                                    {/* Actividad detallada \u2192 abre CandidateDrawer */}
+                                    <button
+                                        className={styles.qdActivityBtn}
+                                        onClick={() => {
+                                            setQuickDrawerOpen(false);
+                                            // Esperar que la animación de cierre termine antes de abrir
+                                            setTimeout(() => handleRowClick(c), 320);
+                                        }}
+                                    >
+                                        <span>Ver Actividad Detallada</span>
+                                        <ChevronRight size={18} />
+                                    </button>
+                                </div>
+                            </>
+                        );
+                    })()}
+                </DrawerContent>
+            </Drawer>
+
+            {/* Global Candidate Drawer */}
+            <CandidateDrawer
+                candidate={selectedCandidate}
+                coursesMap={coursesMapRef}
+                open={isDrawerOpen}
+                onOpenChange={setIsDrawerOpen}
+                onArchive={() => handleArchiveCandidate(selectedCandidate)}
+            />
+
+            {/* WhatsApp Modal */}
+            {whatsappModal.isOpen && (
+                <div
+                    className={styles.modalOverlay}
+                    onClick={() => setWhatsappModal({ isOpen: false, candidate: null })}
+                    role="dialog"
+                    aria-modal="true"
+                    aria-labelledby="modal-title"
+                    style={{ position: 'fixed', inset: 0, zIndex: 1000 }}
+                >
+                    <div className={styles.modalContent} onClick={(e) => e.stopPropagation()}>
+                        <div className={styles.modalHeader}>
+                            <h3 id="modal-title">
+                                <MessageCircle size={24} style={{ marginRight: '8px' }} aria-hidden="true" />
+                                Selecciona un Mensaje
+                            </h3>
+                            <button
+                                className={styles.modalCloseBtn}
+                                onClick={() => setWhatsappModal({ isOpen: false, candidate: null })}
+                                aria-label="Cerrar modal"
+                            >
+                                &times;
+                            </button>
+                        </div>
+
+                        <div className={styles.modalBody}>
+                            <p className={styles.modalSubtitle}>
+                                Enviando mensaje a: <strong>{getDisplayName(whatsappModal.candidate)}</strong>
+                            </p>
+
+                            <div className={styles.messageTemplates}>
+                                {MESSAGE_TEMPLATES.map((template, idx) => (
+                                    <button
+                                        key={template.id}
+                                        ref={idx === 0 ? firstTemplateRef : null}
+                                        className={styles.templateButton}
+                                        onClick={(e) => {
+                                            e.stopPropagation();
+                                            sendWhatsAppMessage(template);
+                                        }}
+                                    >
+                                        <div className={styles.templateTitle}>{template.title}</div>
+                                        <div className={styles.templatePreview}>
+                                            {template.message(getDisplayName(whatsappModal.candidate) || 'Candidato', whatsappModal.candidate)}
+                                        </div>
+                                    </button>
+                                ))}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
             {confirmDialog}
-        </>
+        </AdminLayout>
     );
 }

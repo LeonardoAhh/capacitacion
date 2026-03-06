@@ -210,7 +210,7 @@ export default function LoginPage() {
     }, [signInWithGoogle, checkRateLimit, failedAttempts]);
 
     const handleSuccessComplete = useCallback(() => {
-        router.push('/modulos');
+        router.push('/dashboard');
     }, [router]);
 
     useEffect(() => {

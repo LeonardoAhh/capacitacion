@@ -5,9 +5,10 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import BackButton from '@/components/ui/BackButton/BackButton';
-import ProfileDropdown from '@/components/layout/ProfileDropdown/ProfileDropdown';
 import AvatarSelector from '@/components/ui/AvatarSelector/AvatarSelector';
 import EvaluationModal from '@/components/features/Training/EvaluationModal';
+import MainSidebar from '@/components/layout/MainSidebar/MainSidebar';
+import CandidateMobileHeader from '@/components/features/CandidateSidebar/CandidateMobileHeader';
 import { useNotifications } from '@/hooks/useNotifications';
 import { useDashboardStats } from '@/hooks/useDashboardStats';
 import { useToast } from '@/components/ui/Toast/Toast';
@@ -25,6 +26,7 @@ export default function DashboardPage() {
     const { stats, evaluations, expiringEmployees, loading } = useDashboardStats(user);
     const [showExpiringModal, setShowExpiringModal] = useState(false);
     const [showAvatarSelector, setShowAvatarSelector] = useState(false);
+    const [isSidebarOpen, setIsSidebarOpen] = useState(false);
     const [selectedEvaluation, setSelectedEvaluation] = useState(null);
     const { permission, requestPermission, sendNotification } = useNotifications();
     const { toast } = useToast();
@@ -104,6 +106,16 @@ export default function DashboardPage() {
         }
     };
 
+    const handleLogout = async () => {
+        try {
+            await destroySession();
+            router.push('/');
+        } catch (error) {
+            console.error('Error cerrando sesión:', error);
+            router.push('/');
+        }
+    };
+
     if (authLoading || !user) {
         return (
             <div className={styles.page}>
@@ -130,129 +142,144 @@ export default function DashboardPage() {
                 onSave={handleSaveEvaluation}
             />
 
-            <div className={styles.profileContainer}>
-                <ProfileDropdown onAvatarClick={() => setShowAvatarSelector(true)} />
-            </div>
+            <CandidateMobileHeader
+                user={user}
+                onMenuClick={() => setIsSidebarOpen(true)}
+                title="Dashboard"
+            />
 
-            <div className={styles.container}>
-                <BackButton href="/modulos" />
+            <MainSidebar
+                user={user}
+                handleLogout={handleLogout}
+                isOpen={isSidebarOpen}
+                onClose={() => setIsSidebarOpen(false)}
+            />
 
-                <header className={styles.header}>
-                    <span className={styles.portal}>Dashboard</span>
-                    <h1 className={styles.title}>Gestión de Talento</h1>
-                    <p className={styles.subtitle}>Resumen de empleados y contratos</p>
-                </header>
+            <div className={styles.scrollContent}>
+                <div className={styles.container}>
+                    <header className={styles.header}>
+                        <span className={styles.portal}>Dashboard</span>
+                        <h1 className={styles.title}>Hola, {(user?.nombre || user?.nickname || user?.name || 'Administrador').split(' ')[0]}</h1>
+                        <p className={styles.subtitle}>Resumen de empleados, talento y contratos</p>
+                    </header>
 
-                <div className={styles.statsGrid}>
-                    <Link href="/employees" className={styles.statCard}>
-                        <div className={`${styles.statIcon} ${styles.primary}`}>
-                            <Users size={20} />
+                    <div className={styles.statsGrid}>
+                        <Link href="/employees" className={styles.statCard}>
+                            <div className={`${styles.statIcon} ${styles.primary}`}>
+                                <Users size={20} />
+                            </div>
+                            <div className={styles.statTextGroup}>
+                                <span className={styles.statValue}>{stats.totalEmployees}</span>
+                                <span className={styles.statLabel}>Empleados</span>
+                            </div>
+                        </Link>
+
+                        <Link href="/employees" className={styles.statCard}>
+                            <div className={`${styles.statIcon} ${styles.success}`}>
+                                <FileText size={20} />
+                            </div>
+                            <div className={styles.statTextGroup}>
+                                <span className={styles.statValue}>{stats.activeContracts}</span>
+                                <span className={styles.statLabel}>Contratos Vigentes</span>
+                            </div>
+                        </Link>
+
+                        <div className={`${styles.statCard} ${stats.expiringContracts > 0 ? styles.clickable : ''}`}>
+                            <div className={`${styles.statIcon} ${styles.warning}`}>
+                                <Clock size={20} />
+                            </div>
+                            <div className={styles.statTextGroup}>
+                                <span className={styles.statValue}>{stats.expiringContracts}</span>
+                                <span className={styles.statLabel}>Por Vencer</span>
+                            </div>
                         </div>
-                        <span className={styles.statValue}>{stats.totalEmployees}</span>
-                        <span className={styles.statLabel}>Empleados</span>
-                    </Link>
-
-                    <Link href="/employees" className={styles.statCard}>
-                        <div className={`${styles.statIcon} ${styles.success}`}>
-                            <FileText size={20} />
-                        </div>
-                        <span className={styles.statValue}>{stats.activeContracts}</span>
-                        <span className={styles.statLabel}>Contratos Vigentes</span>
-                    </Link>
-
-                    <div className={`${styles.statCard} ${stats.expiringContracts > 0 ? styles.clickable : ''}`}>
-                        <div className={`${styles.statIcon} ${styles.warning}`}>
-                            <Clock size={20} />
-                        </div>
-                        <span className={styles.statValue}>{stats.expiringContracts}</span>
-                        <span className={styles.statLabel}>Por Vencer</span>
                     </div>
-                </div>
 
-                {permission === 'default' && (
-                    <div className={styles.notificationBanner}>
-                        <span>Activa las notificaciones para recibir alertas</span>
-                        <button onClick={handleEnableNotifications} className={styles.notificationBtn}>
-                            Activar
-                        </button>
-                    </div>
-                )}
+                    {permission === 'default' && (
+                        <div className={styles.notificationBanner}>
+                            <span>Activa las notificaciones para recibir alertas</span>
+                            <button onClick={handleEnableNotifications} className={styles.notificationBtn}>
+                                Activar
+                            </button>
+                        </div>
+                    )}
 
-                <div className={styles.bottomGrid}>
-                    {(evaluations.overdue.length > 0 || evaluations.upcoming.length > 0) && (
-                        <section className={styles.section}>
-                            <div className={styles.sectionHeader}>
-                                <h2 className={styles.sectionTitle}>Evaluaciones</h2>
-                                {evaluations.overdue.length > 0 && (
-                                    <span className={`${styles.sectionBadge} ${styles.danger}`}>
-                                        {evaluations.overdue.length} vencida{evaluations.overdue.length > 1 ? 's' : ''}
+                    <div className={styles.bottomGrid}>
+                        {(evaluations.overdue.length > 0 || evaluations.upcoming.length > 0) && (
+                            <section className={styles.section}>
+                                <div className={styles.sectionHeader}>
+                                    <h2 className={styles.sectionTitle}>Evaluaciones</h2>
+                                    {evaluations.overdue.length > 0 && (
+                                        <span className={`${styles.sectionBadge} ${styles.danger}`}>
+                                            {evaluations.overdue.length} vencida{evaluations.overdue.length > 1 ? 's' : ''}
+                                        </span>
+                                    )}
+                                </div>
+                                <div className={styles.alertList}>
+                                    {evaluations.overdue.map((ev, i) => (
+                                        <div
+                                            key={`overdue-${i}`}
+                                            className={`${styles.alertItem} ${styles.clickable}`}
+                                            onClick={() => setSelectedEvaluation(ev)}
+                                        >
+                                            <div className={`${styles.alertIcon} ${styles.danger}`}>
+                                                <AlertCircle size={20} />
+                                            </div>
+                                            <div className={styles.alertContent}>
+                                                <span className={styles.alertTitle}>{ev.employeeName}</span>
+                                                <span className={styles.alertMeta}>
+                                                    {ev.evaluationType} &middot; Vencida hace <strong>{ev.daysOverdue}d</strong>
+                                                </span>
+                                            </div>
+                                        </div>
+                                    ))}
+                                    {evaluations.upcoming.map((ev, i) => (
+                                        <div
+                                            key={`upcoming-${i}`}
+                                            className={`${styles.alertItem} ${styles.clickable}`}
+                                            onClick={() => setSelectedEvaluation(ev)}
+                                        >
+                                            <div className={`${styles.alertIcon} ${styles.warning}`}>
+                                                <Calendar size={20} />
+                                            </div>
+                                            <div className={styles.alertContent}>
+                                                <span className={styles.alertTitle}>{ev.employeeName}</span>
+                                                <span className={styles.alertMeta}>
+                                                    {ev.evaluationType} &middot; En <strong>{ev.daysUntil}d</strong>
+                                                </span>
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            </section>
+                        )}
+
+                        {stats.expiringContracts > 0 && (
+                            <section className={styles.section}>
+                                <div className={styles.sectionHeader}>
+                                    <h2 className={styles.sectionTitle}>Contratos Próximos a Vencer</h2>
+                                    <span className={`${styles.sectionBadge} ${styles.warning}`}>
+                                        {stats.expiringContracts}
                                     </span>
-                                )}
-                            </div>
-                            <div className={styles.alertList}>
-                                {evaluations.overdue.map((ev, i) => (
-                                    <div
-                                        key={`overdue-${i}`}
-                                        className={`${styles.alertItem} ${styles.clickable}`}
-                                        onClick={() => setSelectedEvaluation(ev)}
-                                    >
-                                        <div className={`${styles.alertIcon} ${styles.danger}`}>
-                                            <AlertCircle size={20} />
+                                </div>
+                                <div className={styles.alertList}>
+                                    {expiringEmployees.map((emp, i) => (
+                                        <div key={i} className={`${styles.alertItem} ${styles.warningMode}`}>
+                                            <div className={`${styles.alertIcon} ${styles.warning}`}>
+                                                <Clock size={20} />
+                                            </div>
+                                            <div className={styles.alertContent}>
+                                                <span className={styles.alertTitle}>{emp.name}</span>
+                                                <span className={styles.alertMeta}>
+                                                    {emp.position} &middot; Vence en <strong>{emp.daysUntilExpiry}d</strong>
+                                                </span>
+                                            </div>
                                         </div>
-                                        <div className={styles.alertContent}>
-                                            <span className={styles.alertTitle}>{ev.employeeName}</span>
-                                            <span className={styles.alertMeta}>
-                                                {ev.evaluationType} &middot; Vencida hace <strong>{ev.daysOverdue}d</strong>
-                                            </span>
-                                        </div>
-                                    </div>
-                                ))}
-                                {evaluations.upcoming.map((ev, i) => (
-                                    <div
-                                        key={`upcoming-${i}`}
-                                        className={`${styles.alertItem} ${styles.clickable}`}
-                                        onClick={() => setSelectedEvaluation(ev)}
-                                    >
-                                        <div className={`${styles.alertIcon} ${styles.warning}`}>
-                                            <Calendar size={20} />
-                                        </div>
-                                        <div className={styles.alertContent}>
-                                            <span className={styles.alertTitle}>{ev.employeeName}</span>
-                                            <span className={styles.alertMeta}>
-                                                {ev.evaluationType} &middot; En <strong>{ev.daysUntil}d</strong>
-                                            </span>
-                                        </div>
-                                    </div>
-                                ))}
-                            </div>
-                        </section>
-                    )}
-
-                    {stats.expiringContracts > 0 && (
-                        <section className={styles.section}>
-                            <div className={styles.sectionHeader}>
-                                <h2 className={styles.sectionTitle}>Contratos Próximos a Vencer</h2>
-                                <span className={`${styles.sectionBadge} ${styles.warning}`}>
-                                    {stats.expiringContracts}
-                                </span>
-                            </div>
-                            <div className={styles.alertList}>
-                                {expiringEmployees.map((emp, i) => (
-                                    <div key={i} className={`${styles.alertItem} ${styles.warningMode}`}>
-                                        <div className={`${styles.alertIcon} ${styles.warning}`}>
-                                            <Clock size={20} />
-                                        </div>
-                                        <div className={styles.alertContent}>
-                                            <span className={styles.alertTitle}>{emp.name}</span>
-                                            <span className={styles.alertMeta}>
-                                                {emp.position} &middot; Vence en <strong>{emp.daysUntilExpiry}d</strong>
-                                            </span>
-                                        </div>
-                                    </div>
-                                ))}
-                            </div>
-                        </section>
-                    )}
+                                    ))}
+                                </div>
+                            </section>
+                        )}
+                    </div>
                 </div>
             </div>
         </div>

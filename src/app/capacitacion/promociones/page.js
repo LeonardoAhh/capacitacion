@@ -1,7 +1,7 @@
 ﻿'use client';
 
 import { useState, useEffect, useCallback } from 'react';
-import ProfileDropdown from '@/components/layout/ProfileDropdown/ProfileDropdown';
+import AdminLayout from '@/components/layout/AdminLayout/AdminLayout';
 import BackButton from '@/components/ui/BackButton/BackButton';
 import { Button } from '@/components/ui/Button/Button';
 import { useToast } from '@/components/ui/Toast/Toast';
@@ -401,31 +401,21 @@ export default function PromocionesPage() {
 
     if (authLoading || !user) {
         return (
-            <div className={styles.main}>
+            <AdminLayout title="Módulo">
                 <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', color: 'var(--text-primary)' }}>
                     <div className="spinner"></div>
                 </div>
-            </div>
+            </AdminLayout>
         );
     }
 
     return (
         <>
-            <div className={styles.profileContainer}>
-                <ProfileDropdown />
-            </div>
-            <main className={styles.main} id="main-content">
-                {/* Background Effects */}
-                <div className={styles.bgDecoration}>
-                    <div className={`${styles.blob} ${styles.blob1}`}></div>
-                    <div className={`${styles.blob} ${styles.blob2}`}></div>
-                    <div className={`${styles.blob} ${styles.blob3}`}></div>
-                </div>
-
+            <AdminLayout title="Promociones">
                 <div className={styles.container}>
                     <div className={styles.header}>
                         <div>
-                            <BackButton href="/capacitacion" />
+                            <BackButton href="/dashboard" />
                             <h1>Control de Promociones</h1>
                             <p>Monitoreo de elegibilidad para cambio de categoría</p>
                         </div>
@@ -622,7 +612,7 @@ export default function PromocionesPage() {
                         </>
                     )}
                 </div>
-            </main >
+            </AdminLayout>
 
             {/* Edit Employee Modal */}
             <EditEmployeeModal
@@ -645,15 +635,18 @@ export default function PromocionesPage() {
                 rules={promotionRules}
                 onRulesUpdated={setPromotionRules}
             />
-            {promoteModal && (
-                <PromoteModal
-                    isOpen={!!promoteModal}
-                    onClose={() => setPromoteModal(null)}
-                    employee={promoteModal.employee}
-                    newPosition={promoteModal.newPosition}
-                    onConfirm={handlePromoteEmployee}
-                />
-            )}
+
+            {
+                promoteModal && (
+                    <PromoteModal
+                        isOpen={!!promoteModal}
+                        onClose={() => setPromoteModal(null)}
+                        employee={promoteModal.employee}
+                        newPosition={promoteModal.newPosition}
+                        onConfirm={handlePromoteEmployee}
+                    />
+                )
+            }
 
             {confirmDialog}
         </>

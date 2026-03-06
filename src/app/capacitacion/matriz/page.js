@@ -1,7 +1,7 @@
 ﻿'use client';
 
 import { useState, useEffect } from 'react';
-import ProfileDropdown from '@/components/layout/ProfileDropdown/ProfileDropdown';
+import AdminLayout from '@/components/layout/AdminLayout/AdminLayout';
 import BackButton from '@/components/ui/BackButton/BackButton';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card/Card';
 import { Button } from '@/components/ui/Button/Button';
@@ -132,11 +132,11 @@ export default function MatrizPage() {
 
     if (authLoading || !user) {
         return (
-            <div className={styles.main}>
+            <AdminLayout title="Módulo">
                 <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', color: 'var(--text-primary)' }}>
                     <div className="spinner"></div>
                 </div>
-            </div>
+            </AdminLayout>
         );
     }
 
@@ -270,15 +270,12 @@ export default function MatrizPage() {
     ).slice(0, 5);
 
     return (
-        <>
-            <div className={styles.profileContainer}>
-                <ProfileDropdown />
-            </div>
+        <AdminLayout title="Matriz de Capacitación">
             <main className={styles.main} id="main-content">
                 <div className={styles.container}>
                     <div className={styles.header}>
                         <div className={styles.headerLeft}>
-                            <BackButton href="/capacitacion" />
+                            <BackButton href="/dashboard" />
                             <h1>Matriz de Capacitación</h1>
                         </div>
 
@@ -721,6 +718,7 @@ export default function MatrizPage() {
                     </Button>
                 </DialogFooter>
             </Dialog>
-        </>
+        </AdminLayout>
     );
 }
+

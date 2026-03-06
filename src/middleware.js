@@ -15,7 +15,6 @@ const ADMIN_ROUTES = [
     '/capacitacion',
     '/reports',
     '/profile',
-    '/modulos',
     '/iluo-manager',
     '/induccion',
     '/complete-profile',

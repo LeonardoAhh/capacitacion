@@ -1,11 +1,11 @@
-'use client';
+﻿'use client';
 
 import React, { useEffect, useState, useMemo, useCallback } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useRouter } from 'next/navigation';
 import { collection, getDocs } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
-import ProfileDropdown from '@/components/layout/ProfileDropdown/ProfileDropdown';
+import AdminLayout from '@/components/layout/AdminLayout/AdminLayout';
 import BackButton from '@/components/ui/BackButton/BackButton';
 import styles from './page.module.css';
 
@@ -33,29 +33,29 @@ import {
     AreaChart
 } from 'recharts';
 
-// Configuración de plazos del Plan de Formación
+// Configuracion de plazos del Plan de Formacion
 const TRAINING_PLAN_CONFIG = [
-    { DEPARTAMENTO: "ALMACEN", ÁREA: "ALMACEN", DIAS: 60 },
-    { DEPARTAMENTO: "CALIDAD", ÁREA: "A. CALIDAD 1ER TURNO", DIAS: 7 },
-    { DEPARTAMENTO: "CALIDAD", ÁREA: "A. CALIDAD 2DO. TURNO", DIAS: 7 },
-    { DEPARTAMENTO: "CALIDAD", ÁREA: "METROLOGÍA", DIAS: 7 },
-    { DEPARTAMENTO: "CALIDAD", ÁREA: "CALIDAD ADMTVO", DIAS: 7 },
-    { DEPARTAMENTO: "CALIDAD", ÁREA: "SGI", DIAS: 60 },
-    { DEPARTAMENTO: "CALIDAD", ÁREA: "RESIDENTES DE CALIDAD", DIAS: 7 },
-    { DEPARTAMENTO: "COMERCIAL", ÁREA: "VENTAS", DIAS: 60 },
-    { DEPARTAMENTO: "GERENCIA DE PLANTA", ÁREA: "GERENCIA", DIAS: 60 },
-    { DEPARTAMENTO: "LOGISTICA", ÁREA: "LOGISTICA", DIAS: 60 },
-    { DEPARTAMENTO: "MANTENIMIENTO", ÁREA: "MANTENIMIENTO", DIAS: 90 },
-    { DEPARTAMENTO: "PRODUCCIÓN", ÁREA: "PRODUCCIÓN ADMTVO", DIAS: 60 },
-    { DEPARTAMENTO: "PRODUCCIÓN", ÁREA: "PRODUCCIÓN MONTAJE", DIAS: 60 },
-    { DEPARTAMENTO: "PRODUCCIÓN", ÁREA: "PRODUCCIÓN 1ER. TURNO", DIAS: 60 },
-    { DEPARTAMENTO: "PRODUCCIÓN", ÁREA: "PRODUCCIÓN 2o. TURNO", DIAS: 60 },
-    { DEPARTAMENTO: "PRODUCCIÓN", ÁREA: "PRODUCCIÓN 3ER. TURNO", DIAS: 60 },
-    { DEPARTAMENTO: "PRODUCCIÓN", ÁREA: "PRODUCCIÓN 4o. TURNO", DIAS: 60 },
-    { DEPARTAMENTO: "PROYECTOS", ÁREA: "PROYECTOS", DIAS: 60 },
-    { DEPARTAMENTO: "RECURSOS HUMANOS", ÁREA: "RECURSOS HUMANOS", DIAS: 60 },
-    { DEPARTAMENTO: "SISTEMAS", ÁREA: "SISTEMAS", DIAS: 60 },
-    { DEPARTAMENTO: "TALLER DE MOLDES", ÁREA: "MOLDES", DIAS: 60 }
+    { DEPARTAMENTO: "ALMACEN", ÃREA: "ALMACEN", DIAS: 60 },
+    { DEPARTAMENTO: "CALIDAD", ÃREA: "A. CALIDAD 1ER TURNO", DIAS: 7 },
+    { DEPARTAMENTO: "CALIDAD", ÃREA: "A. CALIDAD 2DO. TURNO", DIAS: 7 },
+    { DEPARTAMENTO: "CALIDAD", ÃREA: "METROLOGÃA", DIAS: 7 },
+    { DEPARTAMENTO: "CALIDAD", ÃREA: "CALIDAD ADMTVO", DIAS: 7 },
+    { DEPARTAMENTO: "CALIDAD", ÃREA: "SGI", DIAS: 60 },
+    { DEPARTAMENTO: "CALIDAD", ÃREA: "RESIDENTES DE CALIDAD", DIAS: 7 },
+    { DEPARTAMENTO: "COMERCIAL", ÃREA: "VENTAS", DIAS: 60 },
+    { DEPARTAMENTO: "GERENCIA DE PLANTA", ÃREA: "GERENCIA", DIAS: 60 },
+    { DEPARTAMENTO: "LOGISTICA", ÃREA: "LOGISTICA", DIAS: 60 },
+    { DEPARTAMENTO: "MANTENIMIENTO", ÃREA: "MANTENIMIENTO", DIAS: 90 },
+    { DEPARTAMENTO: "PRODUCCION", ÃREA: "PRODUCCION ADMTVO", DIAS: 60 },
+    { DEPARTAMENTO: "PRODUCCION", ÃREA: "PRODUCCION MONTAJE", DIAS: 60 },
+    { DEPARTAMENTO: "PRODUCCION", ÃREA: "PRODUCCION 1ER. TURNO", DIAS: 60 },
+    { DEPARTAMENTO: "PRODUCCION", ÃREA: "PRODUCCION 2o. TURNO", DIAS: 60 },
+    { DEPARTAMENTO: "PRODUCCION", ÃREA: "PRODUCCION 3ER. TURNO", DIAS: 60 },
+    { DEPARTAMENTO: "PRODUCCION", ÃREA: "PRODUCCION 4o. TURNO", DIAS: 60 },
+    { DEPARTAMENTO: "PROYECTOS", ÃREA: "PROYECTOS", DIAS: 60 },
+    { DEPARTAMENTO: "RECURSOS HUMANOS", ÃREA: "RECURSOS HUMANOS", DIAS: 60 },
+    { DEPARTAMENTO: "SISTEMAS", ÃREA: "SISTEMAS", DIAS: 60 },
+    { DEPARTAMENTO: "TALLER DE MOLDES", ÃREA: "MOLDES", DIAS: 60 }
 ];
 
 const MONTHS = [
@@ -320,13 +320,13 @@ export default function ReportsPage() {
                 const month = deliveryDate.getMonth();
                 const dept = emp.department.toUpperCase();
 
-                // Actualizar estadísticas por mes
+                // Actualizar estadisticas por mes
                 monthMap[month].scheduled++;
                 if (emp.trainingPlanDelivered) {
                     monthMap[month].delivered++;
                 }
 
-                // Actualizar estadísticas por departamento
+                // Actualizar estadisticas por departamento
                 if (!deptMap[dept]) {
                     deptMap[dept] = { scheduled: 0, delivered: 0, employees: [] };
                 }
@@ -393,9 +393,9 @@ export default function ReportsPage() {
         const daysUntil = Math.ceil((dueDate - now) / (1000 * 60 * 60 * 24));
 
         if (daysUntil < 0) {
-            return { status: 'overdue', label: `Vencido (${Math.abs(daysUntil)} días)`, color: '#ef4444' };
+            return { status: 'overdue', label: `Vencido (${Math.abs(daysUntil)} dias)`, color: '#ef4444' };
         } else if (daysUntil <= 7) {
-            return { status: 'soon', label: `Próximo (${daysUntil} días)`, color: '#f59e0b' };
+            return { status: 'soon', label: `Proximo (${daysUntil} dias)`, color: '#f59e0b' };
         } else {
             return { status: 'ontime', label: 'A tiempo', color: '#3b82f6' };
         }
@@ -441,7 +441,7 @@ export default function ReportsPage() {
                 </div>
                 <h2 style={{ margin: '0 0 10px', fontSize: '1.5rem' }}>Acceso Restringido</h2>
                 <p style={{ color: 'var(--text-secondary)', margin: '0 0 20px' }}>
-                    Esta sección no está disponible en modo Demo.
+                    Esta seccion no esta disponible en modo Demo.
                 </p>
                 <button
                     onClick={() => router.push('/induccion')}
@@ -455,19 +455,15 @@ export default function ReportsPage() {
                         fontWeight: '600'
                     }}
                 >
-                    Ir a Inducción
+                    Ir a Induccion
                 </button>
             </div>
         );
     }
 
     return (
-        <>
-            <div className={styles.profileContainer}>
-                <ProfileDropdown />
-            </div>
-
-            {/* Background Effects */}
+        <AdminLayout title="Reportes">
+{/* Background Effects */}
             <div className={styles.bgDecoration}>
                 <div className={`${styles.blob} ${styles.blob1}`}></div>
                 <div className={`${styles.blob} ${styles.blob2}`}></div>
@@ -478,10 +474,10 @@ export default function ReportsPage() {
                     <div className={styles.header}>
                         <div className={styles.headerLeft}>
                             <BackButton href="/dashboard" />
-                            <h1>Cumplimiento Plan de Formación</h1>
+                            <h1>Cumplimiento Plan de Formacion</h1>
                         </div>
                         <div className={styles.yearSelector}>
-                            <label>Año:</label>
+                            <label>Ano:</label>
                             <select
                                 value={selectedYear}
                                 onChange={(e) => setSelectedYear(parseInt(e.target.value))}
@@ -558,9 +554,9 @@ export default function ReportsPage() {
                                 </div>
                             </div>
 
-                            {/* Sección de Gráficos Interactivos */}
+                            {/* Seccion de Graficos Interactivos */}
                             <div className={styles.chartsGrid}>
-                                {/* Gráfico de Barras - Cumplimiento Mensual */}
+                                {/* Grafico de Barras - Cumplimiento Mensual */}
                                 <div className={styles.chartCard}>
                                     <div className={styles.chartHeader}>
                                         <div>
@@ -583,11 +579,11 @@ export default function ReportsPage() {
                                     </div>
                                 </div>
 
-                                {/* Gráfico de Pie - Distribución General */}
+                                {/* Grafico de Pie - Distribucion General */}
                                 <div className={styles.chartCard}>
                                     <div className={styles.chartHeader}>
                                         <div>
-                                            <h3 className={styles.chartTitle}>Distribución General</h3>
+                                            <h3 className={styles.chartTitle}>Distribucion General</h3>
                                             <p className={styles.chartSubtitle}>Estado actual de entregas</p>
                                         </div>
                                     </div>
@@ -606,12 +602,12 @@ export default function ReportsPage() {
                                     </div>
                                 </div>
 
-                                {/* Gráfico de Área - Tendencia de Cumplimiento */}
+                                {/* Grafico de Ãrea - Tendencia de Cumplimiento */}
                                 <div className={`${styles.chartCard} ${styles.fullWidth}`}>
                                     <div className={styles.chartHeader}>
                                         <div>
                                             <h3 className={styles.chartTitle}>Tendencia de Cumplimiento Acumulado</h3>
-                                            <p className={styles.chartSubtitle}>Evolución del porcentaje de cumplimiento mensual</p>
+                                            <p className={styles.chartSubtitle}>Evolucion del porcentaje de cumplimiento mensual</p>
                                         </div>
                                     </div>
                                     <div className={styles.chartWrapper}>
@@ -619,12 +615,12 @@ export default function ReportsPage() {
                                     </div>
                                 </div>
 
-                                {/* Gráfico de Barras Horizontal - Top Departamentos */}
+                                {/* Grafico de Barras Horizontal - Top Departamentos */}
                                 <div className={`${styles.chartCard} ${styles.fullWidth}`}>
                                     <div className={styles.chartHeader}>
                                         <div>
                                             <h3 className={styles.chartTitle}>Cumplimiento por Departamento</h3>
-                                            <p className={styles.chartSubtitle}>Porcentaje de planes entregados por área</p>
+                                            <p className={styles.chartSubtitle}>Porcentaje de planes entregados por area</p>
                                         </div>
                                     </div>
                                     <div className={styles.chartWrapper}>
@@ -679,7 +675,7 @@ export default function ReportsPage() {
                                 </div>
                             </div>
 
-                            {/* Estadísticas por Mes */}
+                            {/* Estadisticas por Mes */}
                             <section className={styles.section}>
                                 <h2>Cumplimiento por Mes - {selectedYear}</h2>
                                 <div className={styles.monthGrid}>
@@ -707,12 +703,12 @@ export default function ReportsPage() {
                                 </div>
                             </section>
 
-                            {/* Estadísticas por Departamento */}
+                            {/* Estadisticas por Departamento */}
                             <section className={styles.section}>
                                 <h2>Cumplimiento por Departamento</h2>
                                 {departmentStats.length === 0 ? (
                                     <div className={styles.emptyState}>
-                                        <p>No hay datos de planes de formación para el año {selectedYear}</p>
+                                        <p>No hay datos de planes de formacion para el ano {selectedYear}</p>
                                     </div>
                                 ) : (
                                     <div className={styles.deptTable}>
@@ -814,6 +810,7 @@ export default function ReportsPage() {
                     </div>
                 </div>
             )}
-        </>
+        </AdminLayout>
     );
 }
+

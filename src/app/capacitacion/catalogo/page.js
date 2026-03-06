@@ -188,7 +188,7 @@ export default function CatalogPage() {
                 <div className={styles.container}>
                     <div className={styles.header}>
                         <div className={styles.headerLeft}>
-                            <BackButton href="/capacitacion" />
+                            <BackButton href="/dashboard" />
                             <h1>Catálogo de Cursos</h1>
                         </div>
                         <div className={styles.headerRight}>

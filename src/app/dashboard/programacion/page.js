@@ -1,10 +1,10 @@
-'use client';
+﻿'use client';
 
 import { useState, useEffect, useMemo, useCallback, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { db } from '@/lib/firebase';
 import { collection, getDocs, addDoc, query, where, Timestamp } from 'firebase/firestore';
-import ProfileDropdown from '@/components/layout/ProfileDropdown/ProfileDropdown';
+import AdminLayout from '@/components/layout/AdminLayout/AdminLayout';
 import { Users, BookOpen, CheckCircle, ChevronLeft, Edit2, FileText, LayoutGrid, Activity, Search, ChevronRight, RefreshCw, ArrowLeft, UserPlus } from 'lucide-react';
 import Link from 'next/link';
 import BackButton from '@/components/ui/BackButton/BackButton';
@@ -16,7 +16,7 @@ import MonitoringTable from '@/components/features/Training/MonitoringTable';
 import useIsMobile from '@/hooks/useIsMobile';
 import styles from './page.module.css';
 
-// ─── Animation variants ───────────────────────────────────────────────────────
+// â”€â”€â”€ Animation variants â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 const FADE_UP = {
     hidden: { opacity: 0, y: 16, filter: 'blur(4px)' },
@@ -48,7 +48,7 @@ const TAB_CONTENT = {
 
 const STEP_LABELS = ['Empleados', 'Curso', 'Confirmar'];
 
-// ─── ProgramacionPage ─────────────────────────────────────────────────────────
+// â”€â”€â”€ ProgramacionPage â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 export default function ProgramacionPage() {
     const router = useRouter();
@@ -77,7 +77,7 @@ export default function ProgramacionPage() {
     const pullOpacity = useTransform(pullDistance, [0, 60], [0, 1]);
     const pullRotation = useTransform(pullDistance, [0, 60], [0, 360]);
 
-    // ── Handlers (preserved) ──────────────────────────────────────────────────
+    // â”€â”€ Handlers (preserved) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
     const handleUpdateEmployee = (updatedEmp) => {
         setEmployees(prev => prev.map(e => e.id === updatedEmp.id ? updatedEmp : e));
@@ -120,8 +120,8 @@ export default function ProgramacionPage() {
 
             if (coursesList.length === 0) {
                 setCourses([
-                    { id: 'mock1', title: 'Seguridad Industrial Básica', duration: '1h' },
-                    { id: 'mock2', title: 'Código de Ética', duration: '30m' },
+                    { id: 'mock1', title: 'Seguridad Industrial BÃ¡sica', duration: '1h' },
+                    { id: 'mock2', title: 'CÃ³digo de Ã‰tica', duration: '30m' },
                     { id: 'mock3', title: '5S en Oficina', duration: '45m' },
                 ]);
             } else {
@@ -176,7 +176,7 @@ export default function ProgramacionPage() {
         setTimeout(() => setToast(null), 3000);
     };
 
-    // ── Filtered employees (uses mobileSearch on mobile, searchTerm on desktop) ──
+    // â”€â”€ Filtered employees (uses mobileSearch on mobile, searchTerm on desktop) â”€â”€
     const activeSearchTerm = isMobile ? mobileSearch : searchTerm;
 
     const filteredEmployees = useMemo(() =>
@@ -202,7 +202,7 @@ export default function ProgramacionPage() {
         return course ? (course.title || course.nombre) : '';
     }, [courses, selectedCourse]);
 
-    // ── Pull-to-refresh handlers ──────────────────────────────────────────────
+    // â”€â”€ Pull-to-refresh handlers â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     const handleTouchStart = useCallback((e) => {
         const scrollTop = e.currentTarget?.scrollTop ?? 0;
         if (scrollTop <= 0) {
@@ -234,7 +234,7 @@ export default function ProgramacionPage() {
         animate(pullDistance, 0, { duration: 0.3 });
     }, [pullDistance]);
 
-    // ── Mobile step navigation ────────────────────────────────────────────────
+    // â”€â”€ Mobile step navigation â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     const canGoNext = useCallback(() => {
         if (mobileStep === 0) return selectedEmployees.length > 0;
         if (mobileStep === 1) return !!selectedCourse;
@@ -249,7 +249,7 @@ export default function ProgramacionPage() {
         if (mobileStep > 0) setMobileStep(prev => prev - 1);
     }, [mobileStep]);
 
-    // ── Swipe handler ─────────────────────────────────────────────────────────
+    // â”€â”€ Swipe handler â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     const handleDragEnd = useCallback((e, info) => {
         const threshold = 50;
         if (info.offset.x < -threshold && canGoNext()) {
@@ -259,16 +259,16 @@ export default function ProgramacionPage() {
         }
     }, [canGoNext, goNext, goPrev, mobileStep]);
 
-    // ─────────────────────────────────────────────────────────────────────────
-    // ── MOBILE STEPPER RENDER ──
-    // ─────────────────────────────────────────────────────────────────────────
+    // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    // â”€â”€ MOBILE STEPPER RENDER â”€â”€
+    // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
     const renderMobileView = () => (
         <div className={styles.mobileContainer}>
             {/* Tab bar (same as desktop) */}
             <div className={styles.mobileTabBar}>
                 {[
-                    { key: 'assignment', label: 'Asignación', Icon: LayoutGrid },
+                    { key: 'assignment', label: 'AsignaciÃ³n', Icon: LayoutGrid },
                     { key: 'monitoring', label: 'Monitoreo', Icon: Activity },
                 ].map(({ key, label, Icon }) => (
                     <button
@@ -363,7 +363,7 @@ export default function ProgramacionPage() {
                                 </span>
                             )}
                             {mobileStep === 2 && (
-                                <span>{selectedEmployees.length} empleado{selectedEmployees.length !== 1 ? 's' : ''} × 1 curso</span>
+                                <span>{selectedEmployees.length} empleado{selectedEmployees.length !== 1 ? 's' : ''} Ã— 1 curso</span>
                             )}
                         </div>
 
@@ -393,7 +393,7 @@ export default function ProgramacionPage() {
         </div>
     );
 
-    // ── Step 0: Seleccionar Empleados ─────────
+    // â”€â”€ Step 0: Seleccionar Empleados â”€â”€â”€â”€â”€â”€â”€â”€â”€
     const renderMobileStep0 = () => (
         <div
             className={styles.mobileStepContent}
@@ -426,7 +426,7 @@ export default function ProgramacionPage() {
                 />
             </div>
 
-            {/* Botón crear empleado */}
+            {/* BotÃ³n crear empleado */}
             <button
                 className={styles.mobileAddBtn}
                 onClick={() => router.push('/dashboard/training/registro')}
@@ -441,9 +441,9 @@ export default function ProgramacionPage() {
                 className={styles.mobileSelect}
                 value={selectedArea}
                 onChange={e => setSelectedArea(e.target.value)}
-                aria-label="Filtrar por área"
+                aria-label="Filtrar por Ã¡rea"
             >
-                <option value="all">Todas las Áreas</option>
+                <option value="all">Todas las Ãreas</option>
                 {areas.filter(a => a !== 'all').map(area => (
                     <option key={area} value={area}>{area}</option>
                 ))}
@@ -477,7 +477,7 @@ export default function ProgramacionPage() {
                             </div>
                             <div className={styles.mobileEmpInfo}>
                                 <span className={styles.mobileEmpName}>{emp.name || 'Sin Nombre'}</span>
-                                <span className={styles.mobileEmpRole}>{emp.position || emp.puesto || '—'}</span>
+                                <span className={styles.mobileEmpRole}>{emp.position || emp.puesto || 'â€”'}</span>
                             </div>
                             <div className={styles.mobileEmpActions} onClick={e => e.stopPropagation()}>
                                 <button
@@ -504,7 +504,7 @@ export default function ProgramacionPage() {
         </div>
     );
 
-    // ── Step 1: Seleccionar Curso ─────────
+    // â”€â”€ Step 1: Seleccionar Curso â”€â”€â”€â”€â”€â”€â”€â”€â”€
     const renderMobileStep1 = () => (
         <div className={styles.mobileStepContent}>
             <h3 className={styles.mobileStepTitle}>
@@ -527,7 +527,7 @@ export default function ProgramacionPage() {
                         </div>
                         <div className={styles.mobileCourseInfo}>
                             <span className={styles.mobileCourseName}>{course.title || course.nombre}</span>
-                            <span className={styles.mobileCourseDuration}>{course.duration || 'Sin duración'}</span>
+                            <span className={styles.mobileCourseDuration}>{course.duration || 'Sin duraciÃ³n'}</span>
                         </div>
                         {selectedCourse === course.id && (
                             <motion.div
@@ -544,7 +544,7 @@ export default function ProgramacionPage() {
         </div>
     );
 
-    // ── Step 2: Confirmar ─────────
+    // â”€â”€ Step 2: Confirmar â”€â”€â”€â”€â”€â”€â”€â”€â”€
     const renderMobileStep2 = () => {
         const selectedEmpNames = employees
             .filter(e => selectedEmployees.includes(e.id))
@@ -554,7 +554,7 @@ export default function ProgramacionPage() {
             <div className={styles.mobileStepContent}>
                 <h3 className={styles.mobileStepTitle}>
                     <CheckCircle size={18} />
-                    Confirmar Asignación
+                    Confirmar AsignaciÃ³n
                 </h3>
 
                 <div className={styles.confirmCard}>
@@ -600,9 +600,9 @@ export default function ProgramacionPage() {
         );
     };
 
-    // ─────────────────────────────────────────────────────────────────────────
-    // ── DESKTOP LAYOUT RENDER (preserved) ──
-    // ─────────────────────────────────────────────────────────────────────────
+    // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    // â”€â”€ DESKTOP LAYOUT RENDER (preserved) â”€â”€
+    // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
     const renderDesktopView = () => (
         <>
@@ -622,7 +622,7 @@ export default function ProgramacionPage() {
                 />
             </motion.div>
 
-            {/* ── Tabs ── */}
+            {/* â”€â”€ Tabs â”€â”€ */}
             <motion.div
                 className={styles.tabBar}
                 variants={FADE_UP}
@@ -631,7 +631,7 @@ export default function ProgramacionPage() {
                 animate="visible"
             >
                 {[
-                    { key: 'assignment', label: 'Asignación', Icon: LayoutGrid },
+                    { key: 'assignment', label: 'AsignaciÃ³n', Icon: LayoutGrid },
                     { key: 'monitoring', label: 'Monitoreo', Icon: Activity },
                 ].map(({ key, label, Icon }) => (
                     <button
@@ -653,7 +653,7 @@ export default function ProgramacionPage() {
                 ))}
             </motion.div>
 
-            {/* ── Tab content ── */}
+            {/* â”€â”€ Tab content â”€â”€ */}
             <AnimatePresence mode="wait">
                 {activeTab === 'assignment' ? (
                     <motion.div
@@ -664,7 +664,7 @@ export default function ProgramacionPage() {
                         animate="visible"
                         exit="exit"
                     >
-                        {/* ── Left: Employee selection ── */}
+                        {/* â”€â”€ Left: Employee selection â”€â”€ */}
                         <motion.div className={styles.column} variants={FADE_UP} custom={2}>
                             <div className={styles.card}>
                                 <h2 className={styles.cardTitle}>
@@ -678,9 +678,9 @@ export default function ProgramacionPage() {
                                         className={styles.select}
                                         value={selectedArea}
                                         onChange={e => setSelectedArea(e.target.value)}
-                                        aria-label="Filtrar por área"
+                                        aria-label="Filtrar por Ã¡rea"
                                     >
-                                        <option value="all">Todas las Áreas</option>
+                                        <option value="all">Todas las Ãreas</option>
                                         {areas.filter(a => a !== 'all').map(area => (
                                             <option key={area} value={area}>{area}</option>
                                         ))}
@@ -730,7 +730,7 @@ export default function ProgramacionPage() {
                                                     <div className={styles.empId}>{emp.employeeId}</div>
                                                 </div>
                                                 <div className={styles.empRole}>
-                                                    {emp.position || emp.puesto || '—'}
+                                                    {emp.position || emp.puesto || 'â€”'}
                                                 </div>
                                                 <div className={styles.itemActions} onClick={e => e.stopPropagation()}>
                                                     <button
@@ -773,7 +773,7 @@ export default function ProgramacionPage() {
                             </div>
                         </motion.div>
 
-                        {/* ── Right: Course selection + stats ── */}
+                        {/* â”€â”€ Right: Course selection + stats â”€â”€ */}
                         <motion.div className={styles.column} variants={FADE_UP} custom={3}>
                             <div className={styles.card}>
                                 <h2 className={styles.cardTitle}>
@@ -802,7 +802,7 @@ export default function ProgramacionPage() {
                                                     {course.title || course.nombre}
                                                 </div>
                                                 <div className={styles.courseDuration}>
-                                                    {course.duration || 'Sin duración'}
+                                                    {course.duration || 'Sin duraciÃ³n'}
                                                 </div>
                                             </div>
                                             {selectedCourse === course.id && (
@@ -882,58 +882,57 @@ export default function ProgramacionPage() {
         </>
     );
 
-    // ─────────────────────────────────────────────────────────────────────────
-
+    // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     return (
-        <div className={styles.container}>
-            <div className={styles.profileContainer}>
-                <ProfileDropdown />
-            </div>
+        <AdminLayout title="Programación">
+            <div className={styles.container}>
 
-            <main className={styles.main}>
-                {/* Back link */}
-                <BackButton href="/dashboard" />
 
-                {isMobile ? renderMobileView() : renderDesktopView()}
-            </main>
+                <main className={styles.main}>
+                    {/* Back link */}
+                    <BackButton href="/dashboard" />
 
-            {/* ── Toast ── */}
-            <AnimatePresence>
-                {toast && (
-                    <motion.div
-                        key={toast.message}
-                        className={`${styles.toast} ${styles[toast.type]}`}
-                        initial={{ opacity: 0, y: 20, scale: 0.95 }}
-                        animate={{ opacity: 1, y: 0, scale: 1 }}
-                        exit={{ opacity: 0, y: 16, scale: 0.96 }}
-                        transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
-                        role="status"
-                        aria-live="polite"
-                    >
-                        {toast.type === 'success'
-                            ? <CheckCircle size={16} aria-hidden="true" />
-                            : <span aria-hidden="true">!</span>
-                        }
-                        {toast.message}
-                    </motion.div>
+                    {isMobile ? renderMobileView() : renderDesktopView()}
+                </main>
+
+                {/* â”€â”€ Toast â”€â”€ */}
+                <AnimatePresence>
+                    {toast && (
+                        <motion.div
+                            key={toast.message}
+                            className={`${styles.toast} ${styles[toast.type]}`}
+                            initial={{ opacity: 0, y: 20, scale: 0.95 }}
+                            animate={{ opacity: 1, y: 0, scale: 1 }}
+                            exit={{ opacity: 0, y: 16, scale: 0.96 }}
+                            transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
+                            role="status"
+                            aria-live="polite"
+                        >
+                            {toast.type === 'success'
+                                ? <CheckCircle size={16} aria-hidden="true" />
+                                : <span aria-hidden="true">!</span>
+                            }
+                            {toast.message}
+                        </motion.div>
+                    )}
+                </AnimatePresence>
+
+                {/* â”€â”€ Modals (unchanged) â”€â”€ */}
+                {editingEmployee && (
+                    <EditEmployeeModal
+                        employee={editingEmployee}
+                        onClose={() => setEditingEmployee(null)}
+                        onUpdate={handleUpdateEmployee}
+                        onDelete={handleDeleteEmployee}
+                    />
                 )}
-            </AnimatePresence>
-
-            {/* ── Modals (unchanged) ── */}
-            {editingEmployee && (
-                <EditEmployeeModal
-                    employee={editingEmployee}
-                    onClose={() => setEditingEmployee(null)}
-                    onUpdate={handleUpdateEmployee}
-                    onDelete={handleDeleteEmployee}
-                />
-            )}
-            {historyEmployee && (
-                <EmployeeAssignmentsModal
-                    employee={historyEmployee}
-                    onClose={() => setHistoryEmployee(null)}
-                />
-            )}
-        </div>
+                {historyEmployee && (
+                    <EmployeeAssignmentsModal
+                        employee={historyEmployee}
+                        onClose={() => setHistoryEmployee(null)}
+                    />
+                )}
+            </div>
+        </AdminLayout>
     );
 }

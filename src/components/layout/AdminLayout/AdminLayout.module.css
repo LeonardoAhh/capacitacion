@@ -1,0 +1,77 @@
+/* ================================================================
+   ADMIN LAYOUT
+   ================================================================ */
+
+.layoutPage {
+    min-height: 100dvh;
+    background: var(--bg-primary);
+    position: relative;
+    display: flex;
+    flex-direction: column;
+
+    /* Sidebar tokens inject */
+    --sb-bg: transparent;
+    --sb-border: rgba(245, 158, 11, 0.08);
+    --sb-text: var(--text-primary);
+    --sb-text-muted: var(--text-secondary);
+    --sb-hover-bg: rgba(245, 158, 11, 0.06);
+    --sb-hover-text: var(--text-primary);
+    --sb-active-bg: var(--color-primary);
+    --sb-active-text: #fff;
+    --sb-overlay-bg: rgba(0, 0, 0, 0.4);
+    --sb-shadow: rgba(0, 0, 0, 0.12);
+
+    /* Fondo mesh suave en light */
+    background-image:
+        radial-gradient(ellipse 80% 60% at 0% 0%, rgba(245, 158, 11, 0.04) 0%, transparent 60%),
+        radial-gradient(ellipse 60% 50% at 100% 100%, rgba(99, 102, 241, 0.04) 0%, transparent 60%);
+}
+
+[data-theme="dark"] .layoutPage {
+    --sb-bg: transparent;
+    --sb-border: rgba(245, 158, 11, 0.08);
+    --sb-hover-bg: rgba(245, 158, 11, 0.10);
+
+    background-image:
+        radial-gradient(ellipse 80% 60% at 0% 0%, rgba(245, 158, 11, 0.06) 0%, transparent 60%),
+        radial-gradient(ellipse 60% 50% at 100% 100%, rgba(99, 102, 241, 0.06) 0%, transparent 60%);
+}
+
+@media (min-width: 768px) {
+    .layoutPage {
+        flex-direction: row;
+    }
+}
+
+.scrollContent {
+    flex: 1;
+    position: relative;
+    z-index: 10;
+    min-height: 100vh;
+    padding: 2rem 2rem 8rem;
+    width: 100%;
+    overflow-x: hidden;
+}
+
+.loading {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100dvh;
+    color: var(--text-secondary);
+    animation: shimmer 1.8s ease infinite;
+}
+
+@keyframes shimmer {
+    0% {
+        opacity: 0.4;
+    }
+
+    50% {
+        opacity: 1;
+    }
+
+    100% {
+        opacity: 0.4;
+    }
+}

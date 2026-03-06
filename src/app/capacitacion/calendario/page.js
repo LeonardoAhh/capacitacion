@@ -1,17 +1,19 @@
 ﻿'use client';
 
-import { useState, useEffect, useMemo, useCallback } from 'react';
-import { useAuth } from '@/contexts/AuthContext';
-import { useRouter } from 'next/navigation';
-import ProfileDropdown from '@/components/layout/ProfileDropdown/ProfileDropdown';
+import React, { useState, useEffect, useMemo, useCallback } from 'react';
+import { collection, getDocs, doc, setDoc, updateDoc, deleteDoc } from 'firebase/firestore';
+import { db } from '@/lib/firebase';
+import { Calendar as BigCalendar, dateFnsLocalizer } from 'react-big-calendar';
+import withDragAndDrop from 'react-big-calendar/lib/addons/dragAndDrop';
+import { format, parse, startOfWeek, getDay } from 'date-fns';
+import es from 'date-fns/locale/es';
+import 'react-big-calendar/lib/css/react-big-calendar.css';
+import 'react-big-calendar/lib/addons/dragAndDrop/styles.css';
+import AdminLayout from '@/components/layout/AdminLayout/AdminLayout';
 import BackButton from '@/components/ui/BackButton/BackButton';
 import { Button } from '@/components/ui/Button/Button';
-import { db } from '@/lib/firebase';
-import { collection, getDocs, addDoc, deleteDoc, doc, getDoc, query, where, updateDoc } from 'firebase/firestore';
-import { useToast } from '@/components/ui/Toast/Toast';
 import { Dialog, DialogHeader, DialogTitle, DialogBody, DialogFooter, DialogClose } from '@/components/ui/Dialog/Dialog';
-import { UserPlus, X, Download, Pencil } from 'lucide-react';
-import styles from './page.module.css';
+import { Pencil, Download, X, UserPlus } from 'lucide-react';
 
 // ─── Constantes ────────────────────────────────────────────────────────────
 const EMPTY_SESSION = { date: '', startTime: '', endTime: '' };
@@ -55,7 +57,7 @@ function generateInvitacionPDF(event, personal) {
         const h = parseInt(hRaw, 10);
         const per = h >= 12 ? 'p.m.' : 'a.m.';
         const h12 = h === 0 ? 12 : h > 12 ? h - 12 : h;
-        return `${h12}:${mRaw} ${per}`;
+        return `${h12}:${mRaw} ${per} `;
     };
 
     // ── Helper: dibuja campo etiqueta + valor ─────────────────────────────
@@ -158,7 +160,7 @@ function generateInvitacionPDF(event, personal) {
         pdf.setFont('helvetica', 'bold');
         pdf.setFontSize(9);
         pdf.setTextColor(...PDF_COLORS.black);
-        const propLabel = prop.label ? prop.label.toUpperCase() : `PROPUESTA ${pi + 1}`;
+        const propLabel = prop.label ? prop.label.toUpperCase() : `PROPUESTA ${pi + 1} `;
         pdf.text(propLabel, margin + 4, y + 8);
         y += 14;
 
@@ -402,13 +404,13 @@ export default function CalendarPage() {
                         const [d, m, y] = h.date.split('/');
                         if (d && m && y) {
                             tempEvents.push({
-                                id: `${docSnap.id}_${h.courseName}_done`,
+                                id: `${docSnap.id}_${h.courseName} _done`,
                                 type: 'DONE',
                                 title: h.courseName,
                                 courseName: h.courseName,
                                 employeeName: emp.name,
                                 employeeId: emp.employeeId,
-                                date: `${y}-${m.padStart(2, '0')}-${d.padStart(2, '0')}`,
+                                date: `${y} -${m.padStart(2, '0')} -${d.padStart(2, '0')} `,
                                 score: h.score
                             });
 
@@ -422,13 +424,13 @@ export default function CalendarPage() {
                                 const expD = String(dateObj.getDate()).padStart(2, '0');
 
                                 tempEvents.push({
-                                    id: `${docSnap.id}_${h.courseName}_exp`,
+                                    id: `${docSnap.id}_${h.courseName} _exp`,
                                     type: 'EXPIRED',
-                                    title: `Vence: ${h.courseName}`,
+                                    title: `Vence: ${h.courseName} `,
                                     courseName: h.courseName,
                                     employeeName: emp.name,
                                     employeeId: emp.employeeId,
-                                    date: `${expY}-${expM}-${expD}`
+                                    date: `${expY} -${expM} -${expD} `
                                 });
                             }
                         }
@@ -467,7 +469,7 @@ export default function CalendarPage() {
                 setPersonalList(prev => [...prev, { id: snap.docs[0].id, ...snap.docs[0].data() }]);
                 setPersonalIdInput('');
             } else {
-                toast.warning('No encontrado', `No existe empleado con ID ${id}`);
+                toast.warning('No encontrado', `No existe empleado con ID ${id} `);
             }
         } catch (err) {
             console.error('[CalendarPage] handleSearchPersonal:', err);
@@ -681,101 +683,96 @@ export default function CalendarPage() {
     // Early return de auth — DEBE ir después de todos los hooks
     if (authLoading || !user) {
         return (
-            <div className={styles.main}>
+            <AdminLayout title="Calendario">
                 <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', color: 'var(--text-primary)' }}>
                     <div className="spinner"></div>
                 </div>
-            </div>
+            </AdminLayout>
         );
     }
 
     return (
-        <>
-            <div className={styles.profileContainer}>
-                <ProfileDropdown />
-            </div>
-            <main className={styles.main} id="main-content">
-                <div className={styles.container}>
-                    {/* Header */}
-                    <div className={styles.headerSection}>
-                        <BackButton href="/capacitacion" />
-                        <div className={styles.header}>
-                            <div className={styles.titleGroup}>
-                                <h1>Calendario de Capacitación</h1>
-                                <p>Visualiza los cursos impartidos y programados</p>
+        <AdminLayout title="Calendario de Capacitación">
+            <div className={styles.container}>
+                {/* Header */}
+                <div className={styles.headerSection}>
+                    <BackButton href="/dashboard" />
+                    <div className={styles.header}>
+                        <div className={styles.titleGroup}>
+                            <h1>Calendario de Capacitación</h1>
+                            <p>Visualiza los cursos impartidos y programados</p>
+                        </div>
+                        <div className={styles.headerActions}>
+                            <div className={styles.controls}>
+                                <button className={styles.navBtn} onClick={prevMonth}>
+                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M15 18l-6-6 6-6" /></svg>
+                                </button>
+                                <span className={styles.monthTitle}>
+                                    {date.toLocaleDateString('es-MX', { month: 'long', year: 'numeric' })}
+                                </span>
+                                <button className={styles.navBtn} onClick={nextMonth}>
+                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M9 18l6-6-6-6" /></svg>
+                                </button>
                             </div>
-                            <div className={styles.headerActions}>
-                                <div className={styles.controls}>
-                                    <button className={styles.navBtn} onClick={prevMonth}>
-                                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M15 18l-6-6 6-6" /></svg>
-                                    </button>
-                                    <span className={styles.monthTitle}>
-                                        {date.toLocaleDateString('es-MX', { month: 'long', year: 'numeric' })}
-                                    </span>
-                                    <button className={styles.navBtn} onClick={nextMonth}>
-                                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M9 18l6-6-6-6" /></svg>
-                                    </button>
-                                </div>
-                                {canWrite() && (
-                                    <Button onClick={() => setCreateModalOpen(true)}>
-                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                            <line x1="12" y1="5" x2="12" y2="19" />
-                                            <line x1="5" y1="12" x2="19" y2="12" />
-                                        </svg>
-                                        Agendar Curso
-                                    </Button>
-                                )}
-                            </div>
+                            {canWrite() && (
+                                <Button onClick={() => setCreateModalOpen(true)}>
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                        <line x1="12" y1="5" x2="12" y2="19" />
+                                        <line x1="5" y1="12" x2="19" y2="12" />
+                                    </svg>
+                                    Agendar Curso
+                                </Button>
+                            )}
                         </div>
-                    </div>
-
-                    {/* Legend + Contador */}
-                    <div className={styles.legend} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '0.75rem' }}>
-                        <div className={styles.legendItem}>
-                            <span className={styles.dotDone}></span>
-                            <span>Realizado</span>
-                        </div>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', background: 'var(--bg-secondary)', border: '1px solid var(--border-color)', borderRadius: '999px', padding: '4px 14px', fontSize: '0.85rem', color: 'var(--text-primary)' }}>
-                            <span style={{ fontWeight: 700, fontSize: '1.05rem', color: 'var(--color-success, #22c55e)' }}>{uniqueDoneThisMonth}</span>
-                            <span style={{ color: 'var(--text-secondary)' }}>curso{uniqueDoneThisMonth !== 1 ? 's' : ''} impartido{uniqueDoneThisMonth !== 1 ? 's' : ''} este mes</span>
-                        </div>
-                    </div>
-
-                    {/* Calendar Grid */}
-                    <div className={styles.grid}>
-                        {['DOM', 'LUN', 'MAR', 'MIE', 'JUE', 'VIE', 'SAB'].map(d => (
-                            <div key={d} className={styles.dayHeader}>{d}</div>
-                        ))}
-
-                        {calendarDays.map((day, idx) => {
-                            if (!day) return <div key={`empty-${idx}`} className={styles.emptyCell}></div>;
-
-                            const dateStr = day.toISOString().split('T')[0];
-                            const isToday = dateStr === todayStr;
-                            const stats = getDayStats(day);
-
-                            return (
-                                <div
-                                    key={idx}
-                                    className={`${styles.dayCell} ${isToday ? styles.today : ''} ${stats.total > 0 ? styles.hasEvents : ''}`}
-                                    onClick={() => handleDayClick(day)}
-                                >
-                                    <div className={styles.dayNumber}>{day.getDate()}</div>
-
-                                    {stats.done > 0 && (
-                                        <div className={styles.dayStats}>
-                                            <div className={styles.statBadge + ' ' + styles.statDone}>
-                                                <span className={styles.dotDone}></span>
-                                                {stats.done}
-                                            </div>
-                                        </div>
-                                    )}
-                                </div>
-                            );
-                        })}
                     </div>
                 </div>
-            </main>
+
+                {/* Legend + Contador */}
+                <div className={styles.legend} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '0.75rem' }}>
+                    <div className={styles.legendItem}>
+                        <span className={styles.dotDone}></span>
+                        <span>Realizado</span>
+                    </div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', background: 'var(--bg-secondary)', border: '1px solid var(--border-color)', borderRadius: '999px', padding: '4px 14px', fontSize: '0.85rem', color: 'var(--text-primary)' }}>
+                        <span style={{ fontWeight: 700, fontSize: '1.05rem', color: 'var(--color-success, #22c55e)' }}>{uniqueDoneThisMonth}</span>
+                        <span style={{ color: 'var(--text-secondary)' }}>curso{uniqueDoneThisMonth !== 1 ? 's' : ''} impartido{uniqueDoneThisMonth !== 1 ? 's' : ''} este mes</span>
+                    </div>
+                </div>
+
+                {/* Calendar Grid */}
+                <div className={styles.grid}>
+                    {['DOM', 'LUN', 'MAR', 'MIE', 'JUE', 'VIE', 'SAB'].map(d => (
+                        <div key={d} className={styles.dayHeader}>{d}</div>
+                    ))}
+
+                    {calendarDays.map((day, idx) => {
+                        if (!day) return <div key={`empty - ${idx} `} className={styles.emptyCell}></div>;
+
+                        const dateStr = day.toISOString().split('T')[0];
+                        const isToday = dateStr === todayStr;
+                        const stats = getDayStats(day);
+
+                        return (
+                            <div
+                                key={idx}
+                                className={`${styles.dayCell} ${isToday ? styles.today : ''} ${stats.total > 0 ? styles.hasEvents : ''} `}
+                                onClick={() => handleDayClick(day)}
+                            >
+                                <div className={styles.dayNumber}>{day.getDate()}</div>
+
+                                {stats.done > 0 && (
+                                    <div className={styles.dayStats}>
+                                        <div className={styles.statBadge + ' ' + styles.statDone}>
+                                            <span className={styles.dotDone}></span>
+                                            {stats.done}
+                                        </div>
+                                    </div>
+                                )}
+                            </div>
+                        );
+                    })}
+                </div>
+            </div>
 
             {/* ── Modal: Agendar Curso ──────────────────────────────────── */}
             <Dialog
@@ -815,7 +812,7 @@ export default function CalendarPage() {
                                         role="tab"
                                         type="button"
                                         aria-selected={activeProposal === pi}
-                                        className={`${styles.proposalTab} ${activeProposal === pi ? styles.proposalTabActive : ''}`}
+                                        className={`${styles.proposalTab} ${activeProposal === pi ? styles.proposalTabActive : ''} `}
                                         onClick={() => setActiveProposal(pi)}
                                     >
                                         {prop.label}
@@ -831,7 +828,7 @@ export default function CalendarPage() {
                                 <div
                                     key={pi}
                                     role="tabpanel"
-                                    className={`${styles.sessionPanel} ${activeProposal !== pi ? styles.sessionPanelHidden : ''}`}
+                                    className={`${styles.sessionPanel} ${activeProposal !== pi ? styles.sessionPanelHidden : ''} `}
                                 >
                                     {prop.sessions.map((sess, si) => (
                                         <div key={si} className={styles.sessionRow}>
@@ -841,21 +838,21 @@ export default function CalendarPage() {
                                                 className={styles.input}
                                                 value={sess.date}
                                                 onChange={e => updateSession(pi, si, 'date', e.target.value)}
-                                                aria-label={`Fecha sesión ${si + 1}`}
+                                                aria-label={`Fecha sesión ${si + 1} `}
                                             />
                                             <input
                                                 type="time"
                                                 className={styles.input}
                                                 value={sess.startTime}
                                                 onChange={e => updateSession(pi, si, 'startTime', e.target.value)}
-                                                aria-label={`Hora inicio sesión ${si + 1}`}
+                                                aria-label={`Hora inicio sesión ${si + 1} `}
                                             />
                                             <input
                                                 type="time"
                                                 className={styles.input}
                                                 value={sess.endTime}
                                                 onChange={e => updateSession(pi, si, 'endTime', e.target.value)}
-                                                aria-label={`Hora fin sesión ${si + 1}`}
+                                                aria-label={`Hora fin sesión ${si + 1} `}
                                             />
                                             <button
                                                 type="button"
@@ -907,7 +904,7 @@ export default function CalendarPage() {
                         {/* Objetivo */}
                         <div className={styles.formGroup}>
                             <label htmlFor="ev-objective" className={styles.label}>Objetivo (opcional)</label>
-                            <textarea id="ev-objective" className={`${styles.input} ${styles.textarea}`}
+                            <textarea id="ev-objective" className={`${styles.input} ${styles.textarea} `}
                                 rows={2}
                                 value={newEvent.objective}
                                 onChange={e => setNewEvent({ ...newEvent, objective: e.target.value })}
@@ -954,7 +951,7 @@ export default function CalendarPage() {
                                                     type="button"
                                                     className={styles.removePersonalBtn}
                                                     onClick={() => removePersonal(empId)}
-                                                    aria-label={`Quitar a ${emp.name}`}
+                                                    aria-label={`Quitar a ${emp.name} `}
                                                 >
                                                     <X size={13} />
                                                 </button>
@@ -1014,7 +1011,7 @@ export default function CalendarPage() {
                                                         {ev.employeeName && (
                                                             <span className={styles.eventEmployee}>
                                                                 {ev.employeeName}
-                                                                {ev.score && ` • ${ev.score}%`}
+                                                                {ev.score && ` • ${ev.score}% `}
                                                             </span>
                                                         )}
                                                     </div>
@@ -1023,7 +1020,7 @@ export default function CalendarPage() {
                                                             <button
                                                                 className={styles.editBtn}
                                                                 onClick={() => openEditModal(ev)}
-                                                                aria-label={`Editar ${ev.title}`}
+                                                                aria-label={`Editar ${ev.title} `}
                                                                 title="Editar curso"
                                                             >
                                                                 <Pencil size={14} />
@@ -1031,7 +1028,7 @@ export default function CalendarPage() {
                                                             <button
                                                                 className={styles.editBtn}
                                                                 onClick={() => handleGeneratePDFForEvent(ev)}
-                                                                aria-label={`PDF ${ev.title}`}
+                                                                aria-label={`PDF ${ev.title} `}
                                                                 title="Descargar PDF"
                                                             >
                                                                 <Download size={14} />
@@ -1039,7 +1036,7 @@ export default function CalendarPage() {
                                                             <button
                                                                 className={styles.deleteBtn}
                                                                 onClick={() => handleDeleteEvent(ev.id)}
-                                                                aria-label={`Eliminar ${ev.title}`}
+                                                                aria-label={`Eliminar ${ev.title} `}
                                                             >
                                                                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                                                                     <polyline points="3 6 5 6 21 6" />
@@ -1061,6 +1058,7 @@ export default function CalendarPage() {
                     <Button variant="secondary" onClick={() => setDetailModal(null)}>Cerrar</Button>
                 </DialogFooter>
             </Dialog>
-        </>
+        </AdminLayout>
+
     );
 }

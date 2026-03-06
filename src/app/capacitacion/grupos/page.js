@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -6,7 +6,7 @@ import {
     Users, Plus, BookOpen, ChevronDown, ChevronUp,
     Search, Trash2, Edit2, X, Check, Shield
 } from 'lucide-react';
-import ProfileDropdown from '@/components/layout/ProfileDropdown/ProfileDropdown';
+import AdminLayout from '@/components/layout/AdminLayout/AdminLayout';
 import BackButton from '@/components/ui/BackButton/BackButton';
 import { Button } from '@/components/ui/Button/Button';
 import { useToast } from '@/components/ui/Toast/Toast';
@@ -24,7 +24,7 @@ import {
 } from 'firebase/firestore';
 import styles from './page.module.css';
 
-// ─── Constantes ───────────────────────────────────────────────────────────────
+// â”€â”€â”€ Constantes â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 const GROUP_COLORS = [
     { id: 'blue', label: 'Azul' },
     { id: 'green', label: 'Verde' },
@@ -36,47 +36,47 @@ const GROUP_COLORS = [
 
 const EMPTY_FORM = { name: '', description: '', color: 'blue', requiredCourses: [] };
 
-// Normaliza strings para comparación (sin tildes, uppercase)
+// Normaliza strings para comparaciÃ³n (sin tildes, uppercase)
 const normalize = (s) =>
     (s || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toUpperCase().trim();
 
-// ─── Componente principal ─────────────────────────────────────────────────────
+// â”€â”€â”€ Componente principal â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 export default function GruposPage() {
     const { user, loading: authLoading, canWrite } = useAuth();
     const router = useRouter();
     const { toast } = useToast();
 
-    // — Datos
+    // â€” Datos
     const [groups, setGroups] = useState([]);
     const [loading, setLoading] = useState(true);
     const [memberDetails, setMemberDetails] = useState({}); // { groupId: [record...] }
     const [expandedGroup, setExpandedGroup] = useState(null);
     const [loadingMembers, setLoadingMembers] = useState(false);
 
-    // — Modal: crear / editar grupo
+    // â€” Modal: crear / editar grupo
     const [showGroupModal, setShowGroupModal] = useState(false);
     const [editingGroup, setEditingGroup] = useState(null);
     const [groupForm, setGroupForm] = useState(EMPTY_FORM);
     const [courseInput, setCourseInput] = useState('');
     const [saving, setSaving] = useState(false);
 
-    // — Modal: agregar miembro
+    // â€” Modal: agregar miembro
     const [showMemberModal, setShowMemberModal] = useState(false);
     const [memberGroupId, setMemberGroupId] = useState(null);
     const [memberSearch, setMemberSearch] = useState('');
     const [memberSearchResult, setMemberSearchResult] = useState(null);
     const [memberSearching, setMemberSearching] = useState(false);
 
-    // — Modal: confirmación de borrado
+    // â€” Modal: confirmaciÃ³n de borrado
     const [confirmDelete, setConfirmDelete] = useState(null); // { type: 'group'|'member', groupId, empId? }
 
-    // ── Auth guard ─────────────────────────────────────────────────────────────
+    // â”€â”€ Auth guard â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     useEffect(() => {
         if (!authLoading && !user) router.push('/login');
         else if (user) loadGroups();
     }, [user, authLoading]); // eslint-disable-line react-hooks/exhaustive-deps
 
-    // ── Carga de grupos ────────────────────────────────────────────────────────
+    // â”€â”€ Carga de grupos â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     const loadGroups = useCallback(async () => {
         setLoading(true);
         try {
@@ -90,7 +90,7 @@ export default function GruposPage() {
         }
     }, [toast]);
 
-    // ── Expandir grupo → cargar detalle de miembros ────────────────────────────
+    // â”€â”€ Expandir grupo â†’ cargar detalle de miembros â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     const handleExpand = useCallback(async (group) => {
         const isOpen = expandedGroup === group.id;
         setExpandedGroup(isOpen ? null : group.id);
@@ -125,7 +125,7 @@ export default function GruposPage() {
         }
     }, [expandedGroup, memberDetails]);
 
-    // ── Cumplimiento por miembro ───────────────────────────────────────────────
+    // â”€â”€ Cumplimiento por miembro â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     const getMemberCompliance = useCallback((emp, requiredCourses) => {
         if (!emp || emp.notFound || !requiredCourses.length) {
             return { approved: 0, total: requiredCourses.length, pct: 0 };
@@ -145,7 +145,7 @@ export default function GruposPage() {
         };
     }, []);
 
-    // ── CRUD de grupos ─────────────────────────────────────────────────────────
+    // â”€â”€ CRUD de grupos â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     const openCreateGroup = () => {
         setEditingGroup(null);
         setGroupForm(EMPTY_FORM);
@@ -231,7 +231,7 @@ export default function GruposPage() {
         }
     };
 
-    // ── Gestión de miembros ────────────────────────────────────────────────────
+    // â”€â”€ GestiÃ³n de miembros â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     const openAddMember = (groupId) => {
         setMemberGroupId(groupId);
         setMemberSearch('');
@@ -278,7 +278,7 @@ export default function GruposPage() {
             await updateDoc(doc(db, 'groups', memberGroupId), { members: newMembers });
             toast.success('Agregado', `${emp.name} agregado al grupo`);
             setShowMemberModal(false);
-            // Invalidar caché del grupo afectado
+            // Invalidar cachÃ© del grupo afectado
             setMemberDetails((prev) => {
                 const next = { ...prev };
                 delete next[memberGroupId];
@@ -312,33 +312,29 @@ export default function GruposPage() {
         }
     };
 
-    // ── Loading / Auth ─────────────────────────────────────────────────────────
+    // â”€â”€ Loading / Auth â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     if (authLoading || !user) {
         return (
-            <div className={styles.main}>
+            <AdminLayout title="Módulo">
                 <div className={styles.centeredLoader}><div className="spinner" /></div>
-            </div>
+            </AdminLayout>
         );
     }
 
-    // ── Render ─────────────────────────────────────────────────────────────────
+    // â”€â”€ Render â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     return (
         <>
-            <div className={styles.profileContainer}>
-                <ProfileDropdown />
-            </div>
-
-            <main className={styles.main} id="main-content">
+            <AdminLayout title="Grupos">
                 <div className={styles.container}>
 
                     {/* Encabezado */}
                     <div className={styles.header}>
                         <div className={styles.headerLeft}>
-                            <BackButton href="/capacitacion" />
+                            <BackButton href="/dashboard" />
                             <div>
                                 <h1 className={styles.title}>Grupos y Certificaciones</h1>
                                 <p className={styles.subtitle}>
-                                    Gestiona roles transversales: Auditores, Brigadas, Comités y más
+                                    Gestiona roles transversales: Auditores, Brigadas, ComitÃ©s y mÃ¡s
                                 </p>
                             </div>
                         </div>
@@ -491,7 +487,7 @@ export default function GruposPage() {
                                                             </div>
                                                         ) : members.length === 0 ? (
                                                             <p className={styles.emptyMembers}>
-                                                                No hay miembros en este grupo aún.
+                                                                No hay miembros en este grupo aÃºn.
                                                             </p>
                                                         ) : (
                                                             <ul className={styles.membersList} role="list">
@@ -522,7 +518,7 @@ export default function GruposPage() {
                                                                                 </span>
                                                                                 {!emp.notFound && (
                                                                                     <span className={styles.memberMeta}>
-                                                                                        {emp.position ?? '—'}
+                                                                                        {emp.position ?? 'â€”'}
                                                                                     </span>
                                                                                 )}
                                                                             </div>
@@ -573,203 +569,200 @@ export default function GruposPage() {
                         </ul>
                     )}
                 </div>
-            </main>
 
-            {/* ── Modal: crear / editar grupo ─────────────────────────────────── */}
-            <Dialog open={showGroupModal} onOpenChange={setShowGroupModal}>
-                <DialogHeader>
-                    <DialogTitle>{editingGroup ? 'Editar Grupo' : 'Nuevo Grupo'}</DialogTitle>
-                    <DialogClose onClose={() => setShowGroupModal(false)} />
-                </DialogHeader>
-                <DialogBody>
-                    <div className={`${styles.formStack} ${styles.colorTheme}`} data-color={groupForm.color}>
+                {/* ——— Modal: crear / editar grupo —————————————————————————————————————— */}
+                <Dialog open={showGroupModal} onOpenChange={setShowGroupModal}>
+                    <DialogHeader>
+                        <DialogTitle>{editingGroup ? 'Editar Grupo' : 'Nuevo Grupo'}</DialogTitle>
+                        <DialogClose onClose={() => setShowGroupModal(false)} />
+                    </DialogHeader>
+                    <DialogBody>
+                        <div className={`${styles.formStack} ${styles.colorTheme}`} data-color={groupForm.color}>
 
-                        {/* Nombre */}
-                        <div className={styles.formGroup}>
-                            <label htmlFor="gp-name" className={styles.label}>Nombre *</label>
-                            <input
-                                id="gp-name"
-                                type="text"
-                                value={groupForm.name}
-                                onChange={(e) => setGroupForm((f) => ({ ...f, name: e.target.value }))}
-                                placeholder="Ej. AUDITORES INTERNOS"
-                                className={styles.input}
-                                autoFocus
-                            />
-                        </div>
-
-                        {/* Descripción */}
-                        <div className={styles.formGroup}>
-                            <label htmlFor="gp-desc" className={styles.label}>Descripción (opcional)</label>
-                            <input
-                                id="gp-desc"
-                                type="text"
-                                value={groupForm.description}
-                                onChange={(e) => setGroupForm((f) => ({ ...f, description: e.target.value }))}
-                                placeholder="Ej. Auditores del SGI certificados internamente"
-                                className={styles.input}
-                            />
-                        </div>
-
-                        {/* Color */}
-                        <div className={styles.formGroup}>
-                            <span className={styles.label}>Color de identificación</span>
-                            <div className={styles.colorPicker} role="radiogroup" aria-label="Color">
-                                {GROUP_COLORS.map((c) => (
-                                    <button
-                                        key={c.id}
-                                        type="button"
-                                        role="radio"
-                                        aria-checked={groupForm.color === c.id}
-                                        aria-label={c.label}
-                                        data-color={c.id}
-                                        className={`${styles.colorSwatch} ${groupForm.color === c.id ? styles.colorSelected : ''}`}
-                                        onClick={() => setGroupForm((f) => ({ ...f, color: c.id }))}
-                                        title={c.label}
-                                    >
-                                        {groupForm.color === c.id && <Check size={13} strokeWidth={3} />}
-                                    </button>
-                                ))}
-                            </div>
-                        </div>
-
-                        {/* Cursos */}
-                        <div className={styles.formGroup}>
-                            <span className={styles.label}>
-                                Cursos requeridos ({groupForm.requiredCourses.length})
-                            </span>
-                            <div className={styles.courseInputRow}>
+                            {/* Nombre */}
+                            <div className={styles.formGroup}>
+                                <label htmlFor="gp-name" className={styles.label}>Nombre *</label>
                                 <input
+                                    id="gp-name"
                                     type="text"
-                                    value={courseInput}
-                                    onChange={(e) => setCourseInput(e.target.value)}
-                                    onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); handleAddCourse(); } }}
-                                    placeholder="Nombre del curso — Enter para agregar"
+                                    value={groupForm.name}
+                                    onChange={(e) => setGroupForm((f) => ({ ...f, name: e.target.value }))}
+                                    placeholder="Ej. AUDITORES INTERNOS"
+                                    className={styles.input}
+                                    autoFocus
+                                />
+                            </div>
+
+                            {/* DescripciÃ³n */}
+                            <div className={styles.formGroup}>
+                                <label htmlFor="gp-desc" className={styles.label}>DescripciÃ³n (opcional)</label>
+                                <input
+                                    id="gp-desc"
+                                    type="text"
+                                    value={groupForm.description}
+                                    onChange={(e) => setGroupForm((f) => ({ ...f, description: e.target.value }))}
+                                    placeholder="Ej. Auditores del SGI certificados internamente"
                                     className={styles.input}
                                 />
-                                <button
-                                    type="button"
-                                    className={`${styles.addCourseBtn} colorBtn-${groupForm.color}`}
-                                    onClick={handleAddCourse}
-                                    aria-label="Agregar curso"
-                                    data-color={groupForm.color}
-                                >
-                                    <Plus size={17} />
-                                </button>
                             </div>
-                            {groupForm.requiredCourses.length > 0 && (
-                                <div className={styles.chipGrid}>
-                                    {groupForm.requiredCourses.map((c, i) => (
-                                        <span key={i} className={styles.chip} data-color={groupForm.color}>
-                                            {c}
-                                            <button
-                                                type="button"
-                                                onClick={() => handleRemoveCourse(c)}
-                                                aria-label={`Remover ${c}`}
-                                            >×</button>
-                                        </span>
+
+                            {/* Color */}
+                            <div className={styles.formGroup}>
+                                <span className={styles.label}>Color de identificaciÃ³n</span>
+                                <div className={styles.colorPicker} role="radiogroup" aria-label="Color">
+                                    {GROUP_COLORS.map((c) => (
+                                        <button
+                                            key={c.id}
+                                            type="button"
+                                            role="radio"
+                                            aria-checked={groupForm.color === c.id}
+                                            aria-label={c.label}
+                                            data-color={c.id}
+                                            className={`${styles.colorSwatch} ${groupForm.color === c.id ? styles.colorSelected : ''}`}
+                                            onClick={() => setGroupForm((f) => ({ ...f, color: c.id }))}
+                                            title={c.label}
+                                        >
+                                            {groupForm.color === c.id && <Check size={13} strokeWidth={3} />}
+                                        </button>
                                     ))}
+                                </div>
+                            </div>
+
+                            {/* Cursos */}
+                            <div className={styles.formGroup}>
+                                <span className={styles.label}>
+                                    Cursos requeridos ({groupForm.requiredCourses.length})
+                                </span>
+                                <div className={styles.courseInputRow}>
+                                    <input
+                                        type="text"
+                                        value={courseInput}
+                                        onChange={(e) => setCourseInput(e.target.value)}
+                                        onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); handleAddCourse(); } }}
+                                        placeholder="Nombre del curso â€” Enter para agregar"
+                                        className={styles.input}
+                                    />
+                                    <button
+                                        type="button"
+                                        className={`${styles.addCourseBtn} colorBtn-${groupForm.color}`}
+                                        onClick={handleAddCourse}
+                                        aria-label="Agregar curso"
+                                        data-color={groupForm.color}
+                                    >
+                                        <Plus size={17} />
+                                    </button>
+                                </div>
+                                {groupForm.requiredCourses.length > 0 && (
+                                    <div className={styles.chipGrid}>
+                                        {groupForm.requiredCourses.map((c, i) => (
+                                            <span key={i} className={styles.chip} data-color={groupForm.color}>
+                                                {c}
+                                                <button
+                                                    type="button"
+                                                    onClick={() => handleRemoveCourse(c)}
+                                                    aria-label={`Remover ${c}`}
+                                                >Ã—</button>
+                                            </span>
+                                        ))}
+                                    </div>
+                                )}
+                            </div>
+                        </div>
+                    </DialogBody>
+                    <DialogFooter>
+                        <Button variant="secondary" onClick={() => setShowGroupModal(false)}>Cancelar</Button>
+                        <Button
+                            variant="primary"
+                            onClick={handleSaveGroup}
+                            disabled={saving}
+                            data-color={groupForm.color}
+                        >
+                            {saving ? 'Guardando…' : editingGroup ? 'Guardar Cambios' : 'Crear Grupo'}
+                        </Button>
+                    </DialogFooter>
+                </Dialog>
+
+                {/* Modal: agregar miembro */}
+                <Dialog open={showMemberModal} onOpenChange={setShowMemberModal}>
+                    <DialogHeader>
+                        <DialogTitle>Agregar Miembro al Grupo</DialogTitle>
+                        <DialogClose onClose={() => setShowMemberModal(false)} />
+                    </DialogHeader>
+                    <DialogBody>
+                        <div className={styles.formStack}>
+                            <p className={styles.hint}>Busca al empleado por su número de ID</p>
+                            <div className={styles.memberSearchRow}>
+                                <input
+                                    type="text"
+                                    value={memberSearch}
+                                    onChange={(e) => setMemberSearch(e.target.value)}
+                                    onKeyDown={(e) => { if (e.key === 'Enter') handleSearchMember(); }}
+                                    placeholder="Número de empleado (ej. 4059)"
+                                    className={styles.input}
+                                    autoFocus
+                                />
+                                <Button
+                                    variant="primary"
+                                    onClick={handleSearchMember}
+                                    disabled={memberSearching}
+                                    aria-label="Buscar"
+                                >
+                                    {memberSearching ? '…' : <Search size={16} />}
+                                </Button>
+                            </div>
+
+                            {memberSearchResult && (
+                                <div className={styles.memberResultCard}>
+                                    <div className={styles.memberAvatar} data-color="blue">
+                                        {(memberSearchResult.name ?? '?')[0].toUpperCase()}
+                                    </div>
+                                    <div className={styles.memberInfo}>
+                                        <strong className={styles.memberName}>{memberSearchResult.name}</strong>
+                                        <span className={styles.memberMeta}>
+                                            {memberSearchResult.position ?? '—'}
+                                        </span>
+                                        <span className={styles.memberMeta}>
+                                            ID: {memberSearchResult.employeeId ?? memberSearchResult.id}
+                                        </span>
+                                    </div>
+                                    <Button variant="primary" onClick={() => handleAddMember(memberSearchResult)}>
+                                        <Plus size={15} /> Agregar
+                                    </Button>
                                 </div>
                             )}
                         </div>
-                    </div>
-                </DialogBody>
-                <DialogFooter>
-                    <Button variant="secondary" onClick={() => setShowGroupModal(false)}>Cancelar</Button>
-                    <Button
-                        variant="primary"
-                        onClick={handleSaveGroup}
-                        disabled={saving}
-                        data-color={groupForm.color}
-                    >
-                        {saving ? 'Guardando…' : editingGroup ? 'Guardar Cambios' : 'Crear Grupo'}
-                    </Button>
-                </DialogFooter>
-            </Dialog>
+                    </DialogBody>
+                    <DialogFooter>
+                        <Button variant="secondary" onClick={() => setShowMemberModal(false)}>Cerrar</Button>
+                    </DialogFooter>
+                </Dialog>
 
-            {/* ── Modal: agregar miembro ──────────────────────────────────────── */}
-            <Dialog open={showMemberModal} onOpenChange={setShowMemberModal}>
-                <DialogHeader>
-                    <DialogTitle>Agregar Miembro al Grupo</DialogTitle>
-                    <DialogClose onClose={() => setShowMemberModal(false)} />
-                </DialogHeader>
-                <DialogBody>
-                    <div className={styles.formStack}>
-                        <p className={styles.hint}>Busca al empleado por su número de ID</p>
-                        <div className={styles.memberSearchRow}>
-                            <input
-                                type="text"
-                                value={memberSearch}
-                                onChange={(e) => setMemberSearch(e.target.value)}
-                                onKeyDown={(e) => { if (e.key === 'Enter') handleSearchMember(); }}
-                                placeholder="Número de empleado (ej. 4059)"
-                                className={styles.input}
-                                autoFocus
-                            />
-                            <Button
-                                variant="primary"
-                                onClick={handleSearchMember}
-                                disabled={memberSearching}
-                                aria-label="Buscar"
-                            >
-                                {memberSearching ? '…' : <Search size={16} />}
-                            </Button>
-                        </div>
-
-                        {memberSearchResult && (
-                            <div className={styles.memberResultCard}>
-                                <div className={styles.memberAvatar} data-color="blue">
-                                    {(memberSearchResult.name ?? '?')[0].toUpperCase()}
-                                </div>
-                                <div className={styles.memberInfo}>
-                                    <strong className={styles.memberName}>{memberSearchResult.name}</strong>
-                                    <span className={styles.memberMeta}>
-                                        {memberSearchResult.position ?? '—'}
-                                    </span>
-                                    <span className={styles.memberMeta}>
-                                        ID: {memberSearchResult.employeeId ?? memberSearchResult.id}
-                                    </span>
-                                </div>
-                                <Button variant="primary" onClick={() => handleAddMember(memberSearchResult)}>
-                                    <Plus size={15} /> Agregar
-                                </Button>
-                            </div>
-                        )}
-                    </div>
-                </DialogBody>
-                <DialogFooter>
-                    <Button variant="secondary" onClick={() => setShowMemberModal(false)}>Cerrar</Button>
-                </DialogFooter>
-            </Dialog>
-
-            {/* ── Modal: confirmación de borrado ──────────────────────────────── */}
-            <Dialog
-                open={!!confirmDelete}
-                onOpenChange={(open) => { if (!open) setConfirmDelete(null); }}
-            >
-                <DialogHeader>
-                    <DialogTitle>
-                        {confirmDelete?.type === 'group' ? '¿Eliminar grupo?' : '¿Remover miembro?'}
-                    </DialogTitle>
-                    <DialogClose onClose={() => setConfirmDelete(null)} />
-                </DialogHeader>
-                <DialogBody>
-                    <p className={styles.hint}>
-                        {confirmDelete?.type === 'group'
-                            ? 'Esta acción eliminará el grupo y todos sus datos. No se puede deshacer.'
-                            : `Se removerá a ${confirmDelete?.empName ?? 'este miembro'} del grupo. El empleado y su historial de capacitación no se verán afectados.`}
-                    </p>
-                </DialogBody>
-                <DialogFooter>
-                    <Button variant="secondary" onClick={() => setConfirmDelete(null)}>Cancelar</Button>
-                    <Button
-                        variant="danger"
-                        onClick={confirmDelete?.type === 'group' ? handleDeleteGroup : handleRemoveMember}
-                    >
-                        {confirmDelete?.type === 'group' ? 'Eliminar grupo' : 'Remover miembro'}
-                    </Button>
-                </DialogFooter>
-            </Dialog>
+                {/* Modal: confirmación de borrado */}
+                <Dialog open={!!confirmDelete} onOpenChange={(open) => { if (!open) setConfirmDelete(null); }}>
+                    <DialogHeader>
+                        <DialogTitle>
+                            {confirmDelete?.type === 'group' ? '¿Eliminar grupo?' : '¿Remover miembro?'}
+                        </DialogTitle>
+                        <DialogClose onClose={() => setConfirmDelete(null)} />
+                    </DialogHeader>
+                    <DialogBody>
+                        <p className={styles.hint}>
+                            {confirmDelete?.type === 'group'
+                                ? 'Esta acción eliminará el grupo y todos sus datos. No se puede deshacer.'
+                                : `Se removerá a ${confirmDelete?.empName ?? 'este miembro'} del grupo. El empleado y su historial de capacitación no se verán afectados.`}
+                        </p>
+                    </DialogBody>
+                    <DialogFooter>
+                        <Button variant="secondary" onClick={() => setConfirmDelete(null)}>Cancelar</Button>
+                        <Button
+                            variant="danger"
+                            onClick={confirmDelete?.type === 'group' ? handleDeleteGroup : handleRemoveMember}
+                        >
+                            {confirmDelete?.type === 'group' ? 'Eliminar grupo' : 'Remover miembro'}
+                        </Button>
+                    </DialogFooter>
+                </Dialog>
+            </AdminLayout >
         </>
     );
 }
