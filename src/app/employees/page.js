@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 
 import React, { useEffect, useState, useMemo, useCallback } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
@@ -144,7 +144,7 @@ export default function EmployeesPage() {
     const { showToast } = useToast();
 
     // Pagination state
-    const [itemsPerPage, setItemsPerPage] = useState(8);
+    const [itemsPerPage, setItemsPerPage] = useState(10);
 
     // Catalogs
     const { positions, departments, areas, loading: catalogsLoading } = useCatalogs();
@@ -759,7 +759,7 @@ export default function EmployeesPage() {
                                                 onChange={handleItemsPerPageChange}
                                                 className={styles.itemsPerPageSelect}
                                             >
-                                                <option value={8}>8</option>
+                                                <option value={10}>10</option>
                                                 <option value={12}>12</option>
                                                 <option value={15}>15</option>
                                             </select>

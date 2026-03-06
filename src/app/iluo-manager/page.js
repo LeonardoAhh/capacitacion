@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
     Menu, X, Plus, Trash2, Search, ChevronRight, ChevronDown,
-    Settings2, Users, Filter, Check, Sparkles, Download, ArrowLeft
+    Settings2, Users, Filter, Check, Sparkles, Download
 } from 'lucide-react';
 import { db } from '@/lib/firebase';
 import { collection, query, getDocs, doc, updateDoc, arrayUnion } from 'firebase/firestore';
@@ -233,10 +233,6 @@ export default function IluoManagerPage() {
                         <Settings2 size={20} />
                         <span>ILUO Manager</span>
                     </div>
-
-                    <Link href="/dashboard" className={styles.topBarBack} aria-label="Volver al Dashboard">
-                        <ArrowLeft size={18} />
-                    </Link>
                 </header>
             </div>
 
@@ -335,13 +331,6 @@ export default function IluoManagerPage() {
                                         })
                                     )}
                                 </div>
-                            </div>
-
-                            <div className={styles.drawerFooter}>
-                                <Link href="/dashboard" className={styles.backLink}>
-                                    <ArrowLeft size={16} />
-                                    Volver a Módulos
-                                </Link>
                             </div>
                         </motion.aside>
                     )}
