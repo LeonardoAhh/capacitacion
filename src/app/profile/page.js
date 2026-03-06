@@ -2,7 +2,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useRouter } from 'next/navigation';
-import ProfileDropdown from '@/components/layout/ProfileDropdown/ProfileDropdown';
+
 import styles from './page.module.css';
 import { createAvatar } from '@dicebear/core';
 import { lorelei } from '@dicebear/collection';
@@ -13,9 +13,10 @@ import { Badge } from '@/components/ui/Badge/Badge';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/Card/Card';
 import { TabsComplete } from '@/components/ui/Tabs/Tabs';
 import { Skeleton } from '@/components/ui/Skeleton/Skeleton';
+import AdminLayout from '@/components/layout/AdminLayout/AdminLayout';
 
 export default function ProfilePage() {
-    const { user, loading, updateUserProfile } = useAuth();
+    const { user, loading, updateUserProfile, signOut } = useAuth();
     const router = useRouter();
     const [avatarSeed, setAvatarSeed] = useState('');
 
@@ -24,10 +25,14 @@ export default function ProfilePage() {
 
     useEffect(() => {
         if (user) {
+            if (user.rol === 'instructor' || user.rol === 'INSTRUCTOR') {
+                router.push('/induccion');
+                return;
+            }
             // Prioritize saved avatarSeed, otherwise use email as default seed
             setAvatarSeed(user.avatarSeed || user.email);
         }
-    }, [user]);
+    }, [user, router]);
 
     const avatarSvg = useMemo(() => {
         return createAvatar(lorelei, {
@@ -80,12 +85,10 @@ export default function ProfilePage() {
     const ROLE_BADGE_VARIANT = { super_admin: 'danger', SUPER_ADMIN: 'danger', admin: 'secondary', ADMIN: 'secondary' };
     const roleBadgeVariant = ROLE_BADGE_VARIANT[user?.rol] ?? 'info';
     const isAdmin = ['admin', 'superadmin', 'super_admin', 'ADMIN', 'SUPER_ADMIN'].includes(user?.rol);
-    const isAuditor = ['super_admin', 'instructor'].includes(user?.rol);
+    const isAuditor = ['super_admin'].includes(user?.rol);
 
     // Detail rows declarativos
     const detailRows = [
-        { icon: <Briefcase size={16} />, label: 'Puesto',        value: user?.puesto        || 'No definido' },
-        { icon: <Building2 size={16} />, label: 'Departamento',  value: user?.departamento  || 'No definido' },
         { icon: <Calendar  size={16} />, label: 'Fecha Ingreso', value: user?.fechaIngreso  || 'No definida'  },
         { icon: <User2     size={16} />, label: 'Género',        value: user?.genero        || 'No definido' },
     ];
@@ -120,9 +123,7 @@ export default function ProfilePage() {
     ];
 
     return (
-        <div style={{ minHeight: '100vh', backgroundColor: 'var(--bg-primary)' }}>
-            <div className={styles.profileContainer}><ProfileDropdown /></div>
-
+        <AdminLayout title="Perfil de Usuario">
             <main className={styles.container} id="main-content">
                 <BackButton onClick={() => router.back()} />
 
@@ -194,7 +195,7 @@ export default function ProfilePage() {
                 {/* ── Tabs organizadas ── */}
                 <TabsComplete tabs={profileTabs} defaultValue="perfil" className={styles.tabsContainer} />
             </main>
-        </div>
+        </AdminLayout>
     );
 }
 

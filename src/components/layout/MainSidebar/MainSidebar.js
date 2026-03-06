@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import NextImage from 'next/image';
-import { LogOut, LayoutDashboard, Settings, Award, GraduationCap, X, ChevronDown, ChevronRight, FileText, CheckSquare, Calendar, Users, BarChart2, BookOpen, UserCheck, Briefcase, List, FileCheck, Layers } from 'lucide-react';
+import { LogOut, LayoutDashboard, Settings, Award, GraduationCap, X, ChevronDown, ChevronRight, FileText, CheckSquare, Calendar, Users, BarChart2, BookOpen, UserCheck, Briefcase, List, FileCheck, Layers, Zap, Image as ImageIcon } from 'lucide-react';
 import styles from './MainSidebar.module.css';
 
 export default function MainSidebar({ user, handleLogout, isOpen, onClose }) {
@@ -69,6 +69,12 @@ export default function MainSidebar({ user, handleLogout, isOpen, onClose }) {
             icon: GraduationCap,
             href: '/induccion',
             disabled: false,
+            subItems: [
+                { id: 'interactivos', title: 'Interactivos', href: '/induccion?tab=interactivos', icon: Zap },
+                { id: 'candidatos', title: 'Candidatos', href: '/induccion?tab=candidatos', icon: BookOpen },
+                { id: 'material', title: 'Material', href: '/induccion?tab=material', icon: FileText },
+                { id: 'galeria', title: 'Galería', href: '/induccion?tab=galeria', icon: ImageIcon }
+            ]
         },
     ];
 
@@ -80,6 +86,14 @@ export default function MainSidebar({ user, handleLogout, isOpen, onClose }) {
             href: '/iluo-manager',
             disabled: false,
         });
+    }
+
+    // Filtrar para Instructores: solo ver Inducción
+    const isInstructor = user?.rol === 'instructor' || user?.rol === 'Instructor';
+    let displayNavItems = navItems;
+    
+    if (isInstructor) {
+        displayNavItems = navItems.filter(item => item.id === 'induction');
     }
 
     const firstName = (user?.nombre || user?.nickname || user?.name || 'Admin').split(' ')[0];
@@ -115,7 +129,7 @@ export default function MainSidebar({ user, handleLogout, isOpen, onClose }) {
                 <nav className={styles.sidebarNav} aria-label="Módulos del Sistema">
                     <span className={styles.sidebarLabel} aria-hidden="true">Accesos</span>
 
-                    {navItems.map((item) => {
+                    {displayNavItems.map((item) => {
                         const Icon = item.icon;
                         const hasSubItems = item.subItems && item.subItems.length > 0;
                         const isExpanded = expandedMenu === item.id;

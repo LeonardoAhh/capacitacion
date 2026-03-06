@@ -138,20 +138,37 @@
     }
 }
 
+.topControlsRow {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+    margin-top: 24px;
+    margin-bottom: 24px;
+}
+
+@media (max-width: 768px) {
+    .topControlsRow {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 16px;
+    }
+}
+
 /* === HEADER META — resumen compacto === */
 .headerMeta {
     display: flex;
     flex-wrap: wrap;
     gap: 10px;
-    margin-top: 16px;
+    flex-shrink: 0;
 }
 
 .metaBadge {
     display: inline-flex;
     align-items: center;
     gap: 6px;
-    padding: 6px 14px;
-    border-radius: 20px;
+    padding: 6px 16px;
+    border-radius: 50px;
     font-size: 13px;
     font-weight: 500;
     color: #4a5568;
@@ -214,8 +231,8 @@
 
 /* === SEARCH SECTION === */
 .searchSection {
-    margin-top: 32px;
-    margin-bottom: 32px;
+    flex: 1;
+    min-width: 0;
 }
 
 /* === CONTENT SECTION === */

@@ -1,4 +1,4 @@
-﻿/* eslint-disable @next/next/no-img-element */
+/* eslint-disable @next/next/no-img-element */
 /* eslint-disable jsx-a11y/alt-text */
 'use client';
 
@@ -41,7 +41,9 @@ import NextImage from 'next/image';
 import { LogOut, User, Menu } from 'lucide-react';
 
 import CourseWizardModal from '@/components/features/Courses/CourseWizardModal';
-import InduccionSidebar from '@/components/features/Induccion/Sidebar/InduccionSidebar';
+import { useSearchParams } from 'next/navigation';
+import { Suspense } from 'react';
+import AdminLayout from '@/components/layout/AdminLayout/AdminLayout';
 
 import InteractiveCoursesView from '@/components/features/Induccion/views/InteractiveCoursesView';
 import CandidateCoursesView from '@/components/features/Induccion/views/CandidateCoursesView';
@@ -63,17 +65,25 @@ import { useConfirm } from '@/hooks/useConfirm';
 import puestosData from '../../../puestos.json';
 import styles from './page.module.css';
 
-export default function InductionPage() {
+function InduccionContent() {
     const { user, loading: authLoading, signOut } = useAuth();
     const router = useRouter();
     const { toast } = useToast();
     const { showConfirm, confirmDialog } = useConfirm();
     const fileInputRef = useRef(null);
     const galleryFileRef = useRef(null);
+    const searchParams = useSearchParams();
+    const initialTab = searchParams.get('tab') || 'interactivos';
 
     // ── Tab activo ──
-    const [activeTab, setActiveTab] = useState('interactivos');
-    const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+    const [activeTab, setActiveTab] = useState(initialTab);
+    
+    useEffect(() => {
+        const tab = searchParams.get('tab');
+        if (tab) {
+            setActiveTab(tab);
+        }
+    }, [searchParams]);
 
     // ── Colecciones existentes ──
     const [courses, setCourses] = useState([]);
@@ -531,43 +541,15 @@ export default function InductionPage() {
         activeTab === 'candidatos' || activeTab === 'material' || activeTab === 'all';
 
     return (
-        <>
+        <AdminLayout title="Inducción">
             <div className={styles.main}>
-                <div className={styles.bgDecoration} aria-hidden="true" />
 
                 {/* ══════════════ GRID PRINCIPAL ══════════════ */}
                 <div className={styles.container}>
 
-                    {/* ── SIDEBAR (Escritorio + Drawer Móvil) ── */}
-                    <InduccionSidebar
-                        activeTab={activeTab}
-                        setActiveTab={setActiveTab}
-                        canEdit={canEdit}
-                        user={user}
-                        nativeCoursesCount={nativeCourses.length}
-                        candidateCoursesCount={candidateCourses.length}
-                        coursesCount={courses.length}
-                        galleryItemsCount={galleryItems.length}
-                        handleLogout={handleLogout}
-                        getInitials={getInitials}
-                        isOpen={isSidebarOpen}
-                        onClose={() => setIsSidebarOpen(false)}
-                    />
-
                     {/* ── HEADER ── */}
                     <header className={styles.header}>
                         <div className={styles.titleSectionParent}>
-                            {/* Botón hamburguesa — visible cuando el sidebar es drawer (≤768px) */}
-                            <button
-                                type="button"
-                                className={styles.mobileMenuBtn}
-                                onClick={() => setIsSidebarOpen(true)}
-                                aria-label="Abrir menú de navegación"
-                                aria-expanded={isSidebarOpen}
-                                aria-controls="induccion-sidebar"
-                            >
-                                <Menu size={20} aria-hidden="true" />
-                            </button>
                             <div className={styles.titleSection}>
                                 <h1>Inducción</h1>
                                 <p>Material y cursos de bienvenida para empleados y candidatos</p>
@@ -840,6 +822,14 @@ export default function InductionPage() {
 
                 {confirmDialog}
             </div>
-        </>
+        </AdminLayout>
+    );
+}
+
+export default function InductionPage() {
+    return (
+        <Suspense fallback={<div className={styles.main}><div className={styles.loadingCenter}><div className="spinner" /></div></div>}>
+            <InduccionContent />
+        </Suspense>
     );
 }

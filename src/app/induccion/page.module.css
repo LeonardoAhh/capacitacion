@@ -54,9 +54,6 @@
     /* Surface */
     --c-surface: #ffffff;
 
-    /* Layout */
-    --rail-w: 220px;
-
     /* Radii */
     --r-xl: 20px;
     --r-lg: 14px;
@@ -173,7 +170,7 @@
    ================================================================ */
 .main {
     min-height: 100vh;
-    background: #f5f7ff;
+    background: var(--c-surface);
 
     color: var(--c-ink);
     position: relative;
@@ -208,14 +205,13 @@
 }
 
 /* ================================================================
-   LAYOUT PC — Grid: rail | header | contenido
+   LAYOUT PC — Layout Integrado
    ================================================================ */
 .container {
     position: relative;
     z-index: 10;
-    display: grid;
-    grid-template-columns: var(--rail-w) 1fr;
-    grid-template-rows: auto 1fr;
+    display: flex;
+    flex-direction: column;
     min-height: 100vh;
     width: 100%;
 }
@@ -224,7 +220,6 @@
    HEADER
    ================================================================ */
 .header {
-    grid-column: 2;
     padding: 48px 48px 0;
     animation: indFadeUp 0.5s var(--ease) both;
     max-width: 1800px;

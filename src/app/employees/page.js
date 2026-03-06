@@ -36,7 +36,7 @@ import { generateEmployeeTemplate, parseImportFile, validateEmployeeImportRecord
 // ============================================================================
 
 const formatDate = (dateString) => {
-    if (!dateString) return 'â€”';
+    if (!dateString) return '-';
     try {
         // Fix for Timezone Offset:
         // If it's a YYYY-MM-DD string, parse it as LOCAL time to avoid UTC-based shift.
@@ -647,42 +647,45 @@ export default function EmployeesPage() {
                         </p>
                     </div>
 
-                    {/* Header Meta â€” resumen compacto */}
-                    <div className={styles.headerMeta}>
-                        <span className={styles.metaBadge}>
-                            <Users size={14} />
-                            <strong>{stats.total}</strong> empleados
-                        </span>
-                        <span className={`${styles.metaBadge} ${styles.metaBadgeActive}`}>
-                            <UserCheck size={14} />
-                            <strong>{stats.active}</strong> activos
-                        </span>
-                        <span className={`${styles.metaBadge} ${styles.metaBadgeCandidates}`}>
-                            <UserPlus size={14} />
-                            <strong>{stats.candidates}</strong> candidatos
-                        </span>
-                    </div>
+                    {/* Controles Superiores: Píldoras y Buscador */}
+                    <div className={styles.topControlsRow}>
+                        {/* Header Meta — resumen compacto */}
+                        <div className={styles.headerMeta}>
+                            <span className={styles.metaBadge}>
+                                <Users size={14} />
+                                <strong>{stats.total}</strong> empleados
+                            </span>
+                            <span className={`${styles.metaBadge} ${styles.metaBadgeActive}`}>
+                                <UserCheck size={14} />
+                                <strong>{stats.active}</strong> activos
+                            </span>
+                            <span className={`${styles.metaBadge} ${styles.metaBadgeCandidates}`}>
+                                <UserPlus size={14} />
+                                <strong>{stats.candidates}</strong> candidatos
+                            </span>
+                        </div>
 
-                    {/* Search Bar */}
-                    <div className={styles.searchSection}>
-                        <div style={{ flex: 1 }}>
-                            <EmployeeSearchBar
-                                searchTerm={searchTerm}
-                                onSearchChange={setSearchTerm}
-                                onUpload={handleImportClick}
-                                onDownload={handleDownloadTemplate}
-                                onAddEmployee={openCreateDrawer}
-                                canWrite={true}
-                            />
-                            {/* Hidden File Input for Import */}
-                            <input
-                                type="file"
-                                ref={fileInputRef}
-                                style={{ display: 'none' }}
-                                accept=".xlsx,.xls,.json"
-                                onChange={handleFileImport}
-                                disabled={isImporting}
-                            />
+                        {/* Search Bar */}
+                        <div className={styles.searchSection}>
+                            <div style={{ flex: 1, width: '100%' }}>
+                                <EmployeeSearchBar
+                                    searchTerm={searchTerm}
+                                    onSearchChange={setSearchTerm}
+                                    onUpload={handleImportClick}
+                                    onDownload={handleDownloadTemplate}
+                                    onAddEmployee={openCreateDrawer}
+                                    canWrite={true}
+                                />
+                                {/* Hidden File Input for Import */}
+                                <input
+                                    type="file"
+                                    ref={fileInputRef}
+                                    style={{ display: 'none' }}
+                                    accept=".xlsx,.xls,.json"
+                                    onChange={handleFileImport}
+                                    disabled={isImporting}
+                                />
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -918,11 +921,11 @@ export default function EmployeesPage() {
                                         </div>
                                         <div className={styles.infoItem}>
                                             <label>CURP</label>
-                                            <span>{selectedEmployee.curp || 'â€”'}</span>
+                                            <span>{selectedEmployee.curp || '-'}</span>
                                         </div>
                                         <div className={styles.infoItem}>
                                             <label>ID Empleado</label>
-                                            <span>{selectedEmployee.employeeId || 'â€”'}</span>
+                                            <span>{selectedEmployee.employeeId || '-'}</span>
                                         </div>
                                         <div className={styles.infoItem}>
                                             <label>Tipo</label>
@@ -935,19 +938,19 @@ export default function EmployeesPage() {
                                     <div id="laboral-panel" role="tabpanel" className={styles.infoGrid}>
                                         <div className={styles.infoItem}>
                                             <label>Puesto</label>
-                                            <span>{selectedEmployee.position || 'â€”'}</span>
+                                            <span>{selectedEmployee.position || '-'}</span>
                                         </div>
                                         <div className={styles.infoItem}>
                                             <label>Departamento</label>
-                                            <span>{selectedEmployee.department || 'â€”'}</span>
+                                            <span>{selectedEmployee.department || '-'}</span>
                                         </div>
                                         <div className={styles.infoItem}>
-                                            <label>Ãrea</label>
-                                            <span>{selectedEmployee.area || 'â€”'}</span>
+                                            <label>Área</label>
+                                            <span>{selectedEmployee.area || '-'}</span>
                                         </div>
                                         <div className={styles.infoItem}>
                                             <label>Turno</label>
-                                            <span>{selectedEmployee.shift || 'â€”'}</span>
+                                            <span>{selectedEmployee.shift || '-'}</span>
                                         </div>
                                         <div className={styles.infoItem}>
                                             <label>Fecha de Inicio</label>
@@ -966,12 +969,12 @@ export default function EmployeesPage() {
                                             <div className={styles.infoItem}>
                                                 <label>Código de Acceso</label>
                                                 <span style={{ fontFamily: 'monospace', fontWeight: 'bold' }}>
-                                                    {selectedEmployee.accessCode || 'â€”'}
+                                                    {selectedEmployee.accessCode || '-'}
                                                 </span>
                                             </div>
                                             <div className={styles.infoItem}>
                                                 <label>Plan Entregado</label>
-                                                <span>{selectedEmployee.trainingPlanDelivered ? 'SÃ­' : 'No'}</span>
+                                                <span>{selectedEmployee.trainingPlanDelivered ? 'Sí' : 'No'}</span>
                                             </div>
                                             <div className={styles.infoItem}>
                                                 <label>Fecha Notificación</label>
@@ -1089,7 +1092,7 @@ export default function EmployeesPage() {
                                         value={formData.name || ''}
                                         onChange={handleInputChange}
                                         className={`${styles.formInput} ${formErrors.name ? styles.inputError : ''}`}
-                                        placeholder="Ej: Juan Pérez GarcÃ­a"
+                                        placeholder="Ej: Juan Pérez García"
                                         autoComplete="name"
                                         aria-invalid={!!formErrors.name}
                                         aria-describedby={formErrors.name ? 'name-error' : undefined}
