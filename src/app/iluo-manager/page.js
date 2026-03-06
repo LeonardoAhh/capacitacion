@@ -210,14 +210,7 @@ export default function IluoManagerPage() {
     if (user?.rol !== 'super_admin') return <AccessDenied />;
 
     return (
-        <AdminLayout
-            title="ILUO Manager"
-            quickAction={selectedPosition ? {
-                icon: <Plus size={17} />,
-                label: 'Nueva Competencia',
-                onClick: () => setIsModalOpen(true),
-            } : null}
-        >
+        <AdminLayout title="ILUO Manager">
             {/* Header móvil (solo visible en @media < 768px) */}
             <div className={styles.mobileHeaderWrapper}>
                 <header className={styles.topBar}>
@@ -437,6 +430,17 @@ export default function IluoManagerPage() {
                     )}
                 </main>
             </div>
+
+            {selectedPosition && (
+                <button
+                    className={styles.fab}
+                    onClick={() => setIsModalOpen(true)}
+                    aria-label="Agregar competencia"
+                    title="Nueva Competencia"
+                >
+                    <Plus size={24} />
+                </button>
+            )}
 
             <AnimatePresence>
                 {isModalOpen && (
