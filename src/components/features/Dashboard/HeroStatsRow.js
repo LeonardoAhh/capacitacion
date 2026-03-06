@@ -63,7 +63,7 @@ export default function HeroStatsRow({ stats }) {
 
             {/* Quick Stats Cards */}
             <div className={styles.quickStats}>
-                <Link href="/employees" className={styles.statCard}>
+                <div className={styles.statCard}>
                     <motion.div
                         className={styles.statCardInner}
                         initial={{ opacity: 0, y: 20 }}
@@ -86,9 +86,9 @@ export default function HeroStatsRow({ stats }) {
                         </div>
                         <ArrowUpRight className={styles.statArrow} />
                     </motion.div>
-                </Link>
+                </div>
 
-                <Link href="/employees" className={styles.statCard}>
+                <div className={styles.statCard}>
                     <motion.div
                         className={styles.statCardInner}
                         initial={{ opacity: 0, y: 20 }}
@@ -110,7 +110,7 @@ export default function HeroStatsRow({ stats }) {
                         </div>
                         <ArrowUpRight className={styles.statArrow} />
                     </motion.div>
-                </Link>
+                </div>
             </div>
         </div>
     );

@@ -12,7 +12,10 @@ export default function MainSidebar({ user, handleLogout, isOpen, onClose }) {
     const isSuperAdmin = user?.rol === 'super_admin';
     const isDemo = user?.rol === 'demo' || user?.email?.includes('demo');
 
-    const [expandedMenu, setExpandedMenu] = useState(pathname.startsWith('/capacitacion') ? 'capacitacion' : null);
+    const [expandedMenu, setExpandedMenu] = useState(
+        pathname.startsWith('/capacitacion') ? 'capacitacion' :
+            (pathname.startsWith('/dashboard') || pathname.startsWith('/employees') ? 'nuevos_ingresos' : null)
+    );
 
     const toggleMenu = (menuId) => {
         setExpandedMenu(prev => prev === menuId ? null : menuId);
@@ -27,11 +30,15 @@ export default function MainSidebar({ user, handleLogout, isOpen, onClose }) {
 
     const navItems = [
         {
-            id: 'dashboard',
+            id: 'nuevos_ingresos',
             title: 'Nuevos Ingresos',
             icon: LayoutDashboard,
-            href: '/dashboard',
+            href: '#',
             disabled: isDemo,
+            subItems: [
+                { id: 'dashboard', title: 'Dashboard', href: '/dashboard', icon: BarChart2 },
+                { id: 'empleados', title: 'Empleados', href: '/employees', icon: Users }
+            ]
         },
         {
             id: 'capacitacion',
@@ -41,6 +48,7 @@ export default function MainSidebar({ user, handleLogout, isOpen, onClose }) {
             disabled: isDemo,
             subItems: [
                 { id: 'registro', title: 'Registro', href: '/capacitacion/registro', icon: CheckSquare },
+                { id: 'plan-formacion', title: 'Plan de Formación', href: '/reports', icon: FileText },
                 { id: 'empleados', title: 'Empleados', href: '/capacitacion/empleados', icon: Users },
                 { id: 'matriz', title: 'Matriz de Habilidades', href: '/capacitacion/matriz', icon: Layers },
                 { id: 'catalogo', title: 'Catálogo Cursos', href: '/capacitacion/catalogo', icon: BookOpen },

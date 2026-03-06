@@ -167,10 +167,94 @@ export function useDashboardStats(user) {
         return { upcoming, overdue };
     }, [rawEmployees]);
 
+    // ─── Planes de Formación (RG-REC-048) próximos y vencidos ──────────────
+    const trainingPlans = useMemo(() => {
+        if (rawEmployees.length === 0) return { upcoming: [], overdue: [] };
+
+        const now = new Date();
+        now.setHours(0, 0, 0, 0);
+
+        const upcoming = [];
+        const overdue = [];
+
+        // Importación de lógica estática equivalente a useEmployeeDates para el hook
+        const TRAINING_PLAN_CONFIG = [
+            { DEPARTAMENTO: "ALMACÉN", ÁREA: "ALMACÉN", DIAS: 60 },
+            { DEPARTAMENTO: "CALIDAD", ÁREA: "A. CALIDAD 1ER TURNO", DIAS: 7 },
+            { DEPARTAMENTO: "CALIDAD", ÁREA: "A. CALIDAD 2DO TURNO", DIAS: 7 },
+            { DEPARTAMENTO: "CALIDAD", ÁREA: "METROLOGÍA", DIAS: 7 },
+            { DEPARTAMENTO: "CALIDAD", ÁREA: "CALIDAD ADMTVO", DIAS: 7 },
+            { DEPARTAMENTO: "CALIDAD", ÁREA: "SGI", DIAS: 60 },
+            { DEPARTAMENTO: "CALIDAD", ÁREA: "RESIDENTES DE CALIDAD", DIAS: 7 },
+            { DEPARTAMENTO: "COMERCIAL", ÁREA: "VENTAS", DIAS: 60 },
+            { DEPARTAMENTO: "GERENCIA DE PLANTA", ÁREA: "GERENCIA", DIAS: 60 },
+            { DEPARTAMENTO: "LOGISTICA", ÁREA: "LOGISTICA", DIAS: 60 },
+            { DEPARTAMENTO: "MANTENIMIENTO", ÁREA: "MANTENIMIENTO", DIAS: 90 },
+            { DEPARTAMENTO: "PRODUCCIÓN", ÁREA: "PRODUCCIÓN ADMTVO", DIAS: 60 },
+            { DEPARTAMENTO: "PRODUCCIÓN", ÁREA: "PRODUCCIÓN MONTAJE", DIAS: 60 },
+            { DEPARTAMENTO: "PRODUCCIÓN", ÁREA: "PRODUCCIÓN 1ER TURNO", DIAS: 60 },
+            { DEPARTAMENTO: "PRODUCCIÓN", ÁREA: "PRODUCCIÓN 2DO TURNO", DIAS: 60 },
+            { DEPARTAMENTO: "PRODUCCIÓN", ÁREA: "PRODUCCIÓN 3ER TURNO", DIAS: 60 },
+            { DEPARTAMENTO: "PRODUCCIÓN", ÁREA: "PRODUCCIÓN 4TO TURNO", DIAS: 60 },
+            { DEPARTAMENTO: "PROYECTOS", ÁREA: "PROYECTOS", DIAS: 60 },
+            { DEPARTAMENTO: "RECURSOS HUMANOS", ÁREA: "RECURSOS HUMANOS", DIAS: 60 },
+            { DEPARTAMENTO: "SISTEMAS", ÁREA: "SISTEMAS", DIAS: 60 },
+            { DEPARTAMENTO: "TALLER DE MOLDES", ÁREA: "MOLDES", DIAS: 60 }
+        ];
+
+        rawEmployees.forEach(emp => {
+            // Solo evaluamos si no se ha entregado el plan
+            if (emp.trainingPlanDelivered) return;
+            if (!emp.startDate || !emp.department) return;
+
+            const config = TRAINING_PLAN_CONFIG.find(
+                c => c.DEPARTAMENTO.toUpperCase() === emp.department.toUpperCase() &&
+                    (c.ÁREA.toUpperCase() === (emp.area || '').toUpperCase())
+            ) || TRAINING_PLAN_CONFIG.find(
+                c => c.DEPARTAMENTO.toUpperCase() === emp.department.toUpperCase()
+            );
+
+            const daysAllowed = config?.DIAS || 60;
+            const startDate = new Date(emp.startDate + 'T00:00:00');
+            const deliveryDate = new Date(startDate);
+            deliveryDate.setDate(deliveryDate.getDate() + daysAllowed);
+
+            const daysUntil = Math.ceil((deliveryDate - now) / (1000 * 60 * 60 * 24));
+
+            const baseInfo = {
+                employeeId: emp.employeeId,
+                employeeName: emp.name,
+                dueDate: deliveryDate.toISOString().split('T')[0],
+                department: emp.department,
+            };
+
+            // Vencido
+            if (daysUntil < 0) {
+                overdue.push({
+                    ...baseInfo,
+                    daysOverdue: Math.abs(daysUntil)
+                });
+            }
+            // Próximo a vencer (0 a 7 días)
+            else if (daysUntil >= 0 && daysUntil <= 7) {
+                upcoming.push({
+                    ...baseInfo,
+                    daysUntil
+                });
+            }
+        });
+
+        upcoming.sort((a, b) => a.daysUntil - b.daysUntil);
+        overdue.sort((a, b) => b.daysOverdue - a.daysOverdue);
+
+        return { upcoming, overdue };
+    }, [rawEmployees]);
+
     return {
         stats,
         evaluations,
         expiringEmployees,
+        trainingPlans,
         userName,
         userGender,
         loading,

@@ -617,7 +617,7 @@ export default function EmployeesPage() {
     // ============================================================================
 
     return (
-        <main className={styles.main}>
+        <AdminLayout title="Gestión de Empleados">
             {/* Skip Link for Accessibility */}
             <a href="#main-content" className={styles.skipLink}>
                 Saltar al contenido principal
@@ -637,14 +637,13 @@ export default function EmployeesPage() {
                 {/* Header Section */}
                 <div className={styles.header}>
                     <div className={styles.headerContent}>
-                        <BackButton onClick={() => router.push('/dashboard')} />
 
                         <h1 className={styles.pageTitle}>
                             <Users size={32} style={{ marginRight: '12px' }} />
-                            GestiÃ³n de Empleados
+                            Gestión de Empleados
                         </h1>
                         <p className={styles.pageSubtitle}>
-                            Administra y consulta la informaciÃ³n de tu equipo
+                            Administra y consulta la información de tu equipo
                         </p>
                     </div>
 
@@ -1604,6 +1603,6 @@ export default function EmployeesPage() {
                 onCancel={() => setConfirmDialog(prev => ({ ...prev, isOpen: false }))}
                 variant={confirmDialog.variant}
             />
-        </main>
+        </AdminLayout>
     );
 }

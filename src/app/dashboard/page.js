@@ -23,7 +23,7 @@ export default function DashboardPage() {
     const { user, loading: authLoading, updateUserProfile } = useAuth();
     const router = useRouter();
 
-    const { stats, evaluations, expiringEmployees, loading } = useDashboardStats(user);
+    const { stats, evaluations, expiringEmployees, trainingPlans, loading } = useDashboardStats(user);
     const [showExpiringModal, setShowExpiringModal] = useState(false);
     const [showAvatarSelector, setShowAvatarSelector] = useState(false);
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -164,7 +164,7 @@ export default function DashboardPage() {
                     </header>
 
                     <div className={styles.statsGrid}>
-                        <Link href="/employees" className={styles.statCard}>
+                        <div className={styles.statCard}>
                             <div className={`${styles.statIcon} ${styles.primary}`}>
                                 <Users size={20} />
                             </div>
@@ -172,9 +172,9 @@ export default function DashboardPage() {
                                 <span className={styles.statValue}>{stats.totalEmployees}</span>
                                 <span className={styles.statLabel}>Empleados</span>
                             </div>
-                        </Link>
+                        </div>
 
-                        <Link href="/employees" className={styles.statCard}>
+                        <div className={styles.statCard}>
                             <div className={`${styles.statIcon} ${styles.success}`}>
                                 <FileText size={20} />
                             </div>
@@ -182,7 +182,7 @@ export default function DashboardPage() {
                                 <span className={styles.statValue}>{stats.activeContracts}</span>
                                 <span className={styles.statLabel}>Contratos Vigentes</span>
                             </div>
-                        </Link>
+                        </div>
 
                         <div className={`${styles.statCard} ${stats.expiringContracts > 0 ? styles.clickable : ''}`}>
                             <div className={`${styles.statIcon} ${styles.warning}`}>
@@ -226,10 +226,7 @@ export default function DashboardPage() {
                                                 <AlertCircle size={20} />
                                             </div>
                                             <div className={styles.alertContent}>
-                                                <span className={styles.alertTitle}>{ev.employeeName}</span>
-                                                <span className={styles.alertMeta}>
-                                                    {ev.evaluationType} &middot; Vencida hace <strong>{ev.daysOverdue}d</strong>
-                                                </span>
+                                                <span className={styles.alertTitle}>{ev.employeeId}</span>
                                             </div>
                                         </div>
                                     ))}
@@ -243,10 +240,7 @@ export default function DashboardPage() {
                                                 <Calendar size={20} />
                                             </div>
                                             <div className={styles.alertContent}>
-                                                <span className={styles.alertTitle}>{ev.employeeName}</span>
-                                                <span className={styles.alertMeta}>
-                                                    {ev.evaluationType} &middot; En <strong>{ev.daysUntil}d</strong>
-                                                </span>
+                                                <span className={styles.alertTitle}>{ev.employeeId}</span>
                                             </div>
                                         </div>
                                     ))}
@@ -269,10 +263,42 @@ export default function DashboardPage() {
                                                 <Clock size={20} />
                                             </div>
                                             <div className={styles.alertContent}>
-                                                <span className={styles.alertTitle}>{emp.name}</span>
-                                                <span className={styles.alertMeta}>
-                                                    {emp.position} &middot; Vence en <strong>{emp.daysUntilExpiry}d</strong>
-                                                </span>
+                                                <span className={styles.alertTitle}>{emp.employeeId}</span>
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            </section>
+                        )}
+
+                        {(trainingPlans.overdue.length > 0 || trainingPlans.upcoming.length > 0) && (
+                            <section className={styles.section}>
+                                <div className={styles.sectionHeader}>
+                                    <h2 className={styles.sectionTitle}>Plan Formación</h2>
+                                    {trainingPlans.overdue.length > 0 && (
+                                        <span className={`${styles.sectionBadge} ${styles.danger}`}>
+                                            {trainingPlans.overdue.length} vencido{trainingPlans.overdue.length > 1 ? 's' : ''}
+                                        </span>
+                                    )}
+                                </div>
+                                <div className={styles.alertList}>
+                                    {trainingPlans.overdue.map((plan, i) => (
+                                        <div key={`plan-overdue-${i}`} className={styles.alertItem}>
+                                            <div className={`${styles.alertIcon} ${styles.danger}`}>
+                                                <FileText size={20} />
+                                            </div>
+                                            <div className={styles.alertContent}>
+                                                <span className={styles.alertTitle}>{plan.employeeId}</span>
+                                            </div>
+                                        </div>
+                                    ))}
+                                    {trainingPlans.upcoming.map((plan, i) => (
+                                        <div key={`plan-upc-${i}`} className={styles.alertItem}>
+                                            <div className={`${styles.alertIcon} ${styles.warning}`}>
+                                                <FileText size={20} />
+                                            </div>
+                                            <div className={styles.alertContent}>
+                                                <span className={styles.alertTitle}>{plan.employeeId}</span>
                                             </div>
                                         </div>
                                     ))}
