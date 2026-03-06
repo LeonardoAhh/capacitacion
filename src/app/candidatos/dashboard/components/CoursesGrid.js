@@ -34,19 +34,6 @@ const CourseCard = ({ course, isCompleted, onView, onToggle }) => {
                 </div>
             </div>
 
-            <div className={styles.courseCardFooter}>
-                <button
-                    className={isCompleted ? styles.btnCompleted : styles.btnMarkComplete}
-                    onClick={(e) => {
-                        e.stopPropagation();
-                        onToggle(course.id, !isCompleted);
-                    }}
-                    aria-label={isCompleted ? "Marcar como no completado" : "Marcar como completado"}
-                >
-                    {isCompleted ? 'Completado' : 'Marcar Completado'}
-                </button>
-                <ChevronRight size={18} className={styles.chevron} />
-            </div>
         </div>
     );
 };

@@ -2,6 +2,26 @@
     position: relative;
     min-height: 100vh;
     isolation: isolate;
+    display: flex;
+    /* Sidebar layout = Row */
+    flex-direction: row;
+
+    /* Sidebar tokens inyectados para el CandidateSidebar */
+    --c-orange: #f59e0b;
+    /* Naranja Institucional */
+    --sb-bg: transparent;
+    --sb-border: rgba(245, 158, 11, 0.08);
+    /* 0.08 alpha de #f59e0b */
+    --sb-text: var(--text-primary);
+    --sb-text-muted: var(--text-secondary);
+    --sb-hover-bg: rgba(245, 158, 11, 0.06);
+    --sb-hover-text: var(--text-primary);
+    --sb-active-bg: var(--c-orange);
+    --sb-active-text: #fff;
+    --sb-badge-bg: rgba(245, 158, 11, 0.07);
+    --sb-badge-text: var(--text-secondary);
+    --sb-overlay-bg: rgba(0, 0, 0, 0.4);
+    --sb-shadow: rgba(0, 0, 0, 0.12);
 
     /* Light: mesh cálido crema/ámbar/lavanda */
     background:
@@ -12,6 +32,13 @@
 }
 
 [data-theme="dark"] .page {
+    /* Token overrides para dark mode */
+    --sb-bg: transparent;
+    --sb-border: rgba(245, 158, 11, 0.08);
+    --sb-hover-bg: rgba(245, 158, 11, 0.10);
+    --sb-badge-bg: rgba(245, 158, 11, 0.10);
+    --sb-badge-text: rgba(253, 230, 138, 0.70);
+
     /* Dark: azul profundo / violeta oscuro (del design system de referencia) */
     background:
         radial-gradient(ellipse 80% 60% at 10% 0%, rgba(245, 158, 11, 0.08) 0%, transparent 55%),
@@ -21,12 +48,14 @@
 }
 
 .scrollContent {
+    flex: 1;
+    /* Toma todo el espacio sobrante después del sidebar */
     position: relative;
     z-index: 10;
     min-height: 100vh;
-    padding: 2rem 1rem 8rem;
-    max-width: 1200px;
-    margin: 0 auto;
+    padding: 2rem 2rem 8rem;
+    width: 100%;
+    /* max-width removido para usar 100% de la pantalla */
     display: flex;
     flex-direction: column;
     gap: 1.5rem;
@@ -58,7 +87,8 @@
 
 @media (min-width: 1024px) {
     .scrollContent {
-        padding: 5rem 2.5rem 3rem;
+        padding: 4rem 4rem 4rem;
+        /* Padding más amplio y balanceado para PC */
     }
 
     .infoColumns {

@@ -22,8 +22,8 @@ import CoursesGrid from './components/CoursesGrid';
 import CourseViewer from './components/CourseViewer';
 import ExamModal from './components/ExamModal';
 import { DashboardSkeleton, useToast, CourseDeadlineTimer } from './components';
-import ProfileDropdown from '@/components/layout/ProfileDropdown/ProfileDropdown';
-import SupportButton from './components/SupportButton';
+import CandidateSidebar from '@/components/features/CandidateSidebar/CandidateSidebar';
+import CandidateMobileHeader from '@/components/features/CandidateSidebar/CandidateMobileHeader';
 
 import { useCandidateSession, useCourseProgress, useSessionTimer } from './hooks';
 import { useCandidateData } from '@/hooks/useCandidateData';
@@ -52,6 +52,7 @@ export default function CandidatoDashboard() {
     const [showSetupWizard, setShowSetupWizard] = useState(false);
     const [showAvatarSelector, setShowAvatarSelector] = useState(false);
     const [showThemeSelector, setShowThemeSelector] = useState(false);
+    const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
     const handleLogout = useCallback(async () => {
         try {
@@ -249,16 +250,17 @@ export default function CandidatoDashboard() {
                 onSelectTheme={updateTheme}
             />
 
-            <ProfileDropdown
-                userName={candidate?.nickname || extractFirstName(candidate?.name || candidate?.nombre)}
-                userAvatar={candidate?.avatar || candidate?.photoURL}
-                onLogout={handleLogout}
-                onAvatarClick={() => setShowAvatarSelector(true)}
-                onToggleTheme={() => updateTheme((candidate?.theme || 'light') === 'dark' ? 'light' : 'dark')}
-                showProfile={false}
+            <CandidateSidebar
+                user={candidate}
+                handleLogout={handleLogout}
+                getInitials={extractFirstName} /* Reusamos la utilidad */
+                isOpen={isSidebarOpen}
+                onClose={() => setIsSidebarOpen(false)}
             />
 
             <div className={styles.scrollContent}>
+                <CandidateMobileHeader onOpenSidebar={() => setIsSidebarOpen(true)} />
+
                 <CourseDeadlineTimer
                     startDate={candidate?.startDate}
                     courses={courses}
@@ -307,7 +309,6 @@ export default function CandidatoDashboard() {
                 onSubmit={handleExamModalSubmit}
             />
 
-            <SupportButton />
         </div>
     );
 }
