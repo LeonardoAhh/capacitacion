@@ -1,6 +1,8 @@
 'use client';
+import React from 'react';
 
 import { useState, useCallback, useMemo } from 'react';
+import confetti from 'canvas-confetti';
 import styles from './slides.module.css';
 
 /**
@@ -9,7 +11,7 @@ import styles from './slides.module.css';
  * @param {Object}   props.data           - Datos del quiz (heading, questions, passingScore)
  * @param {Function} [props.onQuizSubmit] - Callback con el score (0-100) al enviar
  */
-export default function QuizSlide({ data, onQuizSubmit, hasBgMedia }) {
+const QuizSlide = React.memo(function QuizSlide({ data, onQuizSubmit, hasBgMedia }) {
     const [answers, setAnswers] = useState({});
     const [submitted, setSubmitted] = useState(false);
     const [shakeIdx, setShakeIdx] = useState(null); // {qi, oi} para shake animation
@@ -39,9 +41,19 @@ export default function QuizSlide({ data, onQuizSubmit, hasBgMedia }) {
             }
         });
 
+        // Gamification: Confetti si aprueba
+        if (score >= passingScore) {
+            confetti({
+                particleCount: 120,
+                spread: 70,
+                origin: { y: 0.6 },
+                colors: ['#003ccc', '#00cc66', '#ffcc00']
+            });
+        }
+
         // Notificar al padre (CoursePlayer) con el score
         if (onQuizSubmit) onQuizSubmit(score);
-    }, [answers, questions, onQuizSubmit]);
+    }, [answers, questions, onQuizSubmit, passingScore]);
 
     const score = useMemo(() => {
         if (!submitted) return 0;
@@ -163,4 +175,6 @@ export default function QuizSlide({ data, onQuizSubmit, hasBgMedia }) {
             )}
         </article>
     );
-}
+});
+
+export default QuizSlide;

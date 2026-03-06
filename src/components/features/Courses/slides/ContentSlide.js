@@ -1,8 +1,9 @@
 'use client';
+import React from 'react';
 import { useState } from 'react';
 import styles from './slides.module.css';
 
-export default function ContentSlide({ data, accentColor, hasBgMedia }) {
+const ContentSlide = React.memo(function ContentSlide({ data, accentColor, hasBgMedia }) {
     const { heading, body, bullets, image, images, tag } = data;
     const [lightboxIdx, setLightboxIdx] = useState(null);
 
@@ -55,6 +56,45 @@ export default function ContentSlide({ data, accentColor, hasBgMedia }) {
                             </li>
                         ))}
                     </ul>
+                )}
+
+                {/* Bloque Alerta / Snippet */}
+                {data.snippet && (
+                    <div
+                        role="note"
+                        aria-label={`Alerta de tipo ${data.snippet.type}`}
+                        style={{
+                            marginTop: 24, padding: '16px 20px', borderRadius: 12,
+                            backgroundColor: data.snippet.type === 'danger' ? 'rgba(239, 68, 68, 0.08)' :
+                                data.snippet.type === 'warning' ? 'rgba(245, 158, 11, 0.08)' :
+                                    data.snippet.type === 'success' ? 'rgba(16, 185, 129, 0.08)' :
+                                        'rgba(59, 130, 246, 0.08)',
+                            borderLeft: `5px solid ${data.snippet.type === 'danger' ? '#ef4444' :
+                                    data.snippet.type === 'warning' ? '#f59e0b' :
+                                        data.snippet.type === 'success' ? '#10b981' :
+                                            '#3b82f6'
+                                }`
+                        }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 6 }}>
+                            <span style={{ fontSize: 18 }} aria-hidden="true">
+                                {data.snippet.type === 'danger' ? '🚨' :
+                                    data.snippet.type === 'warning' ? '⚠️' :
+                                        data.snippet.type === 'success' ? '✅' : 'ℹ️'}
+                            </span>
+                            <strong style={{
+                                fontSize: '1.05rem',
+                                color: data.snippet.type === 'danger' ? 'var(--color-danger, #ef4444)' :
+                                    data.snippet.type === 'warning' ? '#b45309' :
+                                        data.snippet.type === 'success' ? 'var(--color-success, #10b981)' :
+                                            'var(--color-primary, #003ccc)'
+                            }}>
+                                {data.snippet.title || 'Atención'}
+                            </strong>
+                        </div>
+                        <p style={{ margin: 0, fontSize: '0.95rem', color: 'var(--text-secondary)', lineHeight: 1.5 }}>
+                            {data.snippet.text}
+                        </p>
+                    </div>
                 )}
             </div>
 
@@ -168,4 +208,6 @@ export default function ContentSlide({ data, accentColor, hasBgMedia }) {
             )}
         </article>
     );
-}
+});
+
+export default ContentSlide;

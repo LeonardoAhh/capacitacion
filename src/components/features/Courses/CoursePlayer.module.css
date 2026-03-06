@@ -136,22 +136,73 @@
     flex: 1;
     overflow-y: auto;
     overflow-x: hidden;
-    /* IMPORTANTE: NO usar align-items:center aquí.
-       El bug CSS: flex + align-items:center + overflow-y:auto
-       clipa el contenido que excede la altura sin permitir scroll.
-       Solución: flex-direction:column + margin:auto en el hijo. */
+    position: relative;
     display: flex;
     flex-direction: column;
-    padding: var(--course-spacing-md);
+    /* transition: opacity var(--course-transition-fast); */
     -webkit-overflow-scrolling: touch;
+}
+
+.contentSplit {
+    position: relative;
+    display: flex;
+    flex-direction: row;
+}
+
+.contentWithMedia {
+    position: relative;
+}
+
+.mediaFull {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: 0;
+}
+
+.mediaOverlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    z-index: 0;
+}
+
+.mediaSplit {
+    width: 50%;
+    height: 100%;
+    position: relative;
+    border-left: 1px solid var(--course-border);
+    flex-shrink: 0;
+}
+
+.slideWrapperSplit {
+    position: relative;
+    z-index: 1;
+    width: 50%;
+    flex: 1 1 50%;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+}
+
+.slideWrapperWithMedia {
+    position: relative;
+    z-index: 1;
+}
+
+.slideWrapper {
+    padding: var(--course-spacing-md);
     background: var(--course-content-bg);
-    /* Scroll suave en iOS */
     scroll-behavior: smooth;
 }
 
 /* El hijo directo usa margin:auto para centrarse cuando hay espacio,
    pero se alinea al inicio cuando el contenido excede la altura. */
-.content>* {
+.content:not(.contentSplit)>* {
     margin: auto;
     width: 100%;
 }
@@ -546,6 +597,23 @@
 
     .dotActive {
         width: 18px;
+    }
+
+    /* Romper Split Layout en móvil */
+    .contentSplit {
+        flex-direction: column !important;
+    }
+
+    .mediaSplit {
+        width: 100% !important;
+        height: 40vh !important;
+        border-right: none !important;
+        border-bottom: 1px solid var(--course-border);
+    }
+
+    .slideWrapperSplit {
+        width: 100% !important;
+        flex: 1 1 auto !important;
     }
 }
 

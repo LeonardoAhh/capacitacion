@@ -2,17 +2,18 @@
    ShapeHero — Dual Theme (Light / Dark)
    Colores corporativos VIÑOPLASTIC
    Azul #003ccc · Rojo #d40000
+   Sin colores hardcodeados — todo via tokens
    ========================================= */
 
 @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Geist:wght@300;400;500;600&display=swap');
 
 /* ─── Variables internas del Hero ───────────────────────── */
+
 /* Modo claro */
 .hero {
     --vp-blue: #003ccc;
     --vp-blue-light: #1a55e0;
     --vp-red: #d40000;
-    --vp-white: #ffffff;
 
     --hero-bg: #f5f7ff;
     --hero-bg-grad: linear-gradient(145deg, #f0f4ff 0%, #ffffff 60%, #fdf0f0 100%);
@@ -48,6 +49,14 @@
     --item-active-bg: rgba(212, 0, 0, 0.08);
 
     --footer-color: rgba(10, 15, 46, 0.30);
+
+    /* Fade lateral del visual — coincide con --hero-bg en cada tema */
+    --visual-fade-start: rgba(245, 247, 255, 0.88);
+    --visual-fade-mid: rgba(245, 247, 255, 0.20);
+
+    /* Skip link */
+    --skip-bg: var(--vp-blue);
+    --skip-color: #ffffff;
 }
 
 /* Modo oscuro */
@@ -86,6 +95,14 @@
     --item-active-bg: rgba(212, 0, 0, 0.12);
 
     --footer-color: rgba(120, 135, 190, 0.38);
+
+    /* Fade lateral del visual — dark */
+    --visual-fade-start: rgba(6, 6, 18, 0.88);
+    --visual-fade-mid: rgba(6, 6, 18, 0.20);
+
+    /* Skip link dark */
+    --skip-bg: var(--vp-blue-light);
+    --skip-color: #ffffff;
 }
 
 /* ─── Keyframes ─────────────────────────────────────────── */
@@ -155,8 +172,10 @@
 /* ─── Hero shell ────────────────────────────────────────── */
 
 .hero {
-    min-height: 100dvh;
+    /* 100vh como fallback para browsers sin soporte dvh,
+       100dvh después como progressive enhancement */
     min-height: 100vh;
+    min-height: 100dvh;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -165,9 +184,10 @@
     padding: 4rem 2rem 2rem;
     background: var(--hero-bg-grad);
     overflow: hidden;
-    font-family: 'Geist', system-ui, sans-serif;
+    font-family: var(--font-body);
     color: var(--hero-text-primary);
-    transition: background 0.4s ease, color 0.3s ease;
+    /* Solo transicionamos background — color lo hereda correctamente */
+    transition: background 0.4s ease;
 }
 
 /* ─── Grid texture ──────────────────────────────────────── */
@@ -212,8 +232,8 @@
     left: 50%;
     transform: translateX(-50%);
     padding: 0.75rem 1.5rem;
-    background: var(--vp-blue);
-    color: #fff;
+    background: var(--skip-bg);
+    color: var(--skip-color);
     border-radius: 0 0 8px 8px;
     font-weight: 600;
     font-size: 0.875rem;
@@ -224,7 +244,7 @@
 
 .skipLink:focus {
     top: 0;
-    outline: 2px solid white;
+    outline: 2px solid var(--skip-color);
     outline-offset: 2px;
 }
 
@@ -296,7 +316,7 @@
 }
 
 .title {
-    font-family: 'Playfair Display', Georgia, serif;
+    font-family: var(--font-serif);
     font-size: clamp(2.2rem, 7vw, 5.5rem);
     white-space: nowrap;
     font-weight: 900;
@@ -360,7 +380,6 @@
     margin-bottom: 2rem;
 }
 
-/* Contenedor pill */
 .navPill {
     display: inline-flex;
     align-items: stretch;
@@ -375,7 +394,6 @@
     max-width: 100%;
 }
 
-/* Grupo (item + separador) */
 .navGroup {
     display: contents;
 }
@@ -437,7 +455,7 @@
     background: var(--item-active-bg);
 }
 
-/* Etiqueta descriptiva (pequeña) */
+/* Etiqueta descriptiva (sector / área) */
 .navItemDesc {
     font-size: 0.60rem;
     font-weight: 600;
@@ -455,7 +473,7 @@
 
 /* Label principal */
 .navItemLabel {
-    font-family: 'Playfair Display', Georgia, serif;
+    font-family: var(--font-serif);
     font-size: 1.15rem;
     font-weight: 700;
     color: var(--item-label);
@@ -500,22 +518,15 @@
     border-radius: 20px;
 }
 
-/* Fade lateral — el SVG tiene fondo oscuro en ambos temas */
+/* Fade lateral — usa tokens para ser coherente con el bg del tema */
 .visualFade {
     position: absolute;
     inset: 0;
     background: linear-gradient(to right,
-            rgba(245, 247, 255, 0.88) 0%,
-            rgba(245, 247, 255, 0.20) 25%,
-            rgba(245, 247, 255, 0) 45%);
+            var(--visual-fade-start) 0%,
+            var(--visual-fade-mid) 25%,
+            transparent 45%);
     pointer-events: none;
-}
-
-[data-theme="dark"] .visualFade {
-    background: linear-gradient(to right,
-            rgba(6, 6, 18, 0.88) 0%,
-            rgba(6, 6, 18, 0.20) 25%,
-            rgba(6, 6, 18, 0) 45%);
 }
 
 /* ─── Footer ────────────────────────────────────────────── */
@@ -548,8 +559,6 @@
     .right {
         display: block;
     }
-
-    /* El SVG 900×600 define su propio aspecto — no sobreescribir */
 
     .title {
         font-size: clamp(2.4rem, 5.5vw, 5.5rem);
@@ -586,7 +595,6 @@
     }
 
     .title {
-        /* nowrap + vw pequeño para que quepa en una sola línea */
         white-space: nowrap;
         font-size: clamp(1.6rem, 7.5vw, 3rem);
         letter-spacing: -0.04em;

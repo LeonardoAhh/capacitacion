@@ -1,6 +1,7 @@
+import React from 'react';
 import styles from './slides.module.css';
 
-export default function TitleSlide({ data, inline = false, hasBgMedia }) {
+const TitleSlide = React.memo(function TitleSlide({ data, inline = false, hasBgMedia }) {
     return (
         <article
             className={`${styles.slide} ${styles.titleSlide} ${inline ? styles.slideInline : ''} ${hasBgMedia ? styles.slideOverBg : ''}`}
@@ -27,5 +28,6 @@ export default function TitleSlide({ data, inline = false, hasBgMedia }) {
             )}
         </article>
     );
-}
+});
 
+export default TitleSlide;

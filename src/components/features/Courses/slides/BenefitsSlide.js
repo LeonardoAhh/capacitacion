@@ -1,6 +1,7 @@
+import React from 'react';
 import styles from './slides.module.css';
 
-export default function BenefitsSlide({ data, hasBgMedia }) {
+const BenefitsSlide = React.memo(function BenefitsSlide({ data, hasBgMedia }) {
     const accentColor = data.accent || 'var(--course-accent)';
 
     return (
@@ -38,4 +39,6 @@ export default function BenefitsSlide({ data, hasBgMedia }) {
             </ul>
         </article>
     );
-}
+});
+
+export default BenefitsSlide;

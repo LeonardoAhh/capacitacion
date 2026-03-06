@@ -218,16 +218,18 @@ export default function SlideList({ slides, currentSlide, onSelect, onAdd, onReo
                             Sin resultados para &quot;{searchQuery}&quot;
                         </p>
                     ) : (
-                        filteredSlides.map((slide, index) => (
-                            <SortableSlideItem
-                                key={slide.id}
-                                slide={slide}
-                                index={slides.indexOf(slide)} // índice real, no del filtrado
-                                isActive={currentSlide?.id === slide.id}
-                                onSelect={onSelect}
-                                onDuplicate={handleDuplicate}
-                            />
-                        ))
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                            {filteredSlides.map((slide, index) => (
+                                <SortableSlideItem
+                                    key={slide.id}
+                                    slide={slide}
+                                    index={slides.indexOf(slide)} // índice real, no del filtrado
+                                    isActive={currentSlide?.id === slide.id}
+                                    onSelect={onSelect}
+                                    onDuplicate={handleDuplicate}
+                                />
+                            ))}
+                        </div>
                     )}
                 </SortableContext>
 

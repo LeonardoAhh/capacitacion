@@ -20,11 +20,43 @@ export default function CourseWizardModal({ onComplete, onCancel }) {
     const [firstSlideType, setFirstSlideType] = useState('title');
     const [isAnimating, setIsAnimating] = useState(false);
 
-    // Evitar scroll en el fondo mientras el modal está abierto
+    // Focus trap avanzado y body lock
     useEffect(() => {
         document.body.style.overflow = 'hidden';
-        return () => { document.body.style.overflow = 'unset'; };
-    }, []);
+
+        const handleKeyDown = (e) => {
+            if (e.key === 'Escape') {
+                onCancel();
+                return;
+            }
+            if (e.key === 'Tab') {
+                const focusable = Array.from(
+                    document.querySelectorAll(
+                        '.wizard-modal button, .wizard-modal [href], .wizard-modal input, .wizard-modal select, .wizard-modal textarea, .wizard-modal [tabindex]:not([tabindex="-1"])'
+                    )
+                );
+                if (focusable.length === 0) return;
+
+                const first = focusable[0];
+                const last = focusable[focusable.length - 1];
+
+                if (e.shiftKey && document.activeElement === first) {
+                    last.focus();
+                    e.preventDefault();
+                } else if (!e.shiftKey && document.activeElement === last) {
+                    first.focus();
+                    e.preventDefault();
+                }
+            }
+        };
+
+        window.addEventListener('keydown', handleKeyDown);
+
+        return () => {
+            document.body.style.overflow = 'unset';
+            window.removeEventListener('keydown', handleKeyDown);
+        };
+    }, [onCancel]);
 
     const changeStep = (newStep) => {
         setIsAnimating(true);
@@ -55,12 +87,16 @@ export default function CourseWizardModal({ onComplete, onCancel }) {
         switch (step) {
             case 1:
                 return (
-                    <div className={`${styles.stepContent} ${isAnimating ? styles.fadeOut : styles.fadeIn}`}>
+                    <div
+                        className={`${styles.stepContent} ${isAnimating ? styles.fadeOut : styles.fadeIn}`}
+                        role="form"
+                        aria-labelledby="wizard-step1-title"
+                    >
                         <div className={styles.heroSection}>
-                            <div className={styles.heroIconWrapper}>
+                            <div className={styles.heroIconWrapper} aria-hidden="true">
                                 <IconZap size={36} className={styles.heroIcon} />
                             </div>
-                            <h2 className={styles.heroTitle}>Nuevo Curso Interactivo</h2>
+                            <h2 id="wizard-step1-title" className={styles.heroTitle}>Nuevo Curso Interactivo</h2>
                             <p className={styles.heroSubtitle}>
                                 Diseña experiencias de capacitación dinámicas que involucren a tus colaboradores mediante micro-aprendizaje y evaluaciones prácticas.
                             </p>
@@ -94,9 +130,13 @@ export default function CourseWizardModal({ onComplete, onCancel }) {
 
             case 2:
                 return (
-                    <div className={`${styles.stepContent} ${isAnimating ? styles.fadeOut : styles.fadeIn}`}>
+                    <div
+                        className={`${styles.stepContent} ${isAnimating ? styles.fadeOut : styles.fadeIn}`}
+                        role="form"
+                        aria-labelledby="wizard-step2-title"
+                    >
                         <div className={styles.headerContext}>
-                            <h2 className={styles.stepTitle}>Detalles del Curso</h2>
+                            <h2 id="wizard-step2-title" className={styles.stepTitle}>Detalles del Curso</h2>
                             <p className={styles.stepSubtitle}>Proporciona la información principal para identificar tu nuevo curso.</p>
                         </div>
 
@@ -137,13 +177,17 @@ export default function CourseWizardModal({ onComplete, onCancel }) {
 
             case 3:
                 return (
-                    <div className={`${styles.stepContent} ${isAnimating ? styles.fadeOut : styles.fadeIn}`}>
+                    <div
+                        className={`${styles.stepContent} ${isAnimating ? styles.fadeOut : styles.fadeIn}`}
+                        role="form"
+                        aria-labelledby="wizard-step3-title"
+                    >
                         <div className={styles.headerContext}>
-                            <h2 className={styles.stepTitle}>Selecciona una Plantilla</h2>
+                            <h2 id="wizard-step3-title" className={styles.stepTitle}>Selecciona una Plantilla</h2>
                             <p className={styles.stepSubtitle}>Elige un lienzo inicial para empezar a construir tu curso interactivo.</p>
                         </div>
 
-                        <div className={styles.templatesGrid}>
+                        <div className={styles.templatesGrid} role="radiogroup" aria-required="true" aria-label="Selección de plantilla">
                             {[
                                 { id: 'title', icon: IconLayout, label: 'Portada de Título', desc: 'Ideal para iniciar el curso o un módulo.' },
                                 { id: 'objective', icon: IconTarget, label: 'Objetivo', desc: 'Define las metas claras de aprendizaje.' },
@@ -156,8 +200,17 @@ export default function CourseWizardModal({ onComplete, onCancel }) {
                                     key={tpl.id}
                                     className={`${styles.templateCard} ${firstSlideType === tpl.id ? styles.selectedTemplate : ''}`}
                                     onClick={() => setFirstSlideType(tpl.id)}
+                                    role="radio"
+                                    aria-checked={firstSlideType === tpl.id}
+                                    tabIndex={0}
+                                    onKeyDown={e => {
+                                        if (e.key === 'Enter' || e.key === ' ') {
+                                            e.preventDefault();
+                                            setFirstSlideType(tpl.id);
+                                        }
+                                    }}
                                 >
-                                    <div className={styles.templateIconWrapper}>
+                                    <div className={styles.templateIconWrapper} aria-hidden="true">
                                         <tpl.icon size={26} />
                                     </div>
                                     <div className={styles.templateInfo}>
@@ -177,10 +230,15 @@ export default function CourseWizardModal({ onComplete, onCancel }) {
     };
 
     return (
-        <div className={styles.overlay}>
+        <div
+            className={`${styles.overlay} wizard-modal`}
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby={`wizard-step${step}-title`}
+        >
             <div className={styles.modal}>
                 {/* ── PROGRESS STRIP ── */}
-                <div className={styles.progressContainer}>
+                <div className={styles.progressContainer} aria-hidden="true">
                     <div className={styles.progressBar}>
                         <div
                             className={styles.progressFill}

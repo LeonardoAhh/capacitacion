@@ -1,6 +1,7 @@
+import React from 'react';
 import styles from './slides.module.css';
 
-export default function ComparisonSlide({ data, hasBgMedia }) {
+const ComparisonSlide = React.memo(function ComparisonSlide({ data, hasBgMedia }) {
     // Soporte para múltiples formatos de datos:
     // Nuevo: { left: { title, items }, right: { title, items } }
     // Legado: { col1Title, col1Items, col2Title, col2Items }
@@ -76,5 +77,6 @@ export default function ComparisonSlide({ data, hasBgMedia }) {
             </div>
         </article>
     );
-}
+});
 
+export default ComparisonSlide;

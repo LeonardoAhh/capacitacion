@@ -1,0 +1,420 @@
+/* ================================================================
+   INDUCCION SIDEBAR — Module CSS
+   Todos los colores via tokens CSS (var(--...))
+   Sin valores hardcodeados de color
+   ================================================================ */
+
+/* ----------------------------------------------------------------
+   PC / DESKTOP  (base styles)
+   ---------------------------------------------------------------- */
+.sidebar {
+    grid-row: 1 / -1;
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    background: var(--sb-bg);
+    overflow: hidden;
+    z-index: 50;
+    border-right: 1px solid var(--sb-border);
+    transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    /* Safe area para notch/isla dinámica en desktop con pantallas raras */
+    padding-left: env(safe-area-inset-left, 0px);
+}
+
+/* ----------------------------------------------------------------
+   TOP — Brand + Close button
+   ---------------------------------------------------------------- */
+.sidebarTop {
+    padding: 28px 18px 22px;
+    border-bottom: 1px solid var(--sb-border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-shrink: 0;
+}
+
+.sidebarBrand {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+}
+
+.sidebarBrandDot {
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    background: var(--c-orange);
+    flex-shrink: 0;
+    box-shadow: 0 0 10px var(--c-orange-glow);
+}
+
+.sidebarBrandName {
+
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--sb-text);
+    letter-spacing: 0.02em;
+}
+
+/* Oculto en desktop, visible en móvil vía media query */
+.closeBtn {
+    display: none;
+    background: transparent;
+    border: none;
+    color: var(--sb-text-muted);
+    cursor: pointer;
+    padding: 6px;
+    border-radius: 6px;
+    line-height: 0;
+    transition:
+        background 0.15s var(--ease),
+        color 0.15s var(--ease);
+}
+
+.closeBtn:hover {
+    background: var(--sb-hover-bg);
+    color: var(--sb-hover-text);
+}
+
+.closeBtn:focus-visible {
+    outline: 2px solid var(--c-brand);
+    outline-offset: 2px;
+}
+
+/* ----------------------------------------------------------------
+   NAV — items + badges
+   ---------------------------------------------------------------- */
+.sidebarNav {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    padding: 18px 10px;
+    overflow-y: auto;
+    scrollbar-width: none;
+}
+
+.sidebarNav::-webkit-scrollbar {
+    display: none;
+}
+
+.sidebarLabel {
+    display: block;
+
+    font-size: 0.60rem;
+    font-weight: 700;
+    color: var(--sb-text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    padding: 0 8px;
+    margin-bottom: 6px;
+    opacity: 0.55;
+    /* No es interactivo */
+    pointer-events: none;
+    user-select: none;
+}
+
+.sidebarItem {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    padding: 8px 10px;
+    border-radius: var(--r-md);
+    background: transparent;
+    border: none;
+    color: var(--sb-text-muted);
+
+    font-size: 0.825rem;
+    font-weight: 500;
+    cursor: pointer;
+    text-align: left;
+    width: 100%;
+    letter-spacing: -0.005em;
+    /* Transición completa: bg + color en un solo shorthand */
+    transition:
+        background 0.15s var(--ease),
+        color 0.15s var(--ease);
+}
+
+.sidebarItemLeft {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+}
+
+.sidebarItemIcon {
+    width: 18px;
+    height: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    opacity: 0.6;
+    transition: opacity 0.15s var(--ease);
+}
+
+.sidebarItem:hover {
+    background: var(--sb-hover-bg);
+    color: var(--sb-hover-text);
+}
+
+.sidebarItem:hover .sidebarItemIcon {
+    opacity: 0.85;
+}
+
+/* Focus visible para navegación por teclado */
+.sidebarItem:focus-visible {
+    outline: 2px solid var(--c-brand);
+    outline-offset: -2px;
+}
+
+.sidebarItem.active {
+    background: var(--sb-active-bg);
+    color: var(--sb-active-text);
+    font-weight: 600;
+}
+
+.sidebarItem.active .sidebarItemIcon {
+    opacity: 1;
+    color: var(--sb-active-text);
+}
+
+.sidebarBadge {
+    background: var(--sb-badge-bg);
+    color: var(--sb-badge-text);
+
+    font-size: 0.65rem;
+    padding: 2px 6px;
+    border-radius: 20px;
+    font-weight: 600;
+    /* Evita que se comprima si el texto del item es largo */
+    flex-shrink: 0;
+    min-width: 20px;
+    text-align: center;
+}
+
+.sidebarItem.active .sidebarBadge {
+    background: var(--c-brand);
+    color: var(--c-brand-contrast, white);
+}
+
+/* ----------------------------------------------------------------
+   PROFILE — footer del sidebar
+   ---------------------------------------------------------------- */
+.sidebarProfile {
+    margin-top: auto;
+    padding: 16px 18px;
+    /* Safe area para home indicator en iPhone */
+    padding-bottom: calc(16px + env(safe-area-inset-bottom, 0px));
+    border-top: 1px solid var(--sb-border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    flex-shrink: 0;
+}
+
+/* Cambiado de <button> a <div>: no es interactivo, solo muestra info */
+.sidebarAvatarBtn {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 4px;
+    border-radius: 20px;
+    /* Sin cursor pointer porque no es clickeable */
+    cursor: default;
+    min-width: 0;
+    /* permite que el texto truncado funcione */
+}
+
+.sidebarAvatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    overflow: hidden;
+    position: relative;
+    background: var(--c-surface);
+    border: 1px solid var(--c-line);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.sidebarAvatarImage {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    /* El fallback queda debajo; la imagen lo tapa cuando carga */
+    position: relative;
+    z-index: 1;
+}
+
+/* Fallback: siempre presente en el DOM, queda debajo de la imagen.
+   Cuando la imagen falla (onerror), queda visible automáticamente. */
+.sidebarAvatarFallback {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.7rem;
+    font-weight: 600;
+    color: var(--c-muted);
+    z-index: 0;
+}
+
+.sidebarUserDetails {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    min-width: 0;
+    /* necesario para que text-overflow funcione */
+}
+
+.sidebarUserName {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--sb-text);
+    white-space: nowrap;
+    max-width: 5rem;
+    /* rem en lugar de px fijo */
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.sidebarProfileActions {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    flex-shrink: 0;
+}
+
+.sidebarIconBtn {
+    background: transparent;
+    border: none;
+    width: 28px;
+    height: 28px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--sb-text-muted);
+    cursor: pointer;
+    transition:
+        background 0.15s var(--ease),
+        color 0.15s var(--ease);
+    text-decoration: none;
+}
+
+.sidebarIconBtn:hover {
+    background: var(--sb-hover-bg);
+    color: var(--sb-hover-text);
+}
+
+.sidebarIconBtn:focus-visible {
+    outline: 2px solid var(--c-brand);
+    outline-offset: 2px;
+}
+
+/* Dark mode override para hover de iconos */
+[data-theme="dark"] .sidebarIconBtn:hover {
+    background: var(--sb-hover-bg);
+    color: var(--sb-hover-text);
+}
+
+/* Dark mode: el drawer móvil también necesita fondo opaco */
+@media (max-width: 768px) {
+    [data-theme="dark"] .sidebar {
+        background: #0d0f1f;
+    }
+}
+
+.sidebarLogoutBtn:hover {
+    color: var(--c-red);
+    background: var(--c-red-dim);
+}
+
+/* ----------------------------------------------------------------
+   OVERLAY
+   — Siempre en el DOM (no montado/desmontado con JS)
+   — Invisible por defecto, visible con .overlayVisible
+   ---------------------------------------------------------------- */
+.overlay {
+    display: none;
+    /* oculto en desktop */
+    position: fixed;
+    inset: 0;
+    background: var(--sb-overlay-bg, rgba(0, 0, 0, 0.4));
+    backdrop-filter: blur(2px);
+    -webkit-backdrop-filter: blur(2px);
+    z-index: 999;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+}
+
+.overlay.overlayVisible {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+/* ================================================================
+   MOBILE — Drawer (≤ 768px)
+   ================================================================ */
+@media (max-width: 768px) {
+
+    /* Sidebar como drawer lateral */
+    .sidebar {
+        position: fixed;
+        left: 0;
+        top: 0;
+        /* Ancho fijo + safe area izquierda (notch landscape) */
+        width: calc(280px + env(safe-area-inset-left, 0px));
+        /* 100dvh: respeta la barra de URL en Safari iOS */
+        height: 100dvh;
+        z-index: 1000;
+        transform: translateX(-100%);
+        border-right: none;
+        box-shadow: 10px 0 30px var(--sb-shadow, rgba(0, 0, 0, 0.12));
+        /* En drawer móvil el fondo debe ser opaco — el token --sb-bg es
+           transparent en desktop (se funde con el grid), pero aquí está
+           en position: fixed sobre el contenido, necesita superficie sólida */
+        background: var(--c-surface, #ffffff);
+    }
+
+    .sidebar.open {
+        transform: translateX(0);
+    }
+
+    /* Overlay visible en móvil */
+    .overlay {
+        display: block;
+    }
+
+    /* Botón de cierre visible en móvil */
+    .closeBtn {
+        display: flex;
+    }
+
+    /* En móvil el perfil necesita más padding por el home indicator */
+    .sidebarProfile {
+        padding-bottom: calc(20px + env(safe-area-inset-bottom, 0px));
+    }
+}
+
+/* ================================================================
+   ANIMACIÓN del overlay
+   ================================================================ */
+@keyframes overlayFadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}

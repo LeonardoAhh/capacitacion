@@ -32,9 +32,9 @@ function ShapeHeroComponent() {
     return (
         <section
             className={styles.hero}
-            role="banner"
             aria-label="Página principal de ViñoPlastic"
         >
+            {/* Skip link — accesibilidad teclado */}
             <a href="#main-content" className={styles.skipLink}>
                 Saltar al contenido principal
             </a>
@@ -70,7 +70,7 @@ function ShapeHeroComponent() {
                     {/* Divider */}
                     <div className={styles.divider} aria-hidden="true" />
 
-                    {/* Pill navbar única */}
+                    {/* Pill navbar */}
                     <nav className={styles.nav} aria-label="Navegación principal">
                         <div className={styles.navPill}>
                             {NAV_LINKS.map((link, i) => (
@@ -83,6 +83,10 @@ function ShapeHeroComponent() {
                                         className={styles.navItem}
                                         aria-label={link.ariaLabel}
                                     >
+                                        {/* Descripción visible — área, sector */}
+                                        <span className={styles.navItemDesc} aria-hidden="true">
+                                            {link.description}
+                                        </span>
                                         <span className={styles.navItemLabel}>{link.label}</span>
                                     </Link>
                                 </span>
@@ -96,11 +100,13 @@ function ShapeHeroComponent() {
                 </div>
 
                 {/* ── Columna derecha — Visual SVG ── */}
+                {/* aria-hidden en el wrapper porque el alt de la imagen
+                    ya describe el contenido; evitamos doble anuncio */}
                 <div className={styles.right} aria-hidden="true">
                     <div className={styles.visualWrapper}>
                         <Image
                             src="/hero-visual.svg"
-                            alt="Máquina de inyección VIÑOPLASTIC"
+                            alt=""
                             className={styles.visualImg}
                             width={600}
                             height={500}

@@ -1,6 +1,7 @@
+import React from 'react';
 import styles from './slides.module.css';
 
-export default function DefinitionSlide({ data, hasBgMedia }) {
+const DefinitionSlide = React.memo(function DefinitionSlide({ data, hasBgMedia }) {
     return (
         <article
             className={`${styles.slide} ${styles.definitionSlide} ${hasBgMedia ? styles.slideOverBg : ''}`}
@@ -31,4 +32,6 @@ export default function DefinitionSlide({ data, hasBgMedia }) {
             )}
         </article>
     );
-}
+});
+
+export default DefinitionSlide;

@@ -76,7 +76,7 @@
 
 /* ── Textos ── */
 .title {
-    font-family: 'Playfair Display', Georgia, serif;
+    font-family: var(--font-serif);
     font-size: 1.5rem;
     font-weight: 800;
     color: var(--text-primary);

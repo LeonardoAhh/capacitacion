@@ -75,7 +75,7 @@
 }
 
 .label {
-    font-family: 'Geist', system-ui, sans-serif;
+    font-family: var(--font-body);
     font-size: 0.75rem;
     font-weight: 400;
     letter-spacing: 0.02em;
@@ -85,7 +85,7 @@
 }
 
 .author {
-    font-family: 'Playfair Display', Georgia, serif;
+    font-family: var(--font-serif);
     font-size: 0.82rem;
     font-weight: 700;
     letter-spacing: 0.01em;

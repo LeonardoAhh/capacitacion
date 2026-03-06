@@ -4,9 +4,33 @@ import { ToastProvider } from '@/components/ui/Toast/Toast';
 import { OfflineIndicator, UpdatePrompt } from '@/components/guards/pwa';
 import MaintenanceGuard from '@/components/guards/MaintenanceGuard';
 import '@/styles/globals.css';
-import { Inter } from 'next/font/google';
+import { Roboto, Montserrat, Roboto_Mono } from 'next/font/google';
 
-const inter = Inter({ subsets: ['latin'] });
+/* ─── Fuentes del sistema ──────────────────────────────────────────
+   Todas las fuentes se cargan aquí y solo aquí.
+   Los módulos CSS usan ÚNICAMENTE var(--font-serif / --font-body / --font-mono).
+   Para cambiar una fuente en toda la plataforma: editar solo este archivo.
+   ────────────────────────────────────────────────────────────────── */
+
+const roboto = Roboto({
+    subsets: ['latin'],
+    weight: ['300', '400', '500', '700'],
+    variable: '--font-body',
+    display: 'swap',
+});
+
+const robotoMono = Roboto_Mono({
+    subsets: ['latin'],
+    variable: '--font-mono',
+    display: 'swap',
+});
+
+const montserrat = Montserrat({
+    subsets: ['latin'],
+    weight: ['400', '500', '600', '700', '800'],
+    variable: '--font-serif', // Reusamos el alias var(--font-serif) para los títulos
+    display: 'swap',
+});
 
 export const viewport = {
     themeColor: '#ffffff',
@@ -44,24 +68,27 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
     return (
-        <html lang="es" suppressHydrationWarning>
-            <body className={inter.className}>
-                {/* Skip Link para accesibilidad - navegación por teclado (CSS-only) */}
-                <a
-                    href="#main-content"
-                    className="skip-link"
-                >
+        <html
+            lang="es"
+            suppressHydrationWarning
+            /*
+             * Las tres variables CSS quedan disponibles en :root
+             * y en TODOS los módulos CSS sin @import adicional.
+             */
+            className={`${roboto.variable} ${robotoMono.variable} ${montserrat.variable}`}
+        >
+            <body>
+                {/* Skip Link — navegación por teclado (WCAG 2.4.1) */}
+                <a href="#main-content" className="skip-link">
                     Saltar al contenido principal
                 </a>
+
                 <ThemeProvider>
                     <AuthProvider>
                         <ToastProvider>
-                            {/* PWA Components */}
                             <OfflineIndicator />
                             <UpdatePrompt />
-
                             <MaintenanceGuard>
-                                {/* Main content */}
                                 <div style={{ position: 'relative', zIndex: 10 }}>
                                     {children}
                                 </div>

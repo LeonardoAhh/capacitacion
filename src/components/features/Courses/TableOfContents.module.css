@@ -53,7 +53,7 @@
 }
 
 .drawerTitle {
-    font-family: 'Playfair Display', Georgia, serif;
+    font-family: var(--font-serif);
     font-size: 0.9rem;
     font-weight: 700;
     color: var(--text-primary);

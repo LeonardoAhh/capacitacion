@@ -1,3 +1,4 @@
+import React, { memo, useMemo } from 'react';
 import TitleSlide from './slides/TitleSlide';
 import ObjectiveSlide from './slides/ObjectiveSlide';
 import DefinitionSlide from './slides/DefinitionSlide';
@@ -24,7 +25,7 @@ const SLIDE_COMPONENTS = {
     dynamic: ContentSlide,
 };
 
-export default function SlideRenderer({ slide, inline = false, hasBgMedia = false, onQuizSubmit }) {
+const SlideRenderer = memo(({ slide, inline = false, hasBgMedia = false, onQuizSubmit }) => {
     if (!slide) return null;
 
     let Component = SLIDE_COMPONENTS[slide.type];
@@ -96,4 +97,8 @@ export default function SlideRenderer({ slide, inline = false, hasBgMedia = fals
             />
         </div>
     );
-}
+});
+
+SlideRenderer.displayName = 'SlideRenderer';
+
+export default SlideRenderer;

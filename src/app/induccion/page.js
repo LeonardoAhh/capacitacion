@@ -36,11 +36,17 @@ import {
     IconArrowLeft as ArrowLeft
 } from '@/lib/icons';
 import Link from 'next/link';
-import ProfileDropdown from '@/components/layout/ProfileDropdown/ProfileDropdown';
 import BackButton from '@/components/ui/BackButton/BackButton';
 import NextImage from 'next/image';
+import { LogOut, User, Menu } from 'lucide-react';
 
 import CourseWizardModal from '@/components/features/Courses/CourseWizardModal';
+import InduccionSidebar from '@/components/features/Induccion/Sidebar/InduccionSidebar';
+
+import InteractiveCoursesView from '@/components/features/Induccion/views/InteractiveCoursesView';
+import CandidateCoursesView from '@/components/features/Induccion/views/CandidateCoursesView';
+import MaterialView from '@/components/features/Induccion/views/MaterialView';
+import GalleryView from '@/components/features/Induccion/views/GalleryView';
 import CoursePlayer from '@/components/features/Courses/CoursePlayer';
 import {
     importCourseFromJSON,
@@ -58,16 +64,16 @@ import puestosData from '../../../puestos.json';
 import styles from './page.module.css';
 
 export default function InductionPage() {
-    const { user, loading: authLoading } = useAuth();
+    const { user, loading: authLoading, signOut } = useAuth();
     const router = useRouter();
     const { toast } = useToast();
     const { showConfirm, confirmDialog } = useConfirm();
     const fileInputRef = useRef(null);
     const galleryFileRef = useRef(null);
 
-    // ── Tab activo (PC sidebar + Mobile bottom nav) ──
+    // ── Tab activo ──
     const [activeTab, setActiveTab] = useState('interactivos');
-    const [showMobileMenu, setShowMobileMenu] = useState(false);
+    const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
     // ── Colecciones existentes ──
     const [courses, setCourses] = useState([]);
@@ -132,6 +138,20 @@ export default function InductionPage() {
     useEffect(() => {
         if (!authLoading && !user) router.push('/login');
     }, [user, authLoading, router]);
+
+    // ── Logout: usa signOut del contexto (consistente con useAuth) ──
+    const handleLogout = useCallback(async () => {
+        try {
+            await signOut();
+            router.push('/login');
+        } catch (error) {
+            console.error('Logout error:', error);
+            toast.error('Error', 'No se pudo cerrar sesión.');
+        }
+    }, [signOut, router, toast]);
+
+    const getInitials = (name) =>
+        name ? name.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase() : 'U';
 
     // ── Listeners Firestore ──
     useEffect(() => {
@@ -229,23 +249,26 @@ export default function InductionPage() {
         toast.success('Eliminado', 'Elemento eliminado de la galería.');
     }, [showConfirm, toast]);
 
-
-
     const handlePlayNative = useCallback(async (courseId) => {
         const result = await getCourseWithSlides(courseId);
         if (result.success) { setPlayerData(result.data); }
         else { toast.error('Error', 'No se pudo cargar el curso interactivo.'); }
     }, [toast]);
 
+    // ── BUG FIX: setImportAlert no estaba declarado — reemplazado por toast ──
     const handleImport = useCallback(async () => {
         const f = fileInputRef.current?.files?.[0];
-        if (!f) { setImportAlert({ type: 'error', message: 'Selecciona un archivo JSON.' }); return; }
+        if (!f) {
+            toast.error('Error', 'Selecciona un archivo JSON.');
+            return;
+        }
         setImporting(true);
         try {
             const text = await f.text();
             const jsonData = JSON.parse(text);
             const coursesToImport = jsonData.courses || [jsonData];
-            let successCount = 0; let errorMsg = '';
+            let successCount = 0;
+            let errorMsg = '';
             for (const courseItem of coursesToImport) {
                 const courseData = { ...courseItem };
                 delete courseData.slides;
@@ -265,7 +288,9 @@ export default function InductionPage() {
                 toast.success('Éxito', `${successCount} curso(s) importado(s) correctamente.`);
                 if (fileInputRef.current) fileInputRef.current.value = '';
                 await loadNativeCourses();
-            } else { toast.error('Error', errorMsg || 'No se pudieron importar los cursos.'); }
+            } else {
+                toast.error('Error', errorMsg || 'No se pudieron importar los cursos.');
+            }
         } catch (err) {
             toast.error('Error', `Error al parsear JSON: ${err.message}`);
         }
@@ -287,7 +312,7 @@ export default function InductionPage() {
             router.push(`/induccion/cursos/${result.courseId}/editar`);
         } else {
             toast.error('Error', result.error || 'No se pudo crear el curso.');
-            setCreatingCourse(false); // Permite re-intentar
+            setCreatingCourse(false);
         }
     }, [user?.uid, user?.name, user?.email, toast, router]);
 
@@ -314,7 +339,9 @@ export default function InductionPage() {
     }, [toast, loadNativeCourses, nativeCourses, user?.uid, user?.name, user?.email, showConfirm]);
 
     const handleStartRename = useCallback((e, course) => {
-        e.stopPropagation(); setRenamingId(course.id); setRenameValue(course.title);
+        e.stopPropagation();
+        setRenamingId(course.id);
+        setRenameValue(course.title);
     }, []);
 
     const handleConfirmRename = useCallback(async (courseId) => {
@@ -473,7 +500,7 @@ export default function InductionPage() {
     if (authLoading || !user) {
         return (
             <div className={styles.main}>
-                <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+                <div className={styles.loadingCenter}>
                     <div className="spinner" />
                 </div>
             </div>
@@ -490,612 +517,189 @@ export default function InductionPage() {
         );
     }
 
-    const selectedNativeCourse = nativeCourses.find(c => c.id === candidateFormData.nativeCourseId);
-
-    // ── Helpers de visibilidad por tab (PC muestra todo, mobile filtra) ──
-    const showInteractivos = canEdit;
-    const showCandidatos = canEdit;
-
     // ── Filtros de Búsqueda ──
     const q = searchQuery.toLowerCase().trim();
     const filteredNative = nativeCourses.filter(c => c.title?.toLowerCase().includes(q));
-    const filteredCandidates = candidateCourses.filter(c => c.nombre?.toLowerCase().includes(q) || c.descripcion?.toLowerCase().includes(q));
+    const filteredCandidates = candidateCourses.filter(c =>
+        c.nombre?.toLowerCase().includes(q) || c.descripcion?.toLowerCase().includes(q)
+    );
     const filteredMaterial = courses.filter(c => c.title?.toLowerCase().includes(q));
     const filteredGallery = galleryItems.filter(c => c.nombre?.toLowerCase().includes(q));
+
+    // ── Visibilidad de columnas por tab ──
+    const showColumnsSection =
+        activeTab === 'candidatos' || activeTab === 'material' || activeTab === 'all';
 
     return (
         <>
             <div className={styles.main}>
-                <div className={styles.profileContainer}>
-                    <ProfileDropdown />
-                </div>
-
-
-                <div className={styles.bgDecoration} />
+                <div className={styles.bgDecoration} aria-hidden="true" />
 
                 {/* ══════════════ GRID PRINCIPAL ══════════════ */}
                 <div className={styles.container}>
 
-                    {/* ── RAIL IZQUIERDO (PC) ── */}
-                    <aside className={styles.sidebar}>
-                        <div className={styles.sidebarTop}>
-                            <div className={styles.sidebarBrand}>
-                                <span className={styles.sidebarBrandDot} />
-                                <span className={styles.sidebarBrandName}>Viñoplastic</span>
-                            </div>
-                        </div>
-
-                        <nav className={styles.sidebarNav}>
-                            <span className={styles.sidebarLabel}>Inducción</span>
-
-                            {canEdit && (
-                                <button
-                                    className={`${styles.sidebarItem} ${activeTab === 'interactivos' ? styles.active : ''}`}
-                                    onClick={() => setActiveTab('interactivos')}
-                                >
-                                    <span className={styles.sidebarItemLeft}>
-                                        <span className={styles.sidebarItemIcon}><Zap size={15} /></span>
-                                        Interactivos
-                                    </span>
-                                    <span className={styles.sidebarBadge}>{nativeCourses.length}</span>
-                                </button>
-                            )}
-
-                            {canEdit && (
-                                <button
-                                    className={`${styles.sidebarItem} ${activeTab === 'candidatos' ? styles.active : ''}`}
-                                    onClick={() => setActiveTab('candidatos')}
-                                >
-                                    <span className={styles.sidebarItemLeft}>
-                                        <span className={styles.sidebarItemIcon}><BookOpen size={15} /></span>
-                                        Candidatos
-                                    </span>
-                                    <span className={styles.sidebarBadge}>{candidateCourses.length}</span>
-                                </button>
-                            )}
-
-                            <button
-                                className={`${styles.sidebarItem} ${activeTab === 'material' ? styles.active : ''}`}
-                                onClick={() => setActiveTab('material')}
-                            >
-                                <span className={styles.sidebarItemLeft}>
-                                    <span className={styles.sidebarItemIcon}><FileText size={15} /></span>
-                                    Material
-                                </span>
-                                <span className={styles.sidebarBadge}>{courses.length}</span>
-                            </button>
-
-                            <button
-                                className={`${styles.sidebarItem} ${activeTab === 'galeria' ? styles.active : ''}`}
-                                onClick={() => setActiveTab('galeria')}
-                            >
-                                <span className={styles.sidebarItemLeft}>
-                                    <span className={styles.sidebarItemIcon}><Image size={15} /></span>
-                                    Galería
-                                </span>
-                                <span className={styles.sidebarBadge}>{galleryItems.length}</span>
-                            </button>
-                        </nav>
-                    </aside>
+                    {/* ── SIDEBAR (Escritorio + Drawer Móvil) ── */}
+                    <InduccionSidebar
+                        activeTab={activeTab}
+                        setActiveTab={setActiveTab}
+                        canEdit={canEdit}
+                        user={user}
+                        nativeCoursesCount={nativeCourses.length}
+                        candidateCoursesCount={candidateCourses.length}
+                        coursesCount={courses.length}
+                        galleryItemsCount={galleryItems.length}
+                        handleLogout={handleLogout}
+                        getInitials={getInitials}
+                        isOpen={isSidebarOpen}
+                        onClose={() => setIsSidebarOpen(false)}
+                    />
 
                     {/* ── HEADER ── */}
                     <header className={styles.header}>
-                        <div className={styles.titleSection}>
-                            <nav className={styles.breadcrumb} aria-label="breadcrumb">
-                                <Link href="/modulos" className={styles.breadcrumbLink}>Módulos</Link>
-                                <ChevronRight size={12} className={styles.breadcrumbSep} />
-                                <span className={styles.breadcrumbCurrent}>Inducción</span>
-                            </nav>
-                            <h1>Inducción</h1>
-                            <p>Material y cursos de bienvenida para empleados y candidatos</p>
-                            <div className={styles.headerActions}>
-                                <div className={styles.searchInputWrapper}>
-                                    <Search size={16} className={styles.searchIcon} />
-                                    <input
-                                        type="search"
-                                        placeholder="Buscar..."
-                                        className={styles.searchInput}
-                                        value={searchQuery}
-                                        onChange={(e) => setSearchQuery(e.target.value)}
-                                    />
-                                    {searchQuery && (
-                                        <button
-                                            type="button"
-                                            className={styles.searchClearBtn}
-                                            onClick={() => setSearchQuery('')}
-                                            aria-label="Limpiar búsqueda"
-                                        >
-                                            <X size={14} />
-                                        </button>
-                                    )}
-                                </div>
+                        <div className={styles.titleSectionParent}>
+                            {/* Botón hamburguesa — visible cuando el sidebar es drawer (≤768px) */}
+                            <button
+                                type="button"
+                                className={styles.mobileMenuBtn}
+                                onClick={() => setIsSidebarOpen(true)}
+                                aria-label="Abrir menú de navegación"
+                                aria-expanded={isSidebarOpen}
+                                aria-controls="induccion-sidebar"
+                            >
+                                <Menu size={20} aria-hidden="true" />
+                            </button>
+                            <div className={styles.titleSection}>
+                                <h1>Inducción</h1>
+                                <p>Material y cursos de bienvenida para empleados y candidatos</p>
+                            </div>
+                        </div>
+                        <div className={styles.headerActions}>
+                            <div className={styles.searchInputWrapper}>
+                                <Search size={16} className={styles.searchIcon} aria-hidden="true" />
+                                <input
+                                    type="search"
+                                    placeholder="Buscar..."
+                                    className={styles.searchInput}
+                                    value={searchQuery}
+                                    onChange={(e) => setSearchQuery(e.target.value)}
+                                    aria-label="Buscar contenido"
+                                />
+                                {searchQuery && (
+                                    <button
+                                        type="button"
+                                        className={styles.searchClearBtn}
+                                        onClick={() => setSearchQuery('')}
+                                        aria-label="Limpiar búsqueda"
+                                    >
+                                        <X size={14} aria-hidden="true" />
+                                    </button>
+                                )}
                             </div>
                         </div>
                     </header>
 
                     {/* ── CONTENIDO PRINCIPAL ── */}
-                    <main className={styles.contentArea}>
+                    <main className={styles.contentArea} id="main-content">
 
-                        {/* ══ CURSOS INTERACTIVOS ══ */}
-                        {canEdit && (
-                            <section
-                                className={styles.nativeSection}
-                                style={{ display: activeTab === 'interactivos' || activeTab === 'all' ? undefined : 'none' }}
-                            >
-                                <div className={styles.coursesHeader}>
-                                    <h2
-                                        className={styles.sectionTitle}
-                                        onClick={() => setShowNativeSection(!showNativeSection)}
-                                    >
-                                        <ChevronRight size={16} className={`${styles.chevronIcon} ${showNativeSection ? styles.expanded : ''}`} />
-                                        <Zap size={14} style={{ color: 'var(--c-orange)', flexShrink: 0 }} />
-                                        Cursos Interactivos
-                                        <span className={styles.sectionCount}>{nativeCourses.length}</span>
-                                    </h2>
+                        <InteractiveCoursesView
+                            canEdit={canEdit}
+                            activeTab={activeTab}
+                            showNativeSection={showNativeSection}
+                            setShowNativeSection={setShowNativeSection}
+                            nativeCourses={nativeCourses}
+                            nativeLoading={nativeLoading}
+                            filteredNative={filteredNative}
+                            searchQuery={searchQuery}
+                            includeDynamics={includeDynamics}
+                            setIncludeDynamics={setIncludeDynamics}
+                            includeQuizzes={includeQuizzes}
+                            setIncludeQuizzes={setIncludeQuizzes}
+                            importing={importing}
+                            handleImport={handleImport}
+                            creatingCourse={creatingCourse}
+                            handleCreateNewCourse={handleCreateNewCourse}
+                            renamingId={renamingId}
+                            renameValue={renameValue}
+                            setRenameValue={setRenameValue}
+                            handleStartRename={handleStartRename}
+                            handleConfirmRename={handleConfirmRename}
+                            handleRenameKeyDown={handleRenameKeyDown}
+                            handleTogglePublish={handleTogglePublish}
+                            handlePlayNative={handlePlayNative}
+                            handleDeleteNative={handleDeleteNative}
+                            fileInputRef={fileInputRef}
+                        />
 
-                                    <div className={styles.nativeActions}>
-                                        <div className={styles.importOptions}>
-                                            <label title="Incluir dinámicas grupales">
-                                                <input type="checkbox" checked={includeDynamics} onChange={(e) => setIncludeDynamics(e.target.checked)} />
-                                                <span style={{ fontSize: '0.8rem', marginLeft: 4 }}>Dinámicas</span>
-                                            </label>
-                                            <label title="Incluir quizzes grupales">
-                                                <input type="checkbox" checked={includeQuizzes} onChange={(e) => setIncludeQuizzes(e.target.checked)} />
-                                                <span style={{ fontSize: '0.8rem', marginLeft: 4 }}>Quizzes</span>
-                                            </label>
-                                        </div>
-                                        <label className={styles.importJsonBtn}>
-                                            <input ref={fileInputRef} type="file" accept=".json" style={{ display: 'none' }} onChange={() => { }} />
-                                            <FileText size={13} />
-                                            <span>JSON</span>
-                                        </label>
-                                        <button className={styles.importBtn} onClick={handleImport} disabled={importing}>
-                                            <Upload size={13} />
-                                            {importing ? 'Importando…' : 'Importar'}
-                                        </button>
-                                        <button className={styles.newCourseBtn} onClick={handleCreateNewCourse} disabled={creatingCourse} title="Crear curso interactivo desde cero">
-                                            <Plus size={13} />
-                                            {creatingCourse ? 'Creando...' : 'Nuevo Curso'}
-                                        </button>
-                                    </div>
-                                </div>
+                        {/* Visibilidad por tab — solo CSS classes, sin inline style ── */}
+                        <div className={`${styles.columnsContainer} ${!showColumnsSection ? styles.hidden : ''}`}>
+                            <CandidateCoursesView
+                                canEdit={canEdit}
+                                activeTab={activeTab}
+                                candidatosExpanded={candidatosExpanded}
+                                setCandidatosExpanded={setCandidatosExpanded}
+                                candidateCourses={candidateCourses}
+                                showCandidateForm={showCandidateForm}
+                                setShowCandidateForm={setShowCandidateForm}
+                                setEditingCandidateCourse={setEditingCandidateCourse}
+                                editingCandidateCourse={editingCandidateCourse}
+                                candidateFormData={candidateFormData}
+                                setCandidateFormData={setCandidateFormData}
+                                handleCandidateFormChange={handleCandidateFormChange}
+                                handlePuestoToggle={handlePuestoToggle}
+                                handleCreateCandidateCourse={handleCreateCandidateCourse}
+                                uploading={uploading}
+                                availableCourseTitles={availableCourseTitles}
+                                nativeCourses={nativeCourses}
+                                filteredCandidates={filteredCandidates}
+                                searchQuery={searchQuery}
+                                handleEditCandidateCourse={handleEditCandidateCourse}
+                                handleDeleteCandidateCourse={handleDeleteCandidateCourse}
+                                handleToggleCourseActive={handleToggleCourseActive}
+                                handleCandidateCardClick={handleCandidateCardClick}
+                            />
 
-                                {showNativeSection && (
-                                    <div className={styles.nativeGrid}>
-                                        {nativeLoading ? (
-                                            Array(6).fill(0).map((_, i) => <div key={i} className={styles.skeletonCard} />)
-                                        ) : filteredNative.length === 0 ? (
-                                            <div className={styles.emptyState}>
-                                                <FolderOpen size={48} opacity={0.15} style={{ marginBottom: '10px' }} />
-                                                <p>{searchQuery ? 'No hay resultados que coincidan con la búsqueda.' : 'No hay cursos interactivos. Importa un JSON para comenzar.'}</p>
-                                            </div>
-                                        ) : (
-                                            filteredNative.map(course => (
-                                                <div key={course.id} className={styles.nativeCard}>
-                                                    <div className={styles.nativeCardLeft}>
-                                                        <div className={styles.nativeIcon}><BookOpen size={16} /></div>
-                                                        <div className={styles.nativeInfo}>
-                                                            {renamingId === course.id ? (
-                                                                <input
-                                                                    className={styles.renameInput}
-                                                                    value={renameValue}
-                                                                    autoFocus
-                                                                    onChange={e => setRenameValue(e.target.value)}
-                                                                    onBlur={() => handleConfirmRename(course.id)}
-                                                                    onKeyDown={e => handleRenameKeyDown(e, course.id)}
-                                                                    onClick={e => e.stopPropagation()}
-                                                                />
-                                                            ) : (
-                                                                <span className={styles.nativeTitle}>{course.title}</span>
-                                                            )}
-                                                            <div className={styles.nativeMeta}>
-                                                                {course.category && <span>{course.category}</span>}
-                                                                {course.slideCount && <span>{course.slideCount} slides</span>}
-                                                                {course.duration && <span>{course.duration}</span>}
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <div className={styles.nativeCardRight}>
-                                                        <span
-                                                            className={`${styles.publishBadge} ${course.published ? styles.publishedBadge : styles.draftBadge}`}
-                                                            onClick={() => handleTogglePublish(course.id, course.published)}
-                                                            title="Click para cambiar estado"
-                                                        >
-                                                            {course.published ? '📗 Publicado' : '🔒 Borrador'}
-                                                        </span>
-                                                        <button className={styles.editBtn} onClick={(e) => handleStartRename(e, course)} title="Renombrar curso">
-                                                            <Edit3 size={13} />
-                                                        </button>
-                                                        <Link href={`/induccion/cursos/${course.id}/editar`} className={styles.editBtn} title="Editar slides y contenido">
-                                                            <Settings2 size={13} />
-                                                        </Link>
-                                                        <button className={styles.playBtn} onClick={() => handlePlayNative(course.id)} title="Reproducir">
-                                                            <Play size={13} />
-                                                        </button>
-                                                        <button className={styles.nativeDeleteBtn} onClick={(e) => handleDeleteNative(e, course.id)} title="Eliminar">
-                                                            <Trash2 size={13} />
-                                                        </button>
-                                                    </div>
-                                                </div>
-                                            ))
-                                        )}
-                                    </div>
-                                )}
-                            </section>
-                        )}
-
-                        {/* ══ DOS COLUMNAS — Candidatos + Material ══ */}
-                        <div
-                            className={styles.columnsContainer}
-                            style={{ display: activeTab === 'candidatos' || activeTab === 'material' || activeTab === 'all' ? undefined : 'none' }}
-                        >
-                            {/* CANDIDATOS */}
-                            {canEdit && (
-                                <section
-                                    className={styles.columnSection}
-                                    style={{ display: activeTab === 'candidatos' || activeTab === 'all' ? undefined : 'none' }}
-                                >
-                                    <div className={styles.coursesHeader}>
-                                        <h2 className={styles.sectionTitle} onClick={() => setCandidatosExpanded(!candidatosExpanded)}>
-                                            <ChevronRight size={16} className={`${styles.chevronIcon} ${candidatosExpanded ? styles.expanded : ''}`} />
-                                            Candidatos
-                                            <span className={styles.sectionCount}>{candidateCourses.length}</span>
-                                        </h2>
-                                        <button
-                                            className={styles.toggleBtn}
-                                            onClick={() => {
-                                                setShowCandidateForm(!showCandidateForm);
-                                                setEditingCandidateCourse(null);
-                                                setCandidateFormData({ nombre: '', descripcion: '', contenidoUrl: '', examenUrl: '', puestosAplicables: [], duracionEstimada: 30, obligatorio: true, orden: 1, nativeCourseId: '', tipo: 'link' });
-                                            }}
-                                        >
-                                            <Plus size={14} />
-                                            {showCandidateForm ? 'Cerrar' : 'Nuevo'}
-                                        </button>
-                                    </div>
-
-                                    {candidatosExpanded && (
-                                        <>
-                                            {showCandidateForm && (
-                                                <div className={styles.createCourseContainer}>
-                                                    <h3>{editingCandidateCourse ? 'Editar curso' : 'Nuevo curso'}</h3>
-                                                    <form onSubmit={handleCreateCandidateCourse} className={styles.createCourseForm}>
-                                                        <div className={styles.inputGroup}>
-                                                            <label>Nombre del curso</label>
-                                                            <Combobox
-                                                                value={candidateFormData.nombre}
-                                                                onChange={(value) => handleCandidateFormChange('nombre', value)}
-                                                                options={availableCourseTitles}
-                                                                placeholder="Seleccionar o escribir..."
-                                                                searchPlaceholder="Buscar..."
-                                                            />
-                                                        </div>
-                                                        <div className={styles.inputGroup}>
-                                                            <label>Descripción</label>
-                                                            <textarea className={styles.input} value={candidateFormData.descripcion} onChange={e => handleCandidateFormChange('descripcion', e.target.value)} placeholder="Breve descripción del curso..." rows={2} />
-                                                        </div>
-                                                        <div className={styles.inputGroup}>
-                                                            <label>Tipo de contenido</label>
-                                                            <div className={styles.tipoSelector}>
-                                                                {['link', 'native'].map(tipo => (
-                                                                    <button key={tipo} type="button" className={`${styles.tipoBtn} ${candidateFormData.tipo === tipo ? styles.tipoBtnActive : ''}`} onClick={() => handleCandidateFormChange('tipo', tipo)}>
-                                                                        {tipo === 'link' && <><Link2 size={12} /> Enlace</>}
-                                                                        {tipo === 'native' && <><Zap size={12} /> Interactivo</>}
-                                                                    </button>
-                                                                ))}
-                                                            </div>
-                                                        </div>
-                                                        {candidateFormData.tipo === 'native' ? (
-                                                            <div className={styles.inputGroup}>
-                                                                <label>Curso interactivo</label>
-                                                                <select className={styles.input} value={candidateFormData.nativeCourseId} onChange={e => handleCandidateFormChange('nativeCourseId', e.target.value)}>
-                                                                    <option value="">— Seleccionar curso —</option>
-                                                                    {nativeCourses.map(c => <option key={c.id} value={c.id}>{c.title}</option>)}
-                                                                </select>
-                                                            </div>
-                                                        ) : (
-                                                            <div className={styles.inputGroup}>
-                                                                <label>URL de presentación</label>
-                                                                <input className={styles.input} value={candidateFormData.contenidoUrl} onChange={e => handleCandidateFormChange('contenidoUrl', e.target.value)} placeholder="https://drive.google.com/..." />
-                                                            </div>
-                                                        )}
-                                                        <div className={styles.inputGroup}>
-                                                            <label>URL de examen (opcional)</label>
-                                                            <input className={styles.input} value={candidateFormData.examenUrl} onChange={e => handleCandidateFormChange('examenUrl', e.target.value)} placeholder="https://..." />
-                                                        </div>
-                                                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
-                                                            <div className={styles.inputGroup}>
-                                                                <label>Duración (min)</label>
-                                                                <input type="number" className={styles.input} value={candidateFormData.duracionEstimada} onChange={e => handleCandidateFormChange('duracionEstimada', parseInt(e.target.value) || 0)} min="1" />
-                                                            </div>
-                                                            <div className={styles.inputGroup}>
-                                                                <label>Orden</label>
-                                                                <input type="number" className={styles.input} value={candidateFormData.orden} onChange={e => handleCandidateFormChange('orden', parseInt(e.target.value) || 1)} min="1" />
-                                                            </div>
-                                                        </div>
-                                                        <div className={styles.inputGroup}>
-                                                            <label>Puestos aplicables ({candidateFormData.puestosAplicables.length})</label>
-                                                            <div className={styles.puestosCheckboxContainer}>
-                                                                {puestosData.map((p, idx) => (
-                                                                    <label key={idx}>
-                                                                        <input type="checkbox" checked={candidateFormData.puestosAplicables.includes(p.positions)} onChange={() => handlePuestoToggle(p.positions)} />
-                                                                        {p.positions}
-                                                                    </label>
-                                                                ))}
-                                                            </div>
-                                                        </div>
-                                                        <div className={styles.formActions}>
-                                                            <Button type="submit" disabled={uploading}>
-                                                                {uploading ? 'Guardando...' : (editingCandidateCourse ? 'Actualizar' : 'Crear')}
-                                                            </Button>
-                                                            {editingCandidateCourse && (
-                                                                <button type="button" className={styles.toggleBtn} onClick={() => { setEditingCandidateCourse(null); setShowCandidateForm(false); }}>
-                                                                    Cancelar
-                                                                </button>
-                                                            )}
-                                                        </div>
-                                                    </form>
-                                                </div>
-                                            )}
-
-                                            <div className={styles.coursesGrid}>
-                                                {filteredCandidates.length === 0 ? (
-                                                    <div className={styles.emptyState}>
-                                                        <Users size={48} opacity={0.15} style={{ marginBottom: '10px' }} />
-                                                        <p>{searchQuery ? 'No hay candidatos o cursos que coincidan.' : 'No hay cursos de candidatos creados aún.'}</p>
-                                                    </div>
-                                                ) : (
-                                                    filteredCandidates.map(course => {
-                                                        const isNative = course.tipo === 'native' || !!course.nativeCourseId;
-                                                        return (
-                                                            <div key={course.id} className={styles.courseCard} onClick={() => handleCandidateCardClick(course)}>
-                                                                <div className={styles.cardTopColor} style={{ background: course.activo ? '#22c55e' : '#94a3b8' }} />
-                                                                <div className={styles.cardActionsRow}>
-                                                                    <button className={styles.editBtn} onClick={(e) => handleEditCandidateCourse(e, course)}><Edit3 size={12} /></button>
-                                                                    <button className={styles.deleteBtn} onClick={(e) => handleDeleteCandidateCourse(e, course.id)}><Trash2 size={12} /></button>
-                                                                </div>
-                                                                <div className={styles.cardContent}>
-                                                                    <div>
-                                                                        <h3 className={styles.courseTitle}>{course.nombre}</h3>
-                                                                        {course.descripcion && (
-                                                                            <p className={styles.cardDescription}>
-                                                                                {course.descripcion.length > 60 ? course.descripcion.substring(0, 60) + '...' : course.descripcion}
-                                                                            </p>
-                                                                        )}
-                                                                    </div>
-                                                                    <div className={styles.cardMeta}>
-                                                                        {isNative ? (
-                                                                            <span className={`${styles.courseTypeBadge} ${styles.nativeBadge}`}><Zap size={9} /> Interactivo</span>
-                                                                        ) : (
-                                                                            <span className={styles.courseTypeBadge}><Link2 size={9} /> Enlace</span>
-                                                                        )}
-                                                                        <span className={styles.courseTypeBadge}>{course.puestosAplicables?.length || 0} puestos</span>
-                                                                        <span className={styles.courseTypeBadge}>{course.duracionEstimada} min</span>
-                                                                        <button className={styles.toggleBtn} onClick={(e) => { e.stopPropagation(); handleToggleCourseActive(course.id, course.activo); }} style={{ marginLeft: 'auto' }}>
-                                                                            {course.activo ? 'Desactivar' : 'Activar'}
-                                                                        </button>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        );
-                                                    })
-                                                )}
-                                            </div>
-                                        </>
-                                    )}
-                                </section>
-                            )}
-
-                            {/* MATERIAL */}
-                            <section
-                                className={styles.columnSection}
-                                style={{ display: activeTab === 'material' || activeTab === 'all' ? undefined : 'none' }}
-                            >
-                                <div className={styles.coursesHeader}>
-                                    <h2 className={styles.sectionTitle} onClick={() => setMaterialExpanded(!materialExpanded)}>
-                                        <ChevronRight size={16} className={`${styles.chevronIcon} ${materialExpanded ? styles.expanded : ''}`} />
-                                        Material
-                                        <span className={styles.sectionCount}>{courses.length}</span>
-                                    </h2>
-                                    {canEdit && (
-                                        <button className={styles.toggleBtn} onClick={() => setShowCreateForm(!showCreateForm)}>
-                                            <Plus size={14} />
-                                            {showCreateForm ? 'Cerrar' : 'Nuevo'}
-                                        </button>
-                                    )}
-                                </div>
-
-                                {materialExpanded && (
-                                    <>
-                                        {showCreateForm && canEdit && (
-                                            <div className={styles.createCourseContainer}>
-                                                <h3>Nuevo material</h3>
-                                                <form onSubmit={handleCreateCourse} className={styles.createCourseForm}>
-                                                    <div className={styles.inputGroup}>
-                                                        <label>Nombre</label>
-                                                        <input className={styles.input} value={newCourseName} onChange={e => setNewCourseName(e.target.value)} placeholder="Ej. Manual de Bienvenida" />
-                                                    </div>
-                                                    <div className={styles.inputGroup}>
-                                                        <label>Archivo o enlace</label>
-                                                        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                                                            <input type="file" onChange={e => setFile(e.target.files[0])} style={{ display: 'none' }} id="fileUpload" />
-                                                            <label htmlFor="fileUpload" className={`${styles.fileBtn} ${file ? styles.fileBtnActive : ''}`}>
-                                                                {file ? <Check size={14} /> : <FileText size={14} />}
-                                                                {file ? 'Listo' : 'PDF'}
-                                                            </label>
-                                                            <span style={{ color: 'var(--c-muted)', fontSize: '0.75rem' }}>o</span>
-                                                            <input className={styles.input} placeholder="Pegar enlace..." value={presentationLink} onChange={e => setPresentationLink(e.target.value)} style={{ flex: 1 }} />
-                                                        </div>
-                                                    </div>
-                                                    <div className={styles.formActions}>
-                                                        <Button type="submit" disabled={uploading}>{uploading ? 'Subiendo...' : 'Publicar'}</Button>
-                                                    </div>
-                                                </form>
-                                            </div>
-                                        )}
-
-                                        <div className={styles.coursesGrid}>
-                                            {filteredMaterial.length === 0 ? (
-                                                <div className={styles.emptyState}>
-                                                    <FileText size={48} opacity={0.15} style={{ marginBottom: '10px' }} />
-                                                    <p>{searchQuery ? 'No hay material que coincida.' : 'No hay material de inducción'}</p>
-                                                </div>
-                                            ) : (
-                                                filteredMaterial.map(course => (
-                                                    <div key={course.id} className={styles.courseCard} onClick={() => window.open(course.material?.url, '_blank')}>
-                                                        <div className={styles.cardTopColor} style={{ background: course.material?.type === 'link' ? '#f59e0b' : '#ef4444' }} />
-                                                        {canEdit && (
-                                                            <button className={styles.deleteBtn} onClick={(e) => handleDeleteCourse(e, course.id)}><Trash2 size={12} /></button>
-                                                        )}
-                                                        <div className={styles.cardContent}>
-                                                            <h3 className={styles.courseTitle}>{course.title}</h3>
-                                                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                                                                <span className={styles.courseTypeBadge}>
-                                                                    {course.material?.type === 'link' ? <><Link2 size={10} /> Enlace</> : <><FileText size={10} /> PDF</>}
-                                                                </span>
-                                                                <div className={styles.cardAction}><ExternalLink size={14} /></div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                ))
-                                            )}
-                                        </div>
-                                    </>
-                                )}
-                            </section>
+                            <MaterialView
+                                canEdit={canEdit}
+                                activeTab={activeTab}
+                                materialExpanded={materialExpanded}
+                                setMaterialExpanded={setMaterialExpanded}
+                                courses={courses}
+                                showCreateForm={showCreateForm}
+                                setShowCreateForm={setShowCreateForm}
+                                handleCreateCourse={handleCreateCourse}
+                                newCourseName={newCourseName}
+                                setNewCourseName={setNewCourseName}
+                                file={file}
+                                setFile={setFile}
+                                presentationLink={presentationLink}
+                                setPresentationLink={setPresentationLink}
+                                uploading={uploading}
+                                filteredMaterial={filteredMaterial}
+                                searchQuery={searchQuery}
+                                handleDeleteCourse={handleDeleteCourse}
+                            />
                         </div>
 
-                        {/* ══ GALERÍA ══ */}
-                        <section
-                            className={styles.nativeSection}
-                            style={{ display: activeTab === 'galeria' || activeTab === 'all' ? undefined : 'none' }}
-                        >
-                            <div className={styles.coursesHeader}>
-                                <h2 className={styles.sectionTitle} onClick={() => setGalleryExpanded(!galleryExpanded)} style={{ cursor: 'pointer' }}>
-                                    <ChevronRight size={16} className={`${styles.chevronIcon} ${galleryExpanded ? styles.expanded : ''}`} />
-                                    <Image size={14} style={{ color: 'var(--c-orange)', flexShrink: 0 }} />
-                                    Galería
-                                    <span className={styles.sectionCount}>{galleryItems.length}</span>
-                                </h2>
-                                {canEdit && (
-                                    <button className={styles.newCourseBtn} onClick={() => { setGalleryFile(null); setGalleryName(''); setGalleryProgress(0); setGalleryType('imagen'); setShowGalleryModal(true); }}>
-                                        <UploadCloud size={13} />
-                                        Subir
-                                    </button>
-                                )}
-                            </div>
-
-                            {galleryExpanded && (
-                                filteredGallery.length === 0 ? (
-                                    <div className={styles.emptyState}>
-                                        <Image size={48} opacity={0.15} style={{ marginBottom: '10px' }} />
-                                        <p>{searchQuery ? 'No hay resultados en la galería.' : 'No hay elementos en la galería. Sube imágenes o videos.'}</p>
-                                    </div>
-                                ) : (
-                                    <div className={styles.galleryGrid}>
-                                        {filteredGallery.map(item => (
-                                            <div key={item.id} className={styles.galleryCard}>
-                                                <div onClick={() => setSelectedMedia(item)} className={styles.galleryThumbWrap} style={{ cursor: 'pointer' }}>
-                                                    {item.tipo === 'imagen' ? (
-                                                        <NextImage unoptimized fill src={item.viewLink} alt={item.nombre} className={styles.galleryThumb} onError={e => { e.target.style.display = 'none'; e.target.nextSibling.style.display = 'flex'; }} />
-                                                    ) : null}
-                                                    <div className={styles.galleryVideoPlaceholder} style={{ display: item.tipo === 'video' ? 'flex' : 'none' }}>
-                                                        <Video size={32} style={{ color: 'var(--c-orange)', opacity: 0.7 }} />
-                                                    </div>
-                                                    {item.tipo === 'video' && (
-                                                        <div className={styles.galleryPlayOverlay}><Play size={20} /></div>
-                                                    )}
-                                                </div>
-                                                <div className={styles.galleryCardFooter}>
-                                                    <span className={styles.galleryItemName} title={item.nombre}>
-                                                        {item.tipo === 'imagen'
-                                                            ? <Image size={11} style={{ color: 'var(--c-orange)', flexShrink: 0 }} />
-                                                            : <Video size={11} style={{ color: '#6366f1', flexShrink: 0 }} />
-                                                        }
-                                                        {item.nombre}
-                                                    </span>
-                                                    {canEdit && (
-                                                        <button className={styles.galleryDeleteBtn} onClick={(e) => handleGalleryDelete(e, item.id)} title="Eliminar"><Trash2 size={12} /></button>
-                                                    )}
-                                                </div>
-                                            </div>
-                                        ))}
-                                    </div>
-                                )
-                            )}
-                        </section>
+                        <GalleryView
+                            canEdit={canEdit}
+                            activeTab={activeTab}
+                            galleryExpanded={galleryExpanded}
+                            setGalleryExpanded={setGalleryExpanded}
+                            galleryItems={galleryItems}
+                            setGalleryFile={setGalleryFile}
+                            setGalleryName={setGalleryName}
+                            setGalleryProgress={setGalleryProgress}
+                            setGalleryType={setGalleryType}
+                            setShowGalleryModal={setShowGalleryModal}
+                            filteredGallery={filteredGallery}
+                            searchQuery={searchQuery}
+                            setSelectedMedia={setSelectedMedia}
+                            handleGalleryDelete={handleGalleryDelete}
+                        />
 
                     </main>
-                </div>{/* /container */}
+                </div>
 
-                {/* ══ BOTTOM NAV (Mobile) ══ */}
-                <nav className={styles.bottomNav}>
-                    {/* Boton Volver a módulos */}
-                    {user?.rol !== 'instructor' && (
-                        <Link href="/modulos" className={styles.bottomNavBackTab}>
-                            <ArrowLeft size={18} />
-                            <span>Volver</span>
-                        </Link>
-                    )}
-
-                    {/* ProfileDropdown integrado */}
-                    <div className={styles.bottomNavProfile}>
-                        <ProfileDropdown />
-                    </div>
-
-                    {/* Boton + para abrir el drawer de secciones */}
-                    <button
-                        className={`${styles.bottomNavPlusBtn} ${showMobileMenu ? styles.plusBtnActive : ''}`}
-                        onClick={() => setShowMobileMenu(v => !v)}
-                        aria-label="Navegar secciones"
-                        aria-expanded={showMobileMenu}
-                    >
-                        <Plus size={20} />
-                    </button>
-                </nav>
-
-                {/* ══ MOBILE SECTION DRAWER ══ */}
-                {showMobileMenu && (
-                    <div className={styles.mobileSectionOverlay} onClick={() => setShowMobileMenu(false)}>
-                        <div className={styles.mobileSectionDrawer} onClick={e => e.stopPropagation()}>
-                            <p className={styles.mobileSectionTitle}>Ir a sección</p>
-                            {canEdit && (
-                                <button
-                                    className={`${styles.mobileSectionItem} ${activeTab === 'interactivos' ? styles.activeSectionItem : ''}`}
-                                    onClick={() => { setActiveTab('interactivos'); setShowMobileMenu(false); }}
-                                >
-                                    <Zap size={16} />
-                                    <span>Interactivos</span>
-                                    {nativeCourses.length > 0 && <span className={styles.mobileSectionBadge}>{nativeCourses.length}</span>}
-                                </button>
-                            )}
-                            {canEdit && (
-                                <button
-                                    className={`${styles.mobileSectionItem} ${activeTab === 'candidatos' ? styles.activeSectionItem : ''}`}
-                                    onClick={() => { setActiveTab('candidatos'); setShowMobileMenu(false); }}
-                                >
-                                    <BookOpen size={16} />
-                                    <span>Candidatos</span>
-                                </button>
-                            )}
-                            <button
-                                className={`${styles.mobileSectionItem} ${activeTab === 'material' ? styles.activeSectionItem : ''}`}
-                                onClick={() => { setActiveTab('material'); setShowMobileMenu(false); }}
-                            >
-                                <FileText size={16} />
-                                <span>Material</span>
-                            </button>
-                            <button
-                                className={`${styles.mobileSectionItem} ${activeTab === 'galeria' ? styles.activeSectionItem : ''}`}
-                                onClick={() => { setActiveTab('galeria'); setShowMobileMenu(false); }}
-                            >
-                                <Image size={16} />
-                                <span>Galería</span>
-                                {galleryItems.length > 0 && <span className={styles.mobileSectionBadge}>{galleryItems.length}</span>}
-                            </button>
-                        </div>
-                    </div>
-                )}
                 {/* ══ MODAL: Nuevo Curso Interactivo (Wizard) ══ */}
                 {showNewCourseModal && (
                     <CourseWizardModal
@@ -1106,46 +710,90 @@ export default function InductionPage() {
 
                 {/* ══ MODAL: Galería Upload ══ */}
                 {showGalleryModal && (
-                    <div className={styles.galleryModalBackdrop} onClick={(e) => { if (e.target === e.currentTarget) setShowGalleryModal(false); }}>
+                    <div
+                        className={styles.galleryModalBackdrop}
+                        onClick={(e) => { if (e.target === e.currentTarget) setShowGalleryModal(false); }}
+                        role="dialog"
+                        aria-modal="true"
+                        aria-label="Subir archivo a galería"
+                    >
                         <div className={styles.galleryModalBox}>
-                            <button className={styles.closeModalBtn} onClick={() => setShowGalleryModal(false)}><X size={14} /></button>
+                            <button
+                                type="button"
+                                className={styles.closeModalBtn}
+                                onClick={() => setShowGalleryModal(false)}
+                                aria-label="Cerrar modal"
+                            >
+                                <X size={14} aria-hidden="true" />
+                            </button>
                             <div className={styles.galleryModalHeader}>
-                                <UploadCloud size={22} style={{ color: 'var(--c-orange)' }} />
+                                <UploadCloud size={22} className={styles.galleryModalIcon} aria-hidden="true" />
                                 <h2>Subir a Galería</h2>
                                 <p>Sube una imagen o video y asígnale un nombre.</p>
                             </div>
                             <div className={styles.galleryTypeSelector}>
                                 {['imagen', 'video'].map(t => (
-                                    <button key={t} className={`${styles.galleryTypeBtn} ${galleryType === t ? styles.galleryTypeBtnActive : ''}`}
+                                    <button
+                                        key={t}
+                                        type="button"
+                                        className={`${styles.galleryTypeBtn} ${galleryType === t ? styles.galleryTypeBtnActive : ''}`}
                                         onClick={() => { setGalleryType(t); setGalleryFile(null); if (galleryFileRef.current) galleryFileRef.current.value = ''; }}
                                         disabled={galleryUploading}
                                     >
-                                        {t === 'imagen' ? <Image size={14} /> : <Video size={14} />}
+                                        {t === 'imagen' ? <Image size={14} aria-hidden="true" /> : <Video size={14} aria-hidden="true" />}
                                         {t.charAt(0).toUpperCase() + t.slice(1)}
                                     </button>
                                 ))}
                             </div>
-                            <div className={styles.inputGroup} style={{ textAlign: 'left', marginBottom: '12px' }}>
-                                <label>Nombre</label>
-                                <input className={styles.input} placeholder={galleryType === 'imagen' ? 'Ej. Logo empresa' : 'Ej. Video bienvenida'} value={galleryName} onChange={e => setGalleryName(e.target.value)} disabled={galleryUploading} />
+                            <div className={styles.inputGroup}>
+                                <label htmlFor="gallery-name">Nombre</label>
+                                <input
+                                    id="gallery-name"
+                                    className={styles.input}
+                                    placeholder={galleryType === 'imagen' ? 'Ej. Logo empresa' : 'Ej. Video bienvenida'}
+                                    value={galleryName}
+                                    onChange={e => setGalleryName(e.target.value)}
+                                    disabled={galleryUploading}
+                                />
                             </div>
                             <label className={`${styles.galleryFileLabel} ${galleryFile ? styles.galleryFileLabelActive : ''}`}>
-                                <input ref={galleryFileRef} type="file" accept={galleryType === 'imagen' ? 'image/jpeg,image/png,image/webp,image/gif' : 'video/mp4,video/webm,video/quicktime'} style={{ display: 'none' }}
+                                <input
+                                    ref={galleryFileRef}
+                                    type="file"
+                                    accept={galleryType === 'imagen'
+                                        ? 'image/jpeg,image/png,image/webp,image/gif'
+                                        : 'video/mp4,video/webm,video/quicktime'}
+                                    className={styles.galleryFileInput}
                                     onChange={e => { const f = e.target.files?.[0]; if (f) { setGalleryFile(f); if (!galleryName) setGalleryName(f.name.replace(/\.[^.]+$/, '')); } }}
                                     disabled={galleryUploading}
                                 />
-                                {galleryFile ? <><Check size={14} /> {galleryFile.name}</> : <><Upload size={14} /> {galleryType === 'imagen' ? 'Seleccionar imagen' : 'Seleccionar video'}</>}
+                                {galleryFile
+                                    ? <><Check size={14} aria-hidden="true" /> {galleryFile.name}</>
+                                    : <><Upload size={14} aria-hidden="true" /> {galleryType === 'imagen' ? 'Seleccionar imagen' : 'Seleccionar video'}</>
+                                }
                             </label>
                             {galleryUploading && (
-                                <div className={styles.galleryProgressWrap}>
+                                <div className={styles.galleryProgressWrap} role="progressbar" aria-valuenow={galleryProgress} aria-valuemin={0} aria-valuemax={100}>
                                     <div className={styles.galleryProgressBar} style={{ width: `${galleryProgress}%` }} />
                                     <span className={styles.galleryProgressText}>{galleryProgress}%</span>
                                 </div>
                             )}
                             <div className={styles.galleryModalActions}>
-                                <button className={styles.toggleBtn} onClick={() => setShowGalleryModal(false)} disabled={galleryUploading}>Cancelar</button>
-                                <button className={styles.newCourseBtn} onClick={handleGalleryUpload} disabled={galleryUploading || !galleryFile || !galleryName.trim()}>
-                                    <UploadCloud size={13} />
+                                <button
+                                    type="button"
+                                    className={styles.toggleBtn}
+                                    onClick={() => setShowGalleryModal(false)}
+                                    disabled={galleryUploading}
+                                >
+                                    Cancelar
+                                </button>
+                                <button
+                                    type="button"
+                                    className={styles.newCourseBtn}
+                                    onClick={handleGalleryUpload}
+                                    disabled={galleryUploading || !galleryFile || !galleryName.trim()}
+                                >
+                                    <UploadCloud size={13} aria-hidden="true" />
                                     {galleryUploading ? 'Subiendo...' : 'Subir'}
                                 </button>
                             </div>
@@ -1155,13 +803,35 @@ export default function InductionPage() {
 
                 {/* ══ LIGHTBOX ══ */}
                 {selectedMedia && (
-                    <div className={styles.lightboxBackdrop} onClick={() => setSelectedMedia(null)}>
-                        <button className={styles.lightboxCloseBtn} onClick={() => setSelectedMedia(null)}><X size={24} color="white" /></button>
+                    <div
+                        className={styles.lightboxBackdrop}
+                        onClick={() => setSelectedMedia(null)}
+                        role="dialog"
+                        aria-modal="true"
+                        aria-label={`Ver ${selectedMedia.nombre}`}
+                    >
+                        <button
+                            type="button"
+                            className={styles.lightboxCloseBtn}
+                            onClick={() => setSelectedMedia(null)}
+                            aria-label="Cerrar vista previa"
+                        >
+                            <X size={24} aria-hidden="true" />
+                        </button>
                         <div className={styles.lightboxContent} onClick={e => e.stopPropagation()}>
                             {selectedMedia.tipo === 'imagen' ? (
-                                <img src={selectedMedia.viewLink} alt={selectedMedia.nombre} className={styles.lightboxImage} />
+                                <img
+                                    src={selectedMedia.viewLink}
+                                    alt={selectedMedia.nombre}
+                                    className={styles.lightboxImage}
+                                />
                             ) : (
-                                <video src={selectedMedia.viewLink} controls autoPlay className={styles.lightboxVideo} />
+                                <video
+                                    src={selectedMedia.viewLink}
+                                    controls
+                                    autoPlay
+                                    className={styles.lightboxVideo}
+                                />
                             )}
                             <div className={styles.lightboxCaption}>{selectedMedia.nombre}</div>
                         </div>

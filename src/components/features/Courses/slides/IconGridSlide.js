@@ -1,4 +1,5 @@
 'use client';
+import React from 'react';
 
 import styles from './slides.module.css';
 import {
@@ -183,7 +184,7 @@ const MAX_ITEMS = 6;
  *   4 ítems → 2 col × 2 filas
  *   5-6 ítems → 3 col × 2 filas
  */
-export default function IconGridSlide({ data, inline = false, hasBgMedia }) {
+const IconGridSlide = React.memo(function IconGridSlide({ data, inline = false, hasBgMedia }) {
     const { heading, description, items = [] } = data;
 
     // Aplicar límite de 6 ítems
@@ -255,4 +256,6 @@ export default function IconGridSlide({ data, inline = false, hasBgMedia }) {
             )}
         </article>
     );
-}
+});
+
+export default IconGridSlide;

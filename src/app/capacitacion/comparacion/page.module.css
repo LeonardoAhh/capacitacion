@@ -69,7 +69,7 @@
 
 .pageTitle {
     font-size: 1.25rem;
-    font-family: 'Playfair Display', Georgia, serif;
+    font-family: var(--font-serif);
     font-weight: 700;
     color: var(--text-primary);
     margin: 0;

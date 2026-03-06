@@ -39,7 +39,7 @@
     font-weight: 700;
     color: var(--text-primary);
     margin: 0;
-    font-family: 'Playfair Display', Georgia, serif;
+    font-family: var(--font-serif);
 }
 
 .closeBtn {

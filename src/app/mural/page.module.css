@@ -12,7 +12,7 @@
     overflow-x: hidden;
     background: #09090b;
     padding: 2rem 1rem;
-    font-family: 'Inter', system-ui, sans-serif;
+    font-family: var(--font-body);
     color: #f8fafc;
     box-sizing: border-box;
 }

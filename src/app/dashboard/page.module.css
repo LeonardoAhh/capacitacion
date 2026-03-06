@@ -96,7 +96,7 @@
 
 .title {
     font-size: clamp(1.5rem, 3vw, 2rem);
-    font-family: 'Playfair Display', Georgia, serif;
+    font-family: var(--font-serif);
     font-weight: 700;
     color: var(--text-primary);
     margin: 0;
@@ -340,7 +340,7 @@
     color: var(--text-primary);
     margin: 0;
     letter-spacing: -0.015em;
-    font-family: 'Playfair Display', Georgia, serif;
+    font-family: var(--font-serif);
 }
 
 /* ─── Section badge ─────────────────────────────────────── */

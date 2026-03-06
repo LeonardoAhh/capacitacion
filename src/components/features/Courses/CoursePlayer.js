@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useCallback, useRef, useMemo } from 'react';
+import confetti from 'canvas-confetti';
 import { IconArrowLeft, IconArrowRight, IconMenu, IconExpand, IconCompress } from '@/lib/icons';
 import { AiOutlineClockCircle } from 'react-icons/ai';
 import SlideRenderer from './SlideRenderer';
@@ -195,6 +196,15 @@ export default function CoursePlayer({ course, slides, onClose, inline = false, 
     // Usa el score más reciente vía ref funcional de setQuizScore para evitar stale closure
     const handleFinish = useCallback(() => {
         if (inline) { onClose(); return; }
+
+        // Gamification: Lluvia de confetti al terminar el curso
+        confetti({
+            particleCount: 180,
+            spread: 90,
+            origin: { y: 0.5 },
+            colors: ['#003ccc', '#00cc66', '#ffcc00', '#ff66ff']
+        });
+
         setShowCompletion(true);
         setQuizScore(latestScore => {
             persistProgress(current, latestScore);
@@ -365,9 +375,11 @@ export default function CoursePlayer({ course, slides, onClose, inline = false, 
                         <button
                             className={styles.iconBtn}
                             onClick={toggleFullscreen}
-                            aria-label={isFullscreen ? 'Salir de pantalla completa' : 'Pantalla completa'}
+                            aria-label={isFullscreen ? 'Salir de pantalla completa' : 'Activar pantalla completa'}
+                            title={isFullscreen ? 'Salir de pantalla completa' : 'Activar pantalla completa'}
+                            aria-pressed={isFullscreen}
                         >
-                            {isFullscreen ? <IconCompress size={16} /> : <IconExpand size={16} />}
+                            {isFullscreen ? <IconCompress size={16} aria-hidden /> : <IconExpand size={16} aria-hidden />}
                         </button>
                     )}
                 </div>
@@ -404,7 +416,8 @@ export default function CoursePlayer({ course, slides, onClose, inline = false, 
                     aria-valuenow={current + 1}
                     aria-valuemin={1}
                     aria-valuemax={total}
-                    aria-label={`Progreso: slide ${current + 1} de ${total}`}
+                    aria-label={`Progreso del curso: slide ${current + 1} de ${total}`}
+                    tabIndex={0}
                 >
                     <div
                         className={styles.linearBarFill}
@@ -415,15 +428,10 @@ export default function CoursePlayer({ course, slides, onClose, inline = false, 
 
             {/* ── Contenido del slide ── */}
             <main
-                className={styles.content}
+                id="course-slide-content"
+                className={`${styles.content} ${bgMedia?.layout === 'split' ? styles.contentSplit : (bgMedia ? styles.contentFull : '')}`}
                 aria-live="polite"
-                style={bgMedia?.layout === 'split' ? {
-                    position: 'relative',
-                    display: 'flex',
-                    flexDirection: 'row',
-                } : bgMedia ? {
-                    position: 'relative',
-                } : undefined}
+                aria-atomic="true"
             >
                 {/* Fondo multimedia (full) */}
                 {bgMedia && bgMedia.layout !== 'split' && (
@@ -432,32 +440,20 @@ export default function CoursePlayer({ course, slides, onClose, inline = false, 
                             <video
                                 src={bgMedia.url}
                                 autoPlay loop muted playsInline
-                                style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', zIndex: 0 }}
+                                className={styles.mediaFull}
                             />
                         ) : (
                             /* eslint-disable-next-line @next/next/no-img-element */
-                            <img src={bgMedia.url} alt="Fondo" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', zIndex: 0 }} />
+                            <img src={bgMedia.url} alt="Fondo" className={styles.mediaFull} />
                         )}
-                        <div style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.5)', backdropFilter: 'blur(10px)', WebkitBackdropFilter: 'blur(10px)', zIndex: 0 }} />
+                        <div className={styles.mediaOverlay} />
                     </>
                 )}
 
                 {/* Slide content con animación */}
                 <div
                     key={slideKey}
-                    className={`${styles.slideWrapper} ${slideAnimClass}`}
-                    style={bgMedia?.layout === 'split' ? {
-                        position: 'relative',
-                        zIndex: 1,
-                        width: '50%',
-                        flex: '1 1 50%',
-                        overflowY: 'auto',
-                        display: 'flex',
-                        flexDirection: 'column',
-                    } : bgMedia ? {
-                        position: 'relative',
-                        zIndex: 1,
-                    } : undefined}
+                    className={`${bgMedia?.layout === 'split' ? styles.slideWrapperSplit : (bgMedia ? styles.slideWrapperWithMedia : styles.slideWrapper)} ${slideAnimClass}`}
                 >
                     <SlideRenderer
                         slide={currentSlide}
@@ -469,18 +465,12 @@ export default function CoursePlayer({ course, slides, onClose, inline = false, 
 
                 {/* Media split */}
                 {bgMedia?.layout === 'split' && (
-                    <div style={{
-                        width: '50%',
-                        height: '100%',
-                        position: 'relative',
-                        borderLeft: '1px solid var(--border-color)',
-                        flexShrink: 0,
-                    }}>
+                    <div className={styles.mediaSplit}>
                         {bgMedia.type === 'video' ? (
-                            <video src={bgMedia.url} autoPlay loop muted playsInline style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover' }} />
+                            <video src={bgMedia.url} autoPlay loop muted playsInline className={styles.mediaFull} />
                         ) : (
                             /* eslint-disable-next-line @next/next/no-img-element */
-                            <img src={bgMedia.url} alt="Media adjunto" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover' }} />
+                            <img src={bgMedia.url} alt="Media adjunto" className={styles.mediaFull} />
                         )}
                     </div>
                 )}
@@ -491,12 +481,14 @@ export default function CoursePlayer({ course, slides, onClose, inline = false, 
                 <button
                     className={styles.navBtn}
                     onClick={goPrev}
-                    disabled={isFirst}
-                    aria-label="Slide anterior"
-                    aria-disabled={isFirst}
+                    disabled={current === 0}
+                    aria-disabled={current === 0}
+                    aria-label="Ir al slide anterior"
+                    aria-controls="course-slide-content"
+                    title="Anterior (Flecha Izquierda)"
                 >
-                    <IconArrowLeft size={16} aria-hidden="true" />
-                    <span>Anterior</span>
+                    <IconArrowLeft size={20} aria-hidden />
+                    <span>Atrás</span>
                 </button>
 
                 {total <= 12 && (
@@ -522,10 +514,12 @@ export default function CoursePlayer({ course, slides, onClose, inline = false, 
                 <button
                     className={`${styles.navBtn} ${styles.navBtnPrimary}`}
                     onClick={isLast ? handleFinish : goNext}
-                    aria-label={isLast ? 'Finalizar curso' : 'Siguiente slide'}
+                    aria-controls="course-slide-content"
+                    aria-label={current === total - 1 ? 'Finalizar curso' : 'Ir al siguiente slide'}
+                    title={current === total - 1 ? 'Finalizar' : 'Siguiente (Flecha Derecha ó Espacio)'}
                 >
-                    <span>{isLast ? 'Finalizar' : 'Siguiente'}</span>
-                    <IconArrowRight size={16} aria-hidden="true" />
+                    <span>{current === total - 1 ? 'Finalizar' : 'Siguiente'}</span>
+                    <IconArrowRight size={20} aria-hidden />
                 </button>
             </nav>
 

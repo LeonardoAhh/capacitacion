@@ -125,6 +125,7 @@ import {
     AiOutlineFullscreen,
     AiOutlineFullscreenExit,
     AiOutlineExport,
+    AiOutlineEllipsis,
 } from 'react-icons/ai';
 
 // ─────────────────────────────────────────────
@@ -259,6 +260,7 @@ export const IconSquare = AiOutlineCheckSquare; // alias (unchecked = mismo)
 export const IconGraduationCap = AiOutlineTrophy;      // alias educativo
 export const IconExpand = AiOutlineFullscreen;
 export const IconCompress = AiOutlineFullscreenExit;
+export const IconMoreHorizontal = AiOutlineEllipsis;
 
 // Específicos de tipos de slides
 export const IconSlideTitle = AiOutlineLayout;

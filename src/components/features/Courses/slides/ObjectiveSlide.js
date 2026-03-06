@@ -1,6 +1,7 @@
+import React from 'react';
 import styles from './slides.module.css';
 
-export default function ObjectiveSlide({ data, hasBgMedia }) {
+const ObjectiveSlide = React.memo(function ObjectiveSlide({ data, hasBgMedia }) {
     return (
         <article
             className={`${styles.slide} ${styles.objectiveSlide} ${hasBgMedia ? styles.slideOverBg : ''}`}
@@ -30,4 +31,6 @@ export default function ObjectiveSlide({ data, hasBgMedia }) {
             )}
         </article>
     );
-}
+});
+
+export default ObjectiveSlide;

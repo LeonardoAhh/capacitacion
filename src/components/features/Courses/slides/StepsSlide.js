@@ -1,4 +1,5 @@
 'use client';
+import React from 'react';
 /* eslint-disable @next/next/no-img-element */
 
 import { useState } from 'react';
@@ -10,7 +11,7 @@ import styles from './slides.module.css';
  *
  * @param {{ heading, steps: Array<{title, desc, image}> }} data
  */
-export default function StepsSlide({ data, hasBgMedia }) {
+const StepsSlide = React.memo(function StepsSlide({ data, hasBgMedia }) {
     const { heading, steps = [] } = data;
     const [lightboxSrc, setLightboxSrc] = useState(null);
 
@@ -114,4 +115,6 @@ export default function StepsSlide({ data, hasBgMedia }) {
             )}
         </article>
     );
-}
+});
+
+export default StepsSlide;
