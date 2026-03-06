@@ -1,9 +1,9 @@
-﻿'use client';
+'use client';
 
 import { useState, useCallback, useMemo, useEffect } from 'react';
 import Link from 'next/link';
 import { AnimatePresence } from 'framer-motion';
-import { Search, ArrowLeft, Shield } from 'lucide-react';
+import { Search, ArrowLeft, Shield, Users } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useRouter } from 'next/navigation';
 
@@ -24,6 +24,7 @@ import TrainingView from './components/views/TrainingView';
 import PromotionView from './components/views/PromotionView';
 import ILUOView from './components/views/ILUOView';
 import DocumentsView from './components/views/DocumentsView';
+import GroupReportModal from './components/GroupReportModal';
 
 // Styles
 import styles from './page.module.css';
@@ -41,6 +42,9 @@ export default function PerfilPage() {
     const [promotionRule, setPromotionRule] = useState(null);
     const [notFound, setNotFound] = useState(false);
     const [employeeGroups, setEmployeeGroups] = useState([]);
+    
+    // Group Report Modal State
+    const [isGroupModalOpen, setIsGroupModalOpen] = useState(false);
 
     // Auth
     const { user, loading: authLoading } = useAuth();
@@ -280,6 +284,16 @@ export default function PerfilPage() {
                                 {loading ? <div className={styles.spinner} aria-hidden="true" /> : 'Buscar'}
                             </button>
                         </div>
+                        
+                        <button 
+                            className={`${styles.searchPillBtn} ${styles.groupReportBtn}`}
+                            onClick={() => setIsGroupModalOpen(true)}
+                            title="Generar reporte grupal por Área/Puesto"
+                            style={{ marginLeft: '12px', display: 'flex', alignItems: 'center', gap: '8px' }}
+                        >
+                            <Users size={16} />
+                            <span className="hidden sm:inline">Reporte Grupal</span>
+                        </button>
                     </div>
 
                     {/* Live region for screen readers */}
@@ -390,6 +404,11 @@ export default function PerfilPage() {
                             </>
                         ) : null}
                     </main>
+                    
+                    <GroupReportModal 
+                        isOpen={isGroupModalOpen} 
+                        onClose={() => setIsGroupModalOpen(false)} 
+                    />
                 </div>
             </div>
         </AdminLayout>

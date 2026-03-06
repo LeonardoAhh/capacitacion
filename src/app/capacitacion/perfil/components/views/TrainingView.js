@@ -4,43 +4,27 @@ import { CheckCircle, XCircle, Clock, BarChart, Download } from 'lucide-react';
 import BackButton from '@/components/ui/BackButton/BackButton';
 import styles from './TrainingView.module.css';
 
-function generateTrainingReport(employee, trainingStats, complianceValue) {
-    const now = new Date().toLocaleDateString('es-MX', {
-        year: 'numeric', month: 'long', day: 'numeric'
-    });
+import { generateTrainingReportHTML } from '@/utils/pdfGenerator';
 
-    const rowsApproved = trainingStats.approved.map(c => `
-        <tr>
-            <td>${c.name || '—'}</td>
-            <td class="score approved">${c.score}%</td>
-            <td>${c.date ? new Date(c.date).toLocaleDateString('es-MX') : '—'}</td>
-            <td><span class="badge badge-green">Aprobado</span></td>
-        </tr>`).join('');
+export default function TrainingView({ trainingStats, matrixCompliance, onBack, employee }) {
 
-    const rowsFailed = trainingStats.failed.map(c => `
-        <tr>
-            <td>${c.name || '—'}</td>
-            <td class="score failed">${c.score}%</td>
-            <td>${c.date ? new Date(c.date).toLocaleDateString('es-MX') : '—'}</td>
-            <td><span class="badge badge-red">Reprobado</span></td>
-        </tr>`).join('');
+    const complianceValue = typeof matrixCompliance === 'object'
+        ? (matrixCompliance?.compliancePercentage ?? 0)
+        : (matrixCompliance ?? 0);
 
-    const rowsPending = trainingStats.pending.map(c => `
-        <tr>
-            <td>${typeof c === 'string' ? c : c.name || '—'}</td>
-            <td class="score pending">—</td>
-            <td>—</td>
-            <td><span class="badge badge-yellow">Pendiente</span></td>
-        </tr>`).join('');
-
-    return `<!DOCTYPE html>
+    const handleDownload = useCallback(() => {
+        const htmlContent = generateTrainingReportHTML(employee, trainingStats, complianceValue);
+        const win = window.open('', '_blank', 'width=900,height=700');
+        if (!win) return;
+        win.document.write(`<!DOCTYPE html>
 <html lang="es">
 <head>
 <meta charset="UTF-8"/>
 <title>Historial de Capacitación — ${employee?.name || 'Empleado'}</title>
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; }
-  body { font-family: 'Segoe UI', Arial, sans-serif; color: #1e293b; background: #fff; padding: 32px; }
+  body { font-family: 'Segoe UI', Arial, sans-serif; color: #1e293b; background: #fff; }
+  .report-page { padding: 32px; }
   header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 28px; padding-bottom: 20px; border-bottom: 2px solid #e2e8f0; }
   .logo { font-size: 1.4rem; font-weight: 800; color: #3b82f6; letter-spacing: -0.5px; }
   .emp-info h1 { font-size: 1.5rem; font-weight: 700; margin-bottom: 4px; }
@@ -70,53 +54,8 @@ function generateTrainingReport(employee, trainingStats, complianceValue) {
 </style>
 </head>
 <body>
-<header>
-  <div class="emp-info">
-    <div class="logo">ViñaPlastic — Capacitación</div>
-    <h1 style="margin-top:8px">${employee?.name || 'N/A'}</h1>
-    <p>ID: ${employee?.employeeId || employee?.id || '—'} &nbsp;|&nbsp; Puesto: ${employee?.position || '—'}</p>
-    <p>Área: ${employee?.area || '—'} &nbsp;|&nbsp; Turno: ${employee?.shift || '—'}</p>
-  </div>
-  <div class="meta">
-    <div>Reporte de Capacitación</div>
-    <div style="margin-top:4px">${now}</div>
-  </div>
-</header>
-
-<div class="stats">
-  <div class="stat green"><div class="num">${trainingStats.approved.length}</div><div class="lbl">Aprobados</div></div>
-  <div class="stat red">  <div class="num">${trainingStats.failed.length}</div><div class="lbl">Reprobados</div></div>
-  <div class="stat yellow"><div class="num">${trainingStats.pending.length}</div><div class="lbl">Pendientes</div></div>
-  <div class="stat purple"><div class="num">${complianceValue}%</div><div class="lbl">Cumplimiento</div></div>
-</div>
-
-${rowsApproved ? `<h3>✅ Cursos Aprobados</h3>
-<table><thead><tr><th>Curso</th><th>Calificación</th><th>Fecha</th><th>Estado</th></tr></thead>
-<tbody>${rowsApproved}</tbody></table>` : ''}
-
-${rowsFailed ? `<h3>❌ Cursos Reprobados</h3>
-<table><thead><tr><th>Curso</th><th>Calificación</th><th>Fecha</th><th>Estado</th></tr></thead>
-<tbody>${rowsFailed}</tbody></table>` : ''}
-
-${rowsPending ? `<h3>⏳ Cursos Pendientes</h3>
-<table><thead><tr><th>Curso</th><th>Calificación</th><th>Fecha</th><th>Estado</th></tr></thead>
-<tbody>${rowsPending}</tbody></table>` : ''}
-
-<footer>Documento Interno Capacitación — ${now}</footer>
-</body></html>`;
-}
-
-export default function TrainingView({ trainingStats, matrixCompliance, onBack, employee }) {
-
-    const complianceValue = typeof matrixCompliance === 'object'
-        ? (matrixCompliance?.compliancePercentage ?? 0)
-        : (matrixCompliance ?? 0);
-
-    const handleDownload = useCallback(() => {
-        const html = generateTrainingReport(employee, trainingStats, complianceValue);
-        const win = window.open('', '_blank', 'width=900,height=700');
-        if (!win) return;
-        win.document.write(html);
+${htmlContent}
+</body></html>`);
         win.document.close();
         win.focus();
         setTimeout(() => win.print(), 500);
