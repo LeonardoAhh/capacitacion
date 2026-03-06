@@ -53,8 +53,9 @@
 /* ─── Layout base ─────────────────────────────────────────────────────────── */
 .main {
     min-height: 100vh;
-    padding: var(--spacing-xl) 0 6rem;
     background: transparent;
+    position: relative;
+    overflow-x: hidden;
 }
 
 .profileContainer {
@@ -64,10 +65,19 @@
     z-index: 9999;
 }
 
+.pageWrapper {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-height: calc(100vh - 80px);
+    width: 100%;
+}
+
 .container {
-    max-width: 860px;
-    margin: 0 auto;
-    padding: 0 var(--spacing-lg);
+    width: 100%;
+    margin: 0;
+    padding: var(--spacing-md) var(--spacing-lg);
+    flex: 1;
 }
 
 .centeredLoader {

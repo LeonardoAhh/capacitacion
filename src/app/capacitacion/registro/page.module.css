@@ -76,7 +76,7 @@
 .container {
     position: relative;
     z-index: 10;
-    max-width: 960px;
+    max-width: 100%;
     margin: 0 auto;
     padding: var(--spacing-xl);
 }

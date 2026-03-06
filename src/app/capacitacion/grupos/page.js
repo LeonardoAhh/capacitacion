@@ -7,7 +7,6 @@ import {
     Search, Trash2, Edit2, X, Check, Shield
 } from 'lucide-react';
 import AdminLayout from '@/components/layout/AdminLayout/AdminLayout';
-import BackButton from '@/components/ui/BackButton/BackButton';
 import { Button } from '@/components/ui/Button/Button';
 import { useToast } from '@/components/ui/Toast/Toast';
 import { useAuth } from '@/contexts/AuthContext';
@@ -36,7 +35,7 @@ const GROUP_COLORS = [
 
 const EMPTY_FORM = { name: '', description: '', color: 'blue', requiredCourses: [] };
 
-// Normaliza strings para comparaciÃ³n (sin tildes, uppercase)
+// Normaliza strings para comparación (sin tildes, uppercase)
 const normalize = (s) =>
     (s || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toUpperCase().trim();
 
@@ -67,7 +66,7 @@ export default function GruposPage() {
     const [memberSearchResult, setMemberSearchResult] = useState(null);
     const [memberSearching, setMemberSearching] = useState(false);
 
-    // â€” Modal: confirmaciÃ³n de borrado
+    // â€” Modal: confirmación de borrado
     const [confirmDelete, setConfirmDelete] = useState(null); // { type: 'group'|'member', groupId, empId? }
 
     // â”€â”€ Auth guard â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
@@ -231,7 +230,7 @@ export default function GruposPage() {
         }
     };
 
-    // â”€â”€ GestiÃ³n de miembros â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    // â”€â”€ Gestión de miembros â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     const openAddMember = (groupId) => {
         setMemberGroupId(groupId);
         setMemberSearch('');
@@ -278,7 +277,7 @@ export default function GruposPage() {
             await updateDoc(doc(db, 'groups', memberGroupId), { members: newMembers });
             toast.success('Agregado', `${emp.name} agregado al grupo`);
             setShowMemberModal(false);
-            // Invalidar cachÃ© del grupo afectado
+            // Invalidar caché del grupo afectado
             setMemberDetails((prev) => {
                 const next = { ...prev };
                 delete next[memberGroupId];
@@ -325,444 +324,445 @@ export default function GruposPage() {
     return (
         <>
             <AdminLayout title="Grupos">
-                <div className={styles.container}>
+                <div className={styles.pageWrapper}>
+                    <div className={styles.container}>
 
-                    {/* Encabezado */}
-                    <div className={styles.header}>
-                        <div className={styles.headerLeft}>
-                            <BackButton href="/dashboard" />
-                            <div>
-                                <h1 className={styles.title}>Grupos y Certificaciones</h1>
-                                <p className={styles.subtitle}>
-                                    Gestiona roles transversales: Auditores, Brigadas, ComitÃ©s y mÃ¡s
-                                </p>
+                        {/* Encabezado */}
+                        <div className={styles.header}>
+                            <div className={styles.headerLeft}>
+                                <div>
+                                    <h1 className={styles.title}>Grupos y Certificaciones</h1>
+                                    <p className={styles.subtitle}>
+                                        Gestiona roles transversales: Auditores, Brigadas, Comités y más
+                                    </p>
+                                </div>
                             </div>
-                        </div>
-                        {canWrite() && (
-                            <Button variant="primary" onClick={openCreateGroup}>
-                                <Plus size={18} /> Nuevo Grupo
-                            </Button>
-                        )}
-                    </div>
-
-                    {/* Contenido */}
-                    {loading ? (
-                        <div className={styles.centeredLoader}><div className="spinner" /></div>
-                    ) : groups.length === 0 ? (
-                        <div className={styles.emptyState}>
-                            <Shield size={52} strokeWidth={1.2} className={styles.emptyIcon} />
-                            <h3>Sin grupos creados</h3>
-                            <p>Crea tu primer grupo, por ejemplo: <strong>AUDITORES INTERNOS</strong></p>
                             {canWrite() && (
                                 <Button variant="primary" onClick={openCreateGroup}>
-                                    <Plus size={16} /> Crear Grupo
+                                    <Plus size={18} /> Nuevo Grupo
                                 </Button>
                             )}
                         </div>
-                    ) : (
-                        <ul className={styles.groupsList} role="list">
-                            {groups.map((group) => {
-                                const isExpanded = expandedGroup === group.id;
-                                const members = memberDetails[group.id] ?? [];
-                                const totalMembers = (group.members ?? []).length;
 
-                                return (
-                                    <motion.li
-                                        key={group.id}
-                                        className={styles.groupCard}
-                                        data-color={group.color ?? 'blue'}
-                                        initial={{ opacity: 0, y: 8 }}
-                                        animate={{ opacity: 1, y: 0 }}
-                                        layout
-                                    >
-                                        {/* Cabecera del grupo */}
-                                        <div
-                                            className={styles.groupHeader}
-                                            onClick={() => handleExpand(group)}
-                                            role="button"
-                                            tabIndex={0}
-                                            aria-expanded={isExpanded}
-                                            onKeyDown={(e) => e.key === 'Enter' && handleExpand(group)}
+                        {/* Contenido */}
+                        {loading ? (
+                            <div className={styles.centeredLoader}><div className="spinner" /></div>
+                        ) : groups.length === 0 ? (
+                            <div className={styles.emptyState}>
+                                <Shield size={52} strokeWidth={1.2} className={styles.emptyIcon} />
+                                <h3>Sin grupos creados</h3>
+                                <p>Crea tu primer grupo, por ejemplo: <strong>AUDITORES INTERNOS</strong></p>
+                                {canWrite() && (
+                                    <Button variant="primary" onClick={openCreateGroup}>
+                                        <Plus size={16} /> Crear Grupo
+                                    </Button>
+                                )}
+                            </div>
+                        ) : (
+                            <ul className={styles.groupsList} role="list">
+                                {groups.map((group) => {
+                                    const isExpanded = expandedGroup === group.id;
+                                    const members = memberDetails[group.id] ?? [];
+                                    const totalMembers = (group.members ?? []).length;
+
+                                    return (
+                                        <motion.li
+                                            key={group.id}
+                                            className={styles.groupCard}
+                                            data-color={group.color ?? 'blue'}
+                                            initial={{ opacity: 0, y: 8 }}
+                                            animate={{ opacity: 1, y: 0 }}
+                                            layout
                                         >
-                                            <div className={styles.groupIconWrap}>
-                                                <Users size={22} />
-                                            </div>
+                                            {/* Cabecera del grupo */}
+                                            <div
+                                                className={styles.groupHeader}
+                                                onClick={() => handleExpand(group)}
+                                                role="button"
+                                                tabIndex={0}
+                                                aria-expanded={isExpanded}
+                                                onKeyDown={(e) => e.key === 'Enter' && handleExpand(group)}
+                                            >
+                                                <div className={styles.groupIconWrap}>
+                                                    <Users size={22} />
+                                                </div>
 
-                                            <div className={styles.groupInfo}>
-                                                <span className={styles.groupName}>{group.name}</span>
-                                                {group.description && (
-                                                    <span className={styles.groupDesc}>{group.description}</span>
-                                                )}
-                                                <div className={styles.groupMeta}>
-                                                    <span className={styles.metaPill}>
-                                                        <Users size={11} />
-                                                        {totalMembers} miembro{totalMembers !== 1 ? 's' : ''}
-                                                    </span>
-                                                    <span className={styles.metaPillNeutral}>
-                                                        <BookOpen size={11} />
-                                                        {(group.requiredCourses ?? []).length} cursos requeridos
+                                                <div className={styles.groupInfo}>
+                                                    <span className={styles.groupName}>{group.name}</span>
+                                                    {group.description && (
+                                                        <span className={styles.groupDesc}>{group.description}</span>
+                                                    )}
+                                                    <div className={styles.groupMeta}>
+                                                        <span className={styles.metaPill}>
+                                                            <Users size={11} />
+                                                            {totalMembers} miembro{totalMembers !== 1 ? 's' : ''}
+                                                        </span>
+                                                        <span className={styles.metaPillNeutral}>
+                                                            <BookOpen size={11} />
+                                                            {(group.requiredCourses ?? []).length} cursos requeridos
+                                                        </span>
+                                                    </div>
+                                                </div>
+
+                                                {/* Acciones */}
+                                                <div
+                                                    className={styles.groupActions}
+                                                    onClick={(e) => e.stopPropagation()}
+                                                >
+                                                    {canWrite() && (
+                                                        <>
+                                                            <button
+                                                                className={styles.iconBtn}
+                                                                onClick={() => openEditGroup(group)}
+                                                                aria-label="Editar grupo"
+                                                                title="Editar grupo"
+                                                            >
+                                                                <Edit2 size={15} />
+                                                            </button>
+                                                            <button
+                                                                className={`${styles.iconBtn} ${styles.iconBtnDanger}`}
+                                                                onClick={() =>
+                                                                    setConfirmDelete({ type: 'group', groupId: group.id })
+                                                                }
+                                                                aria-label="Eliminar grupo"
+                                                                title="Eliminar grupo"
+                                                            >
+                                                                <Trash2 size={15} />
+                                                            </button>
+                                                        </>
+                                                    )}
+                                                    <span className={styles.chevron} aria-hidden>
+                                                        {isExpanded ? <ChevronUp size={18} /> : <ChevronDown size={18} />}
                                                     </span>
                                                 </div>
                                             </div>
 
-                                            {/* Acciones */}
-                                            <div
-                                                className={styles.groupActions}
-                                                onClick={(e) => e.stopPropagation()}
-                                            >
-                                                {canWrite() && (
-                                                    <>
-                                                        <button
-                                                            className={styles.iconBtn}
-                                                            onClick={() => openEditGroup(group)}
-                                                            aria-label="Editar grupo"
-                                                            title="Editar grupo"
-                                                        >
-                                                            <Edit2 size={15} />
-                                                        </button>
-                                                        <button
-                                                            className={`${styles.iconBtn} ${styles.iconBtnDanger}`}
-                                                            onClick={() =>
-                                                                setConfirmDelete({ type: 'group', groupId: group.id })
-                                                            }
-                                                            aria-label="Eliminar grupo"
-                                                            title="Eliminar grupo"
-                                                        >
-                                                            <Trash2 size={15} />
-                                                        </button>
-                                                    </>
-                                                )}
-                                                <span className={styles.chevron} aria-hidden>
-                                                    {isExpanded ? <ChevronUp size={18} /> : <ChevronDown size={18} />}
-                                                </span>
-                                            </div>
-                                        </div>
-
-                                        {/* Detalle expandible */}
-                                        <AnimatePresence initial={false}>
-                                            {isExpanded && (
-                                                <motion.div
-                                                    key="body"
-                                                    initial={{ opacity: 0, height: 0 }}
-                                                    animate={{ opacity: 1, height: 'auto' }}
-                                                    exit={{ opacity: 0, height: 0 }}
-                                                    transition={{ duration: 0.22 }}
-                                                    className={styles.groupBody}
-                                                >
-                                                    {/* Cursos requeridos */}
-                                                    {(group.requiredCourses ?? []).length > 0 && (
-                                                        <div className={styles.section}>
-                                                            <h4 className={styles.sectionTitle}>
-                                                                <BookOpen size={14} />
-                                                                Cursos requeridos
-                                                            </h4>
-                                                            <div className={styles.courseChips}>
-                                                                {group.requiredCourses.map((c, i) => (
-                                                                    <span key={i} className={styles.courseChip}>{c}</span>
-                                                                ))}
+                                            {/* Detalle expandible */}
+                                            <AnimatePresence initial={false}>
+                                                {isExpanded && (
+                                                    <motion.div
+                                                        key="body"
+                                                        initial={{ opacity: 0, height: 0 }}
+                                                        animate={{ opacity: 1, height: 'auto' }}
+                                                        exit={{ opacity: 0, height: 0 }}
+                                                        transition={{ duration: 0.22 }}
+                                                        className={styles.groupBody}
+                                                    >
+                                                        {/* Cursos requeridos */}
+                                                        {(group.requiredCourses ?? []).length > 0 && (
+                                                            <div className={styles.section}>
+                                                                <h4 className={styles.sectionTitle}>
+                                                                    <BookOpen size={14} />
+                                                                    Cursos requeridos
+                                                                </h4>
+                                                                <div className={styles.courseChips}>
+                                                                    {group.requiredCourses.map((c, i) => (
+                                                                        <span key={i} className={styles.courseChip}>{c}</span>
+                                                                    ))}
+                                                                </div>
                                                             </div>
-                                                        </div>
-                                                    )}
+                                                        )}
 
-                                                    {/* Miembros */}
-                                                    <div className={styles.section}>
-                                                        <div className={styles.sectionRow}>
-                                                            <h4 className={styles.sectionTitle}>
-                                                                <Users size={14} />
-                                                                Miembros ({totalMembers})
-                                                            </h4>
-                                                            {canWrite() && (
-                                                                <button
-                                                                    className={styles.addMemberBtn}
-                                                                    onClick={() => openAddMember(group.id)}
-                                                                >
-                                                                    <Plus size={13} /> Agregar
-                                                                </button>
+                                                        {/* Miembros */}
+                                                        <div className={styles.section}>
+                                                            <div className={styles.sectionRow}>
+                                                                <h4 className={styles.sectionTitle}>
+                                                                    <Users size={14} />
+                                                                    Miembros ({totalMembers})
+                                                                </h4>
+                                                                {canWrite() && (
+                                                                    <button
+                                                                        className={styles.addMemberBtn}
+                                                                        onClick={() => openAddMember(group.id)}
+                                                                    >
+                                                                        <Plus size={13} /> Agregar
+                                                                    </button>
+                                                                )}
+                                                            </div>
+
+                                                            {loadingMembers ? (
+                                                                <div className={styles.centeredLoader} style={{ padding: '1rem' }}>
+                                                                    <div className="spinner" />
+                                                                </div>
+                                                            ) : members.length === 0 ? (
+                                                                <p className={styles.emptyMembers}>
+                                                                    No hay miembros en este grupo aún.
+                                                                </p>
+                                                            ) : (
+                                                                <ul className={styles.membersList} role="list">
+                                                                    {members.map((emp) => {
+                                                                        const empId = emp.employeeId ?? emp.id;
+                                                                        const comp = getMemberCompliance(
+                                                                            emp,
+                                                                            group.requiredCourses ?? []
+                                                                        );
+                                                                        const pctClass =
+                                                                            comp.pct >= 100
+                                                                                ? styles.barSuccess
+                                                                                : comp.pct >= 50
+                                                                                    ? styles.barPartial
+                                                                                    : styles.barLow;
+
+                                                                        return (
+                                                                            <li key={empId} className={styles.memberRow}>
+                                                                                <div className={styles.memberAvatar} data-color={group.color ?? 'blue'}>
+                                                                                    {emp.notFound ? '?' : (emp.name ?? '?')[0].toUpperCase()}
+                                                                                </div>
+
+                                                                                <div className={styles.memberInfo}>
+                                                                                    <span className={styles.memberName}>
+                                                                                        {emp.notFound
+                                                                                            ? `ID ${empId} (no encontrado)`
+                                                                                            : emp.name}
+                                                                                    </span>
+                                                                                    {!emp.notFound && (
+                                                                                        <span className={styles.memberMeta}>
+                                                                                            {emp.position ?? 'â€”'}
+                                                                                        </span>
+                                                                                    )}
+                                                                                </div>
+
+                                                                                {!emp.notFound && (group.requiredCourses ?? []).length > 0 && (
+                                                                                    <div className={styles.complianceWrap}>
+                                                                                        <div className={styles.complianceBar}>
+                                                                                            <div
+                                                                                                className={`${styles.complianceFill} ${pctClass}`}
+                                                                                                style={{ width: `${comp.pct}%` }}
+                                                                                            />
+                                                                                        </div>
+                                                                                        <span className={`${styles.compliancePct} ${pctClass}`}>
+                                                                                            {comp.approved}/{comp.total}
+                                                                                        </span>
+                                                                                    </div>
+                                                                                )}
+
+                                                                                {canWrite() && (
+                                                                                    <button
+                                                                                        className={styles.removeMemberBtn}
+                                                                                        onClick={() =>
+                                                                                            setConfirmDelete({
+                                                                                                type: 'member',
+                                                                                                groupId: group.id,
+                                                                                                empId,
+                                                                                                empName: emp.name ?? empId,
+                                                                                            })
+                                                                                        }
+                                                                                        aria-label={`Remover ${emp.name ?? empId} del grupo`}
+                                                                                        title="Remover del grupo"
+                                                                                    >
+                                                                                        <X size={13} />
+                                                                                    </button>
+                                                                                )}
+                                                                            </li>
+                                                                        );
+                                                                    })}
+                                                                </ul>
                                                             )}
                                                         </div>
+                                                    </motion.div>
+                                                )}
+                                            </AnimatePresence>
+                                        </motion.li>
+                                    );
+                                })}
+                            </ul>
+                        )}
+                    </div>
 
-                                                        {loadingMembers ? (
-                                                            <div className={styles.centeredLoader} style={{ padding: '1rem' }}>
-                                                                <div className="spinner" />
-                                                            </div>
-                                                        ) : members.length === 0 ? (
-                                                            <p className={styles.emptyMembers}>
-                                                                No hay miembros en este grupo aÃºn.
-                                                            </p>
-                                                        ) : (
-                                                            <ul className={styles.membersList} role="list">
-                                                                {members.map((emp) => {
-                                                                    const empId = emp.employeeId ?? emp.id;
-                                                                    const comp = getMemberCompliance(
-                                                                        emp,
-                                                                        group.requiredCourses ?? []
-                                                                    );
-                                                                    const pctClass =
-                                                                        comp.pct >= 100
-                                                                            ? styles.barSuccess
-                                                                            : comp.pct >= 50
-                                                                                ? styles.barPartial
-                                                                                : styles.barLow;
+                    {/* ——— Modal: crear / editar grupo —————————————————————————————————————— */}
+                    <Dialog open={showGroupModal} onOpenChange={setShowGroupModal}>
+                        <DialogHeader>
+                            <DialogTitle>{editingGroup ? 'Editar Grupo' : 'Nuevo Grupo'}</DialogTitle>
+                            <DialogClose onClose={() => setShowGroupModal(false)} />
+                        </DialogHeader>
+                        <DialogBody>
+                            <div className={`${styles.formStack} ${styles.colorTheme}`} data-color={groupForm.color}>
 
-                                                                    return (
-                                                                        <li key={empId} className={styles.memberRow}>
-                                                                            <div className={styles.memberAvatar} data-color={group.color ?? 'blue'}>
-                                                                                {emp.notFound ? '?' : (emp.name ?? '?')[0].toUpperCase()}
-                                                                            </div>
-
-                                                                            <div className={styles.memberInfo}>
-                                                                                <span className={styles.memberName}>
-                                                                                    {emp.notFound
-                                                                                        ? `ID ${empId} (no encontrado)`
-                                                                                        : emp.name}
-                                                                                </span>
-                                                                                {!emp.notFound && (
-                                                                                    <span className={styles.memberMeta}>
-                                                                                        {emp.position ?? 'â€”'}
-                                                                                    </span>
-                                                                                )}
-                                                                            </div>
-
-                                                                            {!emp.notFound && (group.requiredCourses ?? []).length > 0 && (
-                                                                                <div className={styles.complianceWrap}>
-                                                                                    <div className={styles.complianceBar}>
-                                                                                        <div
-                                                                                            className={`${styles.complianceFill} ${pctClass}`}
-                                                                                            style={{ width: `${comp.pct}%` }}
-                                                                                        />
-                                                                                    </div>
-                                                                                    <span className={`${styles.compliancePct} ${pctClass}`}>
-                                                                                        {comp.approved}/{comp.total}
-                                                                                    </span>
-                                                                                </div>
-                                                                            )}
-
-                                                                            {canWrite() && (
-                                                                                <button
-                                                                                    className={styles.removeMemberBtn}
-                                                                                    onClick={() =>
-                                                                                        setConfirmDelete({
-                                                                                            type: 'member',
-                                                                                            groupId: group.id,
-                                                                                            empId,
-                                                                                            empName: emp.name ?? empId,
-                                                                                        })
-                                                                                    }
-                                                                                    aria-label={`Remover ${emp.name ?? empId} del grupo`}
-                                                                                    title="Remover del grupo"
-                                                                                >
-                                                                                    <X size={13} />
-                                                                                </button>
-                                                                            )}
-                                                                        </li>
-                                                                    );
-                                                                })}
-                                                            </ul>
-                                                        )}
-                                                    </div>
-                                                </motion.div>
-                                            )}
-                                        </AnimatePresence>
-                                    </motion.li>
-                                );
-                            })}
-                        </ul>
-                    )}
-                </div>
-
-                {/* ——— Modal: crear / editar grupo —————————————————————————————————————— */}
-                <Dialog open={showGroupModal} onOpenChange={setShowGroupModal}>
-                    <DialogHeader>
-                        <DialogTitle>{editingGroup ? 'Editar Grupo' : 'Nuevo Grupo'}</DialogTitle>
-                        <DialogClose onClose={() => setShowGroupModal(false)} />
-                    </DialogHeader>
-                    <DialogBody>
-                        <div className={`${styles.formStack} ${styles.colorTheme}`} data-color={groupForm.color}>
-
-                            {/* Nombre */}
-                            <div className={styles.formGroup}>
-                                <label htmlFor="gp-name" className={styles.label}>Nombre *</label>
-                                <input
-                                    id="gp-name"
-                                    type="text"
-                                    value={groupForm.name}
-                                    onChange={(e) => setGroupForm((f) => ({ ...f, name: e.target.value }))}
-                                    placeholder="Ej. AUDITORES INTERNOS"
-                                    className={styles.input}
-                                    autoFocus
-                                />
-                            </div>
-
-                            {/* DescripciÃ³n */}
-                            <div className={styles.formGroup}>
-                                <label htmlFor="gp-desc" className={styles.label}>DescripciÃ³n (opcional)</label>
-                                <input
-                                    id="gp-desc"
-                                    type="text"
-                                    value={groupForm.description}
-                                    onChange={(e) => setGroupForm((f) => ({ ...f, description: e.target.value }))}
-                                    placeholder="Ej. Auditores del SGI certificados internamente"
-                                    className={styles.input}
-                                />
-                            </div>
-
-                            {/* Color */}
-                            <div className={styles.formGroup}>
-                                <span className={styles.label}>Color de identificaciÃ³n</span>
-                                <div className={styles.colorPicker} role="radiogroup" aria-label="Color">
-                                    {GROUP_COLORS.map((c) => (
-                                        <button
-                                            key={c.id}
-                                            type="button"
-                                            role="radio"
-                                            aria-checked={groupForm.color === c.id}
-                                            aria-label={c.label}
-                                            data-color={c.id}
-                                            className={`${styles.colorSwatch} ${groupForm.color === c.id ? styles.colorSelected : ''}`}
-                                            onClick={() => setGroupForm((f) => ({ ...f, color: c.id }))}
-                                            title={c.label}
-                                        >
-                                            {groupForm.color === c.id && <Check size={13} strokeWidth={3} />}
-                                        </button>
-                                    ))}
-                                </div>
-                            </div>
-
-                            {/* Cursos */}
-                            <div className={styles.formGroup}>
-                                <span className={styles.label}>
-                                    Cursos requeridos ({groupForm.requiredCourses.length})
-                                </span>
-                                <div className={styles.courseInputRow}>
+                                {/* Nombre */}
+                                <div className={styles.formGroup}>
+                                    <label htmlFor="gp-name" className={styles.label}>Nombre *</label>
                                     <input
+                                        id="gp-name"
                                         type="text"
-                                        value={courseInput}
-                                        onChange={(e) => setCourseInput(e.target.value)}
-                                        onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); handleAddCourse(); } }}
-                                        placeholder="Nombre del curso â€” Enter para agregar"
+                                        value={groupForm.name}
+                                        onChange={(e) => setGroupForm((f) => ({ ...f, name: e.target.value }))}
+                                        placeholder="Ej. AUDITORES INTERNOS"
+                                        className={styles.input}
+                                        autoFocus
+                                    />
+                                </div>
+
+                                {/* Descripción */}
+                                <div className={styles.formGroup}>
+                                    <label htmlFor="gp-desc" className={styles.label}>Descripción (opcional)</label>
+                                    <input
+                                        id="gp-desc"
+                                        type="text"
+                                        value={groupForm.description}
+                                        onChange={(e) => setGroupForm((f) => ({ ...f, description: e.target.value }))}
+                                        placeholder="Ej. Auditores del SGI certificados internamente"
                                         className={styles.input}
                                     />
-                                    <button
-                                        type="button"
-                                        className={`${styles.addCourseBtn} colorBtn-${groupForm.color}`}
-                                        onClick={handleAddCourse}
-                                        aria-label="Agregar curso"
-                                        data-color={groupForm.color}
-                                    >
-                                        <Plus size={17} />
-                                    </button>
                                 </div>
-                                {groupForm.requiredCourses.length > 0 && (
-                                    <div className={styles.chipGrid}>
-                                        {groupForm.requiredCourses.map((c, i) => (
-                                            <span key={i} className={styles.chip} data-color={groupForm.color}>
-                                                {c}
-                                                <button
-                                                    type="button"
-                                                    onClick={() => handleRemoveCourse(c)}
-                                                    aria-label={`Remover ${c}`}
-                                                >Ã—</button>
-                                            </span>
+
+                                {/* Color */}
+                                <div className={styles.formGroup}>
+                                    <span className={styles.label}>Color de identificación</span>
+                                    <div className={styles.colorPicker} role="radiogroup" aria-label="Color">
+                                        {GROUP_COLORS.map((c) => (
+                                            <button
+                                                key={c.id}
+                                                type="button"
+                                                role="radio"
+                                                aria-checked={groupForm.color === c.id}
+                                                aria-label={c.label}
+                                                data-color={c.id}
+                                                className={`${styles.colorSwatch} ${groupForm.color === c.id ? styles.colorSelected : ''}`}
+                                                onClick={() => setGroupForm((f) => ({ ...f, color: c.id }))}
+                                                title={c.label}
+                                            >
+                                                {groupForm.color === c.id && <Check size={13} strokeWidth={3} />}
+                                            </button>
                                         ))}
+                                    </div>
+                                </div>
+
+                                {/* Cursos */}
+                                <div className={styles.formGroup}>
+                                    <span className={styles.label}>
+                                        Cursos requeridos ({groupForm.requiredCourses.length})
+                                    </span>
+                                    <div className={styles.courseInputRow}>
+                                        <input
+                                            type="text"
+                                            value={courseInput}
+                                            onChange={(e) => setCourseInput(e.target.value)}
+                                            onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); handleAddCourse(); } }}
+                                            placeholder="Nombre del curso â€” Enter para agregar"
+                                            className={styles.input}
+                                        />
+                                        <button
+                                            type="button"
+                                            className={`${styles.addCourseBtn} colorBtn-${groupForm.color}`}
+                                            onClick={handleAddCourse}
+                                            aria-label="Agregar curso"
+                                            data-color={groupForm.color}
+                                        >
+                                            <Plus size={17} />
+                                        </button>
+                                    </div>
+                                    {groupForm.requiredCourses.length > 0 && (
+                                        <div className={styles.chipGrid}>
+                                            {groupForm.requiredCourses.map((c, i) => (
+                                                <span key={i} className={styles.chip} data-color={groupForm.color}>
+                                                    {c}
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => handleRemoveCourse(c)}
+                                                        aria-label={`Remover ${c}`}
+                                                    >Ã—</button>
+                                                </span>
+                                            ))}
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
+                        </DialogBody>
+                        <DialogFooter>
+                            <Button variant="secondary" onClick={() => setShowGroupModal(false)}>Cancelar</Button>
+                            <Button
+                                variant="primary"
+                                onClick={handleSaveGroup}
+                                disabled={saving}
+                                data-color={groupForm.color}
+                            >
+                                {saving ? 'Guardando…' : editingGroup ? 'Guardar Cambios' : 'Crear Grupo'}
+                            </Button>
+                        </DialogFooter>
+                    </Dialog>
+
+                    {/* Modal: agregar miembro */}
+                    <Dialog open={showMemberModal} onOpenChange={setShowMemberModal}>
+                        <DialogHeader>
+                            <DialogTitle>Agregar Miembro al Grupo</DialogTitle>
+                            <DialogClose onClose={() => setShowMemberModal(false)} />
+                        </DialogHeader>
+                        <DialogBody>
+                            <div className={styles.formStack}>
+                                <p className={styles.hint}>Busca al empleado por su número de ID</p>
+                                <div className={styles.memberSearchRow}>
+                                    <input
+                                        type="text"
+                                        value={memberSearch}
+                                        onChange={(e) => setMemberSearch(e.target.value)}
+                                        onKeyDown={(e) => { if (e.key === 'Enter') handleSearchMember(); }}
+                                        placeholder="Número de empleado (ej. 4059)"
+                                        className={styles.input}
+                                        autoFocus
+                                    />
+                                    <Button
+                                        variant="primary"
+                                        onClick={handleSearchMember}
+                                        disabled={memberSearching}
+                                        aria-label="Buscar"
+                                    >
+                                        {memberSearching ? '…' : <Search size={16} />}
+                                    </Button>
+                                </div>
+
+                                {memberSearchResult && (
+                                    <div className={styles.memberResultCard}>
+                                        <div className={styles.memberAvatar} data-color="blue">
+                                            {(memberSearchResult.name ?? '?')[0].toUpperCase()}
+                                        </div>
+                                        <div className={styles.memberInfo}>
+                                            <strong className={styles.memberName}>{memberSearchResult.name}</strong>
+                                            <span className={styles.memberMeta}>
+                                                {memberSearchResult.position ?? '—'}
+                                            </span>
+                                            <span className={styles.memberMeta}>
+                                                ID: {memberSearchResult.employeeId ?? memberSearchResult.id}
+                                            </span>
+                                        </div>
+                                        <Button variant="primary" onClick={() => handleAddMember(memberSearchResult)}>
+                                            <Plus size={15} /> Agregar
+                                        </Button>
                                     </div>
                                 )}
                             </div>
-                        </div>
-                    </DialogBody>
-                    <DialogFooter>
-                        <Button variant="secondary" onClick={() => setShowGroupModal(false)}>Cancelar</Button>
-                        <Button
-                            variant="primary"
-                            onClick={handleSaveGroup}
-                            disabled={saving}
-                            data-color={groupForm.color}
-                        >
-                            {saving ? 'Guardando…' : editingGroup ? 'Guardar Cambios' : 'Crear Grupo'}
-                        </Button>
-                    </DialogFooter>
-                </Dialog>
+                        </DialogBody>
+                        <DialogFooter>
+                            <Button variant="secondary" onClick={() => setShowMemberModal(false)}>Cerrar</Button>
+                        </DialogFooter>
+                    </Dialog>
 
-                {/* Modal: agregar miembro */}
-                <Dialog open={showMemberModal} onOpenChange={setShowMemberModal}>
-                    <DialogHeader>
-                        <DialogTitle>Agregar Miembro al Grupo</DialogTitle>
-                        <DialogClose onClose={() => setShowMemberModal(false)} />
-                    </DialogHeader>
-                    <DialogBody>
-                        <div className={styles.formStack}>
-                            <p className={styles.hint}>Busca al empleado por su número de ID</p>
-                            <div className={styles.memberSearchRow}>
-                                <input
-                                    type="text"
-                                    value={memberSearch}
-                                    onChange={(e) => setMemberSearch(e.target.value)}
-                                    onKeyDown={(e) => { if (e.key === 'Enter') handleSearchMember(); }}
-                                    placeholder="Número de empleado (ej. 4059)"
-                                    className={styles.input}
-                                    autoFocus
-                                />
-                                <Button
-                                    variant="primary"
-                                    onClick={handleSearchMember}
-                                    disabled={memberSearching}
-                                    aria-label="Buscar"
-                                >
-                                    {memberSearching ? '…' : <Search size={16} />}
-                                </Button>
-                            </div>
-
-                            {memberSearchResult && (
-                                <div className={styles.memberResultCard}>
-                                    <div className={styles.memberAvatar} data-color="blue">
-                                        {(memberSearchResult.name ?? '?')[0].toUpperCase()}
-                                    </div>
-                                    <div className={styles.memberInfo}>
-                                        <strong className={styles.memberName}>{memberSearchResult.name}</strong>
-                                        <span className={styles.memberMeta}>
-                                            {memberSearchResult.position ?? '—'}
-                                        </span>
-                                        <span className={styles.memberMeta}>
-                                            ID: {memberSearchResult.employeeId ?? memberSearchResult.id}
-                                        </span>
-                                    </div>
-                                    <Button variant="primary" onClick={() => handleAddMember(memberSearchResult)}>
-                                        <Plus size={15} /> Agregar
-                                    </Button>
-                                </div>
-                            )}
-                        </div>
-                    </DialogBody>
-                    <DialogFooter>
-                        <Button variant="secondary" onClick={() => setShowMemberModal(false)}>Cerrar</Button>
-                    </DialogFooter>
-                </Dialog>
-
-                {/* Modal: confirmación de borrado */}
-                <Dialog open={!!confirmDelete} onOpenChange={(open) => { if (!open) setConfirmDelete(null); }}>
-                    <DialogHeader>
-                        <DialogTitle>
-                            {confirmDelete?.type === 'group' ? '¿Eliminar grupo?' : '¿Remover miembro?'}
-                        </DialogTitle>
-                        <DialogClose onClose={() => setConfirmDelete(null)} />
-                    </DialogHeader>
-                    <DialogBody>
-                        <p className={styles.hint}>
-                            {confirmDelete?.type === 'group'
-                                ? 'Esta acción eliminará el grupo y todos sus datos. No se puede deshacer.'
-                                : `Se removerá a ${confirmDelete?.empName ?? 'este miembro'} del grupo. El empleado y su historial de capacitación no se verán afectados.`}
-                        </p>
-                    </DialogBody>
-                    <DialogFooter>
-                        <Button variant="secondary" onClick={() => setConfirmDelete(null)}>Cancelar</Button>
-                        <Button
-                            variant="danger"
-                            onClick={confirmDelete?.type === 'group' ? handleDeleteGroup : handleRemoveMember}
-                        >
-                            {confirmDelete?.type === 'group' ? 'Eliminar grupo' : 'Remover miembro'}
-                        </Button>
-                    </DialogFooter>
-                </Dialog>
-            </AdminLayout >
+                    {/* Modal: confirmación de borrado */}
+                    <Dialog open={!!confirmDelete} onOpenChange={(open) => { if (!open) setConfirmDelete(null); }}>
+                        <DialogHeader>
+                            <DialogTitle>
+                                {confirmDelete?.type === 'group' ? '¿Eliminar grupo?' : '¿Remover miembro?'}
+                            </DialogTitle>
+                            <DialogClose onClose={() => setConfirmDelete(null)} />
+                        </DialogHeader>
+                        <DialogBody>
+                            <p className={styles.hint}>
+                                {confirmDelete?.type === 'group'
+                                    ? 'Esta acción eliminará el grupo y todos sus datos. No se puede deshacer.'
+                                    : `Se removerá a ${confirmDelete?.empName ?? 'este miembro'} del grupo. El empleado y su historial de capacitación no se verán afectados.`}
+                            </p>
+                        </DialogBody>
+                        <DialogFooter>
+                            <Button variant="secondary" onClick={() => setConfirmDelete(null)}>Cancelar</Button>
+                            <Button
+                                variant="danger"
+                                onClick={confirmDelete?.type === 'group' ? handleDeleteGroup : handleRemoveMember}
+                            >
+                                {confirmDelete?.type === 'group' ? 'Eliminar grupo' : 'Remover miembro'}
+                            </Button>
+                        </DialogFooter>
+                    </Dialog>
+                </div>
+            </AdminLayout>
         </>
     );
 }

@@ -5,7 +5,8 @@
     width: 100vw;
     height: 100vh;
     background: rgba(0, 0, 0, 0.5);
-    z-index: 999;
+    z-index: 40;
+    /* Menor que la Sidebar (z-index: 50) */
     backdrop-filter: blur(2px);
 }
 
@@ -17,7 +18,8 @@
     max-width: 500px;
     height: 100vh;
     background: var(--bg-primary);
-    z-index: 1000;
+    z-index: 45;
+    /* Menor que la Sidebar pero mayor que el overlay */
     box-shadow: -5px 0 25px rgba(0, 0, 0, 0.2);
     border-left: 1px solid var(--border-color);
     display: flex;

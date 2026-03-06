@@ -14,6 +14,10 @@ import BackButton from '@/components/ui/BackButton/BackButton';
 import { Button } from '@/components/ui/Button/Button';
 import { Dialog, DialogHeader, DialogTitle, DialogBody, DialogFooter, DialogClose } from '@/components/ui/Dialog/Dialog';
 import { Pencil, Download, X, UserPlus } from 'lucide-react';
+import { useAuth } from '@/contexts/AuthContext';
+import { useRouter } from 'next/navigation';
+import { useToast } from '@/components/ui/Toast/Toast';
+import styles from './page.module.css';
 
 // ─── Constantes ────────────────────────────────────────────────────────────
 const EMPTY_SESSION = { date: '', startTime: '', endTime: '' };
@@ -404,13 +408,13 @@ export default function CalendarPage() {
                         const [d, m, y] = h.date.split('/');
                         if (d && m && y) {
                             tempEvents.push({
-                                id: `${docSnap.id}_${h.courseName} _done`,
+                                id: `${docSnap.id}_${h.courseName}_done`,
                                 type: 'DONE',
                                 title: h.courseName,
                                 courseName: h.courseName,
                                 employeeName: emp.name,
                                 employeeId: emp.employeeId,
-                                date: `${y} -${m.padStart(2, '0')} -${d.padStart(2, '0')} `,
+                                date: `${y}-${m.padStart(2, '0')}-${d.padStart(2, '0')}`,
                                 score: h.score
                             });
 
@@ -424,13 +428,13 @@ export default function CalendarPage() {
                                 const expD = String(dateObj.getDate()).padStart(2, '0');
 
                                 tempEvents.push({
-                                    id: `${docSnap.id}_${h.courseName} _exp`,
+                                    id: `${docSnap.id}_${h.courseName}_exp`,
                                     type: 'EXPIRED',
-                                    title: `Vence: ${h.courseName} `,
+                                    title: `Vence: ${h.courseName}`,
                                     courseName: h.courseName,
                                     employeeName: emp.name,
                                     employeeId: emp.employeeId,
-                                    date: `${expY} -${expM} -${expD} `
+                                    date: `${expY}-${expM}-${expD}`
                                 });
                             }
                         }

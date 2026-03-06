@@ -11,6 +11,7 @@ import QuestionManager from '@/components/features/QuestionManager/QuestionManag
 import Link from 'next/link';
 import styles from './page.module.css';
 
+import AdminLayout from '@/components/layout/AdminLayout/AdminLayout'; // [NEW]
 import { useAuth } from '@/contexts/AuthContext';
 import { useRouter } from 'next/navigation';
 
@@ -283,208 +284,211 @@ export default function ExamenPage() {
 
     if (authLoading || !user) {
         return (
-            <div className={styles.loadingContainer}>
-                <div className="spinner"></div>
-            </div>
+            <AdminLayout title="Generador de Exámenes">
+                <div className={styles.loadingContainer}>
+                    <div className="spinner"></div>
+                </div>
+            </AdminLayout>
         );
     }
 
     if (examData) {
         return (
-            <div className={styles.printContainer}>
-                {/* Print Control Bar (Hidden when printing) */}
-                <div className={styles.noPrintControl}>
-                    <Button variant="outline" onClick={handleReset}>←</Button>
-                    <Button onClick={handlePrint}>🖨️ Imprimir</Button>
-                </div>
+            <AdminLayout title="Generador de Exámenes">
+                <div className={styles.pageWrapper}>
+                    <div className={styles.printContainer}>
+                        {/* Print Control Bar (Hidden when printing) */}
+                        <div className={styles.noPrintControl}>
+                            <Button variant="outline" onClick={handleReset}>←</Button>
+                            <Button onClick={handlePrint}>🖨️ Imprimir</Button>
+                        </div>
 
-                {/* Printable Exam Sheet */}
-                <div className={styles.examSheet}>
-                    <div className={styles.examHeader}>
-                        <div className={styles.logoArea}>
-                            {/* Placeholder for Logo if exists, or text */}
-                            <h2>VIÑOPLASTIC</h2>
-                            <p>Ingeniería en Plásticos</p>
-                        </div>
-                        <div className={styles.examInfo}>
-                            <h1>EXAMEN DE CONOCIMIENTOS</h1>
-                            <p><strong>Fecha:</strong> {examData.date}</p>
-                        </div>
-                    </div>
-
-                    <div className={styles.employeeInfoBox}>
-                        <div className={styles.infoRow}>
-                            <span><strong>Nombre:</strong> {examData.employee.name}</span>
-                            <span><strong>No. Empleado:</strong> {examData.employee.employeeId}</span>
-                        </div>
-                        <div className={styles.infoRow}>
-                            <span><strong>Departamento:</strong> {examData.employee.department}</span>
-                            <span><strong>Puesto:</strong> {examData.employee.position}</span>
-                        </div>
-                    </div>
-
-                    <div className={styles.questionsList}>
-                        {examData.questions.map((q, idx) => (
-                            <div key={q.id} className={styles.questionItem}>
-                                <div className={styles.questionText}>
-                                    <strong>{idx + 1}. {q.question}</strong>
+                        {/* Printable Exam Sheet */}
+                        <div className={styles.examSheet}>
+                            <div className={styles.examHeader}>
+                                <div className={styles.logoArea}>
+                                    {/* Placeholder for Logo if exists, or text */}
+                                    <h2>VIÑOPLASTIC</h2>
+                                    <p>Ingeniería en Plásticos</p>
                                 </div>
-                                <div className={styles.optionsGrid}>
-                                    {q.type === 'Múltiple' ? (
-                                        <>
-                                            <div className={styles.option}>
-                                                <span className={styles.checkbox}></span>
-                                                <span>A) {q.options.a}</span>
-                                            </div>
-                                            <div className={styles.option}>
-                                                <span className={styles.checkbox}></span>
-                                                <span>B) {q.options.b}</span>
-                                            </div>
-                                            <div className={styles.option}>
-                                                <span className={styles.checkbox}></span>
-                                                <span>C) {q.options.c}</span>
-                                            </div>
-                                        </>
-                                    ) : (
-                                        <div className={styles.openAnswerLine}>
-                                            __________________________________________________________________________________________
-                                        </div>
-                                    )}
+                                <div className={styles.examInfo}>
+                                    <h1>EXAMEN DE CONOCIMIENTOS</h1>
+                                    <p><strong>Fecha:</strong> {examData.date}</p>
                                 </div>
                             </div>
-                        ))}
-                    </div>
 
-                    {/* Pagination Styles for Moldes B->A if needed */}
-                    <style jsx global>{`
+                            <div className={styles.employeeInfoBox}>
+                                <div className={styles.infoRow}>
+                                    <span><strong>Nombre:</strong> {examData.employee.name}</span>
+                                    <span><strong>No. Empleado:</strong> {examData.employee.employeeId}</span>
+                                </div>
+                                <div className={styles.infoRow}>
+                                    <span><strong>Departamento:</strong> {examData.employee.department}</span>
+                                    <span><strong>Puesto:</strong> {examData.employee.position}</span>
+                                </div>
+                            </div>
+
+                            <div className={styles.questionsList}>
+                                {examData.questions.map((q, idx) => (
+                                    <div key={q.id} className={styles.questionItem}>
+                                        <div className={styles.questionText}>
+                                            <strong>{idx + 1}. {q.question}</strong>
+                                        </div>
+                                        <div className={styles.optionsGrid}>
+                                            {q.type === 'Múltiple' ? (
+                                                <>
+                                                    <div className={styles.option}>
+                                                        <span className={styles.checkbox}></span>
+                                                        <span>A) {q.options.a}</span>
+                                                    </div>
+                                                    <div className={styles.option}>
+                                                        <span className={styles.checkbox}></span>
+                                                        <span>B) {q.options.b}</span>
+                                                    </div>
+                                                    <div className={styles.option}>
+                                                        <span className={styles.checkbox}></span>
+                                                        <span>C) {q.options.c}</span>
+                                                    </div>
+                                                </>
+                                            ) : (
+                                                <div className={styles.openAnswerLine}>
+                                                    __________________________________________________________________________________________
+                                                </div>
+                                            )}
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+
+                            {/* Pagination Styles for Moldes B->A if needed */}
+                            <style jsx global>{`
                         @media print {
                             .page-break { page-break-after: always; }
                         }
                     `}</style>
 
-                    <div className={styles.signatures}>
-                        <div className={styles.signatureBox}>
-                            <div className={styles.signLine}></div>
-                            <p>Firma del Empleado</p>
-                        </div>
-                        <div className={styles.signatureBox}>
-                            <div className={styles.signLine}></div>
-                            <p>Firma del Evaluador</p>
-                        </div>
-                        <div className={styles.scoreBox}>
-                            <p>Calificación: ________ / 100</p>
+                            <div className={styles.signatures}>
+                                <div className={styles.signatureBox}>
+                                    <div className={styles.signLine}></div>
+                                    <p>Firma del Empleado</p>
+                                </div>
+                                <div className={styles.signatureBox}>
+                                    <div className={styles.signLine}></div>
+                                    <p>Firma del Evaluador</p>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
+            </AdminLayout>
         );
     }
 
     return (
-        <div className={styles.container}>
-            <div className={styles.header}>
-                <div className={styles.titleRow}>
-                    <BackButton href="/dashboard" />
-                    <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
-                        <Button variant="outline" size="sm" onClick={() => setShowQuestionManager(true)}>
-                            Gestionar Preguntas
-                        </Button>
-                        <Link href="/capacitacion/examen/respuestas">
-                            <Button variant="outline" size="sm">
-                                📋 Ver Respuestas
+        <AdminLayout title="Generador de Exámenes">
+            <div className={styles.pageWrapper}>
+                <div className={styles.header}>
+                    <div className={styles.titleRow}>
+                        <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
+                            <Button variant="outline" size="sm" onClick={() => setShowQuestionManager(true)}>
+                                Gestionar Preguntas
                             </Button>
-                        </Link>
-                    </div>
-                </div>
-                <h1 style={{ textAlign: 'center', margin: '1rem 0', color: 'var(--text-primary)' }}>Generador de Exámenes</h1>
-            </div>
-
-            <QuestionManager
-                isOpen={showQuestionManager}
-                onClose={() => setShowQuestionManager(false)}
-            />
-
-            <div className={styles.configCard}>
-                <div className={styles.formGroup}>
-                    <label>1. Seleccionar Empleado</label>
-                    <div className={styles.autocompleteWrapper}>
-                        <input
-                            type="text"
-                            placeholder="Buscar por nombre..."
-                            className={styles.input}
-                            value={searchTerm}
-                            onChange={(e) => {
-                                setSearchTerm(e.target.value);
-                                if (selectedEmployee) setSelectedEmployee(null); // Reset selection on edit
-                            }}
-                        />
-                        {searchTerm && !selectedEmployee && filteredEmployees.length > 0 && (
-                            <ul className={styles.suggestionsList}>
-                                {filteredEmployees.map(emp => (
-                                    <li key={emp.id} onClick={() => handleSelectEmployee(emp)}>
-                                        <strong>{emp.name}</strong> - {emp.position}
-                                    </li>
-                                ))}
-                            </ul>
-                        )}
-                    </div>
-                    {selectedEmployee && (
-                        <div className={styles.selectedBadge}>
-                            ✓ Seleccionado: {selectedEmployee.name} ({selectedEmployee.department})
+                            <Link href="/capacitacion/examen/respuestas">
+                                <Button variant="outline" size="sm">
+                                    📋 Ver Respuestas
+                                </Button>
+                            </Link>
                         </div>
-                    )}
+                    </div>
                 </div>
 
-                <div className={styles.formGroup}>
-                    <label>2. Departamento del Examen</label>
-                    <select
-                        className={styles.select}
-                        value={department}
-                        onChange={(e) => setDepartment(e.target.value)}
-                    >
-                        <option value="Producción">Producción</option>
-                        <option value="Calidad">Calidad</option>
-                        <option value="Moldes">Moldes</option>
-                        <option value="Recursos Humanos">Recursos Humanos</option>
-                    </select>
-                </div>
+                <QuestionManager
+                    isOpen={showQuestionManager}
+                    onClose={() => setShowQuestionManager(false)}
+                />
 
-                <div className={styles.formGroup}>
-                    <label>3. Tipo de Promoción (Categoría)</label>
-                    <select
-                        className={styles.select}
-                        value={category}
-                        onChange={(e) => setCategory(e.target.value)}
-                    >
-                        {department === 'Moldes' ? (
-                            <>
-                                <option value="E_D">Categoría E a D (20 preguntas)</option>
-                                <option value="D_C">Categoría D a C (20 preguntas)</option>
-                                <option value="C_B">Categoría C a B (20 preguntas)</option>
-                                <option value="B_A">Categoría B a A (Todas)</option>
-                            </>
-                        ) : department === 'Recursos Humanos' ? (
-                            <>
-                                <option value="RH_ALL">Examen Completo (Todas las preguntas)</option>
-                            </>
-                        ) : (
-                            <>
-                                <option value="D_C">Categoría D a C (20 Preguntas)</option>
-                                <option value="C_B">Categoría C a B (30 Preguntas)</option>
-                                <option value="B_A">Categoría B a A (40 Preguntas)</option>
-                            </>
+                <div className={styles.configCard}>
+                    <div className={styles.formGroup}>
+                        <label>1. Seleccionar Empleado</label>
+                        <div className={styles.autocompleteWrapper}>
+                            <input
+                                type="text"
+                                placeholder="Buscar por nombre..."
+                                className={styles.input}
+                                value={searchTerm}
+                                onChange={(e) => {
+                                    setSearchTerm(e.target.value);
+                                    if (selectedEmployee) setSelectedEmployee(null); // Reset selection on edit
+                                }}
+                            />
+                            {searchTerm && !selectedEmployee && filteredEmployees.length > 0 && (
+                                <ul className={styles.suggestionsList}>
+                                    {filteredEmployees.map(emp => (
+                                        <li key={emp.id} onClick={() => handleSelectEmployee(emp)}>
+                                            <strong>{emp.name}</strong> - {emp.position}
+                                        </li>
+                                    ))}
+                                </ul>
+                            )}
+                        </div>
+                        {selectedEmployee && (
+                            <div className={styles.selectedBadge}>
+                                ✓ Seleccionado: {selectedEmployee.name} ({selectedEmployee.department})
+                            </div>
                         )}
-                    </select>
-                </div>
+                    </div>
 
-                <Button
-                    onClick={handleGenerate}
-                    disabled={loading || !selectedEmployee}
-                    className={styles.generateBtn}
-                >
-                    {loading ? 'Generando...' : 'Generar Examen'}
-                </Button>
+                    <div className={styles.formGroup}>
+                        <label>2. Departamento del Examen</label>
+                        <select
+                            className={styles.select}
+                            value={department}
+                            onChange={(e) => setDepartment(e.target.value)}
+                        >
+                            <option value="Producción">Producción</option>
+                            <option value="Calidad">Calidad</option>
+                            <option value="Moldes">Moldes</option>
+                            <option value="Recursos Humanos">Recursos Humanos</option>
+                        </select>
+                    </div>
+
+                    <div className={styles.formGroup}>
+                        <label>3. Tipo de Promoción (Categoría)</label>
+                        <select
+                            className={styles.select}
+                            value={category}
+                            onChange={(e) => setCategory(e.target.value)}
+                        >
+                            {department === 'Moldes' ? (
+                                <>
+                                    <option value="E_D">Categoría E a D (20 preguntas)</option>
+                                    <option value="D_C">Categoría D a C (20 preguntas)</option>
+                                    <option value="C_B">Categoría C a B (20 preguntas)</option>
+                                    <option value="B_A">Categoría B a A (Todas)</option>
+                                </>
+                            ) : department === 'Recursos Humanos' ? (
+                                <>
+                                    <option value="RH_ALL">Examen Completo (Todas las preguntas)</option>
+                                </>
+                            ) : (
+                                <>
+                                    <option value="D_C">Categoría D a C (20 Preguntas)</option>
+                                    <option value="C_B">Categoría C a B (30 Preguntas)</option>
+                                    <option value="B_A">Categoría B a A (40 Preguntas)</option>
+                                </>
+                            )}
+                        </select>
+                    </div>
+
+                    <Button
+                        onClick={handleGenerate}
+                        disabled={loading || !selectedEmployee}
+                        className={styles.generateBtn}
+                    >
+                        {loading ? 'Generando...' : 'Generar Examen'}
+                    </Button>
+                </div>
             </div>
-        </div>
+        </AdminLayout>
     );
 }

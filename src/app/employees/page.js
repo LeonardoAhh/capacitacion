@@ -343,7 +343,7 @@ export default function EmployeesPage() {
         // Validate file type
         const validTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
         if (!validTypes.includes(file.type)) {
-            showToast('Solo se permiten imÃ¡genes (JPG, PNG, GIF, WEBP)', 'error');
+            showToast('Solo se permiten imágenes (JPG, PNG, GIF, WEBP)', 'error');
             e.target.value = ''; // Reset input
             return;
         }
@@ -374,11 +374,11 @@ export default function EmployeesPage() {
             ...prev,
             accessCode: code,
             accessCodeGeneratedAt: now,
-            accessCodeExpires: null, // Sin expiraciÃ³n
+            accessCodeExpires: null, // Sin expiración
             accessCodeUses: 0
         }));
 
-        showToast('CÃ³digo de acceso generado', 'success');
+        showToast('Código de acceso generado', 'success');
     }, [showToast]);
 
     const validateFormData = useCallback(() => {
@@ -487,7 +487,7 @@ export default function EmployeesPage() {
         setConfirmDialog({
             isOpen: true,
             title: 'Eliminar Empleado',
-            message: 'Â¿EstÃ¡s seguro de que deseas eliminar este empleado? Esta acciÃ³n no se puede deshacer.',
+            message: '¿Estás seguro de que deseas eliminar este empleado? Esta acción no se puede deshacer.',
             confirmText: 'Eliminar',
             variant: 'danger',
             onConfirm: async () => {
@@ -558,7 +558,7 @@ export default function EmployeesPage() {
             const records = await parseImportFile(file);
 
             if (records.length === 0) {
-                throw new Error('El archivo no contiene registros vÃ¡lidos');
+                throw new Error('El archivo no contiene registros válidos');
             }
 
             // 2. Validate Records
@@ -586,7 +586,7 @@ export default function EmployeesPage() {
                 }
             }
 
-            showToast(`ImportaciÃ³n completada: ${importedCount} empleados creados`, 'success');
+            showToast(`Importación completada: ${importedCount} empleados creados`, 'success');
             refresh(); // Refresh list
 
         } catch (error) {
@@ -763,7 +763,7 @@ export default function EmployeesPage() {
                                                 <option value={12}>12</option>
                                                 <option value={15}>15</option>
                                             </select>
-                                            <span className={styles.itemsPerPageText}>por pÃ¡gina</span>
+                                            <span className={styles.itemsPerPageText}>por página</span>
                                         </div>
 
                                         <div className={styles.paginationControls}>
@@ -771,19 +771,19 @@ export default function EmployeesPage() {
                                                 onClick={prevPage}
                                                 disabled={!hasPrevious || loading}
                                                 className={styles.paginationBtn}
-                                                aria-label="PÃ¡gina anterior"
+                                                aria-label="Página anterior"
                                             >
                                                 <ChevronRight size={18} style={{ transform: 'rotate(180deg)' }} />
                                                 Anterior
                                             </button>
                                             <span className={styles.pageIndicator} aria-current="page">
-                                                PÃ¡gina {page}
+                                                Página {page}
                                             </span>
                                             <button
                                                 onClick={nextPage}
                                                 disabled={!hasMore}
                                                 className={styles.paginationBtn}
-                                                aria-label="PÃ¡gina siguiente"
+                                                aria-label="Página siguiente"
                                             >
                                                 Siguiente
                                                 <ChevronRight size={18} />
@@ -795,7 +795,7 @@ export default function EmployeesPage() {
                                 <div className={styles.emptyState}>
                                     <Search size={48} />
                                     <h3>No se encontraron empleados</h3>
-                                    <p>Intenta con otros tÃ©rminos de bÃºsqueda</p>
+                                    <p>Intenta con otros términos de búsqueda</p>
                                 </div>
                             )}
                         </>
@@ -964,7 +964,7 @@ export default function EmployeesPage() {
                                     <div id="actividad-panel" role="tabpanel">
                                         <div className={styles.infoGrid}>
                                             <div className={styles.infoItem}>
-                                                <label>CÃ³digo de Acceso</label>
+                                                <label>Código de Acceso</label>
                                                 <span style={{ fontFamily: 'monospace', fontWeight: 'bold' }}>
                                                     {selectedEmployee.accessCode || 'â€”'}
                                                 </span>
@@ -974,11 +974,11 @@ export default function EmployeesPage() {
                                                 <span>{selectedEmployee.trainingPlanDelivered ? 'SÃ­' : 'No'}</span>
                                             </div>
                                             <div className={styles.infoItem}>
-                                                <label>Fecha NotificaciÃ³n</label>
+                                                <label>Fecha Notificación</label>
                                                 <span>{formatDate(selectedEmployee.notificationDate)}</span>
                                             </div>
                                             <div className={styles.infoItem}>
-                                                <label>Ãšltimo Login</label>
+                                                <label>Último Login</label>
                                                 <span>{formatDate(selectedEmployee.lastLoginCandidate)}</span>
                                             </div>
                                         </div>
@@ -1076,7 +1076,7 @@ export default function EmployeesPage() {
                         <form onSubmit={(e) => { e.preventDefault(); handleSave(); }}>
                             {/* Personal Information */}
                             <div className={styles.formSection}>
-                                <h3 className={styles.formSectionTitle}>InformaciÃ³n Personal</h3>
+                                <h3 className={styles.formSectionTitle}>Información Personal</h3>
 
                                 <div className={styles.formGroup}>
                                     <label htmlFor="name" className={styles.formLabel}>
@@ -1089,7 +1089,7 @@ export default function EmployeesPage() {
                                         value={formData.name || ''}
                                         onChange={handleInputChange}
                                         className={`${styles.formInput} ${formErrors.name ? styles.inputError : ''}`}
-                                        placeholder="Ej: Juan PÃ©rez GarcÃ­a"
+                                        placeholder="Ej: Juan Pérez GarcÃ­a"
                                         autoComplete="name"
                                         aria-invalid={!!formErrors.name}
                                         aria-describedby={formErrors.name ? 'name-error' : undefined}
@@ -1184,7 +1184,7 @@ export default function EmployeesPage() {
 
                                 <div className={styles.formGroup}>
                                     <label htmlFor="phone" className={styles.formLabel}>
-                                        TelÃ©fono (WhatsApp)
+                                        Teléfono (WhatsApp)
                                     </label>
                                     <div className={styles.phoneInputContainer}>
                                         <Phone size={18} className={styles.phoneIcon} aria-hidden="true" />
@@ -1207,7 +1207,7 @@ export default function EmployeesPage() {
 
                             {/* Work Information */}
                             <div className={styles.formSection}>
-                                <h3 className={styles.formSectionTitle}>InformaciÃ³n Laboral</h3>
+                                <h3 className={styles.formSectionTitle}>Información Laboral</h3>
 
                                 <div className={styles.formGroup}>
                                     <label htmlFor="position" className={styles.formLabel}>
@@ -1356,18 +1356,18 @@ export default function EmployeesPage() {
                             {/* Performance Evaluations */}
                             {drawerMode === 'edit' && formData.startDate && (
                                 <div className={styles.formSection}>
-                                    <h3 className={styles.formSectionTitle}>Evaluaciones de DesempeÃ±o</h3>
+                                    <h3 className={styles.formSectionTitle}>Evaluaciones de Desempeño</h3>
                                     <p className={styles.formSectionHint}>
-                                        Las fechas se calculan automÃ¡ticamente desde la fecha de inicio
+                                        Las fechas se calculan automáticamente desde la fecha de inicio
                                     </p>
 
-                                    {/* EvaluaciÃ³n 1 - 30 dÃ­as */}
+                                    {/* Evaluación 1 - 30 dÃ­as */}
                                     <div className={styles.evalCard}>
-                                        <h4 className={styles.evalTitle}>EvaluaciÃ³n 1 (30 dÃ­as)</h4>
+                                        <h4 className={styles.evalTitle}>Evaluación 1 (30 dÃ­as)</h4>
                                         <div className={styles.formRow}>
                                             <div className={styles.formGroup}>
                                                 <label className={styles.formLabel}>
-                                                    Fecha de EvaluaciÃ³n
+                                                    Fecha de Evaluación
                                                 </label>
                                                 <input
                                                     type="date"
@@ -1380,7 +1380,7 @@ export default function EmployeesPage() {
                                             </div>
                                             <div className={styles.formGroup}>
                                                 <label htmlFor="eval1Score" className={styles.formLabel}>
-                                                    Resultado / CalificaciÃ³n
+                                                    Resultado / Calificación
                                                 </label>
                                                 <input
                                                     type="text"
@@ -1395,13 +1395,13 @@ export default function EmployeesPage() {
                                         </div>
                                     </div>
 
-                                    {/* EvaluaciÃ³n 2 - 60 dÃ­as */}
+                                    {/* Evaluación 2 - 60 dÃ­as */}
                                     <div className={styles.evalCard}>
-                                        <h4 className={styles.evalTitle}>EvaluaciÃ³n 2 (60 dÃ­as)</h4>
+                                        <h4 className={styles.evalTitle}>Evaluación 2 (60 dÃ­as)</h4>
                                         <div className={styles.formRow}>
                                             <div className={styles.formGroup}>
                                                 <label className={styles.formLabel}>
-                                                    Fecha de EvaluaciÃ³n
+                                                    Fecha de Evaluación
                                                 </label>
                                                 <input
                                                     type="date"
@@ -1414,7 +1414,7 @@ export default function EmployeesPage() {
                                             </div>
                                             <div className={styles.formGroup}>
                                                 <label htmlFor="eval2Score" className={styles.formLabel}>
-                                                    Resultado / CalificaciÃ³n
+                                                    Resultado / Calificación
                                                 </label>
                                                 <input
                                                     type="text"
@@ -1429,13 +1429,13 @@ export default function EmployeesPage() {
                                         </div>
                                     </div>
 
-                                    {/* EvaluaciÃ³n 3 - 75 dÃ­as */}
+                                    {/* Evaluación 3 - 75 dÃ­as */}
                                     <div className={styles.evalCard}>
-                                        <h4 className={styles.evalTitle}>EvaluaciÃ³n 3 (75 dÃ­as)</h4>
+                                        <h4 className={styles.evalTitle}>Evaluación 3 (75 dÃ­as)</h4>
                                         <div className={styles.formRow}>
                                             <div className={styles.formGroup}>
                                                 <label className={styles.formLabel}>
-                                                    Fecha de EvaluaciÃ³n
+                                                    Fecha de Evaluación
                                                 </label>
                                                 <input
                                                     type="date"
@@ -1448,7 +1448,7 @@ export default function EmployeesPage() {
                                             </div>
                                             <div className={styles.formGroup}>
                                                 <label htmlFor="eval3Score" className={styles.formLabel}>
-                                                    Resultado / CalificaciÃ³n
+                                                    Resultado / Calificación
                                                 </label>
                                                 <input
                                                     type="text"
@@ -1468,11 +1468,11 @@ export default function EmployeesPage() {
                             {/* Additional Information */}
                             {drawerMode === 'edit' && (
                                 <div className={styles.formSection}>
-                                    <h3 className={styles.formSectionTitle}>InformaciÃ³n Adicional</h3>
+                                    <h3 className={styles.formSectionTitle}>Información Adicional</h3>
 
                                     <div className={styles.formGroup}>
                                         <label className={styles.formLabel}>
-                                            CÃ³digo de Acceso
+                                            Código de Acceso
                                         </label>
                                         <div className={styles.accessCodeContainer}>
                                             {formData.accessCode ? (
@@ -1485,7 +1485,7 @@ export default function EmployeesPage() {
                                                         type="button"
                                                         onClick={handleGenerateAccessCode}
                                                         className={styles.regenerateButton}
-                                                        title="Regenerar cÃ³digo"
+                                                        title="Regenerar código"
                                                     >
                                                         <RefreshCw size={16} />
                                                         Regenerar
@@ -1498,7 +1498,7 @@ export default function EmployeesPage() {
                                                     className={styles.generateButton}
                                                 >
                                                     <Key size={18} />
-                                                    Generar CÃ³digo de Acceso
+                                                    Generar Código de Acceso
                                                 </button>
                                             )}
 
@@ -1530,7 +1530,7 @@ export default function EmployeesPage() {
                                                 onChange={handleInputChange}
                                                 className={styles.checkbox}
                                             />
-                                            <span>Plan de capacitaciÃ³n entregado</span>
+                                            <span>Plan de capacitación entregado</span>
                                         </label>
                                     </div>
                                 </div>

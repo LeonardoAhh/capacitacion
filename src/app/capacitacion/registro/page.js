@@ -200,7 +200,7 @@ export default function RegistroPage() {
         e.preventDefault();
 
         if (selectedEmps.length === 0) {
-            toast.error("AtenciÃ³n", "Selecciona al menos un empleado.");
+            toast.error("Atención", "Selecciona al menos un empleado.");
             return;
         }
 
@@ -213,18 +213,18 @@ export default function RegistroPage() {
             }
             finalCourses = [newCourseName.trim().toUpperCase()];
         } else if (finalCourses.length === 0) {
-            toast.error("AtenciÃ³n", "Selecciona al menos un curso.");
+            toast.error("Atención", "Selecciona al menos un curso.");
             return;
         }
 
         if (!qualification || !date) {
-            toast.error("AtenciÃ³n", "Faltan datos de calificaciÃ³n o fecha.");
+            toast.error("Atención", "Faltan datos de calificación o fecha.");
             return;
         }
 
         const score = parseFloat(qualification);
         if (isNaN(score) || score < 0 || score > 100) {
-            toast.error("Error", "La calificaciÃ³n debe ser un nÃºmero entre 0 y 100.");
+            toast.error("Error", "La calificación debe ser un número entre 0 y 100.");
             return;
         }
 
@@ -312,7 +312,7 @@ export default function RegistroPage() {
             await Promise.all(selectedEmps.map(processEmployee));
 
             const totalRecs = selectedEmps.length * finalCourses.length;
-            toast.success("Ã‰xito", `Se registraron ${totalRecs} capacitaciones.`);
+            toast.success("Éxito", `Se registraron ${totalRecs} capacitaciones.`);
 
             setSelectedEmps([]);
             setSelectedCourses([]);
@@ -324,7 +324,7 @@ export default function RegistroPage() {
 
         } catch (error) {
             console.error(error);
-            toast.error("Error", "FallÃ³ la carga masiva.");
+            toast.error("Error", "Falló la carga masiva.");
         } finally {
             setSubmitting(false);
         }
@@ -418,7 +418,7 @@ export default function RegistroPage() {
                 next.add(rec.row);
                 return next;
             });
-            toast.success("Corregido", `Fila ${rec.row} es ahora vÃ¡lida.`);
+            toast.success("Corregido", `Fila ${rec.row} es ahora válida.`);
         } else {
             // Update the base record with normalized data + new issues
             setImportPreview(prev => ({
@@ -429,7 +429,7 @@ export default function RegistroPage() {
                         : r
                 ),
             }));
-            toast.error("AÃºn invÃ¡lido", validation.issues.join(' â€¢ '));
+            toast.error("Aún inválido", validation.issues.join(' • '));
         }
     };
 
@@ -534,13 +534,13 @@ export default function RegistroPage() {
                 successCount++;
             }
 
-            toast.success("ImportaciÃ³n Exitosa", `Se importaron ${successCount} registros correctamente`);
+            toast.success("Importación Exitosa", `Se importaron ${successCount} registros correctamente`);
             resetImport();
             loadData();
 
         } catch (error) {
             console.error(error);
-            toast.error("Error", "FallÃ³ la importaciÃ³n de datos");
+            toast.error("Error", "Falló la importación de datos");
         } finally {
             setImportProgress(null);
             setImporting(false);
@@ -576,8 +576,8 @@ export default function RegistroPage() {
             <div className={styles.container}>
                 <div className={styles.header}>
                     <BackButton href="/dashboard" />
-                    <h1>Carga Masiva de CapacitaciÃ³n</h1>
-                    <p>Registra uno o varios cursos para mÃºltiples empleados simultÃ¡neamente.</p>
+                    <h1>Carga Masiva de Capacitación</h1>
+                    <p>Registra uno o varios cursos para múltiples empleados simultáneamente.</p>
                 </div>
 
                 {/* Mode Toggle */}
@@ -671,7 +671,7 @@ export default function RegistroPage() {
                                         </div>
                                         <div className={styles.fileInfoDetails}>
                                             <span className={styles.fileName}>{fileInfo.name}</span>
-                                            <span className={styles.fileMeta}>{fileInfo.ext} Â· {fileInfo.size}</span>
+                                            <span className={styles.fileMeta}>{fileInfo.ext} · {fileInfo.size}</span>
                                         </div>
                                         <button
                                             type="button"
@@ -715,8 +715,8 @@ export default function RegistroPage() {
                                             <polyline points="17 8 12 3 7 8" />
                                             <line x1="12" y1="3" x2="12" y2="15" />
                                         </svg>
-                                        <p>Arrastra tu archivo aquÃ­ o haz clic para seleccionar</p>
-                                        <span>Formatos soportados: .xlsx Â· .json</span>
+                                        <p>Arrastra tu archivo aquí o haz clic para seleccionar</p>
+                                        <span>Formatos soportados: .xlsx · .json</span>
                                     </div>
                                 )}
 
@@ -737,14 +737,14 @@ export default function RegistroPage() {
                                 <div>
                                     <div className={styles.sectionTitle}>
                                         <span className={styles.sectionNumber}>3</span>
-                                        Vista Previa y CorrecciÃ³n
+                                        Vista Previa y Corrección
                                     </div>
 
                                     {/* Stats row */}
                                     <div className={styles.previewStats}>
                                         <div className={styles.previewStat}>
                                             <span className={styles.statNum}>{importPreview.valid.length}</span>
-                                            <span className={styles.statLabel}>VÃ¡lidos</span>
+                                            <span className={styles.statLabel}>Válidos</span>
                                         </div>
                                         <div className={`${styles.previewStat} ${styles.statError}`}>
                                             <span className={styles.statNum}>{importPreview.invalid.length}</span>
@@ -830,12 +830,12 @@ export default function RegistroPage() {
                                                                             min="0"
                                                                             max="100"
                                                                             onChange={(e) => handleInvalidEdit(rec.row, 'score', e.target.value)}
-                                                                            aria-label={`CalificaciÃ³n fila ${rec.row}`}
+                                                                            aria-label={`Calificación fila ${rec.row}`}
                                                                         />
                                                                     </td>
                                                                     <td className={styles.errorMsgCell}>
-                                                                        <span className={styles.errorMsg} title={rec.issues?.join(' â€¢ ')}>
-                                                                            {rec.issues?.join(' â€¢ ')}
+                                                                        <span className={styles.errorMsg} title={rec.issues?.join(' • ')}>
+                                                                            {rec.issues?.join(' • ')}
                                                                         </span>
                                                                     </td>
                                                                     <td className={styles.applyCell}>
@@ -844,7 +844,7 @@ export default function RegistroPage() {
                                                                                 type="button"
                                                                                 className={styles.applyBtn}
                                                                                 onClick={() => applyCorrection(rec)}
-                                                                                aria-label={`Aplicar correcciÃ³n fila ${rec.row}`}
+                                                                                aria-label={`Aplicar corrección fila ${rec.row}`}
                                                                             >
                                                                                 <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3">
                                                                                     <polyline points="20 6 9 17 4 12" />
@@ -868,7 +868,7 @@ export default function RegistroPage() {
                                                 >
                                                     {showAllErrors
                                                         ? 'Mostrar menos'
-                                                        : `Ver ${importPreview.invalid.length - 5} errores mÃ¡s`
+                                                        : `Ver ${importPreview.invalid.length - 5} errores más`
                                                     }
                                                 </button>
                                             )}
@@ -883,7 +883,7 @@ export default function RegistroPage() {
                                                     <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
                                                         <polyline points="20 6 9 17 4 12" />
                                                     </svg>
-                                                    Registros vÃ¡lidos
+                                                    Registros válidos
                                                 </span>
                                                 <span className={styles.validCount}>
                                                     {rowsToImport.length} de {importPreview.valid.length} seleccionados
@@ -900,7 +900,7 @@ export default function RegistroPage() {
                                                                     className={styles.headerCheckbox}
                                                                     checked={allValidSelected}
                                                                     onChange={toggleAllValidRows}
-                                                                    aria-label="Seleccionar todos los registros vÃ¡lidos"
+                                                                    aria-label="Seleccionar todos los registros válidos"
                                                                 />
                                                             </th>
                                                             <th>#</th>
@@ -956,7 +956,7 @@ export default function RegistroPage() {
                                                 >
                                                     {showAllValid
                                                         ? 'Mostrar menos'
-                                                        : `Ver ${importPreview.valid.length - 8} registros mÃ¡s`
+                                                        : `Ver ${importPreview.valid.length - 8} registros más`
                                                     }
                                                 </button>
                                             )}
@@ -1113,7 +1113,7 @@ export default function RegistroPage() {
                             {/* 3. Common Data */}
                             <div className={styles.row}>
                                 <div className={styles.formGroup}>
-                                    <label>CalificaciÃ³n (0-100)</label>
+                                    <label>Calificación (0-100)</label>
                                     <input
                                         type="number"
                                         min="0"
@@ -1125,7 +1125,7 @@ export default function RegistroPage() {
                                     />
                                 </div>
                                 <div className={styles.formGroup}>
-                                    <label>Fecha de AplicaciÃ³n</label>
+                                    <label>Fecha de Aplicación</label>
                                     <input
                                         type="date"
                                         value={date}
@@ -1138,7 +1138,7 @@ export default function RegistroPage() {
 
                             <div className={styles.infoBox}>
                                 <p>
-                                    Se crearÃ¡n{' '}
+                                    Se crearán{' '}
                                     <strong>{selectedEmps.length * (isNewCourse ? 1 : selectedCourses.length)}</strong>
                                     {' '}registros en total.
                                 </p>

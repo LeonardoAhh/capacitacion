@@ -6,6 +6,13 @@
     overflow-x: hidden;
 }
 
+.pageWrapper {
+    min-height: 100vh;
+    background: transparent;
+    display: flex;
+    flex-direction: column;
+}
+
 .profileContainer {
     position: fixed;
     top: 20px;
@@ -83,7 +90,8 @@
 .container {
     position: relative;
     z-index: 10;
-    max-width: 960px;
+    max-width: 100%;
+    /* Expansión widescreen */
     margin: 0 auto;
     padding: var(--spacing-xl);
 }
@@ -935,7 +943,7 @@
     background: rgba(0, 0, 0, 0.5);
     backdrop-filter: blur(4px);
     -webkit-backdrop-filter: blur(4px);
-    z-index: 999;
+    z-index: 40;
     opacity: 0;
     visibility: hidden;
     transition: all 0.3s ease;
@@ -955,7 +963,7 @@
     height: 100vh;
     background: var(--bg-primary);
     box-shadow: -8px 0 30px rgba(0, 0, 0, 0.15);
-    z-index: 1000;
+    z-index: 45;
     transform: translateX(100%);
     transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
     display: flex;

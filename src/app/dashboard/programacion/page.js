@@ -120,8 +120,8 @@ export default function ProgramacionPage() {
 
             if (coursesList.length === 0) {
                 setCourses([
-                    { id: 'mock1', title: 'Seguridad Industrial BÃ¡sica', duration: '1h' },
-                    { id: 'mock2', title: 'CÃ³digo de Ã‰tica', duration: '30m' },
+                    { id: 'mock1', title: 'Seguridad Industrial Básica', duration: '1h' },
+                    { id: 'mock2', title: 'Código de Ética', duration: '30m' },
                     { id: 'mock3', title: '5S en Oficina', duration: '45m' },
                 ]);
             } else {
@@ -268,7 +268,7 @@ export default function ProgramacionPage() {
             {/* Tab bar (same as desktop) */}
             <div className={styles.mobileTabBar}>
                 {[
-                    { key: 'assignment', label: 'AsignaciÃ³n', Icon: LayoutGrid },
+                    { key: 'assignment', label: 'Asignación', Icon: LayoutGrid },
                     { key: 'monitoring', label: 'Monitoreo', Icon: Activity },
                 ].map(({ key, label, Icon }) => (
                     <button
@@ -426,7 +426,7 @@ export default function ProgramacionPage() {
                 />
             </div>
 
-            {/* BotÃ³n crear empleado */}
+            {/* Botón crear empleado */}
             <button
                 className={styles.mobileAddBtn}
                 onClick={() => router.push('/dashboard/training/registro')}
@@ -441,7 +441,7 @@ export default function ProgramacionPage() {
                 className={styles.mobileSelect}
                 value={selectedArea}
                 onChange={e => setSelectedArea(e.target.value)}
-                aria-label="Filtrar por Ã¡rea"
+                aria-label="Filtrar por área"
             >
                 <option value="all">Todas las Ãreas</option>
                 {areas.filter(a => a !== 'all').map(area => (
@@ -527,7 +527,7 @@ export default function ProgramacionPage() {
                         </div>
                         <div className={styles.mobileCourseInfo}>
                             <span className={styles.mobileCourseName}>{course.title || course.nombre}</span>
-                            <span className={styles.mobileCourseDuration}>{course.duration || 'Sin duraciÃ³n'}</span>
+                            <span className={styles.mobileCourseDuration}>{course.duration || 'Sin duración'}</span>
                         </div>
                         {selectedCourse === course.id && (
                             <motion.div
@@ -554,7 +554,7 @@ export default function ProgramacionPage() {
             <div className={styles.mobileStepContent}>
                 <h3 className={styles.mobileStepTitle}>
                     <CheckCircle size={18} />
-                    Confirmar AsignaciÃ³n
+                    Confirmar Asignación
                 </h3>
 
                 <div className={styles.confirmCard}>
@@ -631,7 +631,7 @@ export default function ProgramacionPage() {
                 animate="visible"
             >
                 {[
-                    { key: 'assignment', label: 'AsignaciÃ³n', Icon: LayoutGrid },
+                    { key: 'assignment', label: 'Asignación', Icon: LayoutGrid },
                     { key: 'monitoring', label: 'Monitoreo', Icon: Activity },
                 ].map(({ key, label, Icon }) => (
                     <button
@@ -678,7 +678,7 @@ export default function ProgramacionPage() {
                                         className={styles.select}
                                         value={selectedArea}
                                         onChange={e => setSelectedArea(e.target.value)}
-                                        aria-label="Filtrar por Ã¡rea"
+                                        aria-label="Filtrar por área"
                                     >
                                         <option value="all">Todas las Ãreas</option>
                                         {areas.filter(a => a !== 'all').map(area => (
@@ -802,7 +802,7 @@ export default function ProgramacionPage() {
                                                     {course.title || course.nombre}
                                                 </div>
                                                 <div className={styles.courseDuration}>
-                                                    {course.duration || 'Sin duraciÃ³n'}
+                                                    {course.duration || 'Sin duración'}
                                                 </div>
                                             </div>
                                             {selectedCourse === course.id && (

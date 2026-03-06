@@ -4,7 +4,6 @@ import { useState, useEffect } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useRouter } from 'next/navigation';
 import AdminLayout from '@/components/layout/AdminLayout/AdminLayout';
-import BackButton from '@/components/ui/BackButton/BackButton';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card/Card';
 import { Button } from '@/components/ui/Button/Button';
 import { useToast } from '@/components/ui/Toast/Toast';
@@ -407,616 +406,615 @@ export default function AnalisisPage() {
     }
 
     return (
-        <>
-
-            <main className={styles.main} id="main-content">
-                {/* Background Effects */}
-                <div className={styles.bgDecoration}>
-                    <div className={`${styles.blob} ${styles.blob1}`}></div>
-                    <div className={`${styles.blob} ${styles.blob2}`}></div>
-                </div>
-
-                <div className={styles.container}>
-                    <div className={styles.header}>
-                        <div className={styles.headerLeft}>
-                            <BackButton href="/dashboard" />
-                            <h1>Análisis de Cumplimiento</h1>
-                        </div>
-                        <div className={styles.headerRight}>
-                            <Button
-                                variant="primary"
-                                size="sm"
-                                onClick={handleSeed}
-                                disabled={seeding}
-                                title="Recalcula el % de cumplimiento de todos los empleados usando las matrices de posición actuales"
-                            >
-                                {seeding ? (
-                                    <>
-                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={{ animation: 'spin 1s linear infinite' }}>
-                                            <path d="M21 12a9 9 0 1 1-6.219-8.56" />
-                                        </svg>
-                                        Recalculando...
-                                    </>
-                                ) : (
-                                    <>
-                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                            <polyline points="1 4 1 10 7 10" />
-                                            <path d="M3.51 15a9 9 0 1 0 .49-4" />
-                                        </svg>
-                                        Recalcular
-                                    </>
-                                )}
-                            </Button>
-                            <Button
-                                variant="outline"
-                                size="sm"
-                                onClick={() => {
-                                    exportToExcel(filteredRecords, 'empleados_capacitacion', { includeHistory: true });
-                                    toast.success('Éxito', 'Archivo Excel generado');
-                                }}
-                            >
-                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
-                                    <polyline points="14 2 14 8 20 8" />
-                                    <line x1="12" y1="18" x2="12" y2="12" />
-                                    <line x1="9" y1="15" x2="15" y2="15" />
-                                </svg>
-                                Excel
-                            </Button>
-                            <Button
-                                variant="outline"
-                                size="sm"
-                                onClick={() => {
-                                    exportPDFCompliance(filteredRecords, { department: filterDept });
-                                    toast.success('Éxito', 'Reporte PDF generado');
-                                }}
-                            >
-                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
-                                    <polyline points="14 2 14 8 20 8" />
-                                    <line x1="16" y1="13" x2="8" y2="13" />
-                                    <line x1="16" y1="17" x2="8" y2="17" />
-                                    <polyline points="10 9 9 9 8 9" />
-                                </svg>
-                                PDF
-                            </Button>
-                        </div>
+        <AdminLayout title="Análisis de Capacitación">
+            <div className={styles.pageWrapper}>
+                <main className={styles.main} id="main-content">
+                    {/* Background Effects */}
+                    <div className={styles.bgDecoration}>
+                        <div className={`${styles.blob} ${styles.blob1}`}></div>
+                        <div className={`${styles.blob} ${styles.blob2}`}></div>
                     </div>
 
-                    {/* KPI Dashboard - Only Show if Data Exists */}
-                    {records.length > 0 && (
-                        <>
-                            <div className={styles.kpiContainer}>
-                                {/* Global Score Card */}
-                                <Card className={styles.kpiCardMain}>
-                                    <CardContent>
-                                        <div className={styles.kpiContent}>
-                                            <div className={styles.kpiLabel}>Cumplimiento Global</div>
-                                            <div className={`${styles.kpiScore} ${getScoreColorClass(kpiData.globalScore)}`}>
-                                                {kpiData.globalScore}%
+                    <div className={styles.container}>
+                        <div className={styles.header}>
+                            <div className={styles.headerLeft}>
+                                <h1>Análisis de Cumplimiento</h1>
+                            </div>
+                            <div className={styles.headerRight}>
+                                <Button
+                                    variant="primary"
+                                    size="sm"
+                                    onClick={handleSeed}
+                                    disabled={seeding}
+                                    title="Recalcula el % de cumplimiento de todos los empleados usando las matrices de posición actuales"
+                                >
+                                    {seeding ? (
+                                        <>
+                                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={{ animation: 'spin 1s linear infinite' }}>
+                                                <path d="M21 12a9 9 0 1 1-6.219-8.56" />
+                                            </svg>
+                                            Recalculando...
+                                        </>
+                                    ) : (
+                                        <>
+                                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                                <polyline points="1 4 1 10 7 10" />
+                                                <path d="M3.51 15a9 9 0 1 0 .49-4" />
+                                            </svg>
+                                            Recalcular
+                                        </>
+                                    )}
+                                </Button>
+                                <Button
+                                    variant="outline"
+                                    size="sm"
+                                    onClick={() => {
+                                        exportToExcel(filteredRecords, 'empleados_capacitacion', { includeHistory: true });
+                                        toast.success('Éxito', 'Archivo Excel generado');
+                                    }}
+                                >
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                                        <polyline points="14 2 14 8 20 8" />
+                                        <line x1="12" y1="18" x2="12" y2="12" />
+                                        <line x1="9" y1="15" x2="15" y2="15" />
+                                    </svg>
+                                    Excel
+                                </Button>
+                                <Button
+                                    variant="outline"
+                                    size="sm"
+                                    onClick={() => {
+                                        exportPDFCompliance(filteredRecords, { department: filterDept });
+                                        toast.success('Éxito', 'Reporte PDF generado');
+                                    }}
+                                >
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                                        <polyline points="14 2 14 8 20 8" />
+                                        <line x1="16" y1="13" x2="8" y2="13" />
+                                        <line x1="16" y1="17" x2="8" y2="17" />
+                                        <polyline points="10 9 9 9 8 9" />
+                                    </svg>
+                                    PDF
+                                </Button>
+                            </div>
+                        </div>
+
+                        {/* KPI Dashboard - Only Show if Data Exists */}
+                        {records.length > 0 && (
+                            <>
+                                <div className={styles.kpiContainer}>
+                                    {/* Global Score Card */}
+                                    <Card className={styles.kpiCardMain}>
+                                        <CardContent>
+                                            <div className={styles.kpiContent}>
+                                                <div className={styles.kpiLabel}>Cumplimiento Global</div>
+                                                <div className={`${styles.kpiScore} ${getScoreColorClass(kpiData.globalScore)}`}>
+                                                    {kpiData.globalScore}%
+                                                </div>
+                                                <div className={styles.kpiSubtitle}>Promedio Planta</div>
                                             </div>
-                                            <div className={styles.kpiSubtitle}>Promedio Planta</div>
+                                        </CardContent>
+                                    </Card>
+                                </div>
+
+                                {/* Yearly Statistics Cards */}
+                                {kpiData.yearlyStats && (
+                                    <div className={styles.yearlyStatsGrid}>
+                                        {[2024, 2025, 2026].map(year => (
+                                            <YearlyCardStack
+                                                key={year}
+                                                stats={kpiData.yearlyStats[year]}
+                                                yearNumber={year}
+                                                openDetails={openYearlyDetails}
+                                            />
+                                        ))}
+                                    </div>
+                                )}
+                            </>
+                        )}
+
+                        {/* Monthly Unique Courses Chart */}
+                        {records.length > 0 && kpiData.monthlyData && (() => {
+                            const months = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
+                            const maxValue = Math.max(
+                                ...Object.values(kpiData.monthlyData).flatMap(m => [m[2024] || 0, m[2025] || 0, m[2026] || 0]),
+                                1
+                            );
+                            const chartWidth = 800;
+                            const chartHeight = 300;
+                            const padding = 40;
+                            const graphWidth = chartWidth - padding * 2;
+                            const graphHeight = chartHeight - padding * 2;
+
+                            const getPoints = (year) => {
+                                return months.map((month, idx) => {
+                                    const value = kpiData.monthlyData[month]?.[year] || 0;
+                                    const x = padding + (idx * graphWidth / 11);
+                                    const y = chartHeight - padding - (value / maxValue) * graphHeight;
+                                    return `${x},${y}`;
+                                }).join(' ');
+                            };
+
+                            const yearColors = {
+                                2024: '#3b82f6',
+                                2025: '#10b981',
+                                2026: '#f59e0b'
+                            };
+
+                            // Calculate trend line (linear regression)
+                            const getTrendLine = (year) => {
+                                const values = months.map((month, idx) => ({
+                                    x: idx,
+                                    y: kpiData.monthlyData[month]?.[year] || 0
+                                }));
+
+                                const n = values.length;
+                                const sumX = values.reduce((sum, v) => sum + v.x, 0);
+                                const sumY = values.reduce((sum, v) => sum + v.y, 0);
+                                const sumXY = values.reduce((sum, v) => sum + v.x * v.y, 0);
+                                const sumX2 = values.reduce((sum, v) => sum + v.x * v.x, 0);
+
+                                const slope = (n * sumXY - sumX * sumY) / (n * sumX2 - sumX * sumX);
+                                const intercept = (sumY - slope * sumX) / n;
+
+                                // Get start and end points for the trend line
+                                const startY = intercept;
+                                const endY = slope * 11 + intercept;
+
+                                const x1 = padding;
+                                const y1 = chartHeight - padding - (startY / maxValue) * graphHeight;
+                                const x2 = padding + graphWidth;
+                                const y2 = chartHeight - padding - (endY / maxValue) * graphHeight;
+
+                                return { x1, y1, x2, y2 };
+                            };
+
+                            return (
+                                <Card className={styles.chartCard}>
+                                    <CardHeader>
+                                        <CardTitle>Cursos Únicos Impartidos por Mes (Comparación Anual)</CardTitle>
+                                    </CardHeader>
+                                    <CardContent>
+                                        <div className={styles.chart2D}>
+                                            {/* Legend */}
+                                            <div className={styles.chartLegend}>
+                                                <div className={styles.legendItem}>
+                                                    <span className={`${styles.legendColor} ${styles.year2024}`}></span>
+                                                    <span>2024</span>
+                                                </div>
+                                                <div className={styles.legendItem}>
+                                                    <span className={`${styles.legendColor} ${styles.year2025}`}></span>
+                                                    <span>2025</span>
+                                                </div>
+                                                <div className={styles.legendItem}>
+                                                    <span className={`${styles.legendColor} ${styles.year2026}`}></span>
+                                                    <span>2026</span>
+                                                </div>
+                                                <div className={styles.legendDivider}></div>
+                                                <div className={styles.legendItem}>
+                                                    <span className={styles.legendTrendLine}></span>
+                                                    <span>Tendencia</span>
+                                                </div>
+                                            </div>
+
+                                            {/* SVG Line Chart */}
+                                            <div className={styles.lineChartContainer}>
+                                                <svg viewBox={`0 0 ${chartWidth} ${chartHeight}`} className={styles.lineChart}>
+                                                    {/* Grid lines */}
+                                                    {[0, 0.25, 0.5, 0.75, 1].map((ratio, idx) => (
+                                                        <g key={idx}>
+                                                            <line
+                                                                x1={padding}
+                                                                y1={chartHeight - padding - ratio * graphHeight}
+                                                                x2={chartWidth - padding}
+                                                                y2={chartHeight - padding - ratio * graphHeight}
+                                                                stroke="var(--border-color)"
+                                                                strokeDasharray="4"
+                                                                opacity="0.5"
+                                                            />
+                                                            <text
+                                                                x={padding - 10}
+                                                                y={chartHeight - padding - ratio * graphHeight + 4}
+                                                                textAnchor="end"
+                                                                fontSize="12"
+                                                                fill="var(--text-tertiary)"
+                                                            >
+                                                                {Math.round(maxValue * ratio)}
+                                                            </text>
+                                                        </g>
+                                                    ))}
+
+                                                    {/* Lines for each year */}
+                                                    {[2024, 2025, 2026].map(year => (
+                                                        <polyline
+                                                            key={year}
+                                                            points={getPoints(year)}
+                                                            fill="none"
+                                                            stroke={yearColors[year]}
+                                                            strokeWidth="3"
+                                                            strokeLinecap="round"
+                                                            strokeLinejoin="round"
+                                                        />
+                                                    ))}
+
+                                                    {/* Trend lines */}
+                                                    {[2024, 2025, 2026].map(year => {
+                                                        const trend = getTrendLine(year);
+                                                        return (
+                                                            <line
+                                                                key={`trend-${year}`}
+                                                                x1={trend.x1}
+                                                                y1={trend.y1}
+                                                                x2={trend.x2}
+                                                                y2={trend.y2}
+                                                                stroke={yearColors[year]}
+                                                                strokeWidth="2"
+                                                                strokeDasharray="8,4"
+                                                                opacity="0.6"
+                                                            />
+                                                        );
+                                                    })}
+
+                                                    {/* Data points */}
+                                                    {[2024, 2025, 2026].map(year => (
+                                                        months.map((month, idx) => {
+                                                            const value = kpiData.monthlyData[month]?.[year] || 0;
+                                                            const x = padding + (idx * graphWidth / 11);
+                                                            const y = chartHeight - padding - (value / maxValue) * graphHeight;
+                                                            return (
+                                                                <g key={`${year}-${month}`}>
+                                                                    <circle
+                                                                        cx={x}
+                                                                        cy={y}
+                                                                        r="5"
+                                                                        fill={yearColors[year]}
+                                                                        className={styles.dataPoint}
+                                                                    />
+                                                                    <title>{`${month} ${year}: ${value} cursos`}</title>
+                                                                </g>
+                                                            );
+                                                        })
+                                                    ))}
+
+                                                    {/* X-axis labels */}
+                                                    {months.map((month, idx) => (
+                                                        <text
+                                                            key={month}
+                                                            x={padding + (idx * graphWidth / 11)}
+                                                            y={chartHeight - 10}
+                                                            textAnchor="middle"
+                                                            fontSize="12"
+                                                            fill="var(--text-secondary)"
+                                                        >
+                                                            {month}
+                                                        </text>
+                                                    ))}
+                                                </svg>
+                                            </div>
+                                        </div>
+                                        <div className={styles.chartNote}>
+                                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                                <circle cx="12" cy="12" r="10" />
+                                                <line x1="12" y1="16" x2="12" y2="12" />
+                                                <line x1="12" y1="8" x2="12.01" y2="8" />
+                                            </svg>
+                                            Solo se cuentan cursos únicos por mes (un curso solo se cuenta una vez por mes aunque se haya impartido varias veces)
                                         </div>
                                     </CardContent>
                                 </Card>
+                            );
+                        })()}
+
+
+                        {/* Controls Bar */}
+                        <div className={styles.controlsBar}>
+                            <div className={styles.searchBar}>
+                                <input
+                                    type="text"
+                                    placeholder="Buscar por ID, nombre o puesto..."
+                                    value={filterName}
+                                    onChange={(e) => setFilterName(e.target.value)}
+                                />
                             </div>
 
-                            {/* Yearly Statistics Cards */}
-                            {kpiData.yearlyStats && (
-                                <div className={styles.yearlyStatsGrid}>
-                                    {[2024, 2025, 2026].map(year => (
-                                        <YearlyCardStack
-                                            key={year}
-                                            stats={kpiData.yearlyStats[year]}
-                                            yearNumber={year}
-                                            openDetails={openYearlyDetails}
-                                        />
-                                    ))}
-                                </div>
-                            )}
-                        </>
-                    )}
-
-                    {/* Monthly Unique Courses Chart */}
-                    {records.length > 0 && kpiData.monthlyData && (() => {
-                        const months = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
-                        const maxValue = Math.max(
-                            ...Object.values(kpiData.monthlyData).flatMap(m => [m[2024] || 0, m[2025] || 0, m[2026] || 0]),
-                            1
-                        );
-                        const chartWidth = 800;
-                        const chartHeight = 300;
-                        const padding = 40;
-                        const graphWidth = chartWidth - padding * 2;
-                        const graphHeight = chartHeight - padding * 2;
-
-                        const getPoints = (year) => {
-                            return months.map((month, idx) => {
-                                const value = kpiData.monthlyData[month]?.[year] || 0;
-                                const x = padding + (idx * graphWidth / 11);
-                                const y = chartHeight - padding - (value / maxValue) * graphHeight;
-                                return `${x},${y}`;
-                            }).join(' ');
-                        };
-
-                        const yearColors = {
-                            2024: '#3b82f6',
-                            2025: '#10b981',
-                            2026: '#f59e0b'
-                        };
-
-                        // Calculate trend line (linear regression)
-                        const getTrendLine = (year) => {
-                            const values = months.map((month, idx) => ({
-                                x: idx,
-                                y: kpiData.monthlyData[month]?.[year] || 0
-                            }));
-
-                            const n = values.length;
-                            const sumX = values.reduce((sum, v) => sum + v.x, 0);
-                            const sumY = values.reduce((sum, v) => sum + v.y, 0);
-                            const sumXY = values.reduce((sum, v) => sum + v.x * v.y, 0);
-                            const sumX2 = values.reduce((sum, v) => sum + v.x * v.x, 0);
-
-                            const slope = (n * sumXY - sumX * sumY) / (n * sumX2 - sumX * sumX);
-                            const intercept = (sumY - slope * sumX) / n;
-
-                            // Get start and end points for the trend line
-                            const startY = intercept;
-                            const endY = slope * 11 + intercept;
-
-                            const x1 = padding;
-                            const y1 = chartHeight - padding - (startY / maxValue) * graphHeight;
-                            const x2 = padding + graphWidth;
-                            const y2 = chartHeight - padding - (endY / maxValue) * graphHeight;
-
-                            return { x1, y1, x2, y2 };
-                        };
-
-                        return (
-                            <Card className={styles.chartCard}>
-                                <CardHeader>
-                                    <CardTitle>Cursos Únicos Impartidos por Mes (Comparación Anual)</CardTitle>
-                                </CardHeader>
-                                <CardContent>
-                                    <div className={styles.chart2D}>
-                                        {/* Legend */}
-                                        <div className={styles.chartLegend}>
-                                            <div className={styles.legendItem}>
-                                                <span className={`${styles.legendColor} ${styles.year2024}`}></span>
-                                                <span>2024</span>
-                                            </div>
-                                            <div className={styles.legendItem}>
-                                                <span className={`${styles.legendColor} ${styles.year2025}`}></span>
-                                                <span>2025</span>
-                                            </div>
-                                            <div className={styles.legendItem}>
-                                                <span className={`${styles.legendColor} ${styles.year2026}`}></span>
-                                                <span>2026</span>
-                                            </div>
-                                            <div className={styles.legendDivider}></div>
-                                            <div className={styles.legendItem}>
-                                                <span className={styles.legendTrendLine}></span>
-                                                <span>Tendencia</span>
-                                            </div>
-                                        </div>
-
-                                        {/* SVG Line Chart */}
-                                        <div className={styles.lineChartContainer}>
-                                            <svg viewBox={`0 0 ${chartWidth} ${chartHeight}`} className={styles.lineChart}>
-                                                {/* Grid lines */}
-                                                {[0, 0.25, 0.5, 0.75, 1].map((ratio, idx) => (
-                                                    <g key={idx}>
-                                                        <line
-                                                            x1={padding}
-                                                            y1={chartHeight - padding - ratio * graphHeight}
-                                                            x2={chartWidth - padding}
-                                                            y2={chartHeight - padding - ratio * graphHeight}
-                                                            stroke="var(--border-color)"
-                                                            strokeDasharray="4"
-                                                            opacity="0.5"
-                                                        />
-                                                        <text
-                                                            x={padding - 10}
-                                                            y={chartHeight - padding - ratio * graphHeight + 4}
-                                                            textAnchor="end"
-                                                            fontSize="12"
-                                                            fill="var(--text-tertiary)"
-                                                        >
-                                                            {Math.round(maxValue * ratio)}
-                                                        </text>
-                                                    </g>
-                                                ))}
-
-                                                {/* Lines for each year */}
-                                                {[2024, 2025, 2026].map(year => (
-                                                    <polyline
-                                                        key={year}
-                                                        points={getPoints(year)}
-                                                        fill="none"
-                                                        stroke={yearColors[year]}
-                                                        strokeWidth="3"
-                                                        strokeLinecap="round"
-                                                        strokeLinejoin="round"
-                                                    />
-                                                ))}
-
-                                                {/* Trend lines */}
-                                                {[2024, 2025, 2026].map(year => {
-                                                    const trend = getTrendLine(year);
-                                                    return (
-                                                        <line
-                                                            key={`trend-${year}`}
-                                                            x1={trend.x1}
-                                                            y1={trend.y1}
-                                                            x2={trend.x2}
-                                                            y2={trend.y2}
-                                                            stroke={yearColors[year]}
-                                                            strokeWidth="2"
-                                                            strokeDasharray="8,4"
-                                                            opacity="0.6"
-                                                        />
-                                                    );
-                                                })}
-
-                                                {/* Data points */}
-                                                {[2024, 2025, 2026].map(year => (
-                                                    months.map((month, idx) => {
-                                                        const value = kpiData.monthlyData[month]?.[year] || 0;
-                                                        const x = padding + (idx * graphWidth / 11);
-                                                        const y = chartHeight - padding - (value / maxValue) * graphHeight;
-                                                        return (
-                                                            <g key={`${year}-${month}`}>
-                                                                <circle
-                                                                    cx={x}
-                                                                    cy={y}
-                                                                    r="5"
-                                                                    fill={yearColors[year]}
-                                                                    className={styles.dataPoint}
-                                                                />
-                                                                <title>{`${month} ${year}: ${value} cursos`}</title>
-                                                            </g>
-                                                        );
-                                                    })
-                                                ))}
-
-                                                {/* X-axis labels */}
-                                                {months.map((month, idx) => (
-                                                    <text
-                                                        key={month}
-                                                        x={padding + (idx * graphWidth / 11)}
-                                                        y={chartHeight - 10}
-                                                        textAnchor="middle"
-                                                        fontSize="12"
-                                                        fill="var(--text-secondary)"
-                                                    >
-                                                        {month}
-                                                    </text>
-                                                ))}
-                                            </svg>
-                                        </div>
-                                    </div>
-                                    <div className={styles.chartNote}>
-                                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                            <circle cx="12" cy="12" r="10" />
-                                            <line x1="12" y1="16" x2="12" y2="12" />
-                                            <line x1="12" y1="8" x2="12.01" y2="8" />
-                                        </svg>
-                                        Solo se cuentan cursos únicos por mes (un curso solo se cuenta una vez por mes aunque se haya impartido varias veces)
-                                    </div>
-                                </CardContent>
-                            </Card>
-                        );
-                    })()}
-
-
-                    {/* Controls Bar */}
-                    <div className={styles.controlsBar}>
-                        <div className={styles.searchBar}>
-                            <input
-                                type="text"
-                                placeholder="Buscar por ID, nombre o puesto..."
-                                value={filterName}
-                                onChange={(e) => setFilterName(e.target.value)}
-                            />
-                        </div>
-
-                        <div className={styles.filters}>
-                            <select
-                                value={filterDept}
-                                onChange={(e) => setFilterDept(e.target.value)}
-                                className={styles.selectFilter}
-                            >
-                                {departments.map(d => <option key={d} value={d}>{d}</option>)}
-                            </select>
-
-                            <select
-                                value={filterStatus}
-                                onChange={(e) => setFilterStatus(e.target.value)}
-                                className={styles.selectFilter}
-                            >
-                                <option value="Todos">Todos</option>
-                                <option value="Crítico">Crítico (&lt;70%)</option>
-                                <option value="Regular">Regular (70-90%)</option>
-                                <option value="Excelente">Excelente (&gt;90%)</option>
-                            </select>
-                        </div>
-                    </div>
-
-                    {loading ? (
-                        <div className="spinner"></div>
-                    ) : filteredRecords.length === 0 ? (
-                        <div className={styles.emptyState}>No hay registros de análisis.</div>
-                    ) : (
-                        <>
-                            <div className={styles.employeesList}>
-                                {filteredRecords.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage).map(rec => (
-                                    <div key={rec.id} className={styles.employeeCard}>
-                                        <div className={styles.employeeRow} onClick={() => toggleExpand(rec.id)}>
-                                            <div className={styles.employeeInfo}>
-                                                <div className={styles.avatarWrapper}>
-                                                    {getInitials(rec.name)}
-                                                </div>
-                                                <div className={styles.employeeDetails}>
-                                                    <span className={styles.empName}>{rec.name}</span>
-                                                    <span className={styles.empMeta}>{rec.position} • {rec.department || 'N/A'}</span>
-                                                </div>
-                                            </div>
-                                            <div className={styles.employeeActions}>
-                                                <span className={`${styles.complianceBadge} ${getComplianceColor(rec.matrix?.compliancePercentage || 0)}`}>
-                                                    {rec.matrix?.compliancePercentage || 0}%
-                                                </span>
-                                                <button className={`${styles.expandBtn} ${expandedId === rec.id ? styles.expanded : ''}`}>
-                                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                                        <polyline points="6 9 12 15 18 9" />
-                                                    </svg>
-                                                </button>
-                                            </div>
-                                        </div>
-
-                                        {expandedId === rec.id && (
-                                            <div className={styles.expandedContent}>
-                                                <div className={styles.quickStats}>
-                                                    <div className={styles.quickStat}>
-                                                        <span>{rec.matrix?.completedCount || 0}</span>
-                                                        <span>Aprobados</span>
-                                                    </div>
-                                                    <div className={styles.quickStat}>
-                                                        <span>{rec.matrix?.requiredCount || 0}</span>
-                                                        <span>Requeridos</span>
-                                                    </div>
-                                                    <div className={styles.quickStat}>
-                                                        <span>{rec.matrix?.missingCourses?.length || 0}</span>
-                                                        <span>Pendientes</span>
-                                                    </div>
-                                                </div>
-
-                                                <div className={styles.detailsGrid}>
-                                                    <div className={styles.detailItem}>
-                                                        <span className={styles.detailLabel}>ID Empleado</span>
-                                                        <span className={styles.detailValue}>{rec.employeeId || rec.id}</span>
-                                                    </div>
-                                                    <div className={styles.detailItem}>
-                                                        <span className={styles.detailLabel}>Departamento</span>
-                                                        <span className={styles.detailValue}>{rec.department || 'N/A'}</span>
-                                                    </div>
-                                                    <div className={styles.detailItem}>
-                                                        <span className={styles.detailLabel}>Puesto</span>
-                                                        <span className={styles.detailValue}>{rec.position}</span>
-                                                    </div>
-                                                    <div className={styles.detailItem}>
-                                                        <span className={styles.detailLabel}>Cumplimiento</span>
-                                                        <span className={styles.detailValue}>{rec.matrix?.compliancePercentage || 0}%</span>
-                                                    </div>
-                                                </div>
-
-                                                <div className={styles.actionButtonsRow}>
-                                                    <button className={`${styles.actionBtn} ${styles.primary}`} onClick={() => openDetail(rec)}>
-                                                        👁️ Ver Detalle Completo
-                                                    </button>
-                                                </div>
-                                            </div>
-                                        )}
-                                    </div>
-                                ))}
-                            </div>
-
-                            {/* Pagination Controls */}
-                            <div className={styles.paginationControls}>
-                                <Button
-                                    variant="outline"
-                                    size="sm"
-                                    disabled={currentPage === 1}
-                                    onClick={() => setCurrentPage(prev => prev - 1)}
+                            <div className={styles.filters}>
+                                <select
+                                    value={filterDept}
+                                    onChange={(e) => setFilterDept(e.target.value)}
+                                    className={styles.selectFilter}
                                 >
-                                    ←
-                                </Button>
-                                <span className={styles.pageInfo}>
-                                    Página {currentPage} de {Math.ceil(filteredRecords.length / itemsPerPage)} ({filteredRecords.length} registros)
-                                </span>
-                                <Button
-                                    variant="outline"
-                                    size="sm"
-                                    disabled={currentPage >= Math.ceil(filteredRecords.length / itemsPerPage)}
-                                    onClick={() => setCurrentPage(prev => prev + 1)}
+                                    {departments.map(d => <option key={d} value={d}>{d}</option>)}
+                                </select>
+
+                                <select
+                                    value={filterStatus}
+                                    onChange={(e) => setFilterStatus(e.target.value)}
+                                    className={styles.selectFilter}
                                 >
-                                    →
-                                </Button>
-                            </div>
-                        </>
-                    )}
-                </div>
-            </main>
-
-            {/* Detail Slider Panel */}
-            <div className={`${styles.sliderOverlay} ${showDetailModal ? styles.active : ''}`} onClick={() => setShowDetailModal(false)} />
-            <div className={`${styles.sliderPanel} ${showDetailModal ? styles.active : ''}`}>
-                <div className={styles.sliderHeader}>
-                    <h2 className={styles.sliderTitle}>{selectedEmployee?.name}</h2>
-                    <button className={styles.sliderCloseBtn} onClick={() => setShowDetailModal(false)}>
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                            <line x1="18" y1="6" x2="6" y2="18" />
-                            <line x1="6" y1="6" x2="18" y2="18" />
-                        </svg>
-                    </button>
-                </div>
-                <div className={styles.sliderBody}>
-                    {selectedEmployee && (
-                        <div className={styles.detailContainer}>
-                            {/* Stats Header */}
-                            <div className={styles.detailHeader}>
-                                <div className={styles.statBox}>
-                                    <label>Puesto</label>
-                                    <span>{selectedEmployee.position}</span>
-                                </div>
-                                <div className={styles.statBox}>
-                                    <label>Cumplimiento Global</label>
-                                    <span className={getComplianceColor(selectedEmployee.matrix.compliancePercentage)}>
-                                        {selectedEmployee.matrix.compliancePercentage}%
-                                    </span>
-                                </div>
-                            </div>
-
-                            {/* Missing/Pending Courses Section */}
-                            {(() => {
-                                const missingCourses = selectedEmployee.matrix.missingCourses || getMissingCourses(selectedEmployee);
-                                return missingCourses.length > 0 ? (
-                                    <div className={styles.coursesSection}>
-                                        <div className={styles.courseCategory}>
-                                            <div className={styles.categoryHeader}>
-                                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                                    <circle cx="12" cy="12" r="10" />
-                                                    <line x1="15" y1="9" x2="9" y2="15" />
-                                                    <line x1="9" y1="9" x2="15" y2="15" />
-                                                </svg>
-                                                <h4>Cursos Faltantes</h4>
-                                                <span className={styles.categoryCount}>{missingCourses.length}</span>
-                                            </div>
-                                            <div className={styles.courseList}>
-                                                {missingCourses.map((c, i) => (
-                                                    <div key={i} className={`${styles.courseItem} ${styles.pending}`}>
-                                                        {c}
-                                                    </div>
-                                                ))}
-                                            </div>
-                                        </div>
-                                    </div>
-                                ) : (
-                                    <div className={styles.successMessage}>
-                                        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
-                                            <polyline points="22 4 12 14.01 9 11.01" />
-                                        </svg>
-                                        <p>¡Todo al día!</p>
-                                    </div>
-                                );
-                            })()}
-
-                            {/* History Section */}
-                            <div className={styles.historySection}>
-                                <h3>Historial Completo</h3>
-                                <div className={styles.historyList}>
-                                    {selectedEmployee.history?.sort((a, b) => new Date(b.date) - new Date(a.date)).map((h, i) => (
-                                        <div key={i} className={styles.historyItem}>
-                                            <div className={styles.historyLeft}>
-                                                <div className={styles.historyName}>{h.courseName}</div>
-                                                <div className={styles.historyDate}>{h.date}</div>
-                                            </div>
-                                            <div className={styles.historyRight}>
-                                                <span className={h.status === 'approved' ? styles.tagSuccess : styles.tagFail}>
-                                                    {h.score}
-                                                </span>
-                                                {h.status === 'approved' && (
-                                                    <button
-                                                        className={styles.downloadBtn}
-                                                        onClick={() => generateDC3(selectedEmployee, coursesMap[h.courseName] || { name: h.courseName }, { date: h.date })}
-                                                        title="Descargar DC-3"
-                                                    >
-                                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
-                                                            <polyline points="14 2 14 8 20 8" />
-                                                            <line x1="12" y1="18" x2="12" y2="12" />
-                                                            <line x1="9" y1="15" x2="15" y2="15" />
-                                                        </svg>
-                                                    </button>
-                                                )}
-                                            </div>
-                                        </div>
-                                    ))}
-                                </div>
+                                    <option value="Todos">Todos</option>
+                                    <option value="Crítico">Crítico (&lt;70%)</option>
+                                    <option value="Regular">Regular (70-90%)</option>
+                                    <option value="Excelente">Excelente (&gt;90%)</option>
+                                </select>
                             </div>
                         </div>
-                    )}
-                </div>
-            </div>
 
-            {/* Yearly Details Modal */}
-            <Dialog open={showYearlyModal} onOpenChange={setShowYearlyModal}>
-                <DialogHeader>
-                    <DialogTitle>Detalles de Cursos - {selectedYear}</DialogTitle>
-                    <DialogClose onClose={() => setShowYearlyModal(false)} />
-                </DialogHeader>
-                <DialogBody>
-                    <div className={styles.yearlyDetailsContainer}>
-                        {yearlyDetails.length > 0 ? (
-                            <div className={styles.coursesList}>
-                                {yearlyDetails.map((course, idx) => (
-                                    <div key={idx} className={styles.courseDetailCard}>
-                                        <div className={styles.courseDetailHeader}>
-                                            <h4>{course.courseName}</h4>
-                                            <span className={styles.totalAttendees}>
-                                                {course.months.reduce((sum, m) => sum + m.attendees, 0)} asistentes
-                                            </span>
-                                        </div>
-                                        <div className={styles.monthsList}>
-                                            {course.months.map((monthData, midx) => (
-                                                <div key={midx} className={styles.monthItem}>
-                                                    <div className={styles.monthName}>
-                                                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                                            <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
-                                                            <line x1="16" y1="2" x2="16" y2="6" />
-                                                            <line x1="8" y1="2" x2="8" y2="6" />
-                                                            <line x1="3" y1="10" x2="21" y2="10" />
-                                                        </svg>
-                                                        {monthData.month}
-                                                    </div>
-                                                    <div className={styles.monthAttendees}>
-                                                        {monthData.attendees} {monthData.attendees === 1 ? 'asistente' : 'asistentes'}
-                                                    </div>
-                                                </div>
-                                            ))}
-                                        </div>
-                                    </div>
-                                ))}
-                            </div>
+                        {loading ? (
+                            <div className="spinner"></div>
+                        ) : filteredRecords.length === 0 ? (
+                            <div className={styles.emptyState}>No hay registros de análisis.</div>
                         ) : (
-                            <div className={styles.emptyState}>
-                                No se encontraron cursos para este año
+                            <>
+                                <div className={styles.employeesList}>
+                                    {filteredRecords.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage).map(rec => (
+                                        <div key={rec.id} className={styles.employeeCard}>
+                                            <div className={styles.employeeRow} onClick={() => toggleExpand(rec.id)}>
+                                                <div className={styles.employeeInfo}>
+                                                    <div className={styles.avatarWrapper}>
+                                                        {getInitials(rec.name)}
+                                                    </div>
+                                                    <div className={styles.employeeDetails}>
+                                                        <span className={styles.empName}>{rec.name}</span>
+                                                        <span className={styles.empMeta}>{rec.position} • {rec.department || 'N/A'}</span>
+                                                    </div>
+                                                </div>
+                                                <div className={styles.employeeActions}>
+                                                    <span className={`${styles.complianceBadge} ${getComplianceColor(rec.matrix?.compliancePercentage || 0)}`}>
+                                                        {rec.matrix?.compliancePercentage || 0}%
+                                                    </span>
+                                                    <button className={`${styles.expandBtn} ${expandedId === rec.id ? styles.expanded : ''}`}>
+                                                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                                            <polyline points="6 9 12 15 18 9" />
+                                                        </svg>
+                                                    </button>
+                                                </div>
+                                            </div>
+
+                                            {expandedId === rec.id && (
+                                                <div className={styles.expandedContent}>
+                                                    <div className={styles.quickStats}>
+                                                        <div className={styles.quickStat}>
+                                                            <span>{rec.matrix?.completedCount || 0}</span>
+                                                            <span>Aprobados</span>
+                                                        </div>
+                                                        <div className={styles.quickStat}>
+                                                            <span>{rec.matrix?.requiredCount || 0}</span>
+                                                            <span>Requeridos</span>
+                                                        </div>
+                                                        <div className={styles.quickStat}>
+                                                            <span>{rec.matrix?.missingCourses?.length || 0}</span>
+                                                            <span>Pendientes</span>
+                                                        </div>
+                                                    </div>
+
+                                                    <div className={styles.detailsGrid}>
+                                                        <div className={styles.detailItem}>
+                                                            <span className={styles.detailLabel}>ID Empleado</span>
+                                                            <span className={styles.detailValue}>{rec.employeeId || rec.id}</span>
+                                                        </div>
+                                                        <div className={styles.detailItem}>
+                                                            <span className={styles.detailLabel}>Departamento</span>
+                                                            <span className={styles.detailValue}>{rec.department || 'N/A'}</span>
+                                                        </div>
+                                                        <div className={styles.detailItem}>
+                                                            <span className={styles.detailLabel}>Puesto</span>
+                                                            <span className={styles.detailValue}>{rec.position}</span>
+                                                        </div>
+                                                        <div className={styles.detailItem}>
+                                                            <span className={styles.detailLabel}>Cumplimiento</span>
+                                                            <span className={styles.detailValue}>{rec.matrix?.compliancePercentage || 0}%</span>
+                                                        </div>
+                                                    </div>
+
+                                                    <div className={styles.actionButtonsRow}>
+                                                        <button className={`${styles.actionBtn} ${styles.primary}`} onClick={() => openDetail(rec)}>
+                                                            👁️ Ver Detalle Completo
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            )}
+                                        </div>
+                                    ))}
+                                </div>
+
+                                {/* Pagination Controls */}
+                                <div className={styles.paginationControls}>
+                                    <Button
+                                        variant="outline"
+                                        size="sm"
+                                        disabled={currentPage === 1}
+                                        onClick={() => setCurrentPage(prev => prev - 1)}
+                                    >
+                                        ←
+                                    </Button>
+                                    <span className={styles.pageInfo}>
+                                        Página {currentPage} de {Math.ceil(filteredRecords.length / itemsPerPage)} ({filteredRecords.length} registros)
+                                    </span>
+                                    <Button
+                                        variant="outline"
+                                        size="sm"
+                                        disabled={currentPage >= Math.ceil(filteredRecords.length / itemsPerPage)}
+                                        onClick={() => setCurrentPage(prev => prev + 1)}
+                                    >
+                                        →
+                                    </Button>
+                                </div>
+                            </>
+                        )}
+                    </div>
+                </main>
+
+                {/* Detail Slider Panel */}
+                <div className={`${styles.sliderOverlay} ${showDetailModal ? styles.active : ''}`} onClick={() => setShowDetailModal(false)} />
+                <div className={`${styles.sliderPanel} ${showDetailModal ? styles.active : ''}`}>
+                    <div className={styles.sliderHeader}>
+                        <h2 className={styles.sliderTitle}>{selectedEmployee?.name}</h2>
+                        <button className={styles.sliderCloseBtn} onClick={() => setShowDetailModal(false)}>
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                <line x1="18" y1="6" x2="6" y2="18" />
+                                <line x1="6" y1="6" x2="18" y2="18" />
+                            </svg>
+                        </button>
+                    </div>
+                    <div className={styles.sliderBody}>
+                        {selectedEmployee && (
+                            <div className={styles.detailContainer}>
+                                {/* Stats Header */}
+                                <div className={styles.detailHeader}>
+                                    <div className={styles.statBox}>
+                                        <label>Puesto</label>
+                                        <span>{selectedEmployee.position}</span>
+                                    </div>
+                                    <div className={styles.statBox}>
+                                        <label>Cumplimiento Global</label>
+                                        <span className={getComplianceColor(selectedEmployee.matrix.compliancePercentage)}>
+                                            {selectedEmployee.matrix.compliancePercentage}%
+                                        </span>
+                                    </div>
+                                </div>
+
+                                {/* Missing/Pending Courses Section */}
+                                {(() => {
+                                    const missingCourses = selectedEmployee.matrix.missingCourses || getMissingCourses(selectedEmployee);
+                                    return missingCourses.length > 0 ? (
+                                        <div className={styles.coursesSection}>
+                                            <div className={styles.courseCategory}>
+                                                <div className={styles.categoryHeader}>
+                                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                                        <circle cx="12" cy="12" r="10" />
+                                                        <line x1="15" y1="9" x2="9" y2="15" />
+                                                        <line x1="9" y1="9" x2="15" y2="15" />
+                                                    </svg>
+                                                    <h4>Cursos Faltantes</h4>
+                                                    <span className={styles.categoryCount}>{missingCourses.length}</span>
+                                                </div>
+                                                <div className={styles.courseList}>
+                                                    {missingCourses.map((c, i) => (
+                                                        <div key={i} className={`${styles.courseItem} ${styles.pending}`}>
+                                                            {c}
+                                                        </div>
+                                                    ))}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    ) : (
+                                        <div className={styles.successMessage}>
+                                            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
+                                                <polyline points="22 4 12 14.01 9 11.01" />
+                                            </svg>
+                                            <p>¡Todo al día!</p>
+                                        </div>
+                                    );
+                                })()}
+
+                                {/* History Section */}
+                                <div className={styles.historySection}>
+                                    <h3>Historial Completo</h3>
+                                    <div className={styles.historyList}>
+                                        {selectedEmployee.history?.sort((a, b) => new Date(b.date) - new Date(a.date)).map((h, i) => (
+                                            <div key={i} className={styles.historyItem}>
+                                                <div className={styles.historyLeft}>
+                                                    <div className={styles.historyName}>{h.courseName}</div>
+                                                    <div className={styles.historyDate}>{h.date}</div>
+                                                </div>
+                                                <div className={styles.historyRight}>
+                                                    <span className={h.status === 'approved' ? styles.tagSuccess : styles.tagFail}>
+                                                        {h.score}
+                                                    </span>
+                                                    {h.status === 'approved' && (
+                                                        <button
+                                                            className={styles.downloadBtn}
+                                                            onClick={() => generateDC3(selectedEmployee, coursesMap[h.courseName] || { name: h.courseName }, { date: h.date })}
+                                                            title="Descargar DC-3"
+                                                        >
+                                                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                                                                <polyline points="14 2 14 8 20 8" />
+                                                                <line x1="12" y1="18" x2="12" y2="12" />
+                                                                <line x1="9" y1="15" x2="15" y2="15" />
+                                                            </svg>
+                                                        </button>
+                                                    )}
+                                                </div>
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
                             </div>
                         )}
                     </div>
-                </DialogBody>
-            </Dialog>
+                </div>
 
-            {/* Inconsistency Report Modal */}
-            <Dialog open={showInconsistencyModal} onOpenChange={setShowInconsistencyModal}>
-                <DialogHeader>
-                    <DialogTitle>⚠️ Inconsistencias Detectadas</DialogTitle>
-                    <DialogClose onClose={() => setShowInconsistencyModal(false)} />
-                </DialogHeader>
-                <DialogBody>
-                    <p className="mb-4">Los siguientes cursos del historial no coinciden exactamente con el catálogo oficial (Matriz). Esto puede afectar el cálculo de cumplimiento.</p>
-                    <div className={styles.inconsistencyList}>
-                        {inconsistencies.map((inc, i) => (
-                            <div key={i} className={styles.inconsistencyItem}>{inc}</div>
-                        ))}
-                    </div>
-                </DialogBody>
-                <DialogFooter>
-                    <Button onClick={() => setShowInconsistencyModal(false)}>Entendido</Button>
-                </DialogFooter>
-            </Dialog>
-        </>
+                {/* Yearly Details Modal */}
+                <Dialog open={showYearlyModal} onOpenChange={setShowYearlyModal}>
+                    <DialogHeader>
+                        <DialogTitle>Detalles de Cursos - {selectedYear}</DialogTitle>
+                        <DialogClose onClose={() => setShowYearlyModal(false)} />
+                    </DialogHeader>
+                    <DialogBody>
+                        <div className={styles.yearlyDetailsContainer}>
+                            {yearlyDetails.length > 0 ? (
+                                <div className={styles.coursesList}>
+                                    {yearlyDetails.map((course, idx) => (
+                                        <div key={idx} className={styles.courseDetailCard}>
+                                            <div className={styles.courseDetailHeader}>
+                                                <h4>{course.courseName}</h4>
+                                                <span className={styles.totalAttendees}>
+                                                    {course.months.reduce((sum, m) => sum + m.attendees, 0)} asistentes
+                                                </span>
+                                            </div>
+                                            <div className={styles.monthsList}>
+                                                {course.months.map((monthData, midx) => (
+                                                    <div key={midx} className={styles.monthItem}>
+                                                        <div className={styles.monthName}>
+                                                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                                                <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
+                                                                <line x1="16" y1="2" x2="16" y2="6" />
+                                                                <line x1="8" y1="2" x2="8" y2="6" />
+                                                                <line x1="3" y1="10" x2="21" y2="10" />
+                                                            </svg>
+                                                            {monthData.month}
+                                                        </div>
+                                                        <div className={styles.monthAttendees}>
+                                                            {monthData.attendees} {monthData.attendees === 1 ? 'asistente' : 'asistentes'}
+                                                        </div>
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            ) : (
+                                <div className={styles.emptyState}>
+                                    No se encontraron cursos para este año
+                                </div>
+                            )}
+                        </div>
+                    </DialogBody>
+                </Dialog>
+
+                {/* Inconsistency Report Modal */}
+                <Dialog open={showInconsistencyModal} onOpenChange={setShowInconsistencyModal}>
+                    <DialogHeader>
+                        <DialogTitle>⚠️ Inconsistencias Detectadas</DialogTitle>
+                        <DialogClose onClose={() => setShowInconsistencyModal(false)} />
+                    </DialogHeader>
+                    <DialogBody>
+                        <p className="mb-4">Los siguientes cursos del historial no coinciden exactamente con el catálogo oficial (Matriz). Esto puede afectar el cálculo de cumplimiento.</p>
+                        <div className={styles.inconsistencyList}>
+                            {inconsistencies.map((inc, i) => (
+                                <div key={i} className={styles.inconsistencyItem}>{inc}</div>
+                            ))}
+                        </div>
+                    </DialogBody>
+                    <DialogFooter>
+                        <Button onClick={() => setShowInconsistencyModal(false)}>Entendido</Button>
+                    </DialogFooter>
+                </Dialog>
+            </div>
+        </AdminLayout>
     );
 }
-

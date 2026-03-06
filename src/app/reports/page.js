@@ -602,7 +602,7 @@ export default function ReportsPage() {
                                     </div>
                                 </div>
 
-                                {/* Grafico de Ãrea - Tendencia de Cumplimiento */}
+                                {/* Grafico de Área - Tendencia de Cumplimiento */}
                                 <div className={`${styles.chartCard} ${styles.fullWidth}`}>
                                     <div className={styles.chartHeader}>
                                         <div>

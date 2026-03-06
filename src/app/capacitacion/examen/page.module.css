@@ -1,17 +1,14 @@
-.container {
+.pageWrapper {
     min-height: calc(100vh - 80px);
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
+    width: 100%;
+    position: relative;
     padding: 2rem;
-    /* Background removed to inherit from body (platform theme) */
+    overflow-x: hidden;
 }
 
 /* Header Section */
 .header {
     width: 100%;
-    max-width: 600px;
     margin-bottom: 2rem;
     display: flex;
     flex-direction: column;
@@ -32,38 +29,40 @@
     margin: 0;
 }
 
-.backBtn {
-    align-self: flex-start;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    color: var(--text-secondary);
-    font-size: 0.9rem;
-    font-weight: 500;
-    padding: 0.5rem 0.75rem;
-    border-radius: var(--radius-md);
-    transition: all 0.2s ease;
-}
 
-.backBtn:hover {
-    background: var(--bg-tertiary);
-    color: var(--text-primary);
-}
 
-/* Configuration Card - The main focus */
+/* Configuration Card - Responsive for Desktop */
 .configCard {
     width: 100%;
-    max-width: 600px;
+    max-width: 100%;
     background: var(--bg-primary);
     border-radius: var(--radius-xl);
     border: 1px solid var(--border-color);
     box-shadow:
         0 4px 6px -1px rgba(0, 0, 0, 0.05),
         0 10px 15px -3px rgba(0, 0, 0, 0.05);
-    /* Soft, elevated shadow */
     padding: 2.5rem;
     position: relative;
     overflow: hidden;
+}
+
+/* Master-Detail / Form Grid Layout for Large Screens */
+@media (min-width: 1024px) {
+    .configCard {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 32px;
+    }
+
+    .formGroup {
+        margin-bottom: 0;
+    }
+
+    .generateBtn {
+        grid-column: 1 / -1;
+        max-width: 400px;
+        margin: 24px auto 0;
+    }
 }
 
 /* Form Styles refined */

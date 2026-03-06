@@ -231,7 +231,7 @@ export default function PerfilPage() {
 
     if (authLoading || !user) {
         return (
-            <AdminLayout title="Módulo">
+            <AdminLayout title="Perfiles de Puesto">
                 <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', color: 'var(--text-primary)' }}>
                     <div className="spinner"></div>
                 </div>
@@ -240,171 +240,155 @@ export default function PerfilPage() {
     }
 
     return (
-        <AdminLayout title="Módulo">
-            <BackgroundLines className={styles.bgDecoration} />
+        <AdminLayout title="Perfiles de Puesto">
+            <div className={styles.pageWrapper}>
+                <BackgroundLines className={styles.bgDecoration} />
 
-            <div className={styles.container}>
-                {/* Header */}
-                <header className={styles.topBar}>
-                    <div className={styles.topBarLeft}>
-                        <Link
-                            href="/dashboard"
-                            className={styles.topBarBack}
-                            aria-label="Regresar al dashboard"
-                        >
-                            <ArrowLeft size={18} strokeWidth={2} />
-                        </Link>
-                        <span className={styles.topBarTitle}>Perfil</span>
-                    </div>
-
-                    <div className={styles.topBarRight}>
-
-                    </div>
-                </header>
-
-                {/* Barra de búsqueda debajo del ProfileDropdown */}
-                <div className={styles.searchRow}>
-                    <div className={styles.searchPill}>
-                        <Search className={styles.searchPillIcon} size={16} strokeWidth={2.5} />
-                        <label htmlFor="employee-search" className={styles.srOnly}>
-                            Buscar empleado por ID
-                        </label>
-                        <input
-                            id="employee-search"
-                            type="text"
-                            placeholder="ID"
-                            value={searchId}
-                            onChange={(e) => setSearchId(e.target.value)}
-                            onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
-                            className={styles.searchPillInput}
-                            maxLength={MAX_SEARCH_ID_LENGTH}
-                            aria-label="ID del empleado"
-                            aria-describedby="search-instructions"
-                            disabled={loading}
-                        />
-                        <span id="search-instructions" className={styles.srOnly}>
-                            Ingresa el ID del empleado (máximo {MAX_SEARCH_ID_LENGTH} caracteres) y presiona Enter o el botón Buscar
-                        </span>
-                        <button
-                            onClick={handleSearch}
-                            disabled={loading}
-                            className={styles.searchPillBtn}
-                            aria-label={loading ? 'Buscando empleado...' : 'Buscar empleado'}
-                            aria-busy={loading}
-                        >
-                            {loading ? <div className={styles.spinner} aria-hidden="true" /> : 'Buscar'}
-                        </button>
-                    </div>
-                </div>
-
-                {/* Live region for screen readers */}
-                <div
-                    role="status"
-                    aria-live="polite"
-                    aria-atomic="true"
-                    className={styles.srOnly}
-                >
-                    {loading && 'Buscando empleado...'}
-                    {employee && `Empleado ${employee.name} cargado correctamente`}
-                    {notFound && `No se encontró el empleado con ID ${searchId}`}
-                </div>
-
-                <main id="main-content" className={styles.mainGrid} aria-label="Contenido del perfil">
-
-                    {/* Not Found State */}
-                    {notFound && (
-                        <div className={`${styles.colFull} ${styles.notFound}`} role="alert">
-                            <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true">
-                                <circle cx="11" cy="11" r="8" />
-                                <path d="M21 21l-4.35-4.35" />
-                                <path d="M8 8l6 6M14 8l-6 6" />
-                            </svg>
-                            <p className="text-xl">No se encontró empleado con ID: <strong>{searchId}</strong></p>
+                <div className={styles.container}>
+                    {/* Barra de búsqueda debajo del ProfileDropdown */}
+                    <div className={styles.searchRow}>
+                        <div className={styles.searchPill}>
+                            <Search className={styles.searchPillIcon} size={16} strokeWidth={2.5} />
+                            <label htmlFor="employee-search" className={styles.srOnly}>
+                                Buscar empleado por ID
+                            </label>
+                            <input
+                                id="employee-search"
+                                type="text"
+                                placeholder="ID"
+                                value={searchId}
+                                onChange={(e) => setSearchId(e.target.value)}
+                                onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
+                                className={styles.searchPillInput}
+                                maxLength={MAX_SEARCH_ID_LENGTH}
+                                aria-label="ID del empleado"
+                                aria-describedby="search-instructions"
+                                disabled={loading}
+                            />
+                            <span id="search-instructions" className={styles.srOnly}>
+                                Ingresa el ID del empleado (máximo {MAX_SEARCH_ID_LENGTH} caracteres) y presiona Enter o el botón Buscar
+                            </span>
+                            <button
+                                onClick={handleSearch}
+                                disabled={loading}
+                                className={styles.searchPillBtn}
+                                aria-label={loading ? 'Buscando empleado...' : 'Buscar empleado'}
+                                aria-busy={loading}
+                            >
+                                {loading ? <div className={styles.spinner} aria-hidden="true" /> : 'Buscar'}
+                            </button>
                         </div>
-                    )}
+                    </div>
 
-                    {/* Empty State - Initial Load */}
-                    {!employee && !loading && !notFound && (
-                        <div className={`${styles.colFull} ${styles.emptyState}`}>
-                            <Search size={64} strokeWidth={1.5} aria-hidden="true" />
-                            <h3>Busca un empleado</h3>
-                            <p>Ingresa un ID de empleado en el buscador para ver su perfil completo, capacitaciones, evaluaciones y documentos.</p>
-                        </div>
-                    )}
+                    {/* Live region for screen readers */}
+                    <div
+                        role="status"
+                        aria-live="polite"
+                        aria-atomic="true"
+                        className={styles.srOnly}
+                    >
+                        {loading && 'Buscando empleado...'}
+                        {employee && `Empleado ${employee.name} cargado correctamente`}
+                        {notFound && `No se encontró el empleado con ID ${searchId}`}
+                    </div>
 
-                    {/* Content Section */}
-                    {employee ? (
-                        <>
-                            {/* Left Column: Profile Card */}
-                            <div className={`${styles.colProfile} ${styles.stickyProfile}`}>
-                                <ProfileHeader
-                                    employee={employee}
-                                    onBack={() => { }}
-                                    employeeGroups={employeeGroups}
-                                />
+                    <main id="main-content" className={styles.mainGrid} aria-label="Contenido del perfil">
+
+                        {/* Not Found State */}
+                        {notFound && (
+                            <div className={`${styles.colFull} ${styles.notFound}`} role="alert">
+                                <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true">
+                                    <circle cx="11" cy="11" r="8" />
+                                    <path d="M21 21l-4.35-4.35" />
+                                    <path d="M8 8l6 6M14 8l-6 6" />
+                                </svg>
+                                <p className="text-xl">No se encontró empleado con ID: <strong>{searchId}</strong></p>
                             </div>
+                        )}
 
-                            {/* Right Column: Views */}
-                            <div className={styles.colContent}>
-                                <div className={styles.contentArea}>
-                                    <AnimatePresence mode="wait">
-                                        {activeView === 'profile' && (
-                                            <GeneralView
-                                                key="general"
-                                                employee={employee}
-                                                seniority={seniority}
-                                                trainingStats={training}
-                                                promotionInfo={promotionInfo}
-                                                onNavigate={setActiveView}
-                                                documentsCount={employee.documents?.length || 0}
-                                                iluoCount={positionData?.iluoSkills?.length || 0}
-                                            />
-                                        )}
+                        {/* Empty State - Initial Load */}
+                        {!employee && !loading && !notFound && (
+                            <div className={`${styles.colFull} ${styles.emptyState}`}>
+                                <Search size={64} strokeWidth={1.5} aria-hidden="true" />
+                                <h3>Busca un empleado</h3>
+                                <p>Ingresa un ID de empleado en el buscador para ver su perfil completo, capacitaciones, evaluaciones y documentos.</p>
+                            </div>
+                        )}
 
-                                        {activeView === 'training' && (
-                                            <TrainingView
-                                                key="training"
-                                                employee={employee}
-                                                trainingStats={training}
-                                                matrixCompliance={training.matrixCompliance}
-                                                onBack={() => setActiveView('profile')}
-                                            />
-                                        )}
-
-                                        {activeView === 'promotion' && (
-                                            <PromotionView
-                                                key="promotion"
-                                                employee={employee}
-                                                promotionRule={promotionRule}
-                                                promotionInfo={promotionInfo}
-                                                monthsInPosition={monthsInPosition}
-                                                onBack={() => setActiveView('profile')}
-                                            />
-                                        )}
-
-                                        {activeView === 'iluo' && (
-                                            <ILUOView
-                                                key="iluo"
-                                                employee={employee}
-                                                positionData={positionData}
-                                                setEmployee={setEmployee}
-                                                onBack={() => setActiveView('profile')}
-                                            />
-                                        )}
-
-                                        {activeView === 'documents' && (
-                                            <DocumentsView
-                                                key="documents"
-                                                documents={employee.documents}
-                                                onBack={() => setActiveView('profile')}
-                                            />
-                                        )}
-                                    </AnimatePresence>
+                        {/* Content Section */}
+                        {employee ? (
+                            <>
+                                {/* Left Column: Profile Card */}
+                                <div className={`${styles.colProfile} ${styles.stickyProfile}`}>
+                                    <ProfileHeader
+                                        employee={employee}
+                                        onBack={() => { }}
+                                        employeeGroups={employeeGroups}
+                                    />
                                 </div>
-                            </div>
-                        </>
-                    ) : null}
-                </main>
+
+                                {/* Right Column: Views */}
+                                <div className={styles.colContent}>
+                                    <div className={styles.contentArea}>
+                                        <AnimatePresence mode="wait">
+                                            {activeView === 'profile' && (
+                                                <GeneralView
+                                                    key="general"
+                                                    employee={employee}
+                                                    seniority={seniority}
+                                                    trainingStats={training}
+                                                    promotionInfo={promotionInfo}
+                                                    onNavigate={setActiveView}
+                                                    documentsCount={employee.documents?.length || 0}
+                                                    iluoCount={positionData?.iluoSkills?.length || 0}
+                                                />
+                                            )}
+
+                                            {activeView === 'training' && (
+                                                <TrainingView
+                                                    key="training"
+                                                    employee={employee}
+                                                    trainingStats={training}
+                                                    matrixCompliance={training.matrixCompliance}
+                                                    onBack={() => setActiveView('profile')}
+                                                />
+                                            )}
+
+                                            {activeView === 'promotion' && (
+                                                <PromotionView
+                                                    key="promotion"
+                                                    employee={employee}
+                                                    promotionRule={promotionRule}
+                                                    promotionInfo={promotionInfo}
+                                                    monthsInPosition={monthsInPosition}
+                                                    onBack={() => setActiveView('profile')}
+                                                />
+                                            )}
+
+                                            {activeView === 'iluo' && (
+                                                <ILUOView
+                                                    key="iluo"
+                                                    employee={employee}
+                                                    positionData={positionData}
+                                                    setEmployee={setEmployee}
+                                                    onBack={() => setActiveView('profile')}
+                                                />
+                                            )}
+
+                                            {activeView === 'documents' && (
+                                                <DocumentsView
+                                                    key="documents"
+                                                    documents={employee.documents}
+                                                    onBack={() => setActiveView('profile')}
+                                                />
+                                            )}
+                                        </AnimatePresence>
+                                    </div>
+                                </div>
+                            </>
+                        ) : null}
+                    </main>
+                </div>
             </div>
         </AdminLayout>
     );
