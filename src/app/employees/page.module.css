@@ -684,7 +684,7 @@
     border-radius: 8px;
     font-size: 12px;
     font-weight: 600;
-    font-family: monospace;
+    font-family: var(--font-mono, 'Roboto_Mono', monospace);
 }
 
 [data-theme="dark"] .courseBadge {
@@ -707,7 +707,7 @@
 }
 
 .courseId {
-    font-family: monospace;
+    font-family: var(--font-mono, 'Roboto_Mono', monospace);
     font-size: 13px;
     color: #4a5568;
     font-weight: 600;
@@ -1230,7 +1230,7 @@
     font-size: 24px;
     font-weight: 700;
     letter-spacing: 4px;
-    font-family: 'Courier New', monospace;
+    font-family: var(--font-mono, 'Roboto_Mono', monospace);
 }
 
 .generateButton {
@@ -1317,7 +1317,7 @@
 
 .codeInfoItem span {
     color: #718096;
-    font-family: 'Courier New', monospace;
+    font-family: var(--font-mono, 'Roboto_Mono', monospace);
 }
 
 [data-theme="dark"] .codeInfoItem {
