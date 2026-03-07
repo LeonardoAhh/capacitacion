@@ -172,20 +172,9 @@
     background: rgba(60, 60, 65, 0.8);
 }
 
-.header h1 {
-    font-size: 2rem;
-    font-family: var(--font-serif);
-    font-weight: 800;
-    color: var(--text-primary);
-    margin: 0;
-    letter-spacing: -0.5px;
-}
 
-.subtitle {
-    color: var(--text-secondary);
-    font-size: 1rem;
-    margin: 0;
-}
+
+.su
 
 /* ==================== SELECTOR CARD ==================== */
 .selectorCard {
@@ -845,5 +834,42 @@
 
     .employeeRow.expanded .employeeDetails {
         max-height: 280px;
+    }
+}
+
+
+
+
+
+@media (max-width: 768px) {
+    
+    
+}
+
+
+/* Título Principal de Página */
+.pageTitle {
+    font-size: 2rem;
+    font-family: var(--font-serif);
+    font-weight: 800;
+    color: var(--text-primary);
+    margin: 0;
+    letter-spacing: -0.5px;
+}
+
+/* Subtítulo de Página */
+.pageSubtitle {
+    font-size: 1rem;
+    font-weight: 400;
+    color: var(--text-secondary);
+    margin: 4px 0 20px 0;
+}
+
+@media (max-width: 768px) {
+    .pageTitle {
+        font-size: 1.75rem;
+    }
+    .pageSubtitle {
+        margin-bottom: 16px;
     }
 }

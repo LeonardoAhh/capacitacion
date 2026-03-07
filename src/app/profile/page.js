@@ -160,7 +160,7 @@ export default function ProfilePage() {
                                 </p>
                             )}
 
-                            <h1 className={styles.userName}>
+                            <h1 className={styles.pageTitle}>
                                 {user.name || user.displayName || 'Usuario'}
                             </h1>
 

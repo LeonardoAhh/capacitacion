@@ -276,7 +276,7 @@ export default function MatrizPage() {
                 <div className={styles.container}>
                     <div className={styles.header}>
                         <div className={styles.headerLeft}>
-                            <h1>Matriz de Capacitación</h1>
+                            <h1 className={styles.pageTitle}>Matriz de Capacitación</h1>
                         </div>
 
                         <div className={styles.headerRight}>

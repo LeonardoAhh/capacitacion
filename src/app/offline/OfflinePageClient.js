@@ -29,7 +29,7 @@ export default function OfflinePageClient() {
                 <div className={styles.iconWrapper}>
                     <WifiOff size={64} />
                 </div>
-                <h1 className={styles.title}>Sin conexión</h1>
+                <h1 className={styles.pageTitle}>Sin conexión</h1>
                 <p className={styles.message}>
                     No tienes acceso a internet en este momento. 
                     Verifica tu conexión e intenta de nuevo.

@@ -639,7 +639,6 @@ export default function EmployeesPage() {
                     <div className={styles.headerContent}>
 
                         <h1 className={styles.pageTitle}>
-                            <Users size={32} style={{ marginRight: '12px' }} />
                             Gestión de Empleados
                         </h1>
                         <p className={styles.pageSubtitle}>

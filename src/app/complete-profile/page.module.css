@@ -35,31 +35,13 @@
     margin-bottom: 2.5rem;
 }
 
-.title {
-    margin: 0 0 0.5rem 0;
-    font-weight: 700;
-    font-size: 2rem;
-    background: linear-gradient(135deg, #fff 0%, rgba(255, 255, 255, 0.8) 100%);
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
-}
 
-[data-theme="light"] .title {
-    background: linear-gradient(135deg, #000 0%, rgba(0, 0, 0, 0.8) 100%);
-    -webkit-background-clip: text;
-    background-clip: text;
-}
 
-.subtitle {
-    margin: 0;
-    font-size: 0.9375rem;
-    color: rgba(255, 255, 255, 0.6);
-}
+[data-theme="light"] 
 
-[data-theme="light"] .subtitle {
-    color: rgba(0, 0, 0, 0.6);
-}
+.su
+
+[data-theme="light"] .su
 
 .error {
     margin-bottom: 1.5rem;
@@ -157,7 +139,33 @@
         padding: 2rem 1.5rem;
     }
 
-    .title {
-        font-size: 1.5rem;
+    
+}
+
+.pageTitle {
+    font-size: 2.5rem;
+    font-family: var(--font-serif);
+    font-weight: 800;
+    color: var(--text-primary);
+    margin: 0;
+    display: flex;
+    align-items: center;
+    letter-spacing: -0.5px;
+}
+
+.pageSubtitle {
+    font-size: 1rem;
+    font-family: var(--font-sans, "Roboto", sans-serif);
+    font-weight: 400;
+    color: var(--text-secondary);
+    margin: 8px 0 0 0;
+}
+
+@media (max-width: 768px) {
+    .pageTitle {
+        font-size: 2rem;
+    }
+    .pageSubtitle {
+        margin-top: 8px;
     }
 }

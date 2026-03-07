@@ -40,7 +40,7 @@ export default function ProfileHeader({ employee, onBack, employeeGroups = [] })
                     )}
                 </motion.div>
 
-                <h1 className={styles.name}>{employee.name}</h1>
+                <h1 className={styles.pageTitle}>{employee.name}</h1>
 
                 <div className={styles.idBadge}>
                     ID: {employee.employeeId || employee.id}

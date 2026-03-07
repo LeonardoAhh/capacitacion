@@ -332,8 +332,8 @@ export default function GruposPage() {
                         <div className={styles.header}>
                             <div className={styles.headerLeft}>
                                 <div>
-                                    <h1 className={styles.title}>Grupos y Certificaciones</h1>
-                                    <p className={styles.subtitle}>
+                                    <h1 className={styles.pageTitle}>Grupos y Certificaciones</h1>
+                                    <p className={styles.pageSubtitle}>
                                         Gestiona roles transversales: Auditores, Brigadas, Comités y más
                                     </p>
                                 </div>

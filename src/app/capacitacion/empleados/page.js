@@ -448,8 +448,8 @@ export default function EmpleadosPage() {
                 <div className={styles.header}>
                     <div className={styles.headerLeft}>
                         <div className={styles.headerContent}>
-                            <h1>Gestión de Empleados</h1>
-                            <p>Administración de personal y datos maestros</p>
+                            <h1 className={styles.pageTitle}>Gestión de Empleados</h1>
+                            <p className={styles.pageSubtitle}>Administración de personal y datos maestros</p>
                         </div>
 
                     </div>

@@ -420,8 +420,8 @@ export default function PromocionesPage() {
                 <div className={styles.container}>
                     <div className={styles.header}>
                         <div>
-                            <h1>Control de Promociones</h1>
-                            <p>Monitoreo de elegibilidad para cambio de categoría</p>
+                            <h1 className={styles.pageTitle}>Control de Promociones</h1>
+                            <p className={styles.pageSubtitle}>Monitoreo de elegibilidad para cambio de categoría</p>
                         </div>
                     </div>
 

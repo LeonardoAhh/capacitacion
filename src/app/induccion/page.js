@@ -551,7 +551,7 @@ function InduccionContent() {
                     <header className={styles.header}>
                         <div className={styles.titleSectionParent}>
                             <div className={styles.titleSection}>
-                                <h1>Inducción</h1>
+                                <h1 className={styles.pageTitle}>Inducción</h1>
                                 <p>Material y cursos de bienvenida para empleados y candidatos</p>
                             </div>
                         </div>

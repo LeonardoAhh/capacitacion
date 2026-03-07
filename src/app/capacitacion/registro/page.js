@@ -577,8 +577,8 @@ export default function RegistroPage() {
             <main className={styles.main} id="main-content">
                 <div className={styles.container}>
                     <div className={styles.header}>
-                        <h1>Carga Masiva de Capacitación</h1>
-                        <p>Registra uno o varios cursos para múltiples empleados simultáneamente.</p>
+                        <h1 className={styles.pageTitle}>Carga Masiva de Capacitación</h1>
+                        <p className={styles.pageSubtitle}>Registra uno o varios cursos para múltiples empleados simultáneamente.</p>
                     </div>
 
                     {/* Mode Toggle */}

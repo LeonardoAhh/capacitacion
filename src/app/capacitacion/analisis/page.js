@@ -420,7 +420,7 @@ export default function AnalisisPage() {
                     <div className={styles.container}>
                         <div className={styles.header}>
                             <div className={styles.headerLeft}>
-                                <h1>Análisis de Cumplimiento</h1>
+                                <h1 className={styles.pageTitle}>Análisis de Cumplimiento</h1>
                             </div>
                             <div className={styles.headerRight}>
                                 <Button

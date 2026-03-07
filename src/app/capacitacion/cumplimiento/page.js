@@ -306,8 +306,8 @@ export default function CumplimientoPage() {
             <div className={styles.container}>
                 <div className={styles.header}>
                     <div className={styles.headerLeft}>
-                        <h1>Cumplimiento por Curso</h1>
-                        <p className={styles.subtitle}>Visualiza el progreso de capacitación por cada curso</p>
+                        <h1 className={styles.pageTitle}>Cumplimiento por Curso</h1>
+                        <p className={styles.pageSubtitle}>Visualiza el progreso de capacitación por cada curso</p>
                     </div>
                 </div>
 

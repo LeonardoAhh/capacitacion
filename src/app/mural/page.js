@@ -160,7 +160,7 @@ export default function MuralPage() {
                     <div className={styles.headerIconWrapper}>
                         <Award size={40} aria-hidden="true" />
                     </div>
-                    <h1>Mural de Reconocimiento</h1>
+                    <h1 className={styles.pageTitle}>Mural de Reconocimiento</h1>
                 </header>
 
                 {showForm && (

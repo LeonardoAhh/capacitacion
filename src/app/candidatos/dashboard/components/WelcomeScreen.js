@@ -31,7 +31,7 @@ export default function WelcomeScreen({ candidate, onStart }) {
                     )}
                 </div>
 
-                <h1 className={styles.title}>
+                <h1 className={styles.pageTitle}>
                     ¡Bienvenido a <span className={styles.brand}>ViñoPlastic</span>!
                 </h1>
                 <p className={styles.subtitle}>{firstName}</p>

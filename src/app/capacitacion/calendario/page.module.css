@@ -826,3 +826,40 @@
         width: 100%;
     }
 }
+
+
+
+
+
+@media (max-width: 768px) {
+    
+    
+}
+
+
+/* Título Principal de Página */
+.pageTitle {
+    font-size: 2rem;
+    font-family: var(--font-serif);
+    font-weight: 800;
+    color: var(--text-primary);
+    margin: 0;
+    letter-spacing: -0.5px;
+}
+
+/* Subtítulo de Página */
+.pageSubtitle {
+    font-size: 1rem;
+    font-weight: 400;
+    color: var(--text-secondary);
+    margin: 4px 0 20px 0;
+}
+
+@media (max-width: 768px) {
+    .pageTitle {
+        font-size: 1.75rem;
+    }
+    .pageSubtitle {
+        margin-bottom: 16px;
+    }
+}

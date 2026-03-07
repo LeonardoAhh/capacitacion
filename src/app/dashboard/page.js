@@ -158,9 +158,8 @@ export default function DashboardPage() {
             <div className={styles.scrollContent}>
                 <div className={styles.container}>
                     <header className={styles.header}>
-                        <span className={styles.portal}>Dashboard</span>
-                        <h1 className={styles.title}>Hola, {(user?.nombre || user?.nickname || user?.name || 'Administrador').split(' ')[0]}</h1>
-                        <p className={styles.subtitle}>Resumen de empleados, talento y contratos</p>
+                        <h1 className={styles.pageTitle}>Hola, {(user?.nombre || user?.nickname || user?.name || 'Administrador').split(' ')[0]}</h1>
+                        <p className={styles.pageSubtitle}>Resumen de empleados, talento y contratos</p>
                     </header>
 
                     <div className={styles.statsGrid}>

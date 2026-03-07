@@ -188,7 +188,7 @@ export default function CatalogPage() {
                 <div className={styles.container}>
                     <div className={styles.header}>
                         <div className={styles.headerLeft}>
-                            <h1>Catálogo de Cursos</h1>
+                            <h1 className={styles.pageTitle}>Catálogo de Cursos</h1>
                         </div>
                         <div className={styles.headerRight}>
                             <Button onClick={openCreateModal}>

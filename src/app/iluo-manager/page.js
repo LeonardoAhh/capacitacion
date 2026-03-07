@@ -336,7 +336,7 @@ export default function IluoManagerPage() {
                         <div className={styles.content}>
                             <header className={styles.contentHeader}>
                                 <div>
-                                    <h1>{selectedPosition.name}</h1>
+                                    <h1 className={styles.pageTitle}>{selectedPosition.name}</h1>
                                     <span className={styles.deptBadge}>{selectedPosition.department}</span>
                                 </div>
                                 <div className={styles.statsCard}>
@@ -560,7 +560,7 @@ function AccessDenied() {
     return (
         <div className={styles.accessDenied}>
             <div className={styles.deniedIcon}>⨂</div>
-            <h1>Acceso Denegado</h1>
+            <h1 className={styles.pageTitle}>Acceso Denegado</h1>
             <p>No tienes permisos para acceder a esta sección</p>
             <Link href="/dashboard" className={styles.deniedLink}>
                 Volver a Módulos

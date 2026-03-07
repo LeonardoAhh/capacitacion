@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 
 import React, { useEffect, useState, useMemo, useCallback } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
@@ -472,7 +472,7 @@ export default function ReportsPage() {
                 <div className={styles.container}>
                     <div className={styles.header}>
                         <div className={styles.headerLeft}>
-                            <h1>Cumplimiento Plan de Formacion</h1>
+                            <h1 className={styles.pageTitle}>Cumplimiento Plan de Formacion</h1>
                         </div>
                         <div className={styles.yearSelector}>
                             <label>Ano:</label>

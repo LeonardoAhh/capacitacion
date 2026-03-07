@@ -59,29 +59,13 @@
     margin-bottom: 3rem;
 }
 
-.title {
-    font-size: 3rem;
-    font-weight: 800;
-    color: #111;
-    margin: 0 0 1rem 0;
-    letter-spacing: -1px;
-}
 
-[data-theme="dark"] .title {
-    color: #f9fafb;
-}
 
-.subtitle {
-    font-size: 1.25rem;
-    color: #6b7280;
-    max-width: 800px;
-    margin: 0 auto;
-    line-height: 1.6;
-}
+[data-theme="dark"] 
 
-[data-theme="dark"] .subtitle {
-    color: #9ca3af;
-}
+.su
+
+[data-theme="dark"] .su
 
 /* ==================== CARDS ==================== */
 .grid {
@@ -382,4 +366,32 @@
     background: #d97706;
     transform: translateY(-1px);
     box-shadow: 0 6px 8px -1px rgba(245, 158, 11, 0.3);
+}
+
+.pageTitle {
+    font-size: 2.5rem;
+    font-family: var(--font-serif);
+    font-weight: 800;
+    color: var(--text-primary);
+    margin: 0;
+    display: flex;
+    align-items: center;
+    letter-spacing: -0.5px;
+}
+
+.pageSubtitle {
+    font-size: 1rem;
+    font-family: var(--font-sans, "Roboto", sans-serif);
+    font-weight: 400;
+    color: var(--text-secondary);
+    margin: 8px 0 0 0;
+}
+
+@media (max-width: 768px) {
+    .pageTitle {
+        font-size: 2rem;
+    }
+    .pageSubtitle {
+        margin-top: 8px;
+    }
 }

@@ -186,7 +186,7 @@ export default function PresentacionPage() {
 
             <div className={styles.container}>
                 <header className={styles.header}>
-                    <h1 className={styles.title}>Análisis de Capacitación</h1>
+                    <h1 className={styles.pageTitle}>Análisis de Capacitación</h1>
                     <p className={styles.subtitle}>
                         Proyección del impacto de la aplicación de {data.validUserCourses.length} cursos con material actualmente.
                     </p>
@@ -199,7 +199,7 @@ export default function PresentacionPage() {
                             <div className={styles.row}>
                                 <div className={styles.card} style={{ textAlign: 'center', padding: '2rem' }}>
                                     <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginBottom: '1.5rem', borderBottom: '1px solid #e5e7eb', paddingBottom: '0.8rem' }}>
-                                        <h1 style={{ color: '#f59e0b', fontSize: '1.8rem', margin: 0, fontWeight: '800' }}>2024</h1>
+                                        <h1 className={styles.pageTitle}>2024</h1>
                                     </div>
                                     <div style={{ color: '#6b7280', fontWeight: 'bold', letterSpacing: '1px', fontSize: '1rem', marginBottom: '0.5rem', fontFamily: 'serif' }}>AVANCE DEL PLAN</div>
                                     <div style={{ fontSize: '4rem', fontWeight: '900', color: '#ff4d4f', lineHeight: '1', margin: '1rem 0' }}>22.4%</div>
@@ -207,7 +207,7 @@ export default function PresentacionPage() {
 
                                 <div className={styles.card} style={{ textAlign: 'center', padding: '2rem' }}>
                                     <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginBottom: '1.5rem', borderBottom: '1px solid #e5e7eb', paddingBottom: '0.8rem' }}>
-                                        <h1 style={{ color: '#f59e0b', fontSize: '1.8rem', margin: 0, fontWeight: '800' }}>2025</h1>
+                                        <h1 className={styles.pageTitle}>2025</h1>
                                     </div>
                                     <div style={{ color: '#6b7280', fontWeight: 'bold', letterSpacing: '1px', fontSize: '1rem', marginBottom: '0.5rem', fontFamily: 'serif' }}>AVANCE DEL PLAN</div>
                                     <div style={{ fontSize: '4rem', fontWeight: '900', color: '#ff4d4f', lineHeight: '1', margin: '1rem 0' }}>41.2%</div>

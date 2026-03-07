@@ -703,8 +703,8 @@ export default function CalendarPage() {
                 <div className={styles.headerSection}>
                     <div className={styles.header}>
                         <div className={styles.titleGroup}>
-                            <h1>Calendario de Capacitación</h1>
-                            <p>Visualiza los cursos impartidos y programados</p>
+                            <h1 className={styles.pageTitle}>Calendario de Capacitación</h1>
+                            <p className={styles.pageSubtitle}>Visualiza los cursos impartidos y programados</p>
                         </div>
                         <div className={styles.headerActions}>
                             <div className={styles.controls}>

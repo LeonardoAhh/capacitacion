@@ -126,7 +126,7 @@ export default function RegistroEmpleadosPage() {
                 <div className={styles.headerWrapper}>
                     <BackButton href="/dashboard/programacion" />
                     <div className={styles.header}>
-                        <h1 className={styles.title}>Registro de Personal</h1>
+                        <h1 className={styles.pageTitle}>Registro de Personal</h1>
                         <p className={styles.subtitle}>Alta rápida de empleados para plataforma de capacitación.</p>
                     </div>
                 </div>

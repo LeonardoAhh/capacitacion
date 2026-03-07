@@ -154,20 +154,9 @@
     box-shadow: 0 0 15px rgba(245, 158, 11, 0.15);
 }
 
-.header h1 {
-    font-size: 2rem;
-    font-family: var(--font-serif);
-    font-weight: 800;
-    color: var(--text-primary);
-    margin: var(--spacing-sm) 0 var(--spacing-xs);
-    letter-spacing: -0.5px;
-}
 
-.header p {
-    color: var(--text-secondary);
-    font-size: 0.95rem;
-    margin: 0;
-}
+
+
 
 .backBtn {
     display: inline-flex;
@@ -312,19 +301,9 @@
     flex-wrap: wrap;
 }
 
-.header h1 {
-    font-size: 2rem;
-    font-weight: 800;
-    color: var(--text-primary);
-    margin: var(--spacing-sm) 0 var(--spacing-xs);
-    letter-spacing: -0.5px;
-}
 
-.header p {
-    color: var(--text-secondary);
-    font-size: 0.95rem;
-    margin: 0;
-}
+
+
 
 .backBtn {
     display: inline-flex;
@@ -492,11 +471,7 @@
     color: var(--text-tertiary);
 }
 
-.modalSubtitle {
-    color: var(--text-secondary);
-    font-size: 0.9rem;
-    margin-bottom: var(--spacing-md);
-}
+.modalSu
 
 /* ==================== BASE LAYOUT ==================== */
 .main {
@@ -613,19 +588,9 @@
     flex-wrap: wrap;
 }
 
-.header h1 {
-    font-size: 2rem;
-    font-weight: 800;
-    color: var(--text-primary);
-    margin: var(--spacing-sm) 0 var(--spacing-xs);
-    letter-spacing: -0.5px;
-}
 
-.header p {
-    color: var(--text-secondary);
-    font-size: 0.95rem;
-    margin: 0;
-}
+
+
 
 .backBtn {
     display: inline-flex;
@@ -770,19 +735,9 @@
     flex-wrap: wrap;
 }
 
-.header h1 {
-    font-size: 2rem;
-    font-weight: 800;
-    color: var(--text-primary);
-    margin: var(--spacing-sm) 0 var(--spacing-xs);
-    letter-spacing: -0.5px;
-}
 
-.header p {
-    color: var(--text-secondary);
-    font-size: 0.95rem;
-    margin: 0;
-}
+
+
 
 .backBtn {
     display: inline-flex;
@@ -950,11 +905,7 @@
     color: var(--text-tertiary);
 }
 
-.modalSubtitle {
-    color: var(--text-secondary);
-    font-size: 0.9rem;
-    margin-bottom: var(--spacing-md);
-}
+.modalSu
 
 /* ==================== RULES MODAL ==================== */
 .rulesModalBody {
@@ -1323,9 +1274,7 @@
         flex-direction: column;
     }
 
-    .header h1 {
-        font-size: 1.5rem;
-    }
+    
 
     .filterContent {
         flex-direction: column;
@@ -1395,5 +1344,42 @@
 
     .filterCard {
         padding: var(--spacing-md);
+    }
+}
+
+
+
+
+
+@media (max-width: 768px) {
+    
+    
+}
+
+
+/* Título Principal de Página */
+.pageTitle {
+    font-size: 2rem;
+    font-family: var(--font-serif);
+    font-weight: 800;
+    color: var(--text-primary);
+    margin: 0;
+    letter-spacing: -0.5px;
+}
+
+/* Subtítulo de Página */
+.pageSubtitle {
+    font-size: 1rem;
+    font-weight: 400;
+    color: var(--text-secondary);
+    margin: 4px 0 20px 0;
+}
+
+@media (max-width: 768px) {
+    .pageTitle {
+        font-size: 1.75rem;
+    }
+    .pageSubtitle {
+        margin-bottom: 16px;
     }
 }

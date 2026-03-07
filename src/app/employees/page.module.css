@@ -109,33 +109,7 @@
 .headerContent {
     margin-bottom: 24px;
 }
-
-.pageTitle {
-    font-size: 36px;
-    font-weight: 800;
-    color: var(--text-primary);
-    margin: 0 0 8px 0;
-    display: flex;
-    align-items: center;
-    letter-spacing: -0.5px;
-}
-
-.pageSubtitle {
-    font-size: 16px;
-    color: var(--text-secondary);
-    margin: 0;
-    padding-left: 44px;
-}
-
 @media (max-width: 768px) {
-    .pageTitle {
-        font-size: 28px;
-    }
-
-    .pageSubtitle {
-        padding-left: 0;
-        margin-top: 8px;
-    }
 }
 
 .topControlsRow {
@@ -1926,9 +1900,7 @@
 
 /* Small phones (< 375px) */
 @media (max-width: 374px) {
-    .pageTitle {
-        font-size: 24px;
-    }
+    
 
     .statValue {
         font-size: 20px;
@@ -1967,5 +1939,33 @@
 
     .employeeCard {
         break-inside: avoid;
+    }
+}
+
+.pageTitle {
+    font-size: 2.5rem;
+    font-family: var(--font-serif);
+    font-weight: 800;
+    color: var(--text-primary);
+    margin: 0;
+    display: flex;
+    align-items: center;
+    letter-spacing: -0.5px;
+}
+
+.pageSubtitle {
+    font-size: 1rem;
+    font-family: var(--font-sans, "Roboto", sans-serif);
+    font-weight: 400;
+    color: var(--text-secondary);
+    margin: 8px 0 0 0;
+}
+
+@media (max-width: 768px) {
+    .pageTitle {
+        font-size: 2rem;
+    }
+    .pageSubtitle {
+        margin-top: 8px;
     }
 }

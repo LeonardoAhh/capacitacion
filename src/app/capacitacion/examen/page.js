@@ -314,7 +314,7 @@ export default function ExamenPage() {
                                     <p>Ingeniería en Plásticos</p>
                                 </div>
                                 <div className={styles.examInfo}>
-                                    <h1>EXAMEN DE CONOCIMIENTOS</h1>
+                                    <h1 className={styles.pageTitle}>EXAMEN DE CONOCIMIENTOS</h1>
                                     <p><strong>Fecha:</strong> {examData.date}</p>
                                 </div>
                             </div>
