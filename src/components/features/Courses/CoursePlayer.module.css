@@ -51,12 +51,12 @@
     display: flex;
     align-items: center;
     gap: var(--course-spacing-xs);
-    padding: var(--course-spacing-xs) var(--course-spacing-sm);
-    border-radius: var(--course-radius-sm);
+    border-radius: var(--course-radius-md);
     border: 1px solid var(--course-btn-border);
     background: var(--course-btn-bg);
     color: var(--course-btn-text);
     font-size: var(--course-font-sm);
+    font-family: var(--font-body), sans-serif;
     font-weight: 600;
     cursor: pointer;
     transition: all var(--course-transition-fast);
@@ -75,6 +75,7 @@
 
 .headerTitle {
     font-size: var(--course-font-sm);
+    font-family: var(--font-body), sans-serif;
     font-weight: 700;
     color: var(--course-header-text);
     overflow: hidden;
@@ -92,6 +93,7 @@
 
 .counter {
     font-size: var(--course-font-sm);
+    font-family: var(--font-mono), monospace;
     font-weight: 600;
     color: var(--course-slide-text-muted);
     font-variant-numeric: tabular-nums;
@@ -225,11 +227,12 @@
     align-items: center;
     gap: var(--course-spacing-xs);
     padding: var(--course-spacing-sm) var(--course-spacing-md);
-    border-radius: var(--course-radius-sm);
+    border-radius: var(--course-radius-md);
     border: 1px solid var(--course-btn-border);
     background: var(--course-btn-bg);
     color: var(--course-btn-text);
     font-weight: 600;
+    font-family: var(--font-body), sans-serif;
     font-size: var(--course-font-sm);
     cursor: pointer;
     transition: all var(--course-transition-fast);

@@ -72,15 +72,17 @@ const SlideRenderer = memo(({ slide, inline = false, hasBgMedia = false, onQuizS
     if (!Component) {
         return (
             <div
+                className="slide-content-error"
                 style={{
-                    padding: '2rem',
+                    padding: 'var(--course-spacing-2xl)',
                     textAlign: 'center',
-                    color: 'var(--text-tertiary)'
+                    color: 'var(--course-slide-text-secondary)',
+                    fontFamily: 'var(--font-body), sans-serif',
                 }}
                 role="alert"
             >
-                <p>Tipo de slide no soportado: <strong>{slide.type}</strong></p>
-                <pre style={{ textAlign: 'left', fontSize: '0.7rem', marginTop: 10 }}>
+                <p>Tipo de slide no soportado: <strong style={{color: 'var(--course-accent)'}}>{slide.type}</strong></p>
+                <pre style={{ textAlign: 'left', fontSize: 'var(--course-font-xs)', marginTop: 'var(--course-spacing-md)', fontFamily: 'var(--font-mono), monospace' }}>
                     {JSON.stringify(slide.data, null, 2)}
                 </pre>
             </div>

@@ -65,14 +65,14 @@ const ContentSlide = React.memo(function ContentSlide({ data, accentColor, hasBg
                         aria-label={`Alerta de tipo ${data.snippet.type}`}
                         style={{
                             marginTop: 24, padding: '16px 20px', borderRadius: 12,
-                            backgroundColor: data.snippet.type === 'danger' ? 'rgba(239, 68, 68, 0.08)' :
-                                data.snippet.type === 'warning' ? 'rgba(245, 158, 11, 0.08)' :
-                                    data.snippet.type === 'success' ? 'rgba(16, 185, 129, 0.08)' :
-                                        'rgba(59, 130, 246, 0.08)',
-                            borderLeft: `5px solid ${data.snippet.type === 'danger' ? '#ef4444' :
-                                    data.snippet.type === 'warning' ? '#f59e0b' :
-                                        data.snippet.type === 'success' ? '#10b981' :
-                                            '#3b82f6'
+                            backgroundColor: data.snippet.type === 'danger' ? 'color-mix(in srgb, var(--color-danger) 8%, transparent)' :
+                                data.snippet.type === 'warning' ? 'color-mix(in srgb, var(--color-warning) 8%, transparent)' :
+                                    data.snippet.type === 'success' ? 'color-mix(in srgb, var(--color-success) 8%, transparent)' :
+                                        'color-mix(in srgb, var(--color-primary) 8%, transparent)',
+                            borderLeft: `5px solid ${data.snippet.type === 'danger' ? 'var(--color-danger)' :
+                                    data.snippet.type === 'warning' ? 'var(--color-warning)' :
+                                        data.snippet.type === 'success' ? 'var(--color-success)' :
+                                            'var(--color-primary)'
                                 }`
                         }}>
                         <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 6 }}>
@@ -83,10 +83,10 @@ const ContentSlide = React.memo(function ContentSlide({ data, accentColor, hasBg
                             </span>
                             <strong style={{
                                 fontSize: '1.05rem',
-                                color: data.snippet.type === 'danger' ? 'var(--color-danger, #ef4444)' :
-                                    data.snippet.type === 'warning' ? '#b45309' :
-                                        data.snippet.type === 'success' ? 'var(--color-success, #10b981)' :
-                                            'var(--color-primary, #003ccc)'
+                                color: data.snippet.type === 'danger' ? 'var(--color-danger)' :
+                                    data.snippet.type === 'warning' ? 'var(--color-warning)' :
+                                        data.snippet.type === 'success' ? 'var(--color-success)' :
+                                            'var(--color-primary)'
                             }}>
                                 {data.snippet.title || 'Atención'}
                             </strong>

@@ -237,7 +237,7 @@ export default function EditorPage({ params }) {
                         <IconArrowLeft size={20} />
                     </button>
                     <div>
-                        <h1 className={styles.pageTitle}>{course?.title}</h1>
+                        <h1 className={styles.courseTitle}>{course?.title}</h1>
                         <span style={{ fontSize: '0.8rem', color: 'var(--text-tertiary)' }}>
                             Editando contenido
                         </span>

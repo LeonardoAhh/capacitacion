@@ -17,6 +17,7 @@
     animation: courseFadeIn var(--course-duration-slow) var(--course-ease-out);
     background: var(--course-slide-bg);
     color: var(--course-slide-text);
+    font-family: var(--font-body), sans-serif;
 }
 
 /* Fondo Glass unificado para todos los slides sobre Background Media */
@@ -64,6 +65,7 @@
     letter-spacing: 0.15em;
     text-transform: uppercase;
     color: var(--course-label-color, var(--course-accent));
+    font-family: var(--font-body), sans-serif;
     margin-bottom: var(--course-spacing-xs);
 }
 
@@ -103,6 +105,7 @@
 .titleSlide h1 {
     font-size: clamp(2.5rem, 7vw, 4.5rem);
     font-weight: 800;
+    font-family: var(--font-serif), serif;
     color: var(--course-slide-text);
     letter-spacing: -0.03em;
     line-height: 1.05;
@@ -152,6 +155,7 @@
 .objectiveSlide h2 {
     font-size: clamp(1.8rem, 5vw, 2.75rem);
     font-weight: 800;
+    font-family: var(--font-serif), serif;
     color: var(--course-slide-text);
     letter-spacing: -0.02em;
     line-height: 1.1;
@@ -209,6 +213,7 @@
 .definitionSlide h2 {
     font-size: clamp(1.6rem, 4vw, 2.5rem);
     font-weight: 800;
+    font-family: var(--font-serif), serif;
     color: var(--course-slide-text);
     letter-spacing: -0.02em;
 }
@@ -282,6 +287,7 @@
 .contentSlide h2 {
     font-size: clamp(1.5rem, 3.5vw, 2.25rem);
     font-weight: 800;
+    font-family: var(--font-serif), serif;
     color: var(--course-slide-text);
     letter-spacing: -0.02em;
 }
@@ -350,12 +356,14 @@
     font-size: clamp(1.5rem, 4vw, 2.25rem);
     font-weight: 700;
     font-style: italic;
+    font-family: var(--font-serif), serif;
     color: var(--course-slide-text);
 }
 
 .slideTitle {
     font-size: clamp(1.5rem, 4vw, 2.25rem);
     font-weight: 700;
+    font-family: var(--font-serif), serif;
     color: var(--course-slide-text);
     margin: 0;
 }
@@ -467,6 +475,7 @@
 .benefitsSlide h2 {
     font-size: clamp(1.4rem, 3.5vw, 2.25rem);
     font-weight: 800;
+    font-family: var(--font-serif), serif;
     color: var(--course-slide-text);
 }
 
@@ -523,6 +532,7 @@
 .quizSlide h2 {
     font-size: clamp(1.6rem, 4vw, 2.5rem);
     font-weight: 800;
+    font-family: var(--font-serif), serif;
     color: var(--course-slide-text);
     letter-spacing: -0.02em;
 }
@@ -610,6 +620,7 @@
 .optionLetter {
     font-weight: 600;
     font-size: var(--course-font-sm);
+    font-family: var(--font-mono), monospace;
     color: var(--course-slide-text-secondary);
     min-width: 20px;
 }
@@ -786,6 +797,7 @@
 .comparisonHeading {
     font-size: 1.6rem;
     font-weight: 700;
+    font-family: var(--font-serif), serif;
     letter-spacing: -0.02em;
     margin: 0 0 0.25rem;
     color: var(--course-slide-text);

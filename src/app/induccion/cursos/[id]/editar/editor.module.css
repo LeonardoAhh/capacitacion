@@ -65,6 +65,7 @@
     font-size: 1rem;
     font-weight: 600;
     color: var(--text-primary);
+    font-family: var(--font-body), sans-serif;
     margin: 0;
 }
 
@@ -550,7 +551,7 @@
 }
 
 .slideModalTitle {
-    font-family: var(--font-heading);
+    font-family: var(--font-body), sans-serif;
     font-size: 1.25rem;
     font-weight: 700;
     color: var(--text-primary);
@@ -561,6 +562,7 @@
 .slideModalSubtitle {
     font-size: 0.9rem;
     color: var(--text-secondary);
+    font-family: var(--font-body), sans-serif;
     margin: 0;
 }
 
@@ -626,12 +628,14 @@
     font-size: 0.95rem;
     font-weight: 600;
     color: var(--text-primary);
+    font-family: var(--font-body), sans-serif;
     margin: 0 0 2px 0;
 }
 
 .slideTypeDesc {
     font-size: 0.75rem;
     color: var(--text-secondary);
+    font-family: var(--font-body), sans-serif;
     margin: 0;
     line-height: 1.3;
 }

@@ -217,9 +217,9 @@ export default function SlideEditorPanel({ slide, onSave, onDelete, onFormChange
                         <div style={{ display: 'flex', gap: 10 }}>
                             <button
                                 style={{
-                                    flex: 1, padding: '8px', borderRadius: 8, cursor: 'pointer',
+                                    flex: 1, padding: '8px', borderRadius: 'var(--course-radius-md, 8px)', cursor: 'pointer',
                                     border: formData.bgMedia.layout !== 'split' ? 'none' : '1px solid var(--border-color)',
-                                    background: formData.bgMedia.layout !== 'split' ? 'var(--color-primary)' : 'transparent',
+                                    background: formData.bgMedia.layout !== 'split' ? 'var(--course-accent)' : 'transparent',
                                     color: formData.bgMedia.layout !== 'split' ? '#fff' : 'var(--text-primary)',
                                     fontWeight: 600, fontSize: '0.82rem',
                                 }}
@@ -229,9 +229,9 @@ export default function SlideEditorPanel({ slide, onSave, onDelete, onFormChange
                             </button>
                             <button
                                 style={{
-                                    flex: 1, padding: '8px', borderRadius: 8, cursor: 'pointer',
+                                    flex: 1, padding: '8px', borderRadius: 'var(--course-radius-md, 8px)', cursor: 'pointer',
                                     border: formData.bgMedia.layout === 'split' ? 'none' : '1px solid var(--border-color)',
-                                    background: formData.bgMedia.layout === 'split' ? 'var(--color-primary)' : 'transparent',
+                                    background: formData.bgMedia.layout === 'split' ? 'var(--course-accent)' : 'transparent',
                                     color: formData.bgMedia.layout === 'split' ? '#fff' : 'var(--text-primary)',
                                     fontWeight: 600, fontSize: '0.82rem',
                                 }}
