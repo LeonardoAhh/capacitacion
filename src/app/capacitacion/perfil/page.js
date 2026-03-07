@@ -289,9 +289,8 @@ export default function PerfilPage() {
                             className={`${styles.searchPillBtn} ${styles.groupReportBtn}`}
                             onClick={() => setIsGroupModalOpen(true)}
                             title="Generar reporte grupal por Área/Puesto"
-                            style={{ marginLeft: '12px', display: 'flex', alignItems: 'center', gap: '8px' }}
                         >
-                            <Users size={16} />
+                            <Users size={18} />
                             <span className="hidden sm:inline">Reporte Grupal</span>
                         </button>
                     </div>

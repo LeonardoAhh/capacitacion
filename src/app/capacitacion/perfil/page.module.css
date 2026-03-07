@@ -1094,9 +1094,10 @@
 .searchRow {
     display: flex;
     justify-content: center;
+    align-items: center;
+    gap: 16px;
     width: 100%;
     margin-bottom: 32px;
-    /* Margen para separar del grid inferor */
 }
 
 .searchRow .searchPill {
@@ -1116,11 +1117,12 @@
     display: inline-flex;
     align-items: center;
     gap: 0.75rem;
-    padding: 0.5rem 0.75rem 0.5rem 1rem;
+    padding: 0.375rem 0.5rem 0.375rem 1.25rem;
+    height: 56px;
     background: var(--card-background);
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
-    border: 1.5px solid rgba(148, 163, 184, 0.2);
+    border: 1px solid rgba(148, 163, 184, 0.2);
     border-radius: 50px;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
@@ -1176,17 +1178,27 @@
 
 
 .searchPillBtn {
-    padding: 0.625rem 1.5rem;
+    height: 100%;
+    padding: 0 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
     border: none;
     border-radius: 50px;
     color: white;
-    font-size: 0.9rem;
+    font-size: 0.95rem;
     font-weight: 600;
     cursor: pointer;
     transition: all 0.2s ease;
     box-shadow: 0 2px 8px rgba(59, 130, 246, 0.3);
     min-width: 80px;
+}
+
+.groupReportBtn {
+    height: 56px;
+    gap: 8px;
+    padding: 0 1.75rem;
 }
 
 .searchPillBtn:hover:not(:disabled) {
