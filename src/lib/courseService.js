@@ -303,6 +303,101 @@ export async function renameCourse(courseId, newTitle) {
 }
 
 /**
+ * Crea un recurso tipo URL / PDF (sin slides) en la colección cursos.
+ * Estos recursos se muestran en el dashboard del candidato filtrados por puesto.
+ * @param {Object} params
+ * @returns {Object} { success, courseId, error }
+ */
+/**
+ * Sincroniza puestosAplicables en cursos interactivos leyendo la colección `positions`.
+ *
+ * - Sin parámetros: sincroniza TODOS los cursos interactivos (bulk, una sola vez).
+ * - Con courseId: sincroniza solo ese curso (llamado al publicar).
+ *
+ * Lógica: para cada position.requiredCourses[], busca el curso en `cursos`
+ * cuyo title coincida y escribe puestosAplicables con las posiciones que lo requieren.
+ *
+ * @param {string|null} courseId - ID del curso a sincronizar, o null para todos
+ * @returns {Promise<{success: boolean, updatedCount: number, error?: string}>}
+ */
+export async function syncCoursePuestosFromPositions(courseId = null) {
+    try {
+        // 1. Leer todas las posiciones y construir mapa: title.lower → [positionNames]
+        const positionsSnapshot = await getDocs(collection(db, 'positions'));
+        const coursePositionsMap = {};
+        positionsSnapshot.docs.forEach(posDoc => {
+            const { name: posName, requiredCourses = [] } = posDoc.data();
+            if (!posName) return;
+            requiredCourses.forEach(courseTitle => {
+                const key = courseTitle.toLowerCase().trim();
+                if (!coursePositionsMap[key]) coursePositionsMap[key] = [];
+                if (!coursePositionsMap[key].includes(posName)) {
+                    coursePositionsMap[key].push(posName);
+                }
+            });
+        });
+
+        // 2. Obtener cursos a sincronizar
+        let coursesToSync = [];
+        if (courseId) {
+            const snap = await getDoc(doc(db, COURSES_COLLECTION, courseId));
+            if (snap.exists()) coursesToSync = [{ id: snap.id, ...snap.data() }];
+        } else {
+            const snap = await getDocs(collection(db, COURSES_COLLECTION));
+            coursesToSync = snap.docs
+                .map(d => ({ id: d.id, ...d.data() }))
+                .filter(c => !c.tipo || c.tipo !== 'link');
+        }
+
+        // 3. Batch update puestosAplicables donde haya coincidencia
+        const batch = writeBatch(db);
+        let updatedCount = 0;
+        coursesToSync.forEach(course => {
+            const key = (course.title || '').toLowerCase().trim();
+            const positions = coursePositionsMap[key];
+            if (positions?.length > 0) {
+                batch.update(doc(db, COURSES_COLLECTION, course.id), {
+                    puestosAplicables: positions,
+                    updatedAt: serverTimestamp(),
+                });
+                updatedCount++;
+            }
+        });
+
+        await batch.commit();
+        return { success: true, updatedCount };
+    } catch (error) {
+        console.error('Error syncing course positions:', error);
+        return { success: false, updatedCount: 0, error: error.message };
+    }
+}
+
+export async function createLinkCourse({ title, contenidoUrl, puestosAplicables, duracionEstimada, orden, userId }) {
+    try {
+        const coursesRef = collection(db, COURSES_COLLECTION);
+        const courseData = {
+            title: title.trim(),
+            tipo: 'link',
+            contenidoUrl: contenidoUrl.trim(),
+            puestosAplicables: puestosAplicables || [],
+            duracionEstimada: Number(duracionEstimada) || 30,
+            orden: Number(orden) || 1,
+            activo: true,
+            published: true,
+            slideCount: 0,
+            createdBy: userId,
+            createdAt: serverTimestamp(),
+            updatedAt: serverTimestamp(),
+        };
+        const docRef = await addDoc(coursesRef, courseData);
+        return { success: true, courseId: docRef.id };
+    } catch (error) {
+        console.error('Error creando recurso URL/PDF:', error);
+        return { success: false, error: error.message };
+    }
+}
+
+/**
  * Actualiza los campos de metadatos de un curso (title, category, description, etc.)
  * Sin tocar los slides.
  * @param {string} courseId

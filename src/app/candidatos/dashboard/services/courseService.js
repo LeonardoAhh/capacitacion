@@ -8,60 +8,62 @@ import { db } from '@/lib/firebase';
 
 /**
  * Carga cursos requeridos para un puesto dado.
- * Primero busca en la colección 'positions' → 'induction_courses',
- * luego enriquece con datos legacy de 'cursos_induccion'.
- * Si no encuentra, usa fallback a 'cursos_induccion' directamente.
+ *
+ * Estrategia dual (en paralelo):
+ * 1. Nueva arquitectura — colección `cursos` filtrada por `puestosAplicables`
+ *    Incluye tanto cursos interactivos como tipo 'link'.
+ * 2. Path legado — colección `positions` → `induction_courses` + enriquecimiento.
+ *
+ * Los resultados se mergean; los cursos de `cursos` tienen preferencia.
+ * Si ambos paths están vacíos se retorna [].
  *
  * @param {string} position - Nombre del puesto
  * @returns {Promise<Array>} Lista de cursos
  */
 export async function loadCoursesForPosition(position) {
+    const cursosRef = collection(db, 'cursos');
     const positionsRef = collection(db, 'positions');
-    const positionQuery = query(positionsRef, where('name', '==', position));
-    const positionSnapshot = await getDocs(positionQuery);
 
-    let coursesData = [];
+    const [cursosSnapshot, positionSnapshot] = await Promise.all([
+        getDocs(query(cursosRef, where('puestosAplicables', 'array-contains', position))),
+        getDocs(query(positionsRef, where('name', '==', position))),
+    ]);
 
+    // ── 1. Cursos de la colección principal ──
+    let cursosData = cursosSnapshot.docs
+        .map(doc => ({ id: doc.id, ...doc.data() }))
+        .filter(c => c.tipo === 'link' ? c.activo !== false : c.published !== false);
+    cursosData.sort((a, b) => (a.orden || 0) - (b.orden || 0));
+
+    // ── 2. Path legado positions → induction_courses ──
+    let legacyData = [];
     if (!positionSnapshot.empty) {
-        const positionData = positionSnapshot.docs[0].data();
-        const requiredCourses = positionData.requiredCourses || [];
-
+        const requiredCourses = positionSnapshot.docs[0].data().requiredCourses || [];
         if (requiredCourses.length > 0) {
             const inductionRef = collection(db, 'induction_courses');
-
-            // Firestore 'in' supports max 30 values — split into chunks
             const chunkSize = 30;
             const chunks = [];
             for (let i = 0; i < requiredCourses.length; i += chunkSize) {
                 chunks.push(requiredCourses.slice(i, i + chunkSize));
             }
-
             const allResults = await Promise.all(
-                chunks.map(chunk =>
-                    getDocs(query(inductionRef, where('title', 'in', chunk)))
-                )
+                chunks.map(chunk => getDocs(query(inductionRef, where('title', 'in', chunk))))
             );
-
-            coursesData = allResults.flatMap(snapshot =>
-                snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }))
-            );
-
-            // Sort by requiredCourses order
-            coursesData = requiredCourses
-                .map(courseName => coursesData.find(c => c.title === courseName))
-                .filter(Boolean);
-
-            // Enrich with legacy data (examenUrl)
-            coursesData = await enrichWithLegacyData(coursesData, position);
+            let fetched = allResults.flatMap(s => s.docs.map(doc => ({ id: doc.id, ...doc.data() })));
+            fetched = requiredCourses.map(name => fetched.find(c => c.title === name)).filter(Boolean);
+            legacyData = await enrichWithLegacyData(fetched, position);
         }
     }
 
-    // Fallback to legacy collection
-    if (coursesData.length === 0) {
-        coursesData = await loadLegacyCourses(position);
-    }
+    // ── 3. Merge: cursos tiene preferencia; evitar duplicados por id o título ──
+    const seenIds = new Set(cursosData.map(c => c.id));
+    const seenTitles = new Set(cursosData.map(c => (c.title || c.nombre || '').toLowerCase()));
+    const uniqueLegacy = legacyData.filter(c =>
+        !seenIds.has(c.id) &&
+        !seenTitles.has((c.title || c.nombre || '').toLowerCase())
+    );
 
-    return coursesData;
+    return [...cursosData, ...uniqueLegacy];
 }
 
 /**
@@ -99,21 +101,3 @@ async function enrichWithLegacyData(coursesData, position) {
     }
 }
 
-/**
- * Fallback: carga cursos directamente de la colección legacy.
- */
-async function loadLegacyCourses(position) {
-    const cursosRef = collection(db, 'cursos_induccion');
-    const legacyQuery = query(
-        cursosRef,
-        where('puestosAplicables', 'array-contains', position),
-        where('activo', '==', true)
-    );
-    const legacySnapshot = await getDocs(legacyQuery);
-    const coursesData = legacySnapshot.docs.map(doc => ({
-        id: doc.id,
-        ...doc.data()
-    }));
-    coursesData.sort((a, b) => (a.orden || 0) - (b.orden || 0));
-    return coursesData;
-}

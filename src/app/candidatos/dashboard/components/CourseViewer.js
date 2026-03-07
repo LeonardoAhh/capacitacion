@@ -70,32 +70,42 @@ export default function CourseViewer({
                             </p>
 
                             <div className={styles.viewerContainer}>
-                                {(selectedCourse.nativeCourseId || selectedCourse.tipo === 'native') ? (
-                                    /* Curso interactivo → abrir CoursePlayer */
-                                    <div className={styles.noContent}>
-                                        <Zap size={32} style={{ color: '#e8742a', marginBottom: 12 }} />
-                                        <p style={{ marginBottom: 16, color: 'var(--text-secondary)' }}>
-                                            Este es un curso interactivo con diapositivas animadas.
-                                        </p>
-                                        <button
-                                            className={styles.stepButton}
-                                            style={{ background: '#e8742a', color: '#fff', border: 'none', gap: 8 }}
-                                            onClick={() => onPlayNative && onPlayNative(selectedCourse.nativeCourseId)}
-                                        >
-                                            <Zap size={16} />
-                                            Abrir Curso Interactivo
-                                        </button>
-                                    </div>
-                                ) : selectedCourse.material || selectedCourse.contenidoUrl ? (
+                                {selectedCourse.candidateView === 'url' && selectedCourse.contenidoUrl ? (
+                                    /* Admin eligió mostrar URL/PDF para este curso nativo */
                                     <LazyIframe
                                         src={convertDriveUrl(selectedCourse) || selectedCourse.contenidoUrl}
                                         title={courseTitle}
                                         className={styles.iframe}
                                     />
+                                ) : selectedCourse.tipo === 'link' ? (
+                                    /* Recurso URL / PDF */
+                                    selectedCourse.contenidoUrl ? (
+                                        <LazyIframe
+                                            src={convertDriveUrl(selectedCourse) || selectedCourse.contenidoUrl}
+                                            title={courseTitle}
+                                            className={styles.iframe}
+                                        />
+                                    ) : (
+                                        <div className={styles.noContent} role="status">
+                                            <BookOpen size={28} className={styles.noContentIcon} aria-hidden="true" />
+                                            <p>No hay URL configurada</p>
+                                        </div>
+                                    )
                                 ) : (
-                                    <div className={styles.noContent} role="status">
-                                        <BookOpen size={28} className={styles.noContentIcon} aria-hidden="true" />
-                                        <p>No hay contenido disponible</p>
+                                    /* Curso interactivo (nativo) — legacy con nativeCourseId o nuevo con id */
+                                    <div className={styles.noContent}>
+                                        <Zap size={32} style={{ color: 'var(--color-primary)', marginBottom: 12 }} />
+                                        <p style={{ marginBottom: 16, color: 'var(--text-secondary)' }}>
+                                            Este es un curso interactivo con diapositivas animadas.
+                                        </p>
+                                        <button
+                                            className={styles.stepButton}
+                                            style={{ background: 'var(--color-primary)', color: '#fff', border: 'none', gap: 8 }}
+                                            onClick={() => onPlayNative && onPlayNative(selectedCourse.nativeCourseId || selectedCourse.id)}
+                                        >
+                                            <Zap size={16} />
+                                            Abrir Curso Interactivo
+                                        </button>
                                     </div>
                                 )}
                             </div>

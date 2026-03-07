@@ -1,55 +1,16 @@
-/* eslint-disable @next/next/no-img-element */
-/* eslint-disable jsx-a11y/alt-text */
 'use client';
 
 import { useState, useEffect, useCallback, useRef } from 'react';
-import { db } from '@/lib/firebase';
-import { auth } from '@/lib/firebase';
-import { uploadFile } from '@/lib/upload';
-import { collection, query, getDocs, addDoc, orderBy, onSnapshot, deleteDoc, doc, updateDoc } from 'firebase/firestore';
 import { useAuth } from '@/contexts/AuthContext';
 import { useRouter } from 'next/navigation';
-import { Button } from '@/components/ui/Button/Button';
-import { Combobox } from '@/components/ui/Combobox/Combobox';
 import { useToast } from '@/components/ui/Toast/Toast';
-import {
-    IconChevronRight as ChevronRight,
-    IconPlus as Plus,
-    IconFileText as FileText,
-    IconLink as Link2,
-    IconTrash2 as Trash2,
-    IconEdit as Edit3,
-    IconExternalLink as ExternalLink,
-    IconX as X,
-    IconCheck as Check,
-    IconBookOpen as BookOpen,
-    IconUpload as Upload,
-    IconPlay as Play,
-    IconZap as Zap,
-    IconSettings as Settings2,
-    IconImage as Image,
-    IconVideo as Video,
-    IconUploadCloud as UploadCloud,
-    IconSearch as Search,
-    IconFolderOpen as FolderOpen,
-    IconUsers as Users,
-    IconArrowLeft as ArrowLeft
-} from '@/lib/icons';
-import Link from 'next/link';
-import BackButton from '@/components/ui/BackButton/BackButton';
-import NextImage from 'next/image';
-import { LogOut, User, Menu } from 'lucide-react';
-
-import CourseWizardModal from '@/components/features/Courses/CourseWizardModal';
-import { useSearchParams } from 'next/navigation';
+import { IconX as X, IconSearch as Search } from '@/lib/icons';
 import { Suspense } from 'react';
 import AdminLayout from '@/components/layout/AdminLayout/AdminLayout';
-
-import InteractiveCoursesView from '@/components/features/Induccion/views/InteractiveCoursesView';
-import CandidateCoursesView from '@/components/features/Induccion/views/CandidateCoursesView';
-import MaterialView from '@/components/features/Induccion/views/MaterialView';
-import GalleryView from '@/components/features/Induccion/views/GalleryView';
+import CourseWizardModal from '@/components/features/Courses/CourseWizardModal';
 import CoursePlayer from '@/components/features/Courses/CoursePlayer';
+import InteractiveCoursesView from '@/components/features/Induccion/views/InteractiveCoursesView';
+import { useConfirm } from '@/hooks/useConfirm';
 import {
     importCourseFromJSON,
     getAllCourses,
@@ -58,220 +19,61 @@ import {
     togglePublish,
     renameCourse,
     createCourseFromWizard,
+    createLinkCourse,
+    updateCourseFields,
+    syncCoursePuestosFromPositions,
 } from '@/lib/courseService';
 import { logInduccionAction } from '@/lib/induccionAudit';
-import { useConfirm } from '@/hooks/useConfirm';
-
-import puestosData from '../../../puestos.json';
 import styles from './page.module.css';
 
 function InduccionContent() {
-    const { user, loading: authLoading, signOut } = useAuth();
+    const { user, loading: authLoading } = useAuth();
     const router = useRouter();
     const { toast } = useToast();
     const { showConfirm, confirmDialog } = useConfirm();
     const fileInputRef = useRef(null);
-    const galleryFileRef = useRef(null);
-    const searchParams = useSearchParams();
-    const initialTab = searchParams.get('tab') || 'interactivos';
 
-    // ── Tab activo ──
-    const [activeTab, setActiveTab] = useState(initialTab);
-    
-    useEffect(() => {
-        const tab = searchParams.get('tab');
-        if (tab) {
-            setActiveTab(tab);
-        }
-    }, [searchParams]);
-
-    // ── Colecciones existentes ──
-    const [courses, setCourses] = useState([]);
-    const [candidateCourses, setCandidateCourses] = useState([]);
-    const [availableCourseTitles, setAvailableCourseTitles] = useState([]);
-
-    // ── Cursos nativos ──
     const [nativeCourses, setNativeCourses] = useState([]);
     const [nativeLoading, setNativeLoading] = useState(true);
     const [importing, setImporting] = useState(false);
     const [creatingCourse, setCreatingCourse] = useState(false);
     const [showNewCourseModal, setShowNewCourseModal] = useState(false);
-    const [newCourseTitle, setNewCourseTitle] = useState('');
-
-    // ── Player ──
+    const [uploadingLink, setUploadingLink] = useState(false);
+    const [updatingNative, setUpdatingNative] = useState(false);
+    const [syncing, setSyncing] = useState(false);
     const [playerData, setPlayerData] = useState(null);
-
-    // ── Rename inline ──
     const [renamingId, setRenamingId] = useState(null);
     const [renameValue, setRenameValue] = useState('');
-
-    // ── UI state ──
-    const [showCreateForm, setShowCreateForm] = useState(false);
-    const [showCandidateForm, setShowCandidateForm] = useState(false);
-    const [showNativeSection, setShowNativeSection] = useState(true);
-    const [materialExpanded, setMaterialExpanded] = useState(true);
-    const [candidatosExpanded, setCandidatosExpanded] = useState(true);
-
-    const [candidateFormData, setCandidateFormData] = useState({
-        nombre: '', descripcion: '', contenidoUrl: '', examenUrl: '',
-        puestosAplicables: [], duracionEstimada: 30, obligatorio: true,
-        orden: 1, nativeCourseId: '', tipo: 'link',
-    });
-
-    const [newCourseName, setNewCourseName] = useState('');
-    const [file, setFile] = useState(null);
-    const [presentationLink, setPresentationLink] = useState('');
-    const [uploading, setUploading] = useState(false);
-    const [editingCandidateCourse, setEditingCandidateCourse] = useState(null);
-
-    // ── Galería ──
-    const [galleryItems, setGalleryItems] = useState([]);
-    const [showGalleryModal, setShowGalleryModal] = useState(false);
-    const [galleryType, setGalleryType] = useState('imagen');
-    const [galleryFile, setGalleryFile] = useState(null);
-    const [galleryName, setGalleryName] = useState('');
-    const [galleryUploading, setGalleryUploading] = useState(false);
-    const [galleryProgress, setGalleryProgress] = useState(0);
-    const [galleryExpanded, setGalleryExpanded] = useState(true);
-    const [selectedMedia, setSelectedMedia] = useState(null);
-
-    // ── Import options ──
     const [includeDynamics, setIncludeDynamics] = useState(true);
     const [includeQuizzes, setIncludeQuizzes] = useState(true);
-
-    // ── Búsqueda ──
     const [searchQuery, setSearchQuery] = useState('');
 
     const canEdit = user?.rol === 'super_admin' || user?.rol === 'instructor';
 
-    // ── Auth guard ──
     useEffect(() => {
         if (!authLoading && !user) router.push('/login');
     }, [user, authLoading, router]);
 
-    // ── Logout: usa signOut del contexto (consistente con useAuth) ──
-    const handleLogout = useCallback(async () => {
-        try {
-            await signOut();
-            router.push('/login');
-        } catch (error) {
-            console.error('Logout error:', error);
-            toast.error('Error', 'No se pudo cerrar sesión.');
-        }
-    }, [signOut, router, toast]);
-
-    const getInitials = (name) =>
-        name ? name.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase() : 'U';
-
-    // ── Listeners Firestore ──
-    useEffect(() => {
-        const q = query(collection(db, 'induction_courses'), orderBy('createdAt', 'desc'));
-        const unsub = onSnapshot(q, (snap) => {
-            const data = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-            setCourses(data);
-            setAvailableCourseTitles(data.map(c => c.title).filter(Boolean).sort());
-        });
-        return () => unsub();
-    }, []);
-
-    useEffect(() => {
-        const q = query(collection(db, 'cursos_induccion'), orderBy('orden', 'asc'));
-        const unsub = onSnapshot(q, (snap) => {
-            setCandidateCourses(snap.docs.map(d => ({ id: d.id, ...d.data() })));
-        });
-        return () => unsub();
-    }, []);
-
-    const loadNativeCourses = useCallback(async () => {
+    const loadCourses = useCallback(async () => {
         setNativeLoading(true);
         const result = await getAllCourses();
         if (result.success) setNativeCourses(result.data);
         setNativeLoading(false);
     }, []);
 
-    useEffect(() => { loadNativeCourses(); }, [loadNativeCourses]);
+    useEffect(() => { loadCourses(); }, [loadCourses]);
 
-    useEffect(() => {
-        const q = query(collection(db, 'induccion_galeria'), orderBy('createdAt', 'desc'));
-        const unsub = onSnapshot(q, (snap) => {
-            setGalleryItems(snap.docs.map(d => ({ id: d.id, ...d.data() })));
-        });
-        return () => unsub();
-    }, []);
-
-    // ── Galería upload ──
-    const handleGalleryUpload = useCallback(async () => {
-        if (!galleryFile) return toast.warning('Atención', 'Selecciona un archivo.');
-        if (!galleryName.trim()) return toast.warning('Atención', 'Escribe un nombre.');
-        setGalleryUploading(true);
-        setGalleryProgress(0);
-        try {
-            const formData = new FormData();
-            formData.append('file', galleryFile);
-            formData.append('nombre', galleryName.trim());
-            await new Promise((resolve, reject) => {
-                const xhr = new XMLHttpRequest();
-                xhr.open('POST', '/api/gallery-upload');
-                xhr.withCredentials = true;
-                const currentUser = auth.currentUser;
-                if (!currentUser) { reject(new Error('Usuario no autenticado')); return; }
-                currentUser.getIdToken().then(idToken => {
-                    xhr.setRequestHeader('Authorization', `Bearer ${idToken}`);
-                    xhr.upload.onprogress = (e) => {
-                        if (e.lengthComputable) setGalleryProgress(Math.round((e.loaded / e.total) * 90));
-                    };
-                    xhr.onload = async () => {
-                        if (xhr.status >= 200 && xhr.status < 300) {
-                            const result = JSON.parse(xhr.responseText);
-                            if (result.success) {
-                                await addDoc(collection(db, 'induccion_galeria'), {
-                                    nombre: galleryName.trim(), tipo: result.data.tipo,
-                                    mimeType: result.data.mimeType, viewLink: result.data.viewLink,
-                                    downloadLink: result.data.downloadLink, driveId: result.data.id,
-                                    creadoPor: user?.uid || 'unknown', createdAt: new Date().toISOString(),
-                                });
-                                setGalleryProgress(100);
-                                toast.success('Subido', `"${galleryName}" agregado a la galeria.`);
-                                setShowGalleryModal(false); setGalleryFile(null);
-                                setGalleryName(''); setGalleryProgress(0);
-                                if (galleryFileRef.current) galleryFileRef.current.value = '';
-                                resolve();
-                            } else { reject(new Error(result.error || 'Error al subir')); }
-                        } else {
-                            try { const err = JSON.parse(xhr.responseText); reject(new Error(err.error || `HTTP ${xhr.status}`)); }
-                            catch { reject(new Error(`HTTP ${xhr.status}`)); }
-                        }
-                    };
-                    xhr.onerror = () => reject(new Error('Error de red'));
-                    xhr.send(formData);
-                }).catch(err => reject(new Error('No se pudo obtener token: ' + err.message)));
-            });
-        } catch (err) {
-            toast.error('Error', err.message || 'No se pudo subir el archivo.');
-            setGalleryProgress(0);
-        } finally { setGalleryUploading(false); }
-    }, [galleryFile, galleryName, user?.uid, toast]);
-
-    const handleGalleryDelete = useCallback(async (e, itemId) => {
-        e.stopPropagation();
-        if (!await showConfirm('¿Eliminar este elemento de la galería?', { title: 'Eliminar', confirmLabel: 'Eliminar' })) return;
-        await deleteDoc(doc(db, 'induccion_galeria', itemId));
-        toast.success('Eliminado', 'Elemento eliminado de la galería.');
-    }, [showConfirm, toast]);
+    // ── Cursos interactivos ──
 
     const handlePlayNative = useCallback(async (courseId) => {
         const result = await getCourseWithSlides(courseId);
-        if (result.success) { setPlayerData(result.data); }
-        else { toast.error('Error', 'No se pudo cargar el curso interactivo.'); }
+        if (result.success) setPlayerData(result.data);
+        else toast.error('Error', 'No se pudo cargar el curso interactivo.');
     }, [toast]);
 
-    // ── BUG FIX: setImportAlert no estaba declarado — reemplazado por toast ──
     const handleImport = useCallback(async () => {
         const f = fileInputRef.current?.files?.[0];
-        if (!f) {
-            toast.error('Error', 'Selecciona un archivo JSON.');
-            return;
-        }
+        if (!f) { toast.error('Error', 'Selecciona un archivo JSON.'); return; }
         setImporting(true);
         try {
             const text = await f.text();
@@ -284,20 +86,19 @@ function InduccionContent() {
                 delete courseData.slides;
                 const slidesData = courseItem.slides || [];
                 const filteredSlides = slidesData.filter(slide => {
-                    const isDynamic = slide.type === 'group_dynamic' || slide.type === 'dynamic';
-                    const isQuiz = slide.type === 'group_quiz' || slide.type === 'quiz';
-                    if (isDynamic && !includeDynamics) return false;
-                    if (isQuiz && !includeQuizzes) return false;
+                    if ((slide.type === 'group_dynamic' || slide.type === 'dynamic') && !includeDynamics) return false;
+                    if ((slide.type === 'group_quiz' || slide.type === 'quiz') && !includeQuizzes) return false;
                     return true;
                 });
-                const reorderedSlides = filteredSlides.map((slide, index) => ({ ...slide, order: index + 1 }));
+                const reorderedSlides = filteredSlides.map((slide, i) => ({ ...slide, order: i + 1 }));
                 const result = await importCourseFromJSON({ course: courseData, slides: reorderedSlides }, user?.uid || 'admin');
-                if (result.success) { successCount++; } else { errorMsg = result.error; }
+                if (result.success) successCount++;
+                else errorMsg = result.error;
             }
             if (successCount > 0) {
-                toast.success('Éxito', `${successCount} curso(s) importado(s) correctamente.`);
+                toast.success('Éxito', `${successCount} curso(s) importado(s).`);
                 if (fileInputRef.current) fileInputRef.current.value = '';
-                await loadNativeCourses();
+                await loadCourses();
             } else {
                 toast.error('Error', errorMsg || 'No se pudieron importar los cursos.');
             }
@@ -305,10 +106,9 @@ function InduccionContent() {
             toast.error('Error', `Error al parsear JSON: ${err.message}`);
         }
         setImporting(false);
-    }, [loadNativeCourses, user?.uid, includeDynamics, includeQuizzes, toast]);
+    }, [loadCourses, user?.uid, includeDynamics, includeQuizzes, toast]);
 
     const handleCreateNewCourse = useCallback(() => {
-        setNewCourseTitle('Nuevo Curso Interactivo');
         setShowNewCourseModal(true);
     }, []);
 
@@ -328,13 +128,18 @@ function InduccionContent() {
 
     const handleTogglePublish = useCallback(async (courseId, currentPublished) => {
         const course = nativeCourses.find(c => c.id === courseId);
-        const result = await togglePublish(courseId, !currentPublished);
+        const willPublish = !currentPublished;
+        const result = await togglePublish(courseId, willPublish);
         if (result.success) {
-            toast.success('Actualizado', `Curso ${!currentPublished ? 'publicado' : 'despublicado'}.`);
-            await loadNativeCourses();
-            logInduccionAction({ userId: user?.uid, userName: user?.name || user?.email || 'Desconocido', action: !currentPublished ? 'publish' : 'unpublish', target: course?.title || courseId });
-        } else { toast.error('Error', result.error); }
-    }, [toast, loadNativeCourses, nativeCourses, user?.uid, user?.name, user?.email]);
+            toast.success('Actualizado', `Curso ${willPublish ? 'publicado' : 'despublicado'}.`);
+            if (willPublish) {
+                // Auto-sync puestosAplicables desde positions al publicar
+                syncCoursePuestosFromPositions(courseId);
+            }
+            await loadCourses();
+            logInduccionAction({ userId: user?.uid, userName: user?.name || user?.email || 'Desconocido', action: willPublish ? 'publish' : 'unpublish', target: course?.title || courseId });
+        } else toast.error('Error', result.error);
+    }, [toast, loadCourses, nativeCourses, user?.uid, user?.name, user?.email]);
 
     const handleDeleteNative = useCallback(async (e, courseId) => {
         e.stopPropagation();
@@ -343,10 +148,10 @@ function InduccionContent() {
         const result = await deleteCourse(courseId);
         if (result.success) {
             toast.success('Eliminado', 'Curso eliminado.');
-            await loadNativeCourses();
+            await loadCourses();
             logInduccionAction({ userId: user?.uid, userName: user?.name || user?.email || 'Desconocido', action: 'delete', target: course?.title || courseId });
-        } else { toast.error('Error', result.error); }
-    }, [toast, loadNativeCourses, nativeCourses, user?.uid, user?.name, user?.email, showConfirm]);
+        } else toast.error('Error', result.error);
+    }, [toast, loadCourses, nativeCourses, user?.uid, user?.name, user?.email, showConfirm]);
 
     const handleStartRename = useCallback((e, course) => {
         e.stopPropagation();
@@ -361,158 +166,94 @@ function InduccionContent() {
         const result = await renameCourse(courseId, trimmed);
         if (result.success) {
             toast.success('Renombrado', 'Nombre actualizado.');
-            await loadNativeCourses();
+            await loadCourses();
             logInduccionAction({ userId: user?.uid, userName: user?.name || user?.email || 'Desconocido', action: 'rename', target: trimmed, detail: `Antes: "${prev?.title || courseId}"` });
-        } else { toast.error('Error', result.error); }
+        } else toast.error('Error', result.error);
         setRenamingId(null);
-    }, [renameValue, toast, loadNativeCourses, nativeCourses, user?.uid, user?.name, user?.email]);
+    }, [renameValue, toast, loadCourses, nativeCourses, user?.uid, user?.name, user?.email]);
 
     const handleRenameKeyDown = useCallback((e, courseId) => {
         if (e.key === 'Enter') handleConfirmRename(courseId);
         if (e.key === 'Escape') setRenamingId(null);
     }, [handleConfirmRename]);
 
-    // ── Material ──
-    const handleCreateCourse = async (e) => {
-        e.preventDefault();
-        if (!canEdit) return;
-        if (!newCourseName.trim()) return toast.warning('Atención', 'Nombre requerido');
-        setUploading(true);
-        try {
-            let fileData = null;
-            if (file) {
-                const uploadResult = await uploadFile(file, { docType: 'Induccion' });
-                if (!uploadResult.success) throw new Error(uploadResult.error || 'Error subiendo archivo');
-                fileData = { type: 'file', name: file.name, url: uploadResult.data.viewLink, downloadUrl: uploadResult.data.downloadLink };
-            } else {
-                fileData = { type: 'link', name: 'Presentación', url: presentationLink };
-            }
-            await addDoc(collection(db, 'induction_courses'), { title: newCourseName, material: fileData, createdAt: new Date().toISOString() });
-            toast.success('Éxito', 'Material creado');
-            setNewCourseName(''); setFile(null); setPresentationLink(''); setShowCreateForm(false);
-        } catch (error) { toast.error('Error', error.message); }
-        finally { setUploading(false); }
-    };
+    // ── Cursos URL / PDF ──
 
-    const handleDeleteCourse = async (e, courseId) => {
+    const handleCreateLink = useCallback(async (formData) => {
+        if (!formData.title?.trim()) { toast.warning('Atención', 'El nombre es obligatorio.'); return false; }
+        if (!formData.contenidoUrl?.trim()) { toast.warning('Atención', 'La URL es obligatoria.'); return false; }
+        setUploadingLink(true);
+        const result = await createLinkCourse({ ...formData, userId: user?.uid });
+        if (result.success) {
+            toast.success('Creado', 'Recurso creado correctamente.');
+            await loadCourses();
+        } else {
+            toast.error('Error', result.error);
+        }
+        setUploadingLink(false);
+        return result.success;
+    }, [user?.uid, toast, loadCourses]);
+
+    const handleUpdateLink = useCallback(async (courseId, formData) => {
+        setUploadingLink(true);
+        const result = await updateCourseFields(courseId, { ...formData, tipo: 'link' });
+        if (result.success) {
+            toast.success('Actualizado', 'Recurso actualizado.');
+            await loadCourses();
+        } else {
+            toast.error('Error', result.error);
+        }
+        setUploadingLink(false);
+        return result.success;
+    }, [toast, loadCourses]);
+
+    const handleSyncAllPuestos = useCallback(async () => {
+        setSyncing(true);
+        const result = await syncCoursePuestosFromPositions();
+        if (result.success) {
+            toast.success('Sincronizado', `${result.updatedCount} curso(s) actualizados con sus puestos.`);
+            await loadCourses();
+        } else {
+            toast.error('Error', result.error || 'No se pudo sincronizar.');
+        }
+        setSyncing(false);
+    }, [toast, loadCourses]);
+
+    const handleUpdateNative = useCallback(async (courseId, { contenidoUrl, candidateView, puestosAplicables }) => {
+        setUpdatingNative(true);
+        const result = await updateCourseFields(courseId, { contenidoUrl, candidateView, puestosAplicables });
+        if (result.success) {
+            toast.success('Actualizado', 'Curso actualizado.');
+            await loadCourses();
+        } else {
+            toast.error('Error', result.error);
+        }
+        setUpdatingNative(false);
+        return result.success;
+    }, [toast, loadCourses]);
+
+    const handleToggleLinkActive = useCallback(async (courseId, currentActive) => {
+        const result = await updateCourseFields(courseId, { activo: currentActive === false ? true : false });
+        if (result.success) {
+            toast.success('Actualizado', `Recurso ${currentActive === false ? 'activado' : 'desactivado'}.`);
+            await loadCourses();
+        }
+    }, [toast, loadCourses]);
+
+    const handleDeleteLink = useCallback(async (e, courseId) => {
         e.stopPropagation();
-        if (!canEdit) return;
-        if (await showConfirm('¿Borrar este material?', { title: 'Borrar Material', confirmLabel: 'Borrar' })) {
-            await deleteDoc(doc(db, 'induction_courses', courseId));
-            toast.success('Borrado', 'Material eliminado');
-        }
-    };
+        if (!await showConfirm('¿Eliminar este recurso?', { title: 'Eliminar', confirmLabel: 'Eliminar' })) return;
+        const result = await deleteCourse(courseId);
+        if (result.success) { toast.success('Eliminado', 'Recurso eliminado.'); await loadCourses(); }
+        else toast.error('Error', result.error);
+    }, [showConfirm, toast, loadCourses]);
 
-    // ── Candidatos ──
-    const handleCandidateFormChange = async (field, value) => {
-        setCandidateFormData(prev => ({ ...prev, [field]: value }));
-        if (field === 'nombre' && value) {
-            try {
-                const positionsSnapshot = await getDocs(collection(db, 'positions'));
-                const matching = [];
-                positionsSnapshot.docs.forEach(d => {
-                    const pd = d.data();
-                    if (pd.requiredCourses?.includes(value)) matching.push(pd.name);
-                });
-                if (matching.length > 0) {
-                    setCandidateFormData(prev => ({ ...prev, nombre: value, puestosAplicables: matching }));
-                    toast.success('Auto-asignado', `${matching.length} puesto(s)`);
-                }
-            } catch (error) { console.error('Error fetching positions:', error); }
-        }
-    };
+    // ── Guards ──
 
-    const handlePuestoToggle = (puesto) => {
-        setCandidateFormData(prev => ({
-            ...prev,
-            puestosAplicables: prev.puestosAplicables.includes(puesto)
-                ? prev.puestosAplicables.filter(p => p !== puesto)
-                : [...prev.puestosAplicables, puesto]
-        }));
-    };
-
-    const handleCreateCandidateCourse = async (e) => {
-        e.preventDefault();
-        if (!canEdit) return;
-        if (!candidateFormData.nombre.trim()) return toast.warning('Atención', 'El nombre es obligatorio');
-        if (candidateFormData.tipo !== 'native' && !candidateFormData.contenidoUrl.trim())
-            return toast.warning('Atención', 'La URL es obligatoria');
-        if (candidateFormData.tipo === 'native' && !candidateFormData.nativeCourseId)
-            return toast.warning('Atención', 'Selecciona un curso interactivo');
-        if (candidateFormData.puestosAplicables.length === 0)
-            return toast.warning('Atención', 'Selecciona al menos un puesto');
-        setUploading(true);
-        try {
-            const dataToSave = {
-                nombre: candidateFormData.nombre, descripcion: candidateFormData.descripcion,
-                duracionEstimada: candidateFormData.duracionEstimada, obligatorio: candidateFormData.obligatorio,
-                orden: candidateFormData.orden, puestosAplicables: candidateFormData.puestosAplicables,
-                tipo: candidateFormData.tipo,
-                contenidoUrl: candidateFormData.tipo !== 'native' ? candidateFormData.contenidoUrl : '',
-                examenUrl: candidateFormData.examenUrl,
-                nativeCourseId: candidateFormData.tipo === 'native' ? candidateFormData.nativeCourseId : '',
-            };
-            if (editingCandidateCourse) {
-                await updateDoc(doc(db, 'cursos_induccion', editingCandidateCourse.id), { ...dataToSave, updatedAt: new Date().toISOString() });
-                toast.success('Actualizado', 'Curso actualizado');
-            } else {
-                await addDoc(collection(db, 'cursos_induccion'), { ...dataToSave, activo: true, creadoPor: user?.uid || 'unknown', createdAt: new Date().toISOString() });
-                toast.success('Creado', 'Curso creado');
-            }
-            setShowCandidateForm(false); setEditingCandidateCourse(null);
-            setCandidateFormData({ nombre: '', descripcion: '', contenidoUrl: '', examenUrl: '', puestosAplicables: [], duracionEstimada: 30, obligatorio: true, orden: candidateCourses.length + 1, nativeCourseId: '', tipo: 'link' });
-        } catch (error) { toast.error('Error', error.message); }
-        finally { setUploading(false); }
-    };
-
-    const handleEditCandidateCourse = (e, course) => {
-        e.stopPropagation();
-        setEditingCandidateCourse(course);
-        setCandidateFormData({
-            nombre: course.nombre || '', descripcion: course.descripcion || '',
-            contenidoUrl: course.contenidoUrl || '', examenUrl: course.examenUrl || '',
-            puestosAplicables: course.puestosAplicables || [],
-            duracionEstimada: course.duracionEstimada || 30,
-            obligatorio: course.obligatorio !== undefined ? course.obligatorio : true,
-            orden: course.orden || 1, nativeCourseId: course.nativeCourseId || '',
-            tipo: course.tipo || (course.nativeCourseId ? 'native' : 'link'),
-        });
-        setShowCandidateForm(true);
-    };
-
-    const handleDeleteCandidateCourse = async (e, courseId) => {
-        e.stopPropagation();
-        if (!canEdit) return;
-        if (await showConfirm('¿Borrar este curso?', { title: 'Borrar Curso', confirmLabel: 'Borrar' })) {
-            await deleteDoc(doc(db, 'cursos_induccion', courseId));
-            toast.success('Borrado', 'Curso eliminado');
-        }
-    };
-
-    const handleToggleCourseActive = async (courseId, currentStatus) => {
-        if (!canEdit) return;
-        try {
-            await updateDoc(doc(db, 'cursos_induccion', courseId), { activo: !currentStatus });
-            toast.success('Actualizado', `Curso ${!currentStatus ? 'activado' : 'desactivado'}`);
-        } catch (error) { toast.error('Error', error.message); }
-    };
-
-    const handleCandidateCardClick = useCallback(async (course) => {
-        if (course.nativeCourseId || course.tipo === 'native') {
-            const id = course.nativeCourseId;
-            if (id) await handlePlayNative(id);
-        } else if (course.contenidoUrl) {
-            window.open(course.contenidoUrl, '_blank');
-        }
-    }, [handlePlayNative]);
-
-    // ── Guards de carga ──
     if (authLoading || !user) {
         return (
             <div className={styles.main}>
-                <div className={styles.loadingCenter}>
-                    <div className="spinner" />
-                </div>
+                <div className={styles.loadingCenter}><div className="spinner" /></div>
             </div>
         );
     }
@@ -527,32 +268,23 @@ function InduccionContent() {
         );
     }
 
-    // ── Filtros de Búsqueda ──
+    // ── Filtros ──
     const q = searchQuery.toLowerCase().trim();
-    const filteredNative = nativeCourses.filter(c => c.title?.toLowerCase().includes(q));
-    const filteredCandidates = candidateCourses.filter(c =>
-        c.nombre?.toLowerCase().includes(q) || c.descripcion?.toLowerCase().includes(q)
-    );
-    const filteredMaterial = courses.filter(c => c.title?.toLowerCase().includes(q));
-    const filteredGallery = galleryItems.filter(c => c.nombre?.toLowerCase().includes(q));
-
-    // ── Visibilidad de columnas por tab ──
-    const showColumnsSection =
-        activeTab === 'candidatos' || activeTab === 'material' || activeTab === 'all';
+    const interactiveCourses = nativeCourses.filter(c => !c.tipo || c.tipo !== 'link');
+    const linkCourses = nativeCourses.filter(c => c.tipo === 'link');
+    const filteredNative = interactiveCourses.filter(c => c.title?.toLowerCase().includes(q));
+    const filteredLink = linkCourses.filter(c => c.title?.toLowerCase().includes(q));
 
     return (
         <AdminLayout title="Inducción">
             <div className={styles.main}>
-
-                {/* ══════════════ GRID PRINCIPAL ══════════════ */}
                 <div className={styles.container}>
 
-                    {/* ── HEADER ── */}
                     <header className={styles.header}>
                         <div className={styles.titleSectionParent}>
                             <div className={styles.titleSection}>
                                 <h1 className={styles.pageTitle}>Inducción</h1>
-                                <p>Material y cursos de bienvenida para empleados y candidatos</p>
+                                <p>Cursos interactivos y recursos URL / PDF para candidatos</p>
                             </div>
                         </div>
                         <div className={styles.headerActions}>
@@ -563,7 +295,7 @@ function InduccionContent() {
                                     placeholder="Buscar..."
                                     className={styles.searchInput}
                                     value={searchQuery}
-                                    onChange={(e) => setSearchQuery(e.target.value)}
+                                    onChange={e => setSearchQuery(e.target.value)}
                                     aria-label="Buscar contenido"
                                 />
                                 {searchQuery && (
@@ -580,15 +312,10 @@ function InduccionContent() {
                         </div>
                     </header>
 
-                    {/* ── CONTENIDO PRINCIPAL ── */}
                     <main className={styles.contentArea} id="main-content">
-
                         <InteractiveCoursesView
                             canEdit={canEdit}
-                            activeTab={activeTab}
-                            showNativeSection={showNativeSection}
-                            setShowNativeSection={setShowNativeSection}
-                            nativeCourses={nativeCourses}
+                            nativeCourses={interactiveCourses}
                             nativeLoading={nativeLoading}
                             filteredNative={filteredNative}
                             searchQuery={searchQuery}
@@ -610,214 +337,26 @@ function InduccionContent() {
                             handlePlayNative={handlePlayNative}
                             handleDeleteNative={handleDeleteNative}
                             fileInputRef={fileInputRef}
+                            linkCourses={linkCourses}
+                            filteredLink={filteredLink}
+                            uploadingLink={uploadingLink}
+                            onCreateLink={handleCreateLink}
+                            onUpdateLink={handleUpdateLink}
+                            onDeleteLink={handleDeleteLink}
+                            onToggleLinkActive={handleToggleLinkActive}
+                            onUpdateNative={handleUpdateNative}
+                            updatingNative={updatingNative}
+                            onSyncAllPuestos={handleSyncAllPuestos}
+                            syncing={syncing}
                         />
-
-                        {/* Visibilidad por tab — solo CSS classes, sin inline style ── */}
-                        <div className={`${styles.columnsContainer} ${!showColumnsSection ? styles.hidden : ''}`}>
-                            <CandidateCoursesView
-                                canEdit={canEdit}
-                                activeTab={activeTab}
-                                candidatosExpanded={candidatosExpanded}
-                                setCandidatosExpanded={setCandidatosExpanded}
-                                candidateCourses={candidateCourses}
-                                showCandidateForm={showCandidateForm}
-                                setShowCandidateForm={setShowCandidateForm}
-                                setEditingCandidateCourse={setEditingCandidateCourse}
-                                editingCandidateCourse={editingCandidateCourse}
-                                candidateFormData={candidateFormData}
-                                setCandidateFormData={setCandidateFormData}
-                                handleCandidateFormChange={handleCandidateFormChange}
-                                handlePuestoToggle={handlePuestoToggle}
-                                handleCreateCandidateCourse={handleCreateCandidateCourse}
-                                uploading={uploading}
-                                availableCourseTitles={availableCourseTitles}
-                                nativeCourses={nativeCourses}
-                                filteredCandidates={filteredCandidates}
-                                searchQuery={searchQuery}
-                                handleEditCandidateCourse={handleEditCandidateCourse}
-                                handleDeleteCandidateCourse={handleDeleteCandidateCourse}
-                                handleToggleCourseActive={handleToggleCourseActive}
-                                handleCandidateCardClick={handleCandidateCardClick}
-                            />
-
-                            <MaterialView
-                                canEdit={canEdit}
-                                activeTab={activeTab}
-                                materialExpanded={materialExpanded}
-                                setMaterialExpanded={setMaterialExpanded}
-                                courses={courses}
-                                showCreateForm={showCreateForm}
-                                setShowCreateForm={setShowCreateForm}
-                                handleCreateCourse={handleCreateCourse}
-                                newCourseName={newCourseName}
-                                setNewCourseName={setNewCourseName}
-                                file={file}
-                                setFile={setFile}
-                                presentationLink={presentationLink}
-                                setPresentationLink={setPresentationLink}
-                                uploading={uploading}
-                                filteredMaterial={filteredMaterial}
-                                searchQuery={searchQuery}
-                                handleDeleteCourse={handleDeleteCourse}
-                            />
-                        </div>
-
-                        <GalleryView
-                            canEdit={canEdit}
-                            activeTab={activeTab}
-                            galleryExpanded={galleryExpanded}
-                            setGalleryExpanded={setGalleryExpanded}
-                            galleryItems={galleryItems}
-                            setGalleryFile={setGalleryFile}
-                            setGalleryName={setGalleryName}
-                            setGalleryProgress={setGalleryProgress}
-                            setGalleryType={setGalleryType}
-                            setShowGalleryModal={setShowGalleryModal}
-                            filteredGallery={filteredGallery}
-                            searchQuery={searchQuery}
-                            setSelectedMedia={setSelectedMedia}
-                            handleGalleryDelete={handleGalleryDelete}
-                        />
-
                     </main>
                 </div>
 
-                {/* ══ MODAL: Nuevo Curso Interactivo (Wizard) ══ */}
                 {showNewCourseModal && (
                     <CourseWizardModal
                         onComplete={handleConfirmNewCourse}
                         onCancel={() => setShowNewCourseModal(false)}
                     />
-                )}
-
-                {/* ══ MODAL: Galería Upload ══ */}
-                {showGalleryModal && (
-                    <div
-                        className={styles.galleryModalBackdrop}
-                        onClick={(e) => { if (e.target === e.currentTarget) setShowGalleryModal(false); }}
-                        role="dialog"
-                        aria-modal="true"
-                        aria-label="Subir archivo a galería"
-                    >
-                        <div className={styles.galleryModalBox}>
-                            <button
-                                type="button"
-                                className={styles.closeModalBtn}
-                                onClick={() => setShowGalleryModal(false)}
-                                aria-label="Cerrar modal"
-                            >
-                                <X size={14} aria-hidden="true" />
-                            </button>
-                            <div className={styles.galleryModalHeader}>
-                                <UploadCloud size={22} className={styles.galleryModalIcon} aria-hidden="true" />
-                                <h2>Subir a Galería</h2>
-                                <p>Sube una imagen o video y asígnale un nombre.</p>
-                            </div>
-                            <div className={styles.galleryTypeSelector}>
-                                {['imagen', 'video'].map(t => (
-                                    <button
-                                        key={t}
-                                        type="button"
-                                        className={`${styles.galleryTypeBtn} ${galleryType === t ? styles.galleryTypeBtnActive : ''}`}
-                                        onClick={() => { setGalleryType(t); setGalleryFile(null); if (galleryFileRef.current) galleryFileRef.current.value = ''; }}
-                                        disabled={galleryUploading}
-                                    >
-                                        {t === 'imagen' ? <Image size={14} aria-hidden="true" /> : <Video size={14} aria-hidden="true" />}
-                                        {t.charAt(0).toUpperCase() + t.slice(1)}
-                                    </button>
-                                ))}
-                            </div>
-                            <div className={styles.inputGroup}>
-                                <label htmlFor="gallery-name">Nombre</label>
-                                <input
-                                    id="gallery-name"
-                                    className={styles.input}
-                                    placeholder={galleryType === 'imagen' ? 'Ej. Logo empresa' : 'Ej. Video bienvenida'}
-                                    value={galleryName}
-                                    onChange={e => setGalleryName(e.target.value)}
-                                    disabled={galleryUploading}
-                                />
-                            </div>
-                            <label className={`${styles.galleryFileLabel} ${galleryFile ? styles.galleryFileLabelActive : ''}`}>
-                                <input
-                                    ref={galleryFileRef}
-                                    type="file"
-                                    accept={galleryType === 'imagen'
-                                        ? 'image/jpeg,image/png,image/webp,image/gif'
-                                        : 'video/mp4,video/webm,video/quicktime'}
-                                    className={styles.galleryFileInput}
-                                    onChange={e => { const f = e.target.files?.[0]; if (f) { setGalleryFile(f); if (!galleryName) setGalleryName(f.name.replace(/\.[^.]+$/, '')); } }}
-                                    disabled={galleryUploading}
-                                />
-                                {galleryFile
-                                    ? <><Check size={14} aria-hidden="true" /> {galleryFile.name}</>
-                                    : <><Upload size={14} aria-hidden="true" /> {galleryType === 'imagen' ? 'Seleccionar imagen' : 'Seleccionar video'}</>
-                                }
-                            </label>
-                            {galleryUploading && (
-                                <div className={styles.galleryProgressWrap} role="progressbar" aria-valuenow={galleryProgress} aria-valuemin={0} aria-valuemax={100}>
-                                    <div className={styles.galleryProgressBar} style={{ width: `${galleryProgress}%` }} />
-                                    <span className={styles.galleryProgressText}>{galleryProgress}%</span>
-                                </div>
-                            )}
-                            <div className={styles.galleryModalActions}>
-                                <button
-                                    type="button"
-                                    className={styles.toggleBtn}
-                                    onClick={() => setShowGalleryModal(false)}
-                                    disabled={galleryUploading}
-                                >
-                                    Cancelar
-                                </button>
-                                <button
-                                    type="button"
-                                    className={styles.newCourseBtn}
-                                    onClick={handleGalleryUpload}
-                                    disabled={galleryUploading || !galleryFile || !galleryName.trim()}
-                                >
-                                    <UploadCloud size={13} aria-hidden="true" />
-                                    {galleryUploading ? 'Subiendo...' : 'Subir'}
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                )}
-
-                {/* ══ LIGHTBOX ══ */}
-                {selectedMedia && (
-                    <div
-                        className={styles.lightboxBackdrop}
-                        onClick={() => setSelectedMedia(null)}
-                        role="dialog"
-                        aria-modal="true"
-                        aria-label={`Ver ${selectedMedia.nombre}`}
-                    >
-                        <button
-                            type="button"
-                            className={styles.lightboxCloseBtn}
-                            onClick={() => setSelectedMedia(null)}
-                            aria-label="Cerrar vista previa"
-                        >
-                            <X size={24} aria-hidden="true" />
-                        </button>
-                        <div className={styles.lightboxContent} onClick={e => e.stopPropagation()}>
-                            {selectedMedia.tipo === 'imagen' ? (
-                                <img
-                                    src={selectedMedia.viewLink}
-                                    alt={selectedMedia.nombre}
-                                    className={styles.lightboxImage}
-                                />
-                            ) : (
-                                <video
-                                    src={selectedMedia.viewLink}
-                                    controls
-                                    autoPlay
-                                    className={styles.lightboxVideo}
-                                />
-                            )}
-                            <div className={styles.lightboxCaption}>{selectedMedia.nombre}</div>
-                        </div>
-                    </div>
                 )}
 
                 {confirmDialog}

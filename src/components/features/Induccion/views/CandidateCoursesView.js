@@ -101,10 +101,6 @@ export default function CandidateCoursesView({
                                     />
                                 </div>
                                 <div className={styles.inputGroup}>
-                                    <label>Descripción</label>
-                                    <textarea className={styles.input} value={candidateFormData.descripcion} onChange={e => handleCandidateFormChange('descripcion', e.target.value)} placeholder="Breve descripción del curso..." rows={2} />
-                                </div>
-                                <div className={styles.inputGroup}>
                                     <label>Tipo de contenido</label>
                                     <div className={styles.tipoSelector}>
                                         {['link', 'native'].map(tipo => (
@@ -129,10 +125,6 @@ export default function CandidateCoursesView({
                                         <input className={styles.input} value={candidateFormData.contenidoUrl} onChange={e => handleCandidateFormChange('contenidoUrl', e.target.value)} placeholder="https://drive.google.com/..." />
                                     </div>
                                 )}
-                                <div className={styles.inputGroup}>
-                                    <label>URL de examen (opcional)</label>
-                                    <input className={styles.input} value={candidateFormData.examenUrl} onChange={e => handleCandidateFormChange('examenUrl', e.target.value)} placeholder="https://..." />
-                                </div>
                                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
                                     <div className={styles.inputGroup}>
                                         <label>Duración (min)</label>

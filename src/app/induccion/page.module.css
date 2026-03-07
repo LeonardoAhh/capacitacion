@@ -4,7 +4,6 @@
    Sin colores hardcodeados — todo via tokens CSS (var(--...))
    ================================================================ */
 
-@import url('https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@300;400;500;600;700&family=Geist+Mono:wght@400;500;600&display=swap');
 
 /* ================================================================
    DESIGN TOKENS — Scope local en .main
@@ -2699,7 +2698,7 @@ textarea.input {
 
 .pageSubtitle {
     font-size: 1rem;
-    font-family: var(--font-sans, "Roboto", sans-serif);
+    font-family: var(--font-body);
     font-weight: 400;
     color: var(--text-secondary);
     margin: 8px 0 0 0;

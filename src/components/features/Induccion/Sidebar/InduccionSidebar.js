@@ -1,7 +1,7 @@
 import React from 'react';
 import Link from 'next/link';
 import NextImage from 'next/image';
-import { LogOut, User, Zap, BookOpen, FileText, Image as ImageIcon, X, ArrowLeft } from 'lucide-react';
+import { LogOut, User, Zap, Image as ImageIcon, X, ArrowLeft } from 'lucide-react';
 import styles from './InduccionSidebar.module.css';
 
 export default function InduccionSidebar({
@@ -10,8 +10,6 @@ export default function InduccionSidebar({
     canEdit,
     user,
     nativeCoursesCount,
-    candidateCoursesCount,
-    coursesCount,
     galleryItemsCount,
     handleLogout,
     getInitials,
@@ -39,7 +37,6 @@ export default function InduccionSidebar({
                         </Link>
                     )}
 
-                    {/* Botón de cierre — solo visible en móvil vía CSS */}
                     <button
                         className={styles.closeBtn}
                         onClick={onClose}
@@ -75,48 +72,6 @@ export default function InduccionSidebar({
                         </button>
                     )}
 
-                    {canEdit && (
-                        <button
-                            type="button"
-                            className={`${styles.sidebarItem} ${activeTab === 'candidatos' ? styles.active : ''}`}
-                            onClick={() => { setActiveTab('candidatos'); onClose(); }}
-                            aria-current={activeTab === 'candidatos' ? 'page' : undefined}
-                        >
-                            <span className={styles.sidebarItemLeft}>
-                                <span className={styles.sidebarItemIcon} aria-hidden="true">
-                                    <BookOpen size={15} />
-                                </span>
-                                Candidatos
-                            </span>
-                            <span
-                                className={styles.sidebarBadge}
-                                aria-label={`${candidateCoursesCount} candidatos`}
-                            >
-                                {candidateCoursesCount}
-                            </span>
-                        </button>
-                    )}
-
-                    <button
-                        type="button"
-                        className={`${styles.sidebarItem} ${activeTab === 'material' ? styles.active : ''}`}
-                        onClick={() => { setActiveTab('material'); onClose(); }}
-                        aria-current={activeTab === 'material' ? 'page' : undefined}
-                    >
-                        <span className={styles.sidebarItemLeft}>
-                            <span className={styles.sidebarItemIcon} aria-hidden="true">
-                                <FileText size={15} />
-                            </span>
-                            Material
-                        </span>
-                        <span
-                            className={styles.sidebarBadge}
-                            aria-label={`${coursesCount} materiales`}
-                        >
-                            {coursesCount}
-                        </span>
-                    </button>
-
                     <button
                         type="button"
                         className={`${styles.sidebarItem} ${activeTab === 'galeria' ? styles.active : ''}`}
@@ -139,7 +94,6 @@ export default function InduccionSidebar({
                 </nav>
 
                 <div className={styles.sidebarProfile}>
-                    {/* Avatar — display only, no interacción */}
                     <div
                         className={styles.sidebarAvatarBtn}
                         title={user?.name || user?.displayName || 'Usuario'}
@@ -157,7 +111,6 @@ export default function InduccionSidebar({
                                 className={styles.sidebarAvatarImage}
                                 unoptimized
                             />
-                            {/* Fallback visible únicamente si la imagen falla — controlado por CSS */}
                             <span className={styles.sidebarAvatarFallback} aria-hidden="true">
                                 {getInitials(user?.nombre || user?.nickname || user?.name || user?.displayName)}
                             </span>
