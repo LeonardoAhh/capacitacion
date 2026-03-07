@@ -1,3 +1,24 @@
+function safeFormatDate(dateStr) {
+    if (!dateStr) return '—';
+    
+    // Try standard parsing
+    let d = new Date(dateStr);
+    
+    // If invalid, try DD/MM/YYYY
+    if (isNaN(d.getTime()) && typeof dateStr === 'string' && dateStr.includes('/')) {
+        const parts = dateStr.split('/');
+        if (parts.length === 3) {
+            d = new Date(`${parts[2]}-${parts[1]}-${parts[0]}T12:00:00`);
+        }
+    }
+    
+    if (isNaN(d.getTime())) {
+        return dateStr; // Return raw string if nothing works
+    }
+    
+    return d.toLocaleDateString('es-MX', { timeZone: 'UTC' });
+}
+
 export function generateTrainingReportHTML(employee, trainingStats, complianceValue) {
     const now = new Date().toLocaleDateString('es-MX', {
         year: 'numeric', month: 'long', day: 'numeric'
@@ -7,7 +28,7 @@ export function generateTrainingReportHTML(employee, trainingStats, complianceVa
         <tr>
             <td>${c.name || '—'}</td>
             <td class="score approved">${c.score}%</td>
-            <td>${c.date ? new Date(c.date).toLocaleDateString('es-MX') : '—'}</td>
+            <td>${safeFormatDate(c.date)}</td>
             <td><span class="badge badge-green">Aprobado</span></td>
         </tr>`).join('');
 
@@ -15,7 +36,7 @@ export function generateTrainingReportHTML(employee, trainingStats, complianceVa
         <tr>
             <td>${c.name || '—'}</td>
             <td class="score failed">${c.score}%</td>
-            <td>${c.date ? new Date(c.date).toLocaleDateString('es-MX') : '—'}</td>
+            <td>${safeFormatDate(c.date)}</td>
             <td><span class="badge badge-red">Reprobado</span></td>
         </tr>`).join('');
 
