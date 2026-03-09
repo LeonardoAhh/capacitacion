@@ -21,14 +21,6 @@ import {
 import puestosData from '../../../../../puestos.json';
 import styles from '../../../../app/induccion/page.module.css';
 
-const LINK_FORM_EMPTY = {
-    title: '',
-    contenidoUrl: '',
-    puestosAplicables: [],
-    duracionEstimada: 30,
-    orden: 1,
-};
-
 const NATIVE_EDIT_FORM_EMPTY = {
     contenidoUrl: '',
     candidateView: 'native', // 'native' | 'url'
@@ -60,14 +52,6 @@ export default function InteractiveCoursesView({
     handlePlayNative,
     handleDeleteNative,
     fileInputRef,
-    // Cursos URL / PDF
-    linkCourses,
-    filteredLink,
-    uploadingLink,
-    onCreateLink,
-    onUpdateLink,
-    onDeleteLink,
-    onToggleLinkActive,
     // Edición de curso nativo
     onUpdateNative,
     updatingNative,
@@ -77,10 +61,6 @@ export default function InteractiveCoursesView({
 }) {
     const [activeDropdownId, setActiveDropdownId] = useState(null);
     const [showNativeSection, setShowNativeSection] = useState(true);
-    const [showLinkSection, setShowLinkSection] = useState(true);
-    const [showLinkForm, setShowLinkForm] = useState(false);
-    const [editingLink, setEditingLink] = useState(null);
-    const [linkForm, setLinkForm] = useState(LINK_FORM_EMPTY);
     const [showNativeEditForm, setShowNativeEditForm] = useState(false);
     const [editingNative, setEditingNative] = useState(null);
     const [nativeEditForm, setNativeEditForm] = useState(NATIVE_EDIT_FORM_EMPTY);
@@ -127,51 +107,6 @@ export default function InteractiveCoursesView({
         if (!editingNative) return;
         const ok = await onUpdateNative(editingNative.id, nativeEditForm);
         if (ok) handleNativeEditCancel();
-    };
-
-    // ── Link form helpers ──
-    const handleLinkFormChange = (field, value) =>
-        setLinkForm(prev => ({ ...prev, [field]: value }));
-
-    const handlePuestoToggle = (puesto) =>
-        setLinkForm(prev => ({
-            ...prev,
-            puestosAplicables: prev.puestosAplicables.includes(puesto)
-                ? prev.puestosAplicables.filter(p => p !== puesto)
-                : [...prev.puestosAplicables, puesto],
-        }));
-
-    const openCreateLink = () => {
-        setEditingLink(null);
-        setLinkForm({ ...LINK_FORM_EMPTY, orden: linkCourses.length + 1 });
-        setShowLinkForm(true);
-    };
-
-    const openEditLink = (e, course) => {
-        e.stopPropagation();
-        setEditingLink(course);
-        setLinkForm({
-            title: course.title || '',
-            contenidoUrl: course.contenidoUrl || '',
-            puestosAplicables: course.puestosAplicables || [],
-            duracionEstimada: course.duracionEstimada || 30,
-            orden: course.orden || 1,
-        });
-        setShowLinkForm(true);
-    };
-
-    const handleLinkCancel = () => {
-        setShowLinkForm(false);
-        setEditingLink(null);
-        setLinkForm(LINK_FORM_EMPTY);
-    };
-
-    const handleLinkSubmit = async (e) => {
-        e.preventDefault();
-        const ok = editingLink
-            ? await onUpdateLink(editingLink.id, linkForm)
-            : await onCreateLink(linkForm);
-        if (ok) handleLinkCancel();
     };
 
     return (
@@ -401,183 +336,6 @@ export default function InteractiveCoursesView({
                             ))
                         )}
                     </div>
-                )}
-            </section>
-
-            {/* ══════════════════════════════════════════
-                SECCIÓN 2 — URL / PDF
-                ══════════════════════════════════════════ */}
-            <section className={styles.columnSection}>
-                <div className={styles.coursesHeader}>
-                    <h2
-                        className={styles.sectionTitle}
-                        onClick={() => setShowLinkSection(v => !v)}
-                    >
-                        <ChevronRight
-                            size={16}
-                            className={`${styles.chevronIcon} ${showLinkSection ? styles.expanded : ''}`}
-                        />
-                        <Link2 size={14} style={{ color: 'var(--color-primary)', flexShrink: 0 }} />
-                        URL / PDF
-                        <span className={styles.sectionCount}>{linkCourses.length}</span>
-                    </h2>
-
-                    {canEdit && (
-                        <button className={styles.toggleBtn} onClick={openCreateLink}>
-                            <Plus size={14} />
-                            Nuevo
-                        </button>
-                    )}
-                </div>
-
-                {showLinkSection && (
-                    <>
-                        {showLinkForm && canEdit && (
-                            <div className={styles.createCourseContainer}>
-                                <h3>{editingLink ? 'Editar recurso' : 'Nuevo recurso URL / PDF'}</h3>
-                                <form onSubmit={handleLinkSubmit} className={styles.createCourseForm}>
-
-                                    <div className={styles.inputGroup}>
-                                        <label>Nombre</label>
-                                        <input
-                                            className={styles.input}
-                                            value={linkForm.title}
-                                            onChange={e => handleLinkFormChange('title', e.target.value)}
-                                            placeholder="Ej. Manual de bienvenida"
-                                            required
-                                        />
-                                    </div>
-
-                                    <div className={styles.inputGroup}>
-                                        <label>URL del recurso</label>
-                                        <input
-                                            className={styles.input}
-                                            value={linkForm.contenidoUrl}
-                                            onChange={e => handleLinkFormChange('contenidoUrl', e.target.value)}
-                                            placeholder="https://drive.google.com/..."
-                                            required
-                                        />
-                                    </div>
-
-                                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
-                                        <div className={styles.inputGroup}>
-                                            <label>Duración (min)</label>
-                                            <input
-                                                type="number"
-                                                className={styles.input}
-                                                value={linkForm.duracionEstimada}
-                                                onChange={e => handleLinkFormChange('duracionEstimada', parseInt(e.target.value) || 0)}
-                                                min="1"
-                                            />
-                                        </div>
-                                        <div className={styles.inputGroup}>
-                                            <label>Orden</label>
-                                            <input
-                                                type="number"
-                                                className={styles.input}
-                                                value={linkForm.orden}
-                                                onChange={e => handleLinkFormChange('orden', parseInt(e.target.value) || 1)}
-                                                min="1"
-                                            />
-                                        </div>
-                                    </div>
-
-                                    <div className={styles.inputGroup}>
-                                        <label>Puestos aplicables ({linkForm.puestosAplicables.length})</label>
-                                        <div className={styles.puestosCheckboxContainer}>
-                                            {puestosData.map((p, idx) => (
-                                                <label key={idx}>
-                                                    <input
-                                                        type="checkbox"
-                                                        checked={linkForm.puestosAplicables.includes(p.positions)}
-                                                        onChange={() => handlePuestoToggle(p.positions)}
-                                                    />
-                                                    {p.positions}
-                                                </label>
-                                            ))}
-                                        </div>
-                                    </div>
-
-                                    <div className={styles.formActions}>
-                                        <Button type="submit" disabled={uploadingLink}>
-                                            {uploadingLink ? 'Guardando...' : (editingLink ? 'Actualizar' : 'Crear')}
-                                        </Button>
-                                        <button type="button" className={styles.toggleBtn} onClick={handleLinkCancel}>
-                                            Cancelar
-                                        </button>
-                                    </div>
-                                </form>
-                            </div>
-                        )}
-
-                        <div className={styles.coursesGrid}>
-                            {filteredLink.length === 0 ? (
-                                <div className={styles.emptyState}>
-                                    <FileText size={48} opacity={0.15} style={{ marginBottom: '10px' }} />
-                                    <p>{searchQuery ? 'No hay resultados que coincidan.' : 'No hay recursos URL / PDF creados aún.'}</p>
-                                </div>
-                            ) : (
-                                filteredLink.map(course => (
-                                    <div
-                                        key={course.id}
-                                        className={styles.courseCard}
-                                        onClick={() => course.contenidoUrl && window.open(course.contenidoUrl, '_blank')}
-                                        style={{ opacity: course.activo === false ? 0.5 : 1 }}
-                                    >
-                                        <div className={styles.cardTopColor} style={{ background: 'var(--color-primary)' }} />
-
-                                        <div className={styles.cardActionsRow}>
-                                            <div className={styles.actionMenuContainer}>
-                                                <button
-                                                    type="button"
-                                                    className={`${styles.actionMenuToggle} ${activeDropdownId === course.id ? styles.activeToggle : ''}`}
-                                                    onClick={(e) => toggleDropdown(e, course.id)}
-                                                    aria-label="Opciones"
-                                                >
-                                                    <MoreHorizontal size={18} />
-                                                </button>
-
-                                                {activeDropdownId === course.id && (
-                                                    <div className={styles.actionMenuDropdown} onClick={e => e.stopPropagation()}>
-                                                        <button className={styles.actionMenuItem} onClick={() => { setActiveDropdownId(null); window.open(course.contenidoUrl, '_blank'); }}>
-                                                            <ExternalLink size={14} className={styles.actionMenuIcon} />
-                                                            Abrir
-                                                        </button>
-                                                        {canEdit && (
-                                                            <>
-                                                                <button className={styles.actionMenuItem} onClick={(e) => { setActiveDropdownId(null); openEditLink(e, course); }}>
-                                                                    <Edit3 size={14} className={styles.actionMenuIcon} />
-                                                                    Editar
-                                                                </button>
-                                                                <button className={styles.actionMenuItem} onClick={(e) => { e.stopPropagation(); setActiveDropdownId(null); onToggleLinkActive(course.id, course.activo); }}>
-                                                                    <span className={styles.actionMenuIcon}>{course.activo !== false ? '🔴' : '🟢'}</span>
-                                                                    {course.activo !== false ? 'Desactivar' : 'Activar'}
-                                                                </button>
-                                                                <div className={styles.actionMenuDivider} />
-                                                                <button className={`${styles.actionMenuItem} ${styles.danger}`} onClick={(e) => { setActiveDropdownId(null); onDeleteLink(e, course.id); }}>
-                                                                    <Trash2 size={14} className={styles.actionMenuIcon} />
-                                                                    Eliminar
-                                                                </button>
-                                                            </>
-                                                        )}
-                                                    </div>
-                                                )}
-                                            </div>
-                                        </div>
-
-                                        <div className={styles.cardContent}>
-                                            <h3 className={styles.courseTitle}>{course.title}</h3>
-                                            {course.puestosAplicables?.length > 0 && (
-                                                <p style={{ fontSize: '0.7rem', color: 'var(--text-tertiary)', marginTop: '4px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                                                    {course.puestosAplicables.join(', ')}
-                                                </p>
-                                            )}
-                                        </div>
-                                    </div>
-                                ))
-                            )}
-                        </div>
-                    </>
                 )}
             </section>
         </>

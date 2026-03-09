@@ -32,7 +32,7 @@ export async function loadCoursesForPosition(position) {
     // ── 1. Cursos de la colección principal ──
     let cursosData = cursosSnapshot.docs
         .map(doc => ({ id: doc.id, ...doc.data() }))
-        .filter(c => c.tipo === 'link' ? c.activo !== false : c.published !== false);
+        .filter(c => c.tipo === 'link' ? c.activo !== false : c.published === true);
     cursosData.sort((a, b) => (a.orden || 0) - (b.orden || 0));
 
     // ── 2. Path legado positions → induction_courses ──

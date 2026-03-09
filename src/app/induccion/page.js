@@ -4,7 +4,7 @@ import { useState, useEffect, useCallback, useRef } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useRouter } from 'next/navigation';
 import { useToast } from '@/components/ui/Toast/Toast';
-import { IconX as X, IconSearch as Search } from '@/lib/icons';
+import { IconX as X, IconSearch as Search, IconZap as Zap, IconEdit as Edit3, IconLink as Link2 } from '@/lib/icons';
 import { Suspense } from 'react';
 import AdminLayout from '@/components/layout/AdminLayout/AdminLayout';
 import CourseWizardModal from '@/components/features/Courses/CourseWizardModal';
@@ -19,7 +19,6 @@ import {
     togglePublish,
     renameCourse,
     createCourseFromWizard,
-    createLinkCourse,
     updateCourseFields,
     syncCoursePuestosFromPositions,
 } from '@/lib/courseService';
@@ -38,7 +37,6 @@ function InduccionContent() {
     const [importing, setImporting] = useState(false);
     const [creatingCourse, setCreatingCourse] = useState(false);
     const [showNewCourseModal, setShowNewCourseModal] = useState(false);
-    const [uploadingLink, setUploadingLink] = useState(false);
     const [updatingNative, setUpdatingNative] = useState(false);
     const [syncing, setSyncing] = useState(false);
     const [playerData, setPlayerData] = useState(null);
@@ -177,35 +175,7 @@ function InduccionContent() {
         if (e.key === 'Escape') setRenamingId(null);
     }, [handleConfirmRename]);
 
-    // ── Cursos URL / PDF ──
 
-    const handleCreateLink = useCallback(async (formData) => {
-        if (!formData.title?.trim()) { toast.warning('Atención', 'El nombre es obligatorio.'); return false; }
-        if (!formData.contenidoUrl?.trim()) { toast.warning('Atención', 'La URL es obligatoria.'); return false; }
-        setUploadingLink(true);
-        const result = await createLinkCourse({ ...formData, userId: user?.uid });
-        if (result.success) {
-            toast.success('Creado', 'Recurso creado correctamente.');
-            await loadCourses();
-        } else {
-            toast.error('Error', result.error);
-        }
-        setUploadingLink(false);
-        return result.success;
-    }, [user?.uid, toast, loadCourses]);
-
-    const handleUpdateLink = useCallback(async (courseId, formData) => {
-        setUploadingLink(true);
-        const result = await updateCourseFields(courseId, { ...formData, tipo: 'link' });
-        if (result.success) {
-            toast.success('Actualizado', 'Recurso actualizado.');
-            await loadCourses();
-        } else {
-            toast.error('Error', result.error);
-        }
-        setUploadingLink(false);
-        return result.success;
-    }, [toast, loadCourses]);
 
     const handleSyncAllPuestos = useCallback(async () => {
         setSyncing(true);
@@ -232,21 +202,7 @@ function InduccionContent() {
         return result.success;
     }, [toast, loadCourses]);
 
-    const handleToggleLinkActive = useCallback(async (courseId, currentActive) => {
-        const result = await updateCourseFields(courseId, { activo: currentActive === false ? true : false });
-        if (result.success) {
-            toast.success('Actualizado', `Recurso ${currentActive === false ? 'activado' : 'desactivado'}.`);
-            await loadCourses();
-        }
-    }, [toast, loadCourses]);
 
-    const handleDeleteLink = useCallback(async (e, courseId) => {
-        e.stopPropagation();
-        if (!await showConfirm('¿Eliminar este recurso?', { title: 'Eliminar', confirmLabel: 'Eliminar' })) return;
-        const result = await deleteCourse(courseId);
-        if (result.success) { toast.success('Eliminado', 'Recurso eliminado.'); await loadCourses(); }
-        else toast.error('Error', result.error);
-    }, [showConfirm, toast, loadCourses]);
 
     // ── Guards ──
 
@@ -271,9 +227,7 @@ function InduccionContent() {
     // ── Filtros ──
     const q = searchQuery.toLowerCase().trim();
     const interactiveCourses = nativeCourses.filter(c => !c.tipo || c.tipo !== 'link');
-    const linkCourses = nativeCourses.filter(c => c.tipo === 'link');
     const filteredNative = interactiveCourses.filter(c => c.title?.toLowerCase().includes(q));
-    const filteredLink = linkCourses.filter(c => c.title?.toLowerCase().includes(q));
 
     return (
         <AdminLayout title="Inducción">
@@ -312,6 +266,37 @@ function InduccionContent() {
                         </div>
                     </header>
 
+                    <div className={styles.instructionsBanner}>
+                        <div className={styles.instructionStep}>
+                            <Zap size={20} className={styles.instructionIcon} />
+                            <div>
+                                <h4>1. Crea</h4>
+                                <p>Constrúyelo desde el botón de <strong>Opciones</strong>, en la seccion de <strong>Nuevo Curso</strong>.</p>
+                            </div>
+                        </div>
+                        <div className={styles.instructionStep}>
+                            <Edit3 size={20} className={styles.instructionIcon} />
+                            <div>
+                                <h4>2. Configura los cursos</h4>
+                                <p>Da clic en <strong>Configurar slides</strong> en el menú de opciones para agregar contenido.</p>
+                            </div>
+                        </div>
+                        <div className={styles.instructionStep}>
+                            <span className={styles.instructionIcon} style={{ fontSize: '18px' }}>📗</span>
+                            <div>
+                                <h4>3. ¡Importante!</h4>
+                                <p>Los cursos marcados como <strong>Borrador (🔒)</strong> están ocultos para los candidatos.</p>
+                            </div>
+                        </div>
+                        <div className={styles.instructionStep}>
+                            <Link2 size={20} className={styles.instructionIcon} />
+                            <div>
+                                <h4>4. ¿Necesitas editar un curso?</h4>
+                                <p>Al editar un curso, puedes marcar que la vista sea mediante una <strong>URL / PDF</strong> en lugar de los Cursos Interactivos.</p>
+                            </div>
+                        </div>
+                    </div>
+
                     <main className={styles.contentArea} id="main-content">
                         <InteractiveCoursesView
                             canEdit={canEdit}
@@ -337,13 +322,6 @@ function InduccionContent() {
                             handlePlayNative={handlePlayNative}
                             handleDeleteNative={handleDeleteNative}
                             fileInputRef={fileInputRef}
-                            linkCourses={linkCourses}
-                            filteredLink={filteredLink}
-                            uploadingLink={uploadingLink}
-                            onCreateLink={handleCreateLink}
-                            onUpdateLink={handleUpdateLink}
-                            onDeleteLink={handleDeleteLink}
-                            onToggleLinkActive={handleToggleLinkActive}
                             onUpdateNative={handleUpdateNative}
                             updatingNative={updatingNative}
                             onSyncAllPuestos={handleSyncAllPuestos}
