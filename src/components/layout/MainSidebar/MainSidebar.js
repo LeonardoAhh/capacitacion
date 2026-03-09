@@ -65,12 +65,14 @@ export default function MainSidebar({ user, handleLogout, isOpen, onClose }) {
         },
         {
             id: 'induction',
-            title: 'Inducción',
+            title: 'Más',
             icon: GraduationCap,
-            href: '/induccion',
+            href: '#',
             disabled: false,
             subItems: [
-                { id: 'interactivos', title: 'Cursos Interactivos', href: '/induccion', icon: Zap },
+                { id: 'interactivos', title: 'Inducción', href: '/induccion', icon: Zap },
+                { id: 'mural', title: 'Mural', href: '/mural', icon: Zap },
+                { id: 'presentacion', title: 'Presentación', href: '/presentacion', icon: Zap },
             ]
         },
     ];

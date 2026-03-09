@@ -48,6 +48,9 @@ const toDateStr = (date) => {
 function TaskItem({ task, onToggle, onDelete, onEdit, dragHandleProps }) {
     const [isEditing, setIsEditing]   = useState(false);
     const [editValue, setEditValue]   = useState(task.title);
+    const [isExpanded, setIsExpanded] = useState(false);
+
+    // Swipe states
     const [swipeOffset, setSwipeOffset] = useState(0);
     const [isTouching, setIsTouching] = useState(false);
     const touchStartX = useRef(null);
@@ -124,17 +127,20 @@ function TaskItem({ task, onToggle, onDelete, onEdit, dragHandleProps }) {
                     styles.taskItem,
                     task.completed ? styles.completed : '',
                     isTouching ? styles.touching : '',
+                    isExpanded ? styles.expanded : ''
                 ].join(' ')}
                 style={{ transform: `translateX(${swipeOffset}px)` }}
                 onTouchStart={handleTouchStart}
                 onTouchMove={handleTouchMove}
                 onTouchEnd={handleTouchEnd}
+                onClick={() => !isEditing && setIsExpanded(!isExpanded)}
             >
                 {/* Drag handle */}
                 <button
                     className={styles.dragHandle}
                     aria-label="Reordenar tarea"
                     tabIndex={-1}
+                    onClick={(e) => e.stopPropagation()}
                     {...dragHandleProps}
                 >
                     <GripVertical size={14} />
@@ -143,10 +149,13 @@ function TaskItem({ task, onToggle, onDelete, onEdit, dragHandleProps }) {
                 {/* Checkbox */}
                 <button
                     className={styles.checkboxContainer}
-                    onClick={() => onToggle(task.id, task.completed)}
-                    aria-label={task.completed ? 'Marcar como pendiente' : 'Marcar como completado'}
+                    onClick={(e) => {
+                        e.stopPropagation();
+                        onToggle(task.id, task.completed);
+                    }}
+                    aria-label={task.completed ? "Marcar pendiente" : "Completar"}
                 >
-                    {task.completed && <Check size={13} strokeWidth={3} />}
+                    {task.completed && <Check size={14} strokeWidth={3.5} />}
                 </button>
 
                 {/* Content */}
@@ -157,45 +166,77 @@ function TaskItem({ task, onToggle, onDelete, onEdit, dragHandleProps }) {
                             className={styles.inlineInput}
                             value={editValue}
                             onChange={(e) => setEditValue(e.target.value)}
-                            onBlur={commitEdit}
+                            onBlur={(e) => {
+                                e.stopPropagation();
+                                commitEdit();
+                            }}
                             onKeyDown={(e) => {
-                                if (e.key === 'Enter')  commitEdit();
+                                if (e.key === 'Enter') commitEdit();
                                 if (e.key === 'Escape') cancelEdit();
                             }}
+                            onClick={(e) => e.stopPropagation()}
                         />
                     ) : (
                         <span
                             className={styles.taskTitle}
-                            onDoubleClick={() => setIsEditing(true)}
+                            onDoubleClick={(e) => {
+                                e.stopPropagation();
+                                setIsEditing(true);
+                            }}
                             title="Doble clic para editar"
                         >
                             {task.title}
                         </span>
                     )}
-                    <span className={`${styles.urgencyChip} ${urgency.chipClass}`}>
-                        {urgency.label}
-                    </span>
+                    
+                    {/* Meta info / Details: solo visible al expandir */}
+                    {isExpanded && !isEditing && (
+                        <div className={styles.taskDetailsRow}>
+                             <span className={`${styles.urgencyChip} ${urgency.chipClass}`}>
+                                {urgency.label}
+                            </span>
+                            
+                            <div className={styles.taskActionsExpanded}>
+                                <button
+                                    className={styles.editBtn}
+                                    onClick={(e) => {
+                                        e.stopPropagation();
+                                        setIsEditing(true);
+                                    }}
+                                    aria-label="Editar tarea"
+                                >
+                                    <Pencil size={13} />
+                                </button>
+                                <button
+                                    className={styles.deleteBtn}
+                                    onClick={(e) => {
+                                        e.stopPropagation();
+                                        onDelete(task.id);
+                                    }}
+                                    aria-label="Eliminar tarea"
+                                >
+                                    <Trash2 size={13} />
+                                </button>
+                            </div>
+                        </div>
+                    )}
                 </div>
 
-                {/* Action buttons */}
-                <div className={styles.taskActions}>
-                    {!isEditing && (
+                {/* Action button container on right side (only trash icon shown here if not expanded) */}
+                {!isExpanded && (
+                    <div className={styles.taskActions}>
                         <button
-                            className={styles.editBtn}
-                            onClick={() => setIsEditing(true)}
-                            aria-label="Editar tarea"
+                            className={styles.deleteBtn}
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                onDelete(task.id);
+                            }}
+                            aria-label="Eliminar tarea"
                         >
-                            <Pencil size={13} />
+                            <Trash2 size={13} />
                         </button>
-                    )}
-                    <button
-                        className={styles.deleteBtn}
-                        onClick={() => onDelete(task.id)}
-                        aria-label="Eliminar tarea"
-                    >
-                        <Trash2 size={13} />
-                    </button>
-                </div>
+                    </div>
+                )}
             </div>
         </div>
     );
@@ -279,7 +320,31 @@ export default function PendingTasks() {
                 where('userId', '==', user.uid),
             );
             const snap = await getDocs(q);
-            setTasks(snap.docs.map(d => ({ id: d.id, ...d.data() })));
+            
+            const todayStr = toDateStr(new Date());
+            const loadedTasks = [];
+
+            // Identify past incomplete tasks and roll them over
+            const batchPromises = [];
+            
+            snap.docs.forEach(d => {
+                const data = d.data();
+                if (!data.completed && data.date < todayStr) {
+                    // Rollover to today
+                    const updatedTask = { ...data, date: todayStr };
+                    loadedTasks.push({ id: d.id, ...updatedTask });
+                    batchPromises.push(updateDoc(doc(db, 'pending_tasks', d.id), { date: todayStr }));
+                } else {
+                    loadedTasks.push({ id: d.id, ...data });
+                }
+            });
+
+            if (batchPromises.length > 0) {
+                await Promise.allSettled(batchPromises);
+                toast.success(`${batchPromises.length} tareas pasadas se movieron a hoy.`);
+            }
+
+            setTasks(loadedTasks);
         } catch {
             toast.error('No se pudieron cargar los pendientes.');
         } finally {
@@ -289,20 +354,33 @@ export default function PendingTasks() {
 
     useEffect(() => { fetchTasks(); }, [fetchTasks]);
 
-    // ── Push notification (once per day, high-priority tasks) ─────────────────
+    // Push notification for daily high priority tasks
     useEffect(() => {
         if (loading || tasks.length === 0 || permission !== 'granted') return;
-        const today = toDateStr(new Date());
-        if (localStorage.getItem('last_task_notification_date') === today) return;
 
-        const urgent = tasks.filter(t => t.date === today && !t.completed && t.urgency === 'alta');
-        if (urgent.length > 0) {
-            sendNotification('Pendientes Urgentes', {
-                body: `Tienes ${urgent.length} pendiente(s) de alta urgencia hoy.`,
-                icon: '/web-app-manifest-192x192.png',
-                tag: 'high-priority-tasks',
-            });
-            localStorage.setItem('last_task_notification_date', today);
+        const today = new Date().toISOString().split('T')[0];
+        const lastTaskNotif = localStorage.getItem('last_task_notification_date');
+
+        if (lastTaskNotif !== today) {
+            const highPriorityToday = tasks.filter(t => t.date === today && !t.completed && t.urgency === 'alta');
+            
+            if (highPriorityToday.length > 0) {
+                // Map titles for a more specific message
+                const taskTitles = highPriorityToday.map(t => t.title).join(', ');
+                const bodyText = highPriorityToday.length === 1 
+                    ? `No olvides: ${taskTitles}`
+                    : `Tienes ${highPriorityToday.length} urgentes: ${taskTitles}`;
+                
+                // Truncate if the body text is too long for a notification
+                const finalBodyText = bodyText.length > 100 ? bodyText.substring(0, 97) + '...' : bodyText;
+
+                sendNotification('Pendientes para hoy', {
+                    body: finalBodyText,
+                    icon: '/web-app-manifest-192x192.png',
+                    tag: 'high-priority-tasks',
+                });
+                localStorage.setItem('last_task_notification_date', today);
+            }
         }
     }, [tasks, loading, permission, sendNotification]);
 
