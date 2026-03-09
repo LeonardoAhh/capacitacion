@@ -226,6 +226,9 @@ export function useDashboardStats(user) {
                 employeeName: emp.name,
                 dueDate: deliveryDate.toISOString().split('T')[0],
                 department: emp.department,
+                shift: emp.shift || null,
+                // Guardamos el doc ID de Firestore para poder actualizarlo desde el modal
+                firestoreId: emp.id,
             };
 
             // Vencido

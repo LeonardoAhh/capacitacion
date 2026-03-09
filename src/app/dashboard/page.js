@@ -9,6 +9,7 @@ import MainSidebar from '@/components/layout/MainSidebar/MainSidebar';
 import CandidateMobileHeader from '@/components/features/CandidateSidebar/CandidateMobileHeader';
 import PendingTasks from '@/components/features/PendingTasks/PendingTasks';
 import AlertsWidget from '@/components/features/AlertsWidget/AlertsWidget';
+import TrainingPlanModal from '@/components/features/Training/TrainingPlanModal';
 import { useNotifications } from '@/hooks/useNotifications';
 import { useDashboardStats } from '@/hooks/useDashboardStats';
 import { useToast } from '@/components/ui/Toast/Toast';
@@ -25,6 +26,7 @@ export default function DashboardPage() {
     const [showAvatarSelector, setShowAvatarSelector] = useState(false);
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
     const [selectedEvaluation, setSelectedEvaluation] = useState(null);
+    const [selectedTrainingPlan, setSelectedTrainingPlan] = useState(null);
     const { permission, requestPermission, sendNotification } = useNotifications();
     const { toast } = useToast();
 
@@ -139,6 +141,13 @@ export default function DashboardPage() {
                 onSave={handleSaveEvaluation}
             />
 
+            <TrainingPlanModal
+                isOpen={!!selectedTrainingPlan}
+                onClose={() => setSelectedTrainingPlan(null)}
+                plan={selectedTrainingPlan}
+                onSaved={() => setSelectedTrainingPlan(null)}
+            />
+
             <CandidateMobileHeader
                 user={user}
                 onOpenSidebar={() => setIsSidebarOpen(true)}
@@ -210,6 +219,7 @@ export default function DashboardPage() {
                             expiringEmployees={expiringEmployees}
                             trainingPlans={trainingPlans}
                             onEditEvaluation={setSelectedEvaluation}
+                            onMarkTrainingDelivered={setSelectedTrainingPlan}
                         />
                     </div>
                 </div>

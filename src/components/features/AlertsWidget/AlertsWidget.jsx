@@ -142,13 +142,13 @@ function ContractRow({ emp }) {
 
 // ─── TrainingRow ───────────────────────────────────────────────────────────────
 
-function TrainingRow({ plan }) {
+function TrainingRow({ plan, onClick }) {
     const isOverdue = !!plan.daysOverdue;
     const days = isOverdue ? plan.daysOverdue : plan.daysUntil;
     const cls  = urgencyClass(days, isOverdue, styles);
 
     return (
-        <div className={styles.row}>
+        <div className={`${styles.row} ${styles.rowClickable}`} onClick={() => onClick(plan)}>
             <span className={`${styles.urgencyDot} ${cls}`} aria-hidden="true" />
             <div className={styles.rowMain}>
                 <span className={styles.rowName}>
@@ -160,6 +160,11 @@ function TrainingRow({ plan }) {
                             <Building2 size={11} /> {plan.department}
                         </span>
                     )}
+                    {plan.shift && (
+                        <span className={styles.metaChip}>
+                            <Clock size={11} /> {plan.shift}
+                        </span>
+                    )}
                     <span className={styles.metaChip}>
                         <CalendarDays size={11} /> Entrega: {formatDate(plan.dueDate)}
                     </span>
@@ -168,6 +173,7 @@ function TrainingRow({ plan }) {
             <span className={`${styles.daysBadge} ${cls}`}>
                 {daysLabel(days, isOverdue)}
             </span>
+            <ChevronRight size={14} className={styles.chevron} />
         </div>
     );
 }
@@ -190,6 +196,7 @@ export default function AlertsWidget({
     expiringEmployees = [],
     trainingPlans = { overdue: [], upcoming: [] },
     onEditEvaluation,
+    onMarkTrainingDelivered,
 }) {
     const [activeTab, setActiveTab] = useState('evaluaciones');
 
@@ -302,7 +309,7 @@ export default function AlertsWidget({
                                         <div className={styles.group}>
                                             <span className={styles.groupLabel}>Vencidos</span>
                                             {trainingPlans.overdue.map((plan, i) => (
-                                                <TrainingRow key={`tv-${i}`} plan={plan} />
+                                                <TrainingRow key={`tv-${i}`} plan={plan} onClick={onMarkTrainingDelivered} />
                                             ))}
                                         </div>
                                     )}
@@ -310,7 +317,7 @@ export default function AlertsWidget({
                                         <div className={styles.group}>
                                             <span className={styles.groupLabel}>Próximos (7 días)</span>
                                             {trainingPlans.upcoming.map((plan, i) => (
-                                                <TrainingRow key={`tu-${i}`} plan={plan} />
+                                                <TrainingRow key={`tu-${i}`} plan={plan} onClick={onMarkTrainingDelivered} />
                                             ))}
                                         </div>
                                     )}
