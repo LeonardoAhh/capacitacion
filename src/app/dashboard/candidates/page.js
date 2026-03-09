@@ -29,11 +29,12 @@ function useDataFetching() {
             setError(null);
 
             // Parallel fetching for better performance
-            const [employeesSnap, coursesSnap, positionsSnap, legacyCoursesSnap] = await Promise.allSettled([
+            const [employeesSnap, coursesSnap, positionsSnap, legacyCoursesSnap, nuevaCursosSnap] = await Promise.allSettled([
                 getDocs(collection(db, 'employees')),
                 getDocs(collection(db, 'induction_courses')),
                 getDocs(collection(db, 'positions')),
-                getDocs(collection(db, 'cursos_induccion')).catch(() => ({ docs: [] }))
+                getDocs(collection(db, 'cursos_induccion')).catch(() => ({ docs: [] })),
+                getDocs(collection(db, 'cursos')).catch(() => ({ docs: [] }))  // Nueva arquitectura de cursos
             ]);
 
             // Process employees
@@ -59,12 +60,25 @@ function useDataFetching() {
                 });
             }
 
-            // Process legacy courses
+            // Process legacy courses (cursos_induccion)
             if (legacyCoursesSnap.status === 'fulfilled') {
                 legacyCoursesSnap.value.docs.forEach(doc => {
                     const d = doc.data();
                     if (d.activo !== false && !coursesMap[d.id] && !coursesMap[d.nombre]) {
                         coursesMap[d.id] = { id: doc.id, name: d.nombre, ...d };
+                    }
+                });
+            }
+
+            // Process new architecture courses (colección `cursos`) — misma fuente que usa el portal candidato
+            if (nuevaCursosSnap.status === 'fulfilled') {
+                nuevaCursosSnap.value.docs.forEach(doc => {
+                    const d = doc.data();
+                    // Mismo filtro que courseService.js: links activos, interactivos publicados
+                    const isActive = d.tipo === 'link' ? d.activo !== false : d.published === true;
+                    if (isActive && !coursesMap[doc.id]) {
+                        const courseName = d.title || d.nombre || 'Sin nombre';
+                        coursesMap[doc.id] = { id: doc.id, name: courseName, ...d };
                     }
                 });
             }
@@ -110,11 +124,14 @@ function useDataFetching() {
                     if (found) requiredCourseIds.push(found.id);
                 });
 
-                // Fallback to legacy system
+                // Fallback: buscar en cualquier curso del mapa que tenga puestosAplicables
+                // (cubre tanto cursos_induccion como la nueva colección `cursos`)
                 if (requiredCourseIds.length === 0) {
                     Object.values(coursesMap).forEach(course => {
                         if (course.puestosAplicables && course.puestosAplicables.includes(position)) {
-                            requiredCourseIds.push(course.id);
+                            if (!requiredCourseIds.includes(course.id)) {
+                                requiredCourseIds.push(course.id);
+                            }
                         }
                     });
                 }
