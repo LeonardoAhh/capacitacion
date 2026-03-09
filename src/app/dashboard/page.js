@@ -3,21 +3,18 @@
 import { useEffect, useState, useCallback } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useRouter } from 'next/navigation';
-import Link from 'next/link';
-import BackButton from '@/components/ui/BackButton/BackButton';
 import AvatarSelector from '@/components/ui/AvatarSelector/AvatarSelector';
 import EvaluationModal from '@/components/features/Training/EvaluationModal';
 import MainSidebar from '@/components/layout/MainSidebar/MainSidebar';
 import CandidateMobileHeader from '@/components/features/CandidateSidebar/CandidateMobileHeader';
 import PendingTasks from '@/components/features/PendingTasks/PendingTasks';
+import AlertsWidget from '@/components/features/AlertsWidget/AlertsWidget';
 import { useNotifications } from '@/hooks/useNotifications';
 import { useDashboardStats } from '@/hooks/useDashboardStats';
 import { useToast } from '@/components/ui/Toast/Toast';
 import { collection, query, where, getDocs, updateDoc, doc } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
-import {
-    Users, FileText, Clock, AlertCircle, Calendar
-} from 'lucide-react';
+import { Users, FileText, Clock } from 'lucide-react';
 import styles from './page.module.css';
 
 export default function DashboardPage() {
@@ -25,7 +22,6 @@ export default function DashboardPage() {
     const router = useRouter();
 
     const { stats, evaluations, expiringEmployees, trainingPlans, loading } = useDashboardStats(user);
-    const [showExpiringModal, setShowExpiringModal] = useState(false);
     const [showAvatarSelector, setShowAvatarSelector] = useState(false);
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
     const [selectedEvaluation, setSelectedEvaluation] = useState(null);
@@ -208,106 +204,13 @@ export default function DashboardPage() {
                         {/* Pending Tasks Widget */}
                         <PendingTasks />
 
-                        {(evaluations.overdue.length > 0 || evaluations.upcoming.length > 0) && (
-                            <section className={styles.section}>
-                                <div className={styles.sectionHeader}>
-                                    <h2 className={styles.sectionTitle}>Evaluaciones</h2>
-                                    {evaluations.overdue.length > 0 && (
-                                        <span className={`${styles.sectionBadge} ${styles.danger}`}>
-                                            {evaluations.overdue.length} vencida{evaluations.overdue.length > 1 ? 's' : ''}
-                                        </span>
-                                    )}
-                                </div>
-                                <div className={styles.alertList}>
-                                    {evaluations.overdue.map((ev, i) => (
-                                        <div
-                                            key={`overdue-${i}`}
-                                            className={`${styles.alertItem} ${styles.clickable}`}
-                                            onClick={() => setSelectedEvaluation(ev)}
-                                        >
-                                            <div className={`${styles.alertIcon} ${styles.danger}`}>
-                                                <AlertCircle size={20} />
-                                            </div>
-                                            <div className={styles.alertContent}>
-                                                <span className={styles.alertTitle}>{ev.employeeId}</span>
-                                            </div>
-                                        </div>
-                                    ))}
-                                    {evaluations.upcoming.map((ev, i) => (
-                                        <div
-                                            key={`upcoming-${i}`}
-                                            className={`${styles.alertItem} ${styles.clickable}`}
-                                            onClick={() => setSelectedEvaluation(ev)}
-                                        >
-                                            <div className={`${styles.alertIcon} ${styles.warning}`}>
-                                                <Calendar size={20} />
-                                            </div>
-                                            <div className={styles.alertContent}>
-                                                <span className={styles.alertTitle}>{ev.employeeId}</span>
-                                            </div>
-                                        </div>
-                                    ))}
-                                </div>
-                            </section>
-                        )}
-
-                        {stats.expiringContracts > 0 && (
-                            <section className={styles.section}>
-                                <div className={styles.sectionHeader}>
-                                    <h2 className={styles.sectionTitle}>Contratos Próximos a Vencer</h2>
-                                    <span className={`${styles.sectionBadge} ${styles.warning}`}>
-                                        {stats.expiringContracts}
-                                    </span>
-                                </div>
-                                <div className={styles.alertList}>
-                                    {expiringEmployees.map((emp, i) => (
-                                        <div key={i} className={`${styles.alertItem} ${styles.warningMode}`}>
-                                            <div className={`${styles.alertIcon} ${styles.warning}`}>
-                                                <Clock size={20} />
-                                            </div>
-                                            <div className={styles.alertContent}>
-                                                <span className={styles.alertTitle}>{emp.employeeId}</span>
-                                            </div>
-                                        </div>
-                                    ))}
-                                </div>
-                            </section>
-                        )}
-
-                        {(trainingPlans.overdue.length > 0 || trainingPlans.upcoming.length > 0) && (
-                            <section className={styles.section}>
-                                <div className={styles.sectionHeader}>
-                                    <h2 className={styles.sectionTitle}>Plan Formación</h2>
-                                    {trainingPlans.overdue.length > 0 && (
-                                        <span className={`${styles.sectionBadge} ${styles.danger}`}>
-                                            {trainingPlans.overdue.length} vencido{trainingPlans.overdue.length > 1 ? 's' : ''}
-                                        </span>
-                                    )}
-                                </div>
-                                <div className={styles.alertList}>
-                                    {trainingPlans.overdue.map((plan, i) => (
-                                        <div key={`plan-overdue-${i}`} className={styles.alertItem}>
-                                            <div className={`${styles.alertIcon} ${styles.danger}`}>
-                                                <FileText size={20} />
-                                            </div>
-                                            <div className={styles.alertContent}>
-                                                <span className={styles.alertTitle}>{plan.employeeId}</span>
-                                            </div>
-                                        </div>
-                                    ))}
-                                    {trainingPlans.upcoming.map((plan, i) => (
-                                        <div key={`plan-upc-${i}`} className={styles.alertItem}>
-                                            <div className={`${styles.alertIcon} ${styles.warning}`}>
-                                                <FileText size={20} />
-                                            </div>
-                                            <div className={styles.alertContent}>
-                                                <span className={styles.alertTitle}>{plan.employeeId}</span>
-                                            </div>
-                                        </div>
-                                    ))}
-                                </div>
-                            </section>
-                        )}
+                        {/* Widget unificado de alertas */}
+                        <AlertsWidget
+                            evaluations={evaluations}
+                            expiringEmployees={expiringEmployees}
+                            trainingPlans={trainingPlans}
+                            onEditEvaluation={setSelectedEvaluation}
+                        />
                     </div>
                 </div>
             </div>

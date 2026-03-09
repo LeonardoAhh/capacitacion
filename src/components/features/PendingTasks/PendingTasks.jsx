@@ -35,12 +35,17 @@ const URGENCY_CONFIG = {
     baja:  { label: 'Baja',  chipClass: styles.chipBaja  },
 };
 
-/** Fecha local en formato YYYY-MM-DD. Evita el bug UTC en zonas UTC-N. */
+/**
+ * Fecha en formato YYYY-MM-DD usando la zona horaria de México/Querétaro.
+ * Evita bugs de UTC en zonas UTC-N donde el día puede cambiar avantîs.
+ */
 const toDateStr = (date) => {
-    const y = date.getFullYear();
-    const m = String(date.getMonth() + 1).padStart(2, '0');
-    const d = String(date.getDate()).padStart(2, '0');
-    return `${y}-${m}-${d}`;
+    return new Intl.DateTimeFormat('en-CA', {
+        timeZone: 'America/Mexico_City',
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+    }).format(date);
 };
 
 // ─── TaskItem ──────────────────────────────────────────────────────────────────
@@ -49,6 +54,13 @@ function TaskItem({ task, onToggle, onDelete, onEdit, dragHandleProps }) {
     const [isEditing, setIsEditing]   = useState(false);
     const [editValue, setEditValue]   = useState(task.title);
     const [isExpanded, setIsExpanded] = useState(false);
+
+    // Clase CSS por urgencia para el acento visual directo en el item
+    const urgencyItemClass = {
+        alta:  styles.urgAlta,
+        media: styles.urgMedia,
+        baja:  styles.urgBaja,
+    }[task.urgency] ?? '';
 
     // Swipe states
     const [swipeOffset, setSwipeOffset] = useState(0);
@@ -125,7 +137,7 @@ function TaskItem({ task, onToggle, onDelete, onEdit, dragHandleProps }) {
             <div
                 className={[
                     styles.taskItem,
-                    task.completed ? styles.completed : '',
+                    task.completed ? styles.completed : urgencyItemClass,
                     isTouching ? styles.touching : '',
                     isExpanded ? styles.expanded : ''
                 ].join(' ')}
@@ -289,6 +301,7 @@ export default function PendingTasks() {
     const [newTaskUrgency, setNewTaskUrgency] = useState('media');
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [localOrder, setLocalOrder]     = useState([]);
+    const [showAll, setShowAll]           = useState(false);
 
     const formInputRef = useRef(null);
 
@@ -403,6 +416,15 @@ export default function PendingTasks() {
             return (orderMap.get(a.id) ?? Infinity) - (orderMap.get(b.id) ?? Infinity);
         });
     }, [tasks, selectedDateStr, localOrder]);
+
+    /** Las 3 tareas más urgentes del día para mostrar en el widget */
+    const displayTasks = useMemo(() => {
+        const pending   = dailyTasks.filter(t => !t.completed);
+        const completed = dailyTasks.filter(t =>  t.completed);
+        // Mostrar máximo 3 pendientes (ya vienen ordenados por urgencia) + completadas al final
+        const visiblePending = showAll ? pending : pending.slice(0, 3);
+        return [...visiblePending, ...completed];
+    }, [dailyTasks, showAll]);
 
     /** Set de fechas con tareas activas — O(1) lookup para los puntos del calendario */
     const activeDates = useMemo(
@@ -668,11 +690,11 @@ export default function PendingTasks() {
                         onDragEnd={handleDragEnd}
                     >
                         <SortableContext
-                            items={dailyTasks.map(t => t.id)}
+                            items={displayTasks.map(t => t.id)}
                             strategy={verticalListSortingStrategy}
                         >
                             <AnimatePresence initial={false}>
-                                {dailyTasks.map(task => (
+                                {displayTasks.map(task => (
                                     <SortableTaskItem
                                         key={task.id}
                                         task={task}
@@ -684,6 +706,19 @@ export default function PendingTasks() {
                             </AnimatePresence>
                         </SortableContext>
                     </DndContext>
+                )}
+
+                {/* Indicador de tareas extra cuando hay más de 3 pendientes */}
+                {dailyTasks.filter(t => !t.completed).length > 3 && (
+                    <button
+                        className={styles.extraTasksHint}
+                        onClick={() => setShowAll(prev => !prev)}
+                    >
+                        {showAll
+                            ? 'Ver menos'
+                            : `+${dailyTasks.filter(t => !t.completed).length - 3} tarea${dailyTasks.filter(t => !t.completed).length - 3 !== 1 ? 's' : ''} más pendiente${dailyTasks.filter(t => !t.completed).length - 3 !== 1 ? 's' : ''}`
+                        }
+                    </button>
                 )}
             </div>
         </div>

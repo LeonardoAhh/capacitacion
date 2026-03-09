@@ -1,58 +1,95 @@
-.modalOverlay {
+/* ================================================================
+   EvaluationModal — Rediseño Editorial White
+   ================================================================ */
+
+/* ─── Overlay ─────────────────────────────────────────────────── */
+
+.overlay {
     position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    background: rgba(0, 0, 0, 0.5);
-    backdrop-filter: blur(4px);
+    inset: 0;
+    background: rgba(0, 0, 0, 0.45);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
     display: flex;
     align-items: center;
     justify-content: center;
     z-index: 9999;
     padding: 1rem;
-    animation: fadeIn 0.2s ease-out;
 }
 
-.modalContent {
+/* ─── Modal ───────────────────────────────────────────────────── */
+
+.modal {
     background: var(--bg-primary);
     border: 1px solid var(--border-color);
     border-radius: var(--radius-xl);
     width: 100%;
-    max-width: 600px;
-    max-height: 90vh;
+    max-width: 520px;
+    max-height: 92vh;
     overflow-y: auto;
-    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
-    animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    box-shadow:
+        0 24px 48px rgba(0, 0, 0, 0.14),
+        0 8px 16px rgba(0, 0, 0, 0.08);
+    display: flex;
+    flex-direction: column;
+    gap: 0;
 }
 
-.modalHeader {
+/* ─── Header ──────────────────────────────────────────────────── */
+
+.header {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 1.5rem;
+    padding: 1.25rem 1.5rem 1rem;
     border-bottom: 1px solid var(--border-color);
+    gap: 0.75rem;
 }
 
-.modalHeader h2 {
-    font-size: 1.25rem;
+.headerContent {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+    flex: 1;
+}
+
+.evalLabel {
+    font-size: 1.05rem;
     font-weight: 700;
     color: var(--text-primary);
-    margin: 0;
     font-family: var(--font-serif);
 }
+
+/* ─── Urgency badge ───────────────────────────────────────────── */
+
+.urgencyBadge {
+    font-size: 0.72rem;
+    font-weight: 700;
+    padding: 0.2rem 0.65rem;
+    border-radius: var(--radius-full);
+    white-space: nowrap;
+    font-family: var(--font-body);
+}
+
+.urgent  { background: color-mix(in srgb, var(--color-danger)  10%, transparent); color: var(--color-danger); }
+.warning { background: color-mix(in srgb, var(--color-warning) 10%, transparent); color: var(--color-warning); }
+.ok      { background: color-mix(in srgb, var(--color-success) 10%, transparent); color: var(--color-success); }
+
+/* ─── Close button ────────────────────────────────────────────── */
 
 .closeBtn {
     background: transparent;
     border: none;
     color: var(--text-tertiary);
     cursor: pointer;
-    padding: 0.5rem;
+    padding: 0.4rem;
     border-radius: var(--radius-md);
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: all 0.2s;
+    transition: background 0.2s, color 0.2s;
+    flex-shrink: 0;
 }
 
 .closeBtn:hover {
@@ -60,107 +97,219 @@
     color: var(--color-danger);
 }
 
-.modalBody {
-    padding: 1.5rem;
-}
+/* ─── Employee card ───────────────────────────────────────────── */
 
-.infoGrid {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 1.5rem;
-    margin-bottom: 2rem;
-    padding-bottom: 2rem;
+.employeeCard {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem 1.5rem;
+    background: var(--bg-secondary);
     border-bottom: 1px solid var(--border-color);
 }
 
-.infoItem {
-    display: flex;
-    align-items: flex-start;
-    gap: 0.75rem;
-}
-
-.infoIcon {
-    width: 36px;
-    height: 36px;
-    border-radius: var(--radius-md);
-    background: rgba(245, 158, 11, 0.1);
-    color: #F59E0B;
+.employeeAvatar {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: var(--color-primary);
+    color: #fff;
+    font-size: 1.25rem;
+    font-weight: 700;
+    font-family: var(--font-serif);
     display: flex;
     align-items: center;
     justify-content: center;
     flex-shrink: 0;
 }
 
+.employeeInfo {
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+    min-width: 0;
+}
+
+.employeeName {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    font-family: var(--font-body);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.employeeRole {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    font-family: var(--font-body);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* ─── Info grid ───────────────────────────────────────────────── */
+
+.infoGrid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0;
+    padding: 0;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.infoRow {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.6rem;
+    padding: 0.875rem 1.5rem;
+    border-right: 1px solid var(--border-color);
+    border-bottom: 1px solid var(--border-color);
+}
+
+.infoRow:nth-child(2n) {
+    border-right: none;
+}
+
+.infoRow:nth-last-child(-n+2) {
+    border-bottom: none;
+}
+
+.infoIconWrap {
+    color: var(--text-tertiary);
+    flex-shrink: 0;
+    margin-top: 2px;
+}
+
+.infoTexts {
+    display: flex;
+    flex-direction: column;
+    gap: 0.1rem;
+    min-width: 0;
+}
+
 .infoLabel {
-    display: block;
-    font-size: 0.75rem;
+    font-size: 0.68rem;
     font-weight: 600;
     text-transform: uppercase;
+    letter-spacing: 0.06em;
     color: var(--text-tertiary);
-    margin-bottom: 0.25rem;
+    font-family: var(--font-body);
 }
 
 .infoValue {
-    display: block;
-    font-size: 0.9375rem;
+    font-size: 0.875rem;
     font-weight: 600;
     color: var(--text-primary);
+    font-family: var(--font-body);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
-.formContainer {
+/* ─── Form ────────────────────────────────────────────────────── */
+
+.form {
     display: flex;
     flex-direction: column;
-    gap: 1.5rem;
+    gap: 1.25rem;
+    padding: 1.5rem;
 }
 
-.formGroup {
+.formSection {
     display: flex;
     flex-direction: column;
     gap: 0.5rem;
 }
 
 .formLabel {
-    font-size: 0.875rem;
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    font-size: 0.85rem;
     font-weight: 600;
     color: var(--text-primary);
+    font-family: var(--font-body);
+}
+
+.formLabelIcon {
+    color: var(--text-tertiary);
+}
+
+.optional {
+    font-weight: 400;
+    color: var(--text-tertiary);
+    font-size: 0.78rem;
+}
+
+.scoreInput {
+    padding: 0.75rem 1rem;
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-lg);
+    background: var(--bg-secondary);
+    color: var(--text-primary);
+    font-size: 1.5rem;
+    font-weight: 700;
+    font-family: var(--font-serif);
+    text-align: center;
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    width: 100%;
+    -moz-appearance: textfield;
+    appearance: textfield;
+}
+
+.scoreInput::-webkit-inner-spin-button,
+.scoreInput::-webkit-outer-spin-button {
+    opacity: 1;
+}
+
+.scoreInput:focus {
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-primary) 14%, transparent);
 }
 
 .textarea {
-    width: 100%;
-    padding: 0.75rem;
+    padding: 0.75rem 1rem;
     border: 1px solid var(--border-color);
-    border-radius: var(--radius-md);
+    border-radius: var(--radius-lg);
     background: var(--bg-secondary);
     color: var(--text-primary);
-    font-size: 0.9375rem;
+    font-size: 0.9rem;
+    font-family: var(--font-body);
     resize: vertical;
-    transition: all 0.2s;
-    font-family: inherit;
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    min-height: 80px;
+    width: 100%;
 }
 
 .textarea:focus {
-    outline: none;
     border-color: var(--color-primary);
-    box-shadow: 0 0 0 3px rgba(var(--color-primary-rgb, 59, 130, 246), 0.1);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-primary) 14%, transparent);
 }
+
+/* ─── Actions ─────────────────────────────────────────────────── */
 
 .formActions {
     display: flex;
+    gap: 0.75rem;
     justify-content: flex-end;
-    gap: 1rem;
-    margin-top: 1rem;
+    padding-top: 0.25rem;
 }
 
 .cancelBtn {
-    padding: 0.75rem 1.5rem;
+    padding: 0.625rem 1.25rem;
+    border-radius: var(--radius-full);
     background: transparent;
     border: 1px solid var(--border-color);
-    border-radius: var(--radius-full);
     color: var(--text-secondary);
-    font-size: 0.9375rem;
+    font-size: 0.875rem;
     font-weight: 600;
+    font-family: var(--font-body);
     cursor: pointer;
-    transition: all 0.2s;
+    transition: background 0.2s, color 0.2s;
 }
 
 .cancelBtn:hover {
@@ -169,58 +318,51 @@
 }
 
 .saveBtn {
-    padding: 0.75rem 1.5rem;
+    padding: 0.625rem 1.5rem;
+    border-radius: var(--radius-full);
     background: var(--color-primary);
     border: none;
-    border-radius: var(--radius-full);
-    color: white;
-    font-size: 0.9375rem;
-    font-weight: 600;
+    color: #fff;
+    font-size: 0.875rem;
+    font-weight: 700;
+    font-family: var(--font-body);
     cursor: pointer;
-    transition: all 0.2s;
-    box-shadow: 0 4px 6px rgba(var(--color-primary-rgb, 59, 130, 246), 0.2);
+    transition: filter 0.2s, transform 0.2s, box-shadow 0.2s;
+    box-shadow: 0 4px 12px color-mix(in srgb, var(--color-primary) 30%, transparent);
 }
 
 .saveBtn:hover:not(:disabled) {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 8px rgba(var(--color-primary-rgb, 59, 130, 246), 0.3);
+    filter: brightness(1.08);
+    transform: translateY(-1px);
+    box-shadow: 0 6px 16px color-mix(in srgb, var(--color-primary) 35%, transparent);
 }
 
 .saveBtn:disabled {
-    opacity: 0.5;
+    opacity: 0.45;
     cursor: not-allowed;
     transform: none;
+    box-shadow: none;
 }
 
-@keyframes fadeIn {
-    from {
-        opacity: 0;
+/* ─── Responsive ──────────────────────────────────────────────── */
+
+@media (max-width: 540px) {
+    .modal { max-width: 100%; border-radius: var(--radius-lg); }
+
+    .infoGrid { grid-template-columns: 1fr; }
+
+    .infoRow {
+        border-right: none;
+        border-bottom: 1px solid var(--border-color);
+        padding: 0.75rem 1.25rem;
     }
 
-    to {
-        opacity: 1;
-    }
-}
+    .infoRow:last-child { border-bottom: none; }
 
-@keyframes slideUp {
-    from {
-        opacity: 0;
-        transform: translateY(20px) scale(0.95);
-    }
+    .header { padding: 1rem 1.25rem 0.875rem; }
+    .employeeCard { padding: 0.875rem 1.25rem; }
+    .form { padding: 1.25rem; }
 
-    to {
-        opacity: 1;
-        transform: translateY(0) scale(1);
-    }
-}
-
-@media (max-width: 640px) {
-    .infoGrid {
-        grid-template-columns: 1fr;
-        gap: 1rem;
-    }
-
-    .modalContent {
-        max-height: 95vh;
-    }
+    .formActions { flex-direction: column; }
+    .cancelBtn, .saveBtn { width: 100%; text-align: center; }
 }
