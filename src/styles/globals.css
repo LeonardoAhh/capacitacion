@@ -29,6 +29,11 @@
   --color-danger: var(--red-500);
   --color-info: var(--blue-500);
 
+  /* RGB decompositions — for rgba(var(--color-X-rgb), alpha) usage */
+  --color-primary-rgb: 245, 158, 11;
+  --color-danger-rgb: 255, 59, 48;
+  --color-success-rgb: 52, 199, 89;
+
   /* Backgrounds - Editorial White */
   --bg-primary: #ffffff;
   --bg-secondary: #fafaf8;
