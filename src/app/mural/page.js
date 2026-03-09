@@ -5,6 +5,7 @@ import { db } from '@/lib/firebase';
 import { doc, getDoc } from 'firebase/firestore';
 import styles from './page.module.css';
 import { Search, Award, Star, Calendar, CheckCircle2, AlertCircle, RefreshCw, BookOpen } from 'lucide-react';
+import Image from 'next/image';
 
 const CONFETTI_COLORS = ['#fcd34d', '#10b981', '#3b82f6', '#f472b6', '#a855f7'];
 
@@ -156,12 +157,21 @@ export default function MuralPage() {
             </div>
 
             <div className={styles.container}>
-                <header className={styles.header}>
-                    <div className={styles.headerIconWrapper}>
-                        <Award size={40} aria-hidden="true" />
-                    </div>
-                    <h1 className={styles.pageTitle}>Mural de Reconocimiento</h1>
-                </header>
+                {!result?.found && (
+                    <header className={styles.header}>
+                        <div className={styles.headerIconWrapper}>
+                            <Image
+                                src="/logo-vino-plastic.png"
+                                alt="Logo Viñoplastic"
+                                width={72}
+                                height={72}
+                                style={{ objectFit: 'contain' }}
+                                priority
+                            />
+                        </div>
+                        <h1 className={styles.pageTitle}>Mural de Resultados</h1>
+                    </header>
+                )}
 
                 {showForm && (
                     <form onSubmit={handleSearch} className={styles.searchBox} noValidate>
@@ -170,7 +180,7 @@ export default function MuralPage() {
                             <input
                                 type="text"
                                 inputMode="numeric"
-                                placeholder="Ingresa tu Número de Empleado"
+                                placeholder="Ingresa tu No. de Empleado"
                                 value={employeeId}
                                 onChange={handleIdChange}
                                 className={styles.searchInput}
@@ -250,7 +260,7 @@ export default function MuralPage() {
                                 <div className={styles.metricItem}>
                                     <Award size={20} className={styles.metricIcon} aria-hidden="true" />
                                     <div>
-                                        <div className={styles.metricLabel}>Aplica Para</div>
+                                        <div className={styles.metricLabel}>Aplicaste para</div>
                                         <div className={styles.metricValueHighlight}>
                                             {result.data.promotionTo || 'Siguiente Nivel'}
                                         </div>

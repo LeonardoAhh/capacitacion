@@ -401,3 +401,14 @@
         border-right: 1px solid var(--sb-border);
     }
 }
+
+/* Ocultar sidebar al imprimir */
+@media print {
+    .sidebar {
+        display: none !important;
+    }
+
+    .overlay {
+        display: none !important;
+    }
+}

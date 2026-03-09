@@ -388,6 +388,10 @@
         background: white;
     }
 
+    .pageWrapper {
+        padding: 0;
+    }
+
     .noPrintControl {
         display: none !important;
     }
@@ -398,6 +402,14 @@
         margin: 0;
         padding: 0;
         border: none;
+    }
+
+    /* El título dentro del examen debe ser de tamaño carta, no el XL del sistema de diseño */
+    .examInfo .pageTitle {
+        font-size: 1.2rem !important;
+        font-family: 'Times New Roman', Times, serif !important;
+        font-weight: bold !important;
+        letter-spacing: 0 !important;
     }
 
     @page {

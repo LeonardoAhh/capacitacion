@@ -74,3 +74,10 @@
         background: var(--c-surface);
     }
 }
+
+/* Ocultar al imprimir */
+@media print {
+    .header {
+        display: none !important;
+    }
+}

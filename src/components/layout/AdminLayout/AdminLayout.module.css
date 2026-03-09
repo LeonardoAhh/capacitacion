@@ -67,3 +67,17 @@
         opacity: 0.4;
     }
 }
+
+/* ================================================================
+   IMPRESIÓN — Ocultar sidebar, header móvil y limpiar layout
+   ================================================================ */
+@media print {
+    .layoutPage {
+        display: block;
+    }
+
+    .scrollContent {
+        padding: 0;
+        min-height: unset;
+    }
+}
