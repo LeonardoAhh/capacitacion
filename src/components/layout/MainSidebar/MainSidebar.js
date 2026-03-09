@@ -37,7 +37,8 @@ export default function MainSidebar({ user, handleLogout, isOpen, onClose }) {
             disabled: isDemo,
             subItems: [
                 { id: 'dashboard', title: 'Dashboard', href: '/dashboard', icon: BarChart2 },
-                { id: 'empleados', title: 'Empleados', href: '/employees', icon: Users }
+                { id: 'empleados', title: 'Empleados', href: '/employees', icon: Users },
+                { id: 'postulantes', title: 'Seguimiento', href: '/dashboard/candidates', icon: Users }
             ]
         },
         {
@@ -49,18 +50,17 @@ export default function MainSidebar({ user, handleLogout, isOpen, onClose }) {
             subItems: [
                 { id: 'registro', title: 'Registro', href: '/capacitacion/registro', icon: CheckSquare },
                 { id: 'plan-formacion', title: 'Plan de Formación', href: '/reports', icon: FileText },
-                { id: 'empleados', title: 'Empleados', href: '/capacitacion/empleados', icon: Users },
+                { id: 'empleados', title: 'Plantilla', href: '/capacitacion/empleados', icon: Users },
                 { id: 'matriz', title: 'Matriz de Habilidades', href: '/capacitacion/matriz', icon: Layers },
                 { id: 'catalogo', title: 'Catálogo Cursos', href: '/capacitacion/catalogo', icon: BookOpen },
                 { id: 'grupos', title: 'Cursos/Grupos', href: '/capacitacion/grupos', icon: Users },
-                { id: 'analisis', title: 'Análisis', href: '/capacitacion/analisis', icon: BarChart2 },
-                { id: 'cumplimiento', title: 'Cumplimiento', href: '/capacitacion/cumplimiento', icon: FileCheck },
-                { id: 'comparacion', title: 'Comparación', href: '/capacitacion/comparacion', icon: List },
-                { id: 'perfil', title: 'Perfiles de Puesto', href: '/capacitacion/perfil', icon: UserCheck },
-                { id: 'promociones', title: 'Promociones', href: '/capacitacion/promociones', icon: Briefcase },
+                { id: 'analisis', title: 'Cumplimiento Gral.', href: '/capacitacion/analisis', icon: BarChart2 },
+                { id: 'cumplimiento', title: 'Detalle Curso', href: '/capacitacion/cumplimiento', icon: FileCheck },
+                { id: 'comparacion', title: 'Puesto VS', href: '/capacitacion/comparacion', icon: List },
+                { id: 'perfil', title: 'Perfil', href: '/capacitacion/perfil', icon: UserCheck },
+                { id: 'promociones', title: 'Categorías', href: '/capacitacion/promociones', icon: Briefcase },
                 { id: 'examen', title: 'Exámenes', href: '/capacitacion/examen', icon: FileText },
-                { id: 'calendario', title: 'Calendario', href: '/capacitacion/calendario', icon: Calendar },
-                { id: 'postulantes', title: 'Postulantes', href: '/dashboard/candidates', icon: Users }
+                { id: 'calendario', title: 'Calendario', href: '/capacitacion/calendario', icon: Calendar }
             ]
         },
         {
@@ -88,7 +88,7 @@ export default function MainSidebar({ user, handleLogout, isOpen, onClose }) {
     // Filtrar para Instructores: solo ver Inducción
     const isInstructor = user?.rol === 'instructor' || user?.rol === 'Instructor';
     let displayNavItems = navItems;
-    
+
     if (isInstructor) {
         displayNavItems = navItems.filter(item => item.id === 'induction');
     }
