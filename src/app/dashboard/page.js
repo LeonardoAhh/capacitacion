@@ -9,6 +9,7 @@ import AvatarSelector from '@/components/ui/AvatarSelector/AvatarSelector';
 import EvaluationModal from '@/components/features/Training/EvaluationModal';
 import MainSidebar from '@/components/layout/MainSidebar/MainSidebar';
 import CandidateMobileHeader from '@/components/features/CandidateSidebar/CandidateMobileHeader';
+import PendingTasks from '@/components/features/PendingTasks/PendingTasks';
 import { useNotifications } from '@/hooks/useNotifications';
 import { useDashboardStats } from '@/hooks/useDashboardStats';
 import { useToast } from '@/components/ui/Toast/Toast';
@@ -204,6 +205,9 @@ export default function DashboardPage() {
                     )}
 
                     <div className={styles.bottomGrid}>
+                        {/* Pending Tasks Widget */}
+                        <PendingTasks />
+
                         {(evaluations.overdue.length > 0 || evaluations.upcoming.length > 0) && (
                             <section className={styles.section}>
                                 <div className={styles.sectionHeader}>

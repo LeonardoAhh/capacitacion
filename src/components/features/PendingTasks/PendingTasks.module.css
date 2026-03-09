@@ -1,0 +1,495 @@
+/* =======================================================
+   Pending Tasks Widget — Editorial White Design System
+   ======================================================= */
+
+.widgetContainer {
+    position: relative;
+    padding: 1.25rem;
+    border-radius: 20px;
+    background: rgba(255, 255, 255, 0.72);
+    backdrop-filter: blur(28px) saturate(180%);
+    -webkit-backdrop-filter: blur(28px) saturate(180%);
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    box-shadow:
+        0 4px 20px rgba(0, 0, 0, 0.06),
+        0 1px 4px rgba(0, 0, 0, 0.04),
+        inset 0 1px 0 rgba(255, 255, 255, 1);
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    min-height: 380px;
+    height: 100%;
+}
+
+[data-theme="dark"] .widgetContainer {
+    background: rgba(44, 44, 46, 0.78);
+    border-color: rgba(255, 255, 255, 0.08);
+    box-shadow:
+        0 4px 20px rgba(0, 0, 0, 0.35),
+        0 1px 4px rgba(0, 0, 0, 0.2),
+        inset 0 1px 0 rgba(255, 255, 255, 0.06);
+}
+
+.header {
+    display: flex;
+    align-items: flex-start; /* Align to top in case of wrap */
+    justify-content: space-between;
+    gap: 0.5rem; /* Ensure gap between title and add button */
+    width: 100%;
+}
+
+.titleGroup {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex: 1; /* Take up available space */
+    min-width: 0; /* Enable flex child text truncation */
+    flex-wrap: wrap; /* Allow wrapping on very small screens */
+}
+
+.title {
+    font-size: 1.125rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin: 0;
+    font-family: var(--font-serif);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    white-space: nowrap; /* Ensure title stays on one line */
+    flex-shrink: 1; /* Allow title to shrink if needed */
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.badge {
+    background: rgba(245, 158, 11, 0.1);
+    color: var(--color-primary);
+    font-size: 0.75rem;
+    padding: 0.125rem 0.625rem;
+    border-radius: 999px;
+    font-weight: 600;
+    white-space: nowrap; /* Prevent badge from breaking into lines */
+    flex-shrink: 0; /* Keep badge intact */
+}
+
+.addButton {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: var(--color-primary);
+    color: white;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+    box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3);
+}
+
+.addButton:hover {
+    transform: scale(1.08);
+    box-shadow: 0 6px 16px rgba(245, 158, 11, 0.4);
+}
+
+.addButton:active {
+    transform: scale(0.95);
+}
+
+/* ─── Compact Calendar Strip ──────────────────────────────── */
+
+.calendarStrip {
+    display: flex;
+    gap: 0.75rem;
+    max-width: 100%;
+    overflow-x: auto;
+    padding-bottom: 0.5rem;
+    margin-bottom: 0.5rem;
+    /* Hide scrollbar */
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+
+.calendarStrip::-webkit-scrollbar {
+    display: none;
+}
+
+.dayCard {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-width: 60px;
+    height: 72px;
+    border-radius: 14px;
+    background: rgba(255, 255, 255, 0.4);
+    border: 1px solid rgba(0, 0, 0, 0.05);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    flex-shrink: 0;
+}
+
+[data-theme="dark"] .dayCard {
+    background: rgba(255, 255, 255, 0.04);
+    border-color: rgba(255, 255, 255, 0.06);
+}
+
+.dayCard:hover {
+    background: rgba(255, 255, 255, 0.8);
+    border-color: rgba(0, 0, 0, 0.1);
+}
+
+[data-theme="dark"] .dayCard:hover {
+    background: rgba(255, 255, 255, 0.08);
+    border-color: rgba(255, 255, 255, 0.1);
+}
+
+.dayCard.active {
+    background: var(--color-primary);
+    color: white;
+    border-color: var(--color-primary);
+    box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3);
+}
+
+.dayName {
+    font-size: 0.75rem;
+    font-weight: 500;
+    text-transform: uppercase;
+    color: var(--text-secondary);
+    margin-bottom: 4px;
+}
+
+.dayCard.active .dayName,
+.dayCard.active .dayNumber {
+    color: white;
+}
+
+.dayNumber {
+    font-size: 1.125rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    font-family: var(--font-serif);
+}
+
+.hasTasksDot {
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    background: var(--color-primary);
+    margin-top: 4px;
+}
+.dayCard.active .hasTasksDot {
+    background: white;
+}
+
+/* ─── Task List ─────────────────────────────────────────── */
+
+.taskList {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    overflow-y: auto;
+    padding-right: 0.25rem;
+    /* Custom Scrollbar */
+}
+
+.taskList::-webkit-scrollbar { width: 4px; }
+.taskList::-webkit-scrollbar-track { background: transparent; }
+.taskList::-webkit-scrollbar-thumb {
+    background: rgba(0, 0, 0, 0.08);
+    border-radius: 10px;
+}
+[data-theme="dark"] .taskList::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.taskItem {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.875rem 1rem;
+    background: rgba(255, 255, 255, 0.6);
+    border-radius: 12px;
+    border: 1px solid rgba(0, 0, 0, 0.03);
+    transition: all 0.2s ease;
+}
+
+[data-theme="dark"] .taskItem {
+    background: rgba(255, 255, 255, 0.03);
+    border-color: rgba(255, 255, 255, 0.05);
+}
+
+.taskItem:hover {
+    background: rgba(255, 255, 255, 0.9);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+}
+
+[data-theme="dark"] .taskItem:hover {
+    background: rgba(255, 255, 255, 0.07);
+}
+
+.taskItem.completed {
+    opacity: 0.6;
+}
+
+.checkboxContainer {
+    width: 24px;
+    height: 24px;
+    flex-shrink: 0;
+    border-radius: 6px;
+    border: 2px solid var(--text-secondary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s;
+    background: transparent;
+}
+
+.taskItem.completed .checkboxContainer {
+    background: var(--color-success);
+    border-color: var(--color-success);
+    color: white;
+}
+
+.taskContent {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+}
+
+.taskTitle {
+    font-size: 0.9375rem;
+    font-weight: 500;
+    color: var(--text-primary);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    transition: all 0.2s;
+}
+
+.taskItem.completed .taskTitle {
+    text-decoration: line-through;
+    color: var(--text-tertiary);
+}
+
+.taskMeta {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: 0.25rem;
+}
+
+.urgencyDot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+}
+
+.urgencyalta { background: var(--color-danger); }
+.urgencymedia { background: var(--color-warning); }
+.urgencybaja { background: var(--color-success); } /* Or neutral */
+
+.taskLabel {
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+}
+
+.deleteBtn {
+    color: var(--text-tertiary);
+    background: transparent;
+    border: none;
+    padding: 0.25rem;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.deleteBtn:hover {
+    color: var(--color-danger);
+    background: rgba(239, 68, 68, 0.1);
+}
+
+/* ─── Empty State ───────────────────────────────────────── */
+
+.emptyState {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    flex: 1;
+    text-align: center;
+    color: var(--text-tertiary);
+    padding: 2rem 1rem;
+    gap: 1rem;
+}
+
+.emptyIcon {
+    opacity: 0.5;
+    background: rgba(0, 0, 0, 0.03);
+    padding: 1rem;
+    border-radius: 50%;
+}
+
+[data-theme="dark"] .emptyIcon {
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.emptyText {
+    font-size: 0.9375rem;
+    margin: 0;
+}
+
+/* ─── Add Task Form (Inline) ───────────────────────────── */
+
+.addForm {
+    background: rgba(255, 255, 255, 0.9);
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    border-radius: 12px;
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    margin-bottom: 1rem;
+    animation: fadeUp 0.3s ease;
+}
+
+[data-theme="dark"] .addForm {
+    background: rgba(44, 44, 46, 0.9);
+    border-color: rgba(255, 255, 255, 0.1);
+}
+
+.formInput {
+    width: 100%;
+    padding: 0.625rem 0.875rem;
+    border-radius: 999px; /* Matching rounded corners */
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    background: rgba(255, 255, 255, 0.8);
+    font-family: var(--font-body);
+    font-size: 0.9375rem;
+    color: var(--text-primary);
+    transition: all 0.2s;
+    outline: none;
+}
+
+[data-theme="dark"] .formInput {
+    background: rgba(0, 0, 0, 0.2);
+    border-color: rgba(255, 255, 255, 0.1);
+}
+
+.formInput:focus {
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 2px rgba(245, 158, 11, 0.15);
+}
+
+.formRow {
+    display: flex;
+    gap: 0.75rem;
+}
+
+.urgencySelect {
+    flex: 1;
+    padding: 0.625rem;
+    border-radius: 999px; /* Fully rounded pill shape */
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    background: rgba(255, 255, 255, 0.8);
+    color: var(--text-primary);
+    font-family: var(--font-body);
+    font-size: 0.875rem;
+    outline: none;
+    cursor: pointer;
+    appearance: none; /* Removes native OS styles where it forces sharp corners */
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23666666%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E");
+    background-repeat: no-repeat;
+    background-position: right 1rem top 50%;
+    background-size: 0.65rem auto;
+    padding-right: 2.5rem;
+    transition: all 0.2s;
+}
+
+[data-theme="dark"] .urgencySelect {
+    background: rgba(0, 0, 0, 0.2);
+    border-color: rgba(255, 255, 255, 0.1);
+}
+
+.formActions {
+    display: flex;
+    gap: 0.5rem;
+    justify-content: flex-end;
+    margin-top: 0.25rem;
+}
+
+.btnCancel {
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    background: transparent;
+    color: var(--text-secondary);
+    border: none;
+    font-size: 0.875rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.btnCancel:hover {
+    background: rgba(0, 0, 0, 0.05);
+}
+
+[data-theme="dark"] .btnCancel:hover {
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.btnSave {
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    background: var(--color-primary);
+    color: white;
+    border: none;
+    font-size: 0.875rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.btnSave:hover {
+    filter: brightness(1.1);
+    transform: translateY(-1px);
+}
+
+.btnSave:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+}
+
+@keyframes fadeUp {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@media (max-width: 480px) {
+    .calendarStrip {
+        padding-bottom: 0.25rem;
+    }
+    .dayCard {
+        min-width: 54px;
+        height: 64px;
+    }
+    .dayNumber {
+        font-size: 1rem;
+    }
+    .widgetContainer {
+        min-height: 420px;
+    }
+}
