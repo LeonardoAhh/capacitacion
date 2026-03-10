@@ -71,6 +71,7 @@ export default function MainSidebar({ user, handleLogout, isOpen, onClose }) {
             disabled: false,
             subItems: [
                 { id: 'interactivos', title: 'Inducción', href: '/induccion', icon: Zap },
+                { id: 'prototipo', title: 'Prototipo', href: '/prototipo', icon: Zap },
                 { id: 'mural', title: 'Mural', href: '/mural', icon: Zap },
                 { id: 'presentacion', title: 'Presentación', href: '/presentacion', icon: Zap },
             ]
@@ -87,12 +88,19 @@ export default function MainSidebar({ user, handleLogout, isOpen, onClose }) {
         });
     }
 
-    // Filtrar para Instructores: solo ver Inducción
+    // Filtrar para Instructores: solo ver Inducción y Prototipo (sin Mural ni Presentación)
     const isInstructor = user?.rol === 'instructor' || user?.rol === 'Instructor';
     let displayNavItems = navItems;
 
     if (isInstructor) {
-        displayNavItems = navItems.filter(item => item.id === 'induction');
+        displayNavItems = navItems
+            .filter(item => item.id === 'induction')
+            .map(item => ({
+                ...item,
+                subItems: item.subItems?.filter(sub =>
+                    sub.id !== 'mural' && sub.id !== 'presentacion'
+                ),
+            }));
     }
 
     const firstName = (user?.nombre || user?.nickname || user?.name || 'Admin').split(' ')[0];

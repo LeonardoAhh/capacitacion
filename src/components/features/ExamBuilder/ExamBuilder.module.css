@@ -1,0 +1,763 @@
+/* =====================================================================
+   ExamBuilder.module.css — Módulo de estilos para el constructor de exámenes
+   Usa exclusivamente variables CSS del sistema Editorial White.
+   Sin colores ni fuentes hardcodeadas.
+   ===================================================================== */
+
+/* ── CONTENEDOR PRINCIPAL DEL BUILDER ─────────────────────────────── */
+.builder {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-lg);
+    max-width: 860px;
+    margin: 0 auto;
+}
+
+/* ── CARD DE METADATOS ────────────────────────────────────────────── */
+.metaCard {
+    background: var(--bg-primary);
+    border: 1px solid var(--border-color);
+    border-radius: 20px;
+    padding: var(--spacing-xl);
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
+}
+
+.metaTitle {
+    font-family: var(--font-serif);
+    font-size: clamp(1rem, 1.5vw, 1.2rem);
+    font-weight: 700;
+    color: var(--text-primary);
+    margin: 0 0 var(--spacing-md) 0;
+}
+
+.metaGrid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 2fr 1fr;
+    gap: var(--spacing-md);
+    align-items: end;
+}
+
+@media (max-width: 768px) {
+    .metaGrid {
+        grid-template-columns: 1fr 1fr;
+    }
+    .fieldGrow {
+        grid-column: 1 / -1;
+    }
+}
+
+@media (max-width: 480px) {
+    .metaGrid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* ── CAMPOS GENÉRICOS ─────────────────────────────────────────────── */
+.fieldGroup {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.fieldGrow {
+    grid-column: span 2;
+}
+
+.fieldNarrow {
+    max-width: 140px;
+}
+
+.fieldLabel {
+    font-family: var(--font-body);
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+
+.input {
+    width: 100%;
+    padding: 9px 12px;
+    border: 1px solid var(--border-color);
+    border-radius: 10px;
+    background: var(--bg-secondary);
+    color: var(--text-primary);
+    font-family: var(--font-body);
+    font-size: 0.9rem;
+    transition: border-color 0.18s, box-shadow 0.18s;
+    outline: none;
+    box-sizing: border-box;
+}
+
+.input:focus {
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-primary) 15%, transparent);
+}
+
+.textarea {
+    composes: input;
+    resize: vertical;
+    min-height: 64px;
+    line-height: 1.5;
+}
+
+/* ── LISTA DE PREGUNTAS ───────────────────────────────────────────── */
+.questions {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-md);
+}
+
+.emptyQuestions {
+    text-align: center;
+    padding: var(--spacing-xl);
+    border: 2px dashed var(--border-color);
+    border-radius: 16px;
+    color: var(--text-secondary);
+    font-family: var(--font-body);
+    font-size: 0.9rem;
+}
+
+/* ── TARJETA DE PREGUNTA ──────────────────────────────────────────── */
+.questionCard {
+    background: var(--bg-primary);
+    border: 1px solid var(--border-color);
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+    transition: box-shadow 0.2s;
+}
+
+.questionCard:hover {
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.07);
+}
+
+.questionHeader {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    padding: var(--spacing-md) var(--spacing-lg);
+    cursor: pointer;
+    user-select: none;
+    background: var(--bg-secondary);
+    border-bottom: 1px solid var(--border-color);
+    transition: background 0.15s;
+}
+
+.questionHeader:hover {
+    background: color-mix(in srgb, var(--color-primary) 5%, var(--bg-secondary));
+}
+
+.questionNum {
+    font-family: var(--font-serif);
+    font-size: 0.8rem;
+    font-weight: 800;
+    color: var(--color-primary);
+    background: color-mix(in srgb, var(--color-primary) 12%, transparent);
+    border-radius: 999px;
+    padding: 2px 10px;
+    flex-shrink: 0;
+}
+
+.questionSummary {
+    flex: 1;
+    font-family: var(--font-body);
+    font-size: 0.88rem;
+    color: var(--text-primary);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.placeholder {
+    color: var(--text-secondary);
+    font-style: italic;
+}
+
+/* Badge del tipo de pregunta */
+.typeBadge {
+    font-size: 0.72rem;
+    font-family: var(--font-body);
+    font-weight: 600;
+    padding: 3px 10px;
+    border-radius: 999px;
+    flex-shrink: 0;
+    background: var(--bg-primary);
+    color: var(--text-secondary);
+    border: 1px solid var(--border-color);
+}
+
+/* Acciones de la tarjeta */
+.questionActions {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    flex-shrink: 0;
+}
+
+.iconBtn {
+    width: 32px;
+    height: 32px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    background: var(--bg-primary);
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: all 0.15s;
+}
+
+.iconBtn:hover:not(:disabled) {
+    background: var(--bg-secondary);
+    color: var(--text-primary);
+    border-color: var(--color-primary);
+}
+
+.iconBtn:disabled {
+    opacity: 0.35;
+    cursor: not-allowed;
+}
+
+.iconBtnDanger:hover:not(:disabled) {
+    background: color-mix(in srgb, #ef4444 10%, transparent);
+    border-color: #ef4444;
+    color: #ef4444;
+}
+
+/* Cuerpo expandible de la tarjeta */
+.questionBody {
+    padding: var(--spacing-lg);
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-md);
+}
+
+/* Selector de tipo */
+.typeRow {
+    display: flex;
+    gap: var(--spacing-sm);
+    flex-wrap: wrap;
+}
+
+.typeBtn {
+    padding: 6px 14px;
+    border: 1px solid var(--border-color);
+    border-radius: 999px;
+    background: var(--bg-secondary);
+    color: var(--text-secondary);
+    font-family: var(--font-body);
+    font-size: 0.8rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.15s;
+}
+
+.typeBtn:hover {
+    border-color: var(--color-primary);
+    color: var(--color-primary);
+}
+
+.typeBtnActive {
+    background: color-mix(in srgb, var(--color-primary) 12%, transparent);
+    border-color: var(--color-primary);
+    color: var(--color-primary);
+    font-weight: 700;
+}
+
+/* Filas de opciones */
+.optionRow {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    margin-bottom: 6px;
+}
+
+.optControl {
+    accent-color: var(--color-primary);
+    flex-shrink: 0;
+    width: 16px;
+    height: 16px;
+    cursor: pointer;
+}
+
+.optLetter {
+    font-family: var(--font-serif);
+    font-weight: 700;
+    color: var(--text-secondary);
+    min-width: 18px;
+    font-size: 0.85rem;
+}
+
+.addOptBtn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 4px;
+    padding: 6px 14px;
+    border: 1px dashed var(--border-color);
+    border-radius: 8px;
+    background: transparent;
+    color: var(--text-secondary);
+    font-family: var(--font-body);
+    font-size: 0.82rem;
+    cursor: pointer;
+    transition: all 0.15s;
+}
+
+.addOptBtn:hover {
+    border-color: var(--color-primary);
+    color: var(--color-primary);
+    background: color-mix(in srgb, var(--color-primary) 5%, transparent);
+}
+
+/* Filas de afirmaciones V/F */
+.statementRow {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    margin-bottom: 8px;
+}
+
+/* Toggle V/F */
+.tfToggle {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    cursor: pointer;
+    flex-shrink: 0;
+}
+
+.tfToggle input[type="checkbox"] {
+    display: none;
+}
+
+.tfTrack {
+    width: 36px;
+    height: 20px;
+    border-radius: 999px;
+    border: 1.5px solid var(--border-color);
+    background: var(--bg-secondary);
+    position: relative;
+    transition: all 0.2s;
+}
+
+.tfToggle input:checked ~ .tfTrack {
+    background: color-mix(in srgb, var(--color-primary) 20%, transparent);
+    border-color: var(--color-primary);
+}
+
+.tfTrack::after {
+    content: '';
+    position: absolute;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: var(--text-secondary);
+    top: 2px;
+    left: 2px;
+    transition: all 0.2s;
+}
+
+.tfToggle input:checked ~ .tfTrack::after {
+    left: 18px;
+    background: var(--color-primary);
+}
+
+.tfLabel {
+    font-family: var(--font-body);
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: var(--text-secondary);
+    min-width: 14px;
+}
+
+/* ── SECCIÓN AGREGAR PREGUNTA ─────────────────────────────────────── */
+.addSection {
+    background: var(--bg-secondary);
+    border: 1px dashed var(--border-color);
+    border-radius: 16px;
+    padding: var(--spacing-lg);
+}
+
+.addLabel {
+    font-family: var(--font-body);
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+    margin: 0 0 var(--spacing-sm) 0;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+
+.addButtons {
+    display: flex;
+    gap: var(--spacing-sm);
+    flex-wrap: wrap;
+}
+
+.addBtn {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 9px 18px;
+    border: 1px solid var(--border-color);
+    border-radius: 999px;
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    font-family: var(--font-body);
+    font-size: 0.85rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.18s;
+}
+
+.addBtn:hover {
+    border-color: var(--color-primary);
+    background: color-mix(in srgb, var(--color-primary) 8%, transparent);
+    color: var(--color-primary);
+}
+
+/* ── TOOLBAR DE ACCIONES ─────────────────────────────────────────── */
+.toolbar {
+    display: flex;
+    gap: var(--spacing-sm);
+    align-items: center;
+    justify-content: flex-end;
+    padding: var(--spacing-md) 0;
+    border-top: 1px solid var(--border-color);
+    flex-wrap: wrap;
+}
+
+.btnPreview {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 10px 20px;
+    border: 1px solid var(--border-color);
+    border-radius: 10px;
+    background: var(--bg-secondary);
+    color: var(--text-primary);
+    font-family: var(--font-body);
+    font-size: 0.88rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.18s;
+}
+
+.btnPreview:hover {
+    border-color: var(--color-primary);
+    color: var(--color-primary);
+}
+
+.btnSave {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 10px 22px;
+    border: 1px solid var(--color-primary);
+    border-radius: 10px;
+    background: color-mix(in srgb, var(--color-primary) 10%, transparent);
+    color: var(--color-primary);
+    font-family: var(--font-body);
+    font-size: 0.88rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.18s;
+}
+
+.btnSave:hover:not(:disabled) {
+    background: color-mix(in srgb, var(--color-primary) 18%, transparent);
+}
+
+.btnSaving {
+    opacity: 0.7;
+    cursor: not-allowed;
+}
+
+.btnPublish {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 10px 24px;
+    border: none;
+    border-radius: 10px;
+    background: var(--color-primary);
+    color: #fff;
+    font-family: var(--font-body);
+    font-size: 0.88rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.18s;
+}
+
+.btnPublish:hover:not(:disabled) {
+    opacity: 0.9;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 16px color-mix(in srgb, var(--color-primary) 40%, transparent);
+}
+
+.btnPublish:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* ── MODAL DE VISTA PREVIA ─────────────────────────────────────────── */
+.previewOverlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(6px);
+    z-index: 1000;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    padding: var(--spacing-xl) var(--spacing-md);
+    overflow-y: auto;
+}
+
+.previewPanel {
+    background: var(--bg-primary);
+    border-radius: 20px;
+    width: 100%;
+    max-width: 780px;
+    box-shadow: 0 24px 80px rgba(0, 0, 0, 0.18);
+    overflow: hidden;
+}
+
+.previewTopBar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: var(--spacing-md) var(--spacing-xl);
+    border-bottom: 1px solid var(--border-color);
+    background: var(--bg-secondary);
+}
+
+.previewBadge {
+    font-family: var(--font-body);
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+}
+
+.previewTopActions {
+    display: flex;
+    gap: var(--spacing-sm);
+    align-items: center;
+}
+
+.previewPrintBtn {
+    composes: iconBtn;
+}
+
+.previewClose {
+    composes: iconBtn;
+}
+
+.previewContent {
+    padding: var(--spacing-xl);
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-md);
+}
+
+/* Encabezado del examen: logo + metadatos */
+.previewHeaderRow {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--spacing-lg);
+    padding-bottom: var(--spacing-md);
+    border-bottom: 1px solid var(--border-color);
+}
+
+/* Logo de la empresa */
+.logo {
+    flex-shrink: 0;
+}
+
+.logoBox {
+    width: 64px;
+    height: 52px;
+    background: #1a3a6b;
+    border-radius: 4px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 4px;
+    gap: 2px;
+}
+
+.logoTop {
+    color: #fff;
+    font-size: 11px;
+    font-weight: 900;
+    letter-spacing: 1px;
+    font-family: var(--font-serif);
+}
+
+.logoBar {
+    width: 100%;
+    height: 3px;
+    background: #e03030;
+    border-radius: 1px;
+}
+
+.logoBottom {
+    color: #fff;
+    font-size: 8px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    font-family: var(--font-body);
+}
+
+.previewMeta {
+    flex: 1;
+}
+
+.previewDocId {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+    font-weight: 500;
+}
+
+.previewTitle {
+    font-family: var(--font-serif);
+    font-size: clamp(1.2rem, 2vw, 1.5rem);
+    font-weight: 800;
+    color: var(--text-primary);
+    margin: 4px 0 2px;
+}
+
+.previewSubtitle {
+    font-family: var(--font-body);
+    font-size: 0.9rem;
+    font-style: italic;
+    color: var(--text-secondary);
+    margin: 0;
+}
+
+/* Tabla de datos del candidato */
+.previewTable {
+    width: 100%;
+    border-collapse: collapse;
+    font-family: var(--font-body);
+    font-size: 0.82rem;
+}
+
+.previewTdLabel {
+    border: 1px solid var(--border-color);
+    padding: 6px 10px;
+    font-weight: 700;
+    color: var(--text-secondary);
+    white-space: nowrap;
+    width: 1%;
+}
+
+.previewTd {
+    border: 1px solid var(--border-color);
+    padding: 6px 10px;
+    color: var(--text-primary);
+}
+
+.previewInstruction {
+    font-family: var(--font-body);
+    font-size: 0.88rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin: 0;
+}
+
+.previewEmpty {
+    color: var(--text-secondary);
+    font-family: var(--font-body);
+    font-size: 0.88rem;
+    font-style: italic;
+    text-align: center;
+    padding: var(--spacing-lg);
+}
+
+/* Pregunta en la vista previa */
+.previewQuestion {
+    margin-bottom: var(--spacing-md);
+    padding-bottom: var(--spacing-md);
+    border-bottom: 1px solid var(--border-color);
+}
+
+.previewQuestion:last-child {
+    border-bottom: none;
+}
+
+.previewQText {
+    font-family: var(--font-body);
+    font-size: 0.88rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin: 0 0 var(--spacing-sm) 0;
+}
+
+.previewPts {
+    font-weight: 400;
+    color: var(--text-secondary);
+    font-size: 0.78rem;
+}
+
+.previewOption {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--spacing-sm);
+    padding: 4px 0;
+    font-family: var(--font-body);
+    font-size: 0.84rem;
+    color: var(--text-primary);
+}
+
+.previewBubble {
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    border: 1.5px solid var(--text-secondary);
+    flex-shrink: 0;
+    margin-top: 2px;
+}
+
+.previewStatement {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    padding: 4px 0;
+    font-family: var(--font-body);
+    font-size: 0.84rem;
+    color: var(--text-primary);
+}
+
+.previewTfBox {
+    width: 22px;
+    height: 22px;
+    border-radius: 4px;
+    border: 1.5px solid var(--border-color);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    font-weight: 800;
+    color: var(--text-secondary);
+    flex-shrink: 0;
+    font-family: var(--font-body);
+}
+
+.previewFooter {
+    display: flex;
+    justify-content: space-between;
+    padding-top: var(--spacing-md);
+    border-top: 1px solid var(--border-color);
+    font-family: var(--font-body);
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+}
