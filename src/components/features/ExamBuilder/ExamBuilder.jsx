@@ -334,7 +334,7 @@ export default function ExamBuilder({ initial = null, onSave, onPublish, saving 
                     </button>
                     <button
                         className={`${styles.btnSave} ${saving ? styles.btnSaving : ''}`}
-                        onClick={() => onSave(exam)}
+                        onClick={() => onSave({ ...exam, status: 'draft' })}
                         disabled={saving}
                     >
                         <Save size={16} /> {saving ? 'Guardando…' : 'Guardar borrador'}
