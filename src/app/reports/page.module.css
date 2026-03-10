@@ -201,7 +201,7 @@
 /* ==================== CHARTS GRID ==================== */
 .chartsGrid {
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: 1fr;
     gap: 24px;
     width: 100%;
 }
@@ -238,11 +238,10 @@
     margin: 0;
 }
 
-.chartSu
-
 .chartWrapper {
     flex-grow: 1;
-    min-height: 300px;
+    min-height: 350px;
+    width: 100%;
 }
 
 .chartLegend {
@@ -422,101 +421,218 @@
 /* ==================== MODAL ==================== */
 .modalOverlay {
     position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.6);
-    backdrop-filter: blur(5px);
+    inset: 0;
+    background: rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
     display: flex;
     align-items: center;
     justify-content: center;
     z-index: 1000;
-    padding: 20px;
+    padding: 24px;
+    animation: fadeIn 0.3s ease-out;
 }
 
 .modal {
     background: var(--bg-primary);
     width: 100%;
-    max-width: 800px;
-    max-height: 85vh;
+    max-width: 900px;
+    max-height: 90vh;
     border-radius: 24px;
     display: flex;
     flex-direction: column;
     box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
     animation: scaleIn 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
     overflow: hidden;
+    border: 1px solid var(--border-color);
+}
+
+[data-theme="dark"] .modal {
+    background: #1e1e24; /* Un poco mas oscuro que bg-primary */
 }
 
 .modalHeader {
-    padding: 24px;
+    padding: 24px 32px;
     border-bottom: 1px solid var(--border-color);
     display: flex;
     justify-content: space-between;
     align-items: center;
+    background: var(--bg-secondary);
 }
 
-.modalHeader h2 {
+.modalTitle {
     margin: 0;
     font-family: var(--font-serif);
     font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    display: flex;
+    align-items: center;
+    gap: 12px;
 }
 
 .closeBtn {
-    background: transparent;
-    border: none;
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--bg-primary);
+    border: 1px solid var(--border-color);
     cursor: pointer;
     color: var(--text-secondary);
-    padding: 8px;
     border-radius: 50%;
-    transition: background 0.2s;
+    transition: all 0.2s ease;
 }
 
 .closeBtn:hover {
-    background: var(--bg-secondary);
-    color: var(--text-primary);
+    background: var(--color-primary);
+    color: white;
+    border-color: var(--color-primary);
+    transform: rotate(90deg);
 }
 
 .modalStats {
-    padding: 16px 24px;
-    background: var(--bg-secondary);
-    display: flex;
-    gap: 24px;
+    padding: 24px 32px;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
     border-bottom: 1px solid var(--border-color);
-    font-size: 0.9rem;
+}
+
+.modalStatItem {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: 16px;
+    padding: 16px 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    transition: transform 0.2s;
+}
+
+.modalStatItem:hover {
+    transform: translateY(-2px);
+}
+
+.statVal {
+    font-size: 1.8rem;
+    font-family: var(--font-serif);
+    font-weight: 800;
+    color: var(--text-primary);
+    line-height: 1;
+}
+
+.statLbl {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.statSuccess {
+    background: rgba(34, 197, 94, 0.05);
+    border-color: rgba(34, 197, 94, 0.2);
+}
+.statSuccess .statVal {
+    color: #22c55e;
+}
+
+.statWarning {
+    background: rgba(245, 158, 11, 0.05);
+    border-color: rgba(245, 158, 11, 0.2);
+}
+.statWarning .statVal {
+    color: #f59e0b;
 }
 
 .employeeList {
-    padding: 24px;
+    flex: 1;
     overflow-y: auto;
+    padding: 0 32px 32px 32px;
 }
 
 .employeeHeader {
     display: grid;
-    grid-template-columns: 1fr 2fr 1fr 1fr 1fr;
+    grid-template-columns: 80px 2fr 1fr 120px 100px;
+    gap: 16px;
+    position: sticky;
+    top: 0;
+    background: var(--bg-primary);
+    padding: 16px 0;
     font-weight: 600;
-    color: var(--text-secondary);
-    padding-bottom: 12px;
-    border-bottom: 2px solid var(--border-color);
-    margin-bottom: 12px;
-    font-size: 0.9rem;
+    color: var(--text-tertiary);
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border-bottom: 1px solid var(--border-color);
+    z-index: 10;
+}
+
+[data-theme="dark"] .employeeHeader {
+    background: #1e1e24;
+}
+
+.employeeBody {
+    display: flex;
+    flex-direction: column;
 }
 
 .employeeRow {
     display: grid;
-    grid-template-columns: 1fr 2fr 1fr 1fr 1fr;
-    padding: 12px 0;
-    border-bottom: 1px solid var(--border-color);
+    grid-template-columns: 80px 2fr 1fr 120px 100px;
+    gap: 16px;
+    padding: 16px 0;
+    border-bottom: 1px dashed var(--border-color);
     align-items: center;
     font-size: 0.95rem;
-    color: var(--text-primary);
+    transition: background 0.2s;
+}
+
+.employeeRow:hover {
+    background: rgba(0,0,0,0.02);
+}
+
+[data-theme="dark"] .employeeRow:hover {
+    background: rgba(255,255,255,0.02);
 }
 
 .employeeRow:last-child {
     border-bottom: none;
 }
 
+.empId {
+    font-family: var(--font-mono);
+    color: var(--text-tertiary);
+    font-size: 0.85rem;
+}
+
+.empName {
+    font-weight: 500;
+    color: var(--text-primary);
+}
+
+.empShift {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    color: var(--text-secondary);
+    font-size: 0.85rem;
+}
+
+.empDate {
+    color: var(--text-secondary);
+    font-size: 0.85rem;
+    font-family: var(--font-mono);
+}
+
 /* ==================== ANIMATIONS ==================== */
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
 @keyframes fadeInUp {
     from {
         opacity: 0;

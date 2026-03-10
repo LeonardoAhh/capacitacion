@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState, useMemo, useCallback } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useRouter } from 'next/navigation';
 import { collection, getDocs } from 'firebase/firestore';
@@ -10,10 +10,6 @@ import styles from './page.module.css';
 
 // UI Components
 import { Badge } from '@/components/ui/Badge/Badge';
-import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/Card/Card';
-import { Button } from '@/components/ui/Button/Button';
-import { Progress, CircularProgress } from '@/components/ui/Progress/Progress';
-import { Skeleton } from '@/components/ui/Skeleton/Skeleton';
 import {
     BarChart,
     Bar,
@@ -22,14 +18,6 @@ import {
     CartesianGrid,
     Tooltip,
     ResponsiveContainer,
-    PieChart,
-    Pie,
-    Cell,
-    Legend,
-    LineChart,
-    Line,
-    Area,
-    AreaChart
 } from 'recharts';
 
 // Configuracion de plazos del Plan de Formacion
@@ -62,18 +50,6 @@ const MONTHS = [
     'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'
 ];
 
-const CHART_COLORS = [
-    '#3b82f6', // Blue
-    '#22c55e', // Green  
-    '#f59e0b', // Amber
-    '#8b5cf6', // Purple
-    '#ef4444', // Red
-    '#06b6d4', // Cyan
-    '#ec4899', // Pink
-    '#14b8a6', // Teal
-    '#f97316', // Orange
-    '#6366f1', // Indigo
-];
 
 // Memoized Chart Components for Performance
 const MemoizedMonthlyBarChart = React.memo(({ data }) => (
@@ -106,130 +82,6 @@ const MemoizedMonthlyBarChart = React.memo(({ data }) => (
 ));
 MemoizedMonthlyBarChart.displayName = 'MemoizedMonthlyBarChart';
 
-const MemoizedStatusPieChart = React.memo(({ delivered, pending }) => (
-    <ResponsiveContainer width="100%" height="100%">
-        <PieChart>
-            <Pie
-                data={[
-                    { name: 'Entregados', value: delivered },
-                    { name: 'Pendientes', value: pending }
-                ]}
-                cx="50%"
-                cy="50%"
-                innerRadius={60}
-                outerRadius={90}
-                paddingAngle={5}
-                dataKey="value"
-                label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
-                labelLine={{ stroke: 'var(--text-secondary)' }}
-            >
-                <Cell fill="#22c55e" />
-                <Cell fill="#f59e0b" />
-            </Pie>
-            <Tooltip
-                contentStyle={{
-                    backgroundColor: 'var(--bg-primary)',
-                    border: '1px solid var(--border-color)',
-                    borderRadius: '8px',
-                    boxShadow: 'var(--shadow-lg)'
-                }}
-            />
-        </PieChart>
-    </ResponsiveContainer>
-));
-MemoizedStatusPieChart.displayName = 'MemoizedStatusPieChart';
-
-const MemoizedTrendAreaChart = React.memo(({ data }) => (
-    <ResponsiveContainer width="100%" height="100%">
-        <AreaChart data={data} margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
-            <defs>
-                <linearGradient id="colorPercentage" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#8b5cf6" stopOpacity={0.4} />
-                    <stop offset="95%" stopColor="#8b5cf6" stopOpacity={0} />
-                </linearGradient>
-            </defs>
-            <CartesianGrid strokeDasharray="3 3" stroke="var(--border-color)" opacity={0.5} />
-            <XAxis
-                dataKey="monthName"
-                tick={{ fontSize: 11, fill: 'var(--text-secondary)' }}
-                tickFormatter={(value) => value.substring(0, 3)}
-                axisLine={{ stroke: 'var(--border-color)' }}
-            />
-            <YAxis
-                tick={{ fontSize: 11, fill: 'var(--text-secondary)' }}
-                axisLine={{ stroke: 'var(--border-color)' }}
-                domain={[0, 100]}
-                tickFormatter={(value) => `${value}%`}
-            />
-            <Tooltip
-                contentStyle={{
-                    backgroundColor: 'var(--bg-primary)',
-                    border: '1px solid var(--border-color)',
-                    borderRadius: '8px',
-                    boxShadow: 'var(--shadow-lg)'
-                }}
-                formatter={(value) => [`${value}%`, 'Cumplimiento']}
-                labelStyle={{ color: 'var(--text-primary)', fontWeight: 600 }}
-            />
-            <Area
-                type="monotone"
-                dataKey="cumPercentage"
-                stroke="#8b5cf6"
-                strokeWidth={3}
-                fill="url(#colorPercentage)"
-            />
-        </AreaChart>
-    </ResponsiveContainer>
-));
-MemoizedTrendAreaChart.displayName = 'MemoizedTrendAreaChart';
-
-const MemoizedDepartmentBarChart = React.memo(({ data }) => (
-    <ResponsiveContainer width="100%" height="100%">
-        <BarChart
-            data={data}
-            layout="vertical"
-            margin={{ top: 5, right: 30, left: 80, bottom: 5 }}
-        >
-            <CartesianGrid strokeDasharray="3 3" stroke="var(--border-color)" opacity={0.5} />
-            <XAxis
-                type="number"
-                domain={[0, 100]}
-                tick={{ fontSize: 11, fill: 'var(--text-secondary)' }}
-                tickFormatter={(value) => `${value}%`}
-                axisLine={{ stroke: 'var(--border-color)' }}
-            />
-            <YAxis
-                type="category"
-                dataKey="name"
-                tick={{ fontSize: 11, fill: 'var(--text-secondary)' }}
-                axisLine={{ stroke: 'var(--border-color)' }}
-                width={75}
-            />
-            <Tooltip
-                contentStyle={{
-                    backgroundColor: 'var(--bg-primary)',
-                    border: '1px solid var(--border-color)',
-                    borderRadius: '8px',
-                    boxShadow: 'var(--shadow-lg)'
-                }}
-                formatter={(value, name, props) => [
-                    `${value}%`,
-                    `Cumplimiento (${props.payload.delivered}/${props.payload.scheduled})`
-                ]}
-                labelStyle={{ color: 'var(--text-primary)', fontWeight: 600 }}
-            />
-            <Bar dataKey="percentage" radius={[0, 4, 4, 0]}>
-                {data.map((entry, index) => (
-                    <Cell
-                        key={`cell-${index}`}
-                        fill={entry.percentage >= 80 ? '#22c55e' : entry.percentage >= 50 ? '#f59e0b' : '#ef4444'}
-                    />
-                ))}
-            </Bar>
-        </BarChart>
-    </ResponsiveContainer>
-));
-MemoizedDepartmentBarChart.displayName = 'MemoizedDepartmentBarChart';
 
 export default function ReportsPage() {
     const { user, loading: authLoading } = useAuth();
@@ -261,17 +113,6 @@ export default function ReportsPage() {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [user, selectedYear]);
 
-    // Memoized data transformations
-    const monthlyStatsWithPercentage = useMemo(() => {
-        return monthlyStats.map(m => ({
-            ...m,
-            cumPercentage: m.scheduled > 0 ? Math.round((m.delivered / m.scheduled) * 100) : 0
-        }));
-    }, [monthlyStats]);
-
-    const topDepartments = useMemo(() => {
-        return departmentStats.slice(0, 8);
-    }, [departmentStats]);
 
     const calculateTrainingPlanDate = (startDate, department, area) => {
         if (!startDate || !department || !area) return null;
@@ -356,7 +197,6 @@ export default function ReportsPage() {
                     month: parseInt(month),
                     monthName: MONTHS[parseInt(month)],
                     ...data,
-                    percentage: data.scheduled > 0 ? Math.round((data.delivered / data.scheduled) * 100) : 0
                 }));
 
             // Calcular totales
@@ -577,129 +417,7 @@ export default function ReportsPage() {
                                     </div>
                                 </div>
 
-                                {/* Grafico de Pie - Distribucion General */}
-                                <div className={styles.chartCard}>
-                                    <div className={styles.chartHeader}>
-                                        <div>
-                                            <h3 className={styles.chartTitle}>Distribucion General</h3>
-                                            <p className={styles.chartSubtitle}>Estado actual de entregas</p>
-                                        </div>
-                                    </div>
-                                    <div className={styles.chartWrapper}>
-                                        <MemoizedStatusPieChart delivered={totals.delivered} pending={totals.pending} />
-                                    </div>
-                                    <div className={styles.chartLegend}>
-                                        <div className={styles.legendItem}>
-                                            <span className={styles.legendDot} style={{ backgroundColor: '#22c55e' }}></span>
-                                            <span>Entregados ({totals.delivered})</span>
-                                        </div>
-                                        <div className={styles.legendItem}>
-                                            <span className={styles.legendDot} style={{ backgroundColor: '#f59e0b' }}></span>
-                                            <span>Pendientes ({totals.pending})</span>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                {/* Grafico de Área - Tendencia de Cumplimiento */}
-                                <div className={`${styles.chartCard} ${styles.fullWidth}`}>
-                                    <div className={styles.chartHeader}>
-                                        <div>
-                                            <h3 className={styles.chartTitle}>Tendencia de Cumplimiento Acumulado</h3>
-                                            <p className={styles.chartSubtitle}>Evolucion del porcentaje de cumplimiento mensual</p>
-                                        </div>
-                                    </div>
-                                    <div className={styles.chartWrapper}>
-                                        <MemoizedTrendAreaChart data={monthlyStatsWithPercentage} />
-                                    </div>
-                                </div>
-
-                                {/* Grafico de Barras Horizontal - Top Departamentos */}
-                                <div className={`${styles.chartCard} ${styles.fullWidth}`}>
-                                    <div className={styles.chartHeader}>
-                                        <div>
-                                            <h3 className={styles.chartTitle}>Cumplimiento por Departamento</h3>
-                                            <p className={styles.chartSubtitle}>Porcentaje de planes entregados por area</p>
-                                        </div>
-                                    </div>
-                                    <div className={styles.chartWrapper}>
-                                        <ResponsiveContainer width="100%" height="100%">
-                                            <BarChart
-                                                data={departmentStats.slice(0, 8)}
-                                                layout="vertical"
-                                                margin={{ top: 5, right: 30, left: 80, bottom: 5 }}
-                                            >
-                                                <CartesianGrid strokeDasharray="3 3" stroke="var(--border-color)" opacity={0.5} />
-                                                <XAxis
-                                                    type="number"
-                                                    domain={[0, 100]}
-                                                    tick={{ fontSize: 11, fill: 'var(--text-secondary)' }}
-                                                    tickFormatter={(value) => `${value}%`}
-                                                    axisLine={{ stroke: 'var(--border-color)' }}
-                                                />
-                                                <YAxis
-                                                    type="category"
-                                                    dataKey="name"
-                                                    tick={{ fontSize: 11, fill: 'var(--text-secondary)' }}
-                                                    axisLine={{ stroke: 'var(--border-color)' }}
-                                                    width={75}
-                                                />
-                                                <Tooltip
-                                                    contentStyle={{
-                                                        backgroundColor: 'var(--bg-primary)',
-                                                        border: '1px solid var(--border-color)',
-                                                        borderRadius: '8px',
-                                                        boxShadow: 'var(--shadow-lg)'
-                                                    }}
-                                                    formatter={(value, name, props) => [
-                                                        `${value}%`,
-                                                        `Cumplimiento (${props.payload.delivered}/${props.payload.scheduled})`
-                                                    ]}
-                                                    labelStyle={{ color: 'var(--text-primary)', fontWeight: 600 }}
-                                                />
-                                                <Bar
-                                                    dataKey="percentage"
-                                                    radius={[0, 4, 4, 0]}
-                                                >
-                                                    {departmentStats.slice(0, 8).map((entry, index) => (
-                                                        <Cell
-                                                            key={`cell-${index}`}
-                                                            fill={entry.percentage >= 80 ? '#22c55e' : entry.percentage >= 50 ? '#f59e0b' : '#ef4444'}
-                                                        />
-                                                    ))}
-                                                </Bar>
-                                            </BarChart>
-                                        </ResponsiveContainer>
-                                    </div>
-                                </div>
                             </div>
-
-                            {/* Estadisticas por Mes */}
-                            <section className={styles.section}>
-                                <h2>Cumplimiento por Mes - {selectedYear}</h2>
-                                <div className={styles.monthGrid}>
-                                    {monthlyStats.map((month) => (
-                                        <div key={month.month} className={styles.monthCard}>
-                                            <div className={styles.monthHeader}>
-                                                <span className={styles.monthName}>{month.monthName}</span>
-                                                <Badge
-                                                    variant={month.percentage >= 80 ? 'success' : month.percentage >= 50 ? 'warning' : 'danger'}
-                                                    size="sm"
-                                                >
-                                                    {month.percentage}%
-                                                </Badge>
-                                            </div>
-                                            <Progress
-                                                value={month.percentage}
-                                                variant={month.percentage >= 80 ? 'success' : month.percentage >= 50 ? 'warning' : 'danger'}
-                                                size="sm"
-                                            />
-                                            <div className={styles.monthStats}>
-                                                <span>{month.delivered} / {month.scheduled}</span>
-                                            </div>
-                                        </div>
-                                    ))}
-                                </div>
-                            </section>
 
                             {/* Estadisticas por Departamento */}
                             <section className={styles.section}>
@@ -759,51 +477,64 @@ export default function ReportsPage() {
                 <div className={styles.modalOverlay} onClick={() => setSelectedDept(null)}>
                     <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
                         <div className={styles.modalHeader}>
-                            <h2>{selectedDept.name}</h2>
-                            <button className={styles.closeBtn} onClick={() => setSelectedDept(null)}>
-                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                            <h2 className={styles.modalTitle}>
+                                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ color: 'var(--text-tertiary)' }}>
+                                    <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                                    <polyline points="9 22 9 12 15 12 15 22"></polyline>
+                                </svg>
+                                {selectedDept.name}
+                            </h2>
+                            <button className={styles.closeBtn} onClick={() => setSelectedDept(null)} aria-label="Cerrar modal">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                                     <line x1="18" y1="6" x2="6" y2="18" />
                                     <line x1="6" y1="6" x2="18" y2="18" />
                                 </svg>
                             </button>
                         </div>
                         <div className={styles.modalStats}>
-                            <span className={styles.modalStatItem}>
-                                <strong>{selectedDept.scheduled}</strong> Programados
-                            </span>
-                            <span className={styles.modalStatItem} style={{ color: '#22c55e' }}>
-                                <strong>{selectedDept.delivered}</strong> Entregados
-                            </span>
-                            <span className={styles.modalStatItem} style={{ color: '#f59e0b' }}>
-                                <strong>{selectedDept.scheduled - selectedDept.delivered}</strong> Pendientes
-                            </span>
+                            <div className={styles.modalStatItem}>
+                                <span className={styles.statVal}>{selectedDept.scheduled}</span>
+                                <span className={styles.statLbl}>Programados</span>
+                            </div>
+                            <div className={`${styles.modalStatItem} ${styles.statSuccess}`}>
+                                <span className={styles.statVal}>{selectedDept.delivered}</span>
+                                <span className={styles.statLbl}>Entregados</span>
+                            </div>
+                            <div className={`${styles.modalStatItem} ${styles.statWarning}`}>
+                                <span className={styles.statVal}>{selectedDept.scheduled - selectedDept.delivered}</span>
+                                <span className={styles.statLbl}>Pendientes</span>
+                            </div>
                         </div>
                         <div className={styles.employeeList}>
                             <div className={styles.employeeHeader}>
                                 <span>ID</span>
-                                <span>Nombre</span>
+                                <span>Nombre del Empleado</span>
                                 <span>Turno</span>
-                                <span>Fecha Entrega</span>
-                                <span>Estado</span>
+                                <span>Límite Entrega</span>
+                                <span>Estado Actual</span>
                             </div>
-                            {selectedDept.employees.map((emp, idx) => {
-                                const status = getDeliveryStatus(emp.deliveryDate, emp.delivered);
-                                return (
-                                    <div key={idx} className={styles.employeeRow}>
-                                        <span className={styles.empId}>{emp.employeeId}</span>
-                                        <span className={styles.empName}>{emp.name}</span>
-                                        <Badge variant="secondary" size="sm">Turno {emp.shift}</Badge>
-                                        <span className={styles.empDate}>{formatDate(emp.deliveryDate)}</span>
-                                        <Badge
-                                            variant={status.label === 'Entregado' ? 'success' : status.label === 'Pendiente' ? 'warning' : 'danger'}
-                                            size="sm"
-                                            dot={status.label !== 'Entregado'}
-                                        >
-                                            {status.label}
-                                        </Badge>
-                                    </div>
-                                );
-                            })}
+                            <div className={styles.employeeBody}>
+                                {selectedDept.employees.map((emp, idx) => {
+                                    const status = getDeliveryStatus(emp.deliveryDate, emp.delivered);
+                                    return (
+                                        <div key={idx} className={styles.employeeRow}>
+                                            <span className={styles.empId}>{emp.employeeId}</span>
+                                            <span className={styles.empName}>{emp.name}</span>
+                                            <span className={styles.empShift}>
+                                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                                                {emp.shift}
+                                            </span>
+                                            <span className={styles.empDate}>{formatDate(emp.deliveryDate)}</span>
+                                            <Badge
+                                                variant={status.label === 'Entregado' ? 'success' : status.label.includes('Vencido') ? 'danger' : 'warning'}
+                                                size="sm"
+                                            >
+                                                {status.label}
+                                            </Badge>
+                                        </div>
+                                    );
+                                })}
+                            </div>
                         </div>
                     </div>
                 </div>
