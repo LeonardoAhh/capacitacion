@@ -264,7 +264,7 @@ const MESSAGE_TEMPLATES = [
         id: 'welcome',
         title: '👋 Bienvenida',
         message: (name, c) =>
-            `¡Bienvenido/a ${name}! 🎉\n\nEs un placer tenerte en el equipo. Para comenzar tu proceso de inducción, ingresa a la plataforma:\n\n🌐 *https://vertxk.xyz/*\n\nUsa tu código de acceso:\n\n🔑 *${c?.accessCode || '-'}*\n\nSi tienes cualquier duda, escríbenos. ¡Mucho éxito! 💼\n\n_Recursos Humanos_`
+            `¡Bienvenido/a ${name}! 🎉\n\nEs un placer tenerte en el equipo. Para comenzar tu proceso de inducción, ingresa a la plataforma:\n\n🌐 *https://vertxk.xyz/*\n\n📌 Dirígete a la *sección de candidatos* e ingresa tus datos:\n\n👤 *Número de empleado:* ${c?.employeeId || 'Tu número de empleado'}\n📄 *CURP:* ${c?.curp || 'Tu CURP'}\n🔑 *Código de acceso:* ${c?.accessCode || '-'}\n\nSi tienes cualquier duda, escríbenos. ¡Mucho éxito! 💼\n\n_Recursos Humanos_`
     },
     {
         id: 'progress_check',
@@ -642,20 +642,20 @@ export default function CandidateMonitoringPage() {
             </div>
             {showMobileFilters && (
                 <div className={styles.mobileFiltersPanel}>
-                        <select
-                            value={statusFilter}
-                            onChange={(e) => setStatusFilter(e.target.value)}
-                            className={styles.statusFilter}
-                        >
-                            <option value="all">Todos los estados</option>
-                            <option value="completed">Completados</option>
-                            <option value="inProgress">En Proceso</option>
-                            <option value="inactive">Inactivos</option>
-                            <option value="notStarted">Sin Iniciar</option>
-                            <option value="archived">🗄️ Archivados</option>
-                        </select>
-                    </div>
-                )}
+                    <select
+                        value={statusFilter}
+                        onChange={(e) => setStatusFilter(e.target.value)}
+                        className={styles.statusFilter}
+                    >
+                        <option value="all">Todos los estados</option>
+                        <option value="completed">Completados</option>
+                        <option value="inProgress">En Proceso</option>
+                        <option value="inactive">Inactivos</option>
+                        <option value="notStarted">Sin Iniciar</option>
+                        <option value="archived">🗄️ Archivados</option>
+                    </select>
+                </div>
+            )}
             {/* Results Summary */}
             <div className={styles.resultsInfo}>
                 <span>
