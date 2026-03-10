@@ -20,6 +20,7 @@
     margin: 0;
     font-size: 1rem;
     font-weight: 600;
+    font-family: var(--font-body);
     color: var(--text-primary);
 }
 
@@ -89,6 +90,7 @@
     margin: 0 0 0.125rem 0;
     font-size: 0.875rem;
     font-weight: 600;
+    font-family: var(--font-body);
     color: var(--text-primary);
     overflow: hidden;
     text-overflow: ellipsis;
@@ -147,17 +149,14 @@
 }
 
 .modalContent {
-    background: #ffffff;
+    background: var(--bg-secondary);
     border-radius: var(--radius-xl);
     width: 100%;
     max-width: 560px;
     max-height: 90vh;
     display: flex;
     flex-direction: column;
-}
-
-:global([data-theme="dark"]) .modalContent {
-    background: #1e1e2e;
+    border: 1px solid var(--border-color);
 }
 
 .modalHeader {
@@ -165,27 +164,20 @@
     justify-content: space-between;
     align-items: center;
     padding: 1rem 1.25rem;
-    border-bottom: 1px solid #e5e7eb;
+    border-bottom: 1px solid var(--border-color);
     flex-shrink: 0;
-}
-
-:global([data-theme="dark"]) .modalHeader {
-    border-bottom-color: #2d3748;
 }
 
 .modalHeader h3 {
     margin: 0;
     font-size: 1rem;
     font-weight: 600;
-    color: #1a1a2e;
-}
-
-:global([data-theme="dark"]) .modalHeader h3 {
-    color: #f3f4f6;
+    font-family: var(--font-body);
+    color: var(--text-primary);
 }
 
 .modalClose {
-    background: #f3f4f6;
+    background: var(--bg-tertiary);
     border: none;
     border-radius: var(--radius-sm);
     width: 32px;
@@ -194,22 +186,14 @@
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    color: #6b7280;
+    color: var(--text-secondary);
     transition: background var(--transition-fast);
     flex-shrink: 0;
 }
 
-:global([data-theme="dark"]) .modalClose {
-    background: #2d3748;
-    color: #a0aec0;
-}
-
 .modalClose:hover {
-    background: #e5e7eb;
-}
-
-:global([data-theme="dark"]) .modalClose:hover {
-    background: #4a5568;
+    background: var(--bg-primary);
+    border: 1px solid var(--border-color);
 }
 
 .modalBody {
@@ -224,14 +208,10 @@
 
 .modalFooter {
     padding: 0.875rem 1.25rem;
-    border-top: 1px solid #e5e7eb;
+    border-top: 1px solid var(--border-color);
     display: flex;
     justify-content: center;
     flex-shrink: 0;
-}
-
-:global([data-theme="dark"]) .modalFooter {
-    border-top-color: #2d3748;
 }
 
 /* Download Button */
@@ -241,14 +221,14 @@
     gap: 0.5rem;
     padding: 0.625rem 1.5rem;
     background: var(--color-primary);
-    color: white;
+    color: var(--bg-primary);
     border: none;
     border-radius: var(--radius-md);
     font-weight: 600;
     font-size: 0.875rem;
+    font-family: var(--font-body);
     cursor: pointer;
     transition: filter var(--transition-fast);
-    font-family: inherit;
 }
 
 .downloadBtn:hover:not(:disabled) {
