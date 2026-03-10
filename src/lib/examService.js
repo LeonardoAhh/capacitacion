@@ -134,3 +134,57 @@ export async function unpublishExam(examId) {
         return { success: false, error: error.message };
     }
 }
+
+/**
+ * Duplica un examen existente como nuevo borrador.
+ * @param {Object} exam - Objeto completo del examen
+ * @param {string} userId
+ */
+export async function duplicateExam(exam, userId) {
+    const { id, createdAt, updatedAt, publishedAt, status, ...data } = exam;
+    return createExam({
+        ...data,
+        title: `Copia de ${data.title || 'Sin título'}`,
+    }, userId);
+}
+
+/**
+ * Guarda un snapshot del examen en su subcolección /historial.
+ * Se llama automáticamente al publicar para mantener el historial de versiones.
+ * @param {string} examId
+ * @param {Object} examData - Estado del examen al momento de publicar
+ * @param {string} userId
+ */
+export async function saveExamSnapshot(examId, examData, userId) {
+    try {
+        const historialRef = collection(db, EXAMS_COLLECTION, examId, 'historial');
+        const { id, ...data } = examData;
+        await addDoc(historialRef, {
+            ...data,
+            savedBy: userId,
+            savedAt: serverTimestamp(),
+        });
+        return { success: true };
+    } catch (error) {
+        console.error('Error guardando snapshot:', error);
+        return { success: false, error: error.message };
+    }
+}
+
+/**
+ * Obtiene el historial de versiones publicadas de un examen, ordenado por fecha descendente.
+ * @param {string} examId
+ * @returns {Promise<Object[]>}
+ */
+export async function getExamHistory(examId) {
+    try {
+        const ref = collection(db, EXAMS_COLLECTION, examId, 'historial');
+        const q = query(ref, orderBy('savedAt', 'desc'));
+        const snap = await getDocs(q);
+        return snap.docs.map(d => ({ id: d.id, ...d.data() }));
+    } catch (error) {
+        console.error('Error obteniendo historial:', error);
+        return [];
+    }
+}
+

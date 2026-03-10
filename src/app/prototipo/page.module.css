@@ -13,6 +13,14 @@
     gap: var(--spacing-xl);
 }
 
+@media print {
+    .container {
+        padding: 0 !important;
+        gap: 0 !important;
+        display: block !important;
+    }
+}
+
 /* ── ENCABEZADO LISTA ────────────────────────────────────────────── */
 .header {
     display: flex;
@@ -50,6 +58,12 @@
     align-items: center;
     gap: var(--spacing-lg);
     flex-wrap: wrap;
+}
+
+@media print {
+    .editorHeader {
+        display: none !important;
+    }
 }
 
 .btnBack {
@@ -126,7 +140,9 @@
 }
 
 .loadingGrid {
-    composes: examGrid;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: var(--spacing-lg);
 }
 
 .skeletonCard {
@@ -261,3 +277,168 @@
         grid-template-columns: 1fr;
     }
 }
+
+/* ── MODAL DE HISTORIAL DE VERSIONES ─────────────────────────────── */
+.historyOverlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.45);
+    backdrop-filter: blur(6px);
+    z-index: 1100;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: var(--spacing-md);
+}
+
+.historyPanel {
+    background: var(--bg-primary);
+    border-radius: 20px;
+    width: 100%;
+    max-width: 520px;
+    box-shadow: 0 24px 60px rgba(0, 0, 0, 0.15);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+.historyHeader {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: var(--spacing-md);
+    padding: var(--spacing-lg) var(--spacing-xl);
+    border-bottom: 1px solid var(--border-color);
+    background: var(--bg-secondary);
+}
+
+.historyLabel {
+    font-family: var(--font-body);
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--text-secondary);
+    margin: 0 0 4px 0;
+}
+
+.historyTitle {
+    font-family: var(--font-serif);
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin: 0;
+}
+
+.historyClose {
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    background: var(--bg-primary);
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: all 0.15s;
+    flex-shrink: 0;
+}
+
+.historyClose:hover {
+    border-color: var(--color-primary);
+    color: var(--color-primary);
+}
+
+.historyBody {
+    padding: var(--spacing-md);
+    max-height: 380px;
+    overflow-y: auto;
+}
+
+.historyLoading,
+.historyEmpty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: var(--spacing-md);
+    padding: var(--spacing-xl);
+    color: var(--text-secondary);
+    font-family: var(--font-body);
+    font-size: 0.88rem;
+    text-align: center;
+}
+
+.historyEmpty p { margin: 0; }
+
+.versionList {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.versionItem {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-md);
+    padding: var(--spacing-md) var(--spacing-lg);
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    transition: box-shadow 0.15s;
+}
+
+.versionItem:hover {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+
+.versionNum {
+    font-family: var(--font-mono);
+    font-size: 0.78rem;
+    font-weight: 700;
+    color: var(--color-primary);
+    background: color-mix(in srgb, var(--color-primary) 10%, transparent);
+    border-radius: 999px;
+    padding: 2px 10px;
+    flex-shrink: 0;
+}
+
+.versionInfo {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    flex: 1;
+    min-width: 0;
+}
+
+.versionDate {
+    font-family: var(--font-body);
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.versionMeta {
+    font-family: var(--font-body);
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.versionBadge {
+    font-family: var(--font-body);
+    font-size: 0.7rem;
+    font-weight: 700;
+    color: #16a34a;
+    background: color-mix(in srgb, #22c55e 10%, transparent);
+    border-radius: 999px;
+    padding: 2px 9px;
+    flex-shrink: 0;
+}
+

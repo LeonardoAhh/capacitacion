@@ -8,9 +8,25 @@
 .builder {
     display: flex;
     flex-direction: column;
-    gap: var(--spacing-lg);
+    /* gap: var(--spacing-lg); => Lo pasamos a editorUi para no afectar a printOnly */
     max-width: 860px;
     margin: 0 auto;
+}
+
+.editorUi {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-xl);
+}
+
+@media print {
+    .editorUi {
+        display: none !important;
+    }
+}
+
+.printOnly {
+    display: none;
 }
 
 /* ── CARD DE METADATOS ────────────────────────────────────────────── */
@@ -96,7 +112,17 @@
 }
 
 .textarea {
-    composes: input;
+    width: 100%;
+    padding: 9px 12px;
+    border: 1px solid var(--border-color);
+    border-radius: 10px;
+    background: var(--bg-secondary);
+    color: var(--text-primary);
+    font-family: var(--font-body);
+    font-size: 0.9rem;
+    transition: border-color 0.18s, box-shadow 0.18s;
+    outline: none;
+    box-sizing: border-box;
     resize: vertical;
     min-height: 64px;
     line-height: 1.5;
@@ -504,7 +530,288 @@
     cursor: not-allowed;
 }
 
+/* ── BARRA DE PROGRESO ────────────────────────────────────────────── */
+.progressWrap {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: 14px;
+    padding: var(--spacing-md) var(--spacing-lg);
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.progressStats {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 6px;
+    font-family: var(--font-body);
+    font-size: 0.82rem;
+    color: var(--text-secondary);
+}
+
+.progressStats strong {
+    color: var(--text-primary);
+    font-weight: 700;
+}
+
+.progressStats em {
+    font-style: normal;
+    color: var(--text-secondary);
+    font-size: 0.75rem;
+}
+
+.dot {
+    color: var(--border-color);
+    font-weight: 300;
+}
+
+.progressAllDone {
+    color: #22c55e;
+    font-weight: 700;
+}
+
+.progressTrack {
+    height: 4px;
+    background: var(--border-color);
+    border-radius: 999px;
+    overflow: hidden;
+}
+
+.progressFill {
+    height: 100%;
+    background: var(--color-primary);
+    border-radius: 999px;
+    transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ── PANEL DE INSTRUCCIONES ───────────────────────────────────────── */
+.instructionsWrap {
+    border: 1px solid var(--border-color);
+    border-radius: 14px;
+    overflow: hidden;
+}
+
+.instructionsToggle {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    padding: var(--spacing-md) var(--spacing-lg);
+    background: var(--bg-secondary);
+    border: none;
+    cursor: pointer;
+    font-family: var(--font-body);
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+    text-align: left;
+    transition: color 0.15s;
+}
+
+.instructionsToggle:hover {
+    color: var(--color-primary);
+}
+
+.instructionsToggle span {
+    flex: 1;
+}
+
+.instructionsPanel {
+    border-top: 1px solid var(--border-color);
+}
+
+.instructionsContent {
+    padding: var(--spacing-md);
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.guideItem {
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.guideQ {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 9px 12px;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    font-family: var(--font-body);
+    font-size: 0.83rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    text-align: left;
+    border-radius: 8px;
+    transition: background 0.15s;
+    gap: var(--spacing-sm);
+}
+
+.guideQ:hover {
+    background: color-mix(in srgb, var(--color-primary) 6%, transparent);
+    color: var(--color-primary);
+}
+
+.guideA {
+    font-family: var(--font-body);
+    font-size: 0.82rem;
+    color: var(--text-secondary);
+    line-height: 1.6;
+    margin: 0;
+    padding: 4px 12px 10px;
+}
+
+/* ── MODAL DE VALIDACIÓN ──────────────────────────────────────────── */
+.valOverlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.45);
+    backdrop-filter: blur(4px);
+    z-index: 1100;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: var(--spacing-md);
+}
+
+.valModal {
+    background: var(--bg-primary);
+    border-radius: 20px;
+    width: 100%;
+    max-width: 480px;
+    box-shadow: 0 24px 60px rgba(0, 0, 0, 0.18);
+    overflow: hidden;
+}
+
+.valHeader {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    padding: var(--spacing-md) var(--spacing-xl);
+    font-family: var(--font-serif);
+    font-size: 1rem;
+    font-weight: 700;
+}
+
+.valHeaderError {
+    background: color-mix(in srgb, #ef4444 8%, transparent);
+    color: #ef4444;
+    border-bottom: 1px solid color-mix(in srgb, #ef4444 20%, transparent);
+}
+
+.valHeaderOk {
+    background: color-mix(in srgb, #22c55e 8%, transparent);
+    color: #16a34a;
+    border-bottom: 1px solid color-mix(in srgb, #22c55e 20%, transparent);
+}
+
+.valClose {
+    margin-left: auto;
+    width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    border-radius: 6px;
+    color: inherit;
+    opacity: 0.6;
+    transition: opacity 0.15s;
+}
+
+.valClose:hover { opacity: 1; }
+
+.valBody {
+    padding: var(--spacing-lg) var(--spacing-xl);
+}
+
+.valDesc {
+    font-family: var(--font-body);
+    font-size: 0.88rem;
+    color: var(--text-secondary);
+    margin: 0 0 var(--spacing-md) 0;
+    line-height: 1.6;
+}
+
+.errorList {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.errorItem {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    font-family: var(--font-body);
+    font-size: 0.83rem;
+    color: #ef4444;
+    padding: 6px 10px;
+    background: color-mix(in srgb, #ef4444 6%, transparent);
+    border-radius: 8px;
+    line-height: 1.4;
+}
+
+.valFooter {
+    display: flex;
+    gap: var(--spacing-sm);
+    justify-content: flex-end;
+    padding: var(--spacing-md) var(--spacing-xl) var(--spacing-lg);
+    border-top: 1px solid var(--border-color);
+}
+
+.valBtnSecondary {
+    padding: 9px 18px;
+    border: 1px solid var(--border-color);
+    border-radius: 10px;
+    background: var(--bg-secondary);
+    color: var(--text-primary);
+    font-family: var(--font-body);
+    font-size: 0.85rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.15s;
+}
+
+.valBtnSecondary:hover {
+    border-color: var(--color-primary);
+    color: var(--color-primary);
+}
+
+.valBtnPrimary {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 9px 20px;
+    border: none;
+    border-radius: 10px;
+    background: var(--color-primary);
+    color: #fff;
+    font-family: var(--font-body);
+    font-size: 0.85rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.18s;
+}
+
+.valBtnPrimary:hover {
+    opacity: 0.88;
+    transform: translateY(-1px);
+}
+
 /* ── MODAL DE VISTA PREVIA ─────────────────────────────────────────── */
+
 .previewOverlay {
     position: fixed;
     inset: 0;
@@ -552,11 +859,31 @@
 }
 
 .previewPrintBtn {
-    composes: iconBtn;
+    width: 32px;
+    height: 32px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    background: var(--bg-secondary);
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: all 0.15s;
 }
 
 .previewClose {
-    composes: iconBtn;
+    width: 32px;
+    height: 32px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    background: var(--bg-secondary);
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: all 0.15s;
 }
 
 .previewContent {
@@ -575,45 +902,62 @@
     border-bottom: 1px solid var(--border-color);
 }
 
-/* Logo de la empresa */
+/* Logo imagen desde /public */
 .logo {
     flex-shrink: 0;
 }
 
-.logoBox {
-    width: 64px;
-    height: 52px;
-    background: #1a3a6b;
-    border-radius: 4px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    padding: 4px;
-    gap: 2px;
+.logoImg {
+    display: block;
+    width: 80px;
+    height: auto;
+    object-fit: contain;
 }
 
-.logoTop {
-    color: #fff;
-    font-size: 11px;
-    font-weight: 900;
-    letter-spacing: 1px;
-    font-family: var(--font-serif);
+@media print {
+    @page { margin: 1cm; }
+
+    /* Ocultar TODA la UI interactiva */
+    .previewTopBar,
+    .hideOnPrint,
+    .editorUi,
+    .previewOverlay {
+        display: none !important;
+    }
+
+    /* Mostrar SOLO la capa de impresión limpia */
+    .printOnly {
+        display: block !important;
+    }
+
+    /* Centrado del texto superando al logo */
+    .previewHeaderRow {
+        display: block !important;
+        position: relative !important;
+        text-align: center !important;
+        padding-top: 20px !important;
+        margin-bottom: 20px !important;
+    }
+
+    .logo {
+        position: absolute !important;
+        left: 0 !important;
+        top: 0 !important;
+    }
+
+    .previewMeta {
+        display: block !important;
+        width: 100% !important;
+        margin: 0 auto !important;
+    }
+
+    .previewContent {
+        padding: 0 !important;
+    }
 }
 
-.logoBar {
-    width: 100%;
-    height: 3px;
-    background: #e03030;
-    border-radius: 1px;
-}
-
-.logoBottom {
-    color: #fff;
-    font-size: 8px;
-    font-weight: 700;
-    letter-spacing: 2px;
-    font-family: var(--font-body);
+.footerDocInfo {
+    margin-left: auto;
 }
 
 .previewMeta {
@@ -636,10 +980,13 @@
 }
 
 .previewSubtitle {
-    font-family: var(--font-body);
-    font-size: 0.9rem;
-    font-style: italic;
+    font-family: var(--font-serif);
+    font-size: 0.95rem;
+    font-weight: 700;
+    font-style: normal;
+    text-transform: uppercase;
     color: var(--text-secondary);
+    letter-spacing: 0.05em;
     margin: 0;
 }
 

@@ -80,4 +80,10 @@
         padding: 0;
         min-height: unset;
     }
+
+    .layoutPage :global(nav),
+    .layoutPage :global(aside),
+    .layoutPage :global(header) {
+        display: none !important;
+    }
 }

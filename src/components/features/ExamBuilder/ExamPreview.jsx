@@ -1,18 +1,23 @@
 'use client';
 
 import { motion } from 'framer-motion';
+import Image from 'next/image';
 import { X, Printer } from 'lucide-react';
 import styles from './ExamBuilder.module.css';
 
-/** Logo de la empresa renderizado con CSS puro (sin imágenes hardcodeadas) */
+/** Logo de la empresa desde /public */
 function CompanyLogo() {
     return (
         <div className={styles.logo}>
-            <div className={styles.logoBox}>
-                <span className={styles.logoTop}>ViÑO</span>
-                <div className={styles.logoBar} />
-                <span className={styles.logoBottom}>PLASTIC</span>
-            </div>
+            <Image
+                src="/logo-vino-plastic.png"
+                alt="Viñoplastic"
+                width={80}
+                height={64}
+                className={styles.logoImg}
+                unoptimized
+                priority
+            />
         </div>
     );
 }
@@ -53,12 +58,23 @@ export default function ExamPreview({ exam, onClose }) {
                 </div>
 
                 {/* Contenido del examen (formato imprimible) */}
-                <div className={styles.previewContent}>
+                <ExamDocument exam={exam} />
+            </motion.div>
+        </motion.div>
+    );
+}
+
+/**
+ * Componente puro que renderiza el formato del examen (Reutilizable para impresión directa)
+ */
+export function ExamDocument({ exam }) {
+    return (
+        <div className={styles.previewContent}>
                     {/* Encabezado con logo y datos auditables */}
                     <div className={styles.previewHeaderRow}>
                         <CompanyLogo />
                         <div className={styles.previewMeta}>
-                            <span className={styles.previewDocId}>
+                            <span className={`${styles.previewDocId} ${styles.hideOnPrint}`}>
                                 {exam.documentId || 'ID-DOC'} · {exam.revision || 'Rev. —'}
                             </span>
                             <h1 className={styles.previewTitle}>Evaluación</h1>
@@ -125,11 +141,9 @@ export default function ExamPreview({ exam, onClose }) {
 
                     {/* Pie del examen */}
                     <div className={styles.previewFooter}>
-                        <span>Mínimo para aprobar: <strong>{exam.passingScore} / 10</strong></span>
-                        <span>{exam.documentId} · {exam.revision}</span>
+                        <span className={styles.hideOnPrint}>Mínimo para aprobar: <strong>{exam.passingScore} / 10</strong></span>
+                        <span className={styles.footerDocInfo}>{exam.documentId} · {exam.revision}</span>
                     </div>
                 </div>
-            </motion.div>
-        </motion.div>
     );
 }
