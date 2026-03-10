@@ -14,6 +14,9 @@ import styles from './page.module.css';
 // Normalize string for comparison
 const normalize = (str) => str?.trim().toUpperCase() || '';
 
+// Orden de clasificación de estatus: pendientes primero, aprobados al final
+const STATUS_ORDER = { no_tomado: 0, failed: 1, approved: 2 };
+
 export default function CumplimientoPage() {
     const { user, loading: authLoading } = useAuth();
     const router = useRouter();
@@ -171,8 +174,6 @@ export default function CumplimientoPage() {
         };
     }, [selectedCourse, employees, positions]);
 
-    // Status sort order: pending/failed first, approved last
-    const statusOrder = { no_tomado: 0, failed: 1, approved: 2 };
 
     // Filter by search term and sort: pendientes primero, aprobados al final
     const filteredEmployees = useMemo(() => {
@@ -185,7 +186,7 @@ export default function CumplimientoPage() {
                 emp.department.toLowerCase().includes(term)
             );
         }
-        return [...list].sort((a, b) => (statusOrder[a.status] ?? 0) - (statusOrder[b.status] ?? 0));
+        return [...list].sort((a, b) => (STATUS_ORDER[a.status] ?? 0) - (STATUS_ORDER[b.status] ?? 0));
     }, [courseEmployees, searchTerm]);
 
     // Pagination
@@ -232,7 +233,7 @@ export default function CumplimientoPage() {
         // CSV: mismo orden que la lista (pendientes primero)
         const sortedForExport = [...courseEmployees]
             .filter(filterFn)
-            .sort((a, b) => (statusOrder[a.status] ?? 0) - (statusOrder[b.status] ?? 0));
+            .sort((a, b) => (STATUS_ORDER[a.status] ?? 0) - (STATUS_ORDER[b.status] ?? 0));
         const headers = ['ID Empleado', 'Nombre', 'Departamento', 'Puesto', 'Fecha', 'Calificacion', 'Estado'];
         const rows = sortedForExport.map(emp => [
             emp.id,
@@ -282,7 +283,7 @@ export default function CumplimientoPage() {
         // PDF: mismo orden que la lista (pendientes primero)
         const sortedForPDF = [...courseEmployees]
             .filter(filterFn)
-            .sort((a, b) => (statusOrder[a.status] ?? 0) - (statusOrder[b.status] ?? 0));
+            .sort((a, b) => (STATUS_ORDER[a.status] ?? 0) - (STATUS_ORDER[b.status] ?? 0));
         const rows = sortedForPDF.map(emp => {
             const statusLabel = emp.status === 'approved' ? 'Aprobado' : emp.status === 'failed' ? 'Reprobado' : 'Pendiente';
             const statusColor = emp.status === 'approved' ? '#16a34a' : emp.status === 'failed' ? '#dc2626' : '#d97706';

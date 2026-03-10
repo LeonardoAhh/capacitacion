@@ -43,18 +43,37 @@ export async function fetchEmployeeCourses(employeeId) {
     const coursesData = await Promise.all(
         progSnap.docs.map(async (pDoc) => {
             const progData = pDoc.data();
-            const courseDoc = await getDoc(doc(db, 'cursos_induccion', progData.courseId));
-            const courseDetail = courseDoc.exists()
-                ? courseDoc.data()
-                : { nombre: 'Curso no encontrado', descripcion: '' };
+
+            // Buscar primero en colección principal `cursos` (cursos interactivos nuevos)
+            let courseDetail = null;
+            const mainCourseDoc = await getDoc(doc(db, 'cursos', progData.courseId));
+            if (mainCourseDoc.exists()) {
+                const data = mainCourseDoc.data();
+                courseDetail = {
+                    ...data,
+                    title: data.title || data.nombre || 'Sin Título',
+                    description: data.description || data.descripcion || '',
+                };
+            } else {
+                // Fallback: colección legada `cursos_induccion`
+                const legacyDoc = await getDoc(doc(db, 'cursos_induccion', progData.courseId));
+                if (legacyDoc.exists()) {
+                    const data = legacyDoc.data();
+                    courseDetail = {
+                        ...data,
+                        title: data.title || data.nombre || 'Sin Título',
+                        description: data.description || data.descripcion || '',
+                    };
+                } else {
+                    courseDetail = { title: 'Curso no encontrado', description: '' };
+                }
+            }
 
             return {
                 id: progData.courseId,
                 assignmentId: pDoc.id,
                 ...courseDetail,
-                title: courseDetail.nombre || 'Sin Título',
-                description: courseDetail.descripcion || '',
-                ...progData,
+                ...progData, // progData al final para que status/assignedAt tengan preferencia
             };
         })
     );

@@ -3,9 +3,9 @@
 import { useState } from 'react';
 import { db } from '@/lib/firebase';
 import { collection, addDoc, query, where, getDocs, Timestamp } from 'firebase/firestore';
-import Navbar from '@/components/layout/Navbar/Navbar';
+import AdminLayout from '@/components/layout/AdminLayout/AdminLayout';
 import { UserPlus, Save, AlertCircle, CheckCircle } from 'lucide-react';
-import BackButton from '@/components/ui/BackButton/BackButton';
+
 import styles from './page.module.css';
 
 export default function RegistroEmpleadosPage() {
@@ -119,12 +119,9 @@ export default function RegistroEmpleadosPage() {
     };
 
     return (
-        <div className={styles.container}>
-            <Navbar />
-
+        <AdminLayout title="Registro de Personal">
             <main className={styles.main}>
                 <div className={styles.headerWrapper}>
-                    <BackButton href="/dashboard/programacion" />
                     <div className={styles.header}>
                         <h1 className={styles.pageTitle}>Registro de Personal</h1>
                         <p className={styles.subtitle}>Alta rápida de empleados para plataforma de capacitación.</p>
@@ -187,12 +184,12 @@ export default function RegistroEmpleadosPage() {
                                             <option value="">Seleccionar...</option>
                                             <option value="ALMACEN">Almacén</option>
                                             <option value="CALIDAD">Calidad</option>
-                                            <option value="COMERCIAL">Comercial</option>
+                                            <option value="MOLDES">Moldes</option>
                                             <option value="MANTENIMIENTO">Mantenimiento</option>
                                             <option value="PRODUCCIÓN">Producción</option>
                                             <option value="RH">Recursos Humanos</option>
                                             <option value="SISTEMAS">Sistemas</option>
-                                            <option value="OTROS">Otros</option>
+                                            <option value="PROYECTOS">Proyectos</option>
                                         </select>
                                     </div>
 
@@ -278,6 +275,6 @@ export default function RegistroEmpleadosPage() {
                     </form>
                 </div>
             </main>
-        </div>
+        </AdminLayout>
     );
 }

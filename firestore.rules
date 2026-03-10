@@ -37,22 +37,23 @@ service cloud.firestore {
     
     // ===== REGLAS POR COLECCIÓN =====
     
-		match /users/{userId} {
-  		allow read: if isAuthenticated() && 
+    match /users/{userId} {
+      allow read: if isAuthenticated() && 
                  (request.auth.uid == userId || hasAnyRole(['super_admin', 'rh']));
-  		allow create: if hasRole('super_admin') || 
+      allow create: if hasRole('super_admin') || 
                   (isAuthenticated() && 
                    request.auth.uid == userId &&
                    request.resource.data.email == request.auth.token.email);
-  		allow update: if hasAnyRole(['super_admin', 'rh']) || request.auth.uid == userId;
-			allow delete: if hasRole('super_admin');
-  // ✅ NUEVO — Progreso del usuario en cursos interactivos
-  // Ruta: users/{userId}/progress/{courseId}
-  	match /progress/{courseId} {
-    // El usuario solo puede leer y escribir su propio progreso
-			allow read, write: if isAuthenticated() && request.auth.uid == userId;
-  }
-}
+      allow update: if hasAnyRole(['super_admin', 'rh']) || request.auth.uid == userId;
+      allow delete: if hasRole('super_admin');
+
+      // ✅ Progreso del usuario en cursos interactivos
+      // Ruta: users/{userId}/progress/{courseId}
+      match /progress/{courseId} {
+        // El usuario solo puede leer y escribir su propio progreso
+        allow read, write: if isAuthenticated() && request.auth.uid == userId;
+      }
+    }
     
     match /employees/{docId} {
       allow read: if true;
@@ -80,14 +81,12 @@ service cloud.firestore {
     
     match /induction_courses/{docId} {
       allow read: if true;
-      // ✅ instructor agregado
       allow write: if hasAnyRole(['super_admin', 'rh', 'instructor'])
                    && isValidString(request.resource.data.title);
     }
     
     match /cursos_induccion/{docId} {
       allow read: if true;
-      // ✅ instructor agregado
       allow write: if hasAnyRole(['super_admin', 'rh', 'instructor']);
     }
 
@@ -169,33 +168,51 @@ service cloud.firestore {
     }
 
     // ===== CURSOS INTERACTIVOS NATIVOS =====
+    // ✅ read: true — el portal de training usa sesión propia (sin Firebase Auth)
+    //    y necesita leer cursos y slides sin autenticación de Firebase.
     match /cursos/{courseId} {
-      allow read: if isAuthenticated();
-      // ✅ instructor agregado
+      allow read: if true;
       allow write: if hasAnyRole(['super_admin', 'instructor']);
 
       match /slides/{slideId} {
-        allow read: if isAuthenticated();
-        // ✅ instructor agregado
+        allow read: if true;
         allow write: if hasAnyRole(['super_admin', 'instructor']);
       }
     }
+
+    // ===== BANCO DE EXÁMENES NATIVO =====
+    match /examenes/{examId} {
+      // Un candidato logueado solo puede leer si está publicado. Admins pueden leer todos.
+      allow read: if isAuthenticated() && (
+        resource.data.status == 'published' || hasAnyRole(['super_admin', 'admin', 'instructor', 'Instructor', 'rh'])
+      );
+      // Solo roles administrativos pueden crear, modificar o eliminar exámenes
+      allow write: if hasAnyRole(['super_admin', 'admin', 'instructor', 'Instructor', 'rh']);
+    }
+
+    // Historial auditable de exámenes (snapshots)
+    match /exam_history/{historyId} {
+      allow read, write: if hasAnyRole(['super_admin', 'admin', 'instructor', 'Instructor', 'rh']);
+    }
     
-    // ✅ NUEVO — MURAL DE RECONOCIMIENTO (Protegido VS Búsqueda Pública Libre)
+    match /employees/{empId}/exam_results/{resultId} {
+      allow read: if isAuthenticated();
+      allow write: if isAuthenticated();
+    }
+
+    // ===== MURAL DE RECONOCIMIENTO =====
     match /mural_exams/{employeeId} {
       // Público puede visualizar solo si conoce el ID puntual 
       allow get: if true; 
       // Por seguridad: Nadie puede leer/exportar la lista de todos (evita scrapeo de datos)
       allow list: if false; 
-      // Solo administrador publicadores pueden re-sincronizar esto
+      // Solo administradores pueden re-sincronizar esto
       allow write: if hasAnyRole(['super_admin', 'admin', 'rh']);
     }
     
     // ===== GRUPOS Y CERTIFICACIONES (Auditores, Brigadas, etc.) =====
     match /groups/{docId} {
-      // Cualquier usuario autenticado puede leer los grupos
       allow read: if isAuthenticated();
-      // Solo super_admin y rh pueden crear/modificar grupos
       allow create: if hasAnyRole(['super_admin', 'rh'])
                     && isValidString(request.resource.data.name);
       allow update: if hasAnyRole(['super_admin', 'rh'])

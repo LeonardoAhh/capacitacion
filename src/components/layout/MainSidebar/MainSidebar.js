@@ -4,16 +4,17 @@ import React, { useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import NextImage from 'next/image';
-import { LogOut, LayoutDashboard, Settings, Award, GraduationCap, X, ChevronDown, ChevronRight, FileText, CheckSquare, Calendar, Users, BarChart2, BookOpen, UserCheck, Briefcase, List, FileCheck, Layers, Zap } from 'lucide-react';
+import { LogOut, LayoutDashboard, Settings, Award, GraduationCap, X, ChevronDown, ChevronRight, FileText, CheckSquare, Calendar, Users, BarChart2, BookOpen, UserCheck, Briefcase, List, FileCheck, Layers, Zap, CalendarRange } from 'lucide-react';
 import styles from './MainSidebar.module.css';
 
 export default function MainSidebar({ user, handleLogout, isOpen, onClose }) {
     const pathname = usePathname();
     const isSuperAdmin = user?.rol === 'super_admin';
+    const isAdmin = user?.rol === 'admin' || user?.rol === 'super_admin';
     const isDemo = user?.rol === 'demo' || user?.email?.includes('demo');
 
     const [expandedMenu, setExpandedMenu] = useState(
-        (pathname.startsWith('/capacitacion') || pathname.startsWith('/dashboard/candidates')) ? 'capacitacion' :
+        (pathname.startsWith('/capacitacion') || pathname.startsWith('/dashboard/candidates') || pathname.startsWith('/dashboard/programacion')) ? 'capacitacion' :
             ((pathname === '/dashboard' || pathname.startsWith('/employees')) ? 'nuevos_ingresos' : null)
     );
 
@@ -38,7 +39,8 @@ export default function MainSidebar({ user, handleLogout, isOpen, onClose }) {
             subItems: [
                 { id: 'dashboard', title: 'Dashboard', href: '/dashboard', icon: BarChart2 },
                 { id: 'empleados', title: 'Empleados', href: '/employees', icon: Users },
-                { id: 'postulantes', title: 'Seguimiento', href: '/dashboard/candidates', icon: Users }
+                { id: 'postulantes', title: 'Seguimiento', href: '/dashboard/candidates', icon: Users },
+                { id: 'programacion', title: 'Programación', href: '/dashboard/programacion', icon: CalendarRange }
             ]
         },
         {
@@ -60,7 +62,7 @@ export default function MainSidebar({ user, handleLogout, isOpen, onClose }) {
                 { id: 'perfil', title: 'Perfil', href: '/capacitacion/perfil', icon: UserCheck },
                 { id: 'promociones', title: 'Categorías', href: '/capacitacion/promociones', icon: Briefcase },
                 { id: 'examen', title: 'Exámenes', href: '/capacitacion/examen', icon: FileText },
-                { id: 'calendario', title: 'Calendario', href: '/capacitacion/calendario', icon: Calendar }
+                { id: 'calendario', title: 'Calendario', href: '/capacitacion/calendario', icon: Calendar },
             ]
         },
         {

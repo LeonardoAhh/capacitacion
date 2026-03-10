@@ -34,34 +34,46 @@ export default function MonitoringTable() {
         if (!silent) setLoading(true);
         setRefreshing(true);
         try {
-            const [progSnap, empSnap, courseSnap] = await Promise.all([
+            // Consultamos las tres colecciones en paralelo
+            // cursos_induccion = legada, cursos = principal (nueva UI)
+            const [progSnap, empSnap, legacySnap, mainSnap] = await Promise.all([
                 getDocs(collection(db, 'programacion')),
                 getDocs(collection(db, 'employees_programacion')),
                 getDocs(collection(db, 'cursos_induccion')),
+                getDocs(collection(db, 'cursos')),
             ]);
 
+            // Mapa de empleados
             const employeesMap = {};
             empSnap.docs.forEach(d => { employeesMap[d.id] = d.data(); });
 
+            // Mapa de cursos: legada primero, luego principal (sobreescribe si hay coincidencia)
             const coursesMap = {};
-            courseSnap.docs.forEach(d => { coursesMap[d.id] = d.data(); });
+            legacySnap.docs.forEach(d => {
+                const data = d.data();
+                coursesMap[d.id] = { ...data, title: data.title || data.nombre || 'Sin título' };
+            });
+            mainSnap.docs.forEach(d => {
+                const data = d.data();
+                coursesMap[d.id] = { ...data, title: data.title || data.nombre || 'Sin título' };
+            });
 
             const fullData = progSnap.docs.map(d => {
                 const item = { id: d.id, ...d.data() };
                 const emp = employeesMap[item.employeeId] || { name: 'Desconocido', area: '-' };
-                const course = coursesMap[item.courseId] || { nombre: 'Curso eliminado' };
+                const course = coursesMap[item.courseId] || { title: 'Curso eliminado' };
 
                 return {
                     ...item,
                     employeeName: emp.name,
                     employeeArea: emp.area,
-                    courseTitle: course.nombre || course.title || 'Sin título',
+                    courseTitle: course.title,
                 };
             });
 
             setAssignments(fullData);
         } catch (error) {
-            console.error("Error fetching monitoring data:", error);
+            console.error('Error fetching monitoring data:', error);
         } finally {
             if (!silent) setLoading(false);
             setRefreshing(false);

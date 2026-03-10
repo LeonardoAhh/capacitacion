@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 
 import { useState, useEffect, useMemo, useCallback, useRef } from 'react';
 import { useRouter } from 'next/navigation';
@@ -7,7 +7,7 @@ import { collection, getDocs, addDoc, query, where, Timestamp } from 'firebase/f
 import AdminLayout from '@/components/layout/AdminLayout/AdminLayout';
 import { Users, BookOpen, CheckCircle, ChevronLeft, Edit2, FileText, LayoutGrid, Activity, Search, ChevronRight, RefreshCw, ArrowLeft, UserPlus } from 'lucide-react';
 import Link from 'next/link';
-import BackButton from '@/components/ui/BackButton/BackButton';
+
 import { motion, AnimatePresence, useMotionValue, useTransform, animate } from 'framer-motion';
 import EditEmployeeModal from '@/components/features/Training/EditEmployeeModal';
 import EmployeeAssignmentsModal from '@/components/features/Training/EmployeeAssignmentsModal';
@@ -111,25 +111,56 @@ export default function ProgramacionPage() {
     const fetchData = async (silent = false) => {
         if (!silent) setLoading(true);
         try {
+            // Empleados
             const empSnapshot = await getDocs(collection(db, 'employees_programacion'));
             const empList = empSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
             setEmployees(empList);
 
-            const coursesSnapshot = await getDocs(collection(db, 'cursos_induccion'));
-            const coursesList = coursesSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+            // Cursos — consultamos ambas fuentes en paralelo
+            // Nota: no usamos orderBy en Firestore para evitar requerir índice compuesto;
+            // el ordenamiento se hace en el cliente.
+            const [cursosSnap, legacySnap] = await Promise.all([
+                getDocs(query(collection(db, 'cursos'), where('published', '==', true))),
+                getDocs(collection(db, 'cursos_induccion')),
+            ]);
 
-            if (coursesList.length === 0) {
+            // Cursos interactivos (excluyendo tipo link), ordenados por título
+            const mainCourses = cursosSnap.docs
+                .map(doc => ({ id: doc.id, ...doc.data() }))
+                .filter(c => !c.tipo || c.tipo !== 'link')
+                .map(c => ({
+                    id: c.id,
+                    title: c.title || c.nombre || 'Sin título',
+                    duration: c.duration || c.duracion || '',
+                }))
+                .sort((a, b) => a.title.localeCompare(b.title, 'es'));
+
+            // Cursos legados (cursos_induccion)
+            const legacyCourses = legacySnap.docs
+                .map(doc => ({ id: doc.id, ...doc.data() }))
+                .map(c => ({
+                    id: c.id,
+                    title: c.title || c.nombre || 'Sin título',
+                    duration: c.duration || c.duracion || '',
+                }));
+
+            // Fusión: main tiene preferencia; se evitan duplicados por título
+            const seenTitles = new Set(mainCourses.map(c => c.title.toLowerCase()));
+            const uniqueLegacy = legacyCourses.filter(c => !seenTitles.has(c.title.toLowerCase()));
+            const allCourses = [...mainCourses, ...uniqueLegacy];
+
+            if (allCourses.length === 0) {
                 setCourses([
                     { id: 'mock1', title: 'Seguridad Industrial Básica', duration: '1h' },
                     { id: 'mock2', title: 'Código de Ética', duration: '30m' },
                     { id: 'mock3', title: '5S en Oficina', duration: '45m' },
                 ]);
             } else {
-                setCourses(coursesList);
+                setCourses(allCourses);
             }
             setLoading(false);
         } catch (error) {
-            console.error("Error fetching data:", error);
+            console.error('Error fetching data:', error);
             setLoading(false);
         }
     };
@@ -363,7 +394,7 @@ export default function ProgramacionPage() {
                                 </span>
                             )}
                             {mobileStep === 2 && (
-                                <span>{selectedEmployees.length} empleado{selectedEmployees.length !== 1 ? 's' : ''} Ã— 1 curso</span>
+                                <span>{selectedEmployees.length} empleado{selectedEmployees.length !== 1 ? 's' : ''} × 1 curso</span>
                             )}
                         </div>
 
@@ -443,7 +474,7 @@ export default function ProgramacionPage() {
                 onChange={e => setSelectedArea(e.target.value)}
                 aria-label="Filtrar por área"
             >
-                <option value="all">Todas las Ãreas</option>
+                <option value="all">Todas las Áreas</option>
                 {areas.filter(a => a !== 'all').map(area => (
                     <option key={area} value={area}>{area}</option>
                 ))}
@@ -477,7 +508,7 @@ export default function ProgramacionPage() {
                             </div>
                             <div className={styles.mobileEmpInfo}>
                                 <span className={styles.mobileEmpName}>{emp.name || 'Sin Nombre'}</span>
-                                <span className={styles.mobileEmpRole}>{emp.position || emp.puesto || 'â€”'}</span>
+                                <span className={styles.mobileEmpRole}>{emp.position || emp.puesto || '—'}</span>
                             </div>
                             <div className={styles.mobileEmpActions} onClick={e => e.stopPropagation()}>
                                 <button
@@ -680,7 +711,7 @@ export default function ProgramacionPage() {
                                         onChange={e => setSelectedArea(e.target.value)}
                                         aria-label="Filtrar por área"
                                     >
-                                        <option value="all">Todas las Ãreas</option>
+                                        <option value="all">Todas las Áreas</option>
                                         {areas.filter(a => a !== 'all').map(area => (
                                             <option key={area} value={area}>{area}</option>
                                         ))}
@@ -730,7 +761,7 @@ export default function ProgramacionPage() {
                                                     <div className={styles.empId}>{emp.employeeId}</div>
                                                 </div>
                                                 <div className={styles.empRole}>
-                                                    {emp.position || emp.puesto || 'â€”'}
+                                                    {emp.position || emp.puesto || '—'}
                                                 </div>
                                                 <div className={styles.itemActions} onClick={e => e.stopPropagation()}>
                                                     <button
@@ -889,9 +920,6 @@ export default function ProgramacionPage() {
 
 
                 <main className={styles.main}>
-                    {/* Back link */}
-                    <BackButton href="/dashboard" />
-
                     {isMobile ? renderMobileView() : renderDesktopView()}
                 </main>
 
