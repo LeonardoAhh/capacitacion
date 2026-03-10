@@ -1,6 +1,7 @@
 'use client';
 
-import { useState, useEffect, useMemo, useCallback } from 'react';
+import { useState, useEffect, useMemo, useCallback, useRef } from 'react';
+import { Filter } from 'lucide-react';
 import AdminLayout from '@/components/layout/AdminLayout/AdminLayout';
 import { useAuth } from '@/contexts/AuthContext';
 import { useRouter } from 'next/navigation';
@@ -26,6 +27,9 @@ export default function CumplimientoPage() {
     const [currentPage, setCurrentPage] = useState(1);
     const [expandedRows, setExpandedRows] = useState(new Set());
     const itemsPerPage = 25;
+    const [exportFilter, setExportFilter] = useState('all'); // 'all' | 'pending' | 'approved'
+    const [filterOpen, setFilterOpen] = useState(false);
+    const filterRef = useRef(null);
 
     const toggleRow = (empId) => {
         setExpandedRows(prev => {
@@ -78,6 +82,17 @@ export default function CumplimientoPage() {
             loadData();
         }
     }, [loadData, user, authLoading, router]);
+
+    // Cerrar filter dropdown al hacer click afuera
+    useEffect(() => {
+        const handleOutside = (e) => {
+            if (filterRef.current && !filterRef.current.contains(e.target)) {
+                setFilterOpen(false);
+            }
+        };
+        document.addEventListener('mousedown', handleOutside);
+        return () => document.removeEventListener('mousedown', handleOutside);
+    }, []);
 
 
 
@@ -156,15 +171,21 @@ export default function CumplimientoPage() {
         };
     }, [selectedCourse, employees, positions]);
 
-    // Filter by search term
+    // Status sort order: pending/failed first, approved last
+    const statusOrder = { no_tomado: 0, failed: 1, approved: 2 };
+
+    // Filter by search term and sort: pendientes primero, aprobados al final
     const filteredEmployees = useMemo(() => {
-        if (!searchTerm) return courseEmployees;
-        const term = searchTerm.toLowerCase();
-        return courseEmployees.filter(emp =>
-            emp.name.toLowerCase().includes(term) ||
-            emp.id.toLowerCase().includes(term) ||
-            emp.department.toLowerCase().includes(term)
-        );
+        let list = courseEmployees;
+        if (searchTerm) {
+            const term = searchTerm.toLowerCase();
+            list = list.filter(emp =>
+                emp.name.toLowerCase().includes(term) ||
+                emp.id.toLowerCase().includes(term) ||
+                emp.department.toLowerCase().includes(term)
+            );
+        }
+        return [...list].sort((a, b) => (statusOrder[a.status] ?? 0) - (statusOrder[b.status] ?? 0));
     }, [courseEmployees, searchTerm]);
 
     // Pagination
@@ -201,13 +222,26 @@ export default function CumplimientoPage() {
             return;
         }
 
-        // Create CSV content
-        const headers = ['ID Empleado', 'Nombre Curso', 'Fecha', 'Calificación'];
-        const rows = courseEmployees.map(emp => [
+        // Aplicar filtro de exportación
+        const filterFn = exportFilter === 'pending'
+            ? (e) => e.status !== 'approved'
+            : exportFilter === 'approved'
+                ? (e) => e.status === 'approved'
+                : () => true;
+
+        // CSV: mismo orden que la lista (pendientes primero)
+        const sortedForExport = [...courseEmployees]
+            .filter(filterFn)
+            .sort((a, b) => (statusOrder[a.status] ?? 0) - (statusOrder[b.status] ?? 0));
+        const headers = ['ID Empleado', 'Nombre', 'Departamento', 'Puesto', 'Fecha', 'Calificacion', 'Estado'];
+        const rows = sortedForExport.map(emp => [
             emp.id,
-            selectedCourse,
+            emp.name,
+            emp.department,
+            emp.position,
             emp.date,
-            emp.score
+            emp.score,
+            emp.status === 'approved' ? 'Aprobado' : emp.status === 'failed' ? 'Reprobado' : 'Pendiente'
         ]);
 
         // Build CSV string
@@ -221,7 +255,8 @@ export default function CumplimientoPage() {
         const link = document.createElement('a');
         const url = URL.createObjectURL(blob);
         link.setAttribute('href', url);
-        link.setAttribute('download', `Reporte_${selectedCourse.replace(/\s+/g, '_')}_${new Date().toLocaleDateString('es-MX').replace(/\//g, '-')}.csv`);
+        const filterSuffix = exportFilter === 'pending' ? '_SoloPendientes' : exportFilter === 'approved' ? '_SoloAprobados' : '';
+        link.setAttribute('download', `Reporte_${selectedCourse.replace(/\s+/g, '_')}${filterSuffix}_${new Date().toLocaleDateString('es-MX').replace(/\//g, '-')}.csv`);
         link.style.visibility = 'hidden';
         document.body.appendChild(link);
         link.click();
@@ -237,7 +272,18 @@ export default function CumplimientoPage() {
         }
 
         const now = new Date().toLocaleDateString('es-MX', { year: 'numeric', month: 'long', day: 'numeric' });
-        const rows = courseEmployees.map(emp => {
+        // Aplicar filtro de exportación
+        const filterFn = exportFilter === 'pending'
+            ? (e) => e.status !== 'approved'
+            : exportFilter === 'approved'
+                ? (e) => e.status === 'approved'
+                : () => true;
+
+        // PDF: mismo orden que la lista (pendientes primero)
+        const sortedForPDF = [...courseEmployees]
+            .filter(filterFn)
+            .sort((a, b) => (statusOrder[a.status] ?? 0) - (statusOrder[b.status] ?? 0));
+        const rows = sortedForPDF.map(emp => {
             const statusLabel = emp.status === 'approved' ? 'Aprobado' : emp.status === 'failed' ? 'Reprobado' : 'Pendiente';
             const statusColor = emp.status === 'approved' ? '#16a34a' : emp.status === 'failed' ? '#dc2626' : '#d97706';
             const badgeBg = emp.status === 'approved' ? '#dcfce7' : emp.status === 'failed' ? '#fee2e2' : '#fef9c3';
@@ -252,6 +298,8 @@ export default function CumplimientoPage() {
             </tr>`;
         }).join('');
 
+        const filterLabel = exportFilter === 'pending' ? 'Solo Pendientes' : exportFilter === 'approved' ? 'Solo Aprobados' : 'Todos';
+
         const html = `<!DOCTYPE html>
 <html lang="es"><head><meta charset="UTF-8"/>
 <title>Cumplimiento — ${selectedCourse}</title>
@@ -261,6 +309,7 @@ export default function CumplimientoPage() {
   header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:24px;padding-bottom:16px;border-bottom:2px solid #e2e8f0}
   .logo{font-size:1.3rem;font-weight:800;color:#3b82f6}
   .title{font-size:1.4rem;font-weight:700;margin-top:6px}
+  .filterTag{display:inline-block;margin-top:6px;padding:3px 10px;border-radius:20px;font-size:0.75rem;font-weight:600;background:${exportFilter==='pending'?'#fffbeb':exportFilter==='approved'?'#f0fdf4':'#eff6ff'};color:${exportFilter==='pending'?'#d97706':exportFilter==='approved'?'#16a34a':'#2563eb'}}
   .meta{text-align:right;font-size:0.85rem;color:#64748b}
   .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:24px}
   .stat{padding:14px;border-radius:10px;text-align:center}
@@ -278,7 +327,7 @@ export default function CumplimientoPage() {
   @media print{body{padding:16px}}
 </style></head><body>
 <header>
-  <div><div class="logo">ViñaPlastic — Capacitación</div><div class="title">${selectedCourse}</div></div>
+  <div><div class="logo">Viñaplastic — Capacitación</div><div class="title">${selectedCourse}</div><div class="filterTag">${filterLabel}</div></div>
   <div class="meta"><div>Reporte de Cumplimiento</div><div style="margin-top:4px">${now}</div></div>
 </header>
 <div class="stats">
@@ -335,7 +384,34 @@ export default function CumplimientoPage() {
                                     </select>
                                 </div>
                                 {selectedCourse && courseEmployees.length > 0 && (
-                                    <div style={{ display: 'flex', gap: '0.5rem', marginTop: 'auto' }}>
+                                    <div style={{ display: 'flex', gap: '0.5rem', marginTop: 'auto', alignItems: 'center', flexWrap: 'wrap' }}>
+                                        {/* Botón ícono de filtro */}
+                                        <div className={styles.filterWrapper} ref={filterRef}>
+                                            <button
+                                                className={`${styles.filterBtn} ${exportFilter !== 'all' ? styles.filterActive : ''}`}
+                                                onClick={() => setFilterOpen(p => !p)}
+                                                title={exportFilter === 'all' ? 'Filtrar exportación' : exportFilter === 'pending' ? 'Solo Pendientes' : 'Solo Aprobados'}
+                                            >
+                                                <Filter size={16} />
+                                            </button>
+                                            {filterOpen && (
+                                                <div className={styles.filterMenu}>
+                                                    {[
+                                                        { value: 'all', label: 'Todo' },
+                                                        { value: 'pending', label: 'Solo Pendientes' },
+                                                        { value: 'approved', label: 'Solo Aprobados' },
+                                                    ].map(opt => (
+                                                        <button
+                                                            key={opt.value}
+                                                            className={`${styles.filterOption} ${exportFilter === opt.value ? styles.filterOptionActive : ''}`}
+                                                            onClick={() => { setExportFilter(opt.value); setFilterOpen(false); }}
+                                                        >
+                                                            {opt.label}
+                                                        </button>
+                                                    ))}
+                                                </div>
+                                            )}
+                                        </div>
                                         <Button
                                             variant="outline"
                                             onClick={downloadReport}
@@ -368,7 +444,7 @@ export default function CumplimientoPage() {
                         {selectedCourse && (
                             <>
                                 {/* Stats Cards */}
-                                <div className={styles.statsGrid}>
+                                <div className={styles.statsGrid} style={{ marginTop: '40px' }}>
                                     <div className={`${styles.statCard} ${styles.statPrimary}`}>
                                         <div className={styles.statIcon}>
                                             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
