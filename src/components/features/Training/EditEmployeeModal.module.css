@@ -145,6 +145,38 @@
     background: var(--bg-secondary);
 }
 
+/* Copy Input */
+.copyInputWrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.copyInputWrapper input {
+    padding-right: 2.5rem;
+}
+
+.copyBtn {
+    position: absolute;
+    right: 0.5rem;
+    background: transparent;
+    border: none;
+    color: var(--text-tertiary);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    border-radius: 6px;
+    transition: all 0.2s ease;
+}
+
+.copyBtn:hover {
+    background: var(--bg-hover);
+    color: var(--color-primary);
+}
+
 /* Buttons */
 .deleteBtn {
     display: flex;

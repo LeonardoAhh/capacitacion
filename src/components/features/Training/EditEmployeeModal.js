@@ -1,14 +1,13 @@
 import { useState } from 'react';
-import { X, Save, Trash2, UserCog } from 'lucide-react';
+import { X, Save, Trash2, UserCog, Copy, CheckCircle2 } from 'lucide-react';
 import { db } from '@/lib/firebase';
 import { doc, updateDoc, deleteDoc, collection, query, where, getDocs, writeBatch } from 'firebase/firestore';
 import styles from './EditEmployeeModal.module.css';
-import { useConfirm } from '@/hooks/useConfirm';
 
 export default function EditEmployeeModal({ employee, onClose, onUpdate, onDelete }) {
     const [formData, setFormData] = useState({ ...employee });
     const [loading, setLoading] = useState(false);
-    const { showConfirm, confirmDialog } = useConfirm();
+    const [copied, setCopied] = useState(false);
 
     const handleChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -24,7 +23,8 @@ export default function EditEmployeeModal({ employee, onClose, onUpdate, onDelet
                 employeeId: formData.employeeId,
                 position: formData.position || formData.puesto || '',
                 area: formData.area,
-                shift: formData.shift || ''
+                shift: formData.shift || '',
+                accessCode: formData.accessCode || ''
             });
             onUpdate({ ...employee, ...formData });
             onClose();
@@ -35,8 +35,19 @@ export default function EditEmployeeModal({ employee, onClose, onUpdate, onDelet
         }
     };
 
+    const handleCopy = async () => {
+        if (!formData.accessCode) return;
+        try {
+            await navigator.clipboard.writeText(formData.accessCode);
+            setCopied(true);
+            setTimeout(() => setCopied(false), 2000);
+        } catch (err) {
+            console.error('Failed to copy text: ', err);
+        }
+    };
+
     const handleDelete = async () => {
-        if (!await showConfirm(`¿Eliminar a ${formData.name} y todas sus asignaciones? Esta acción es irreversible.`, { title: 'Eliminar Empleado', confirmLabel: 'Eliminar' })) return;
+        if (!window.confirm(`¿Eliminar a ${formData.name} y todas sus asignaciones? Esta acción es irreversible.`)) return;
         setLoading(true);
         try {
             const programacionRef = collection(db, 'programacion');
@@ -93,17 +104,40 @@ export default function EditEmployeeModal({ employee, onClose, onUpdate, onDelet
                                 />
                             </div>
 
-                            <div className={styles.inputGroup}>
-                                <label className={styles.label} htmlFor="em-id">ID de Empleado</label>
-                                <input
-                                    id="em-id"
-                                    className={styles.input}
-                                    name="employeeId"
-                                    value={formData.employeeId || ''}
-                                    onChange={handleChange}
-                                />
-                            </div>
+                            <div className={styles.row}>
+                                <div className={styles.inputGroup}>
+                                    <label className={styles.label} htmlFor="em-id">ID de Empleado</label>
+                                    <input
+                                        id="em-id"
+                                        className={styles.input}
+                                        name="employeeId"
+                                        value={formData.employeeId || ''}
+                                        onChange={handleChange}
+                                    />
+                                </div>
 
+                                <div className={styles.inputGroup}>
+                                    <label className={styles.label} htmlFor="em-code">Código de Acceso</label>
+                                    <div className={styles.copyInputWrapper}>
+                                        <input
+                                            id="em-code"
+                                            className={styles.input}
+                                            name="accessCode"
+                                            value={formData.accessCode || ''}
+                                            onChange={handleChange}
+                                        />
+                                        <button
+                                            type="button"
+                                            className={styles.copyBtn}
+                                            onClick={handleCopy}
+                                            title="Copiar código"
+                                        >
+                                            {copied ? <CheckCircle2 size={14} color="var(--color-success)" /> : <Copy size={14} />}
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            
                             <div className={styles.row}>
                                 <div className={styles.inputGroup}>
                                     <label className={styles.label} htmlFor="em-area">Área</label>
@@ -169,7 +203,6 @@ export default function EditEmployeeModal({ employee, onClose, onUpdate, onDelet
                     </form>
                 </div>
             </div>
-            {confirmDialog}
         </>
     );
 }
