@@ -105,13 +105,12 @@ function ShapeHeroComponent() {
                 <div className={styles.right} aria-hidden="true">
                     <div className={styles.visualWrapper}>
                         <Image
-                            src="/hero-visual.svg"
+                            src="/logo-vino-plastic.png"
                             alt=""
                             className={styles.visualImg}
-                            width={600}
-                            height={500}
+                            width={480}
+                            height={480}
                             priority
-                            unoptimized
                         />
                         <div className={styles.visualFade} />
                     </div>
@@ -121,7 +120,7 @@ function ShapeHeroComponent() {
 
             {/* Footer */}
             <footer className={styles.footer}>
-                <span className={styles.year}>© {new Date().getFullYear()} Vertx System</span>
+                <span className={styles.year}>© {new Date().getFullYear()} ViñoPlastic System</span>
             </footer>
         </section>
     );

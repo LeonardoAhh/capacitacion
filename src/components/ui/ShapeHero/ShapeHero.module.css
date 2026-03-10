@@ -496,36 +496,34 @@
 .visualWrapper {
     position: relative;
     width: 100%;
-    border-radius: 20px;
+    max-width: 380px;
+    margin: 0 auto;
+    border-radius: 28px;
     overflow: hidden;
-    box-shadow:
-        0 0 0 1px rgba(30, 96, 176, 0.25),
-        0 20px 60px rgba(0, 0, 0, 0.40),
-        inset 0 1px 0 rgba(255, 255, 255, 0.08);
+    background: transparent;
+    padding: 2rem;
 }
 
 [data-theme="dark"] .visualWrapper {
-    box-shadow:
-        0 0 0 1px rgba(30, 96, 176, 0.35),
-        0 20px 60px rgba(0, 0, 0, 0.60),
-        inset 0 1px 0 rgba(255, 255, 255, 0.06);
+    background: transparent;
 }
 
 .visualImg {
     width: 100%;
     height: auto;
     display: block;
-    border-radius: 20px;
+    border-radius: 12px;
+    object-fit: contain;
 }
 
-/* Fade lateral — usa tokens para ser coherente con el bg del tema */
+/* Fade lateral suave — difumina el borde izquierdo contra el fondo del hero */
 .visualFade {
     position: absolute;
     inset: 0;
     background: linear-gradient(to right,
             var(--visual-fade-start) 0%,
-            var(--visual-fade-mid) 25%,
-            transparent 45%);
+            var(--visual-fade-mid) 18%,
+            transparent 38%);
     pointer-events: none;
 }
 

@@ -1,8 +1,2 @@
-export const metadata = {
-    title: 'Mural de Reconocimiento',
-    description: 'Consulta tu resultado de examen teórico y estado de promoción.',
-};
-
-export default function MuralLayout({ children }) {
-    return children;
-}
+export const metadata = { title: 'Mural' };
+export default function Layout({ children }) { return children; }

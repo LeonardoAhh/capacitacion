@@ -41,7 +41,10 @@ export const viewport = {
 };
 
 export const metadata = {
-    title: 'Vertx ViñoPlastic',
+    title: {
+        template: '%s | ViñoPlastic',
+        default: 'ViñoPlastic',
+    },
     description: 'Plataforma de capacitación Viñoplastic.',
     manifest: '/manifest.json',
     icons: {
