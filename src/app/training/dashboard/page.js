@@ -32,9 +32,9 @@ import {
 import styles from './page.module.css';
 
 export default function TrainingDashboard() {
-    const { user, courses, loading, stats, markAsViewed, markAsCompleted, updateTheme, updateAvatar, updateNickname, logout } = useTrainingData();
+    const { user, courses, positionCourses, trainingRecord, loading, stats, markAsViewed, markAsCompleted, updateTheme, updateAvatar, updateNickname, logout } = useTrainingData();
     const { theme, setTheme, availableThemes } = useTheme();
-    const gamification = useGamification(user, courses, stats);
+    const gamification = useGamification(user, courses, stats, positionCourses, trainingRecord);
 
     const [showWelcome, setShowWelcome] = useState(false);
     const [showSetupWizard, setShowSetupWizard] = useState(false);
@@ -274,14 +274,6 @@ export default function TrainingDashboard() {
                 {/* Compliance */}
                 <TrainingCompliance user={user} />
 
-                {/* Courses Header */}
-                <div className={styles.header}>
-                    <h1 className={styles.pageTitle}>Mis Cursos Asignados</h1>
-                    <p className={styles.pageSubtitle}>
-                        Gestiona tu avance y completa las capacitaciones programadas.
-                    </p>
-                </div>
-
                 {/* Search */}
                 <div className={styles.controls}>
                     <div className={styles.searchWrapper}>
@@ -309,11 +301,6 @@ export default function TrainingDashboard() {
                         <h3 className={styles.emptyTitle}>
                             {searchQuery ? 'No se encontraron cursos' : 'Sin cursos asignados'}
                         </h3>
-                        <p className={styles.emptyText}>
-                            {searchQuery
-                                ? 'Intenta con otro término de búsqueda'
-                                : 'Actualmente no tienes capacitaciones pendientes.'}
-                        </p>
                     </div>
                 ) : (
                     <div className={styles.coursesGrid}>

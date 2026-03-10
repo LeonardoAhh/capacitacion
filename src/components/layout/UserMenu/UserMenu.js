@@ -79,28 +79,6 @@ export default function UserMenu({ user, onLogout, onAvatarClick, onThemeChange 
                         </button>
                     </div>
 
-                    <div className={styles.menuSection}>
-                        <span className={styles.sectionTitle}>Apariencia</span>
-                        <div className={styles.themeGrid}>
-                            {Object.entries(availableThemes).map(([key, value]) => (
-                                <button
-                                    key={key}
-                                    className={`${styles.themeOption} ${theme === key ? styles.active : ''}`}
-                                    onClick={() => handleThemeSelect(key)}
-                                >
-                                    <div
-                                        className={styles.colorPreview}
-                                        style={{ backgroundColor: value.color }}
-                                    >
-                                        {theme === key && (
-                                            <IconCheck size={12} strokeWidth={3} color={key === 'dark' ? '#fff' : '#000'} />
-                                        )}
-                                    </div>
-                                    <span className={styles.themeLabel}>{value.name}</span>
-                                </button>
-                            ))}
-                        </div>
-                    </div>
 
                     <div className={styles.menuSection}>
                         <button onClick={onLogout} className={styles.logoutBtn}>

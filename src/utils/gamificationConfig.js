@@ -115,14 +115,7 @@ export const BADGES = [
     },
 
     // ── 11-13: Customization & Identity ───────────────────────
-    {
-        id: 'stylist',
-        title: 'Estilista',
-        description: 'Personalizaste tu tema.',
-        icon: <Palette />,
-        color: 'from-pink-400 to-rose-500',
-        condition: (stats) => stats.hasCustomTheme
-    },
+
     {
         id: 'identity',
         title: 'Identidad',

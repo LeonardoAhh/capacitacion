@@ -1,12 +1,23 @@
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import {
     BADGES, CERTIFICATES,
     calculateLevel, getRankCurrent, getNextRank,
     XP_PER_COURSE
 } from '@/utils/gamificationConfig';
 
-export function useGamification(user, courses, stats) {
+/**
+ * Hook de gamificación.
+ * Recibe `trainingRecord` (de `training_records`) con el historial REAL
+ * de cursos aprobados por el empleado, y `positionCourses` con los
+ * cursos requeridos por su puesto.
+ *
+ * Base de cálculo:
+ *  - XP: cursos aprobados en training_records (historial real)
+ *  - allCompleted: todos los cursos del puesto han sido aprobados
+ *  - allViewed: todos los cursos asignados en programacion han sido vistos/completados
+ */
+export function useGamification(user, courses = [], stats = {}, positionCourses = [], trainingRecord = null) {
     const [gamificationState, setGamificationState] = useState({
         level: 1,
         rank: null,
@@ -17,87 +28,84 @@ export function useGamification(user, courses, stats) {
         badges: [],
         earnedBadgesCount: 0,
         certificates: [],
-        earnedCertificatesCount: 0
+        earnedCertificatesCount: 0,
     });
 
     useEffect(() => {
         if (!user || !courses) return;
 
-        // 1. Calculate XP
+        // ── 1. Cursos aprobados (fuente de verdad: training_records) ────────
+        // Si tenemos el registro real del sistema de capacitación, lo usamos.
+        // Si no, caemos de vuelta a los cursos completados en programacion.
+        const realApprovedCount = trainingRecord?.approvedCount ?? stats.completed ?? 0;
+
+        // ── 2. allCompleted: se basa en cursos del puesto ───────────────────
+        const posCompleted   = positionCourses.filter(c => c.completed).length;
+        const posTotal       = positionCourses.length;
+        const allCompleted   = posTotal > 0 ? posCompleted >= posTotal : (stats.completed > 0 && stats.completed >= stats.total);
+
+        // ── 3. allViewed: sobre cursos de programacion ──────────────────────
+        const viewedCount = courses.filter(c => c.status === 'viewed' || c.status === 'completed').length;
+        const allViewed   = courses.length > 0 && viewedCount >= courses.length;
+
+        // ── 4. Calcular XP ──────────────────────────────────────────────────
         let calculatedXP = 0;
+        calculatedXP += realApprovedCount * XP_PER_COURSE;
 
-        // XP from Courses
-        calculatedXP += (stats.completed || 0) * XP_PER_COURSE;
+        // Bonus XP por perfil
+        if (user.avatar)                          calculatedXP += 50;
+        if (user.nickname)                        calculatedXP += 50;
 
-        // XP from Profile (Bonus)
-        if (user.avatar) calculatedXP += 50;
-        if (user.nickname) calculatedXP += 50;
-        if (user.theme && user.theme !== 'light') calculatedXP += 50;
-
-        // Base XP
+        // Base XP (primer login)
         calculatedXP += 100;
 
-        // 2. Determine Level and Ranks
-        const currentLevel = calculateLevel(calculatedXP);
-        const currentRank = getRankCurrent(currentLevel);
-        const nextRankObj = getNextRank(currentLevel);
+        // ── 5. Nivel y rango ────────────────────────────────────────────────
+        const currentLevel  = calculateLevel(calculatedXP);
+        const currentRank   = getRankCurrent(currentLevel);
+        const nextRankObj   = getNextRank(currentLevel);
 
-        // 3. Derived stats for evaluation
-        const totalCourses = courses.length;
-        const completedCount = stats.completed || 0;
-        const viewedCount = courses.filter(c => c.status === 'viewed' || c.status === 'completed').length;
-        const allViewed = totalCourses > 0 && viewedCount >= totalCourses;
-        const allCompleted = totalCourses > 0 && completedCount >= totalCourses;
-
-        // 4. Evaluate Badges (first pass — without earnedBadges count)
+        // ── 6. Evaluar badges ───────────────────────────────────────────────
+        const history = trainingRecord?.history || [];
         const evaluationStats = {
-            completed: completedCount,
-            hasPerfectScore: false,
-            streak: 1,
-            hasEarlyLogin: new Date().getHours() < 8,
-            hasLateLogin: new Date().getHours() > 20,
+            completed:       realApprovedCount,
+            hasPerfectScore: history.some(h => parseFloat(h.score || 0) >= 100),
+            streak:          1,
+            hasEarlyLogin:   new Date().getHours() < 8,
+            hasLateLogin:    new Date().getHours() > 20,
             hasWeekendLogin: [0, 6].includes(new Date().getDay()),
-            hasCustomTheme: user.theme && user.theme !== 'light',
             hasCustomAvatar: !!user.avatar,
-            hasNickname: !!user.nickname,
-            level: currentLevel,
-            loginCount: 5,
-            hasSafetyCourse: courses.some(c => c.title?.toLowerCase().includes('seguridad') && c.status === 'completed'),
-            hasQualityCourse: courses.some(c => c.title?.toLowerCase().includes('calidad') && c.status === 'completed'),
+            hasNickname:     !!user.nickname,
+            level:           currentLevel,
+            loginCount:      5,
+            hasSafetyCourse: history.some(h =>
+                h.status === 'approved' && (h.courseName || '').toLowerCase().includes('seguridad')
+            ),
+            hasQualityCourse: history.some(h =>
+                h.status === 'approved' && (h.courseName || '').toLowerCase().includes('calidad')
+            ),
             allViewed,
             allCompleted,
-            earnedBadges: 0, // Placeholder, recalculated below
+            earnedBadges: 0,
         };
 
-        // First pass: evaluate badges without self-referential count
-        const firstPassBadges = BADGES.map(badge => ({
-            ...badge,
-            unlocked: badge.condition(evaluationStats)
-        }));
-        const firstPassEarned = firstPassBadges.filter(b => b.unlocked).length;
+        // Primera pasada
+        const firstPassBadges  = BADGES.map(b => ({ ...b, unlocked: b.condition(evaluationStats) }));
+        const firstPassEarned  = firstPassBadges.filter(b => b.unlocked).length;
 
-        // Second pass: re-evaluate with actual earned count (for Collector/Completist badges)
+        // Segunda pasada (badges que dependen de earnedBadges)
         evaluationStats.earnedBadges = firstPassEarned;
-        const unlockedBadges = BADGES.map(badge => ({
-            ...badge,
-            unlocked: badge.condition(evaluationStats)
-        }));
+        const unlockedBadges   = BADGES.map(b => ({ ...b, unlocked: b.condition(evaluationStats) }));
         const earnedBadgesCount = unlockedBadges.filter(b => b.unlocked).length;
-
-        // Update earnedBadges if changed after second pass
         evaluationStats.earnedBadges = earnedBadgesCount;
 
-        // 5. Evaluate Certificates
-        const unlockedCertificates = CERTIFICATES.map(cert => ({
-            ...cert,
-            unlocked: cert.condition(evaluationStats)
-        }));
+        // ── 7. Certificados ─────────────────────────────────────────────────
+        const unlockedCertificates   = CERTIFICATES.map(c => ({ ...c, unlocked: c.condition(evaluationStats) }));
         const earnedCertificatesCount = unlockedCertificates.filter(c => c.unlocked).length;
 
-        // 6. Progress to next level
+        // ── 8. Progreso dentro del nivel ────────────────────────────────────
         const xpForCurrentLevel = (currentLevel - 1) * 200;
-        const xpInCurrentLevel = calculatedXP - xpForCurrentLevel;
-        const levelProgress = (xpInCurrentLevel / 200) * 100;
+        const xpInCurrentLevel  = calculatedXP - xpForCurrentLevel;
+        const levelProgress     = (xpInCurrentLevel / 200) * 100;
 
         setGamificationState({
             level: currentLevel,
@@ -112,7 +120,7 @@ export function useGamification(user, courses, stats) {
             earnedCertificatesCount,
         });
 
-    }, [user, courses, stats]);
+    }, [user, courses, stats, positionCourses, trainingRecord]);
 
     return gamificationState;
 }

@@ -78,9 +78,9 @@ const NoCategoryState = () => (
         <div style={{
             width: '48px',
             height: '48px',
-            background: 'rgba(99, 102, 241, 0.1)',
+            background: 'rgba(var(--color-primary-rgb), 0.1)',
             borderRadius: '12px',
-            color: '#6366f1',
+            color: 'var(--color-primary)',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
@@ -88,10 +88,10 @@ const NoCategoryState = () => (
         }}>
             <Sparkles size={24} />
         </div>
-        <h3 style={{ fontSize: '1.1rem', fontWeight: 600, marginBottom: '0.5rem' }}>
+        <h3 style={{ fontSize: '1.1rem', fontWeight: 600, marginBottom: '0.5rem', fontFamily: 'var(--font-body)' }}>
             ¡Tu camino comienza aquí!
         </h3>
-        <p style={{ color: 'var(--text-secondary)', fontSize: '0.95rem', maxWidth: '400px', margin: '0 auto' }}>
+        <p style={{ color: 'var(--text-secondary)', fontSize: '0.95rem', maxWidth: '400px', margin: '0 auto', fontFamily: 'var(--font-body)' }}>
             Estás listo para iniciar tu desarrollo profesional. Completa tus cursos para desbloquear nuevas oportunidades.
         </p>
     </motion.div>
@@ -116,9 +116,9 @@ const NoPlanState = ({ position }) => (
         <div style={{
             width: '48px',
             height: '48px',
-            background: 'rgba(100, 116, 139, 0.1)',
+            background: 'rgba(var(--color-primary-rgb), 0.08)',
             borderRadius: '12px',
-            color: '#64748b',
+            color: 'var(--text-secondary)',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
@@ -126,10 +126,10 @@ const NoPlanState = ({ position }) => (
         }}>
             <Info size={24} />
         </div>
-        <h3 style={{ fontSize: '1.1rem', fontWeight: 600, marginBottom: '0.5rem' }}>
+        <h3 style={{ fontSize: '1.1rem', fontWeight: 600, marginBottom: '0.5rem', fontFamily: 'var(--font-body)' }}>
             Desarrollo Profesional
         </h3>
-        <p style={{ color: 'var(--text-secondary)', fontSize: '0.95rem', maxWidth: '400px', margin: '0 auto' }}>
+        <p style={{ color: 'var(--text-secondary)', fontSize: '0.95rem', maxWidth: '400px', margin: '0 auto', fontFamily: 'var(--font-body)' }}>
             Tu puesto <strong>{position}</strong> sigue un programa de capacitación especializado.
         </p>
     </motion.div>
@@ -142,22 +142,21 @@ const MaxCategoryState = () => (
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.3 }}
         style={{
-            background: 'linear-gradient(135deg, #fef9c3 0%, #fef08a 100%)',
+            background: 'rgba(var(--color-primary-rgb), 0.06)',
             borderRadius: '20px',
             padding: '2rem',
             marginTop: '1.5rem',
             marginBottom: '3rem',
             textAlign: 'center',
-            border: '1px solid #fde047',
-            boxShadow: '0 4px 6px -1px rgba(250, 204, 21, 0.1), 0 2px 4px -1px rgba(250, 204, 21, 0.06)'
+            border: '1px solid rgba(var(--color-primary-rgb), 0.2)',
         }}
     >
         <div style={{
             width: '56px',
             height: '56px',
-            background: 'rgba(255, 255, 255, 0.5)',
+            background: 'rgba(var(--color-primary-rgb), 0.1)',
             borderRadius: '50%',
-            color: '#854d0e',
+            color: 'var(--color-primary)',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
@@ -165,10 +164,10 @@ const MaxCategoryState = () => (
         }}>
             <Trophy size={28} />
         </div>
-        <h3 style={{ fontSize: '1.25rem', fontWeight: 700, marginBottom: '0.5rem', color: '#854d0e' }}>
+        <h3 style={{ fontSize: '1.25rem', fontWeight: 700, marginBottom: '0.5rem', color: 'var(--color-secondary)', fontFamily: 'var(--font-serif)' }}>
             ¡Eres Categoría A!
         </h3>
-        <p style={{ color: '#a16207', fontSize: '1rem', maxWidth: '450px', margin: '0 auto', fontWeight: 500 }}>
+        <p style={{ color: 'var(--text-secondary)', fontSize: '1rem', maxWidth: '450px', margin: '0 auto', fontWeight: 500, fontFamily: 'var(--font-body)' }}>
             Has alcanzado el máximo nivel de excelencia. Tu dedicación y liderazgo inspiran a todo el equipo. ¡Sigue brillando!
         </p>
     </motion.div>
@@ -179,17 +178,17 @@ const ComplianceCard = ({ complianceData }) => {
     const { percentage = 0, nextPosition, positionStartDate, performancePeriod, performanceScore, scheduledExam } = complianceData;
 
     const progressColor = useMemo(() => {
-        if (percentage >= 80) return '#22c55e';
-        if (percentage >= 50) return '#f59e0b';
-        return '#6366f1';
+        if (percentage >= 80) return 'var(--color-success)';
+        if (percentage >= 50) return 'var(--color-primary)';
+        return 'var(--color-info)';
     }, [percentage]);
 
     const isHighCompliance = percentage >= 80;
 
     const getPerformanceBadgeStyle = (score) => {
-        if (score >= 90) return { bg: '#dcfce7', color: '#166534' };
-        if (score >= 70) return { bg: '#fef3c7', color: '#92400e' };
-        return { bg: '#fee2e2', color: '#991b1b' };
+        if (score >= 90) return { bg: 'rgba(var(--color-success-rgb), 0.12)', color: 'var(--color-success)' };
+        if (score >= 70) return { bg: 'rgba(var(--color-primary-rgb), 0.10)', color: 'var(--color-secondary)' };
+        return { bg: 'rgba(var(--color-danger-rgb), 0.10)', color: 'var(--color-danger)' };
     };
 
     const performanceBadge = performanceScore !== null && performanceScore !== undefined
@@ -240,11 +239,14 @@ const ComplianceCard = ({ complianceData }) => {
                 </div>
 
                 <div style={{
-                    background: isHighCompliance ? 'rgba(34, 197, 94, 0.1)' : 'rgba(99, 102, 241, 0.1)',
+                    background: isHighCompliance
+                        ? 'rgba(var(--color-success-rgb), 0.1)'
+                        : 'rgba(var(--color-primary-rgb), 0.1)',
                     padding: '0.25rem 0.75rem',
                     borderRadius: '20px',
                     fontSize: '0.85rem',
                     fontWeight: 600,
+                    fontFamily: 'var(--font-body)',
                     color: progressColor
                 }}>
                     {percentage}% Completado
@@ -351,7 +353,8 @@ const ComplianceCard = ({ complianceData }) => {
                     <span style={{
                         fontSize: '0.9rem',
                         fontWeight: 600,
-                        color: scheduledExam ? '#22c55e' : 'var(--text-primary)'
+                        fontFamily: 'var(--font-body)',
+                        color: scheduledExam ? 'var(--color-success)' : 'var(--text-primary)'
                     }}>
                         {scheduledExam === true ? 'Sí' : scheduledExam === false ? 'No' : 'S/D'}
                     </span>

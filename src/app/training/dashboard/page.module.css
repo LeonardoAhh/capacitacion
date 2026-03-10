@@ -257,26 +257,35 @@
 
 /* Empty State */
 .emptyState {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
     text-align: center;
-    padding: 3rem 1.5rem;
+    padding: 4rem 2rem;
+    background: var(--bg-secondary);
+    border: 1px dashed var(--border-color);
+    border-radius: var(--radius-lg);
+    min-height: 250px;
 }
 
 .emptyIcon {
     color: var(--text-tertiary);
     margin-bottom: 1rem;
-    opacity: 0.5;
+    opacity: 0.6;
 }
 
 .emptyTitle {
     font-size: 1.125rem;
     font-weight: 600;
     color: var(--text-primary);
-    margin-bottom: 0.375rem;
+    margin-bottom: 0.5rem;
 }
 
 .emptyText {
     font-size: 0.9375rem;
     color: var(--text-secondary);
+    max-width: 400px;
 }
 
 /* Welcome Drawer */

@@ -2,13 +2,15 @@ import { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { doc, updateDoc } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
-import { fetchFreshProfile, fetchEmployeeCourses } from '@/lib/trainingDataService';
+import { fetchFreshProfile, fetchEmployeeCourses, fetchTrainingRecord } from '@/lib/trainingDataService';
 import { destroySession } from '@/lib/sessionApi';
 
 export function useTrainingData() {
     const router = useRouter();
     const [user, setUser] = useState(null);
     const [courses, setCourses] = useState([]);
+    const [positionCourses, setPositionCourses] = useState([]);
+    const [trainingRecord, setTrainingRecord] = useState(null);
     const [loading, setLoading] = useState(true);
     const [stats, setStats] = useState({
         total: 0,
@@ -49,9 +51,14 @@ export function useTrainingData() {
                     sessionStorage.setItem('training_session', JSON.stringify(currentProfile));
                 }
 
-                // Fetch courses from service
-                const coursesData = await fetchEmployeeCourses(currentProfile.id);
+                // Fetch cursos de programacion + registro de training en paralelo
+                const [coursesData, trainingRec] = await Promise.all([
+                    fetchEmployeeCourses(currentProfile.id),
+                    fetchTrainingRecord(currentProfile.employeeId),
+                ]);
                 setCourses(coursesData);
+                setTrainingRecord(trainingRec);
+                setPositionCourses(trainingRec.positionCourses || []);
                 setStats(calculateStats(coursesData));
             } catch (error) {
                 console.error("Error loading courses:", error);
@@ -167,6 +174,8 @@ export function useTrainingData() {
     return {
         user,
         courses,
+        positionCourses,
+        trainingRecord,
         loading,
         stats,
         markAsViewed,

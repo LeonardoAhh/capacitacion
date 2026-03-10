@@ -80,3 +80,77 @@ export async function fetchEmployeeCourses(employeeId) {
 
     return coursesData;
 }
+
+/**
+ * Obtiene el registro de capacitación del empleado desde training_records.
+ * Devuelve el historial aprobado, el matrix de cumplimiento y los cursos
+ * requeridos por su puesto (desde `positions`) para alimentar la gamificación.
+ *
+ * @param {string} employeeId - ID del empleado (campo employeeId en training_records)
+ * @returns {Promise<object>} { history, matrix, positionCourses, approvedCount }
+ */
+export async function fetchTrainingRecord(employeeId) {
+    if (!employeeId) return { history: [], matrix: null, positionCourses: [], approvedCount: 0 };
+
+    try {
+        // 1. Buscar por documento ID directo (el ID del doc suele ser el mismo employeeId)
+        let recordData = null;
+        const directSnap = await getDoc(doc(db, 'training_records', employeeId));
+        if (directSnap.exists()) {
+            recordData = directSnap.data();
+        } else {
+            // Fallback: buscar por campo employeeId
+            const q = query(
+                collection(db, 'training_records'),
+                where('employeeId', '==', employeeId)
+            );
+            const snap = await getDocs(q);
+            if (!snap.empty) recordData = snap.docs[0].data();
+        }
+
+        if (!recordData) {
+            return { history: [], matrix: null, positionCourses: [], approvedCount: 0 };
+        }
+
+        const history = recordData.history || [];
+        const matrix  = recordData.matrix  || null;
+        const position = recordData.position || '';
+
+        // 2. Cursos aprobados (status === 'approved' o score >= 70)
+        const approved = history.filter(h =>
+            h.status === 'approved' || (!h.status && parseFloat(h.score || 0) >= 70)
+        );
+
+        // 3. Cursos requeridos por el puesto (desde `positions`)
+        let positionCourses = [];
+        if (position) {
+            const normalize = (s) => (s || '').trim().toUpperCase();
+            const posSnap = await getDocs(collection(db, 'positions'));
+            let requiredNames = [];
+            posSnap.forEach(d => {
+                if (normalize(d.data().name) === normalize(position)) {
+                    requiredNames = d.data().requiredCourses || [];
+                }
+            });
+
+            // Cruzar nombres requeridos con los cursos aprobados
+            const approvedNormalized = new Set(approved.map(a => normalize(a.courseName || a.course || '')));
+            positionCourses = requiredNames.map(name => ({
+                id: normalize(name),
+                title: name,
+                requiredByPosition: true,
+                completed: approvedNormalized.has(normalize(name)),
+            }));
+        }
+
+        return {
+            history,
+            matrix,
+            approvedCount: approved.length,
+            positionCourses, // { id, title, requiredByPosition, completed }
+        };
+    } catch (e) {
+        console.error('Error fetching training record:', e);
+        return { history: [], matrix: null, positionCourses: [], approvedCount: 0 };
+    }
+}
