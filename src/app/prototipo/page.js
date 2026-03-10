@@ -9,6 +9,7 @@ import { useRouter } from 'next/navigation';
 import { useToast } from '@/components/ui/Toast/Toast';
 import ExamBuilder from '@/components/features/ExamBuilder/ExamBuilder';
 import SetupWizard from '@/components/features/ExamBuilder/SetupWizard';
+import ConfirmDialog from '@/components/ui/ConfirmDialog/ConfirmDialog';
 import {
     getAllExams,
     createExam,
@@ -43,6 +44,9 @@ export default function PrototipoPage() {
     const [historyExam, setHistoryExam] = useState(null);
     const [historyVersions, setHistoryVersions] = useState([]);
     const [historyLoading, setHistoryLoading] = useState(false);
+
+    // Estado para el modal de confirmación de eliminación
+    const [examToDelete, setExamToDelete] = useState(null);
 
     // Guard de acceso: solo roles permitidos
     useEffect(() => {
@@ -127,11 +131,17 @@ export default function PrototipoPage() {
         }
     };
 
-    // Elimina un examen con confirmación
-    const handleDelete = async (examId) => {
-        if (!window.confirm('¿Seguro que quieres eliminar este examen? Esta acción no se puede deshacer.')) return;
-        await deleteExam(examId);
+    // Solicita confirmación para eliminar un examen
+    const handleDeleteClick = (exam) => {
+        setExamToDelete(exam);
+    };
+
+    // Ejecuta la eliminación tras confirmar
+    const confirmDelete = async () => {
+        if (!examToDelete) return;
+        await deleteExam(examToDelete.id);
         showToast('Examen eliminado', 'success');
+        setExamToDelete(null);
         await loadExams();
     };
 
@@ -249,7 +259,7 @@ export default function PrototipoPage() {
                                         )}
                                         <button
                                             className={`${styles.actionBtn} ${styles.actionBtnDanger}`}
-                                            onClick={() => handleDelete(exam.id)}
+                                            onClick={() => handleDeleteClick(exam)}
                                         >
                                             <Trash2 size={14} />
                                         </button>
@@ -335,6 +345,18 @@ export default function PrototipoPage() {
                     </motion.div>
                 )}
             </AnimatePresence>
+
+            {/* Modal de confirmación global */}
+            <ConfirmDialog
+                isOpen={!!examToDelete}
+                title="Eliminar Examen"
+                message={`¿Seguro que quieres eliminar el examen "${examToDelete?.title || 'Sin título'}"? Esta acción borrará permanentemente sus preguntas y configuración, y no se puede deshacer.`}
+                confirmText="Sí, eliminar examen"
+                cancelText="Cancelar"
+                onConfirm={confirmDelete}
+                onCancel={() => setExamToDelete(null)}
+                variant="danger"
+            />
         </AdminLayout>
     );
 }
