@@ -17,6 +17,7 @@ const EMPTY_EXAM = {
     revision: '',
     title: '',
     passingScore: 7,
+    puestosAplicables: [],
     questions: [],
     status: 'draft',
 };

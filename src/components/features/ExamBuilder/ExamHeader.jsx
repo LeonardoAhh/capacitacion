@@ -1,5 +1,6 @@
 'use client';
 
+import { Check } from 'lucide-react';
 import styles from './ExamBuilder.module.css';
 
 /**
@@ -56,6 +57,28 @@ export default function ExamHeader({ exam, onChange }) {
                         step={0.5}
                         onChange={e => onChange('passingScore', +e.target.value)}
                     />
+                </div>
+
+                {/* Puestos detectados automáticamente (Solo lectura) */}
+                <div className={styles.puestosAsignadosContainer}>
+                    <div className={styles.puestosHeader}>
+                        Puestos Asignados
+                        <span className={styles.autoBadge}>Automático <Check size={10} strokeWidth={3} /></span>
+                    </div>
+                    {exam.puestosAplicables && exam.puestosAplicables.length > 0 ? (
+                        <div className={styles.puestosGrid}>
+                            {exam.puestosAplicables.map(puesto => (
+                                <div key={puesto} className={styles.puestoChipReadOnly} title="Detectado según Catálogo de Puestos">
+                                    <span className={styles.puestoDot}></span>
+                                    <span>{puesto}</span>
+                                </div>
+                            ))}
+                        </div>
+                    ) : (
+                        <p className={styles.puestosEmpty}>
+                            Ningún puesto requiere este examen. Modifica sus Cursos Requeridos en el Catálogo de Puestos.
+                        </p>
+                    )}
                 </div>
             </div>
         </div>

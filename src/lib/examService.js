@@ -8,11 +8,119 @@ import {
     deleteDoc,
     query,
     orderBy,
+    where,
+    writeBatch,
     serverTimestamp,
 } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 
 const EXAMS_COLLECTION = 'examenes';
+
+/**
+ * Obtiene los exámenes publicados aplicables a un puesto específico.
+ * Utilizado en el portal de candidatos.
+ * @param {string} position - Nombre del puesto
+ * @returns {Promise<Array>}
+ */
+export async function getPublishedExamsForPosition(position) {
+    try {
+        const ref = collection(db, EXAMS_COLLECTION);
+        const q = query(
+            ref,
+            where('status', '==', 'published')
+        );
+        const snap = await getDocs(q);
+        
+        const exams = [];
+        snap.docs.forEach(doc => {
+            const data = doc.data();
+            const puestos = data.puestosAplicables || [];
+            if (puestos.includes(position)) {
+                exams.push({ id: doc.id, ...data });
+            }
+        });
+
+        // Ordenar alfabéticamente
+        return exams.sort((a, b) => (a.title || '').localeCompare(b.title || ''));
+    } catch (error) {
+        console.error('Error fetching published exams for position:', error);
+        return [];
+    }
+}
+
+/**
+ * Sincroniza el campo puestosAplicables de un examen o de todos los exámenes publicados
+ * leyendo la colección `positions` y buscando coincidencias exactas del título del examen
+ * dentro del array `requiredCourses` o `requiredExams` de cada posición.
+ * 
+ * @param {string} [examId] - Si se provee, solo sincroniza ese examen. Si no, sincroniza todos los publicados.
+ */
+export async function syncExamPuestosFromPositions(examId = null) {
+    try {
+        // 1. Obtener todas las posiciones
+        const positionsSnap = await getDocs(collection(db, 'positions'));
+        const allPositions = positionsSnap.docs.map(doc => ({
+            id: doc.id,
+            name: doc.data().name || doc.id,
+            requiredCourses: doc.data().requiredCourses || [] // Aquí se guardan los títulos de cursos/exámenes
+        }));
+
+        // 2. Obtener los exámenes a actualizar
+        let examsQuery;
+        if (examId) {
+            examsQuery = doc(db, EXAMS_COLLECTION, examId);
+        } else {
+            // Solo sincronizamos los exámenes que no estén eliminados (draft o published)
+            examsQuery = collection(db, EXAMS_COLLECTION);
+        }
+
+        const examsSnap = examId ? await getDoc(examsQuery) : await getDocs(examsQuery);
+        const examsArray = examId ? (examsSnap.exists() ? [examsSnap] : []) : examsSnap.docs;
+
+        if (examsArray.length === 0) return { success: true, updatedCount: 0 };
+
+        // 3. Preparar batch
+        const batch = writeBatch(db);
+        let updatedCount = 0;
+
+        for (const examDoc of examsArray) {
+            const examData = examDoc.data();
+            const examTitle = examData.title;
+
+            if (!examTitle) continue;
+
+            const matchingPositions = allPositions
+                .filter(p => p.requiredCourses.includes(examTitle))
+                .map(p => p.name);
+            
+            // Ordenar alfabéticamente
+            matchingPositions.sort((a, b) => a.localeCompare(b));
+
+            // Solo actualizar si hay cambios
+            const currentPuestos = examData.puestosAplicables || [];
+            const hasChanged = 
+                currentPuestos.length !== matchingPositions.length ||
+                !currentPuestos.every((val, index) => val === matchingPositions[index]);
+
+            if (hasChanged) {
+                batch.update(examDoc.ref, { 
+                    puestosAplicables: matchingPositions,
+                    updatedAt: serverTimestamp() 
+                });
+                updatedCount++;
+            }
+        }
+
+        if (updatedCount > 0) {
+            await batch.commit();
+        }
+
+        return { success: true, updatedCount };
+    } catch (error) {
+        console.error('Error sincronizando puestos para exámenes:', error);
+        return { success: false, error: error.message };
+    }
+}
 
 /**
  * Crea un nuevo examen como borrador en Firebase.
@@ -25,11 +133,18 @@ export async function createExam(data, userId) {
         const ref = collection(db, EXAMS_COLLECTION);
         const docRef = await addDoc(ref, {
             ...data,
+            puestosAplicables: data.puestosAplicables || [], // Asegurar inicialización
             status: 'draft',
             createdBy: userId,
             createdAt: serverTimestamp(),
             updatedAt: serverTimestamp(),
         });
+        
+        // Sincronizar puestos iniciales en background
+        if (data.title) {
+            syncExamPuestosFromPositions(docRef.id).catch(console.error);
+        }
+
         return { success: true, examId: docRef.id };
     } catch (error) {
         console.error('Error creando examen:', error);
@@ -46,6 +161,12 @@ export async function updateExam(examId, data) {
     try {
         const ref = doc(db, EXAMS_COLLECTION, examId);
         await updateDoc(ref, { ...data, updatedAt: serverTimestamp() });
+        
+        // Si se actualizó el título, resincronizar los puestos por si coinciden distinto
+        if (data.title) {
+            syncExamPuestosFromPositions(examId).catch(console.error);
+        }
+
         return { success: true };
     } catch (error) {
         console.error('Error actualizando examen:', error);
@@ -111,6 +232,10 @@ export async function publishExam(examId) {
             publishedAt: serverTimestamp(),
             updatedAt: serverTimestamp(),
         });
+
+        // Asegurar que al publicar, los puestos estén 100% correctos
+        await syncExamPuestosFromPositions(examId);
+
         return { success: true };
     } catch (error) {
         console.error('Error publicando examen:', error);

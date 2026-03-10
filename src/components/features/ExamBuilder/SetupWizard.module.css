@@ -114,6 +114,29 @@
     letter-spacing: -0.01em;
 }
 
+.stepTitleRow {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--spacing-sm);
+    margin: 0;
+}
+
+.autoDetectBadge {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding: 4px 8px;
+    background: rgba(16, 185, 129, 0.1);
+    color: #10b981;
+    border-radius: 6px;
+    font-family: var(--font-body);
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
 .stepDesc {
     font-family: var(--font-body);
     font-size: 0.87rem;
@@ -174,6 +197,96 @@
 .input:focus {
     border-color: var(--color-primary);
     box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-primary) 15%, transparent);
+}
+
+/* ── Selección de Puestos ─────────────────────────────────────────── */
+.puestosContainer {
+    max-height: 200px;
+    overflow-y: auto;
+    padding: 4px;
+    margin: 0 -4px; /* Compensar padding de scroll */
+}
+
+/* Custom Scrollbar */
+.puestosContainer::-webkit-scrollbar {
+    width: 6px;
+}
+.puestosContainer::-webkit-scrollbar-track {
+    background: rgba(0,0,0,0.02);
+    border-radius: 10px;
+}
+.puestosContainer::-webkit-scrollbar-thumb {
+    background: var(--border-color);
+    border-radius: 10px;
+}
+.puestosContainer::-webkit-scrollbar-thumb:hover {
+    background: #ccc;
+}
+
+.puestosGrid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.puestoChip {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 12px;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: 10px;
+    color: var(--text-secondary);
+    font-family: var(--font-body);
+    font-size: 0.82rem;
+    font-weight: 500;
+}
+
+.puestoChipReadOnly {
+    background: rgba(245, 158, 11, 0.05); /* Ligeramente ámbar */
+    border-color: rgba(245, 158, 11, 0.2);
+    color: var(--text-primary);
+}
+
+.puestoDot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--color-primary);
+    opacity: 0.8;
+}
+
+.warningBox {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 16px;
+    background: rgba(245, 158, 11, 0.08);
+    border: 1px solid rgba(245, 158, 11, 0.3);
+    border-radius: 12px;
+    color: #d97706; /* primary más oscuro */
+    margin-top: 8px;
+}
+
+.warningBox p {
+    margin: 0;
+    font-family: var(--font-body);
+    font-size: 0.85rem;
+    line-height: 1.5;
+}
+
+.warningBox strong {
+    font-weight: 600;
+}
+
+.loadingText,
+.emptyText {
+    font-family: var(--font-body);
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    text-align: center;
+    padding: var(--spacing-md) 0;
 }
 
 /* ── Card de resumen ──────────────────────────────────────────────── */

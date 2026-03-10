@@ -1,6 +1,7 @@
 "use client";
 
-import { User, GraduationCap, FileText, FileCheck, ArrowRight, CheckCircle2, Clock, Circle } from "lucide-react";
+import { useState, useEffect } from 'react';
+import { User, GraduationCap, FileText, FileCheck, ArrowRight, CheckCircle2, Clock, Circle, Printer } from "lucide-react";
 import { motion } from "framer-motion";
 import {
     Drawer,
@@ -12,6 +13,7 @@ import {
     DrawerTitle,
     DrawerTrigger,
 } from "@/components/ui/Drawer/Drawer";
+import ExamResultPrint, { loadAllExamResults } from '@/components/features/Dashboard/ExamResultPrint';
 import styles from './CandidateDrawer.module.css';
 
 const itemVariants = {
@@ -53,6 +55,15 @@ export default function CandidateDrawer({
     const completedIds = candidate?.cursosCompletados || [];
     const requiredCourseNames = candidate?.requiredCourseNames || [];
 
+    // Estado para resultados de exámenes
+    const [examResults, setExamResults] = useState([]);
+    const [printExamId, setPrintExamId] = useState(null);
+
+    useEffect(() => {
+        if (!candidate?.id) return;
+        setExamResults([]);
+        loadAllExamResults(candidate.id).then(setExamResults);
+    }, [candidate?.id]);
 
 
     // Calculate status for each course
@@ -118,6 +129,7 @@ export default function CandidateDrawer({
     const progressBadge = getProgressBadge();
 
     return (
+        <>
         <Drawer open={open} onOpenChange={onOpenChange}>
             {children && <DrawerTrigger asChild>{children}</DrawerTrigger>}
             <DrawerContent className={styles.drawerContent}>
@@ -241,6 +253,44 @@ export default function CandidateDrawer({
                                     )}
                                 </div>
                             </motion.div>
+
+                            {/* Exámenes contestados */}
+                            {examResults.length > 0 && (
+                                <motion.div variants={itemVariants} className={styles.coursesSection}>
+                                    <h3 className={styles.sectionTitle}>Exámenes Contestados</h3>
+                                    <div className={styles.coursesList}>
+                                        {examResults.map(result => (
+                                            <motion.div
+                                                key={result.id}
+                                                variants={itemVariants}
+                                                className={`${styles.courseItem} ${result.passed ? styles.completed : styles.inProgress}`}
+                                            >
+                                                <div className={styles.courseMain}>
+                                                    <div className={styles.courseIcon}>
+                                                        {result.passed
+                                                            ? <CheckCircle2 size={14} />
+                                                            : <Clock size={14} />}
+                                                    </div>
+                                                    <div className={styles.courseInfo}>
+                                                        <span className={styles.courseName}>{result.examTitle}</span>
+                                                        <span className={styles.courseDetail}>
+                                                            Calificación: <strong>{result.score10}/10</strong>
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                                <button
+                                                    className={styles.btnPrint}
+                                                    onClick={() => setPrintExamId(result.id)}
+                                                    title="Imprimir examen contestado"
+                                                >
+                                                    <Printer size={14} /> Imprimir
+                                                </button>
+                                            </motion.div>
+                                        ))}
+                                    </div>
+                                </motion.div>
+                            )}
+
                         </div>
 
                         <DrawerFooter>
@@ -256,5 +306,15 @@ export default function CandidateDrawer({
                 )}
             </DrawerContent>
         </Drawer>
+
+        {/* Modal de impresión de examen contestado */}
+        {printExamId && candidate && (
+            <ExamResultPrint
+                candidate={candidate}
+                examId={printExamId}
+                onClose={() => setPrintExamId(null)}
+            />
+        )}
+        </>
     );
 }

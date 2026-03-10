@@ -1,11 +1,13 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { collection, getDocs } from 'firebase/firestore';
+import { db } from '@/lib/firebase';
 import { motion, AnimatePresence } from 'framer-motion';
-import { FileText, ChevronRight, CheckCircle, X } from 'lucide-react';
+import { FileText, ChevronRight, CheckCircle, X, Users, Check, AlertCircle } from 'lucide-react';
 import styles from './SetupWizard.module.css';
 
-const TOTAL_STEPS = 2;
+const TOTAL_STEPS = 3; // +1 para Puestos
 
 /**
  * Wizard de 2 pasos para crear un nuevo examen con metadatos pre-cargados.
@@ -20,9 +22,48 @@ export default function SetupWizard({ onFinish, onSkip }) {
         revision: 'Rev. 1',
         title: '',
         passingScore: 7,
+        puestosAplicables: [], // Nuevo campo
     });
 
+    // Cargar puestos desde Firebase y buscar coincidencias automáticas
+    useEffect(() => {
+        const fetchPositions = async () => {
+            setLoadingPositions(true);
+            try {
+                const snapshot = await getDocs(collection(db, 'positions'));
+                const autoAssigned = [];
+                
+                snapshot.forEach(doc => {
+                    const posData = doc.data();
+                    const name = posData.name || doc.id;
+                    // Verificamos si este examen (por título) está en los requiredCourses de la posición
+                    if (posData.requiredCourses && Array.isArray(posData.requiredCourses)) {
+                        if (data.title && posData.requiredCourses.includes(data.title)) {
+                            autoAssigned.push(name);
+                        }
+                    }
+                });
+
+                const uniqueAssigned = [...new Set(autoAssigned)].sort((a, b) => a.localeCompare(b));
+                setAvailablePositions(uniqueAssigned);
+                
+                // Forzamos la actualización silenciosa del examen
+                setData(prev => ({ ...prev, puestosAplicables: uniqueAssigned }));
+
+            } catch (error) {
+                console.error('Error fetching positions:', error);
+            } finally {
+                setLoadingPositions(false);
+            }
+        };
+        
+        if (step === 2) {
+            fetchPositions();
+        }
+    }, [step, data.title]);
+
     const update = (field, value) => setData(prev => ({ ...prev, [field]: value }));
+    
     const canNext = data.title.trim().length > 0;
 
     return (
@@ -137,6 +178,51 @@ export default function SetupWizard({ onFinish, onSkip }) {
                                     onChange={e => update('passingScore', +e.target.value)}
                                 />
                             </div>
+                        </motion.div>
+                    )}
+
+                    {step === 2 && (
+                        <motion.div
+                            key="step2"
+                            className={styles.stepContent}
+                            initial={{ opacity: 0, x: 30 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            exit={{ opacity: 0, x: -30 }}
+                            transition={{ duration: 0.18 }}
+                        >
+                            <div className={styles.stepTitleRow}>
+                                <h2 className={styles.stepTitle}>Puestos Asignados</h2>
+                                <span className={styles.autoDetectBadge}>Detección Automática <Check size={12} strokeWidth={3} /></span>
+                            </div>
+                            <p className={styles.stepDesc}>
+                                El sistema detecta automáticamente qué puestos deben presentar este examen con base en el <strong>Catálogo de Puestos</strong>. Si necesitas añadir más, modifícalo desde la configuración del puesto.
+                            </p>
+
+                            <div className={styles.puestosContainer}>
+                                {loadingPositions ? (
+                                    <p className={styles.loadingText}>Analizando matriz de capacitación...</p>
+                                ) : availablePositions.length > 0 ? (
+                                    <div className={styles.puestosGrid}>
+                                        {availablePositions.map(puesto => {
+                                            return (
+                                                <div
+                                                    key={puesto}
+                                                    className={`${styles.puestoChip} ${styles.puestoChipReadOnly}`}
+                                                    title="Asignado automáticamente"
+                                                >
+                                                    <span className={styles.puestoDot}></span>
+                                                    <span>{puesto}</span>
+                                                </div>
+                                            );
+                                        })}
+                                    </div>
+                                ) : (
+                                    <div className={styles.warningBox}>
+                                        <AlertCircle size={16} />
+                                        <p>Ningún puesto tiene asignado el examen <strong>&quot;{data.title}&quot;</strong> todavía.</p>
+                                    </div>
+                                )}
+                            </div>
 
                             {/* Resumen visual del examen a crear */}
                             <div className={styles.summaryCard}>
@@ -152,8 +238,8 @@ export default function SetupWizard({ onFinish, onSkip }) {
                                     </div>
                                 )}
                                 <div className={styles.summaryRow}>
-                                    <span>Mínimo para aprobar</span>
-                                    <strong>{data.passingScore} / 10</strong>
+                                    <span>Puestos</span>
+                                    <strong>{data.puestosAplicables?.length || 0} seleccionados</strong>
                                 </div>
                             </div>
                         </motion.div>

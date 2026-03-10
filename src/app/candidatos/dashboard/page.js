@@ -20,7 +20,8 @@ import GeneralInfo from './components/GeneralInfo';
 import CoursesGrid from './components/CoursesGrid';
 import CourseViewer from './components/CourseViewer';
 import ExamModal from './components/ExamModal';
-import { DashboardSkeleton, useToast, CourseDeadlineTimer } from './components';
+import { DashboardSkeleton, useToast, CourseDeadlineTimer, ExamsGrid } from './components';
+import CandidateExamViewer from './components/CandidateExamViewer';
 import CandidateSidebar from '@/components/features/CandidateSidebar/CandidateSidebar';
 import CandidateMobileHeader from '@/components/features/CandidateSidebar/CandidateMobileHeader';
 
@@ -29,6 +30,7 @@ import { useCandidateData } from '@/hooks/useCandidateData';
 import { extractFirstName } from './utils/helpers';
 import { loadCoursesForPosition } from './services/courseService';
 import { getCourseWithSlides } from '@/lib/courseService';
+import { getPublishedExamsForPosition } from '@/lib/examService';
 import CoursePlayer from '@/components/features/Courses/CoursePlayer';
 import induccionEmpresaExam from '../../../../public/examenes/induccion_empresa.json';
 
@@ -41,7 +43,9 @@ export default function CandidatoDashboard() {
     const { candidate, loading, setCandidate, updateTheme, updateAvatar, updateNickname } = useCandidateData();
 
     const [courses, setCourses] = useState([]);
+    const [exams, setExams] = useState([]);
     const [selectedCourse, setSelectedCourse] = useState(null);
+    const [activeExam, setActiveExam] = useState(null); // examen seleccionado por el candidato
     const [showWelcome, setShowWelcome] = useState(false);
     const [courseProgress, setCourseProgress] = useState({});
     const [showExamModal, setShowExamModal] = useState(false);
@@ -98,6 +102,10 @@ export default function CandidatoDashboard() {
                 loadCoursesForPosition(positionToLoad)
                     .then(setCourses)
                     .catch(err => console.error('Error loading courses:', err));
+                    
+                getPublishedExamsForPosition(positionToLoad)
+                    .then(setExams)
+                    .catch(err => console.error('Error loading exams:', err));
             }
 
             if (candidate.coursesProgress) {
@@ -279,6 +287,12 @@ export default function CandidatoDashboard() {
                     onToggleCompletion={toggleCourseCompletion}
                 />
 
+                <ExamsGrid 
+                    exams={exams} 
+                    candidate={candidate} 
+                    onViewExam={(exam) => setActiveExam(exam)} 
+                />
+
                 <footer className={styles.footer}>
                     <p>ViñoPlastic Inyección S.A. de C.V.</p>
                     <p>Portal de Inducción</p>
@@ -306,6 +320,15 @@ export default function CandidatoDashboard() {
                 examData={examData}
                 onSubmit={handleExamModalSubmit}
             />
+
+            {/* Visor nativo de exámenes de la colección Firebase 'examenes' */}
+            {activeExam && (
+                <CandidateExamViewer
+                    exam={activeExam}
+                    candidate={candidate}
+                    onClose={() => setActiveExam(null)}
+                />
+            )}
 
         </div>
     );
