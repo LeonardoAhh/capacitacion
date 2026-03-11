@@ -22,7 +22,7 @@ export default function ImportantInfoCards({ className }) {
                         <FileText size={18} />
                     </div>
                     <p className={styles.importantCardText}>
-                        Entrega tus evaluaciones en los <span>próximos 7 días</span> después de tu ingreso.
+                        Entrega tus evaluaciones en los <span>próximos 3 días</span> después de tu ingreso.
                     </p>
                 </div>
 

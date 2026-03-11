@@ -1,0 +1,115 @@
+.container {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    width: 100%;
+}
+
+.label {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--text-tertiary);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 2px;
+}
+
+.viewMode {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 8px;
+    border-radius: 6px;
+    margin: -6px -8px; /* Offset padding to keep text aligned with label */
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border: 1px solid transparent;
+}
+
+.viewMode:hover {
+    background: rgba(0, 122, 255, 0.04);
+    border-color: rgba(0, 122, 255, 0.1);
+}
+
+.value {
+    font-size: 14px;
+    color: var(--text-primary);
+    font-weight: 500;
+}
+
+.value.empty {
+    color: var(--text-tertiary);
+    font-style: italic;
+}
+
+.editIcon {
+    opacity: 0;
+    color: var(--blue-500);
+    transition: opacity 0.2s;
+}
+
+.viewMode:hover .editIcon {
+    opacity: 0.7;
+}
+
+/* Edit Mode */
+.editMode {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: -6px -8px; 
+}
+
+.input, .select {
+    flex: 1;
+    padding: 5px 7px;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text-primary);
+    background: #fff;
+    border: 1px solid var(--blue-500);
+    border-radius: 6px;
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(0, 122, 255, 0.1);
+    font-family: inherit;
+    width: 100%;
+}
+
+.checkbox {
+    width: 16px;
+    height: 16px;
+    cursor: pointer;
+    accent-color: var(--blue-500);
+}
+
+.actions {
+    display: flex;
+    gap: 4px;
+}
+
+.saveBtn, .cancelBtn {
+    background: transparent;
+    border: none;
+    border-radius: 4px;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.saveBtn {
+    color: var(--color-success);
+}
+.saveBtn:hover {
+    background: rgba(52, 199, 89, 0.1);
+}
+
+.cancelBtn {
+    color: var(--color-danger);
+}
+.cancelBtn:hover {
+    background: rgba(255, 59, 48, 0.1);
+}

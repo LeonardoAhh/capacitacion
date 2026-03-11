@@ -16,22 +16,6 @@
 /* ────────────────────────────────────────────────────────────────
    BASE — body hereda la fuente body del sistema
    ──────────────────────────────────────────────────────────────── */
-*,
-*::before,
-*::after {
-    box-sizing: border-box;
-}
-
-body {
-    font-family: var(--font-body);
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-    /* Sin hardcode de color — viene de los tokens del ThemeProvider */
-    background-color: var(--bg-primary);
-    color: var(--text-primary);
-    margin: 0;
-}
-
 /* ────────────────────────────────────────────────────────────────
    SKIP LINK — accesibilidad de teclado (WCAG 2.4.1)
    Fuera de módulos CSS para garantizar que siempre esté disponible

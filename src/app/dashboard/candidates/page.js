@@ -198,19 +198,23 @@ function useDataFetching() {
 
 /**
  * Calcula cuánto tiempo le queda al candidato para terminar sus cursos.
- * Base: fechaIngreso + 7 días.
+ * Base: fechaIngreso + 3 días. Si existe `fechaLimite` en Firestore, se usa ese valor.
  * @param {Object} candidate
  * @returns {{ daysLeft: number, hoursLeft: number, isExpired: boolean, isUrgent: boolean, label: string }}
  */
 function getDeadlineInfo(candidate) {
-    const ingreso = candidate.startDate || candidate.fechaIngreso || candidate.createdAt;
+    // Si se reabrió el plazo, usar la fecha límite personalizada
+    const ingreso = candidate.fechaLimite || candidate.startDate || candidate.fechaIngreso || candidate.createdAt;
     if (!ingreso) return null;
 
     try {
         const start = new Date(ingreso);
         if (isNaN(start.getTime())) return null;
 
-        const deadline = new Date(start.getTime() + 7 * 24 * 60 * 60 * 1000);
+        // Si es fechaLimite ya es la fecha absoluta de vencimiento
+        const deadline = candidate.fechaLimite
+            ? new Date(ingreso)
+            : new Date(start.getTime() + 3 * 24 * 60 * 60 * 1000);
         const now = new Date();
         const diffMs = deadline - now;
 
@@ -487,6 +491,28 @@ export default function CandidateMonitoringPage() {
             await updateUserProfile(user.uid, { photoURL: avatarUrl, avatar: avatarUrl });
         }
     }, [user?.uid, updateUserProfile]);
+
+    // Reabrir / Extender el plazo del candidato N días desde hoy
+    const handleReopenDeadline = useCallback(async (candidate, extraDays = 3) => {
+        if (!await showConfirm(
+            `¿Extender el plazo de ${getShortName(candidate.name)} ${extraDays} días más a partir de hoy?`,
+            { title: 'Reabrir Plazo', confirmLabel: `Extender ${extraDays} días` }
+        )) return;
+        try {
+            const newDeadline = new Date();
+            newDeadline.setDate(newDeadline.getDate() + extraDays);
+            newDeadline.setHours(23, 59, 59, 0); // hasta el final del día
+            await updateDoc(doc(db, 'employees', candidate.id), {
+                fechaLimite: newDeadline.toISOString()
+            });
+            toast.success(`Plazo extendido ${extraDays} días para ${getShortName(candidate.name)}`);
+            setQuickDrawerOpen(false);
+            fetchData();
+        } catch (err) {
+            console.error('Error extending deadline:', err);
+            toast.error('Error al extender el plazo');
+        }
+    }, [showConfirm, toast, fetchData]);
 
 
 
@@ -872,7 +898,7 @@ export default function CandidateMonitoringPage() {
                                         </p>
                                     </div>
 
-                                    {/* Actividad detallada \u2192 abre CandidateDrawer */}
+                                    {/* Actividad detallada → abre CandidateDrawer */}
                                     <button
                                         className={styles.qdActivityBtn}
                                         onClick={() => {
@@ -884,6 +910,25 @@ export default function CandidateMonitoringPage() {
                                         <span>Ver Actividad Detallada</span>
                                         <ChevronRight size={18} />
                                     </button>
+
+                                    {/* Reabrir Plazo */}
+                                    {c.status !== 'completed' && (
+                                        <div className={styles.qdReopenSection}>
+                                            <p className={styles.qdReopenLabel}>Reabrir Plazo</p>
+                                            <div className={styles.qdReopenBtns}>
+                                                {[1, 3, 7].map(days => (
+                                                    <button
+                                                        key={days}
+                                                        className={styles.qdReopenBtn}
+                                                        onClick={() => handleReopenDeadline(c, days)}
+                                                        title={`Extender ${days} día${days > 1 ? 's' : ''} desde hoy`}
+                                                    >
+                                                        +{days}d
+                                                    </button>
+                                                ))}
+                                            </div>
+                                        </div>
+                                    )}
                                 </div>
                             </>
                         );

@@ -1,13 +1,14 @@
 'use client';
 
-import { memo, useState, useCallback } from 'react';
+import { memo } from 'react';
 import Image from 'next/image';
 import {
     User, Briefcase, Activity, FileText,
-    Edit, Trash2, Phone, Loader2, Download
+    Trash2, Phone, Loader2, Download
 } from 'lucide-react';
 import BackButton from '@/components/ui/BackButton/BackButton';
-import styles from '../../page.module.css';
+import InlineEditField from './InlineEditField';
+import styles from '../page.module.css';
 
 const getInitials = (name) => {
     if (!name) return 'EM';
@@ -46,17 +47,22 @@ const formatDate = (dateString) => {
 function EmployeeDetailComponent({
     employee,
     onBack,
-    onEdit,
+    onUpdate, // Replacing onEdit with onUpdate for Inline Editing
     onDelete,
     onImageError,
     isDeleting,
 }) {
-    const [activeTab, setActiveTab] = useState('personal');
+    const handleFieldSave = (field, value) => {
+        onUpdate(employee.id, { [field]: value });
+    };
 
     return (
         <div className={styles.detailView}>
-            <BackButton onClick={onBack} label="Volver a la lista" />
+            <div style={{ marginBottom: '32px' }}>
+                <BackButton onClick={onBack} label="" />
+            </div>
 
+            {/* HEADER COMPACTO CON ACCIONES */}
             <div className={styles.detailHeader}>
                 <div className={styles.avatarLarge}>
                     {employee.photoUrl ? (
@@ -73,12 +79,29 @@ function EmployeeDetailComponent({
                     )}
                 </div>
                 <div className={styles.headerInfo}>
-                    <h2 className={styles.detailName}>{employee.name}</h2>
-                    <p className={styles.detailId}>ID: {employee.employeeId || employee.id}</p>
-                    <span className={`${styles.statusBadge} ${employee.status === 'Inactivo' ? styles.statusInactive : styles.statusActive}`}>
-                        {employee.status || 'Activo'}
-                    </span>
+                    <InlineEditField
+                        label="Nombre"
+                        value={employee.name}
+                        onSave={(val) => handleFieldSave('name', val)}
+                        className={styles.detailNameInline}
+                        required
+                    />
+                    <div style={{ display: 'flex', gap: '12px', alignItems: 'center', marginTop: '4px' }}>
+                        <p className={styles.detailId}>ID: {employee.employeeId || employee.id}</p>
+                        <InlineEditField
+                            label=""
+                            type="select"
+                            value={employee.status || 'Activo'}
+                            options={[
+                                { label: 'Activo', value: 'Activo' },
+                                { label: 'Inactivo', value: 'Inactivo' }
+                            ]}
+                            onSave={(val) => handleFieldSave('status', val)}
+                        />
+                    </div>
                 </div>
+
+                {/* Agrupamos las acciones */}
                 <div className={styles.actionButtons}>
                     {employee.phone && (
                         <a
@@ -92,14 +115,6 @@ function EmployeeDetailComponent({
                             WhatsApp
                         </a>
                     )}
-                    <button
-                        onClick={() => onEdit(employee)}
-                        className={styles.editButton}
-                        title="Editar empleado"
-                    >
-                        <Edit size={18} />
-                        Editar
-                    </button>
                     <button
                         onClick={() => onDelete(employee.id)}
                         className={styles.deleteButton}
@@ -116,184 +131,216 @@ function EmployeeDetailComponent({
                 </div>
             </div>
 
-            <div className={styles.tabsNav} role="tablist">
-                <button
-                    role="tab"
-                    aria-selected={activeTab === 'personal'}
-                    aria-controls="personal-panel"
-                    className={`${styles.tabButton} ${activeTab === 'personal' ? styles.tabActive : ''}`}
-                    onClick={() => setActiveTab('personal')}
-                >
-                    <User size={18} />
-                    Personal
-                </button>
-                <button
-                    role="tab"
-                    aria-selected={activeTab === 'laboral'}
-                    aria-controls="laboral-panel"
-                    className={`${styles.tabButton} ${activeTab === 'laboral' ? styles.tabActive : ''}`}
-                    onClick={() => setActiveTab('laboral')}
-                >
-                    <Briefcase size={18} />
-                    Laboral
-                </button>
-                <button
-                    role="tab"
-                    aria-selected={activeTab === 'actividad'}
-                    aria-controls="actividad-panel"
-                    className={`${styles.tabButton} ${activeTab === 'actividad' ? styles.tabActive : ''}`}
-                    onClick={() => setActiveTab('actividad')}
-                >
-                    <Activity size={18} />
-                    Actividad
-                </button>
-                <button
-                    role="tab"
-                    aria-selected={activeTab === 'documentos'}
-                    aria-controls="documentos-panel"
-                    className={`${styles.tabButton} ${activeTab === 'documentos' ? styles.tabActive : ''}`}
-                    onClick={() => setActiveTab('documentos')}
-                >
-                    <FileText size={18} />
-                    Documentos
-                </button>
-            </div>
+            {/* FLUJO CONTINUO SIN TABS */}
+            <div className={styles.unifiedContent}>
 
-            <div className={styles.tabContent}>
-                {activeTab === 'personal' && (
-                    <div id="personal-panel" role="tabpanel" className={styles.infoGrid}>
-                        <div className={styles.infoItem}>
-                            <label>Nombre Completo</label>
-                            <span>{employee.name}</span>
-                        </div>
-                        <div className={styles.infoItem}>
-                            <label>CURP</label>
-                            <span>{employee.curp || '—'}</span>
-                        </div>
-                        <div className={styles.infoItem}>
-                            <label>ID Empleado</label>
-                            <span>{employee.employeeId || '—'}</span>
-                        </div>
-                        <div className={styles.infoItem}>
-                            <label>Tipo</label>
-                            <span>{employee.isCandidato ? 'Candidato' : 'Empleado'}</span>
-                        </div>
+                {/* 1. SECCIÓN PERSONAL */}
+                <div className={styles.unifiedSection}>
+                    <h3 className={styles.sectionHeading}>
+                        <User size={18} className={styles.sectionIcon} />
+                        Información Personal
+                    </h3>
+                    <div className={styles.infoGrid}>
+                        <InlineEditField
+                            label="CURP"
+                            value={employee.curp}
+                            onSave={(val) => handleFieldSave('curp', val)}
+                        />
+                        <InlineEditField
+                            label="ID Empleado"
+                            value={employee.employeeId}
+                            onSave={(val) => handleFieldSave('employeeId', val)}
+                        />
+                        <InlineEditField
+                            label="Tipo"
+                            type="select"
+                            value={employee.isCandidato ? 'Candidato' : 'Empleado'}
+                            options={[
+                                { label: 'Empleado', value: 'Empleado' },
+                                { label: 'Candidato', value: 'Candidato' }
+                            ]}
+                            onSave={(val) => handleFieldSave('isCandidato', val === 'Candidato')}
+                        />
+                        <InlineEditField
+                            label="Teléfono"
+                            value={employee.phone}
+                            onSave={(val) => handleFieldSave('phone', val)}
+                        />
                     </div>
-                )}
+                </div>
 
-                {activeTab === 'laboral' && (
-                    <div id="laboral-panel" role="tabpanel" className={styles.infoGrid}>
-                        <div className={styles.infoItem}>
-                            <label>Puesto</label>
-                            <span>{employee.position || '—'}</span>
-                        </div>
-                        <div className={styles.infoItem}>
-                            <label>Departamento</label>
-                            <span>{employee.department || '—'}</span>
-                        </div>
-                        <div className={styles.infoItem}>
-                            <label>Área</label>
-                            <span>{employee.area || '—'}</span>
-                        </div>
-                        <div className={styles.infoItem}>
-                            <label>Turno</label>
-                            <span>{employee.shift || '—'}</span>
-                        </div>
-                        <div className={styles.infoItem}>
-                            <label>Fecha de Inicio</label>
-                            <span>{formatDate(employee.startDate)}</span>
-                        </div>
-                        <div className={styles.infoItem}>
-                            <label>Fin de Contrato</label>
-                            <span>{formatDate(employee.contractEndDate)}</span>
-                        </div>
+                <hr className={styles.sectionDivider} />
+
+                {/* 2. SECCIÓN LABORAL */}
+                <div className={styles.unifiedSection}>
+                    <h3 className={styles.sectionHeading}>
+                        <Briefcase size={18} className={styles.sectionIcon} />
+                        Información Laboral
+                    </h3>
+                    <div className={styles.infoGrid}>
+                        <InlineEditField
+                            label="Puesto"
+                            value={employee.position}
+                            onSave={(val) => handleFieldSave('position', val)}
+                        />
+                        <InlineEditField
+                            label="Departamento"
+                            value={employee.department}
+                            onSave={(val) => handleFieldSave('department', val)}
+                        />
+                        <InlineEditField
+                            label="Área"
+                            value={employee.area}
+                            onSave={(val) => handleFieldSave('area', val)}
+                        />
+                        <InlineEditField
+                            label="Turno"
+                            value={employee.shift}
+                            onSave={(val) => handleFieldSave('shift', val)}
+                        />
+                        <InlineEditField
+                            label="Fecha de Inicio"
+                            type="date"
+                            value={employee.startDate ? new Date(employee.startDate).toISOString().split('T')[0] : ''}
+                            onSave={(val) => handleFieldSave('startDate', val + 'T12:00:00Z')}
+                        />
+                        <InlineEditField
+                            label="Fin de Contrato"
+                            type="date"
+                            value={employee.contractEndDate ? new Date(employee.contractEndDate).toISOString().split('T')[0] : ''}
+                            onSave={(val) => handleFieldSave('contractEndDate', val ? val + 'T12:00:00Z' : null)}
+                        />
                     </div>
-                )}
+                </div>
 
-                {activeTab === 'actividad' && (
-                    <div id="actividad-panel" role="tabpanel">
-                        <div className={styles.infoGrid}>
-                            <div className={styles.infoItem}>
-                                <label>Código de Acceso</label>
-                                <span style={{ fontFamily: 'monospace', fontWeight: 'bold' }}>
-                                    {employee.accessCode || '—'}
+                <hr className={styles.sectionDivider} />
+
+                {/* 3. SECCIÓN ACTIVIDAD */}
+                <div className={styles.unifiedSection}>
+                    <h3 className={styles.sectionHeading}>
+                        <Activity size={18} className={styles.sectionIcon} />
+                        Actividad y Plataforma
+                    </h3>
+                    <div className={styles.infoGrid}>
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', gridColumn: '1 / -1' }}>
+                            <div style={{ display: 'flex', alignItems: 'flex-end', gap: '8px' }}>
+                                <div style={{ flex: 1 }}>
+                                    <InlineEditField
+                                        label="Código de Acceso"
+                                        value={employee.accessCode}
+                                        onSave={(val) => handleFieldSave('accessCode', val)}
+                                    />
+                                </div>
+                                <button
+                                    onClick={() => {
+                                        const code = Math.floor(100000 + Math.random() * 900000).toString();
+                                        onUpdate(employee.id, {
+                                            accessCode: code,
+                                            accessCodeGeneratedAt: Date.now(),
+                                            accessCodeUses: 0
+                                        });
+                                    }}
+                                    className={styles.generateCodeBtn}
+                                    title="Generar nuevo código"
+                                >
+                                    <Activity size={16} />
+                                    Generar
+                                </button>
+                            </div>
+                            {employee.accessCode && (
+                                <div className={styles.infoItem} style={{ marginTop: '0' }}>
+                                    <label>Usos / Creado</label>
+                                    <span style={{ fontSize: '0.85rem' }}>
+                                        {employee.accessCodeUses || 0} usos • {employee.accessCodeGeneratedAt ? new Date(employee.accessCodeGeneratedAt).toLocaleDateString('es-MX') : '—'}
+                                    </span>
+                                </div>
+                            )}
+                        </div>
+                        <InlineEditField
+                            label="Plan Entregado"
+                            type="checkbox"
+                            value={employee.trainingPlanDelivered}
+                            onSave={(val) => handleFieldSave('trainingPlanDelivered', val)}
+                        />
+                        <InlineEditField
+                            label="Fecha Notificación"
+                            type="date"
+                        value={employee.notificationDate ? new Date(employee.notificationDate).toISOString().split('T')[0] : ''}
+                        onSave={(val) => handleFieldSave('notificationDate', val ? val + 'T12:00:00Z' : null)}
+                    />
+                    <div className={styles.infoItem}>
+                        <label>Último Login</label>
+                        <span>{formatDate(employee.lastLoginCandidate)}</span>
+                    </div>
+                </div>
+
+                {employee.cursosCompletados && employee.cursosCompletados.length > 0 && (
+                    <div className={styles.coursesSection}>
+                        <h4 className={styles.coursesTitle}>Cursos Completados</h4>
+                        <div className={styles.coursesBadgeContainer}>
+                            {employee.cursosCompletados.map((courseId, idx) => (
+                                <span key={idx} className={styles.courseBadge}>
+                                    {courseId.substring(0, 12)}...
                                 </span>
-                            </div>
-                            <div className={styles.infoItem}>
-                                <label>Plan Entregado</label>
-                                <span>{employee.trainingPlanDelivered ? 'Sí' : 'No'}</span>
-                            </div>
-                            <div className={styles.infoItem}>
-                                <label>Fecha Notificación</label>
-                                <span>{formatDate(employee.notificationDate)}</span>
-                            </div>
-                            <div className={styles.infoItem}>
-                                <label>Último Login</label>
-                                <span>{formatDate(employee.lastLoginCandidate)}</span>
-                            </div>
+                            ))}
                         </div>
+                    </div>
+                )}
 
-                        {employee.cursosCompletados && employee.cursosCompletados.length > 0 && (
-                            <div className={styles.coursesSection}>
-                                <h4 className={styles.coursesTitle}>Cursos Completados</h4>
-                                <div className={styles.coursesBadgeContainer}>
-                                    {employee.cursosCompletados.map((courseId, idx) => (
-                                        <span key={idx} className={styles.courseBadge}>
-                                            {courseId.substring(0, 12)}...
+                {employee.coursesProgress && Object.keys(employee.coursesProgress).length > 0 && (
+                    <div className={styles.coursesSection}>
+                        <h4 className={styles.coursesTitle}>Progreso de Cursos</h4>
+                        {Object.entries(employee.coursesProgress).map(([courseId, progress]) => (
+                            <div key={courseId} className={styles.progressItem}>
+                                <span className={styles.courseId}>{courseId.substring(0, 12)}...</span>
+                                <div className={styles.progressSteps}>
+                                    <span className={progress.step1Completed ? styles.stepCompleted : styles.stepPending}>
+                                        Paso 1
+                                    </span>
+                                    <span className={progress.step2Completed ? styles.stepCompleted : styles.stepPending}>
+                                        Paso 2
+                                    </span>
+                                    {progress.examDownloaded && (
+                                        <span className={styles.stepInfo}>
+                                            <Download size={14} /> Examen
                                         </span>
-                                    ))}
+                                    )}
                                 </div>
                             </div>
-                        )}
-
-                        {employee.coursesProgress && Object.keys(employee.coursesProgress).length > 0 && (
-                            <div className={styles.coursesSection}>
-                                <h4 className={styles.coursesTitle}>Progreso de Cursos</h4>
-                                {Object.entries(employee.coursesProgress).map(([courseId, progress]) => (
-                                    <div key={courseId} className={styles.progressItem}>
-                                        <span className={styles.courseId}>{courseId.substring(0, 12)}...</span>
-                                        <div className={styles.progressSteps}>
-                                            <span className={progress.step1Completed ? styles.stepCompleted : styles.stepPending}>
-                                                Paso 1
-                                            </span>
-                                            <span className={progress.step2Completed ? styles.stepCompleted : styles.stepPending}>
-                                                Paso 2
-                                            </span>
-                                            {progress.examDownloaded && (
-                                                <span className={styles.stepInfo}>
-                                                    <Download size={14} /> Examen
-                                                </span>
-                                            )}
-                                        </div>
-                                    </div>
-                                ))}
-                            </div>
-                        )}
-                    </div>
-                )}
-
-                {activeTab === 'documentos' && (
-                    <div id="documentos-panel" role="tabpanel">
-                        {employee.documents && employee.documents.length > 0 ? (
-                            <div className={styles.documentsList}>
-                                {employee.documents.map((doc, idx) => (
-                                    <div key={idx} className={styles.documentItem}>
-                                        <FileText size={20} />
-                                        <span>Documento {idx + 1}</span>
-                                        <a href="#" className={styles.documentLink}>Ver</a>
-                                    </div>
-                                ))}
-                            </div>
-                        ) : (
-                            <div className={styles.emptyState}>
-                                <FileText size={32} />
-                                <p>No hay documentos disponibles</p>
-                            </div>
-                        )}
+                        ))}
                     </div>
                 )}
             </div>
-        </div>
+
+            <hr className={styles.sectionDivider} />
+
+            {/* 4. SECCIÓN DOCUMENTOS */}
+            <div className={styles.unifiedSection}>
+                <h3 className={styles.sectionHeading}>
+                    <FileText size={18} className={styles.sectionIcon} />
+                    Documentos
+                </h3>
+
+                {employee.documents && employee.documents.length > 0 ? (
+                    <div className={styles.documentsList}>
+                        {employee.documents.map((doc, idx) => (
+                            <div key={idx} className={styles.documentItem}>
+                                <FileText size={20} />
+                                <span>Documento {idx + 1}</span>
+                                <a href="#" className={styles.documentLink}>Ver</a>
+                            </div>
+                        ))}
+                    </div>
+                ) : (
+                    <div className={styles.emptyState}>
+                        <FileText size={32} />
+                        <p>No hay documentos disponibles</p>
+                    </div>
+                )}
+            </div>
+
+        </div> {/* Fin de Unified Content */ }
+        </div >
     );
 }
 

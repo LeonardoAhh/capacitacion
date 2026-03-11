@@ -29,15 +29,12 @@
 }
 
 .tabActive {
-    color: #007AFF;
-    border-bottom-color: #007AFF;
+    color: var(--blue-500);
+    border-bottom-color: var(--blue-500);
     font-weight: 600;
 }
 
-[data-theme="dark"] .tabActive {
-    color: #0A84FF;
-    border-bottom-color: #0A84FF;
-}
+
 
 /* === TAB CONTENT === */
 .tabContent {
@@ -83,7 +80,7 @@
     border-radius: 10px;
     border: none;
     background: rgba(0, 122, 255, 0.1);
-    color: #007AFF;
+    color: var(--blue-500);
     font-size: 14px;
     font-weight: 600;
     cursor: pointer;
@@ -101,30 +98,20 @@
 
 .quickActionDanger {
     background: rgba(255, 59, 48, 0.1);
-    color: #FF3B30;
+    color: var(--color-danger);
 }
 
 .quickActionDanger:hover {
     background: rgba(255, 59, 48, 0.2);
 }
 
-[data-theme="dark"] .quickActionBtn {
-    background: rgba(10, 132, 255, 0.15);
-    color: #0A84FF;
-}
 
-[data-theme="dark"] .quickActionBtn:hover {
-    background: rgba(10, 132, 255, 0.25);
-}
 
-[data-theme="dark"] .quickActionDanger {
-    background: rgba(255, 69, 58, 0.15);
-    color: #FF453A;
-}
 
-[data-theme="dark"] .quickActionDanger:hover {
-    background: rgba(255, 69, 58, 0.25);
-}
+
+
+
+
 
 /* === EMPTY TAB STATE === */
 .emptyTabState {
