@@ -15,6 +15,7 @@ import ProfileDropdown from '@/components/layout/ProfileDropdown/ProfileDropdown
 import AvatarSelector from '@/components/ui/AvatarSelector/AvatarSelector';
 import { useConfirm } from '@/hooks/useConfirm';
 import AdminLayout from '@/components/layout/AdminLayout/AdminLayout';
+import Select from '@/components/ui/Select/Select';
 
 // Custom hook for data fetching
 function useDataFetching() {
@@ -668,18 +669,19 @@ export default function CandidateMonitoringPage() {
             </div>
             {showMobileFilters && (
                 <div className={styles.mobileFiltersPanel}>
-                    <select
+                    <Select
                         value={statusFilter}
-                        onChange={(e) => setStatusFilter(e.target.value)}
+                        onChange={setStatusFilter}
+                        options={[
+                            { label: 'Todos los estados', value: 'all' },
+                            { label: 'Completados', value: 'completed' },
+                            { label: 'En Proceso', value: 'inProgress' },
+                            { label: 'Inactivos', value: 'inactive' },
+                            { label: 'Sin Iniciar', value: 'notStarted' },
+                            { label: '🗄️ Archivados', value: 'archived' }
+                        ]}
                         className={styles.statusFilter}
-                    >
-                        <option value="all">Todos los estados</option>
-                        <option value="completed">Completados</option>
-                        <option value="inProgress">En Proceso</option>
-                        <option value="inactive">Inactivos</option>
-                        <option value="notStarted">Sin Iniciar</option>
-                        <option value="archived">🗄️ Archivados</option>
-                    </select>
+                    />
                 </div>
             )}
             {/* Results Summary */}
