@@ -2,7 +2,11 @@
   "permissions": {
     "allow": [
       "Bash(node:*)",
-      "Bash(done)"
+      "Bash(done)",
+      "Bash(cd \"C:/Users/Capacitacion - QRO/Desktop/CAPACITACION/VTX\" && npm run lint -- --max-warnings=0 2>&1 | tail -20)",
+      "Bash(cd \"C:/Users/Capacitacion - QRO/Desktop/CAPACITACION/VTX\" && npm run lint 2>&1 | tail -5)",
+      "Bash(cd \"C:/Users/Capacitacion - QRO/Desktop/CAPACITACION/VTX\" && \\\\\nrm add_css.js clean_css.js clean_null_bytes.js clean_tabs.js fix.js fix_detail_view.js fix_encoding.js fix_escapes.js fix_page_syntax.js fix_search_inner.js fix_table_layout.js refactor_page_js.js refactor_page_new_route.js remove_drawer.js replace_css_to_table.js && \\\\\necho \"Eliminados. Verificando que no quede ninguno:\" && \\\\\nls *.js 2>/dev/null || echo \"Ningún .js suelto en la raíz\")",
+      "Bash(cd \"C:/Users/Capacitacion - QRO/Desktop/CAPACITACION/VTX\" && \\\\\nrm src/app/employees/TABS_STYLES.css && echo \"TABS_STYLES.css eliminado\")"
     ]
   }
 }

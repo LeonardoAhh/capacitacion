@@ -24,109 +24,7 @@ import { useCatalogs } from '@/hooks/useCatalogs';
 
 
 import { generateEmployeeTemplate, parseImportFile, validateEmployeeImportRecords } from '@/utils/importUtils';
-
-// ============================================================================
-// HELPER FUNCTIONS
-// ============================================================================
-
-const formatDate = (dateString) => {
-    if (!dateString) return '-';
-    try {
-        // Fix for Timezone Offset:
-        // If it's a YYYY-MM-DD string, parse it as LOCAL time to avoid UTC-based shift.
-        if (typeof dateString === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(dateString)) {
-            const [year, month, day] = dateString.split('-').map(Number);
-            // Month is 0-indexed in Date constructor
-            const date = new Date(year, month - 1, day);
-            return date.toLocaleDateString('es-MX', {
-                year: 'numeric',
-                month: 'short',
-                day: 'numeric'
-            });
-        }
-
-        const date = typeof dateString === 'number' ? new Date(dateString) : new Date(dateString);
-        return date.toLocaleDateString('es-MX', {
-            year: 'numeric',
-            month: 'short',
-            day: 'numeric'
-        });
-    } catch (e) {
-        console.error('Error formatting date:', e);
-        return dateString;
-    }
-};
-
-const formatDateForInput = (dateString) => {
-    if (!dateString) return '';
-    try {
-        const date = new Date(dateString);
-        return date.toISOString().split('T')[0];
-    } catch (e) {
-        console.error('Error formatting date for input:', e);
-        return '';
-    }
-};
-
-const getInitials = (name) => {
-    if (!name) return 'EM';
-    return name
-        .split(' ')
-        .map(n => n[0])
-        .join('')
-        .slice(0, 2)
-        .toUpperCase();
-};
-
-const calculateDatesFromStart = (startDate) => {
-    if (!startDate) return {};
-
-    const start = new Date(startDate);
-
-    // Calculate contract end date (90 days)
-    const contractEnd = new Date(start);
-    contractEnd.setDate(contractEnd.getDate() + 90);
-
-    // Calculate evaluation dates
-    const eval1 = new Date(start);
-    eval1.setDate(eval1.getDate() + 30);
-
-    const eval2 = new Date(start);
-    eval2.setDate(eval2.getDate() + 60);
-
-    const eval3 = new Date(start);
-    eval3.setDate(eval3.getDate() + 75);
-
-    return {
-        contractEndDate: contractEnd.toISOString().split('T')[0],
-        eval1Date: eval1.toISOString().split('T')[0],
-        eval2Date: eval2.toISOString().split('T')[0],
-        eval3Date: eval3.toISOString().split('T')[0]
-    };
-};
-
-const getEmptyFormData = () => ({
-    name: '',
-    employeeId: '',
-    curp: '',
-    phone: '',
-    position: '',
-    department: '',
-    area: '',
-    shift: '',
-    status: 'Activo',
-    isCandidato: false,
-    startDate: '',
-    contractEndDate: '',
-    photoUrl: '',
-    eval1Date: '',
-    eval1Score: '',
-    eval2Date: '',
-    eval2Score: '',
-    eval3Date: '',
-    eval3Score: '',
-    trainingPlanDelivered: false
-});
+import { getInitials } from '@/lib/employeeUtils';
 
 // ============================================================================
 // MAIN COMPONENT
@@ -262,6 +160,15 @@ export default function EmployeesPage() {
             }
         });
     }, [deleteEmployee, showToast]);
+
+    const handleUpdateEmployee = useCallback(async (id, data) => {
+        const result = await updateEmployee(id, data);
+        if (result.success) {
+            // Actualizar el snapshot local para que el detalle refleje los cambios al instante
+            setSelectedEmployee(prev => prev ? { ...prev, ...data } : prev);
+        }
+        return result;
+    }, [updateEmployee]);
 
     const handleItemsPerPageChange = useCallback((e) => {
         setItemsPerPage(Number(e.target.value));
@@ -602,7 +509,7 @@ export default function EmployeesPage() {
                         <EmployeeDetail
                             employee={selectedEmployee}
                             onBack={handleBackToList}
-                            onUpdate={updateEmployee}
+                            onUpdate={handleUpdateEmployee}
                             onDelete={handleDeleteEmployee}
                             onImageError={handleImageError}
                             isDeleting={isDeleting}

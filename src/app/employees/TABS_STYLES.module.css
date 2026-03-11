@@ -1,23 +1,24 @@
 /* === TABS NAVIGATION === */
 .tabsContainer {
     display: flex;
-    gap: 8px;
+    gap: var(--spacing-sm);
     margin: 20px 0;
     padding: 0 4px;
-    border-bottom: 2px solid var(--divider);
+    border-bottom: 2px solid var(--border-color);
 }
 
 .tab {
     flex: 1;
     padding: 12px 16px;
+    min-height: 44px; /* touch target */
     background: transparent;
     border: none;
     border-bottom: 3px solid transparent;
     color: var(--text-secondary);
-    font-size: 14px;
+    font-size: var(--text-base);
     font-weight: 500;
     cursor: pointer;
-    transition: all 0.2s;
+    transition: all var(--transition-fast);
     white-space: nowrap;
     position: relative;
     bottom: -2px;
@@ -25,16 +26,14 @@
 
 .tab:hover {
     color: var(--text-primary);
-    background: rgba(0, 122, 255, 0.05);
+    background: rgba(var(--color-info-rgb), 0.05);
 }
 
 .tabActive {
-    color: var(--blue-500);
-    border-bottom-color: var(--blue-500);
+    color: var(--color-info);
+    border-bottom-color: var(--color-info);
     font-weight: 600;
 }
-
-
 
 /* === TAB CONTENT === */
 .tabContent {
@@ -47,7 +46,6 @@
         opacity: 0;
         transform: translateY(10px);
     }
-
     to {
         opacity: 1;
         transform: translateY(0);
@@ -59,7 +57,7 @@
 }
 
 .tabPaneTitle {
-    font-size: 18px;
+    font-size: var(--text-xl);
     font-weight: 600;
     color: var(--text-primary);
     margin: 0 0 16px 0;
@@ -69,49 +67,42 @@
 /* === QUICK ACTIONS ROW === */
 .quickActionsRow {
     display: flex;
-    gap: 12px;
-    margin-top: 16px;
+    gap: var(--spacing-md);
+    margin-top: var(--spacing-md);
     width: 100%;
 }
 
 .quickActionBtn {
     flex: 1;
     padding: 10px 16px;
-    border-radius: 10px;
+    min-height: 44px; /* touch target */
+    border-radius: var(--radius-md);
     border: none;
-    background: rgba(0, 122, 255, 0.1);
-    color: var(--blue-500);
-    font-size: 14px;
+    background: rgba(var(--color-info-rgb), 0.1);
+    color: var(--color-info);
+    font-size: var(--text-base);
     font-weight: 600;
     cursor: pointer;
-    transition: all 0.2s;
+    transition: all var(--transition-fast);
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 6px;
+    gap: var(--spacing-sm);
 }
 
 .quickActionBtn:hover {
-    background: rgba(0, 122, 255, 0.2);
+    background: rgba(var(--color-info-rgb), 0.2);
     transform: translateY(-1px);
 }
 
 .quickActionDanger {
-    background: rgba(255, 59, 48, 0.1);
+    background: rgba(var(--color-danger-rgb), 0.1);
     color: var(--color-danger);
 }
 
 .quickActionDanger:hover {
-    background: rgba(255, 59, 48, 0.2);
+    background: rgba(var(--color-danger-rgb), 0.2);
 }
-
-
-
-
-
-
-
-
 
 /* === EMPTY TAB STATE === */
 .emptyTabState {
@@ -125,19 +116,19 @@
 }
 
 .emptyTabState svg {
-    margin-bottom: 16px;
+    margin-bottom: var(--spacing-md);
     opacity: 0.5;
 }
 
 .emptyTabState p {
-    font-size: 14px;
+    font-size: var(--text-base);
     margin: 0;
 }
 
 /* === RESPONSIVE === */
 @media (max-width: 600px) {
     .tab {
-        font-size: 12px;
+        font-size: var(--text-xs);
         padding: 10px 12px;
     }
 

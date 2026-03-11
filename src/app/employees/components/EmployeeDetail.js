@@ -4,45 +4,12 @@ import { memo } from 'react';
 import Image from 'next/image';
 import {
     User, Briefcase, Activity, FileText,
-    Trash2, Phone, Loader2, Download
+    Trash2, Phone, Loader2, Download, ShieldCheck, ShieldOff
 } from 'lucide-react';
 import BackButton from '@/components/ui/BackButton/BackButton';
 import InlineEditField from './InlineEditField';
 import styles from '../page.module.css';
-
-const getInitials = (name) => {
-    if (!name) return 'EM';
-    return name
-        .split(' ')
-        .map(n => n[0])
-        .join('')
-        .slice(0, 2)
-        .toUpperCase();
-};
-
-const formatDate = (dateString) => {
-    if (!dateString) return '—';
-    try {
-        if (typeof dateString === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(dateString)) {
-            const [year, month, day] = dateString.split('-').map(Number);
-            const date = new Date(year, month - 1, day);
-            return date.toLocaleDateString('es-MX', {
-                year: 'numeric',
-                month: 'short',
-                day: 'numeric'
-            });
-        }
-
-        const date = typeof dateString === 'number' ? new Date(dateString) : new Date(dateString);
-        return date.toLocaleDateString('es-MX', {
-            year: 'numeric',
-            month: 'short',
-            day: 'numeric'
-        });
-    } catch {
-        return dateString;
-    }
-};
+import { getInitials, formatDate } from '@/lib/employeeUtils';
 
 function EmployeeDetailComponent({
     employee,
@@ -58,7 +25,7 @@ function EmployeeDetailComponent({
 
     return (
         <div className={styles.detailView}>
-            <div style={{ marginBottom: '32px' }}>
+            <div className={styles.backButtonWrapper}>
                 <BackButton onClick={onBack} label="" />
             </div>
 
@@ -86,7 +53,7 @@ function EmployeeDetailComponent({
                         className={styles.detailNameInline}
                         required
                     />
-                    <div style={{ display: 'flex', gap: '12px', alignItems: 'center', marginTop: '4px' }}>
+                    <div className={styles.detailIdRow}>
                         <p className={styles.detailId}>ID: {employee.employeeId || employee.id}</p>
                         <InlineEditField
                             label=""
@@ -152,16 +119,6 @@ function EmployeeDetailComponent({
                             onSave={(val) => handleFieldSave('employeeId', val)}
                         />
                         <InlineEditField
-                            label="Tipo"
-                            type="select"
-                            value={employee.isCandidato ? 'Candidato' : 'Empleado'}
-                            options={[
-                                { label: 'Empleado', value: 'Empleado' },
-                                { label: 'Candidato', value: 'Candidato' }
-                            ]}
-                            onSave={(val) => handleFieldSave('isCandidato', val === 'Candidato')}
-                        />
-                        <InlineEditField
                             label="Teléfono"
                             value={employee.phone}
                             onSave={(val) => handleFieldSave('phone', val)}
@@ -221,10 +178,44 @@ function EmployeeDetailComponent({
                         <Activity size={18} className={styles.sectionIcon} />
                         Actividad y Plataforma
                     </h3>
+
+                    {/* ACCESO A PLATAFORMA — control prominente */}
+                    <div className={`${styles.platformAccessCard} ${employee.isCandidato ? styles.platformAccessCardActive : ''}`}>
+                        <div className={styles.platformAccessInfo}>
+                            <div className={styles.platformAccessIcon}>
+                                {employee.isCandidato
+                                    ? <ShieldCheck size={22} />
+                                    : <ShieldOff size={22} />
+                                }
+                            </div>
+                            <div>
+                                <p className={styles.platformAccessTitle}>
+                                    Acceso a la plataforma
+                                </p>
+                                <p className={styles.platformAccessDesc}>
+                                    {employee.isCandidato
+                                        ? 'Puede ingresar con su código de acceso'
+                                        : 'No tiene acceso a la plataforma de candidatos'
+                                    }
+                                </p>
+                            </div>
+                            <span className={`${styles.platformAccessBadge} ${employee.isCandidato ? styles.platformAccessBadgeOn : styles.platformAccessBadgeOff}`}>
+                                {employee.isCandidato ? 'Activo' : 'Inactivo'}
+                            </span>
+                        </div>
+                        <button
+                            type="button"
+                            className={`${styles.platformAccessToggle} ${employee.isCandidato ? styles.platformAccessToggleOn : styles.platformAccessToggleOff}`}
+                            onClick={() => handleFieldSave('isCandidato', !employee.isCandidato)}
+                        >
+                            {employee.isCandidato ? 'Quitar acceso' : 'Dar acceso'}
+                        </button>
+                    </div>
+
                     <div className={styles.infoGrid}>
-                        <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', gridColumn: '1 / -1' }}>
-                            <div style={{ display: 'flex', alignItems: 'flex-end', gap: '8px' }}>
-                                <div style={{ flex: 1 }}>
+                        <div className={styles.accessCodeRow}>
+                            <div className={styles.accessCodeInputRow}>
+                                <div className={styles.accessCodeInputWrapper}>
                                     <InlineEditField
                                         label="Código de Acceso"
                                         value={employee.accessCode}
@@ -248,9 +239,9 @@ function EmployeeDetailComponent({
                                 </button>
                             </div>
                             {employee.accessCode && (
-                                <div className={styles.infoItem} style={{ marginTop: '0' }}>
+                                <div className={styles.infoItem}>
                                     <label>Usos / Creado</label>
-                                    <span style={{ fontSize: '0.85rem' }}>
+                                    <span className={styles.codeUsageInfo}>
                                         {employee.accessCodeUses || 0} usos • {employee.accessCodeGeneratedAt ? new Date(employee.accessCodeGeneratedAt).toLocaleDateString('es-MX') : '—'}
                                     </span>
                                 </div>

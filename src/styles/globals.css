@@ -33,6 +33,16 @@
   --color-primary-rgb: 245, 158, 11;
   --color-danger-rgb: 255, 59, 48;
   --color-success-rgb: 52, 199, 89;
+  --color-info-rgb: 0, 122, 255;
+
+  /* Typography scale (rem-based, browser zoom friendly) */
+  --text-xs:   0.75rem;    /* 12px */
+  --text-sm:   0.8125rem;  /* 13px */
+  --text-base: 0.875rem;   /* 14px */
+  --text-md:   0.9375rem;  /* 15px */
+  --text-lg:   1rem;       /* 16px */
+  --text-xl:   1.25rem;    /* 20px */
+  --text-2xl:  1.5rem;     /* 24px */
 
   /* Backgrounds - Editorial White */
   --bg-primary: #ffffff;
