@@ -20,6 +20,16 @@ function EmployeeDetailComponent({
     isDeleting,
 }) {
     const handleFieldSave = (field, value) => {
+        // Si se actualiza la fecha de inicio, recalcular fin de contrato (+90 días)
+        if (field === 'startDate' && value) {
+            const rawDate = value.replace('T12:00:00Z', '');
+            const start = new Date(rawDate);
+            const end = new Date(start);
+            end.setDate(end.getDate() + 90);
+            const contractEndDate = end.toISOString().split('T')[0] + 'T12:00:00Z';
+            onUpdate(employee.id, { startDate: value, contractEndDate });
+            return;
+        }
         onUpdate(employee.id, { [field]: value });
     };
 
@@ -160,6 +170,7 @@ function EmployeeDetailComponent({
                             type="date"
                             value={employee.startDate ? new Date(employee.startDate).toISOString().split('T')[0] : ''}
                             onSave={(val) => handleFieldSave('startDate', val + 'T12:00:00Z')}
+                            helperText="Actualiza automáticamente el fin de contrato"
                         />
                         <InlineEditField
                             label="Fin de Contrato"

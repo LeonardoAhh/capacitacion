@@ -30,9 +30,9 @@ export const useEmployeeDates = () => {
         const start = new Date(startDate);
         if (isNaN(start.getTime())) return null;
 
-        // Fin de contrato: 89 días
+        // Fin de contrato: 90 días
         const contractEnd = new Date(start);
-        contractEnd.setDate(contractEnd.getDate() + 89);
+        contractEnd.setDate(contractEnd.getDate() + 90);
 
         // Notificación de renovación: 75 días
         const notificationDate = new Date(start);

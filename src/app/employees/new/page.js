@@ -48,6 +48,20 @@ export default function NewEmployeePage() {
 
     const handleInputChange = (e) => {
         const { name, value, type, checked } = e.target;
+        // Si cambia la fecha de inicio, auto-calcular fin de contrato (90 días)
+        if (name === 'startDate' && value) {
+            const start = new Date(value);
+            const end = new Date(start);
+            end.setDate(end.getDate() + 90);
+            const endDateStr = end.toISOString().split('T')[0];
+            setFormData(prev => ({
+                ...prev,
+                startDate: value,
+                contractEndDate: endDateStr
+            }));
+            if (formErrors['startDate']) clearErrors('startDate');
+            return;
+        }
         setFormData(prev => ({
             ...prev,
             [name]: type === 'checkbox' ? checked : value
@@ -277,7 +291,14 @@ export default function NewEmployeePage() {
                                 />
                             </div>
                             <div className={styles.formGroup}>
-                                <label htmlFor="contractEndDate" className={styles.label}>Fin Contrato</label>
+                                <label htmlFor="contractEndDate" className={styles.label}>
+                                    Fin Contrato
+                                    {formData.startDate && formData.contractEndDate && (
+                                        <span style={{ fontSize: '0.75rem', color: 'var(--color-primary)', marginLeft: '8px', fontWeight: 400 }}>
+                                            (auto-calculado)
+                                        </span>
+                                    )}
+                                </label>
                                 <input
                                     type="date"
                                     id="contractEndDate"
