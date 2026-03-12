@@ -403,7 +403,7 @@ export default function EmployeeForm({
                                     {[
                                         { num: 1, date: calculatedDates.eval1Date, days: '30 días', score: 'eval1Score' },
                                         { num: 2, date: calculatedDates.eval2Date, days: '60 días', score: 'eval2Score' },
-                                        { num: 3, date: calculatedDates.eval3Date, days: '75 días', score: 'eval3Score' }
+                                        { num: 3, date: calculatedDates.eval3Date, days: '85 días', score: 'eval3Score' }
                                     ].map((evalItem) => (
                                         <div
                                             key={evalItem.num}

@@ -2176,3 +2176,118 @@
         justify-content: center;
     }
 }
+
+/* === EVALUACIONES DE DESEMPEÑO === */
+.evalsSection {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.evalEmptyNote {
+    font-size: var(--text-sm);
+    color: var(--text-tertiary);
+    margin: 0;
+}
+
+.evalCard {
+    border: 1px solid var(--border-color);
+    border-radius: 14px;
+    overflow: hidden;
+    transition: box-shadow 0.2s ease;
+}
+
+.evalCard:hover {
+    box-shadow: 0 4px 16px rgba(0,0,0,0.06);
+}
+
+.evalCardPending {
+    background: var(--bg-primary);
+}
+
+.evalCardPassed {
+    background: rgba(var(--color-success-rgb), 0.04);
+    border-color: rgba(var(--color-success-rgb), 0.2);
+}
+
+.evalCardFailed {
+    background: rgba(var(--color-danger-rgb), 0.04);
+    border-color: rgba(var(--color-danger-rgb), 0.2);
+}
+
+.evalCardHeader {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 14px 18px;
+}
+
+.evalCardNum {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: var(--text-base);
+    color: var(--text-secondary);
+    flex-shrink: 0;
+}
+
+.evalCardInfo {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.evalCardLabel {
+    font-size: var(--text-base);
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.evalCardMeta {
+    font-size: var(--text-xs);
+    color: var(--text-tertiary);
+    font-family: var(--font-mono);
+}
+
+.evalScoreBadge {
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: var(--text-sm);
+    font-weight: 700;
+    flex-shrink: 0;
+}
+
+.evalScorePassed {
+    background: rgba(var(--color-success-rgb), 0.12);
+    color: var(--color-success);
+}
+
+.evalScoreFailed {
+    background: rgba(var(--color-danger-rgb), 0.12);
+    color: var(--color-danger);
+}
+
+.evalCardBody {
+    padding: 0 18px 14px 18px;
+    border-top: 1px solid var(--border-color);
+    margin-top: 2px;
+    padding-top: 12px;
+}
+
+@media (max-width: 640px) {
+    .evalCardHeader {
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+    .evalScoreBadge {
+        order: -1;
+        margin-left: auto;
+    }
+}

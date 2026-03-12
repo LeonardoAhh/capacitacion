@@ -4,7 +4,7 @@ import { memo } from 'react';
 import Image from 'next/image';
 import {
     User, Briefcase, Activity, FileText,
-    Trash2, Phone, Loader2, Download, ShieldCheck, ShieldOff
+    Trash2, Phone, Loader2, Download, ShieldCheck, ShieldOff, ClipboardList
 } from 'lucide-react';
 import BackButton from '@/components/ui/BackButton/BackButton';
 import InlineEditField from './InlineEditField';
@@ -20,14 +20,22 @@ function EmployeeDetailComponent({
     isDeleting,
 }) {
     const handleFieldSave = (field, value) => {
-        // Si se actualiza la fecha de inicio, recalcular fin de contrato (+90 días)
+        // Si se actualiza la fecha de inicio, recalcular todas las fechas derivadas
         if (field === 'startDate' && value) {
             const rawDate = value.replace('T12:00:00Z', '');
             const start = new Date(rawDate);
-            const end = new Date(start);
-            end.setDate(end.getDate() + 90);
-            const contractEndDate = end.toISOString().split('T')[0] + 'T12:00:00Z';
-            onUpdate(employee.id, { startDate: value, contractEndDate });
+            const addDays = (d, days) => {
+                const result = new Date(d);
+                result.setDate(result.getDate() + days);
+                return result.toISOString().split('T')[0] + 'T12:00:00Z';
+            };
+            onUpdate(employee.id, {
+                startDate:       value,
+                contractEndDate: addDays(start, 90),
+                eval1Date:       addDays(start, 30),
+                eval2Date:       addDays(start, 60),
+                eval3Date:       addDays(start, 85),
+            });
             return;
         }
         onUpdate(employee.id, { [field]: value });
@@ -183,7 +191,69 @@ function EmployeeDetailComponent({
 
                 <hr className={styles.sectionDivider} />
 
-                {/* 3. SECCIÓN ACTIVIDAD */}
+                {/* 3. SECCIÓN EVALUACIONES */}
+                <div className={styles.unifiedSection}>
+                    <h3 className={styles.sectionHeading}>
+                        <ClipboardList size={18} className={styles.sectionIcon} />
+                        Evaluaciones de Desempeño
+                    </h3>
+
+                    {employee.eval1Date || employee.eval2Date || employee.eval3Date ? (
+                        <div className={styles.evalsSection}>
+                            {[
+                                { num: 1, label: 'Evaluación 1', date: employee.eval1Date, scoreField: 'eval1Score', score: employee.eval1Score, days: '30 días' },
+                                { num: 2, label: 'Evaluación 2', date: employee.eval2Date, scoreField: 'eval2Score', score: employee.eval2Score, days: '60 días' },
+                                { num: 3, label: 'Evaluación 3', date: employee.eval3Date, scoreField: 'eval3Score', score: employee.eval3Score, days: '85 días' },
+                            ].map((ev) => {
+                                const hasScore = ev.score !== '' && ev.score !== null && ev.score !== undefined;
+                                const passed   = hasScore && parseFloat(ev.score) >= 80;
+                                const failed   = hasScore && parseFloat(ev.score) < 80;
+                                return (
+                                    <div
+                                        key={ev.num}
+                                        className={`${styles.evalCard} ${
+                                            passed ? styles.evalCardPassed
+                                            : failed ? styles.evalCardFailed
+                                            : styles.evalCardPending
+                                        }`}
+                                    >
+                                        <div className={styles.evalCardHeader}>
+                                            <div className={styles.evalCardNum}>{ev.num}</div>
+                                            <div className={styles.evalCardInfo}>
+                                                <span className={styles.evalCardLabel}>{ev.label}</span>
+                                                <span className={styles.evalCardMeta}>
+                                                    {ev.days} &bull; {ev.date ? formatDate(ev.date.split?.('T')[0] ?? ev.date) : '—'}
+                                                </span>
+                                            </div>
+                                            {hasScore && (
+                                                <span className={`${styles.evalScoreBadge} ${passed ? styles.evalScorePassed : styles.evalScoreFailed}`}>
+                                                    {passed ? '✓' : '✕'} {ev.score}
+                                                </span>
+                                            )}
+                                        </div>
+                                        <div className={styles.evalCardBody}>
+                                            <InlineEditField
+                                                label="Calificación (0–100)"
+                                                type="number"
+                                                value={ev.score ?? ''}
+                                                onSave={(val) => handleFieldSave(ev.scoreField, val === '' ? null : Number(val))}
+                                                placeholder="Pendiente"
+                                            />
+                                        </div>
+                                    </div>
+                                );
+                            })}
+                        </div>
+                    ) : (
+                        <p className={styles.evalEmptyNote}>
+                            Guarda una fecha de inicio para generar las fechas de evaluación.
+                        </p>
+                    )}
+                </div>
+
+                <hr className={styles.sectionDivider} />
+
+                {/* 4. SECCIÓN ACTIVIDAD */}
                 <div className={styles.unifiedSection}>
                     <h3 className={styles.sectionHeading}>
                         <Activity size={18} className={styles.sectionIcon} />

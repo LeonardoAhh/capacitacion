@@ -56,6 +56,21 @@ export function useDashboardStats(user) {
         loadUserData();
     }, [user, loadEmployees, loadUserData]);
 
+    // ─── Helper: parseo seguro de fechas (Firestore Timestamp, ISO string o YYYY-MM-DD) ──
+    const parseDateToLocal = (value) => {
+        if (!value) return null;
+        // Firestore Timestamp
+        if (value?.toDate) return value.toDate();
+        // String con hora (ISO): recortar a fecha local pura
+        if (typeof value === 'string') {
+            const dateOnly = value.split('T')[0];
+            const [y, m, d] = dateOnly.split('-').map(Number);
+            if (!y || !m || !d) return null;
+            return new Date(y, m - 1, d);
+        }
+        return null;
+    };
+
     // ─── Calcular estadísticas derivadas con useMemo ────────────
     const stats = useMemo(() => {
         if (rawEmployees.length === 0) {
@@ -68,14 +83,14 @@ export function useDashboardStats(user) {
         const totalEmployees = rawEmployees.length;
 
         const activeContracts = rawEmployees.filter(emp => {
-            if (!emp.contractEndDate) return false;
-            const endDate = new Date(emp.contractEndDate + 'T00:00:00');
+            const endDate = parseDateToLocal(emp.contractEndDate);
+            if (!endDate) return false;
             return endDate >= now;
         }).length;
 
         const expiringContracts = rawEmployees.filter(emp => {
-            if (!emp.contractEndDate) return false;
-            const endDate = new Date(emp.contractEndDate + 'T00:00:00');
+            const endDate = parseDateToLocal(emp.contractEndDate);
+            if (!endDate) return false;
             const daysUntilExpiry = Math.ceil((endDate - now) / (1000 * 60 * 60 * 24));
             return daysUntilExpiry >= 0 && daysUntilExpiry <= 30;
         }).length;
@@ -92,17 +107,17 @@ export function useDashboardStats(user) {
 
         return rawEmployees
             .filter(emp => {
-                if (!emp.contractEndDate) return false;
-                const endDate = new Date(emp.contractEndDate + 'T00:00:00');
+                const endDate = parseDateToLocal(emp.contractEndDate);
+                if (!endDate) return false;
                 const daysUntilExpiry = Math.ceil((endDate - now) / (1000 * 60 * 60 * 24));
                 return daysUntilExpiry >= 0 && daysUntilExpiry <= 30;
             })
             .map(emp => {
-                const endDate = new Date(emp.contractEndDate + 'T00:00:00');
-                const now2 = new Date();
-                now2.setHours(0, 0, 0, 0);
-                const daysUntilExpiry = Math.ceil((endDate - now2) / (1000 * 60 * 60 * 24));
-                return { ...emp, daysUntilExpiry };
+                const endDate = parseDateToLocal(emp.contractEndDate);
+                const daysUntilExpiry = Math.ceil((endDate - now) / (1000 * 60 * 60 * 24));
+                // Normalizar contractEndDate a string YYYY-MM-DD para el widget de display
+                const contractEndDate = endDate.toISOString().split('T')[0];
+                return { ...emp, contractEndDate, daysUntilExpiry };
             })
             .sort((a, b) => a.daysUntilExpiry - b.daysUntilExpiry);
     }, [rawEmployees]);
@@ -127,9 +142,12 @@ export function useDashboardStats(user) {
             evalDates.forEach(evalItem => {
                 if (!evalItem.date) return;
 
-                const evalDate = new Date(evalItem.date + 'T00:00:00');
+                const evalDate = parseDateToLocal(evalItem.date);
+                if (!evalDate) return; // fecha inválida, ignorar
                 const daysUntil = Math.ceil((evalDate - now) / (1000 * 60 * 60 * 24));
                 const hasScore = evalItem.score !== '' && evalItem.score !== null && evalItem.score !== undefined;
+                // Normalizar la fecha a string YYYY-MM-DD para el display
+                const dateStr = evalDate.toISOString().split('T')[0];
 
                 const baseInfo = {
                     employeeId: emp.employeeId,
@@ -139,7 +157,7 @@ export function useDashboardStats(user) {
                     department: emp.department,
                     shift: emp.shift,
                     evalNum: evalItem.num,
-                    date: evalItem.date,
+                    date: dateStr,
                     evaluationType: `Evaluación ${evalItem.num}`,
                 };
 
@@ -147,7 +165,7 @@ export function useDashboardStats(user) {
                     upcoming.push({
                         ...baseInfo,
                         daysUntil,
-                        scheduledDate: evalItem.date,
+                        scheduledDate: dateStr,
                     });
                 }
 
@@ -155,7 +173,7 @@ export function useDashboardStats(user) {
                     overdue.push({
                         ...baseInfo,
                         daysOverdue: Math.abs(daysUntil),
-                        dueDate: evalItem.date,
+                        dueDate: dateStr,
                     });
                 }
             });
@@ -183,14 +201,14 @@ export function useDashboardStats(user) {
             { DEPARTAMENTO: "CALIDAD", ÁREA: "A. CALIDAD 1ER TURNO", DIAS: 7 },
             { DEPARTAMENTO: "CALIDAD", ÁREA: "A. CALIDAD 2DO TURNO", DIAS: 7 },
             { DEPARTAMENTO: "CALIDAD", ÁREA: "METROLOGÍA", DIAS: 7 },
-            { DEPARTAMENTO: "CALIDAD", ÁREA: "CALIDAD ADMTVO", DIAS: 7 },
+            { DEPARTAMENTO: "CALIDAD", ÁREA: "CALIDAD ADMINISTRATIVO", DIAS: 7 },
             { DEPARTAMENTO: "CALIDAD", ÁREA: "SGI", DIAS: 60 },
             { DEPARTAMENTO: "CALIDAD", ÁREA: "RESIDENTES DE CALIDAD", DIAS: 7 },
             { DEPARTAMENTO: "COMERCIAL", ÁREA: "VENTAS", DIAS: 60 },
             { DEPARTAMENTO: "GERENCIA DE PLANTA", ÁREA: "GERENCIA", DIAS: 60 },
             { DEPARTAMENTO: "LOGISTICA", ÁREA: "LOGISTICA", DIAS: 60 },
             { DEPARTAMENTO: "MANTENIMIENTO", ÁREA: "MANTENIMIENTO", DIAS: 90 },
-            { DEPARTAMENTO: "PRODUCCIÓN", ÁREA: "PRODUCCIÓN ADMTVO", DIAS: 60 },
+            { DEPARTAMENTO: "PRODUCCIÓN", ÁREA: "PRODUCCIÓN ADMINISTRATIVO", DIAS: 60 },
             { DEPARTAMENTO: "PRODUCCIÓN", ÁREA: "PRODUCCIÓN MONTAJE", DIAS: 60 },
             { DEPARTAMENTO: "PRODUCCIÓN", ÁREA: "PRODUCCIÓN 1ER TURNO", DIAS: 60 },
             { DEPARTAMENTO: "PRODUCCIÓN", ÁREA: "PRODUCCIÓN 2DO TURNO", DIAS: 60 },
@@ -207,6 +225,20 @@ export function useDashboardStats(user) {
             if (emp.trainingPlanDelivered) return;
             if (!emp.startDate || !emp.department) return;
 
+            // Parseo seguro: soporta Firestore Timestamp, ISO string o YYYY-MM-DD
+            let rawStartStr;
+            if (emp.startDate?.toDate) {
+                // Firestore Timestamp
+                rawStartStr = emp.startDate.toDate().toISOString().split('T')[0];
+            } else if (typeof emp.startDate === 'string') {
+                rawStartStr = emp.startDate.split('T')[0];
+            } else {
+                return; // formato desconocido, ignorar
+            }
+
+            const startDate = new Date(rawStartStr + 'T00:00:00');
+            if (isNaN(startDate.getTime())) return; // fecha inválida, ignorar
+
             const config = TRAINING_PLAN_CONFIG.find(
                 c => c.DEPARTAMENTO.toUpperCase() === emp.department.toUpperCase() &&
                     (c.ÁREA.toUpperCase() === (emp.area || '').toUpperCase())
@@ -215,7 +247,6 @@ export function useDashboardStats(user) {
             );
 
             const daysAllowed = config?.DIAS || 60;
-            const startDate = new Date(emp.startDate + 'T00:00:00');
             const deliveryDate = new Date(startDate);
             deliveryDate.setDate(deliveryDate.getDate() + daysAllowed);
 

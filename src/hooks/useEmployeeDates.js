@@ -5,14 +5,14 @@ export const useEmployeeDates = () => {
         { DEPARTAMENTO: "CALIDAD", ÁREA: "A. CALIDAD 1ER TURNO", DIAS: 7 },
         { DEPARTAMENTO: "CALIDAD", ÁREA: "A. CALIDAD 2DO TURNO", DIAS: 7 },
         { DEPARTAMENTO: "CALIDAD", ÁREA: "METROLOGÍA", DIAS: 7 },
-        { DEPARTAMENTO: "CALIDAD", ÁREA: "CALIDAD ADMTVO", DIAS: 7 },
+        { DEPARTAMENTO: "CALIDAD", ÁREA: "CALIDAD ADMINISTRATIVO", DIAS: 7 },
         { DEPARTAMENTO: "CALIDAD", ÁREA: "SGI", DIAS: 60 },
         { DEPARTAMENTO: "CALIDAD", ÁREA: "RESIDENTES DE CALIDAD", DIAS: 7 },
         { DEPARTAMENTO: "COMERCIAL", ÁREA: "VENTAS", DIAS: 60 },
         { DEPARTAMENTO: "GERENCIA DE PLANTA", ÁREA: "GERENCIA", DIAS: 60 },
         { DEPARTAMENTO: "LOGISTICA", ÁREA: "LOGISTICA", DIAS: 60 },
         { DEPARTAMENTO: "MANTENIMIENTO", ÁREA: "MANTENIMIENTO", DIAS: 90 },
-        { DEPARTAMENTO: "PRODUCCIÓN", ÁREA: "PRODUCCIÓN ADMTVO", DIAS: 60 },
+        { DEPARTAMENTO: "PRODUCCIÓN", ÁREA: "PRODUCCIÓN ADMINISTRATIVO", DIAS: 60 },
         { DEPARTAMENTO: "PRODUCCIÓN", ÁREA: "PRODUCCIÓN MONTAJE", DIAS: 60 },
         { DEPARTAMENTO: "PRODUCCIÓN", ÁREA: "PRODUCCIÓN 1ER TURNO", DIAS: 60 },
         { DEPARTAMENTO: "PRODUCCIÓN", ÁREA: "PRODUCCIÓN 2DO TURNO", DIAS: 60 },
@@ -46,9 +46,9 @@ export const useEmployeeDates = () => {
         const eval2Date = new Date(start);
         eval2Date.setDate(eval2Date.getDate() + 60);
 
-        // Evaluación 3: 75 días
+        // Evaluación 3: 85 días
         const eval3Date = new Date(start);
-        eval3Date.setDate(eval3Date.getDate() + 75);
+        eval3Date.setDate(eval3Date.getDate() + 85);
 
         return {
             contractEndDate: contractEnd.toISOString().split('T')[0],

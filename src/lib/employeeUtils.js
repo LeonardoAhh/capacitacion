@@ -78,6 +78,6 @@ export function calculateDatesFromStart(startDate) {
         contractEndDate: addDays(start, 90),
         eval1Date: addDays(start, 30),
         eval2Date: addDays(start, 60),
-        eval3Date: addDays(start, 75),
+        eval3Date: addDays(start, 85),
     };
 }
