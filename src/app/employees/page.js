@@ -292,18 +292,24 @@ export default function EmployeesPage() {
             </div>
 
             {/* Main Container */}
-            <div className={styles.container} id="main-content">
-                {/* Header Section */}
-                <div className={styles.header}>
-                    <div className={styles.headerContent}>
-
-                        <h1 className={styles.pageTitle}>
-                            Gestión de Empleados
-                        </h1>
-                        <p className={styles.pageSubtitle}>
-                            Administra y consulta la información de tu equipo
-                        </p>
-                    </div>
+                <div className={styles.container}>
+                    <header className={styles.header}>
+                        <h1 className={styles.pageTitle}>Empleados Nuevos Ingresos</h1>
+                        <div className={styles.headerActions}>
+                            <button className={styles.actionBtn} onClick={handleDownloadTemplate}>
+                                <Download size={16} />
+                                <span>Plantilla Excel</span>
+                            </button>
+                            <button className={styles.actionBtn} onClick={handleImportClick}>
+                                <Upload size={16} />
+                                <span>Carga Masiva</span>
+                            </button>
+                            <button className={`${styles.actionBtn} ${styles.actionBtnPrimary}`} onClick={() => router.push('/employees/new')}>
+                                <UserPlus size={16} />
+                                <span>Nuevo Empleado</span>
+                            </button>
+                        </div>
+                    </header>
 
                     {/* Controles Superiores: Píldoras y Buscador */}
                     <div className={styles.topControlsRow}>
@@ -349,8 +355,8 @@ export default function EmployeesPage() {
 
                     {/* Mobile Floating Action Button */}
                     {true /* depends on auth, assuming user can write as this matches TopControls behavior */ && (
-                        <button 
-                            className={styles.mobileFab} 
+                        <button
+                            className={styles.mobileFab}
                             onClick={() => router.push('/employees/new')}
                             aria-label="Agregar empleado"
                         >
@@ -516,9 +522,8 @@ export default function EmployeesPage() {
                         />
                     )}
                 </div>
-            </div>
 
-            
+
 
             {/* Confirmation Dialog */}
             <ConfirmDialog

@@ -12,13 +12,14 @@ import { useToast } from '@/components/ui/Toast/Toast';
 import { db } from '@/lib/firebase';
 import { uploadFile } from '@/lib/upload';
 import { collection, getDocs, query, orderBy, doc, updateDoc, setDoc, getDoc, deleteDoc, where, limit, writeBatch } from 'firebase/firestore';
-import { Users, CheckCircle, AlertTriangle } from 'lucide-react';
+import { Users, CheckCircle, AlertTriangle, UserPlus } from 'lucide-react';
 
 import { Dialog, DialogHeader, DialogTitle, DialogBody, DialogFooter, DialogClose } from '@/components/ui/Dialog/Dialog';
 import { Avatar } from '@/components/ui/Avatar/Avatar';
 import styles from './page.module.css';
 import EmployeeSearchBar from '@/components/ui/EmployeeSearchBar/EmployeeSearchBar';
 import { useConfirm } from '@/hooks/useConfirm';
+import { Select } from '@/components/ui';
 
 export default function EmpleadosPage() {
     const { user, loading: authLoading, canWrite } = useAuth();
@@ -451,8 +452,14 @@ export default function EmpleadosPage() {
                             <h1 className={styles.pageTitle}>Gestión de Empleados</h1>
                             <p className={styles.pageSubtitle}>Administración de personal y datos maestros</p>
                         </div>
-
                     </div>
+                    <button
+                        className={styles.newEmployeeBtn}
+                        onClick={() => setIsCreating(true)}
+                    >
+                        <UserPlus size={16} />
+                        <span>Nuevo Empleado</span>
+                    </button>
                 </div>
 
                 {/* Stats Summary & Search Bar */}
@@ -500,20 +507,18 @@ export default function EmpleadosPage() {
                 {/* Filters */}
                 <div className={styles.filterCard}>
                     <div className={styles.filterContent}>
-                        <div className={styles.filterGroup}>
-                            <label>Departamento</label>
-                            <select value={deptFilter} onChange={(e) => setDeptFilter(e.target.value)} className={styles.select}>
-                                <option value="Todos">Todos</option>
-                                {departments.map(d => <option key={d} value={d}>{d}</option>)}
-                            </select>
-                        </div>
-                        <div className={styles.filterGroup}>
-                            <label>Puesto</label>
-                            <select value={posFilter} onChange={(e) => setPosFilter(e.target.value)} className={styles.select}>
-                                <option value="Todos">Todos</option>
-                                {positions.map(p => <option key={p} value={p}>{p}</option>)}
-                            </select>
-                        </div>
+                        <Select
+                            label="Departamento"
+                            value={deptFilter}
+                            onChange={(val) => setDeptFilter(val)}
+                            options={[{ value: 'Todos', label: 'Todos' }, ...departments.map(d => ({ value: d, label: d }))]}
+                        />
+                        <Select
+                            label="Puesto"
+                            value={posFilter}
+                            onChange={(val) => setPosFilter(val)}
+                            options={[{ value: 'Todos', label: 'Todos' }, ...positions.map(p => ({ value: p, label: p }))]}
+                        />
                         <div className={styles.countBadge}>{filteredEmployees.length} Registros</div>
                     </div>
                 </div>
@@ -704,76 +709,88 @@ export default function EmpleadosPage() {
                                     </div>
 
                                     <div className={styles.formGrid}>
-                                        <div className={styles.formGroup}>
-                                            <label>Puesto</label>
-                                            <input type="text" value={formData.position} onChange={(e) => setFormData({ ...formData, position: e.target.value })} list="positionsListCol" className={styles.input} />
-                                            <datalist id="positionsListCol">{positions.map(p => <option key={p} value={p} />)}</datalist>
-                                        </div>
-                                        <div className={styles.formGroup}>
-                                            <label>Departamento</label>
-                                            <input type="text" value={formData.department} onChange={(e) => setFormData({ ...formData, department: e.target.value })} list="deptListCol" className={styles.input} />
-                                            <datalist id="deptListCol">{departments.map(d => <option key={d} value={d} />)}</datalist>
-                                        </div>
+                                        <Select
+                                            label="Puesto"
+                                            value={formData.position}
+                                            onChange={(val) => setFormData({ ...formData, position: val })}
+                                            placeholder="-- Seleccionar --"
+                                            searchable
+                                            options={positions.map(p => ({ value: p, label: p }))}
+                                        />
+                                        <Select
+                                            label="Departamento"
+                                            value={formData.department}
+                                            onChange={(val) => setFormData({ ...formData, department: val })}
+                                            placeholder="-- Seleccionar --"
+                                            searchable
+                                            options={departments.map(d => ({ value: d, label: d }))}
+                                        />
                                     </div>
 
                                     <div className={styles.formGrid}>
-                                        <div className={styles.formGroup}>
-                                            <label>Área</label>
-                                            <select value={formData.area} onChange={(e) => setFormData({ ...formData, area: e.target.value })} className={styles.select}>
-                                                <option value="">-- Seleccionar --</option>
-                                                <option value="A. CALIDAD 1ER TURNO">A. CALIDAD 1ER TURNO</option>
-                                                <option value="A. CALIDAD 2DO TURNO">A. CALIDAD 2DO TURNO</option>
-                                                <option value="ALMACÉN">ALMACÉN</option>
-                                                <option value="CALIDAD ADMTVO">CALIDAD ADMTVO</option>
-                                                <option value="GERENCIA">GERENCIA</option>
-                                                <option value="LOGÍSTICA">LOGÍSTICA</option>
-                                                <option value="MANTENIMIENTO">MANTENIMIENTO</option>
-                                                <option value="METROLOGÍA">METROLOGÍA</option>
-                                                <option value="MOLDES">MOLDES</option>
-                                                <option value="PRODUCCIÓN 1ER TURNO">PRODUCCIÓN 1ER TURNO</option>
-                                                <option value="PRODUCCIÓN 2DO TURNO">PRODUCCIÓN 2DO TURNO</option>
-                                                <option value="PRODUCCIÓN 3ER TURNO">PRODUCCIÓN 3ER TURNO</option>
-                                                <option value="PRODUCCIÓN 4TO TURNO">PRODUCCIÓN 4TO TURNO</option>
-                                                <option value="PRODUCCIÓN ADMTVO">PRODUCCIÓN ADMTVO</option>
-                                                <option value="PRODUCCIÓN MONTAJE">PRODUCCIÓN MONTAJE</option>
-                                                <option value="PROYECTOS">PROYECTOS</option>
-                                                <option value="RECURSOS HUMANOS">RECURSOS HUMANOS</option>
-                                                <option value="RESIDENTES DE CALIDAD">RESIDENTES DE CALIDAD</option>
-                                                <option value="SGI">SGI</option>
-                                                <option value="SISTEMAS">SISTEMAS</option>
-                                            </select>
-                                        </div>
-                                        <div className={styles.formGroup}>
-                                            <label>Turno</label>
-                                            <select value={formData.shift} onChange={(e) => setFormData({ ...formData, shift: e.target.value })} className={styles.select}>
-                                                <option value="">-- Seleccionar --</option>
-                                                <option value="1">1</option>
-                                                <option value="2">2</option>
-                                                <option value="3">3</option>
-                                                <option value="4">4</option>
-                                                <option value="5">5</option>
-                                            </select>
-                                        </div>
+                                        <Select
+                                            label="Área"
+                                            value={formData.area}
+                                            onChange={(val) => setFormData({ ...formData, area: val })}
+                                            placeholder="-- Seleccionar --"
+                                            options={[
+                                                { value: 'A. CALIDAD 1ER TURNO', label: 'A. CALIDAD 1ER TURNO' },
+                                                { value: 'A. CALIDAD 2DO TURNO', label: 'A. CALIDAD 2DO TURNO' },
+                                                { value: 'ALMACÉN', label: 'ALMACÉN' },
+                                                { value: 'CALIDAD ADMTVO', label: 'CALIDAD ADMTVO' },
+                                                { value: 'GERENCIA', label: 'GERENCIA' },
+                                                { value: 'LOGÍSTICA', label: 'LOGÍSTICA' },
+                                                { value: 'MANTENIMIENTO', label: 'MANTENIMIENTO' },
+                                                { value: 'METROLOGÍA', label: 'METROLOGÍA' },
+                                                { value: 'MOLDES', label: 'MOLDES' },
+                                                { value: 'PRODUCCIÓN 1ER TURNO', label: 'PRODUCCIÓN 1ER TURNO' },
+                                                { value: 'PRODUCCIÓN 2DO TURNO', label: 'PRODUCCIÓN 2DO TURNO' },
+                                                { value: 'PRODUCCIÓN 3ER TURNO', label: 'PRODUCCIÓN 3ER TURNO' },
+                                                { value: 'PRODUCCIÓN 4TO TURNO', label: 'PRODUCCIÓN 4TO TURNO' },
+                                                { value: 'PRODUCCIÓN ADMTVO', label: 'PRODUCCIÓN ADMTVO' },
+                                                { value: 'PRODUCCIÓN MONTAJE', label: 'PRODUCCIÓN MONTAJE' },
+                                                { value: 'PROYECTOS', label: 'PROYECTOS' },
+                                                { value: 'RECURSOS HUMANOS', label: 'RECURSOS HUMANOS' },
+                                                { value: 'RESIDENTES DE CALIDAD', label: 'RESIDENTES DE CALIDAD' },
+                                                { value: 'SGI', label: 'SGI' },
+                                                { value: 'SISTEMAS', label: 'SISTEMAS' },
+                                            ]}
+                                        />
+                                        <Select
+                                            label="Turno"
+                                            value={formData.shift}
+                                            onChange={(val) => setFormData({ ...formData, shift: val })}
+                                            placeholder="-- Seleccionar --"
+                                            options={[
+                                                { value: '1', label: '1' },
+                                                { value: '2', label: '2' },
+                                                { value: '3', label: '3' },
+                                                { value: '4', label: '4' },
+                                                { value: '5', label: '5' },
+                                            ]}
+                                        />
                                     </div>
 
                                     <div className={styles.formGrid}>
-                                        <div className={styles.formGroup}>
-                                            <label>Escolaridad</label>
-                                            <select value={formData.education} onChange={(e) => setFormData({ ...formData, education: e.target.value })} className={styles.select}>
-                                                <option value="">-- Seleccionar --</option>
-                                                <option value="BACHILLERATO">BACHILLERATO</option>
-                                                <option value="CARRERA TECNICA">CARRERA TECNICA</option>
-                                                <option value="INGENIERIA">INGENIERIA</option>
-                                                <option value="LICENCIATURA">LICENCIATURA</option>
-                                                <option value="MAESTRIA">MAESTRIA</option>
-                                                <option value="PASANTE INGENIERIA">PASANTE INGENIERIA</option>
-                                                <option value="POSGRADO">POSGRADO</option>
-                                                <option value="PREPARATORIA">PREPARATORIA</option>
-                                                <option value="PRIMARIA">PRIMARIA</option>
-                                                <option value="SECUNDARIA">SECUNDARIA</option>
-                                                <option value="TSU">TSU</option>
-                                            </select>
-                                        </div>
+                                        <Select
+                                            label="Escolaridad"
+                                            value={formData.education}
+                                            onChange={(val) => setFormData({ ...formData, education: val })}
+                                            placeholder="-- Seleccionar --"
+                                            options={[
+                                                { value: 'BACHILLERATO', label: 'BACHILLERATO' },
+                                                { value: 'CARRERA TECNICA', label: 'CARRERA TECNICA' },
+                                                { value: 'INGENIERIA', label: 'INGENIERIA' },
+                                                { value: 'LICENCIATURA', label: 'LICENCIATURA' },
+                                                { value: 'MAESTRIA', label: 'MAESTRIA' },
+                                                { value: 'PASANTE INGENIERIA', label: 'PASANTE INGENIERIA' },
+                                                { value: 'POSGRADO', label: 'POSGRADO' },
+                                                { value: 'PREPARATORIA', label: 'PREPARATORIA' },
+                                                { value: 'PRIMARIA', label: 'PRIMARIA' },
+                                                { value: 'SECUNDARIA', label: 'SECUNDARIA' },
+                                                { value: 'TSU', label: 'TSU' },
+                                            ]}
+                                        />
                                         <div className={styles.formGroup}>
                                             <label>Fecha Ingreso</label>
                                             <input type="date" value={formData.startDate} onChange={(e) => setFormData({ ...formData, startDate: e.target.value })} className={styles.input} />
@@ -987,102 +1004,88 @@ export default function EmpleadosPage() {
                             </div>
 
                             <div className={styles.formGrid}>
-                                <div className={styles.formGroup}>
-                                    <label>Puesto (Categoría)</label>
-                                    <input
-                                        type="text"
-                                        value={formData.position}
-                                        onChange={(e) => setFormData({ ...formData, position: e.target.value })}
-                                        list="positionsList"
-                                    />
-                                    <datalist id="positionsList">
-                                        {positions.map(p => <option key={p} value={p} />)}
-                                    </datalist>
-                                </div>
-                                <div className={styles.formGroup}>
-                                    <label>Departamento</label>
-                                    <input
-                                        type="text"
-                                        value={formData.department}
-                                        onChange={(e) => setFormData({ ...formData, department: e.target.value })}
-                                        list="deptList"
-                                    />
-                                    <datalist id="deptList">
-                                        {departments.map(d => <option key={d} value={d} />)}
-                                    </datalist>
-                                </div>
+                                <Select
+                                    label="Puesto (Categoría)"
+                                    value={formData.position}
+                                    onChange={(val) => setFormData({ ...formData, position: val })}
+                                    placeholder="-- Seleccionar --"
+                                    searchable
+                                    options={positions.map(p => ({ value: p, label: p }))}
+                                />
+                                <Select
+                                    label="Departamento"
+                                    value={formData.department}
+                                    onChange={(val) => setFormData({ ...formData, department: val })}
+                                    placeholder="-- Seleccionar --"
+                                    searchable
+                                    options={departments.map(d => ({ value: d, label: d }))}
+                                />
                             </div>
 
                             <div className={styles.formGrid}>
-                                <div className={styles.formGroup}>
-                                    <label>Área</label>
-                                    <select
-                                        value={formData.area}
-                                        onChange={(e) => setFormData({ ...formData, area: e.target.value })}
-                                        className={styles.select}
-                                    >
-                                        <option value="">-- Seleccionar --</option>
-                                        <option value="A. CALIDAD 1ER TURNO">A. CALIDAD 1ER TURNO</option>
-                                        <option value="A. CALIDAD 2DO TURNO">A. CALIDAD 2DO TURNO</option>
-                                        <option value="ALMACÉN">ALMACÉN</option>
-                                        <option value="CALIDAD ADMTVO">CALIDAD ADMTVO</option>
-                                        <option value="GERENCIA">GERENCIA</option>
-                                        <option value="LOGÍSTICA">LOGÍSTICA</option>
-                                        <option value="MANTENIMIENTO">MANTENIMIENTO</option>
-                                        <option value="METROLOGÍA">METROLOGÍA</option>
-                                        <option value="MOLDES">MOLDES</option>
-                                        <option value="PRODUCCIÓN 1ER TURNO">PRODUCCIÓN 1ER TURNO</option>
-                                        <option value="PRODUCCIÓN 2DO TURNO">PRODUCCIÓN 2DO TURNO</option>
-                                        <option value="PRODUCCIÓN 3ER TURNO">PRODUCCIÓN 3ER TURNO</option>
-                                        <option value="PRODUCCIÓN 4TO TURNO">PRODUCCIÓN 4TO TURNO</option>
-                                        <option value="PRODUCCIÓN ADMTVO">PRODUCCIÓN ADMTVO</option>
-                                        <option value="PRODUCCIÓN MONTAJE">PRODUCCIÓN MONTAJE</option>
-                                        <option value="PROYECTOS">PROYECTOS</option>
-                                        <option value="RECURSOS HUMANOS">RECURSOS HUMANOS</option>
-                                        <option value="RESIDENTES DE CALIDAD">RESIDENTES DE CALIDAD</option>
-                                        <option value="SGI">SGI</option>
-                                        <option value="SISTEMAS">SISTEMAS</option>
-                                    </select>
-                                </div>
-                                <div className={styles.formGroup}>
-                                    <label>Turno</label>
-                                    <select
-                                        value={formData.shift}
-                                        onChange={(e) => setFormData({ ...formData, shift: e.target.value })}
-                                        className={styles.select}
-                                    >
-                                        <option value="">-- Seleccionar --</option>
-                                        <option value="1">1</option>
-                                        <option value="2">2</option>
-                                        <option value="3">3</option>
-                                        <option value="4">4</option>
-                                        <option value="5">5</option>
-                                    </select>
-                                </div>
+                                <Select
+                                    label="Área"
+                                    value={formData.area}
+                                    onChange={(val) => setFormData({ ...formData, area: val })}
+                                    placeholder="-- Seleccionar --"
+                                    options={[
+                                        { value: 'A. CALIDAD 1ER TURNO', label: 'A. CALIDAD 1ER TURNO' },
+                                        { value: 'A. CALIDAD 2DO TURNO', label: 'A. CALIDAD 2DO TURNO' },
+                                        { value: 'ALMACÉN', label: 'ALMACÉN' },
+                                        { value: 'CALIDAD ADMTVO', label: 'CALIDAD ADMTVO' },
+                                        { value: 'GERENCIA', label: 'GERENCIA' },
+                                        { value: 'LOGÍSTICA', label: 'LOGÍSTICA' },
+                                        { value: 'MANTENIMIENTO', label: 'MANTENIMIENTO' },
+                                        { value: 'METROLOGÍA', label: 'METROLOGÍA' },
+                                        { value: 'MOLDES', label: 'MOLDES' },
+                                        { value: 'PRODUCCIÓN 1ER TURNO', label: 'PRODUCCIÓN 1ER TURNO' },
+                                        { value: 'PRODUCCIÓN 2DO TURNO', label: 'PRODUCCIÓN 2DO TURNO' },
+                                        { value: 'PRODUCCIÓN 3ER TURNO', label: 'PRODUCCIÓN 3ER TURNO' },
+                                        { value: 'PRODUCCIÓN 4TO TURNO', label: 'PRODUCCIÓN 4TO TURNO' },
+                                        { value: 'PRODUCCIÓN ADMTVO', label: 'PRODUCCIÓN ADMTVO' },
+                                        { value: 'PRODUCCIÓN MONTAJE', label: 'PRODUCCIÓN MONTAJE' },
+                                        { value: 'PROYECTOS', label: 'PROYECTOS' },
+                                        { value: 'RECURSOS HUMANOS', label: 'RECURSOS HUMANOS' },
+                                        { value: 'RESIDENTES DE CALIDAD', label: 'RESIDENTES DE CALIDAD' },
+                                        { value: 'SGI', label: 'SGI' },
+                                        { value: 'SISTEMAS', label: 'SISTEMAS' },
+                                    ]}
+                                />
+                                <Select
+                                    label="Turno"
+                                    value={formData.shift}
+                                    onChange={(val) => setFormData({ ...formData, shift: val })}
+                                    placeholder="-- Seleccionar --"
+                                    options={[
+                                        { value: '1', label: '1' },
+                                        { value: '2', label: '2' },
+                                        { value: '3', label: '3' },
+                                        { value: '4', label: '4' },
+                                        { value: '5', label: '5' },
+                                    ]}
+                                />
                             </div>
 
                             <div className={styles.formGrid}>
-                                <div className={styles.formGroup}>
-                                    <label>Escolaridad</label>
-                                    <select
-                                        value={formData.education}
-                                        onChange={(e) => setFormData({ ...formData, education: e.target.value })}
-                                        className={styles.select}
-                                    >
-                                        <option value="">-- Seleccionar --</option>
-                                        <option value="BACHILLERATO">BACHILLERATO</option>
-                                        <option value="CARRERA TECNICA">CARRERA TECNICA</option>
-                                        <option value="INGENIERIA">INGENIERIA</option>
-                                        <option value="LICENCIATURA">LICENCIATURA</option>
-                                        <option value="MAESTRIA">MAESTRIA</option>
-                                        <option value="PASANTE INGENIERIA">PASANTE INGENIERIA</option>
-                                        <option value="POSGRADO">POSGRADO</option>
-                                        <option value="PREPARATORIA">PREPARATORIA</option>
-                                        <option value="PRIMARIA">PRIMARIA</option>
-                                        <option value="SECUNDARIA">SECUNDARIA</option>
-                                        <option value="TSU">TSU</option>
-                                    </select>
-                                </div>
+                                <Select
+                                    label="Escolaridad"
+                                    value={formData.education}
+                                    onChange={(val) => setFormData({ ...formData, education: val })}
+                                    placeholder="-- Seleccionar --"
+                                    options={[
+                                        { value: 'BACHILLERATO', label: 'BACHILLERATO' },
+                                        { value: 'CARRERA TECNICA', label: 'CARRERA TECNICA' },
+                                        { value: 'INGENIERIA', label: 'INGENIERIA' },
+                                        { value: 'LICENCIATURA', label: 'LICENCIATURA' },
+                                        { value: 'MAESTRIA', label: 'MAESTRIA' },
+                                        { value: 'PASANTE INGENIERIA', label: 'PASANTE INGENIERIA' },
+                                        { value: 'POSGRADO', label: 'POSGRADO' },
+                                        { value: 'PREPARATORIA', label: 'PREPARATORIA' },
+                                        { value: 'PRIMARIA', label: 'PRIMARIA' },
+                                        { value: 'SECUNDARIA', label: 'SECUNDARIA' },
+                                        { value: 'TSU', label: 'TSU' },
+                                    ]}
+                                />
                                 <div className={styles.formGroup}>
                                     <label>Fecha Ingreso</label>
                                     <input

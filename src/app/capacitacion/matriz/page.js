@@ -12,6 +12,7 @@ import { collection, getDocs, doc, updateDoc, query, orderBy, where, writeBatch 
 import { seedCapacitacionDataRobust } from '@/lib/seedCapacitacion';
 import styles from './page.module.css';
 import { Dialog, DialogHeader, DialogTitle, DialogBody, DialogFooter, DialogClose } from '@/components/ui/Dialog/Dialog';
+import { Select } from '@/components/ui';
 
 export default function MatrizPage() {
     const { user, loading: authLoading, canWrite } = useAuth();
@@ -302,15 +303,12 @@ export default function MatrizPage() {
                             />
                         </div>
 
-                        <select
-                            className={styles.deptFilter}
+                        <Select
                             value={selectedDepartment}
-                            onChange={(e) => setSelectedDepartment(e.target.value)}
-                        >
-                            {departments.map(dept => (
-                                <option key={dept} value={dept}>{dept}</option>
-                            ))}
-                        </select>
+                            onChange={(val) => setSelectedDepartment(val)}
+                            options={departments.map(d => ({ value: d, label: d }))}
+                            className={styles.deptFilter}
+                        />
 
                         <div className={styles.viewToggles}>
                             <button

@@ -11,6 +11,7 @@ import AdminLayout from '@/components/layout/AdminLayout/AdminLayout';
 import BackButton from '@/components/ui/BackButton/BackButton';
 import { ChevronRight, ArrowLeft, Save, User, Briefcase, Info, Phone } from 'lucide-react';
 import styles from './wizard.module.css';
+import { Select } from '@/components/ui';
 
 const STEPS = [
     { id: 1, title: 'Datos Personales', icon: User },
@@ -220,65 +221,40 @@ export default function NewEmployeePage() {
 
                     {currentStep === 2 && (
                         <div className={styles.formGrid}>
-                            <div className={styles.formGroup}>
-                                <label htmlFor="department" className={styles.label}>Departamento</label>
-                                <select
-                                    id="department"
-                                    name="department"
-                                    value={formData.department}
-                                    onChange={handleInputChange}
-                                    className={styles.select}
-                                    disabled={catalogsLoading}
-                                >
-                                    <option value="">Seleccionar...</option>
-                                    {departments?.map((d, i) => <option key={i} value={d}>{d}</option>)}
-                                </select>
-                            </div>
-                            <div className={styles.formGroup}>
-                                <label htmlFor="area" className={styles.label}>Área</label>
-                                <select
-                                    id="area"
-                                    name="area"
-                                    value={formData.area}
-                                    onChange={handleInputChange}
-                                    className={styles.select}
-                                    disabled={catalogsLoading}
-                                >
-                                    <option value="">Seleccionar...</option>
-                                    {areas?.map((a, i) => <option key={i} value={a}>{a}</option>)}
-                                </select>
-                            </div>
-                            <div className={styles.formGroup}>
-                                <label htmlFor="position" className={styles.label}>Puesto</label>
-                                <select
-                                    id="position"
-                                    name="position"
-                                    value={formData.position}
-                                    onChange={handleInputChange}
-                                    className={styles.select}
-                                    disabled={catalogsLoading}
-                                >
-                                    <option value="">Seleccionar...</option>
-                                    {positions?.map((p, i) => <option key={i} value={p}>{p}</option>)}
-                                </select>
-                            </div>
-                            <div className={styles.formGroup}>
-                                <label htmlFor="shift" className={styles.label}>Turno</label>
-                                <select
-                                    id="shift"
-                                    name="shift"
-                                    value={formData.shift}
-                                    onChange={handleInputChange}
-                                    className={styles.select}
-                                >
-                                    <option value="">Seleccionar...</option>
-                                    <option value="1">1</option>
-                                    <option value="2">2</option>
-                                    <option value="3">3</option>
-                                    <option value="4">4</option>
-                                    <option value="Mixto">Mixto</option>
-                                </select>
-                            </div>
+                            <Select
+                                label="Departamento"
+                                value={formData.department}
+                                onChange={(val) => handleInputChange({ target: { name: 'department', value: val } })}
+                                placeholder="Seleccionar..."
+                                options={(departments || []).map(d => ({ value: d, label: d }))}
+                            />
+                            <Select
+                                label="Área"
+                                value={formData.area}
+                                onChange={(val) => handleInputChange({ target: { name: 'area', value: val } })}
+                                placeholder="Seleccionar..."
+                                options={(areas || []).map(a => ({ value: a, label: a }))}
+                            />
+                            <Select
+                                label="Puesto"
+                                value={formData.position}
+                                onChange={(val) => handleInputChange({ target: { name: 'position', value: val } })}
+                                placeholder="Seleccionar..."
+                                options={(positions || []).map(p => ({ value: p, label: p }))}
+                            />
+                            <Select
+                                label="Turno"
+                                value={formData.shift}
+                                onChange={(val) => handleInputChange({ target: { name: 'shift', value: val } })}
+                                placeholder="Seleccionar..."
+                                options={[
+                                    { value: '1', label: '1' },
+                                    { value: '2', label: '2' },
+                                    { value: '3', label: '3' },
+                                    { value: '4', label: '4' },
+                                    { value: 'Mixto', label: 'Mixto' },
+                                ]}
+                            />
                             <div className={styles.formGroup}>
                                 <label htmlFor="startDate" className={styles.label}>Fecha Inicio</label>
                                 <input
@@ -313,19 +289,15 @@ export default function NewEmployeePage() {
 
                     {currentStep === 3 && (
                         <div className={styles.formGrid}>
-                            <div className={styles.formGroup}>
-                                <label htmlFor="status" className={styles.label}>Estado Actual</label>
-                                <select
-                                    id="status"
-                                    name="status"
-                                    value={formData.status}
-                                    onChange={handleInputChange}
-                                    className={styles.select}
-                                >
-                                    <option value="Activo">Activo</option>
-                                    <option value="Inactivo">Inactivo</option>
-                                </select>
-                            </div>
+                            <Select
+                                label="Estado Actual"
+                                value={formData.status}
+                                onChange={(val) => handleInputChange({ target: { name: 'status', value: val } })}
+                                options={[
+                                    { value: 'Activo', label: 'Activo' },
+                                    { value: 'Inactivo', label: 'Inactivo' },
+                                ]}
+                            />
                             <div className={styles.formGroup}>
                                 <label htmlFor="accessCode" className={styles.label}>Código PIN Accesos (Opcional)</label>
                                 <input

@@ -122,7 +122,7 @@ export default function MainSidebar({ user, handleLogout, isOpen, onClose }) {
                 <div className={styles.sidebarTop}>
                     <div className={styles.sidebarBrand}>
                         <div className={styles.sidebarBrandDot} aria-hidden="true" />
-                        <span className={styles.sidebarBrandName}>Viñoplastic</span>
+                        <h2 className={styles.sidebarBrandName}>VIÑOPLASTIC</h2>
                     </div>
 
                     <button

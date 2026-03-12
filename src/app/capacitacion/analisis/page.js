@@ -14,6 +14,7 @@ import styles from './page.module.css';
 import { generateDC3 } from '@/utils/dc3Generator';
 import { exportToExcel, exportPDFCompliance } from '@/utils/exportUtils';
 import { Dialog, DialogHeader, DialogTitle, DialogBody, DialogFooter, DialogClose } from '@/components/ui/Dialog/Dialog';
+import { Select } from '@/components/ui';
 import YearlyCardStack from '@/components/ui/CardStack/YearlyCardStack';
 
 export default function AnalisisPage() {
@@ -741,24 +742,22 @@ export default function AnalisisPage() {
                             </div>
 
                             <div className={styles.filters}>
-                                <select
+                                <Select
                                     value={filterDept}
-                                    onChange={(e) => setFilterDept(e.target.value)}
-                                    className={styles.selectFilter}
-                                >
-                                    {departments.map(d => <option key={d} value={d}>{d}</option>)}
-                                </select>
+                                    onChange={(val) => setFilterDept(val)}
+                                    options={departments.map(d => ({ value: d, label: d }))}
+                                />
 
-                                <select
+                                <Select
                                     value={filterStatus}
-                                    onChange={(e) => setFilterStatus(e.target.value)}
-                                    className={styles.selectFilter}
-                                >
-                                    <option value="Todos">Todos</option>
-                                    <option value="Crítico">Crítico (&lt;70%)</option>
-                                    <option value="Regular">Regular (70-90%)</option>
-                                    <option value="Excelente">Excelente (&gt;90%)</option>
-                                </select>
+                                    onChange={(val) => setFilterStatus(val)}
+                                    options={[
+                                        { value: 'Todos', label: 'Todos' },
+                                        { value: 'Crítico', label: 'Crítico (<70%)' },
+                                        { value: 'Regular', label: 'Regular (70-90%)' },
+                                        { value: 'Excelente', label: 'Excelente (>90%)' },
+                                    ]}
+                                />
                             </div>
                         </div>
 

@@ -43,24 +43,118 @@
 
 /* === CONTAINER === */
 .container {
-    position: relative;
-    z-index: 10;
-    max-width: 100%;
+    max-width: 1440px;
+    width: 100%;
     margin: 0 auto;
-    padding: 30px 24px 40px;
-    padding-bottom: calc(40px + env(safe-area-inset-bottom));
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    overflow-x: hidden;
 }
 
 @media (max-width: 768px) {
     .container {
-        padding: 80px 16px 24px;
-        padding-bottom: calc(24px + env(safe-area-inset-bottom));
+        padding: 0;
+        gap: 1.125rem;
     }
 }
 
 /* === HEADER === */
 .header {
-    margin-bottom: 32px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+.pageTitle {
+    font-size: clamp(1.75rem, 5vw, 2.5rem);
+    font-family: var(--font-serif);
+    font-weight: 800;
+    color: var(--text-primary);
+    margin: 0;
+    display: flex;
+    align-items: center;
+    letter-spacing: -0.5px;
+}
+
+.headerActions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-shrink: 0;
+    flex-wrap: wrap;
+}
+
+.actionBtn {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 10px 18px;
+    border: 1px solid var(--border-color);
+    border-radius: 50px;
+    background: var(--bg-primary);
+    color: var(--text-secondary);
+    font-size: 0.875rem;
+    font-weight: 600;
+    font-family: var(--font-body);
+    cursor: pointer;
+    transition: all 0.2s;
+    white-space: nowrap;
+}
+
+.actionBtn:hover {
+    background: var(--bg-secondary);
+    color: var(--text-primary);
+    border-color: var(--text-tertiary);
+}
+
+[data-theme="dark"] .actionBtn {
+    background: rgba(40, 40, 45, 0.8);
+    border-color: rgba(255, 255, 255, 0.08);
+}
+
+[data-theme="dark"] .actionBtn:hover {
+    background: rgba(55, 55, 62, 0.9);
+    border-color: rgba(255, 255, 255, 0.15);
+}
+
+.actionBtnPrimary {
+    background: var(--color-primary);
+    border-color: var(--color-primary);
+    color: #fff;
+}
+
+.actionBtnPrimary:hover {
+    background: color-mix(in srgb, var(--color-primary) 85%, black);
+    border-color: color-mix(in srgb, var(--color-primary) 85%, black);
+    color: #fff;
+}
+
+[data-theme="dark"] .actionBtnPrimary {
+    background: var(--color-primary);
+    border-color: var(--color-primary);
+}
+
+@media (max-width: 640px) {
+    .headerActions {
+        width: 100%;
+    }
+    .actionBtn {
+        flex: 1;
+        justify-content: center;
+        padding: 10px 12px;
+        font-size: 0.8rem;
+    }
+    .actionBtn span {
+        display: none;
+    }
+    .actionBtn svg {
+        width: 18px;
+        height: 18px;
+    }
 }
 
 .headerContent {

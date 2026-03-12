@@ -93,7 +93,6 @@
     z-index: 10;
     max-width: 600px;
     margin: 0 auto;
-    padding: 0 16px 40px;
 }
 
 /* === MAIN GRID LAYOUT === */
@@ -126,7 +125,6 @@
 @media (min-width: 1024px) {
     .container {
         max-width: 100%;
-        padding: 24px 40px;
     }
 
     /* Two column grid layout */
@@ -245,7 +243,7 @@
 }
 
 .pageTitle {
-    font-size: 2rem;
+    font-size: clamp(1.75rem, 5vw, 2.5rem);
     font-family: var(--font-serif);
     font-weight: 800;
     color: var(--text-primary);
@@ -1054,10 +1052,6 @@
 
 /* === RESPONSIVE === */
 @media (max-width: 600px) {
-    .container {
-        padding: 12px;
-    }
-
     .searchCard {
         flex-direction: column;
     }
@@ -1276,10 +1270,6 @@
 
 /* === Mobile First - Extra Small Devices (< 480px) === */
 @media (max-width: 480px) {
-    .container {
-        padding: 12px;
-    }
-
     /* Top Bar */
     .topBar {
         flex-wrap: wrap;
@@ -1324,10 +1314,6 @@
 
     .detailTitle {
         font-size: 22px;
-    }
-
-    .pageTitle {
-        font-size: 26px;
     }
 
     /* Avatar */
@@ -1387,10 +1373,6 @@
 
 /* === Small Devices (480px - 640px) === */
 @media (min-width: 481px) and (max-width: 640px) {
-    .container {
-        padding: 14px;
-    }
-
     .searchPill {
         max-width: 100%;
         width: 100%;
@@ -1442,7 +1424,6 @@
 /* === Tablet Devices (641px - 768px) === */
 @media (min-width: 641px) and (max-width: 768px) {
     .container {
-        padding: 18px 20px;
         max-width: 100%;
     }
 
@@ -1465,7 +1446,6 @@
 /* === Medium Tablets (768px - 1024px) === */
 @media (min-width: 769px) and (max-width: 1023px) {
     .container {
-        padding: 20px 28px;
         max-width: 100%;
     }
 
@@ -1492,7 +1472,6 @@
 @media (min-width: 1024px) and (max-width: 1280px) {
     .container {
         max-width: 1200px;
-        padding: 24px 32px;
     }
 
     /* Two column layout */
@@ -1514,7 +1493,6 @@
 @media (min-width: 1281px) {
     .container {
         max-width: 1400px;
-        padding: 24px 40px;
     }
 
     .mainGrid {
@@ -1569,11 +1547,6 @@
 
     .topBar {
         padding: 0.5rem 0.75rem;
-    }
-
-    .container {
-        padding-top: 12px;
-        padding-bottom: 12px;
     }
 }
 

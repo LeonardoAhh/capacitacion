@@ -11,6 +11,7 @@ import {
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import styles from './page.module.css';
+import { Select } from '@/components/ui';
 
 // ─── Constantes ──────────────────────────────────────────────────────────────
 
@@ -323,15 +324,13 @@ export default function RegistroEmpleadosPage() {
                                             <p className={styles.stepDesc}>Área, puesto y turno de trabajo.</p>
 
                                             <div className={styles.rowTwo}>
-                                                <div className={styles.field}>
-                                                    <label className={styles.label}>Área <span className={styles.req}>*</span></label>
-                                                    <select className={styles.select} name="area" value={formData.area} onChange={handleChange}>
-                                                        <option value="">Seleccionar...</option>
-                                                        {AREAS.map(a => (
-                                                            <option key={a} value={a}>{a.charAt(0) + a.slice(1).toLowerCase()}</option>
-                                                        ))}
-                                                    </select>
-                                                </div>
+                                                <Select
+                                                    label={<>Área <span className={styles.req}>*</span></>}
+                                                    value={formData.area}
+                                                    onChange={(val) => handleChange({ target: { name: 'area', value: val } })}
+                                                    placeholder="Seleccionar..."
+                                                    options={AREAS.map(a => ({ value: a, label: a.charAt(0) + a.slice(1).toLowerCase() }))}
+                                                />
 
                                                 <div className={styles.field}>
                                                     <label className={styles.label}>Puesto <span className={styles.req}>*</span></label>
@@ -359,15 +358,13 @@ export default function RegistroEmpleadosPage() {
                                                     />
                                                 </div>
 
-                                                <div className={styles.field}>
-                                                    <label className={styles.label}>Turno</label>
-                                                    <select className={styles.select} name="shift" value={formData.shift} onChange={handleChange}>
-                                                        <option value="">Seleccionar...</option>
-                                                        {TURNOS.map(t => (
-                                                            <option key={t} value={t}>Turno {t}</option>
-                                                        ))}
-                                                    </select>
-                                                </div>
+                                                <Select
+                                                    label="Turno"
+                                                    value={formData.shift}
+                                                    onChange={(val) => handleChange({ target: { name: 'shift', value: val } })}
+                                                    placeholder="Seleccionar..."
+                                                    options={TURNOS.map(t => ({ value: t, label: `Turno ${t}` }))}
+                                                />
                                             </div>
                                         </div>
                                     )}

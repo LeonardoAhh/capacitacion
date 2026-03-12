@@ -418,7 +418,7 @@
 }
 
 .pageTitle {
-    font-size: 2.5rem;
+    font-size: clamp(1.75rem, 5vw, 2.5rem);
     font-family: var(--font-serif);
     font-weight: 800;
     color: var(--text-primary);
@@ -437,9 +437,6 @@
 }
 
 @media (max-width: 768px) {
-    .pageTitle {
-        font-size: 2rem;
-    }
     .pageSubtitle {
         margin-top: 8px;
     }

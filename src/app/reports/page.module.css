@@ -57,7 +57,6 @@
 .container {
     width: 100%;
     margin: 0;
-    padding: var(--spacing-md) var(--spacing-xl);
     flex: 1;
     display: flex;
     flex-direction: column;
@@ -665,12 +664,6 @@
 }
 
 @media (max-width: 768px) {
-    .container {
-        padding: var(--spacing-md);
-        padding-top: 70px;
-        /* Space for ProfileDropdown on mobile */
-    }
-
     .tableHeader,
     .employeeHeader {
         display: none;
@@ -705,7 +698,7 @@
 }
 
 .pageTitle {
-    font-size: 2.5rem;
+    font-size: clamp(1.75rem, 5vw, 2.5rem);
     font-family: var(--font-serif);
     font-weight: 800;
     color: var(--text-primary);
@@ -724,9 +717,6 @@
 }
 
 @media (max-width: 768px) {
-    .pageTitle {
-        font-size: 2rem;
-    }
     .pageSubtitle {
         margin-top: 8px;
     }

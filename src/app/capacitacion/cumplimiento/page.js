@@ -1,11 +1,13 @@
 'use client';
 
 import { useState, useEffect, useMemo, useCallback, useRef } from 'react';
+import { createPortal } from 'react-dom';
 import { Filter } from 'lucide-react';
 import AdminLayout from '@/components/layout/AdminLayout/AdminLayout';
 import { useAuth } from '@/contexts/AuthContext';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/Button/Button';
+import { Select } from '@/components/ui';
 import { useToast } from '@/components/ui/Toast/Toast';
 import { db } from '@/lib/firebase';
 import { collection, getDocs, query, orderBy } from 'firebase/firestore';
@@ -32,7 +34,9 @@ export default function CumplimientoPage() {
     const itemsPerPage = 25;
     const [exportFilter, setExportFilter] = useState('all'); // 'all' | 'pending' | 'approved'
     const [filterOpen, setFilterOpen] = useState(false);
+    const [filterMenuStyle, setFilterMenuStyle] = useState({});
     const filterRef = useRef(null);
+    const filterBtnRef = useRef(null);
 
     const toggleRow = (empId) => {
         setExpandedRows(prev => {
@@ -88,14 +92,18 @@ export default function CumplimientoPage() {
 
     // Cerrar filter dropdown al hacer click afuera
     useEffect(() => {
+        if (!filterOpen) return;
         const handleOutside = (e) => {
-            if (filterRef.current && !filterRef.current.contains(e.target)) {
+            if (
+                filterBtnRef.current && !filterBtnRef.current.contains(e.target) &&
+                !e.target.closest('[data-filter-menu]')
+            ) {
                 setFilterOpen(false);
             }
         };
         document.addEventListener('mousedown', handleOutside);
         return () => document.removeEventListener('mousedown', handleOutside);
-    }, []);
+    }, [filterOpen]);
 
 
 
@@ -368,35 +376,43 @@ export default function CumplimientoPage() {
                         {/* Course Selector */}
                         <div className={styles.selectorCard}>
                             <div className={styles.selectorRow}>
-                                <div className={styles.formGroup}>
-                                    <label>Seleccionar Curso</label>
-                                    <select
-                                        value={selectedCourse}
-                                        onChange={(e) => {
-                                            setSelectedCourse(e.target.value);
-                                            setCurrentPage(1);
-                                        }}
-                                        className={styles.select}
-                                    >
-                                        <option value="">-- Selecciona un curso --</option>
-                                        {courses.map(c => (
-                                            <option key={c.id} value={c.name}>{c.name}</option>
-                                        ))}
-                                    </select>
-                                </div>
+                                <Select
+                                    label="Seleccionar Curso"
+                                    value={selectedCourse}
+                                    onChange={(val) => { setSelectedCourse(val); setCurrentPage(1); }}
+                                    placeholder="-- Selecciona un curso --"
+                                    searchable
+                                    options={courses.map(c => ({ value: c.name, label: c.name }))}
+                                />
                                 {selectedCourse && courseEmployees.length > 0 && (
                                     <div style={{ display: 'flex', gap: '0.5rem', marginTop: 'auto', alignItems: 'center', flexWrap: 'wrap' }}>
                                         {/* Botón ícono de filtro */}
-                                        <div className={styles.filterWrapper} ref={filterRef}>
+                                        <div className={styles.filterWrapper}>
                                             <button
+                                                ref={filterBtnRef}
                                                 className={`${styles.filterBtn} ${exportFilter !== 'all' ? styles.filterActive : ''}`}
-                                                onClick={() => setFilterOpen(p => !p)}
+                                                onClick={() => {
+                                                    if (!filterOpen && filterBtnRef.current) {
+                                                        const rect = filterBtnRef.current.getBoundingClientRect();
+                                                        setFilterMenuStyle({
+                                                            position: 'fixed',
+                                                            top: rect.bottom + 6,
+                                                            right: window.innerWidth - rect.right,
+                                                            zIndex: 99999,
+                                                        });
+                                                    }
+                                                    setFilterOpen(p => !p);
+                                                }}
                                                 title={exportFilter === 'all' ? 'Filtrar exportación' : exportFilter === 'pending' ? 'Solo Pendientes' : 'Solo Aprobados'}
                                             >
                                                 <Filter size={16} />
                                             </button>
-                                            {filterOpen && (
-                                                <div className={styles.filterMenu}>
+                                            {filterOpen && typeof document !== 'undefined' && createPortal(
+                                                <div
+                                                    className={styles.filterMenu}
+                                                    style={filterMenuStyle}
+                                                    data-filter-menu
+                                                >
                                                     {[
                                                         { value: 'all', label: 'Todo' },
                                                         { value: 'pending', label: 'Solo Pendientes' },
@@ -410,7 +426,8 @@ export default function CumplimientoPage() {
                                                             {opt.label}
                                                         </button>
                                                     ))}
-                                                </div>
+                                                </div>,
+                                                document.body
                                             )}
                                         </div>
                                         <Button

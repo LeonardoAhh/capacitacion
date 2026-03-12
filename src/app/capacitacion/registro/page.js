@@ -574,12 +574,10 @@ export default function RegistroPage() {
                 <div className={`${styles.blob} ${styles.blob2}`}></div>
             </div>
 
-            <main className={styles.main} id="main-content">
                 <div className={styles.container}>
-                    <div className={styles.header}>
-                        <h1 className={styles.pageTitle}>Carga Masiva de Capacitación</h1>
-                        <p className={styles.pageSubtitle}>Registra uno o varios cursos para múltiples empleados simultáneamente.</p>
-                    </div>
+                    <header className={styles.header}>
+                        <h1 className={styles.pageTitle}>Registro de Capacitación</h1>
+                    </header>
 
                     {/* Mode Toggle */}
                     <div className={styles.modeToggle}>
@@ -1113,10 +1111,10 @@ export default function RegistroPage() {
                                 </div>
 
                                 {/* 3. Common Data & Actions */}
-                                <div style={{ 
-                                    display: 'flex', 
-                                    alignItems: 'flex-end', 
-                                    gap: '1.5rem', 
+                                <div style={{
+                                    display: 'flex',
+                                    alignItems: 'flex-end',
+                                    gap: '1.5rem',
                                     marginTop: '1.5rem',
                                     flexWrap: 'wrap'
                                 }}>
@@ -1132,7 +1130,7 @@ export default function RegistroPage() {
                                             required
                                         />
                                     </div>
-                                    
+
                                     <div className={styles.formGroup} style={{ marginBottom: 0, width: '200px' }}>
                                         <label>Fecha de Aplicación</label>
                                         <input
@@ -1171,7 +1169,6 @@ export default function RegistroPage() {
                         )}
                     </div>
                 </div>
-            </main>
         </AdminLayout>
     );
 }

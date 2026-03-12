@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, useEffect, useMemo, useCallback } from "react";
+import { useState, useEffect, useMemo, useCallback, useRef } from "react";
+import { createPortal } from "react-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import {
     Search,
@@ -68,6 +69,8 @@ function EmployeeSearchBar({
     const [query, setQuery] = useState(searchTerm);
     const [isFocused, setIsFocused] = useState(false);
     const [activeIndex, setActiveIndex] = useState(-1);
+    const [panelStyle, setPanelStyle] = useState({});
+    const wrapperRef = useRef(null);
     const debouncedQuery = useDebounce(query, 300);
 
     // Sync with external searchTerm ONLY if not focused (to avoid cursor jumps)
@@ -167,6 +170,16 @@ function EmployeeSearchBar({
     }, []);
 
     const handleFocus = useCallback(() => {
+        if (wrapperRef.current) {
+            const rect = wrapperRef.current.getBoundingClientRect();
+            setPanelStyle({
+                position: 'fixed',
+                top: rect.bottom + 8,
+                left: rect.left,
+                width: rect.width,
+                zIndex: 99999,
+            });
+        }
         setIsFocused(true);
     }, []);
 
@@ -181,7 +194,7 @@ function EmployeeSearchBar({
 
     return (
         <div className={styles.container}>
-            <div className={styles.searchWrapper}>
+            <div className={styles.searchWrapper} ref={wrapperRef}>
                 <div className={styles.inputContainer}>
                     <div className={styles.iconWrapper}>
                         <AnimatePresence mode="wait">
@@ -226,10 +239,11 @@ function EmployeeSearchBar({
                 </div>
 
                 <AnimatePresence>
-                    {showActions && (
+                    {showActions && typeof document !== 'undefined' && createPortal(
                         <motion.div
                             id="employee-actions"
                             className={styles.actionsPanel}
+                            style={panelStyle}
                             variants={ANIMATION_VARIANTS.container}
                             initial="hidden"
                             animate="show"
@@ -279,7 +293,8 @@ function EmployeeSearchBar({
                                     ↑↓ para navegar • Enter para seleccionar • ESC para cancelar
                                 </span>
                             </div>
-                        </motion.div>
+                        </motion.div>,
+                        document.body
                     )}
                 </AnimatePresence>
             </div>

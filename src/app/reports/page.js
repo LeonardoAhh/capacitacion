@@ -10,6 +10,7 @@ import styles from './page.module.css';
 
 // UI Components
 import { Badge } from '@/components/ui/Badge/Badge';
+import { Select } from '@/components/ui';
 import {
     BarChart,
     Bar,
@@ -308,238 +309,232 @@ export default function ReportsPage() {
                 <div className={`${styles.blob} ${styles.blob2}`}></div>
             </div>
 
-            <main className={styles.main} id="main-content">
                 <div className={styles.container}>
-                    <div className={styles.header}>
+                    <header className={styles.header}>
                         <div className={styles.headerLeft}>
-                            <h1 className={styles.pageTitle}>Cumplimiento Plan de Formacion</h1>
+                            <h1 className={styles.pageTitle}>Plan de Formación</h1>
                         </div>
-                        <div className={styles.yearSelector}>
-                            <label>Ano:</label>
-                            <select
-                                value={selectedYear}
-                                onChange={(e) => setSelectedYear(parseInt(e.target.value))}
-                                className="input-field"
-                            >
-                                {[2023, 2024, 2025, 2026, 2027].map(year => (
-                                    <option key={year} value={year}>{year}</option>
-                                ))}
-                            </select>
+                        <Select
+                            label="Año"
+                            value={selectedYear}
+                            onChange={(val) => setSelectedYear(Number(val))}
+                            options={[2023, 2024, 2025, 2026, 2027].map(y => ({ value: y, label: String(y) }))}
+                        />
+                    </header>
+                </div>
+
+            {loading ? (
+                <div className={styles.loadingContainer}>
+                    <div className="spinner"></div>
+                </div>
+            ) : (
+                <>
+                    {/* Resumen General */}
+                    <div className={styles.summaryCards}>
+                        <div className={styles.summaryCard}>
+                            <div className={styles.summaryIcon} style={{ background: 'linear-gradient(135deg, #3b82f6, #06b6d4)' }}>
+                                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                    <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
+                                    <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" />
+                                </svg>
+                            </div>
+                            <div className={styles.summaryContent}>
+                                <span className={styles.summaryNumber}>{totals.scheduled}</span>
+                                <span className={styles.summaryLabel}>Programados</span>
+                            </div>
+                        </div>
+
+                        <div className={styles.summaryCard}>
+                            <div className={styles.summaryIcon} style={{ background: 'linear-gradient(135deg, #22c55e, #16a34a)' }}>
+                                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
+                                    <polyline points="22 4 12 14.01 9 11.01" />
+                                </svg>
+                            </div>
+                            <div className={styles.summaryContent}>
+                                <span className={styles.summaryNumber}>{totals.delivered}</span>
+                                <span className={styles.summaryLabel}>Entregados</span>
+                            </div>
+                        </div>
+
+                        <div className={styles.summaryCard}>
+                            <div className={styles.summaryIcon} style={{ background: 'linear-gradient(135deg, #f59e0b, #d97706)' }}>
+                                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                    <circle cx="12" cy="12" r="10" />
+                                    <polyline points="12 6 12 12 16 14" />
+                                </svg>
+                            </div>
+                            <div className={styles.summaryContent}>
+                                <span className={styles.summaryNumber}>{totals.pending}</span>
+                                <span className={styles.summaryLabel}>Pendientes</span>
+                            </div>
+                        </div>
+
+                        <div className={styles.summaryCard}>
+                            <div className={styles.summaryIcon} style={{ background: 'linear-gradient(135deg, #8b5cf6, #7c3aed)' }}>
+                                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                    <line x1="18" y1="20" x2="18" y2="10" />
+                                    <line x1="12" y1="20" x2="12" y2="4" />
+                                    <line x1="6" y1="20" x2="6" y2="14" />
+                                </svg>
+                            </div>
+                            <div className={styles.summaryContent}>
+                                <span className={styles.summaryNumber}>
+                                    {totals.scheduled > 0 ? Math.round((totals.delivered / totals.scheduled) * 100) : 0}%
+                                </span>
+                                <span className={styles.summaryLabel}>Cumplimiento</span>
+                            </div>
                         </div>
                     </div>
 
-                    {loading ? (
-                        <div className={styles.loadingContainer}>
-                            <div className="spinner"></div>
+                    {/* Seccion de Graficos Interactivos */}
+                    <div className={styles.chartsGrid}>
+                        {/* Grafico de Barras - Cumplimiento Mensual */}
+                        <div className={styles.chartCard}>
+                            <div className={styles.chartHeader}>
+                                <div>
+                                    <h3 className={styles.chartTitle}>Cumplimiento Mensual</h3>
+                                    <p className={styles.chartSubtitle}>Programados vs Entregados por mes</p>
+                                </div>
+                            </div>
+                            <div className={styles.chartWrapper}>
+                                <MemoizedMonthlyBarChart data={monthlyStats} />
+                            </div>
+                            <div className={styles.chartLegend}>
+                                <div className={styles.legendItem}>
+                                    <span className={styles.legendDot} style={{ backgroundColor: '#3b82f6' }}></span>
+                                    <span>Programados</span>
+                                </div>
+                                <div className={styles.legendItem}>
+                                    <span className={styles.legendDot} style={{ backgroundColor: '#22c55e' }}></span>
+                                    <span>Entregados</span>
+                                </div>
+                            </div>
                         </div>
-                    ) : (
-                        <>
-                            {/* Resumen General */}
-                            <div className={styles.summaryCards}>
-                                <div className={styles.summaryCard}>
-                                    <div className={styles.summaryIcon} style={{ background: 'linear-gradient(135deg, #3b82f6, #06b6d4)' }}>
-                                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                            <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
-                                            <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" />
-                                        </svg>
-                                    </div>
-                                    <div className={styles.summaryContent}>
-                                        <span className={styles.summaryNumber}>{totals.scheduled}</span>
-                                        <span className={styles.summaryLabel}>Programados</span>
-                                    </div>
-                                </div>
 
-                                <div className={styles.summaryCard}>
-                                    <div className={styles.summaryIcon} style={{ background: 'linear-gradient(135deg, #22c55e, #16a34a)' }}>
-                                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
-                                            <polyline points="22 4 12 14.01 9 11.01" />
-                                        </svg>
-                                    </div>
-                                    <div className={styles.summaryContent}>
-                                        <span className={styles.summaryNumber}>{totals.delivered}</span>
-                                        <span className={styles.summaryLabel}>Entregados</span>
-                                    </div>
-                                </div>
+                    </div>
 
-                                <div className={styles.summaryCard}>
-                                    <div className={styles.summaryIcon} style={{ background: 'linear-gradient(135deg, #f59e0b, #d97706)' }}>
-                                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                            <circle cx="12" cy="12" r="10" />
-                                            <polyline points="12 6 12 12 16 14" />
-                                        </svg>
-                                    </div>
-                                    <div className={styles.summaryContent}>
-                                        <span className={styles.summaryNumber}>{totals.pending}</span>
-                                        <span className={styles.summaryLabel}>Pendientes</span>
-                                    </div>
+                    {/* Estadisticas por Departamento */}
+                    <section className={styles.section}>
+                        <h2>Cumplimiento por Departamento</h2>
+                        {departmentStats.length === 0 ? (
+                            <div className={styles.emptyState}>
+                                <p>No hay datos de planes de formacion para el ano {selectedYear}</p>
+                            </div>
+                        ) : (
+                            <div className={styles.deptTable}>
+                                <div className={styles.tableHeader}>
+                                    <span>Departamento</span>
+                                    <span>Programados</span>
+                                    <span>Entregados</span>
+                                    <span>Pendientes</span>
+                                    <span>Cumplimiento</span>
                                 </div>
-
-                                <div className={styles.summaryCard}>
-                                    <div className={styles.summaryIcon} style={{ background: 'linear-gradient(135deg, #8b5cf6, #7c3aed)' }}>
-                                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                            <line x1="18" y1="20" x2="18" y2="10" />
-                                            <line x1="12" y1="20" x2="12" y2="4" />
-                                            <line x1="6" y1="20" x2="6" y2="14" />
-                                        </svg>
-                                    </div>
-                                    <div className={styles.summaryContent}>
-                                        <span className={styles.summaryNumber}>
-                                            {totals.scheduled > 0 ? Math.round((totals.delivered / totals.scheduled) * 100) : 0}%
+                                {departmentStats.map((dept) => (
+                                    <div
+                                        key={dept.name}
+                                        className={`${styles.tableRow} ${styles.clickable}`}
+                                        onClick={() => setSelectedDept(dept)}
+                                    >
+                                        <span className={styles.deptName}>
+                                            {dept.name}
+                                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                                <polyline points="9 18 15 12 9 6" />
+                                            </svg>
                                         </span>
-                                        <span className={styles.summaryLabel}>Cumplimiento</span>
-                                    </div>
-                                </div>
-                            </div>
-
-                            {/* Seccion de Graficos Interactivos */}
-                            <div className={styles.chartsGrid}>
-                                {/* Grafico de Barras - Cumplimiento Mensual */}
-                                <div className={styles.chartCard}>
-                                    <div className={styles.chartHeader}>
-                                        <div>
-                                            <h3 className={styles.chartTitle}>Cumplimiento Mensual</h3>
-                                            <p className={styles.chartSubtitle}>Programados vs Entregados por mes</p>
-                                        </div>
-                                    </div>
-                                    <div className={styles.chartWrapper}>
-                                        <MemoizedMonthlyBarChart data={monthlyStats} />
-                                    </div>
-                                    <div className={styles.chartLegend}>
-                                        <div className={styles.legendItem}>
-                                            <span className={styles.legendDot} style={{ backgroundColor: '#3b82f6' }}></span>
-                                            <span>Programados</span>
-                                        </div>
-                                        <div className={styles.legendItem}>
-                                            <span className={styles.legendDot} style={{ backgroundColor: '#22c55e' }}></span>
-                                            <span>Entregados</span>
-                                        </div>
-                                    </div>
-                                </div>
-
-                            </div>
-
-                            {/* Estadisticas por Departamento */}
-                            <section className={styles.section}>
-                                <h2>Cumplimiento por Departamento</h2>
-                                {departmentStats.length === 0 ? (
-                                    <div className={styles.emptyState}>
-                                        <p>No hay datos de planes de formacion para el ano {selectedYear}</p>
-                                    </div>
-                                ) : (
-                                    <div className={styles.deptTable}>
-                                        <div className={styles.tableHeader}>
-                                            <span>Departamento</span>
-                                            <span>Programados</span>
-                                            <span>Entregados</span>
-                                            <span>Pendientes</span>
-                                            <span>Cumplimiento</span>
-                                        </div>
-                                        {departmentStats.map((dept) => (
-                                            <div
-                                                key={dept.name}
-                                                className={`${styles.tableRow} ${styles.clickable}`}
-                                                onClick={() => setSelectedDept(dept)}
-                                            >
-                                                <span className={styles.deptName}>
-                                                    {dept.name}
-                                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                                        <polyline points="9 18 15 12 9 6" />
-                                                    </svg>
-                                                </span>
-                                                <span className={styles.deptStat}>{dept.scheduled}</span>
-                                                <span className={styles.deptStat} style={{ color: '#22c55e' }}>{dept.delivered}</span>
-                                                <span className={styles.deptStat} style={{ color: '#f59e0b' }}>{dept.scheduled - dept.delivered}</span>
-                                                <span className={styles.deptProgress}>
-                                                    <div className={styles.miniProgressBar}>
-                                                        <div
-                                                            className={styles.miniProgressFill}
-                                                            style={{
-                                                                width: `${dept.percentage}%`,
-                                                                background: dept.percentage >= 80 ? '#22c55e' : dept.percentage >= 50 ? '#f59e0b' : '#ef4444'
-                                                            }}
-                                                        ></div>
-                                                    </div>
-                                                    <span>{dept.percentage}%</span>
-                                                </span>
+                                        <span className={styles.deptStat}>{dept.scheduled}</span>
+                                        <span className={styles.deptStat} style={{ color: '#22c55e' }}>{dept.delivered}</span>
+                                        <span className={styles.deptStat} style={{ color: '#f59e0b' }}>{dept.scheduled - dept.delivered}</span>
+                                        <span className={styles.deptProgress}>
+                                            <div className={styles.miniProgressBar}>
+                                                <div
+                                                    className={styles.miniProgressFill}
+                                                    style={{
+                                                        width: `${dept.percentage}%`,
+                                                        background: dept.percentage >= 80 ? '#22c55e' : dept.percentage >= 50 ? '#f59e0b' : '#ef4444'
+                                                    }}
+                                                ></div>
                                             </div>
-                                        ))}
+                                            <span>{dept.percentage}%</span>
+                                        </span>
                                     </div>
-                                )}
-                            </section>
-                        </>
-                    )}
-                </div>
-            </main>
+                                ))}
+                            </div>
+                        )}
+                    </section>
+                </>
+            )}
 
-            {/* Modal de Empleados por Departamento */}
-            {selectedDept && (
-                <div className={styles.modalOverlay} onClick={() => setSelectedDept(null)}>
-                    <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
-                        <div className={styles.modalHeader}>
-                            <h2 className={styles.modalTitle}>
-                                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ color: 'var(--text-tertiary)' }}>
-                                    <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
-                                    <polyline points="9 22 9 12 15 12 15 22"></polyline>
-                                </svg>
-                                {selectedDept.name}
-                            </h2>
-                            <button className={styles.closeBtn} onClick={() => setSelectedDept(null)} aria-label="Cerrar modal">
-                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                                    <line x1="18" y1="6" x2="6" y2="18" />
-                                    <line x1="6" y1="6" x2="18" y2="18" />
-                                </svg>
-                            </button>
+        {/* Modal de Empleados por Departamento */ }
+    {
+        selectedDept && (
+            <div className={styles.modalOverlay} onClick={() => setSelectedDept(null)}>
+                <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
+                    <div className={styles.modalHeader}>
+                        <h2 className={styles.modalTitle}>
+                            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ color: 'var(--text-tertiary)' }}>
+                                <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                                <polyline points="9 22 9 12 15 12 15 22"></polyline>
+                            </svg>
+                            {selectedDept.name}
+                        </h2>
+                        <button className={styles.closeBtn} onClick={() => setSelectedDept(null)} aria-label="Cerrar modal">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                <line x1="18" y1="6" x2="6" y2="18" />
+                                <line x1="6" y1="6" x2="18" y2="18" />
+                            </svg>
+                        </button>
+                    </div>
+                    <div className={styles.modalStats}>
+                        <div className={styles.modalStatItem}>
+                            <span className={styles.statVal}>{selectedDept.scheduled}</span>
+                            <span className={styles.statLbl}>Programados</span>
                         </div>
-                        <div className={styles.modalStats}>
-                            <div className={styles.modalStatItem}>
-                                <span className={styles.statVal}>{selectedDept.scheduled}</span>
-                                <span className={styles.statLbl}>Programados</span>
-                            </div>
-                            <div className={`${styles.modalStatItem} ${styles.statSuccess}`}>
-                                <span className={styles.statVal}>{selectedDept.delivered}</span>
-                                <span className={styles.statLbl}>Entregados</span>
-                            </div>
-                            <div className={`${styles.modalStatItem} ${styles.statWarning}`}>
-                                <span className={styles.statVal}>{selectedDept.scheduled - selectedDept.delivered}</span>
-                                <span className={styles.statLbl}>Pendientes</span>
-                            </div>
+                        <div className={`${styles.modalStatItem} ${styles.statSuccess}`}>
+                            <span className={styles.statVal}>{selectedDept.delivered}</span>
+                            <span className={styles.statLbl}>Entregados</span>
                         </div>
-                        <div className={styles.employeeList}>
-                            <div className={styles.employeeHeader}>
-                                <span>ID</span>
-                                <span>Nombre del Empleado</span>
-                                <span>Turno</span>
-                                <span>Límite Entrega</span>
-                                <span>Estado Actual</span>
-                            </div>
-                            <div className={styles.employeeBody}>
-                                {selectedDept.employees.map((emp, idx) => {
-                                    const status = getDeliveryStatus(emp.deliveryDate, emp.delivered);
-                                    return (
-                                        <div key={idx} className={styles.employeeRow}>
-                                            <span className={styles.empId}>{emp.employeeId}</span>
-                                            <span className={styles.empName}>{emp.name}</span>
-                                            <span className={styles.empShift}>
-                                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
-                                                {emp.shift}
-                                            </span>
-                                            <span className={styles.empDate}>{formatDate(emp.deliveryDate)}</span>
-                                            <Badge
-                                                variant={status.label === 'Entregado' ? 'success' : status.label.includes('Vencido') ? 'danger' : 'warning'}
-                                                size="sm"
-                                            >
-                                                {status.label}
-                                            </Badge>
-                                        </div>
-                                    );
-                                })}
-                            </div>
+                        <div className={`${styles.modalStatItem} ${styles.statWarning}`}>
+                            <span className={styles.statVal}>{selectedDept.scheduled - selectedDept.delivered}</span>
+                            <span className={styles.statLbl}>Pendientes</span>
+                        </div>
+                    </div>
+                    <div className={styles.employeeList}>
+                        <div className={styles.employeeHeader}>
+                            <span>ID</span>
+                            <span>Nombre del Empleado</span>
+                            <span>Turno</span>
+                            <span>Límite Entrega</span>
+                            <span>Estado Actual</span>
+                        </div>
+                        <div className={styles.employeeBody}>
+                            {selectedDept.employees.map((emp, idx) => {
+                                const status = getDeliveryStatus(emp.deliveryDate, emp.delivered);
+                                return (
+                                    <div key={idx} className={styles.employeeRow}>
+                                        <span className={styles.empId}>{emp.employeeId}</span>
+                                        <span className={styles.empName}>{emp.name}</span>
+                                        <span className={styles.empShift}>
+                                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                                            {emp.shift}
+                                        </span>
+                                        <span className={styles.empDate}>{formatDate(emp.deliveryDate)}</span>
+                                        <Badge
+                                            variant={status.label === 'Entregado' ? 'success' : status.label.includes('Vencido') ? 'danger' : 'warning'}
+                                            size="sm"
+                                        >
+                                            {status.label}
+                                        </Badge>
+                                    </div>
+                                );
+                            })}
                         </div>
                     </div>
                 </div>
-            )}
-        </AdminLayout>
+            </div>
+        )
+    }
+        </AdminLayout >
     );
 }
 

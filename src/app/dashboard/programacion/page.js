@@ -15,6 +15,7 @@ import EmployeeSearchBar from '@/components/ui/EmployeeSearchBar/EmployeeSearchB
 import MonitoringTable from '@/components/features/Training/MonitoringTable';
 import useIsMobile from '@/hooks/useIsMobile';
 import styles from './page.module.css';
+import { Select } from '@/components/ui';
 
 // â”€â”€â”€ Animation variants â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
@@ -468,17 +469,11 @@ export default function ProgramacionPage() {
             </button>
 
             {/* Area filter */}
-            <select
-                className={styles.mobileSelect}
+            <Select
                 value={selectedArea}
-                onChange={e => setSelectedArea(e.target.value)}
-                aria-label="Filtrar por área"
-            >
-                <option value="all">Todas las Áreas</option>
-                {areas.filter(a => a !== 'all').map(area => (
-                    <option key={area} value={area}>{area}</option>
-                ))}
-            </select>
+                onChange={(val) => setSelectedArea(val)}
+                options={[{ value: 'all', label: 'Todas las Áreas' }, ...areas.filter(a => a !== 'all').map(area => ({ value: area, label: area }))]}
+            />
 
             {/* Employee list */}
             <div className={styles.mobileEmployeeList}>
@@ -705,17 +700,11 @@ export default function ProgramacionPage() {
 
                                 {/* Area filter */}
                                 <div className={styles.filters}>
-                                    <select
-                                        className={styles.select}
+                                    <Select
                                         value={selectedArea}
-                                        onChange={e => setSelectedArea(e.target.value)}
-                                        aria-label="Filtrar por área"
-                                    >
-                                        <option value="all">Todas las Áreas</option>
-                                        {areas.filter(a => a !== 'all').map(area => (
-                                            <option key={area} value={area}>{area}</option>
-                                        ))}
-                                    </select>
+                                        onChange={(val) => setSelectedArea(val)}
+                                        options={[{ value: 'all', label: 'Todas las Áreas' }, ...areas.filter(a => a !== 'all').map(area => ({ value: area, label: area }))]}
+                                    />
                                 </div>
 
                                 {/* Employee list */}

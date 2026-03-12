@@ -206,6 +206,29 @@
     gap: var(--spacing-md);
 }
 
+.newEmployeeBtn {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 10px 20px;
+    background: var(--color-primary);
+    border: none;
+    border-radius: 50px;
+    color: #fff;
+    font-size: 0.875rem;
+    font-weight: 600;
+    font-family: var(--font-body);
+    cursor: pointer;
+    transition: background 0.2s, transform 0.15s;
+    white-space: nowrap;
+    align-self: center;
+}
+
+.newEmployeeBtn:hover {
+    background: color-mix(in srgb, var(--color-primary) 85%, black);
+    transform: translateY(-1px);
+}
+
 .backBtn {
     display: inline-flex;
     align-items: center;

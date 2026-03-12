@@ -5,6 +5,7 @@ import BackButton from '@/components/ui/BackButton/BackButton';
 import { db } from '@/lib/firebase';
 import { collection, getDocs, query, orderBy, where } from 'firebase/firestore';
 import { Button } from '@/components/ui/Button/Button';
+import { Select } from '@/components/ui';
 import { useToast } from '@/components/ui/Toast/Toast';
 import { Card, CardContent } from '@/components/ui/Card/Card';
 import QuestionManager from '@/components/features/QuestionManager/QuestionManager'; // [NEW]
@@ -440,47 +441,37 @@ export default function ExamenPage() {
                         )}
                     </div>
 
-                    <div className={styles.formGroup}>
-                        <label>2. Departamento del Examen</label>
-                        <select
-                            className={styles.select}
-                            value={department}
-                            onChange={(e) => setDepartment(e.target.value)}
-                        >
-                            <option value="Producción">Producción</option>
-                            <option value="Calidad">Calidad</option>
-                            <option value="Moldes">Moldes</option>
-                            <option value="Recursos Humanos">Recursos Humanos</option>
-                        </select>
-                    </div>
+                    <Select
+                        label="2. Departamento del Examen"
+                        value={department}
+                        onChange={(val) => setDepartment(val)}
+                        options={[
+                            { value: 'Producción', label: 'Producción' },
+                            { value: 'Calidad', label: 'Calidad' },
+                            { value: 'Moldes', label: 'Moldes' },
+                            { value: 'Recursos Humanos', label: 'Recursos Humanos' },
+                        ]}
+                    />
 
-                    <div className={styles.formGroup}>
-                        <label>3. Tipo de Promoción (Categoría)</label>
-                        <select
-                            className={styles.select}
-                            value={category}
-                            onChange={(e) => setCategory(e.target.value)}
-                        >
-                            {department === 'Moldes' ? (
-                                <>
-                                    <option value="E_D">Categoría E a D (20 preguntas)</option>
-                                    <option value="D_C">Categoría D a C (20 preguntas)</option>
-                                    <option value="C_B">Categoría C a B (20 preguntas)</option>
-                                    <option value="B_A">Categoría B a A (Todas)</option>
-                                </>
-                            ) : department === 'Recursos Humanos' ? (
-                                <>
-                                    <option value="RH_ALL">Examen Completo (Todas las preguntas)</option>
-                                </>
-                            ) : (
-                                <>
-                                    <option value="D_C">Categoría D a C (20 Preguntas)</option>
-                                    <option value="C_B">Categoría C a B (30 Preguntas)</option>
-                                    <option value="B_A">Categoría B a A (40 Preguntas)</option>
-                                </>
-                            )}
-                        </select>
-                    </div>
+                    <Select
+                        label="3. Tipo de Promoción (Categoría)"
+                        value={category}
+                        onChange={(val) => setCategory(val)}
+                        options={
+                            department === 'Moldes' ? [
+                                { value: 'E_D', label: 'Categoría E a D (20 preguntas)' },
+                                { value: 'D_C', label: 'Categoría D a C (20 preguntas)' },
+                                { value: 'C_B', label: 'Categoría C a B (20 preguntas)' },
+                                { value: 'B_A', label: 'Categoría B a A (Todas)' },
+                            ] : department === 'Recursos Humanos' ? [
+                                { value: 'RH_ALL', label: 'Examen Completo (Todas las preguntas)' },
+                            ] : [
+                                { value: 'D_C', label: 'Categoría D a C (20 Preguntas)' },
+                                { value: 'C_B', label: 'Categoría C a B (30 Preguntas)' },
+                                { value: 'B_A', label: 'Categoría B a A (40 Preguntas)' },
+                            ]
+                        }
+                    />
 
                     <Button
                         onClick={handleGenerate}
