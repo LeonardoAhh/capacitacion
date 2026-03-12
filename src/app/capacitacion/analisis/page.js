@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 
 import { useState, useEffect } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
@@ -546,29 +546,47 @@ export default function AnalisisPage() {
                             };
 
                             // Calculate trend line (linear regression)
+                            // Solo incluye meses con datos reales (excluye ceros al final del año sin datos)
                             const getTrendLine = (year) => {
-                                const values = months.map((month, idx) => ({
+                                const allValues = months.map((month, idx) => ({
                                     x: idx,
                                     y: kpiData.monthlyData[month]?.[year] || 0
                                 }));
 
+                                // Encontrar el último índice con valor > 0
+                                let lastDataIdx = -1;
+                                for (let i = allValues.length - 1; i >= 0; i--) {
+                                    if (allValues[i].y > 0) { lastDataIdx = i; break; }
+                                }
+
+                                // Si no hay datos, no dibujamos tendencia
+                                if (lastDataIdx < 1) return null;
+
+                                // Solo regresión sobre los meses con datos (hasta el último mes con valor)
+                                const values = allValues.slice(0, lastDataIdx + 1);
                                 const n = values.length;
                                 const sumX = values.reduce((sum, v) => sum + v.x, 0);
                                 const sumY = values.reduce((sum, v) => sum + v.y, 0);
                                 const sumXY = values.reduce((sum, v) => sum + v.x * v.y, 0);
                                 const sumX2 = values.reduce((sum, v) => sum + v.x * v.x, 0);
 
-                                const slope = (n * sumXY - sumX * sumY) / (n * sumX2 - sumX * sumX);
+                                const denom = (n * sumX2 - sumX * sumX);
+                                if (denom === 0) return null;
+
+                                const slope = (n * sumXY - sumX * sumY) / denom;
                                 const intercept = (sumY - slope * sumX) / n;
 
-                                // Get start and end points for the trend line
-                                const startY = intercept;
-                                const endY = slope * 11 + intercept;
+                                // La línea va desde el primer mes hasta el último mes con datos
+                                const startX = values[0].x;
+                                const endX = values[values.length - 1].x;
 
-                                const x1 = padding;
-                                const y1 = chartHeight - padding - (startY / maxValue) * graphHeight;
-                                const x2 = padding + graphWidth;
-                                const y2 = chartHeight - padding - (endY / maxValue) * graphHeight;
+                                const startYVal = slope * startX + intercept;
+                                const endYVal = slope * endX + intercept;
+
+                                const x1 = padding + (startX * graphWidth / 11);
+                                const y1 = chartHeight - padding - (startYVal / maxValue) * graphHeight;
+                                const x2 = padding + (endX * graphWidth / 11);
+                                const y2 = chartHeight - padding - (endYVal / maxValue) * graphHeight;
 
                                 return { x1, y1, x2, y2 };
                             };
@@ -576,7 +594,7 @@ export default function AnalisisPage() {
                             return (
                                 <Card className={styles.chartCard}>
                                     <CardHeader>
-                                        <CardTitle>Cursos Únicos Impartidos por Mes (Comparación Anual)</CardTitle>
+                                        <CardTitle>Comparación Anual de Cursos Impartidos</CardTitle>
                                     </CardHeader>
                                     <CardContent>
                                         <div className={styles.chart2D}>
@@ -644,6 +662,7 @@ export default function AnalisisPage() {
                                                     {/* Trend lines */}
                                                     {[2024, 2025, 2026].map(year => {
                                                         const trend = getTrendLine(year);
+                                                        if (!trend) return null;
                                                         return (
                                                             <line
                                                                 key={`trend-${year}`}
