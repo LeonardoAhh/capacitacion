@@ -317,6 +317,35 @@ export const validateEmployeeImportRecords = (records, existingEmployees) => {
 };
 
 /**
+ * Validate a single employee record against the existing list.
+ * Used for re-validation after inline editing in the employee import preview.
+ * @param {Object} record - Normalized employee record
+ * @param {Array} existingEmployees - Current employee list
+ * @returns {{ valid: boolean, issues: string[] }}
+ */
+export const validateSingleEmployeeRecord = (record, existingEmployees) => {
+    const issues = [];
+    const existingIds = new Set(existingEmployees.map(e => String(e.id).toUpperCase()));
+    const existingEmpIds = new Set(existingEmployees.map(e => String(e.employeeId).toUpperCase()));
+
+    if (!record.name) issues.push('Falta Nombre');
+    if (!record.department) issues.push('Falta Departamento');
+    if (!record.position) issues.push('Falta Puesto');
+
+    if (record.employeeId) {
+        const upperId = String(record.employeeId).toUpperCase();
+        if (existingIds.has(upperId) || existingEmpIds.has(upperId)) {
+            issues.push(`ID "${record.employeeId}" ya existe`);
+        }
+    }
+
+    return {
+        valid: issues.length === 0,
+        issues
+    };
+};
+
+/**
  * Generate Excel template for download
  */
 export const generateExcelTemplate = async () => {

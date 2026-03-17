@@ -10,6 +10,7 @@ import {
 } from 'lucide-react';
 import Image from 'next/image';
 import { EmployeeDetail } from './components/EmployeeDetail';
+import EmployeeImportPreview from './components/EmployeeImportPreview';
 import styles from './page.module.css';
 import BackButton from '@/components/ui/BackButton/BackButton';
 import { useEmployees } from '@/hooks/useEmployees';
@@ -62,6 +63,7 @@ export default function EmployeesPage() {
 
     // Bulk Import State
     const [isImporting, setIsImporting] = useState(false);
+    const [importPreview, setImportPreview] = useState(null);
     const fileInputRef = React.useRef(null);
 
     // Confirmation dialog state
@@ -223,15 +225,25 @@ export default function EmployeesPage() {
             // 2. Validate Records
             const validation = validateEmployeeImportRecords(records, employees);
 
-            if (validation.invalid.length > 0) {
-                // Show errors (simplified for now, could be a modal)
-                const errorMsg = `Se encontraron ${validation.invalid.length} errores. Primer error: Fila ${validation.invalid[0].row} - ${validation.invalid[0].issues.join(', ')}`;
-                throw new Error(errorMsg);
-            }
+            // Show Preview instead of direct import
+            setImportPreview(validation);
+            showToast('Archivo procesado. Revisa la vista previa.', 'info');
 
-            // 3. Import Valid Records
-            let importedCount = 0;
-            for (const record of validation.valid) {
+        } catch (error) {
+            console.error('Import error:', error);
+            showToast(error.message || 'Error al importar el archivo', 'error');
+        } finally {
+            setIsImporting(false);
+        }
+    }, [employees, showToast]);
+
+    const handleImportConfirm = useCallback(async (rowsToImport) => {
+        setIsImporting(true);
+        let importedCount = 0;
+        let errors = 0;
+
+        try {
+            for (const record of rowsToImport) {
                 const result = await createEmployee({
                     ...record,
                     status: 'Activo',
@@ -241,20 +253,30 @@ export default function EmployeesPage() {
                 if (result.success) {
                     importedCount++;
                 } else {
+                    errors++;
                     console.error(`Error importing row ${record.row}:`, result.error);
                 }
             }
 
-            showToast(`Importación completada: ${importedCount} empleados creados`, 'success');
-            refresh(); // Refresh list
-
+            if (errors > 0) {
+                showToast(`Importación finalizada con ${errors} errores. ${importedCount} empleados creados.`, 'warning');
+            } else {
+                showToast(`Importación completada: ${importedCount} empleados creados`, 'success');
+            }
+            
+            setImportPreview(null);
+            refresh();
         } catch (error) {
-            console.error('Import error:', error);
-            showToast(error.message || 'Error al importar el archivo', 'error');
+            console.error('Confirm import error:', error);
+            showToast('Error al procesar la importación', 'error');
         } finally {
             setIsImporting(false);
         }
-    }, [employees, createEmployee, refresh, showToast]);
+    }, [createEmployee, showToast, refresh]);
+
+    const handleImportCancel = useCallback(() => {
+        setImportPreview(null);
+    }, []);
 
     // ============================================================================
     // RENDER LOADING STATE
@@ -541,6 +563,17 @@ export default function EmployeesPage() {
                 onCancel={() => setConfirmDialog(prev => ({ ...prev, isOpen: false }))}
                 variant={confirmDialog.variant}
             />
+
+            {/* Import Preview Overlay */}
+            {importPreview && (
+                <EmployeeImportPreview 
+                    preview={importPreview}
+                    existingEmployees={employees}
+                    onCancel={handleImportCancel}
+                    onConfirm={handleImportConfirm}
+                    isImporting={isImporting}
+                />
+            )}
         </AdminLayout>
     );
 }
