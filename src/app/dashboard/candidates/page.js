@@ -8,7 +8,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/components/ui/Toast/Toast';
 import { Drawer, DrawerContent, DrawerHeader, DrawerTitle, DrawerClose } from '@/components/ui/Drawer/Drawer';
 import styles from './page.module.css';
-import { Search, Users, CheckCircle, Clock, AlertCircle, Bell, MessageCircle, Key, Filter, X, ChevronRight, Phone, ArrowUpDown, ArrowUp, ArrowDown, UserCircle2 } from 'lucide-react';
+import { Search, Users, CheckCircle, CheckCircle2, Clock, AlertCircle, Bell, MessageCircle, Key, Filter, X, ChevronRight, Phone, ArrowUpDown, ArrowUp, ArrowDown, UserCircle2 } from 'lucide-react';
 import { useTheme } from '@/contexts/ThemeContext';
 import CandidateDrawer from '@/components/features/Dashboard/CandidateDrawer';
 import ProfileDropdown from '@/components/layout/ProfileDropdown/ProfileDropdown';
@@ -337,6 +337,7 @@ export default function CandidateMonitoringPage() {
     const [showMobileFilters, setShowMobileFilters] = useState(false);
     const [showAvatarSelector, setShowAvatarSelector] = useState(false);
     const [whatsappModal, setWhatsappModal] = useState({ isOpen: false, candidate: null });
+    const [selectedWhatsappTemplate, setSelectedWhatsappTemplate] = useState(MESSAGE_TEMPLATES[0]);
     // { key: 'name'|'progress'|'lastLogin', dir: 'asc'|'desc' }
     const [sortConfig, setSortConfig] = useState({ key: null, dir: 'asc' });
     // QuickDrawer al hacer click en una card
@@ -438,6 +439,7 @@ export default function CandidateMonitoringPage() {
             isOpen: true,
             candidate
         });
+        setSelectedWhatsappTemplate(MESSAGE_TEMPLATES[0]);
     }, []);
 
     const sendWhatsAppMessage = useCallback((template) => {
@@ -984,27 +986,51 @@ export default function CandidateMonitoringPage() {
 
                         <div className={styles.modalBody}>
                             <p className={styles.modalSubtitle}>
-                                Enviando mensaje a: <strong>{getDisplayName(whatsappModal.candidate)}</strong>
+                                Enviando a: <strong>{getDisplayName(whatsappModal.candidate)}</strong>
                             </p>
 
-                            <div className={styles.messageTemplates}>
-                                {MESSAGE_TEMPLATES.map((template, idx) => (
+                            <div className={styles.whatsappTemplatesNav}>
+                                {MESSAGE_TEMPLATES.map((template) => (
                                     <button
                                         key={template.id}
-                                        ref={idx === 0 ? firstTemplateRef : null}
-                                        className={styles.templateButton}
+                                        className={`${styles.whatsappTab} ${selectedWhatsappTemplate.id === template.id ? styles.whatsappTabActive : ''}`}
                                         onClick={(e) => {
                                             e.stopPropagation();
-                                            sendWhatsAppMessage(template);
+                                            setSelectedWhatsappTemplate(template);
                                         }}
                                     >
-                                        <div className={styles.templateTitle}>{template.title}</div>
-                                        <div className={styles.templatePreview}>
-                                            {template.message(getDisplayName(whatsappModal.candidate) || 'Candidato', whatsappModal.candidate)}
-                                        </div>
+                                        {template.title}
                                     </button>
                                 ))}
                             </div>
+
+                            <div className={styles.whatsappChatPreview}>
+                                <div className={styles.whatsappBubble}>
+                                    {selectedWhatsappTemplate.message(getDisplayName(whatsappModal.candidate) || 'Candidato', whatsappModal.candidate).split('\n').map((line, i) => (
+                                        <span key={i}>
+                                            {line}
+                                            <br />
+                                        </span>
+                                    ))}
+                                    <div className={styles.whatsappBubbleTime}>
+                                        {new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                                        <CheckCircle2 size={12} className={styles.whatsappReadTick} />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className={styles.modalFooterActions}>
+                            <button
+                                className={styles.whatsappSendBtn}
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    sendWhatsAppMessage(selectedWhatsappTemplate);
+                                }}
+                            >
+                                <MessageCircle size={18} />
+                                Enviar por WhatsApp
+                            </button>
                         </div>
                     </div>
                 </div>

@@ -877,8 +877,10 @@
     .modalContent {
         max-width: 100%;
         border-radius: 20px 20px 0 0;
-        max-height: 90vh;
+        max-height: 80vh; /* Reducido de 90vh para evitar la navbar */
         border-bottom: none;
+        display: flex;
+        flex-direction: column;
     }
 }
 
@@ -936,41 +938,129 @@
     color: var(--text-primary);
 }
 
-/* Message Templates */
-.messageTemplates {
+/* WhatsApp Redesign */
+.whatsappTemplatesNav {
     display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
+    overflow-x: auto;
+    gap: 8px;
+    padding-bottom: 8px;
+    margin-bottom: 16px;
+    scrollbar-width: none; /* Firefox */
 }
 
-.templateButton {
-    background: var(--bg-tertiary);
-    border: 1px solid transparent;
-    border-radius: var(--radius-md);
-    padding: 0.875rem;
-    cursor: pointer;
-    transition: all var(--transition-fast);
-    text-align: left;
-    display: flex;
-    flex-direction: column;
-    gap: 0.375rem;
-    width: 100%;
+.whatsappTemplatesNav::-webkit-scrollbar {
+    display: none; /* Safari/Chrome */
 }
 
-.templateButton:hover {
-    border-color: #25D366;
-}
-
-.templateTitle {
-    font-weight: 600;
-    font-size: 0.875rem;
-    color: var(--text-primary);
-}
-
-.templatePreview {
-    font-size: 0.8125rem;
+.whatsappTab {
+    flex: 0 0 auto;
+    padding: 8px 16px;
+    border-radius: 99px;
+    border: 1px solid var(--border-color);
+    background: var(--bg-primary);
     color: var(--text-secondary);
-    line-height: 1.4;
+    font-size: 0.8125rem;
+    font-weight: 600;
+    font-family: var(--font-body);
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.whatsappTabActive {
+    background: #eef2ff;
+    border-color: #3b82f6;
+    color: #3b82f6;
+}
+
+.whatsappChatPreview {
+    background: #e5ddd5;
+    border-radius: 12px;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    min-height: 160px; /* Reducido para móviles */
+    max-height: 45vh; /* Limita el crecimiento en móviles */
+    margin-bottom: 16px;
+    position: relative;
+    overflow-y: auto; /* Permite scroll interno si el texto es muy largo */
+    scrollbar-width: thin;
+}
+
+.whatsappChatPreview::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    opacity: 0.05;
+    background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M54.627 0l.83.83-1.66 1.66-.83-.83.83-.83zM27.83 0l.83.83-1.66 1.66-.83-.83.83-.83zM4.17 0l.83.83-1.66 1.66-.83-.83.83-.83zM0 6.627l.83.83-1.66 1.66L-.83 8.287 0 6.627zm0 24.17l.83.83-1.66 1.66-.83-.83.83-.83zm0 24.17l.83.83-1.66 1.66-.83-.83.83-.83z' fill='%23000000' fill-opacity='1' fill-rule='evenodd'/%3E%3C/svg%3E");
+    pointer-events: none;
+}
+
+.whatsappBubble {
+    background: #ffffff;
+    border-radius: 0 8px 8px 8px;
+    padding: 8px 12px;
+    color: #111b21;
+    font-size: 0.875rem;
+    line-height: 1.5;
+    position: relative;
+    box-shadow: 0 1px 0.5px rgba(11, 20, 26, .13);
+    margin-right: auto;
+    max-width: 90%;
+    z-index: 1;
+}
+
+.whatsappBubble::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -8px;
+    width: 0;
+    height: 0;
+    border-top: 0px solid transparent;
+    border-right: 8px solid #ffffff;
+    border-bottom: 8px solid transparent;
+}
+
+.whatsappBubbleTime {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 4px;
+    font-size: 0.6875rem;
+    color: #667781;
+    margin-top: 4px;
+}
+
+.whatsappReadTick {
+    color: #53bdeb;
+}
+
+.modalFooterActions {
+    display: flex;
+    justify-content: center;
+    padding-top: 8px;
+}
+
+.whatsappSendBtn {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: #25D366;
+    color: white;
+    border: none;
+    padding: 14px 28px;
+    border-radius: 99px;
+    font-size: 0.9375rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s;
+    box-shadow: 0 4px 12px rgba(37, 211, 102, 0.3);
+}
+
+.whatsappSendBtn:hover:not(:disabled) {
+    background: #128c7e;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(18, 140, 126, 0.4);
 }
 
 /* Loading & Error States */
