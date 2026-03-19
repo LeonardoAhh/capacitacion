@@ -87,6 +87,56 @@
     }
 }
 
+/* ─── MOBILE: stats en grid 2×2 compacto ─── */
+@media (max-width: 768px) {
+    .topControls {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 0.5rem;
+        margin-bottom: 1rem;
+    }
+
+    /* El buscador ocupa toda la fila */
+    .searchContainer {
+        grid-column: 1 / -1;
+        min-width: 0;
+        order: 5;
+    }
+
+    /* El botón de filtro va junto al buscador */
+    .filterToggleButton {
+        grid-column: 1 / -1;
+        width: 100%;
+        border-radius: var(--radius-lg);
+        border: 1px dashed var(--border-color);
+        order: 6;
+        height: 38px;
+    }
+
+    /* Stat cards: más compactos, sin hover animation */
+    .statCard {
+        padding: 0.625rem 0.875rem;
+        gap: 0.625rem;
+    }
+
+    .statCard:hover {
+        transform: none;
+    }
+
+    .statIcon {
+        width: 32px;
+        height: 32px;
+    }
+
+    .statValue {
+        font-size: 1.375rem;
+    }
+
+    .statLabel {
+        font-size: 0.7rem;
+    }
+}
+
 .statCard {
     display: flex;
     flex-direction: row;
@@ -1196,12 +1246,12 @@
 
 .candidateCard:hover {
     transform: translateY(-4px);
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
-    border-color: var(--color-primary);
+    box-shadow: 0 8px 24px rgba(59, 130, 246, 0.15);
+    border-color: #3b82f6;
 }
 
 .candidateCard:focus-visible {
-    outline: 2px solid var(--color-primary);
+    outline: 2px solid #3b82f6;
     outline-offset: 2px;
 }
 
@@ -1226,14 +1276,11 @@
     width: 80px;
     height: 80px;
     border-radius: 50%;
-    background: linear-gradient(135deg, var(--color-primary), var(--color-secondary, #8b5cf6));
+    background: linear-gradient(135deg, #1d4ed8, #3b82f6);
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 1.75rem;
-    font-weight: 700;
-    color: #fff;
-    border: 2px solid var(--border-color);
+    border: 2px solid rgba(59, 130, 246, 0.3);
     flex-shrink: 0;
 }
 
@@ -1253,7 +1300,7 @@
 }
 
 .dot_inProgress {
-    background: #f59e0b;
+    background: #3b82f6;
 }
 
 .dot_inactive {
@@ -1273,8 +1320,9 @@
 }
 
 .cardName {
+    font-family: var(--font-serif);
     font-size: 0.875rem;
-    font-weight: 600;
+    font-weight: 700;
     color: var(--text-primary);
     line-height: 1.2;
     text-align: center;
@@ -1302,7 +1350,7 @@
 
 .cardProgressFill {
     height: 100%;
-    background: var(--color-primary);
+    background: #3b82f6;
     border-radius: 99px;
     transition: width 0.4s ease;
 }
@@ -1346,13 +1394,11 @@
     width: 72px;
     height: 72px;
     border-radius: 50%;
-    background: linear-gradient(135deg, var(--color-primary), var(--color-secondary, #8b5cf6));
+    background: linear-gradient(135deg, #1d4ed8, #3b82f6);
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 1.5rem;
-    font-weight: 700;
-    color: #fff;
+    border: 2px solid rgba(59, 130, 246, 0.3);
 }
 
 .qdHeaderInfo {
@@ -1377,6 +1423,39 @@
     color: var(--text-tertiary);
     font-weight: 600;
     margin: 0;
+}
+
+/* Pestañas del QuickDrawer */
+.qdTabs {
+    display: flex;
+    background: var(--bg-secondary);
+    padding: 0.375rem;
+    border-radius: 99px;
+    margin: 0 1.5rem 0.5rem;
+    border: 1px solid var(--border-color);
+}
+
+.qdTab {
+    flex: 1;
+    padding: 0.5rem 0.25rem;
+    border-radius: 99px;
+    border: none;
+    background: transparent;
+    font-size: 0.8125rem;
+    font-weight: 700;
+    font-family: var(--font-serif);
+    color: var(--text-tertiary);
+    cursor: pointer;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    white-space: nowrap;
+}
+
+.qdTabActive {
+    background: var(--bg-primary);
+    color: var(--color-primary);
+    box-shadow: 
+        0 2px 8px rgba(0, 0, 0, 0.06),
+        0 1px 2px rgba(0, 0, 0, 0.04);
 }
 
 /* Body del QuickDrawer */
@@ -1521,7 +1600,7 @@
 .qdProgressPct {
     font-size: 1rem;
     font-weight: 700;
-    color: var(--color-primary);
+    color: #3b82f6;
 }
 
 .qdProgressBarContainer {
@@ -1534,7 +1613,7 @@
 
 .qdProgressFill {
     height: 100%;
-    background: var(--color-primary);
+    background: #3b82f6;
     border-radius: 99px;
     transition: width 0.5s ease;
 }
@@ -1573,17 +1652,113 @@
 }
 
 /* =============================================
-   RESPONSIVE
+   RESPONSIVE — Cards y QuickDrawer mobile
    ============================================= */
-@media (max-width: 480px) {
+
+/* Tablets pequeñas y mobile grande */
+@media (max-width: 768px) {
+
+    /* Cards: 2 columnas naturales, más compactas */
     .candidateGrid {
         grid-template-columns: repeat(2, 1fr);
+        gap: 0.625rem;
+        padding: 0.75rem;
+    }
+
+    .candidateCard {
+        padding: 1rem 0.75rem 0.875rem;
+        gap: 0.375rem;
+    }
+
+    .cardPhotoWrapper {
+        width: 64px;
+        height: 64px;
+    }
+
+    .cardPhotoFallback {
+        width: 64px;
+        height: 64px;
+    }
+
+    .cardName {
+        font-size: 0.8rem;
+    }
+
+    /* QuickDrawer — header compacto */
+    .qdHeader {
         gap: 0.75rem;
-        padding: 1rem;
+        align-items: center;
+    }
+
+    .qdPhotoWrapper {
+        flex-shrink: 0;
+    }
+
+    .qdPhotoFallback {
+        width: 56px;
+        height: 56px;
+    }
+
+    /* Nombre largo: máx 2 líneas con ellipsis */
+    .qdHeaderInfo [class*="DrawerTitle"],
+    .qdHeaderInfo h2,
+    .qdHeaderInfo h3 {
+        font-size: 1rem;
+        line-height: 1.25;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+
+    .qdPosition {
+        font-size: 0.8rem;
+        white-space: normal;
+    }
+
+    /* Body menos padding */
+    .qdBody {
+        padding: 0.875rem 1rem 1.25rem;
+        gap: 0.75rem;
+    }
+
+    /* Info grid: 1 columna en mobile */
+    .qdInfoGrid {
+        grid-template-columns: 1fr 1fr;
+        gap: 0.625rem;
+        padding: 0.75rem;
+    }
+
+    .qdInfoLabel {
+        font-size: 0.65rem;
+    }
+
+    .qdInfoValue {
+        font-size: 0.8125rem;
+    }
+
+    /* Progreso */
+    .qdProgressSection {
+        padding: 0.75rem;
+    }
+}
+
+/* Mobile pequeño: 1 sola columna en info grid */
+@media (max-width: 420px) {
+    .candidateGrid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 0.5rem;
+        padding: 0.625rem;
     }
 
     .qdInfoGrid {
         grid-template-columns: 1fr;
+    }
+
+    .qdPhotoFallback {
+        width: 48px;
+        height: 48px;
     }
 }
 
@@ -1594,7 +1769,6 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-
     .candidateCard,
     .qdWhatsappBtn,
     .qdActivityBtn {

@@ -58,55 +58,14 @@ export default function CandidateDrawer({
     // Estado para resultados de exámenes
     const [examResults, setExamResults] = useState([]);
     const [printExamId, setPrintExamId] = useState(null);
+    const [activeTab, setActiveTab] = useState('resumen');
 
     useEffect(() => {
         if (!candidate?.id) return;
         setExamResults([]);
         loadAllExamResults(candidate.id).then(setExamResults);
+        setActiveTab('resumen'); // Reset tab when candidate changes
     }, [candidate?.id]);
-
-
-    // Calculate status for each course
-    const getCourseStatus = (courseName) => {
-        if (!candidate) return 'notStarted';
-
-        const targetNameNormalized = normalizeString(courseName);
-
-        // 1. Get List of Completed Course Names (Normalized)
-        const completedNamesNormalized = completedIds.map(id => {
-            const course = coursesMap[id];
-            const name = course?.name || course?.nombre || course?.title;
-            return name ? normalizeString(name) : null;
-        }).filter(Boolean);
-
-        // 2. Check overlap by NAME (Primary robust check)
-        const isCompletedByName = completedNamesNormalized.includes(targetNameNormalized);
-
-        // 3. Check overlap by ID (Secondary precise check)
-        // Find the ID of the course we are looking for
-        let targetCourseId = null;
-        for (const [id, course] of Object.entries(coursesMap)) {
-            if (
-                normalizeString(course.name) === targetNameNormalized ||
-                normalizeString(course.title) === targetNameNormalized ||
-                normalizeString(course.nombre) === targetNameNormalized
-            ) {
-                targetCourseId = id;
-                break;
-            }
-        }
-        const isCompletedById = targetCourseId && completedIds.includes(targetCourseId);
-
-        const isCompleted = isCompletedByName || isCompletedById;
-
-        // Get progress for this course
-        const progress = targetCourseId ? (candidate.coursesProgress?.[targetCourseId] || null) : null;
-        const hasProgress = progress?.presentationCompleted || progress?.examDownloaded;
-
-        if (isCompleted) return 'completed';
-        if (hasProgress) return 'inProgress';
-        return 'notStarted';
-    };
 
     const getStatusBadge = (status) => {
         switch (status) {
@@ -153,109 +112,131 @@ export default function CandidateDrawer({
                                     <User className={styles.icon} />
                                 </div>
                                 <div className={styles.headerText}>
-                                    <DrawerTitle>{candidate.name}</DrawerTitle>
-                                    <DrawerDescription>{candidate.position}</DrawerDescription>
+                                    <DrawerTitle className={styles.headerTitle}>{candidate.name}</DrawerTitle>
+                                    <DrawerDescription className={styles.headerDesc}>{candidate.position}</DrawerDescription>
                                 </div>
                                 <span className={`${styles.progressBadge} ${progressBadge.class}`}>
                                     {progressBadge.text}
                                 </span>
-
                             </motion.div>
                         </DrawerHeader>
 
+                        {/* Tabs Navigation */}
+                        <motion.div variants={itemVariants} className={styles.tabsContainer}>
+                            <button 
+                                className={`${styles.tab} ${activeTab === 'resumen' ? styles.tabActive : ''}`}
+                                onClick={() => setActiveTab('resumen')}
+                            >
+                                Resumen
+                            </button>
+                            <button 
+                                className={`${styles.tab} ${activeTab === 'cursos' ? styles.tabActive : ''}`}
+                                onClick={() => setActiveTab('cursos')}
+                            >
+                                Cursos
+                            </button>
+                            {examResults.length > 0 && (
+                                <button 
+                                    className={`${styles.tab} ${activeTab === 'examenes' ? styles.tabActive : ''}`}
+                                    onClick={() => setActiveTab('examenes')}
+                                >
+                                    Exámenes
+                                </button>
+                            )}
+                        </motion.div>
+
                         <div className={styles.body}>
-                            {/* Candidate Info */}
-                            <motion.div variants={itemVariants} className={styles.infoSection}>
-                                <div className={styles.infoGrid}>
-                                    <div className={styles.infoItem}>
-                                        <span className={styles.infoLabel}>ID Empleado</span>
-                                        <span className={styles.infoValue}>{candidate.employeeId || 'N/A'}</span>
-                                    </div>
-                                    <div className={styles.infoItem}>
-                                        <span className={styles.infoLabel}>Último acceso</span>
-                                        <span className={styles.infoValue}>{candidate.lastLogin || 'Nunca'}</span>
-                                    </div>
-                                    <div className={styles.infoItem}>
-                                        <span className={styles.infoLabel}>Cursos completados</span>
-                                        <span className={styles.infoValue}>{candidate.completedCount} de {candidate.requiredCount}</span>
-                                    </div>
-                                </div>
-                            </motion.div>
+                            {activeTab === 'resumen' && (
+                                <>
+                                    {/* Candidate Info Card */}
+                                    <motion.div variants={itemVariants} className={`${styles.infoSection} ${styles.card}`}>
+                                        <div className={styles.infoGrid}>
+                                            <div className={styles.infoItem}>
+                                                <span className={styles.infoLabel}>ID Empleado</span>
+                                                <span className={styles.infoValue}>{candidate.employeeId || 'N/A'}</span>
+                                            </div>
+                                            <div className={styles.infoItem}>
+                                                <span className={styles.infoLabel}>Último acceso</span>
+                                                <span className={styles.infoValue}>{candidate.lastLogin || 'Nunca'}</span>
+                                            </div>
+                                            <div className={styles.infoItem} style={{ gridColumn: 'span 2', marginTop: '4px' }}>
+                                                <span className={styles.infoLabel}>Cursos completados</span>
+                                                <span className={styles.infoValue}>{candidate.completedCount} de {candidate.requiredCount}</span>
+                                            </div>
+                                        </div>
+                                    </motion.div>
 
-                            {/* Progress Bar */}
-                            <motion.div variants={itemVariants} className={styles.progressSection}>
-                                <div className={styles.progressHeader}>
-                                    <GraduationCap size={18} />
-                                    <span>Progreso de Capacitación</span>
-                                </div>
-                                <div className={styles.progressBarContainer}>
-                                    <div
-                                        className={styles.progressBar}
-                                        style={{ width: `${Math.min(candidate.progress, 100)}%` }}
-                                    />
-                                </div>
-                                <div className={styles.progressStats}>
-                                    <span>{candidate.progress}% completado</span>
-                                </div>
-                            </motion.div>
+                                    {/* Progress Section Card */}
+                                    <motion.div variants={itemVariants} className={`${styles.progressSection} ${styles.card}`}>
+                                        <div className={styles.progressLabel}>
+                                            <GraduationCap size={18} />
+                                            <span>Progreso de Capacitación</span>
+                                        </div>
+                                        <div className={styles.progressBarContainer}>
+                                            <div
+                                                className={styles.progressBar}
+                                                style={{ width: `${Math.min(candidate.progress, 100)}%` }}
+                                            />
+                                        </div>
+                                        <div className={styles.progressDetail}>
+                                            {candidate.progress}% completado
+                                        </div>
+                                    </motion.div>
+                                </>
+                            )}
 
-                            {/* Courses List */}
-                            <motion.div variants={itemVariants} className={styles.coursesSection}>
-                                <h3 className={styles.sectionTitle}>Cursos Requeridos</h3>
-                                <div className={styles.coursesList}>
-                                    {candidate.requiredCourseIds && candidate.requiredCourseIds.length > 0 ? (
-                                        candidate.requiredCourseIds.map((courseId, index) => {
-                                            const courseObj = coursesMap[courseId];
-                                            const courseName = courseObj?.name || courseObj?.nombre || courseObj?.title || 'Curso Desconocido';
+                            {activeTab === 'cursos' && (
+                                <motion.div variants={itemVariants} className={styles.coursesSection}>
+                                    <h3 className={styles.sectionTitle}>Cursos Requeridos</h3>
+                                    <div className={styles.coursesList}>
+                                        {candidate.requiredCourseIds && candidate.requiredCourseIds.length > 0 ? (
+                                            candidate.requiredCourseIds.map((courseId, index) => {
+                                                const courseObj = coursesMap[courseId];
+                                                const courseName = courseObj?.name || courseObj?.nombre || courseObj?.title || 'Curso Desconocido';
+                                                
+                                                const isCompleted = completedIds.includes(courseId);
+                                                const progress = candidate.coursesProgress?.[courseId] || null;
+                                                const hasProgress = progress?.presentationCompleted;
 
-                                            // Status Logic by ID (Direct & Robust)
-                                            const isCompleted = completedIds.includes(courseId);
-                                            const progress = candidate.coursesProgress?.[courseId] || null;
-                                            const hasProgress = progress?.presentationCompleted;
+                                                let status = 'notStarted';
+                                                if (isCompleted) status = 'completed';
+                                                else if (hasProgress) status = 'inProgress';
 
-                                            let status = 'notStarted';
-                                            if (isCompleted) status = 'completed';
-                                            else if (hasProgress) status = 'inProgress';
+                                                const statusBadge = getStatusBadge(status);
 
-                                            const statusBadge = getStatusBadge(status);
-
-                                            return (
-                                                <motion.div
-                                                    key={courseId}
-                                                    variants={itemVariants}
-                                                    className={`${styles.courseItem} ${styles[status]}`}
-                                                >
-                                                    <div className={styles.courseMain}>
-                                                        <div className={styles.courseIcon}>
-                                                            {statusBadge.icon}
-                                                        </div>
-                                                        <div className={styles.courseInfo}>
-                                                            <span className={styles.courseName}>{courseName}</span>
-                                                            <div className={styles.courseDetails}>
-                                                                {progress?.presentationCompleted && (
-                                                                    <span className={styles.courseDetail}>
-                                                                        <FileText size={12} /> Presentación
-                                                                    </span>
-                                                                )}
+                                                return (
+                                                    <motion.div
+                                                        key={courseId}
+                                                        variants={itemVariants}
+                                                        className={`${styles.courseItem} ${styles[status]}`}
+                                                    >
+                                                        <div className={styles.courseMain}>
+                                                            <div className={styles.courseIcon}>
+                                                                {statusBadge.icon}
+                                                            </div>
+                                                            <div className={styles.courseInfo}>
+                                                                <span className={styles.courseName}>{courseName}</span>
+                                                                <div className={styles.courseType}>
+                                                                    <FileText size={12} /> Presentación
+                                                                </div>
                                                             </div>
                                                         </div>
-                                                    </div>
-                                                    <span className={`${styles.statusBadge} ${statusBadge.class}`}>
-                                                        {statusBadge.text}
-                                                    </span>
-                                                </motion.div>
-                                            );
-                                        })
-                                    ) : (
-                                        <div className={styles.emptyState}>
-                                            <p>No hay cursos asignados para este puesto</p>
-                                        </div>
-                                    )}
-                                </div>
-                            </motion.div>
+                                                        <span className={`${styles.statusBadge} ${statusBadge.class}`}>
+                                                            {statusBadge.text}
+                                                        </span>
+                                                    </motion.div>
+                                                );
+                                            })
+                                        ) : (
+                                            <div className={styles.emptyState}>
+                                                <p>No hay cursos asignados para este puesto</p>
+                                            </div>
+                                        )}
+                                    </div>
+                                </motion.div>
+                            )}
 
-                            {/* Exámenes contestados */}
-                            {examResults.length > 0 && (
+                            {activeTab === 'examenes' && examResults.length > 0 && (
                                 <motion.div variants={itemVariants} className={styles.coursesSection}>
                                     <h3 className={styles.sectionTitle}>Exámenes Contestados</h3>
                                     <div className={styles.coursesList}>
@@ -267,21 +248,18 @@ export default function CandidateDrawer({
                                             >
                                                 <div className={styles.courseMain}>
                                                     <div className={styles.courseIcon}>
-                                                        {result.passed
-                                                            ? <CheckCircle2 size={14} />
-                                                            : <Clock size={14} />}
+                                                        {result.passed ? <CheckCircle2 size={16} /> : <Clock size={16} />}
                                                     </div>
                                                     <div className={styles.courseInfo}>
                                                         <span className={styles.courseName}>{result.examTitle}</span>
-                                                        <span className={styles.courseDetail}>
+                                                        <div className={styles.courseType}>
                                                             Calificación: <strong>{result.score10}/10</strong>
-                                                        </span>
+                                                        </div>
                                                     </div>
                                                 </div>
                                                 <button
                                                     className={styles.btnPrint}
                                                     onClick={() => setPrintExamId(result.id)}
-                                                    title="Imprimir examen contestado"
                                                 >
                                                     <Printer size={14} /> Imprimir
                                                 </button>
@@ -293,8 +271,8 @@ export default function CandidateDrawer({
 
                         </div>
 
-                        <DrawerFooter>
-                            <motion.div variants={itemVariants} className={styles.footerActions}>
+                        <DrawerFooter className={styles.footerActions}>
+                            <motion.div variants={itemVariants} style={{ width: '100%' }}>
                                 <DrawerClose asChild>
                                     <button className={styles.closeButton}>
                                         Cerrar

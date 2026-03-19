@@ -8,7 +8,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/components/ui/Toast/Toast';
 import { Drawer, DrawerContent, DrawerHeader, DrawerTitle, DrawerClose } from '@/components/ui/Drawer/Drawer';
 import styles from './page.module.css';
-import { Search, Users, CheckCircle, Clock, AlertCircle, Bell, MessageCircle, Key, Filter, X, ChevronRight, Phone, ArrowUpDown, ArrowUp, ArrowDown } from 'lucide-react';
+import { Search, Users, CheckCircle, Clock, AlertCircle, Bell, MessageCircle, Key, Filter, X, ChevronRight, Phone, ArrowUpDown, ArrowUp, ArrowDown, UserCircle2 } from 'lucide-react';
 import { useTheme } from '@/contexts/ThemeContext';
 import CandidateDrawer from '@/components/features/Dashboard/CandidateDrawer';
 import ProfileDropdown from '@/components/layout/ProfileDropdown/ProfileDropdown';
@@ -342,6 +342,7 @@ export default function CandidateMonitoringPage() {
     // QuickDrawer al hacer click en una card
     const [quickDrawerOpen, setQuickDrawerOpen] = useState(false);
     const [quickDrawerCandidate, setQuickDrawerCandidate] = useState(null);
+    const [quickDrawerTab, setQuickDrawerTab] = useState('perfil');
 
     // Memoized calculations
     const stats = useMemo(() => {
@@ -427,6 +428,7 @@ export default function CandidateMonitoringPage() {
     // Card click: abre el QuickDrawer
     const handleCardClick = useCallback((candidate) => {
         setQuickDrawerCandidate(candidate);
+        setQuickDrawerTab('perfil'); // Reset a la primera pestaña
         setQuickDrawerOpen(true);
     }, []);
 
@@ -704,26 +706,10 @@ export default function CandidateMonitoringPage() {
                                 onClick={() => handleCardClick(candidate)}
                                 aria-label={`Ver detalles de ${candidate.name}`}
                             >
-                                {/* Foto o Inicial */}
+                                {/* Ícono de perfil */}
                                 <div className={styles.cardPhotoWrapper}>
-                                    {candidate.photoUrl ? (
-                                        // eslint-disable-next-line @next/next/no-img-element
-                                        <img
-                                            src={candidate.photoUrl}
-                                            alt={`Foto de ${candidate.name}`}
-                                            className={styles.cardPhoto}
-                                            onError={(e) => {
-                                                e.currentTarget.style.display = 'none';
-                                                e.currentTarget.nextSibling.style.display = 'flex';
-                                            }}
-                                        />
-                                    ) : null}
-                                    <div
-                                        className={styles.cardPhotoFallback}
-                                        style={{ display: candidate.photoUrl ? 'none' : 'flex' }}
-                                        aria-hidden="true"
-                                    >
-                                        {getShortName(candidate.name).charAt(0).toUpperCase()}
+                                    <div className={styles.cardPhotoFallback} aria-hidden="true">
+                                        <UserCircle2 size={40} strokeWidth={1.5} color="#fff" />
                                     </div>
                                     {/* Badge de estado flotante */}
                                     <span
@@ -783,26 +769,10 @@ export default function CandidateMonitoringPage() {
                             <>
                                 <DrawerHeader>
                                     <div className={styles.qdHeader}>
-                                        {/* Foto */}
+                                        {/* Ícono de perfil */}
                                         <div className={styles.qdPhotoWrapper}>
-                                            {c.photoUrl ? (
-                                                // eslint-disable-next-line @next/next/no-img-element
-                                                <img
-                                                    src={c.photoUrl}
-                                                    alt={`Foto de ${c.name}`}
-                                                    className={styles.qdPhoto}
-                                                    onError={(e) => {
-                                                        e.currentTarget.style.display = 'none';
-                                                        e.currentTarget.nextSibling.style.display = 'flex';
-                                                    }}
-                                                />
-                                            ) : null}
-                                            <div
-                                                className={styles.qdPhotoFallback}
-                                                style={{ display: c.photoUrl ? 'none' : 'flex' }}
-                                                aria-hidden="true"
-                                            >
-                                                {getShortName(c.name).charAt(0).toUpperCase()}
+                                            <div className={styles.qdPhotoFallback} aria-hidden="true">
+                                                <UserCircle2 size={36} strokeWidth={1.5} color="#fff" />
                                             </div>
                                         </div>
                                         {/* Info */}
@@ -810,126 +780,166 @@ export default function CandidateMonitoringPage() {
                                             <DrawerTitle>{c.name}</DrawerTitle>
                                             <p className={styles.qdPosition}>{c.position}</p>
                                             <p className={styles.qdEmployeeId}>ID: {c.employeeId || 'N/A'}</p>
-                                            <span className={`${styles.badge} ${styles[c.status]}`}>
-                                                {c.status === 'completed' ? '\u2713 Completado' :
-                                                    c.status === 'inProgress' ? '\u23f3 En Proceso' :
-                                                        c.status === 'inactive' ? '\u26a0 Inactivo' : '\u25cb Sin Iniciar'}
-                                            </span>
+
                                         </div>
                                         <DrawerClose />
                                     </div>
                                 </DrawerHeader>
 
-                                <div className={styles.qdBody}>
-                                    {/* WhatsApp CTA */}
+                                <div className={styles.qdTabs}>
                                     <button
-                                        className={styles.qdWhatsappBtn}
-                                        onClick={() => {
-                                            setQuickDrawerOpen(false);
-                                            handleWhatsApp(c);
-                                        }}
-                                        disabled={!c.phone}
-                                        title={c.phone
-                                            ? `Enviar WhatsApp a ${getShortName(c.name)}`
-                                            : 'Sin tel\u00e9fono registrado \u2014 edita el perfil'}
+                                        className={`${styles.qdTab} ${quickDrawerTab === 'perfil' ? styles.qdTabActive : ''}`}
+                                        onClick={() => setQuickDrawerTab('perfil')}
                                     >
-                                        <MessageCircle size={20} aria-hidden="true" />
-                                        {c.phone
-                                            ? `WhatsApp \u2014 ${getDisplayName(c)}`
-                                            : 'Sin tel\u00e9fono registrado'}
+                                        Perfil
                                     </button>
+                                    <button
+                                        className={`${styles.qdTab} ${quickDrawerTab === 'progreso' ? styles.qdTabActive : ''}`}
+                                        onClick={() => setQuickDrawerTab('progreso')}
+                                    >
+                                        Progreso
+                                    </button>
+                                    <button
+                                        className={`${styles.qdTab} ${quickDrawerTab === 'acciones' ? styles.qdTabActive : ''}`}
+                                        onClick={() => setQuickDrawerTab('acciones')}
+                                    >
+                                        Acciones
+                                    </button>
+                                </div>
 
-                                    {/* Tiempo restante */}
-                                    {dl && c.status !== 'completed' && (
-                                        <div
-                                            className={styles.qdDeadline}
-                                            style={{
-                                                background: dl.isExpired ? 'rgba(239,68,68,0.10)' : dl.isUrgent ? 'rgba(251,146,60,0.10)' : 'rgba(34,197,94,0.08)',
-                                                borderColor: dl.isExpired ? 'rgba(239,68,68,0.3)' : dl.isUrgent ? 'rgba(251,146,60,0.3)' : 'rgba(34,197,94,0.3)',
-                                                color: dl.isExpired ? '#ef4444' : dl.isUrgent ? '#f97316' : '#16a34a',
-                                            }}
-                                        >
-                                            <Clock size={16} />
-                                            <span>Tiempo restante: <strong>{dl.label}</strong></span>
-                                        </div>
+                                <div className={styles.qdBody}>
+                                    {quickDrawerTab === 'perfil' && (
+                                        <>
+                                            {/* WhatsApp CTA */}
+                                            <button
+                                                className={styles.qdWhatsappBtn}
+                                                onClick={() => {
+                                                    setQuickDrawerOpen(false);
+                                                    handleWhatsApp(c);
+                                                }}
+                                                disabled={!c.phone}
+                                                title={c.phone
+                                                    ? `Enviar WhatsApp a ${getShortName(c.name)}`
+                                                    : 'Sin teléfono registrado — edita el perfil'}
+                                            >
+                                                <MessageCircle size={20} aria-hidden="true" />
+                                                {c.phone
+                                                    ? `WhatsApp — ${getDisplayName(c)}`
+                                                    : 'Sin teléfono registrado'}
+                                            </button>
+
+                                            {/* Info Grid */}
+                                            <div className={styles.qdInfoGrid}>
+                                                <div className={styles.qdInfoItem}>
+                                                    <span className={styles.qdInfoLabel}>Puesto</span>
+                                                    <span className={styles.qdInfoValue}>{c.position}</span>
+                                                </div>
+                                                <div className={styles.qdInfoItem}>
+                                                    <span className={styles.qdInfoLabel}>Turno</span>
+                                                    <span className={styles.qdInfoValue}>{c.turno || c.shift || c.TURNO || 'No especificado'}</span>
+                                                </div>
+                                                <div className={styles.qdInfoItem}>
+                                                    <span className={styles.qdInfoLabel}>Fecha de Ingreso</span>
+                                                    <span className={styles.qdInfoValue}>
+                                                        {c.startDate || c.fechaIngreso || c.createdAt
+                                                            ? new Date(c.startDate || c.fechaIngreso || c.createdAt).toLocaleDateString('es-MX', { day: '2-digit', month: 'short', year: 'numeric' })
+                                                            : 'No registrada'
+                                                        }
+                                                    </span>
+                                                </div>
+                                                <div className={styles.qdInfoItem}>
+                                                    <span className={styles.qdInfoLabel}>Último acceso</span>
+                                                    <span className={styles.qdInfoValue}>
+                                                        {c.daysSinceLastLogin !== null && c.daysSinceLastLogin > 2 && c.status !== 'completed' && (
+                                                            <Bell size={14} className={styles.inactiveIcon} style={{ marginRight: 4 }} />
+                                                        )}
+                                                        {c.lastLogin}
+                                                    </span>
+                                                </div>
+                                                <div className={styles.qdInfoItem}>
+                                                    <span className={styles.qdInfoLabel}>Código de acceso</span>
+                                                    <span className={styles.qdInfoValue}>
+                                                        <Key size={14} style={{ marginRight: 4 }} />
+                                                        <strong>{c.accessCode}</strong>
+                                                        <span className={styles.qdInfoMeta}> ({c.accessCodeUses} usos)</span>
+                                                    </span>
+                                                </div>
+                                                <div className={styles.qdInfoItem}>
+                                                    <span className={styles.qdInfoLabel}>Debe concluir el</span>
+                                                    <span className={styles.qdInfoValue} style={{
+                                                        color: dl?.isExpired ? '#ef4444' : dl?.isUrgent ? '#f97316' : 'inherit',
+                                                        fontWeight: dl?.isExpired || dl?.isUrgent ? 600 : 'inherit'
+                                                    }}>
+                                                        {(() => {
+                                                            const base = c.fechaLimite || c.startDate || c.fechaIngreso || c.createdAt;
+                                                            if (!base) return 'No disponible';
+                                                            const deadline = c.fechaLimite
+                                                                ? new Date(c.fechaLimite)
+                                                                : new Date(new Date(base).getTime() + 3 * 24 * 60 * 60 * 1000);
+                                                            if (dl?.isExpired) return '⚠ Tiempo vencido';
+                                                            return deadline.toLocaleDateString('es-MX', { day: '2-digit', month: 'short', year: 'numeric' });
+                                                        })()}
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        </>
                                     )}
 
-                                    {/* Info Grid */}
-                                    <div className={styles.qdInfoGrid}>
-                                        <div className={styles.qdInfoItem}>
-                                            <span className={styles.qdInfoLabel}>Puesto</span>
-                                            <span className={styles.qdInfoValue}>{c.position}</span>
-                                        </div>
-                                        <div className={styles.qdInfoItem}>
-                                            <span className={styles.qdInfoLabel}>\u00daltimo acceso</span>
-                                            <span className={styles.qdInfoValue}>
-                                                {c.daysSinceLastLogin !== null && c.daysSinceLastLogin > 2 && c.status !== 'completed' && (
-                                                    <Bell size={14} className={styles.inactiveIcon} style={{ marginRight: 4 }} />
-                                                )}
-                                                {c.lastLogin}
-                                            </span>
-                                        </div>
-                                        <div className={styles.qdInfoItem}>
-                                            <span className={styles.qdInfoLabel}>C\u00f3digo de acceso</span>
-                                            <span className={styles.qdInfoValue}>
-                                                <Key size={14} style={{ marginRight: 4 }} />
-                                                <strong>{c.accessCode}</strong>
-                                                <span className={styles.qdInfoMeta}> ({c.accessCodeUses} usos)</span>
-                                            </span>
-                                        </div>
-                                        <div className={styles.qdInfoItem}>
-                                            <span className={styles.qdInfoLabel}>Presentaciones vistas</span>
-                                            <span className={styles.qdInfoValue}>{c.presentationsViewed}</span>
-                                        </div>
-                                    </div>
-
-                                    {/* Progreso general */}
-                                    <div className={styles.qdProgressSection}>
-                                        <div className={styles.qdProgressHeader}>
-                                            <span className={styles.qdProgressLabel}>Progreso de Inducci\u00f3n</span>
-                                            <span className={styles.qdProgressPct}>{c.progress}%</span>
-                                        </div>
-                                        <div className={styles.qdProgressBarContainer}>
-                                            <div
-                                                className={`${styles.qdProgressFill} ${c.progress >= 100 ? styles.qdProgressComplete : ''}`}
-                                                style={{ width: `${Math.min(c.progress, 100)}%` }}
-                                            />
-                                        </div>
-                                        <p className={styles.qdProgressDetail}>
-                                            {c.completedCount} de {c.requiredCount} cursos completados
-                                        </p>
-                                    </div>
-
-                                    {/* Actividad detallada → abre CandidateDrawer */}
-                                    <button
-                                        className={styles.qdActivityBtn}
-                                        onClick={() => {
-                                            setQuickDrawerOpen(false);
-                                            // Esperar que la animación de cierre termine antes de abrir
-                                            setTimeout(() => handleRowClick(c), 320);
-                                        }}
-                                    >
-                                        <span>Ver Actividad Detallada</span>
-                                        <ChevronRight size={18} />
-                                    </button>
-
-                                    {/* Reabrir Plazo */}
-                                    {c.status !== 'completed' && (
-                                        <div className={styles.qdReopenSection}>
-                                            <p className={styles.qdReopenLabel}>Reabrir Plazo</p>
-                                            <div className={styles.qdReopenBtns}>
-                                                {[1, 3, 7].map(days => (
-                                                    <button
-                                                        key={days}
-                                                        className={styles.qdReopenBtn}
-                                                        onClick={() => handleReopenDeadline(c, days)}
-                                                        title={`Extender ${days} día${days > 1 ? 's' : ''} desde hoy`}
-                                                    >
-                                                        +{days}d
-                                                    </button>
-                                                ))}
+                                    {quickDrawerTab === 'progreso' && (
+                                        <>
+                                            {/* Progreso general */}
+                                            <div className={styles.qdProgressSection}>
+                                                <div className={styles.qdProgressHeader}>
+                                                    <span className={styles.qdProgressLabel}>Progreso de Inducción</span>
+                                                    <span className={styles.qdProgressPct}>{c.progress}%</span>
+                                                </div>
+                                                <div className={styles.qdProgressBarContainer}>
+                                                    <div
+                                                        className={`${styles.qdProgressFill} ${c.progress >= 100 ? styles.qdProgressComplete : ''}`}
+                                                        style={{ width: `${Math.min(c.progress, 100)}%` }}
+                                                    />
+                                                </div>
+                                                <p className={styles.qdProgressDetail}>
+                                                    {c.completedCount} de {c.requiredCount} cursos completados
+                                                </p>
                                             </div>
-                                        </div>
+
+                                            {/* Actividad detallada → abre CandidateDrawer */}
+                                            <button
+                                                className={styles.qdActivityBtn}
+                                                onClick={() => {
+                                                    setQuickDrawerOpen(false);
+                                                    setTimeout(() => handleRowClick(c), 320);
+                                                }}
+                                            >
+                                                <span>Ver Actividad Detallada</span>
+                                                <ChevronRight size={18} />
+                                            </button>
+                                        </>
+                                    )}
+
+                                    {quickDrawerTab === 'acciones' && (
+                                        <>
+                                            {/* Reabrir Plazo */}
+                                            <div className={styles.qdReopenSection}>
+                                                <p className={styles.qdReopenLabel}>Reabrir Plazo</p>
+                                                <p style={{ fontSize: '0.75rem', color: 'var(--text-tertiary)', marginBottom: '1rem' }}>
+                                                    Extiende el tiempo de capacitación del candidato.
+                                                </p>
+                                                <div className={styles.qdReopenBtns}>
+                                                    {[1, 3, 7].map(days => (
+                                                        <button
+                                                            key={days}
+                                                            className={styles.qdReopenBtn}
+                                                            onClick={() => handleReopenDeadline(c, days)}
+                                                            title={`Extender ${days} día${days > 1 ? 's' : ''} desde hoy`}
+                                                        >
+                                                            +{days}d
+                                                        </button>
+                                                    ))}
+                                                </div>
+                                            </div>
+                                        </>
                                     )}
                                 </div>
                             </>

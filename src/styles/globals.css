@@ -20,9 +20,9 @@
   --red-500: #FF3B30;
 
   /* --- Semantic Colors (Light Theme - Editorial White) --- */
-  --color-primary: var(--amber-500);
-  --color-secondary: #d97706;
-  --color-accent: #fbbf24;
+  --color-primary: var(--blue-500);
+  --color-secondary: #005ce6;
+  --color-accent: #3385ff;
 
   --color-success: var(--green-500);
   --color-warning: var(--amber-500);
@@ -30,7 +30,7 @@
   --color-info: var(--blue-500);
 
   /* RGB decompositions — for rgba(var(--color-X-rgb), alpha) usage */
-  --color-primary-rgb: 245, 158, 11;
+  --color-primary-rgb: 0, 122, 255;
   --color-danger-rgb: 255, 59, 48;
   --color-success-rgb: 52, 199, 89;
   --color-info-rgb: 0, 122, 255;
@@ -287,7 +287,7 @@ html {
 }
 
 body {
-  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  font-family: var(--font-body), system-ui, -apple-system, sans-serif;
   background-color: var(--app-background);
   color: var(--text-primary);
   line-height: 1.5;
@@ -301,7 +301,7 @@ h1,
 h2,
 h3,
 h4 {
-  font-family: 'Playfair Display', Georgia, serif;
+  font-family: var(--font-serif), Georgia, serif;
   font-weight: 700;
   line-height: 1.1;
   color: var(--text-primary);

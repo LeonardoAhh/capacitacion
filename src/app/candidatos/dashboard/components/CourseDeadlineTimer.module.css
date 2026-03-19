@@ -35,7 +35,7 @@
     right: 0;
     height: 40%;
     background: radial-gradient(ellipse 80% 60% at 20% 0%,
-            rgba(245, 158, 11, 0.10) 0%,
+            rgba(59, 130, 246, 0.10) 0%,
             transparent 100%);
     pointer-events: none;
     border-radius: inherit;
@@ -44,24 +44,22 @@
 /* ─── Urgente ───────────────────────────────────────── */
 
 .urgent {
-    background: rgba(255, 250, 235, 0.80);
-    border-color: rgba(245, 158, 11, 0.30);
+    background: rgba(239, 246, 255, 0.80);
+    border-color: rgba(59, 130, 246, 0.30);
     box-shadow:
-        0 8px 32px rgba(245, 158, 11, 0.15),
-        0 2px 8px rgba(245, 158, 11, 0.08),
+        0 8px 32px rgba(59, 130, 246, 0.15),
+        0 2px 8px rgba(59, 130, 246, 0.08),
         inset 0 1px 0 rgba(255, 255, 255, 0.95);
     animation: timerPulse 2s ease-in-out infinite;
 }
 
 @keyframes timerPulse {
-
     0%,
     100% {
-        box-shadow: 0 8px 32px rgba(245, 158, 11, 0.15), 0 2px 8px rgba(245, 158, 11, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.95);
+        box-shadow: 0 8px 32px rgba(59, 130, 246, 0.15), 0 2px 8px rgba(59, 130, 246, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.95);
     }
-
     50% {
-        box-shadow: 0 8px 40px rgba(245, 158, 11, 0.28), 0 2px 8px rgba(245, 158, 11, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.95);
+        box-shadow: 0 8px 40px rgba(59, 130, 246, 0.28), 0 2px 8px rgba(59, 130, 246, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.95);
     }
 }
 
@@ -117,15 +115,15 @@
     align-items: center;
     justify-content: center;
     flex-shrink: 0;
-    background: rgba(245, 158, 11, 0.12);
-    color: #f59e0b;
-    border: 1px solid rgba(245, 158, 11, 0.20);
+    background: rgba(59, 130, 246, 0.12);
+    color: #3b82f6;
+    border: 1px solid rgba(59, 130, 246, 0.20);
 }
 
 .urgent .iconWrapper {
-    background: rgba(245, 158, 11, 0.18);
-    border-color: rgba(245, 158, 11, 0.35);
-    color: #f59e0b;
+    background: rgba(59, 130, 246, 0.18);
+    border-color: rgba(59, 130, 246, 0.35);
+    color: #3b82f6;
 }
 
 .expired .iconWrapper {
@@ -144,16 +142,16 @@
 }
 
 .title {
+    font-family: var(--font-serif);
     font-size: 0.9375rem;
     font-weight: 700;
     color: var(--text-primary);
     margin: 0;
     letter-spacing: -0.01em;
-    font-family: inherit;
 }
 
 .urgent .title {
-    color: #d97706;
+    color: #2563eb;
 }
 
 .expired .title {
@@ -174,10 +172,10 @@
     flex-direction: column;
     align-items: center;
     min-width: 48px;
-    background: rgba(245, 158, 11, 0.08);
+    background: rgba(59, 130, 246, 0.08);
     border-radius: 10px;
     padding: 0.375rem 0.5rem;
-    border: 1px solid rgba(245, 158, 11, 0.14);
+    border: 1px solid rgba(59, 130, 246, 0.14);
 }
 
 [data-theme="dark"] .timeUnit {
@@ -188,14 +186,14 @@
 .timeValue {
     font-size: 1.375rem;
     font-weight: 800;
-    color: #f59e0b;
+    color: #3b82f6;
     line-height: 1.1;
     font-variant-numeric: tabular-nums;
     letter-spacing: -0.02em;
 }
 
 .urgent .timeValue {
-    color: #d97706;
+    color: #2563eb;
 }
 
 .timeLabel {
@@ -210,7 +208,7 @@
 .separator {
     font-size: 1.25rem;
     font-weight: 700;
-    color: #f59e0b;
+    color: #3b82f6;
     opacity: 0.5;
     margin-top: -0.5rem;
     padding: 0 0.125rem;
@@ -271,9 +269,9 @@
 .courseSummaryCount {
     font-size: 0.6875rem;
     font-weight: 700;
-    color: #f59e0b;
-    background: rgba(245, 158, 11, 0.10);
-    border: 1px solid rgba(245, 158, 11, 0.18);
+    color: #3b82f6;
+    background: rgba(59, 130, 246, 0.10);
+    border: 1px solid rgba(59, 130, 246, 0.18);
     padding: 0.1rem 0.5rem;
     border-radius: 999px;
 }
@@ -292,7 +290,7 @@
 
 .progressFill {
     height: 100%;
-    background: linear-gradient(90deg, #f59e0b, #fbbf24);
+    background: linear-gradient(90deg, #3b82f6, #60a5fa);
     border-radius: 999px;
     transition: width 0.6s cubic-bezier(0.16, 1, 0.3, 1);
 }

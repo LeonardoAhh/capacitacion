@@ -4,9 +4,9 @@ import { useState, useEffect, useMemo } from 'react';
 import { Clock, AlertTriangle, CheckCircle, Circle } from 'lucide-react';
 import styles from './CourseDeadlineTimer.module.css';
 
-const COURSE_DURATION_DAYS = 7;
+const COURSE_DURATION_DAYS = 3;
 
-export default function CourseDeadlineTimer({ startDate, courses = [], completedCourses = [] }) {
+export default function CourseDeadlineTimer({ startDate, fechaLimite, courses = [], completedCourses = [] }) {
     const [timeRemaining, setTimeRemaining] = useState(null);
     const [isExpired, setIsExpired] = useState(false);
     const [isUrgent, setIsUrgent] = useState(false);
@@ -26,8 +26,10 @@ export default function CourseDeadlineTimer({ startDate, courses = [], completed
         if (!startDate) return;
 
         const calculateTimeRemaining = () => {
-            const start = new Date(startDate);
-            const deadline = new Date(start.getTime() + COURSE_DURATION_DAYS * 24 * 60 * 60 * 1000);
+            // Si el admin extendió el plazo, usar fechaLimite directamente; si no, startDate + 3 días
+            const deadline = fechaLimite
+                ? new Date(fechaLimite)
+                : new Date(new Date(startDate).getTime() + COURSE_DURATION_DAYS * 24 * 60 * 60 * 1000);
             const now = new Date();
             const diff = deadline - now;
 
@@ -51,7 +53,7 @@ export default function CourseDeadlineTimer({ startDate, courses = [], completed
         const interval = setInterval(calculateTimeRemaining, 1000);
 
         return () => clearInterval(interval);
-    }, [startDate]);
+    }, [startDate, fechaLimite]);
 
     if (!startDate) return null;
 
@@ -64,7 +66,7 @@ export default function CourseDeadlineTimer({ startDate, courses = [], completed
                 <div className={styles.content}>
                     <h4 className={styles.title}>Tiempo agotado</h4>
                     <p className={styles.message}>
-                        Tu plazo de <strong>{COURSE_DURATION_DAYS} días</strong> para completar los cursos ha terminado.
+                        Tu plazo para completar los cursos ha terminado.
                         Por favor contacta a Recursos Humanos.
                     </p>
                 </div>
@@ -110,7 +112,10 @@ export default function CourseDeadlineTimer({ startDate, courses = [], completed
                         </div>
                     </div>
                     <p className={styles.subtitle}>
-                        Tienes <strong>{COURSE_DURATION_DAYS} días</strong> desde tu fecha de ingreso para completar la inducción.
+                        {fechaLimite
+                            ? 'Plazo personalizado asignado por Recursos Humanos.'
+                            : `Tienes ${COURSE_DURATION_DAYS} días desde tu fecha de ingreso para completar la inducción.`
+                        }
                     </p>
                 </div>
             </div>

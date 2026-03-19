@@ -268,7 +268,8 @@ export default function CandidatoDashboard() {
                 <CandidateMobileHeader onOpenSidebar={() => setIsSidebarOpen(true)} />
 
                 <CourseDeadlineTimer
-                    startDate={candidate?.startDate}
+                    startDate={candidate?.startDate || candidate?.fechaIngreso || candidate?.createdAt}
+                    fechaLimite={candidate?.fechaLimite}
                     courses={courses}
                     completedCourses={candidate?.cursosCompletados || []}
                 />
