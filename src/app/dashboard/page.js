@@ -5,8 +5,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useRouter } from 'next/navigation';
 import AvatarSelector from '@/components/ui/AvatarSelector/AvatarSelector';
 import EvaluationModal from '@/components/features/Training/EvaluationModal';
-import MainSidebar from '@/components/layout/MainSidebar/MainSidebar';
-import CandidateMobileHeader from '@/components/features/CandidateSidebar/CandidateMobileHeader';
+import AdminLayout from '@/components/layout/AdminLayout/AdminLayout';
 import PendingTasks from '@/components/features/PendingTasks/PendingTasks';
 import AlertsWidget from '@/components/features/AlertsWidget/AlertsWidget';
 import TrainingPlanModal from '@/components/features/Training/TrainingPlanModal';
@@ -126,7 +125,17 @@ export default function DashboardPage() {
 
 
     return (
-        <div className={styles.page}>
+        <AdminLayout
+            title="Dashboard"
+            headerContent={
+                <div className={styles.headerTitles}>
+                    <h1 className={styles.greetingTitle}>
+                        Hola, {(user?.nombre || user?.nickname || user?.name || 'Administrador').split(' ')[0]}
+                    </h1>
+                    <p className={styles.greetingSubtitle}>Resumen de empleados, talento y contratos</p>
+                </div>
+            }
+        >
             <AvatarSelector
                 isOpen={showAvatarSelector}
                 onClose={() => setShowAvatarSelector(false)}
@@ -148,82 +157,59 @@ export default function DashboardPage() {
                 onSaved={() => setSelectedTrainingPlan(null)}
             />
 
-            <CandidateMobileHeader
-                user={user}
-                onOpenSidebar={() => setIsSidebarOpen(true)}
-                title="Dashboard"
-            />
-
-            <MainSidebar
-                user={user}
-                handleLogout={handleLogout}
-                isOpen={isSidebarOpen}
-                onClose={() => setIsSidebarOpen(false)}
-            />
-
-            <div className={styles.scrollContent}>
-                <div className={styles.container}>
-                    <header className={styles.header}>
-                        <h1 className={styles.pageTitle}>Hola, {(user?.nombre || user?.nickname || user?.name || 'Administrador').split(' ')[0]}</h1>
-                        <p className={styles.pageSubtitle}>Resumen de empleados, talento y contratos</p>
-                    </header>
-
-                    <div className={styles.statsGrid}>
-                        <div className={styles.statCard}>
-                            <div className={`${styles.statIcon} ${styles.primary}`}>
-                                <Users size={20} />
-                            </div>
-                            <div className={styles.statTextGroup}>
-                                <span className={styles.statValue}>{stats.totalEmployees}</span>
-                                <span className={styles.statLabel}>Empleados</span>
-                            </div>
+            <div className={styles.container}>
+                <div className={styles.statsGrid}>
+                    <div className={styles.statCard}>
+                        <div className={`${styles.statIcon} ${styles.primary}`}>
+                            <Users size={20} />
                         </div>
-
-                        <div className={styles.statCard}>
-                            <div className={`${styles.statIcon} ${styles.success}`}>
-                                <FileText size={20} />
-                            </div>
-                            <div className={styles.statTextGroup}>
-                                <span className={styles.statValue}>{stats.activeContracts}</span>
-                                <span className={styles.statLabel}>Contratos Vigentes</span>
-                            </div>
-                        </div>
-
-                        <div className={`${styles.statCard} ${stats.expiringContracts > 0 ? styles.clickable : ''}`}>
-                            <div className={`${styles.statIcon} ${styles.warning}`}>
-                                <Clock size={20} />
-                            </div>
-                            <div className={styles.statTextGroup}>
-                                <span className={styles.statValue}>{stats.expiringContracts}</span>
-                                <span className={styles.statLabel}>Por Vencer</span>
-                            </div>
+                        <div className={styles.statTextGroup}>
+                            <span className={styles.statValue}>{stats.totalEmployees}</span>
+                            <span className={styles.statLabel}>Empleados</span>
                         </div>
                     </div>
 
-                    {permission === 'default' && (
-                        <div className={styles.notificationBanner}>
-                            <span>Activa las notificaciones para recibir alertas</span>
-                            <button onClick={handleEnableNotifications} className={styles.notificationBtn}>
-                                Activar
-                            </button>
+                    <div className={styles.statCard}>
+                        <div className={`${styles.statIcon} ${styles.success}`}>
+                            <FileText size={20} />
                         </div>
-                    )}
+                        <div className={styles.statTextGroup}>
+                            <span className={styles.statValue}>{stats.activeContracts}</span>
+                            <span className={styles.statLabel}>Contratos Vigentes</span>
+                        </div>
+                    </div>
 
-                    <div className={styles.bottomGrid}>
-                        {/* Pending Tasks Widget */}
-                        <PendingTasks />
-
-                        {/* Widget unificado de alertas */}
-                        <AlertsWidget
-                            evaluations={evaluations}
-                            expiringEmployees={expiringEmployees}
-                            trainingPlans={trainingPlans}
-                            onEditEvaluation={setSelectedEvaluation}
-                            onMarkTrainingDelivered={setSelectedTrainingPlan}
-                        />
+                    <div className={`${styles.statCard} ${stats.expiringContracts > 0 ? styles.clickable : ''}`}>
+                        <div className={`${styles.statIcon} ${styles.warning}`}>
+                            <Clock size={20} />
+                        </div>
+                        <div className={styles.statTextGroup}>
+                            <span className={styles.statValue}>{stats.expiringContracts}</span>
+                            <span className={styles.statLabel}>Por Vencer</span>
+                        </div>
                     </div>
                 </div>
+
+                {permission === 'default' && (
+                    <div className={styles.notificationBanner}>
+                        <span>Activa las notificaciones para recibir alertas</span>
+                        <button onClick={handleEnableNotifications} className={styles.notificationBtn}>
+                            Activar
+                        </button>
+                    </div>
+                )}
+
+                <div className={styles.bottomGrid}>
+                    <PendingTasks />
+                    <AlertsWidget
+                        evaluations={evaluations}
+                        expiringEmployees={expiringEmployees}
+                        trainingPlans={trainingPlans}
+                        onEditEvaluation={setSelectedEvaluation}
+                        onMarkTrainingDelivered={setSelectedTrainingPlan}
+                    />
+                </div>
             </div>
-        </div>
+        </AdminLayout>
     );
 }

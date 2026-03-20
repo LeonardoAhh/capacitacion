@@ -200,6 +200,8 @@ export default function AlertsWidget({
 }) {
     const [activeTab, setActiveTab] = useState('evaluaciones');
 
+    const [showAll, setShowAll] = useState(false);
+
     // Totales por tab para los badges
     const counts = useMemo(() => ({
         evaluaciones: evaluations.overdue.length + evaluations.upcoming.length,
@@ -214,6 +216,9 @@ export default function AlertsWidget({
     ];
 
     const totalAlerts = counts.evaluaciones + counts.contratos + counts.formacion;
+
+    /** Helper para limitar resultados */
+    const limitResults = (list) => showAll ? list : list.slice(0, 4);
 
     return (
         <section className={styles.widget} aria-label="Alertas de seguimiento">
@@ -238,7 +243,10 @@ export default function AlertsWidget({
                         icon={tab.icon}
                         count={counts[tab.id]}
                         active={activeTab === tab.id}
-                        onClick={setActiveTab}
+                        onClick={(id) => {
+                            setActiveTab(id);
+                            setShowAll(false);
+                        }}
                     />
                 ))}
             </div>
@@ -264,19 +272,19 @@ export default function AlertsWidget({
                                     {evaluations.overdue.length > 0 && (
                                         <div className={styles.group}>
                                             <span className={styles.groupLabel}>Vencidas</span>
-                                            {evaluations.overdue.map((ev, i) => (
+                                            {limitResults(evaluations.overdue).map((ev, i) => (
                                                 <EvalRow key={`ov-${i}`} item={ev} onEdit={onEditEvaluation} />
                                             ))}
                                         </div>
                                     )}
-                                    {evaluations.upcoming.length > 0 && (
+                                    {(!showAll && evaluations.overdue.length <= 4 && evaluations.upcoming.length > 0) || (showAll && evaluations.upcoming.length > 0) ? (
                                         <div className={styles.group}>
                                             <span className={styles.groupLabel}>Próximas</span>
-                                            {evaluations.upcoming.map((ev, i) => (
+                                            {limitResults(evaluations.upcoming).map((ev, i) => (
                                                 <EvalRow key={`up-${i}`} item={ev} onEdit={onEditEvaluation} />
                                             ))}
                                         </div>
-                                    )}
+                                    ) : null}
                                 </>
                             )}
                         </div>
@@ -290,7 +298,7 @@ export default function AlertsWidget({
                             ) : (
                                 <div className={styles.group}>
                                     <span className={styles.groupLabel}>Próximos a vencer (30 días)</span>
-                                    {expiringEmployees.map((emp, i) => (
+                                    {limitResults(expiringEmployees).map((emp, i) => (
                                         <ContractRow key={i} emp={emp} />
                                     ))}
                                 </div>
@@ -308,22 +316,32 @@ export default function AlertsWidget({
                                     {trainingPlans.overdue.length > 0 && (
                                         <div className={styles.group}>
                                             <span className={styles.groupLabel}>Vencidos</span>
-                                            {trainingPlans.overdue.map((plan, i) => (
+                                            {limitResults(trainingPlans.overdue).map((plan, i) => (
                                                 <TrainingRow key={`tv-${i}`} plan={plan} onClick={onMarkTrainingDelivered} />
                                             ))}
                                         </div>
                                     )}
-                                    {trainingPlans.upcoming.length > 0 && (
+                                    {(!showAll && trainingPlans.overdue.length <= 4 && trainingPlans.upcoming.length > 0) || (showAll && trainingPlans.upcoming.length > 0) ? (
                                         <div className={styles.group}>
                                             <span className={styles.groupLabel}>Próximos (7 días)</span>
-                                            {trainingPlans.upcoming.map((plan, i) => (
+                                            {limitResults(trainingPlans.upcoming).map((plan, i) => (
                                                 <TrainingRow key={`tu-${i}`} plan={plan} onClick={onMarkTrainingDelivered} />
                                             ))}
                                         </div>
-                                    )}
+                                    ) : null}
                                 </>
                             )}
                         </div>
+                    )}
+
+                    {/* Botón Ver Más */}
+                    {counts[activeTab] > 4 && (
+                        <button
+                            className={styles.extraResultsHint}
+                            onClick={() => setShowAll(prev => !prev)}
+                        >
+                            {showAll ? 'Ver menos' : `Mostrar ${counts[activeTab] - 4} más`}
+                        </button>
                     )}
                 </motion.div>
             </AnimatePresence>

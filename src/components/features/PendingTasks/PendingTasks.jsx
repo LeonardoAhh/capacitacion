@@ -216,18 +216,20 @@ function TaskItem({ task, onToggle, onDelete, onEdit, dragHandleProps }) {
                                         setIsEditing(true);
                                     }}
                                     aria-label="Editar tarea"
+                                    title="Editar"
                                 >
-                                    <Pencil size={13} />
+                                    <Pencil size={14} strokeWidth={2.5} />
                                 </button>
                                 <button
-                                    className={styles.deleteBtn}
+                                    className={styles.deleteBtnCircle}
                                     onClick={(e) => {
                                         e.stopPropagation();
                                         onDelete(task.id);
                                     }}
                                     aria-label="Eliminar tarea"
+                                    title="Eliminar"
                                 >
-                                    <Trash2 size={13} />
+                                    <Trash2 size={14} strokeWidth={2.5} />
                                 </button>
                             </div>
                         </div>
