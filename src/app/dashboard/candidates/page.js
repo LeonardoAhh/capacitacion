@@ -239,25 +239,52 @@ function getDeadlineInfo(candidate) {
 }
 
 
-// Convierte "APELLIDO1 APELLIDO2 NOMBRE1 NOMBRE2" → "Nombre1 Apellido1"
-// Maneja automáticamente 1, 2, 3 o 4+ palabras
+// Extrae el primer nombre y el primer apellido de la cadena asumiendo formato PATERNO MATERNO NOMBRES
 function getShortName(fullName) {
-    if (!fullName || typeof fullName !== 'string') return fullName || 'Colaborador';
-    const capitalize = (word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
-    const parts = fullName.trim().split(/\s+/).filter(Boolean);
-    if (parts.length === 1) return capitalize(parts[0]);
-    if (parts.length === 2) return `${capitalize(parts[0])} ${capitalize(parts[1])}`;
-    if (parts.length === 3) return `${capitalize(parts[2])} ${capitalize(parts[0])}`;
-    // 4+ palabras: APELLIDO1 APELLIDO2 NOMBRE1 NOMBRE2 → "Nombre1 Apellido1"
-    return `${capitalize(parts[2])} ${capitalize(parts[0])}`;
+    if (!fullName || typeof fullName !== 'string') return 'Colaborador';
+
+    // Conectores comunes en apellidos y nombres hispanos
+    const connectors = new Set(['de', 'la', 'las', 'los', 'del', 'y', 'mac', 'mc', 'van', 'von', 'san', 'santa']);
+    const words = fullName.trim().split(/\s+/).filter(Boolean);
+
+    if (words.length === 0) return 'Colaborador';
+
+    const capitalize = (text) => text.charAt(0).toUpperCase() + text.slice(1).toLowerCase();
+
+    // 1. Agrupamos palabras uniendo los conectores con la palabra que les sigue
+    // Ej: "HERNÁNDEZ DE LA CRUZ RODRIGO" -> ["Hernández", "de la Cruz", "Rodrigo"]
+    const grouped = [];
+    let currentPart = [];
+
+    for (let i = 0; i < words.length; i++) {
+        const wordLower = words[i].toLowerCase();
+
+        if (connectors.has(wordLower)) {
+            currentPart.push(wordLower);
+        } else {
+            currentPart.push(capitalize(words[i]));
+            grouped.push(currentPart.join(' '));
+            currentPart = [];
+        }
+    }
+
+    if (currentPart.length > 0) grouped.push(currentPart.join(' '));
+
+    // 2. Extraemos según cantidad de grupos resultantes
+    if (grouped.length === 1) return grouped[0];
+    if (grouped.length === 2) return `${grouped[1]} ${grouped[0]}`; // Ej: PATERNO NOMBRE -> Nombre Paterno
+
+    // En formato PATERNO MATERNO NOMBRES, el primer nombre suele estar en el índice 2
+    // y el primer apellido en el índice 0. 
+    return `${grouped[2]} ${grouped[0]}`;
 }
 
-// Devuelve "ID - Nombre Apellido" o solo "Nombre Apellido" si no hay ID
+// Devuelve "Nombre Apellido - ID" o solo "Nombre Apellido" si no hay ID
 function getDisplayName(candidate) {
     if (!candidate) return 'Colaborador';
     const shortName = getShortName(candidate.name);
     const id = candidate.employeeId;
-    return id ? `${id} - ${shortName}` : shortName;
+    return id ? `${shortName} - ${id}` : shortName;
 }
 
 // ============================================================================
@@ -269,19 +296,19 @@ const MESSAGE_TEMPLATES = [
         id: 'welcome',
         title: 'Bienvenida',
         message: (name, c) =>
-            `¡Bienvenido/a ${name}!\n\nEs un placer tenerte en el equipo. Para comenzar tu proceso de capacitación, ingresa a la plataforma:\n\n*https://vertxk.xyz/*\n\nDirígete a la *sección de candidatos* e ingresa tus datos:\n\n*Número de empleado:* ${c?.employeeId || 'Tu número de empleado'}\n*CURP:* ${c?.curp || 'Tu CURP'}\n*Código de acceso:* ${c?.accessCode || '-'}\n\nSi tienes cualquier duda, escríbenos. ¡Mucho éxito!\n\n_Capacitación ViñoPlastic_`
+            `¡Bienvenido/a ${name}!\n\nEs un placer tenerte en el equipo. Para comenzar tu proceso de capacitación, ingresa a la plataforma:\n\n*https://vertxk.xyz/*\n\nDirígete a la *sección de candidatos* e ingresa tus datos:\n\n*Número de empleado:* ${c?.employeeId || 'Tu número de empleado'}\n*CURP:* ${c?.curp || 'Tu CURP'}\n*Código de acceso:* ${c?.accessCode || '-'}\n\nSi tienes cualquier duda, escríbeme.\n\n*_Capacitación ViñoPlastic_*`
     },
     {
         id: 'progress_check',
         title: 'Revisión de Progreso',
         message: (name, c) =>
-            `Hola ${name}\n\nNotamos que llevas un avance del *${c?.progress ?? 0}%* en tu proceso de capacitación. ¿Tienes alguna duda o necesitas apoyo?\n\nEstamos para ayudarte.\n\n_Capacitación ViñoPlastic_`
+            `Hola ${name}\n\nNotamos que llevas un avance del *${c?.progress ?? 0}%* en tu proceso de capacitación. ¿Tienes alguna duda o necesitas apoyo?\n\nEstoy para ayudarte.\n\n_*Capacitación ViñoPlastic_*`
     },
     {
         id: 'problem_inquiry',
         title: 'Consulta de Problemas',
         message: (name) =>
-            `Hola ${name},\n\nHemos notado que no has avanzado recientemente en tus cursos. ¿Hay algo que te esté impidiendo continuar?\n\nPodemos agendar un momento para apoyarte, solo dínos cuándo te viene bien.\n\n_Capacitación ViñoPlastic_`
+            `Hola ${name},\n\nHe notado que no has avanzado en tus cursos. ¿Hay algo que te esté impidiendo continuar?\n\nPuedo agendar un momento para apoyarte, solo dime cuándo te viene bien.\n\n_*Capacitación ViñoPlastic_*`
     },
     {
         id: 'inactive_alert',
@@ -289,7 +316,7 @@ const MESSAGE_TEMPLATES = [
         message: (name, c) => {
             const dias = c?.daysSinceLastLogin;
             const cuanto = dias === 1 ? '1 día' : dias ? `${dias} días` : 'varios días';
-            return `Hola ${name},\n\nLlevamos *${cuanto}* sin verte en la plataforma de capacitación. Recuerda que completar los cursos a tiempo es parte de tu proceso de integración.\n\n¿Necesitas ayuda? ¡Escríbenos!\n\n_Capacitación ViñoPlastic_`;
+            return `Hola ${name},\n\nLlevo *${cuanto}* sin verte en la plataforma de capacitación. Recuerda que completar los cursos a tiempo es parte de tu proceso de capacitación.\n\n¿Necesitas ayuda? ¡Escríbeme!\n\n_*Capacitación ViñoPlastic_*`;
         }
     },
     {
@@ -306,14 +333,14 @@ const MESSAGE_TEMPLATES = [
                             ? `solo te queda *1 día y ${dl.hoursLeft} horas*`
                             : `te quedan *${dl.daysLeft} días y ${dl.hoursLeft} horas*`
                 : 'el tiempo es limitado';
-            return `Hola ${name}\n\nTe recordamos que ${tiempo} para completar tu inducción.\n\nPor favor entrega tus evaluaciones a Capacitación.\n\n*Capacitación ViñoPlastic*`;
+            return `Hola ${name}\n\nTe recuerdo que ${tiempo} para completar tu capacitación.\n\nPor favor entrega tus evaluaciones al área de Capacitación.\n\n*Capacitación ViñoPlastic*`;
         }
     },
     {
         id: 'support_offer',
         title: 'Ofrecimiento de Apoyo',
         message: (name) =>
-            `Hola ${name},\n\nQueremos asegurarnos de que tu proceso de incorporación sea lo más cómodo posible.\n\nSi tienes dudas sobre los cursos, el acceso a la plataforma o cualquier otra cosa, escríbenos aquí o acércate con Capacitación en horario de 8:00 a 17:00 h.\n\n_ViñoPlastic_`
+            `Hola ${name},\n\nQuiero asegurarme de que tu proceso de capacitación sea lo más cómodo posible.\n\nSi tienes dudas sobre los cursos, el acceso a la plataforma o cualquier otra cosa, escríbeme aquí o acércate con Capacitación en horario de 8:00 a 17:00 h.\n\n_ViñoPlastic_`
     }
 ];
 
