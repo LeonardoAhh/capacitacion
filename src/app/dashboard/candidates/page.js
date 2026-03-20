@@ -239,52 +239,29 @@ function getDeadlineInfo(candidate) {
 }
 
 
-// Extrae el primer nombre y el primer apellido de la cadena asumiendo formato PATERNO MATERNO NOMBRES
-function getShortName(fullName) {
+// Da formato correcto de Title Case a todo el nombre, respetando los conectores.
+function formatFullName(fullName) {
     if (!fullName || typeof fullName !== 'string') return 'Colaborador';
 
-    // Conectores comunes en apellidos y nombres hispanos
     const connectors = new Set(['de', 'la', 'las', 'los', 'del', 'y', 'mac', 'mc', 'van', 'von', 'san', 'santa']);
     const words = fullName.trim().split(/\s+/).filter(Boolean);
 
     if (words.length === 0) return 'Colaborador';
-
     const capitalize = (text) => text.charAt(0).toUpperCase() + text.slice(1).toLowerCase();
 
-    // 1. Agrupamos palabras uniendo los conectores con la palabra que les sigue
-    // Ej: "HERNÁNDEZ DE LA CRUZ RODRIGO" -> ["Hernández", "de la Cruz", "Rodrigo"]
-    const grouped = [];
-    let currentPart = [];
-
-    for (let i = 0; i < words.length; i++) {
-        const wordLower = words[i].toLowerCase();
-
-        if (connectors.has(wordLower)) {
-            currentPart.push(wordLower);
-        } else {
-            currentPart.push(capitalize(words[i]));
-            grouped.push(currentPart.join(' '));
-            currentPart = [];
-        }
-    }
-
-    if (currentPart.length > 0) grouped.push(currentPart.join(' '));
-
-    // 2. Extraemos según cantidad de grupos resultantes
-    if (grouped.length === 1) return grouped[0];
-    if (grouped.length === 2) return `${grouped[1]} ${grouped[0]}`; // Ej: PATERNO NOMBRE -> Nombre Paterno
-
-    // En formato PATERNO MATERNO NOMBRES, el primer nombre suele estar en el índice 2
-    // y el primer apellido en el índice 0. 
-    return `${grouped[2]} ${grouped[0]}`;
+    return words.map((w, i) => {
+        const lower = w.toLowerCase();
+        if (i === 0) return capitalize(w); // El primero siempre con mayúscula
+        return connectors.has(lower) ? lower : capitalize(w);
+    }).join(' ');
 }
 
 // Devuelve "Nombre Apellido - ID" o solo "Nombre Apellido" si no hay ID
 function getDisplayName(candidate) {
     if (!candidate) return 'Colaborador';
-    const shortName = getShortName(candidate.name);
+    const formatted = formatFullName(candidate.name);
     const id = candidate.employeeId;
-    return id ? `${shortName} - ${id}` : shortName;
+    return id ? `${formatted} - ${id}` : formatted;
 }
 
 // ============================================================================
@@ -746,13 +723,12 @@ export default function CandidateMonitoringPage() {
                     {filteredCandidates.map((candidate) => {
                         const dl = getDeadlineInfo(candidate);
                         const hasDl = dl && candidate.status !== 'completed';
-                        // Iniciales para el avatar de texto
-                        const initials = getShortName(candidate.name)
-                            .split(' ')
-                            .map(w => w[0])
-                            .join('')
-                            .slice(0, 2)
-                            .toUpperCase();
+                        // Iniciales para el avatar de texto y formateo de nombre
+                        const formattedName = formatFullName(candidate.name);
+                        const initialsWords = formattedName.split(' ').filter(w => !['de','la','las','los','del','y','san','santa'].includes(w.toLowerCase()));
+                        const initials = initialsWords.length >= 2 
+                            ? (initialsWords[0][0] + initialsWords[initialsWords.length - 1][0]).toUpperCase()
+                            : (initialsWords[0] || 'C').slice(0, 2).toUpperCase();
 
                         return (
                             <button
@@ -768,7 +744,7 @@ export default function CandidateMonitoringPage() {
 
                                 {/* Nombre + ID */}
                                 <div className={styles.rowIdentity}>
-                                    <span className={styles.rowName}>{getShortName(candidate.name)}</span>
+                                    <span className={styles.rowName}>{formattedName}</span>
                                     <span className={styles.rowId}>{candidate.employeeId || '—'}</span>
                                 </div>
 
@@ -829,12 +805,11 @@ export default function CandidateMonitoringPage() {
                         const dl = getDeadlineInfo(c);
 
                         // Iniciales para el avatar del modal
-                        const initials = getShortName(c.name)
-                            .split(' ')
-                            .map(w => w[0])
-                            .join('')
-                            .slice(0, 2)
-                            .toUpperCase();
+                        const formattedNameModal = formatFullName(c.name);
+                        const initialsWordsModal = formattedNameModal.split(' ').filter(w => !['de','la','las','los','del','y','san','santa'].includes(w.toLowerCase()));
+                        const initials = initialsWordsModal.length >= 2 
+                            ? (initialsWordsModal[0][0] + initialsWordsModal[initialsWordsModal.length - 1][0]).toUpperCase()
+                            : (initialsWordsModal[0] || 'C').slice(0, 2).toUpperCase();
 
                         return (
                             <>
