@@ -469,7 +469,7 @@ export default function CandidateMonitoringPage() {
         link.click();
         document.body.removeChild(link);
 
-        toast.success(`Mensaje abierto en WhatsApp para ${getShortName(whatsappModal.candidate.name)}`);
+        toast.success(`Mensaje abierto en WhatsApp para ${formatFullName(whatsappModal.candidate.name)}`);
         setWhatsappModal({ isOpen: false, candidate: null });
     }, [whatsappModal.candidate, toast]);
 
@@ -477,7 +477,7 @@ export default function CandidateMonitoringPage() {
     const handleArchiveCandidate = useCallback(async (candidate) => {
         const action = candidate.isArchived ? 'restaurar' : 'archivar';
         if (!await showConfirm(
-            `¿Estás seguro de que deseas ${action} a ${getShortName(candidate.name)}?`,
+            `¿Estás seguro de que deseas ${action} a ${formatFullName(candidate.name)}?`,
             { title: 'Confirmar Acción', confirmLabel: 'Aceptar' }
         )) return;
 
@@ -504,7 +504,7 @@ export default function CandidateMonitoringPage() {
     // Reabrir / Extender el plazo del candidato N días desde hoy
     const handleReopenDeadline = useCallback(async (candidate, extraDays = 3) => {
         if (!await showConfirm(
-            `¿Extender el plazo de ${getShortName(candidate.name)} ${extraDays} días más a partir de hoy?`,
+            `¿Extender el plazo de ${formatFullName(candidate.name)} ${extraDays} días más a partir de hoy?`,
             { title: 'Reabrir Plazo', confirmLabel: `Extender ${extraDays} días` }
         )) return;
         try {
@@ -514,7 +514,7 @@ export default function CandidateMonitoringPage() {
             await updateDoc(doc(db, 'employees', candidate.id), {
                 fechaLimite: newDeadline.toISOString()
             });
-            toast.success(`Plazo extendido ${extraDays} días para ${getShortName(candidate.name)}`);
+            toast.success(`Plazo extendido ${extraDays} días para ${formatFullName(candidate.name)}`);
             setQuickDrawerOpen(false);
             fetchData();
         } catch (err) {
@@ -865,7 +865,7 @@ export default function CandidateMonitoringPage() {
                                                 }}
                                                 disabled={!c.phone}
                                                 title={c.phone
-                                                    ? `Enviar WhatsApp a ${getShortName(c.name)}`
+                                                    ? `Enviar WhatsApp a ${formatFullName(c.name)}`
                                                     : 'Sin teléfono registrado — edita el perfil'}
                                             >
                                                 <MessageCircle size={20} aria-hidden="true" />
