@@ -1087,6 +1087,7 @@
     display: flex;
     justify-content: center;
     padding-top: 0.5rem;
+    padding-bottom: 2rem; /* Separación del botón con el borde inferior del dispositivo */
 }
 
 .whatsappSendBtn {

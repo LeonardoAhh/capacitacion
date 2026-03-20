@@ -306,7 +306,7 @@ const MESSAGE_TEMPLATES = [
                             ? `solo te queda *1 día y ${dl.hoursLeft} horas*`
                             : `te quedan *${dl.daysLeft} días y ${dl.hoursLeft} horas*`
                 : 'el tiempo es limitado';
-            return `Hola ${name}\n\nTe recordamos que ${tiempo} para completar tu inducción.\n\nPor favor termina los cursos pendientes y entrega tus evaluaciones a Recursos Humanos.\n\n¡Cualquier duda estamos contigo!\n\n_Recursos Humanos_`;
+            return `Hola ${name}\n\nTe recordamos que ${tiempo} para completar tu inducción.\n\nPor favor entrega tus evaluaciones a Recursos Humanos.\n\n*RRRH ViñoPlastic*`;
         }
     },
     {
@@ -688,8 +688,8 @@ export default function CandidateMonitoringPage() {
                                 <span className={styles.filterTabCount}>
                                     {value === 'completed' ? stats.completed
                                         : value === 'inProgress' ? stats.inProgress
-                                        : value === 'inactive' ? stats.inactive
-                                        : candidates.filter(c => c.status === 'notStarted' && !c.isArchived).length}
+                                            : value === 'inactive' ? stats.inactive
+                                                : candidates.filter(c => c.status === 'notStarted' && !c.isArchived).length}
                                 </span>
                             )}
                         </button>
@@ -765,17 +765,16 @@ export default function CandidateMonitoringPage() {
                                 <span className={`${styles.rowStatus} ${styles[`status_${candidate.status}`]}`}>
                                     {candidate.status === 'completed' ? 'Completado'
                                         : candidate.status === 'inProgress' ? 'En Proceso'
-                                        : candidate.status === 'inactive' ? 'Inactivo'
-                                        : 'Sin Iniciar'}
+                                            : candidate.status === 'inactive' ? 'Inactivo'
+                                                : 'Sin Iniciar'}
                                 </span>
 
                                 {/* Deadline */}
                                 {hasDl ? (
-                                    <span className={`${styles.rowDeadline} ${
-                                        dl.isExpired ? styles.deadlineExpired
-                                        : dl.isUrgent ? styles.deadlineUrgent
-                                        : styles.deadlineOk
-                                    }`}>
+                                    <span className={`${styles.rowDeadline} ${dl.isExpired ? styles.deadlineExpired
+                                            : dl.isUrgent ? styles.deadlineUrgent
+                                                : styles.deadlineOk
+                                        }`}>
                                         <Clock size={11} aria-hidden="true" />
                                         {dl.label}
                                     </span>
