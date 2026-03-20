@@ -269,19 +269,19 @@ const MESSAGE_TEMPLATES = [
         id: 'welcome',
         title: 'Bienvenida',
         message: (name, c) =>
-            `¡Bienvenido/a ${name}!\n\nEs un placer tenerte en el equipo. Para comenzar tu proceso de inducción, ingresa a la plataforma:\n\n*https://vertxk.xyz/*\n\nDirígete a la *sección de candidatos* e ingresa tus datos:\n\n*Número de empleado:* ${c?.employeeId || 'Tu número de empleado'}\n*CURP:* ${c?.curp || 'Tu CURP'}\n*Código de acceso:* ${c?.accessCode || '-'}\n\nSi tienes cualquier duda, escríbenos. ¡Mucho éxito!\n\n_Recursos Humanos_`
+            `¡Bienvenido/a ${name}!\n\nEs un placer tenerte en el equipo. Para comenzar tu proceso de capacitación, ingresa a la plataforma:\n\n*https://vertxk.xyz/*\n\nDirígete a la *sección de candidatos* e ingresa tus datos:\n\n*Número de empleado:* ${c?.employeeId || 'Tu número de empleado'}\n*CURP:* ${c?.curp || 'Tu CURP'}\n*Código de acceso:* ${c?.accessCode || '-'}\n\nSi tienes cualquier duda, escríbenos. ¡Mucho éxito!\n\n_Capacitación ViñoPlastic_`
     },
     {
         id: 'progress_check',
         title: 'Revisión de Progreso',
         message: (name, c) =>
-            `Hola ${name}\n\nNotamos que llevas un avance del *${c?.progress ?? 0}%* en tu proceso de inducción. ¿Tienes alguna duda o necesitas apoyo?\n\nEstamos para ayudarte.\n\n_Recursos Humanos_`
+            `Hola ${name}\n\nNotamos que llevas un avance del *${c?.progress ?? 0}%* en tu proceso de capacitación. ¿Tienes alguna duda o necesitas apoyo?\n\nEstamos para ayudarte.\n\n_Capacitación ViñoPlastic_`
     },
     {
         id: 'problem_inquiry',
         title: 'Consulta de Problemas',
         message: (name) =>
-            `Hola ${name},\n\nHemos notado que no has avanzado recientemente en tus cursos. ¿Hay algo que te esté impidiendo continuar?\n\nPodemos agendar un momento para apoyarte, solo dínos cuándo te viene bien.\n\n_Recursos Humanos_`
+            `Hola ${name},\n\nHemos notado que no has avanzado recientemente en tus cursos. ¿Hay algo que te esté impidiendo continuar?\n\nPodemos agendar un momento para apoyarte, solo dínos cuándo te viene bien.\n\n_Capacitación ViñoPlastic_`
     },
     {
         id: 'inactive_alert',
@@ -289,7 +289,7 @@ const MESSAGE_TEMPLATES = [
         message: (name, c) => {
             const dias = c?.daysSinceLastLogin;
             const cuanto = dias === 1 ? '1 día' : dias ? `${dias} días` : 'varios días';
-            return `Hola ${name},\n\nLlevamos *${cuanto}* sin verte en la plataforma de capacitación. Recuerda que completar los cursos a tiempo es parte de tu proceso de integración.\n\n¿Necesitas ayuda? ¡Escríbenos!\n\n_Recursos Humanos_`;
+            return `Hola ${name},\n\nLlevamos *${cuanto}* sin verte en la plataforma de capacitación. Recuerda que completar los cursos a tiempo es parte de tu proceso de integración.\n\n¿Necesitas ayuda? ¡Escríbenos!\n\n_Capacitación ViñoPlastic_`;
         }
     },
     {
@@ -306,14 +306,14 @@ const MESSAGE_TEMPLATES = [
                             ? `solo te queda *1 día y ${dl.hoursLeft} horas*`
                             : `te quedan *${dl.daysLeft} días y ${dl.hoursLeft} horas*`
                 : 'el tiempo es limitado';
-            return `Hola ${name}\n\nTe recordamos que ${tiempo} para completar tu inducción.\n\nPor favor entrega tus evaluaciones a Recursos Humanos.\n\n*RRRH ViñoPlastic*`;
+            return `Hola ${name}\n\nTe recordamos que ${tiempo} para completar tu inducción.\n\nPor favor entrega tus evaluaciones a Capacitación.\n\n*Capacitación ViñoPlastic*`;
         }
     },
     {
         id: 'support_offer',
         title: 'Ofrecimiento de Apoyo',
         message: (name) =>
-            `Hola ${name},\n\nQueremos asegurarnos de que tu proceso de incorporación sea lo más cómodo posible.\n\nSi tienes dudas sobre los cursos, el acceso a la plataforma o cualquier otra cosa, escríbenos aquí o acércate con Recursos Humanos en horario de 8:00 a 17:00 h.\n\n_Recursos Humanos_`
+            `Hola ${name},\n\nQueremos asegurarnos de que tu proceso de incorporación sea lo más cómodo posible.\n\nSi tienes dudas sobre los cursos, el acceso a la plataforma o cualquier otra cosa, escríbenos aquí o acércate con Capacitación en horario de 8:00 a 17:00 h.\n\n_ViñoPlastic_`
     }
 ];
 
@@ -772,8 +772,8 @@ export default function CandidateMonitoringPage() {
                                 {/* Deadline */}
                                 {hasDl ? (
                                     <span className={`${styles.rowDeadline} ${dl.isExpired ? styles.deadlineExpired
-                                            : dl.isUrgent ? styles.deadlineUrgent
-                                                : styles.deadlineOk
+                                        : dl.isUrgent ? styles.deadlineUrgent
+                                            : styles.deadlineOk
                                         }`}>
                                         <Clock size={11} aria-hidden="true" />
                                         {dl.label}
