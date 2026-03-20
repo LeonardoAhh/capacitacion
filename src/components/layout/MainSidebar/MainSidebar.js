@@ -7,7 +7,7 @@ import NextImage from 'next/image';
 import { LogOut, LayoutDashboard, Settings, Award, GraduationCap, X, ChevronDown, ChevronRight, FileText, CheckSquare, Calendar, Users, BarChart2, BookOpen, UserCheck, Briefcase, List, FileCheck, Layers, Zap, CalendarRange } from 'lucide-react';
 import styles from './MainSidebar.module.css';
 
-export default function MainSidebar({ user, handleLogout, isOpen, onClose }) {
+export default function MainSidebar({ user, handleLogout, isOpen, onClose, isCollapsed }) {
     const pathname = usePathname();
     const isSuperAdmin = user?.rol === 'super_admin';
     const isAdmin = user?.rol === 'admin' || user?.rol === 'super_admin';
@@ -116,7 +116,7 @@ export default function MainSidebar({ user, handleLogout, isOpen, onClose }) {
             />
 
             <aside
-                className={`${styles.sidebar} ${isOpen ? styles.open : ''}`}
+                className={`${styles.sidebar} ${isOpen ? styles.open : ''} ${isCollapsed ? styles.collapsed : ''}`}
                 aria-label="Navegación Principal"
             >
                 <div className={styles.sidebarTop}>

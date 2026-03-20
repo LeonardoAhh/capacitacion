@@ -40,9 +40,15 @@
     position: relative;
     z-index: 10;
     min-height: 100vh;
-    padding: clamp(1rem, 4vw, 2rem) clamp(1rem, 4vw, 2rem) 8rem;
+    padding: 0 clamp(1rem, 4vw, 2rem) 8rem; /* Quitamos padding top para manejarlo en el header */
     width: 100%;
     overflow-x: hidden;
+    transition: margin-left 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Cuando el sidebar está colapsado en desktop, el contenido ocupa todo el ancho */
+.scrollContentExpanded {
+    margin-left: 0;
 }
 
 .loading {
@@ -69,6 +75,74 @@
 }
 
 /* ================================================================
+   HEADER DESKTOP — Barra de contexto (visible solo en ≥768px)
+   ================================================================ */
+
+.desktopHeader {
+    display: none; /* oculto en móvil — CandidateMobileHeader toma el control */
+}
+
+@media (min-width: 768px) {
+    .desktopHeader {
+        height: 72px; /* Misma altura que sidebarTop */
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        margin-bottom: 1.5rem;
+        border-bottom: 1px solid var(--border-color);
+        margin-left: calc(-1 * clamp(1rem, 4vw, 2rem));
+        margin-right: calc(-1 * clamp(1rem, 4vw, 2rem));
+        padding-left: clamp(1rem, 4vw, 2rem);
+        padding-right: clamp(1rem, 4vw, 2rem);
+    }
+}
+
+.sidebarToggle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 30px;
+    height: 30px;
+    background: transparent;
+    border: none;
+    border-radius: var(--radius-sm);
+    color: var(--text-tertiary);
+    cursor: pointer;
+    flex-shrink: 0;
+    transition: color 0.15s, background 0.15s;
+    padding: 0;
+}
+
+.sidebarToggle:hover {
+    color: var(--text-primary);
+    background: var(--bg-tertiary);
+}
+
+.sidebarToggle:focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 2px;
+}
+
+.headerDivider {
+    width: 1px;
+    height: 16px;
+    background: var(--border-color);
+    flex-shrink: 0;
+}
+
+.pageTitle {
+    font-size: 0.875rem; /* Ajustado al diseño de referencia */
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    color: var(--text-secondary);
+    font-family: var(--font-body);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin-top: 1px; /* Alineación óptica */
+}
+
+/* ================================================================
    IMPRESIÓN — Ocultar sidebar, header móvil y limpiar layout
    ================================================================ */
 @media print {
@@ -79,6 +153,10 @@
     .scrollContent {
         padding: 0;
         min-height: unset;
+    }
+
+    .desktopHeader {
+        display: none;
     }
 
     .layoutPage :global(nav),

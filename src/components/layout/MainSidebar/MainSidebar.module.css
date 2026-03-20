@@ -24,7 +24,8 @@
    TOP — Brand + Close button
    ---------------------------------------------------------------- */
 .sidebarTop {
-    padding: 28px 18px 22px;
+    height: 72px; /* Altura fija para alineación exacta con desktopHeader */
+    padding: 0 1.25rem;
     border-bottom: 1px solid var(--sb-border);
     display: flex;
     justify-content: space-between;
@@ -56,10 +57,12 @@
 }
 
 .sidebarBrandName {
-    font-size: 1.25rem;
-    font-weight: 600;
+    font-size: 1.125rem; /* Ajuste para matching */
+    font-weight: 700;
+    font-family: var(--font-body);
     color: var(--sb-text);
-    letter-spacing: 0.02em;
+    letter-spacing: 0.04em;
+    margin-top: 2px; /* Alineación óptica */
 }
 
 .closeBtn {
@@ -364,6 +367,17 @@
 .overlayVisible {
     opacity: 1;
     visibility: visible;
+}
+
+/* Colapso del sidebar en desktop — activado desde AdminLayout */
+@media (min-width: 768px) {
+    .collapsed {
+        transform: translateX(-100%);
+        width: 0;
+        min-width: 0;
+        border-right: none;
+        overflow: hidden;
+    }
 }
 
 @media (max-width: 767px) {

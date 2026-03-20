@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+import { createPortal } from "react-dom";
 import { X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import styles from './Drawer.module.css';
@@ -40,7 +41,10 @@ export function DrawerTrigger({ children, asChild }) {
 export function DrawerContent({ children, className = "" }) {
     const { open, setOpen } = React.useContext(DrawerContext);
 
+    const [mounted, setMounted] = React.useState(false);
+
     React.useEffect(() => {
+        setMounted(true);
         if (open) {
             // Contador global para soportar múltiples Drawers apilados
             window.__drawerCount = (window.__drawerCount || 0) + 1;
@@ -58,8 +62,9 @@ export function DrawerContent({ children, className = "" }) {
         };
     }, [open]);
 
+    if (!mounted) return null;
 
-    return (
+    return createPortal(
         <AnimatePresence>
             {open && (
                 <>
@@ -89,7 +94,8 @@ export function DrawerContent({ children, className = "" }) {
                     </motion.div>
                 </>
             )}
-        </AnimatePresence>
+        </AnimatePresence>,
+        document.body
     );
 }
 
