@@ -23,9 +23,8 @@ import EmployeeSkeleton from '@/components/ui/EmployeeSkeleton/EmployeeSkeleton'
 import { useFormValidation } from '@/hooks/useFormValidation';
 import { useCatalogs } from '@/hooks/useCatalogs';
 
-
 import { generateEmployeeTemplate, parseImportFile, validateEmployeeImportRecords } from '@/utils/importUtils';
-import { getInitials } from '@/lib/employeeUtils';
+import { getInitials, formatFullName } from '@/lib/employeeUtils';
 
 // ============================================================================
 // MAIN COMPONENT
@@ -37,7 +36,7 @@ export default function EmployeesPage() {
     const { showToast } = useToast();
 
     // Pagination state
-    const [itemsPerPage, setItemsPerPage] = useState(10);
+    const [itemsPerPage, setItemsPerPage] = useState(8);
 
     // Catalogs
     const { positions, departments, areas, loading: catalogsLoading } = useCatalogs();
@@ -307,53 +306,47 @@ export default function EmployeesPage() {
             {/* Profile Dropdown */}
 
 
-            {/* Background Effects */}
-            <div className={styles.bgDecoration} aria-hidden="true">
-                <div className={`${styles.blob} ${styles.blob1}`}></div>
-                <div className={`${styles.blob} ${styles.blob2}`}></div>
-            </div>
+
 
             {/* Main Container */}
                 <div className={styles.container}>
-                    <header className={styles.header}>
-                        <h1 className={styles.pageTitle}>Empleados Nuevos Ingresos</h1>
-                        <div className={styles.headerActions}>
-                            <button className={styles.actionBtn} onClick={handleDownloadTemplate}>
-                                <Download size={16} />
-                                <span>Plantilla Excel</span>
-                            </button>
-                            <button className={styles.actionBtn} onClick={handleImportClick}>
-                                <Upload size={16} />
-                                <span>Carga Masiva</span>
-                            </button>
-                            <button className={`${styles.actionBtn} ${styles.actionBtnPrimary}`} onClick={() => router.push('/employees/new')}>
-                                <UserPlus size={16} />
-                                <span>Nuevo Empleado</span>
-                            </button>
+                    {/* Stats Row */}
+                    <div className={styles.statsRow}>
+                        <div className={styles.statBlock}>
+                            <div className={`${styles.statIcon} ${styles.blue}`}>
+                                <Users size={18} strokeWidth={2} aria-hidden="true" />
+                            </div>
+                            <div className={styles.statContent}>
+                                <h3 className={styles.statValue}>{stats.total}</h3>
+                                <p className={styles.statLabel}>Total Empleados</p>
+                            </div>
                         </div>
-                    </header>
-
-                    {/* Controles Superiores: Píldoras y Buscador */}
-                    <div className={styles.topControlsRow}>
-                        {/* Header Meta — resumen compacto */}
-                        <div className={styles.headerMeta}>
-                            <span className={styles.metaBadge}>
-                                <Users size={14} />
-                                <strong>{stats.total}</strong> empleados
-                            </span>
-                            <span className={`${styles.metaBadge} ${styles.metaBadgeActive}`}>
-                                <UserCheck size={14} />
-                                <strong>{stats.active}</strong> activos
-                            </span>
-                            <span className={`${styles.metaBadge} ${styles.metaBadgeCandidates}`}>
-                                <UserPlus size={14} />
-                                <strong>{stats.candidates}</strong> candidatos
-                            </span>
+                        <div className={styles.statDivider} aria-hidden="true" />
+                        <div className={styles.statBlock}>
+                            <div className={`${styles.statIcon} ${styles.green}`}>
+                                <UserCheck size={18} strokeWidth={2} aria-hidden="true" />
+                            </div>
+                            <div className={styles.statContent}>
+                                <h3 className={styles.statValue}>{stats.active}</h3>
+                                <p className={styles.statLabel}>Activos</p>
+                            </div>
                         </div>
+                        <div className={styles.statDivider} aria-hidden="true" />
+                        <div className={styles.statBlock}>
+                            <div className={`${styles.statIcon} ${styles.orange}`}>
+                                <UserPlus size={18} strokeWidth={2} aria-hidden="true" />
+                            </div>
+                            <div className={styles.statContent}>
+                                <h3 className={styles.statValue}>{stats.candidates}</h3>
+                                <p className={styles.statLabel}>Candidatos</p>
+                            </div>
+                        </div>
+                    </div>
 
-                        {/* Search Bar */}
-                        <div className={styles.searchSection}>
-                            <div className={styles.searchInner}>
+                    {/* Barra de Controles: Búsqueda y Botones de Acción */}
+                    <div className={styles.controlsBar}>
+                        <div className={styles.controlsBarTop}>
+                            <div className={styles.searchSection}>
                                 <EmployeeSearchBar
                                     searchTerm={searchTerm}
                                     onSearchChange={setSearchTerm}
@@ -362,18 +355,35 @@ export default function EmployeesPage() {
                                     onAddEmployee={() => router.push('/employees/new')}
                                     canWrite={true}
                                 />
-                                {/* Hidden File Input for Import */}
-                                <input
-                                    type="file"
-                                    ref={fileInputRef}
-                                    style={{ display: 'none' }}
-                                    accept=".xlsx,.xls,.json"
-                                    onChange={handleFileImport}
-                                    disabled={isImporting}
-                                />
+                            </div>
+                            <div className={styles.headerActions}>
+                                <button className={styles.actionBtn} onClick={handleDownloadTemplate}>
+                                    <Download size={16} />
+                                    <span>Plantilla Excel</span>
+                                </button>
+                                <button className={styles.actionBtn} onClick={handleImportClick}>
+                                    <Upload size={16} />
+                                    <span>Carga Masiva</span>
+                                </button>
+                                <button className={`${styles.actionBtn} ${styles.actionBtnPrimary}`} onClick={() => router.push('/employees/new')}>
+                                    <UserPlus size={16} />
+                                    <span>Nuevo Empleado</span>
+                                </button>
                             </div>
                         </div>
+                        {/* Aquí irían los tabs de filtros en el futuro, por ahora no existen tabs aparte de los de states */}
                     </div>
+
+                    {/* Hidden File Input for Import */}
+                    <input
+                        type="file"
+                        ref={fileInputRef}
+                        style={{ display: 'none' }}
+                        accept=".xlsx,.xls,.json"
+                        onChange={handleFileImport}
+                        disabled={isImporting}
+                    />
+
 
                     {/* Mobile Floating Action Button */}
                     {true /* depends on auth, assuming user can write as this matches TopControls behavior */ && (
@@ -402,82 +412,77 @@ export default function EmployeesPage() {
                             ) : employees.length > 0 ? (
                                 <>
                                     <div className={styles.tableContainer}>
-                                        <table className={styles.dataTable}>
-                                            <thead>
-                                                <tr>
-                                                    <th>ID</th>
-                                                    <th>Foto</th>
-                                                    <th>Empleado</th>
-                                                    <th>Puesto</th>
-                                                    <th>Departamento</th>
-                                                    <th>Turno</th>
-                                                    <th>Estatus</th>
-                                                    <th></th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                {employees.map(emp => (
-                                                    <tr
+                                        <div className={styles.employeeList}>
+                                            <div className={styles.listHeader}>
+                                                <div className={styles.colHeaderAvatar} aria-hidden="true"></div>
+                                                <div className={styles.colHeaderName}>Empleado</div>
+                                                <div className={styles.colHeaderPosition}>Puesto</div>
+                                                <div className={styles.colHeaderDepartment}>Departamento</div>
+                                                <div className={styles.colHeaderShift}>Turno</div>
+                                                <div className={styles.colHeaderStatus}>Estatus</div>
+                                                <div aria-hidden="true"></div>
+                                            </div>
+                                            {employees.map(emp => {
+                                                const formattedName = formatFullName(emp.name);
+                                                const initialsWords = formattedName.split(' ').filter(w => !['de','la','las','los','del','y','san','santa'].includes(w.toLowerCase()));
+                                                const initials = initialsWords.length >= 2 
+                                                    ? (initialsWords[0][0] + initialsWords[initialsWords.length - 1][0]).toUpperCase()
+                                                    : (initialsWords[0] || 'C').slice(0, 2).toUpperCase();
+
+                                                return (
+                                                    <button
                                                         key={emp.id}
-                                                        className={styles.tableRow}
+                                                        className={styles.employeeRow}
                                                         onClick={() => handleSelectEmployee(emp)}
-                                                        tabIndex={0}
-                                                        onKeyDown={(e) => {
-                                                            if (e.key === 'Enter' || e.key === ' ') {
-                                                                e.preventDefault();
-                                                                handleSelectEmployee(emp);
-                                                            }
-                                                        }}
                                                         aria-label={`Ver detalles de ${emp.name}, ${emp.position || 'sin puesto'}`}
                                                     >
-                                                        <td className={styles.cellId}>
-                                                            <span className={styles.rowId}>{emp.employeeId || emp.id}</span>
-                                                        </td>
-                                                        <td className={styles.cellAvatar}>
-                                                            <div className={styles.tableAvatar}>
-                                                                {emp.photoUrl ? (
-                                                                    <Image
-                                                                        src={emp.photoUrl}
-                                                                        alt={`Foto de ${emp.name}`}
-                                                                        width={40}
-                                                                        height={40}
-                                                                        unoptimized
-                                                                        onError={(e) => handleImageError(e, emp.name)}
-                                                                    />
-                                                                ) : (
-                                                                    <span aria-hidden="true">{getInitials(emp.name)}</span>
-                                                                )}
-                                                            </div>
-                                                        </td>
-                                                        <td className={styles.cellName}>
-                                                            <div className={styles.employeeBasicInfo}>
-                                                                <span className={styles.rowName}>{emp.name}</span>
+                                                        {/* Avatar */}
+                                                        <div className={styles.rowAvatar} aria-hidden="true">
+                                                            {emp.photoUrl ? (
+                                                                <Image
+                                                                    src={emp.photoUrl}
+                                                                    alt={`Foto`}
+                                                                    width={36}
+                                                                    height={36}
+                                                                    unoptimized
+                                                                    onError={(e) => handleImageError(e, emp.name)}
+                                                                />
+                                                            ) : (
+                                                                initials
+                                                            )}
+                                                        </div>
+
+                                                        {/* Nombre + ID */}
+                                                        <div className={styles.rowIdentity}>
+                                                            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                                                <span className={styles.rowName}>{formattedName}</span>
                                                                 {emp.isCandidato && (
                                                                     <span className={styles.candidateBadgeMini}>Candidato</span>
                                                                 )}
                                                             </div>
-                                                        </td>
-                                                        <td className={styles.cellPosition}>
-                                                            <span className={styles.rowPosition}>{emp.position || 'Sin puesto'}</span>
-                                                        </td>
-                                                        <td className={styles.cellDepartment}>
-                                                            {emp.department && <span className={styles.rowDepartment}>{emp.department}</span>}
-                                                        </td>
-                                                        <td className={styles.cellShift}>
-                                                            {emp.shift && <span className={styles.rowShift}>{emp.shift}</span>}
-                                                        </td>
-                                                        <td className={styles.cellStatus}>
-                                                            <span className={`${styles.statusBadge} ${emp.status === 'Inactivo' ? styles.statusInactive : styles.statusActive}`}>
-                                                                {emp.status || 'Activo'}
-                                                            </span>
-                                                        </td>
-                                                        <td className={styles.cellActions}>
-                                                            <ChevronRight className={styles.rowChevron} size={20} />
-                                                        </td>
-                                                    </tr>
-                                                ))}
-                                            </tbody>
-                                        </table>
+                                                            <span className={styles.rowId}>{emp.employeeId || emp.id}</span>
+                                                        </div>
+
+                                                        {/* Puesto */}
+                                                        <span className={styles.rowPosition}>{emp.position || '—'}</span>
+
+                                                        {/* Departamento */}
+                                                        <span className={styles.rowDepartment}>{emp.department || '—'}</span>
+
+                                                        {/* Turno */}
+                                                        <span className={styles.rowShift}>{emp.shift || '—'}</span>
+
+                                                        {/* Estatus */}
+                                                        <span className={`${styles.statusBadge} ${emp.status === 'Inactivo' ? styles.statusInactive : styles.statusActive}`}>
+                                                            {emp.status || 'Activo'}
+                                                        </span>
+
+                                                        {/* Flecha */}
+                                                        <ChevronRight size={15} className={styles.rowArrow} aria-hidden="true" />
+                                                    </button>
+                                                );
+                                            })}
+                                        </div>
                                     </div>
 
                                     {/* Pagination */}

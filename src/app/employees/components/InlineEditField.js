@@ -12,7 +12,8 @@ export default function InlineEditField({
     onSave,
     placeholder = '—',
     required = false,
-    className = ''
+    className = '',
+    variant = 'default' // Add variant support
 }) {
     const [isEditing, setIsEditing] = useState(false);
     const [tempValue, setTempValue] = useState(value || '');
@@ -68,7 +69,7 @@ export default function InlineEditField({
 
     return (
         <div className={`${styles.container} ${className}`}>
-            <label className={styles.label}>{label}</label>
+            <label className={`${styles.label} ${variant === 'hero' ? 'hero-label' : ''}`}>{label}</label>
             
             {isEditing ? (
                 <div className={styles.editMode}>
@@ -126,7 +127,7 @@ export default function InlineEditField({
                     role="button"
                     tabIndex={0}
                 >
-                    <span className={`${styles.value} ${!value ? styles.empty : ''}`}>
+                    <span className={`${styles.value} ${!value ? styles.empty : ''} ${variant === 'hero' ? 'hero-value' : ''}`}>
                         {displayValue()}
                     </span>
                     <Edit2 size={12} className={styles.editIcon} />

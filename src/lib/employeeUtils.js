@@ -44,18 +44,37 @@ export function formatDateForInput(dateString) {
 }
 
 /**
- * Returns up to 2 uppercase initials from a full name.
+ * Inyecta Title Case a un nombre completo ignorando conectores como "de", "la".
+ * @param {string} fullName
+ * @returns {string}
+ */
+export function formatFullName(fullName) {
+    if (!fullName || typeof fullName !== 'string') return 'Colaborador';
+    const connectors = new Set(['de', 'la', 'las', 'los', 'del', 'y', 'mac', 'mc', 'van', 'von', 'san', 'santa']);
+    const words = fullName.trim().split(/\s+/).filter(Boolean);
+    if (words.length === 0) return 'Colaborador';
+    const capitalize = (text) => text.charAt(0).toUpperCase() + text.slice(1).toLowerCase();
+    return words.map((w, i) => {
+        const lower = w.toLowerCase();
+        if (i === 0) return capitalize(w);
+        return connectors.has(lower) ? lower : capitalize(w);
+    }).join(' ');
+}
+
+/**
+ * Returns up to 2 uppercase initials from a full name, ignoring connectors.
  * @param {string} name
  * @returns {string}
  */
 export function getInitials(name) {
     if (!name) return 'EM';
-    return name
-        .split(' ')
-        .map((n) => n[0])
-        .join('')
-        .slice(0, 2)
-        .toUpperCase();
+    const formattedName = formatFullName(name);
+    const connectors = new Set(['de', 'la', 'las', 'los', 'del', 'y', 'san', 'santa']);
+    const initialsWords = formattedName.split(' ').filter(w => !connectors.has(w.toLowerCase()));
+    
+    return initialsWords.length >= 2 
+        ? (initialsWords[0][0] + initialsWords[initialsWords.length - 1][0]).toUpperCase()
+        : (initialsWords[0] || 'C').slice(0, 2).toUpperCase();
 }
 
 /**
