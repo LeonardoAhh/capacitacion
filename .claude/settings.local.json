@@ -12,7 +12,10 @@
       "Bash(__NEW_LINE_e3eee8942211551b__ cp:*)",
       "Bash(cp -r /home/user/capacitacion/src/app/dashboard/programacion/* /home/user/capacitacion/src/app/programacion/)",
       "Bash(cp -r /home/user/capacitacion/src/app/dashboard/training/registro/* /home/user/capacitacion/src/app/training/registro/)",
-      "Bash(__NEW_LINE_e3eee8942211551b__ rm:*)"
+      "Bash(__NEW_LINE_e3eee8942211551b__ rm:*)",
+      "Bash(find '/c/Users/Capacitacion - QRO/Desktop/Capacitación/VTX' -type f -path *employees*)",
+      "Bash(npm run:*)",
+      "Bash(cd:*)"
     ]
   }
 }

@@ -1,116 +1,165 @@
+/* ══════════════════════════════════════════════════════
+   InlineEditField — Material Expressive 3
+   ══════════════════════════════════════════════════════ */
+
+/* ── Contenedor ── */
 .container {
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-    width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  width: 100%;
 }
 
+/* ── Label (M3: label small) ── */
 .label {
-    font-size: 0.75rem;
-    font-weight: 600;
-    color: var(--c-muted);
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    margin-bottom: 2px;
+  font-size: 0.6875rem;
+  font-weight: 700;
+  color: var(--text-tertiary);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  user-select: none;
 }
 
+/* ── Modo Vista ── */
 .viewMode {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    padding: 6px 8px;
-    border-radius: var(--r-md);
-    margin: -6px -8px; /* Offset padding to keep text aligned with label */
-    cursor: pointer;
-    transition: all var(--t);
-    border: 1px solid transparent;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 10px;
+  margin: -7px -10px;
+  border-radius: 10px;
+  cursor: pointer;
+  border: 1.5px solid transparent;
+  transition:
+    background 200ms cubic-bezier(0.2, 0, 0, 1),
+    border-color 200ms cubic-bezier(0.2, 0, 0, 1);
+  min-height: 36px;
 }
 
 .viewMode:hover {
-    background: var(--c-primary-dim);
-    border-color: rgba(245, 158, 11, 0.1);
+  background: rgba(var(--color-primary-rgb), 0.06);
+  border-color: rgba(var(--color-primary-rgb), 0.18);
 }
 
+.viewMode:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+/* ── Valor ── */
 .value {
-    font-size: 1rem;
-    color: var(--c-ink);
-    font-weight: 500;
+  font-size: 0.9375rem;
+  color: var(--text-primary);
+  font-weight: 500;
+  flex: 1;
+  line-height: 1.4;
 }
 
 .value.empty {
-    color: var(--c-muted);
-    font-style: italic;
-    opacity: 0.7;
+  color: var(--text-tertiary);
+  font-style: italic;
+  font-weight: 400;
 }
 
+/* ── Ícono lápiz ── */
 .editIcon {
-    opacity: 0;
-    color: var(--c-primary);
-    transition: opacity var(--t);
+  opacity: 0;
+  color: var(--color-primary);
+  flex-shrink: 0;
+  transition: opacity 200ms cubic-bezier(0.2, 0, 0, 1);
 }
 
 .viewMode:hover .editIcon {
-    opacity: 0.7;
+  opacity: 0.65;
 }
 
-/* Edit Mode */
+/* ── Modo Edición ── */
 .editMode {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    margin: -6px -8px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: -7px -10px;
 }
 
-.input, .select {
-    flex: 1;
-    padding: 5px 7px;
-    font-size: 1rem;
-    font-weight: 500;
-    color: var(--c-ink);
-    background: var(--c-surface);
-    border: 1px solid var(--c-primary);
-    border-radius: var(--r-sm);
-    outline: none;
-    box-shadow: 0 0 0 2px var(--c-primary-dim);
-    font-family: inherit;
-    width: 100%;
+/* ── Input / Select ── */
+.input {
+  flex: 1;
+  width: 100%;
+  padding: 7px 11px;
+  font-size: 0.9375rem;
+  font-weight: 500;
+  color: var(--text-primary);
+  background: var(--bg-primary);
+  border: 1.5px solid var(--color-primary);
+  border-radius: 10px;
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(var(--color-primary-rgb), 0.12);
+  font-family: inherit;
+  line-height: 1.4;
+  transition:
+    box-shadow 200ms cubic-bezier(0.2, 0, 0, 1),
+    border-color 200ms cubic-bezier(0.2, 0, 0, 1);
+  min-height: 36px;
 }
 
+.input:focus {
+  box-shadow: 0 0 0 4px rgba(var(--color-primary-rgb), 0.18);
+}
+
+/* ── Checkbox ── */
 .checkbox {
-    width: 16px;
-    height: 16px;
-    cursor: pointer;
-    accent-color: var(--c-primary);
+  width: 18px;
+  height: 18px;
+  cursor: pointer;
+  accent-color: var(--color-primary);
+  flex-shrink: 0;
 }
 
+/* ── Acciones guardar / cancelar ── */
 .actions {
-    display: flex;
-    gap: 4px;
+  display: flex;
+  gap: 4px;
+  flex-shrink: 0;
 }
 
-.saveBtn, .cancelBtn {
-    background: transparent;
-    border: none;
-    border-radius: var(--r-sm);
-    width: 24px;
-    height: 24px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    transition: background var(--t);
+.saveBtn,
+.cancelBtn {
+  background: transparent;
+  border: none;
+  border-radius: 8px;
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background 150ms cubic-bezier(0.2, 0, 0, 1);
+  flex-shrink: 0;
 }
 
+/* ME3: tonal filled save */
 .saveBtn {
-    color: var(--c-success, #10b981);
+  color: var(--color-success);
 }
 .saveBtn:hover {
-    background: rgba(16, 185, 129, 0.1);
+  background: rgba(var(--color-success-rgb), 0.14);
 }
 
+/* ME3: tonal filled cancel */
 .cancelBtn {
-    color: var(--c-danger, #ef4444);
+  color: var(--color-danger);
 }
 .cancelBtn:hover {
-    background: rgba(239, 68, 68, 0.1);
+  background: rgba(var(--color-danger-rgb), 0.12);
+}
+
+/* ── Accesibilidad ── */
+@media (prefers-reduced-motion: reduce) {
+  .viewMode,
+  .input,
+  .saveBtn,
+  .cancelBtn,
+  .editIcon {
+    transition: none;
+  }
 }
