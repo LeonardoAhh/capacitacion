@@ -461,7 +461,7 @@ export default function ProgramacionPage() {
             {/* Botón crear empleado */}
             <button
                 className={styles.mobileAddBtn}
-                onClick={() => router.push('/dashboard/training/registro')}
+                onClick={() => router.push('/training/registro')}
                 type="button"
             >
                 <UserPlus size={16} />
@@ -643,7 +643,7 @@ export default function ProgramacionPage() {
                 <EmployeeSearchBar
                     searchTerm={searchTerm}
                     onSearchChange={setSearchTerm}
-                    onAddEmployee={() => router.push('/dashboard/training/registro')}
+                    onAddEmployee={() => router.push('/training/registro')}
                     canWrite={true}
                 />
             </motion.div>

@@ -9,17 +9,7 @@ import { csrfMiddleware } from '@/lib/csrf';
 const PUBLIC_ROUTES = ['/', '/login', '/candidatos', '/training/login', '/organigrama'];
 
 /** Rutas que requieren sesión tipo 'admin' */
-const ADMIN_ROUTES = [
-    '/dashboard',
-    '/employees',
-    '/capacitacion',
-    '/reports',
-    '/profile',
-    '/iluo-manager',
-    '/induccion',
-    '/complete-profile',
-    '/test',
-];
+const ADMIN_ROUTES = [];
 
 /** Rutas que requieren sesión tipo 'candidate' */
 const CANDIDATE_ROUTES = ['/candidatos/dashboard'];

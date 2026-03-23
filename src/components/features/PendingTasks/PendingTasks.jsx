@@ -313,12 +313,12 @@ export default function PendingTasks() {
         useSensor(TouchSensor,   { activationConstraint: { delay: 250, tolerance: 5 } }),
     );
 
-    // Stable 7-day window — only recalculates on mount
+    // 7-day window starting from yesterday — only recalculates on mount
     const days = useMemo(() => {
         const today = new Date();
         return Array.from({ length: 7 }, (_, i) => {
             const d = new Date(today);
-            d.setDate(today.getDate() + i);
+            d.setDate(today.getDate() - 1 + i); // -1 = ayer, 0 = hoy, 1 = mañana…
             return d;
         });
     }, []);
@@ -448,6 +448,7 @@ export default function PendingTasks() {
         const todayMidnight = new Date();
         todayMidnight.setHours(0, 0, 0, 0);
         const diff = Math.round((date - todayMidnight) / 86_400_000);
+        if (diff === -1) return 'Ayer';
         if (diff === 0) return 'Hoy';
         if (diff === 1) return 'Mañana';
         return `En ${diff} días`;
@@ -587,7 +588,7 @@ export default function PendingTasks() {
                             onClick={() => { setSelectedDate(date); setLocalOrder([]); }}
                         >
                             <span className={styles.dayName}>
-                                {isToday(date) ? 'Hoy' : getDayName(date)}
+                                {isToday(date) ? 'Hoy' : getDayName(date).toUpperCase()}
                             </span>
                             <span className={styles.dayNumber}>{date.getDate()}</span>
                             {activeDates.has(dateStr) && <div className={styles.hasTasksDot} />}

@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useRouter } from 'next/navigation';
 import MainSidebar from '@/components/layout/MainSidebar/MainSidebar';
@@ -25,6 +25,12 @@ export default function AdminLayout({ children, title = 'Viñoplastic RH' }) {
             router.push('/');
         }
     };
+
+    useEffect(() => {
+        if (!loading && !user) {
+            router.replace('/login');
+        }
+    }, [loading, user, router]);
 
     if (loading || !user) {
         return (

@@ -6,8 +6,8 @@ import { Users, FileText, Award, TrendingUp, GitCompareArrows, ScrollText } from
 import styles from "./DashboardBentoGrid.module.css";
 
 const QUICK_ACTIONS = [
-    { href: "/dashboard/candidates", title: "Candidatos", icon: Users, colorClass: "actionIconOrange" },
-    { href: "/dashboard/programacion", title: "Programación", icon: FileText, colorClass: "actionIconBlue" },
+    { href: "/candidates", title: "Candidatos", icon: Users, colorClass: "actionIconOrange" },
+    { href: "/programacion", title: "Programación", icon: FileText, colorClass: "actionIconBlue" },
     { href: "/capacitacion", title: "Capacitación", icon: Award, colorClass: "actionIconPurple" },
     { href: "/reports", title: "Reportes", icon: TrendingUp, colorClass: "actionIconGreen" },
     { href: "/capacitacion/comparacion", title: "Comparación", icon: GitCompareArrows, colorClass: "actionIconCyan" },

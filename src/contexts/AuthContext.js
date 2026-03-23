@@ -94,46 +94,6 @@ export function AuthProvider({ children }) {
         }
     };
 
-    const signInWithGoogle = async () => {
-        try {
-            const { GoogleAuthProvider, signInWithPopup } = await import('firebase/auth');
-            const provider = new GoogleAuthProvider();
-
-            // Opcional: forzar selección de cuenta
-            provider.setCustomParameters({
-                prompt: 'select_account'
-            });
-
-            const result = await signInWithPopup(auth, provider);
-            const user = result.user;
-
-            // Verificar si el usuario ya existe en Firestore
-            const userDoc = await getDoc(doc(db, 'users', user.uid));
-
-            if (!userDoc.exists()) {
-                // Usuario NO autorizado - cerrar sesión y rechazar acceso
-                await firebaseSignOut(auth);
-
-                return {
-                    success: false,
-                    error: 'Acceso no autorizado. Tu cuenta de Google no tiene permisos para acceder a esta aplicación. Contacta al administrador.'
-                };
-            }
-
-            // Usuario autorizado (ya existe en Firestore)
-            return { success: true, user: result.user, isNewUser: false };
-        } catch (error) {
-            console.error("Google Sign-In Error:", error);
-
-            // Manejar cancelación del popup
-            if (error.code === 'auth/popup-closed-by-user' || error.code === 'auth/cancelled-popup-request') {
-                return { success: false, error: 'Inicio de sesión cancelado' };
-            }
-
-            return { success: false, error: 'Error al iniciar sesión con Google' };
-        }
-    };
-
     const signUp = async (email, password) => {
         try {
             const result = await createUserWithEmailAndPassword(auth, email, password);
@@ -191,7 +151,6 @@ export function AuthProvider({ children }) {
         loading,
         signIn,
         signInWithUsername,
-        signInWithGoogle,
         updateUserProfile,
         signInAnon,
         signUp,

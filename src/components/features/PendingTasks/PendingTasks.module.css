@@ -275,6 +275,9 @@
     font-weight: 600;
     color: var(--text-primary);
     transition: all var(--transition-fast);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 .completed .taskTitle {
@@ -416,4 +419,28 @@
     border: none;
     font-weight: 600;
     cursor: pointer;
+}
+
+@media (max-width: 768px) {
+    .widgetContainer { padding: 1.25rem 1rem; border-radius: 24px; }
+    .title { font-size: 1.2rem; }
+
+    .calendarStrip {
+        gap: 0.5rem;
+        overflow: hidden; /* sin scroll horizontal en mobile */
+    }
+
+    /* En mobile mostrar solo ayer, hoy, mañana (primeros 3) */
+    .calendarStrip > *:nth-child(n+4) { display: none; }
+
+    /* Los 3 días visibles se reparten el ancho de forma equitativa */
+    .calendarStrip > *:nth-child(-n+3) {
+        flex: 1 1 0;
+        min-width: 0;
+        height: 60px;
+        border-radius: 14px;
+    }
+
+    .dayName { font-size: 0.6rem; }
+    .dayNumber { font-size: 1rem; }
 }

@@ -2,7 +2,7 @@
 
 import { useReducer, useEffect, useCallback, useRef } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { createSession } from '@/lib/sessionApi';
 import UnifiedLogin from '@/components/auth/UnifiedLogin';
 
@@ -93,8 +93,9 @@ function validateLoginFields(identifier, password) {
 
 export default function LoginPage() {
     const [state, dispatch] = useReducer(loginReducer, initialLoginState);
-    const { user, signIn, signInWithUsername, signInWithGoogle } = useAuth();
+    const { user, signIn, signInWithUsername } = useAuth();
     const router = useRouter();
+    const searchParams = useSearchParams();
     const timerRef = useRef(null);
 
     const { identifier, password, error, loading, isSuccess, failedAttempts, blockedUntil, remainingSeconds } = state;
@@ -177,7 +178,11 @@ export default function LoginPage() {
             : await signInWithUsername(identifier.trim(), password);
 
         if (result.success) {
-            await createSession('admin');
+            const sessionOk = await createSession('admin');
+            if (!sessionOk) {
+                dispatch({ type: 'LOGIN_ERROR', error: 'Error al crear sesión. Intenta de nuevo.' });
+                return;
+            }
             sessionStorage.setItem('showWelcome', 'true');
             dispatch({ type: 'LOGIN_SUCCESS' });
             clearRateLimitStorage();
@@ -189,33 +194,13 @@ export default function LoginPage() {
         }
     }, [identifier, password, signIn, signInWithUsername, checkRateLimit, failedAttempts]);
 
-    const handleGoogleSignIn = useCallback(async () => {
-        if (!checkRateLimit()) return;
-
-        dispatch({ type: 'LOGIN_START' });
-
-        const result = await signInWithGoogle();
-
-        if (result.success) {
-            await createSession('admin');
-            sessionStorage.setItem('showWelcome', 'true');
-            dispatch({ type: 'LOGIN_SUCCESS' });
-            clearRateLimitStorage();
-        } else {
-            dispatch({ type: 'LOGIN_ERROR', error: result.error || 'Error al iniciar sesión con Google' });
-            if (failedAttempts + 1 >= RATE_LIMIT.MAX_ATTEMPTS) {
-                dispatch({ type: 'RATE_LIMIT_HIT' });
-            }
-        }
-    }, [signInWithGoogle, checkRateLimit, failedAttempts]);
-
     const handleSuccessComplete = useCallback(() => {
-        if (user?.rol === 'Instructor' || user?.rol === 'instructor') {
-            router.push('/induccion');
-        } else {
-            router.push('/dashboard');
-        }
-    }, [router, user]);
+        const redirectTo = searchParams.get('redirect');
+        const dest = (user?.rol === 'Instructor' || user?.rol === 'instructor')
+            ? '/induccion'
+            : (redirectTo || '/employees');
+        router.push(dest);
+    }, [user, searchParams, router]);
 
     useEffect(() => {
         if (isSuccess) {
@@ -258,9 +243,6 @@ export default function LoginPage() {
             onSubmit={handleSubmit}
             submitText="Iniciar Sesión"
             isSuccess={isSuccess}
-            showGoogle
-            onGoogleSignIn={handleGoogleSignIn}
-            googleLoading={loading}
             backHref="/"
             backLabel="Inicio"
         />
