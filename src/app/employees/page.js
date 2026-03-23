@@ -311,37 +311,7 @@ export default function EmployeesPage() {
             {/* Main Container */}
                 <div className={styles.container}>
                     {/* Stats Row */}
-                    <div className={styles.statsRow}>
-                        <div className={styles.statBlock}>
-                            <div className={`${styles.statIcon} ${styles.blue}`}>
-                                <Users size={18} strokeWidth={2} aria-hidden="true" />
-                            </div>
-                            <div className={styles.statContent}>
-                                <h3 className={styles.statValue}>{stats.total}</h3>
-                                <p className={styles.statLabel}>Total Empleados</p>
-                            </div>
-                        </div>
-                        <div className={styles.statDivider} aria-hidden="true" />
-                        <div className={styles.statBlock}>
-                            <div className={`${styles.statIcon} ${styles.green}`}>
-                                <UserCheck size={18} strokeWidth={2} aria-hidden="true" />
-                            </div>
-                            <div className={styles.statContent}>
-                                <h3 className={styles.statValue}>{stats.active}</h3>
-                                <p className={styles.statLabel}>Activos</p>
-                            </div>
-                        </div>
-                        <div className={styles.statDivider} aria-hidden="true" />
-                        <div className={styles.statBlock}>
-                            <div className={`${styles.statIcon} ${styles.orange}`}>
-                                <UserPlus size={18} strokeWidth={2} aria-hidden="true" />
-                            </div>
-                            <div className={styles.statContent}>
-                                <h3 className={styles.statValue}>{stats.candidates}</h3>
-                                <p className={styles.statLabel}>Candidatos</p>
-                            </div>
-                        </div>
-                    </div>
+                    {/* Solicitud del usuario: "Quita las cards" (Se ocultó la sección statsGrid) */}
 
                     {/* Barra de Controles: Búsqueda y Botones de Acción */}
                     <div className={styles.controlsBar}>
