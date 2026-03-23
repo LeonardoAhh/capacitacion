@@ -368,12 +368,13 @@ function ContratoModal({ initial, onClose, onSave }) {
                                         list="shift-list"
                                         value={form.shift || ''}
                                         onChange={e => set('shift', e.target.value)}
-                                        placeholder="Ej. 1, 2, Mixto"
+                                        placeholder="1, 2, 3, 4, Mixto"
                                     />
                                     <datalist id="shift-list">
                                         <option value="1" />
                                         <option value="2" />
                                         <option value="3" />
+                                        <option value="4" />
                                         <option value="Mixto" />
                                     </datalist>
                                 </div>
