@@ -348,15 +348,34 @@ function ContratoModal({ initial, onClose, onSave }) {
                                 </div>
 
                                 {/* Área */}
-                                <div className={`${styles.fieldGroup} ${styles.formGridFull}`}>
+                                <div className={styles.fieldGroup}>
                                     <label className={styles.fieldLabel}>Área</label>
                                     <input
                                         type="text"
                                         className={styles.fieldInput}
                                         value={form.area}
                                         onChange={e => set('area', e.target.value)}
-                                        placeholder="Ej. PRODUCCIÓN ADMINISTRATIVO"
+                                        placeholder="Ej. ADMINISTRATIVO"
                                     />
+                                </div>
+
+                                {/* Turno */}
+                                <div className={styles.fieldGroup}>
+                                    <label className={styles.fieldLabel}>Turno</label>
+                                    <input
+                                        type="text"
+                                        className={styles.fieldInput}
+                                        list="shift-list"
+                                        value={form.shift || ''}
+                                        onChange={e => set('shift', e.target.value)}
+                                        placeholder="Ej. 1, 2, Mixto"
+                                    />
+                                    <datalist id="shift-list">
+                                        <option value="1" />
+                                        <option value="2" />
+                                        <option value="3" />
+                                        <option value="Mixto" />
+                                    </datalist>
                                 </div>
                             </>
                         )}
@@ -465,6 +484,7 @@ export default function ContratosPage() {
     const [search,        setSearch]        = useState('');
     const [filterDept,    setFilterDept]    = useState('');
     const [filterStatus,  setFilterStatus]  = useState('');
+    const [filterShift,   setFilterShift]   = useState('');
     const [showModal,     setShowModal]     = useState(false);
     const [editingItem,   setEditingItem]   = useState(null);
     const [importLoading, setImportLoading] = useState(false);
@@ -486,9 +506,13 @@ export default function ContratosPage() {
         return () => unsub();
     }, []);
 
-    // ── Departamentos únicos para filtro ──────────────────────────────────────
+    // ── Opciones para filtros ─────────────────────────────────────────────────
     const departments = useMemo(() =>
         [...new Set(contratos.map(c => c.department).filter(Boolean))].sort(),
+    [contratos]);
+
+    const shifts = useMemo(() =>
+        [...new Set(contratos.map(c => c.shift).filter(Boolean))].sort(),
     [contratos]);
 
     // ── Filtrado y búsqueda ───────────────────────────────────────────────────
@@ -506,6 +530,7 @@ export default function ContratosPage() {
                     c.department?.toLowerCase().includes(q);
 
                 const matchDept = !filterDept || c.department === filterDept;
+                const matchShift = !filterShift || c.shift === filterShift;
 
                 let matchStatus = true;
                 if (filterStatus === 'expiring') {
@@ -522,7 +547,7 @@ export default function ContratosPage() {
                     });
                 }
 
-                return matchSearch && matchDept && matchStatus;
+                return matchSearch && matchDept && matchShift && matchStatus;
             })
             // Ordenar por employeeID de menor a mayor ascendente numéricamente
             .sort((a, b) => {
@@ -532,7 +557,7 @@ export default function ContratosPage() {
                 // Si tienen el mismo ID falto (0), desempata por nombre
                 return (a.name || '').localeCompare(b.name || '', 'es');
             });
-    }, [contratos, search, filterDept, filterStatus]);
+    }, [contratos, search, filterDept, filterShift, filterStatus]);
 
     // Calcular la lista de página actual
     const totalPages = Math.ceil(filtered.length / ITEMS_PER_PAGE);
@@ -682,6 +707,17 @@ export default function ContratosPage() {
                         <option value="expiring">Contrato por vencer</option>
                     </select>
 
+                    {/* Filtro turno */}
+                    <select
+                        className={styles.filterSelect}
+                        value={filterShift}
+                        onChange={e => setFilterShift(e.target.value)}
+                        aria-label="Filtrar por turno"
+                    >
+                        <option value="">Todos los turnos</option>
+                        {shifts.map(s => <option key={s} value={s}>Turno: {s}</option>)}
+                    </select>
+
                     {/* Botones de acción */}
                     <div className={styles.toolbarActions}>
                         <input
@@ -740,6 +776,7 @@ export default function ContratosPage() {
                                     <tr>
                                         <th>Empleado</th>
                                         <th>Puesto / Área</th>
+                                        <th style={{ textAlign: 'center' }}>Turno</th>
                                         <th>F. Ingreso</th>
                                         <th style={{ textAlign: 'center' }}>1ª Eval <small>(+30d)</small></th>
                                         <th style={{ textAlign: 'center' }}>2ª Eval <small>(+60d)</small></th>
@@ -768,6 +805,11 @@ export default function ContratosPage() {
                                                 <td className={styles.posCell}>
                                                     <div className={styles.posName}>{item.position}</div>
                                                     <div className={styles.posDept}>{item.department}{item.area ? ` · ${item.area}` : ''}</div>
+                                                </td>
+
+                                                {/* Turno */}
+                                                <td style={{ textAlign: 'center', fontWeight: '500', color: 'var(--c-ink)' }}>
+                                                    {item.shift || '—'}
                                                 </td>
 
                                                 {/* Fecha ingreso */}
@@ -900,6 +942,12 @@ export default function ContratosPage() {
                                         <div className={styles.cardDateItem}>
                                             <span className={styles.cardDateLabel}>Área</span>
                                             <span className={styles.cardDateValue}>{item.department || '—'}</span>
+                                        </div>
+                                        <div className={styles.cardDateItem}>
+                                            <span className={styles.cardDateLabel}>Turno</span>
+                                            <span className={styles.cardDateValue} style={{ color: 'var(--c-ink)', fontWeight: 600 }}>
+                                                {item.shift || '—'}
+                                            </span>
                                         </div>
                                     </div>
 
