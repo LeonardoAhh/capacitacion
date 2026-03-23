@@ -77,17 +77,29 @@ function TrainingBtn({ item, onToggle, disabled }) {
     const tooltip = dueDate && !isDelivered ? `Límite: ${formatDate(dueDate)}` : `Plan de formación: ${labelText}`;
 
     return (
-        <button
-            className={`${styles.trainingBtn} ${chipClass}`}
-            onClick={onToggle}
-            disabled={disabled}
-            type="button"
-            aria-pressed={isDelivered}
-            title={tooltip}
-        >
-            <Icon size={12} />
-            {labelText}
-        </button>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <button
+                className={`${styles.trainingBtn} ${chipClass}`}
+                onClick={onToggle}
+                disabled={disabled}
+                type="button"
+                aria-pressed={isDelivered}
+                title={tooltip}
+            >
+                <Icon size={12} />
+                {labelText}
+            </button>
+            {!isDelivered && dueDate && (
+                <span style={{ 
+                    fontSize: '0.6875rem', 
+                    fontWeight: 600, 
+                    color: isOverdue ? 'var(--c-danger)' : 'var(--c-muted)',
+                    whiteSpace: 'nowrap'
+                }}>
+                    Lím: {formatDate(dueDate)}
+                </span>
+            )}
+        </div>
     );
 }
 
