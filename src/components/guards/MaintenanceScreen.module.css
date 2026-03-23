@@ -1,36 +1,35 @@
 /* =========================================
-   MaintenanceScreen — Design System Tokens
-   Sin colores hardcodeados · Variables CSS globales
+   MaintenanceScreen — Editorial White ME3
    ========================================= */
 
-/* ── Container ── */
 .container {
     position: fixed;
     inset: 0;
     width: 100vw;
     height: 100vh;
-    background-color: var(--app-background);
+    background-color: var(--c-surface);
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     z-index: 99999;
     overflow: hidden;
-    font-family: var(--font-body);
-    color: var(--text-primary);
+    font-family: var(--font-body), sans-serif;
+    color: var(--c-ink);
 }
 
-/* ── Grid texture ── */
+/* ── Grid texture (Subtle) ── */
 .grid {
     position: absolute;
     inset: 0;
     background-image:
-        linear-gradient(var(--border-color) 1px, transparent 1px),
-        linear-gradient(90deg, var(--border-color) 1px, transparent 1px);
-    background-size: 48px 48px;
+        linear-gradient(var(--c-line) 1px, transparent 1px),
+        linear-gradient(90deg, var(--c-line) 1px, transparent 1px);
+    background-size: 40px 40px;
+    opacity: 0.5; /* Suavizar cuadrícula */
     pointer-events: none;
-    mask-image: radial-gradient(ellipse 80% 80% at 50% 50%, black 40%, transparent 100%);
-    -webkit-mask-image: radial-gradient(ellipse 80% 80% at 50% 50%, black 40%, transparent 100%);
+    mask-image: radial-gradient(ellipse 70% 70% at 50% 50%, black 30%, transparent 100%);
+    -webkit-mask-image: radial-gradient(ellipse 70% 70% at 50% 50%, black 30%, transparent 100%);
 }
 
 /* ── Top bar ── */
@@ -39,36 +38,40 @@
     top: 0;
     left: 0;
     right: 0;
-    padding: var(--spacing-lg) var(--spacing-2xl);
+    padding: 24px 40px;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    border-bottom: 1px solid var(--border-color);
+    border-bottom: 1.5px solid var(--c-line);
+    background: rgba(255, 255, 255, 0.4);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
 }
 
 .logo {
     display: flex;
     align-items: center;
-    gap: var(--spacing-sm);
-    font-size: 0.8rem;
-    font-weight: 600;
-    letter-spacing: 0.06em;
+    gap: 8px;
+    font-size: 0.85rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
     text-transform: uppercase;
-    color: var(--text-primary);
+    color: var(--c-ink);
 }
 
 .statusPill {
     display: inline-flex;
     align-items: center;
-    gap: 0.4rem;
+    gap: 6px;
     font-size: 0.72rem;
-    font-weight: 500;
-    color: var(--color-danger);
-    background: color-mix(in srgb, var(--color-danger) 8%, transparent);
-    border: 1px solid color-mix(in srgb, var(--color-danger) 22%, transparent);
-    padding: 0.3rem var(--spacing-md);
-    border-radius: var(--radius-full);
-    letter-spacing: 0.03em;
+    font-weight: 600;
+    color: var(--c-danger-strong, #dc2626);
+    background: var(--c-danger-dim, #fef2f2);
+    border: 1.5px solid var(--c-danger-mid, #fecaca);
+    padding: 6px 14px;
+    border-radius: var(--r-full);
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
 }
 
 .statusDot {
@@ -76,7 +79,7 @@
     height: 6px;
     flex-shrink: 0;
     border-radius: 50%;
-    background: var(--color-danger);
+    background: var(--c-danger);
     animation: blink 2s ease-in-out infinite;
 }
 
@@ -90,50 +93,55 @@
     display: flex;
     flex-direction: column;
     align-items: flex-start;
-    max-width: 680px;
+    max-width: 720px;
     width: 100%;
-    padding: 0 var(--spacing-2xl);
+    padding: 0 40px;
+    position: relative;
+    z-index: 10; /* encima del grid */
 }
 
 /* ── Eyebrow ── */
 .eyebrow {
     font-size: 0.75rem;
-    font-weight: 500;
+    font-weight: 700;
     letter-spacing: 0.12em;
     text-transform: uppercase;
-    color: var(--text-tertiary);
-    margin-bottom: var(--spacing-md);
+    color: var(--c-muted);
+    margin-bottom: 24px;
 }
 
 /* ── Heading ── */
 .heading {
-    font-family: var(--font-serif);
-    font-size: clamp(2.8rem, 8vw, 5.5rem);
+    font-family: var(--font-serif, 'Montserrat'), sans-serif;
+    font-size: clamp(3rem, 8vw, 6rem);
     font-weight: 800;
     line-height: 1.05;
-    letter-spacing: -0.02em;
-    color: var(--text-primary);
-    margin-bottom: var(--spacing-lg);
+    letter-spacing: -0.03em;
+    color: var(--c-ink);
+    margin-bottom: 30px;
 }
 
 .headingAccent {
-    color: var(--text-primary);
+    color: var(--c-ink);
     position: relative;
     display: inline-block;
 }
 
+/* Subrayado Ámbar Editorial */
 .headingAccent::after {
     content: '';
     position: absolute;
-    bottom: 4px;
+    bottom: 6px;
     left: 0;
     right: 0;
-    height: 3px;
-    background: var(--color-primary);
-    border-radius: var(--radius-sm);
+    height: 16px;
+    background: var(--c-primary);
+    opacity: 0.4;
+    border-radius: var(--r-sm);
     transform: scaleX(0);
     transform-origin: left;
-    animation: underlineIn 0.8s cubic-bezier(0.22, 1, 0.36, 1) 1s forwards;
+    animation: underlineIn 0.8s cubic-bezier(0.22, 1, 0.36, 1) 0.6s forwards;
+    z-index: -1;
 }
 
 @keyframes underlineIn {
@@ -142,19 +150,19 @@
 
 /* ── Description ── */
 .description {
-    font-size: 1rem;
-    line-height: 1.75;
-    color: var(--text-secondary);
-    max-width: 480px;
+    font-size: 1.05rem;
+    line-height: 1.6;
+    color: var(--c-muted);
+    max-width: 500px;
     font-weight: 400;
 }
 
 /* ── Divider ── */
 .divider {
     width: 100%;
-    height: 1px;
-    background: var(--border-color);
-    margin: var(--spacing-xl) 0;
+    height: 1.5px;
+    background: var(--c-line);
+    margin: 40px 0;
 }
 
 /* ── Countdown ── */
@@ -165,141 +173,108 @@
 .countdownHeader {
     display: flex;
     align-items: center;
-    gap: var(--spacing-xs);
-    font-size: 0.72rem;
-    font-weight: 600;
-    letter-spacing: 0.1em;
+    gap: 8px;
+    font-size: 0.74rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
     text-transform: uppercase;
-    color: var(--text-tertiary);
-    margin-bottom: var(--spacing-md);
+    color: var(--c-muted);
+    margin-bottom: 16px;
 }
 
 .segments {
     display: flex;
     align-items: flex-end;
-    gap: var(--spacing-xs);
+    gap: 12px;
 }
 
 .segment {
     display: flex;
     flex-direction: column;
     align-items: center;
-    min-width: 72px;
+    min-width: 80px;
 }
 
 .segmentValue {
-    font-family: var(--font-serif);
-    font-size: clamp(2.2rem, 5vw, 3.5rem);
-    font-weight: 700;
+    font-family: var(--font-serif, 'Montserrat'), sans-serif;
+    font-size: clamp(2.5rem, 6vw, 4rem);
+    font-weight: 800;
     line-height: 1;
-    color: var(--text-primary);
+    color: var(--c-ink);
     font-variant-numeric: tabular-nums;
     letter-spacing: -0.02em;
 }
 
 .segmentLabel {
-    font-size: 0.65rem;
-    font-weight: 500;
+    font-size: 0.70rem;
+    font-weight: 600;
     letter-spacing: 0.1em;
     text-transform: uppercase;
-    color: var(--text-tertiary);
-    margin-top: var(--spacing-xs);
+    color: var(--c-muted);
+    margin-top: 8px;
 }
 
 .colon {
-    font-family: var(--font-serif);
-    font-size: clamp(1.8rem, 4vw, 3rem);
-    font-weight: 700;
-    color: var(--text-tertiary);
+    font-family: var(--font-serif, 'Montserrat'), sans-serif;
+    font-size: clamp(2rem, 5vw, 3.2rem);
+    font-weight: 800;
+    color: var(--c-muted);
     line-height: 1;
-    padding-bottom: 1.4rem;
-    padding-inline: var(--spacing-xs);
+    padding-bottom: 1.6rem;
+    padding-inline: 4px;
     user-select: none;
+    opacity: 0.5;
 }
 
 .indefinite {
-    font-family: var(--font-serif);
-    font-size: 2.2rem;
-    font-weight: 700;
-    color: var(--text-tertiary);
+    font-family: var(--font-serif, 'Montserrat'), sans-serif;
+    font-size: 2.5rem;
+    font-weight: 800;
+    color: var(--c-muted);
 }
 
 /* ── Alert note ── */
 .alertNote {
     display: inline-flex;
     align-items: center;
-    gap: var(--spacing-sm);
-    font-size: 0.8rem;
-    font-weight: 400;
-    color: var(--text-secondary);
-    margin-top: var(--spacing-xl);
-    padding: var(--spacing-sm) var(--spacing-md);
-    border: 1px solid var(--border-color);
-    background: var(--card-background);
-    border-radius: var(--radius-md);
+    gap: 12px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: var(--c-ink);
+    margin-top: 40px;
+    padding: 12px 18px;
+    border: 1.5px solid var(--c-primary-mid);
+    background: var(--c-primary-dim);
+    border-radius: var(--r-md);
 }
 
 /* ── Footer ── */
 .footer {
     position: absolute;
-    bottom: var(--spacing-lg);
-    font-size: 0.72rem;
-    color: var(--text-tertiary);
-    letter-spacing: 0.04em;
+    bottom: 24px;
+    font-size: 0.75rem;
+    font-weight: 500;
+    color: var(--c-muted);
+    letter-spacing: 0.05em;
 }
 
-/* ── Responsive — Tablet ── */
+/* ── Responsive ── */
 @media (max-width: 768px) {
-    .topBar {
-        padding: var(--spacing-md) var(--spacing-lg);
-    }
-
-    .main {
-        padding: 0 var(--spacing-lg);
-    }
-
-    .heading {
-        margin-bottom: var(--spacing-md);
-    }
-
-    .segment {
-        min-width: 60px;
-    }
-
-    .colon {
-        padding-bottom: 1.2rem;
-        padding-inline: 2px;
-    }
+    .topBar { padding: 16px 24px; }
+    .main { padding: 0 24px; }
+    .heading { margin-bottom: 20px; }
+    .segment { min-width: 64px; }
+    .colon { padding-bottom: 1.4rem; }
+    .footer { bottom: 16px; }
 }
 
-/* ── Responsive — Mobile ── */
 @media (max-width: 480px) {
-    .topBar {
-        padding: var(--spacing-md) var(--spacing-md);
-    }
-
-    .main {
-        padding: 0 var(--spacing-md);
-    }
-
-    .logo span {
-        display: none;
-    }
-
-    .segment {
-        min-width: 44px;
-    }
-
-    .segmentValue {
-        font-size: clamp(1.8rem, 9vw, 2.2rem);
-    }
-
-    .colon {
-        padding-bottom: 1rem;
-        font-size: clamp(1.5rem, 6vw, 1.8rem);
-    }
-
-    .indefinite {
-        font-size: 1.8rem;
-    }
+    .topBar { padding: 12px 16px; }
+    .main { padding: 0 16px; }
+    .logo span { display: none; }
+    .segment { min-width: 50px; }
+    .segmentValue { font-size: clamp(2rem, 10vw, 2.5rem); }
+    .colon { padding-bottom: 1.2rem; font-size: clamp(1.6rem, 7vw, 2rem); }
+    .indefinite { font-size: 2rem; }
+    .description { font-size: 0.95rem; }
 }
