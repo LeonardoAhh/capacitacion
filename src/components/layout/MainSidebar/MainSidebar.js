@@ -20,7 +20,8 @@ const NAV_SECTIONS = [
         items: [
             { id: 'empleados',    label: 'Candidatos',    href: '/employees',     icon: Users },
             { id: 'candidates',   label: 'Control App',  href: '/candidates',    icon: Users },
-            { id: 'programacion', label: 'Empleados', href: '/programacion',  icon: CalendarRange },
+            { id: 'programacion', label: 'Empleados',    href: '/programacion',  icon: CalendarRange },
+            { id: 'contratos',    label: 'Contratos',    href: '/contratos',     icon: FileText },
         ],
     },
     {
@@ -84,7 +85,7 @@ export default function MainSidebar({ user, handleLogout, isOpen, onClose, isCol
 
     const getDefaultOpen = () => {
         if (pathname.startsWith('/capacitacion')) return 'capacitacion';
-        if (pathname.startsWith('/employees') || pathname.startsWith('/candidates') || pathname.startsWith('/programacion')) return 'ingresos';
+        if (pathname.startsWith('/employees') || pathname.startsWith('/candidates') || pathname.startsWith('/programacion') || pathname.startsWith('/contratos')) return 'ingresos';
         if (pathname.startsWith('/induccion') || pathname.startsWith('/prototipo') || pathname.startsWith('/mural')) return 'recursos';
         return null;
     };

@@ -379,13 +379,19 @@
    ================================================================ */
 .contentArea {
     grid-column: 2;
-    padding: 30px 48px 80px;
+    padding: 24px 32px 80px;
     display: flex;
     flex-direction: column;
     gap: 24px;
     min-width: 0;
     max-width: 1800px;
     width: 100%;
+}
+
+@media (max-width: 767px) {
+    .contentArea {
+        padding: 16px 16px 80px;
+    }
 }
 
 /* ================================================================

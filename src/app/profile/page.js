@@ -6,101 +6,102 @@ import { useRouter } from 'next/navigation';
 import styles from './page.module.css';
 import { createAvatar } from '@dicebear/core';
 import { lorelei } from '@dicebear/collection';
-import { Eye, EyeOff, RefreshCw, Briefcase, Building2, Calendar, User2, User, Shield, BookOpen } from 'lucide-react';
-import BackButton from '@/components/ui/BackButton/BackButton';
+import {
+    Eye, EyeOff, RefreshCw, Calendar, User2, User, Shield, BookOpen
+} from 'lucide-react';
 import { useToast } from '@/components/ui/Toast/Toast';
 import { Badge } from '@/components/ui/Badge/Badge';
-import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/Card/Card';
-import { TabsComplete } from '@/components/ui/Tabs/Tabs';
 import { Skeleton } from '@/components/ui/Skeleton/Skeleton';
 import AdminLayout from '@/components/layout/AdminLayout/AdminLayout';
 
+// ── Helpers ──────────────────────────────────────────────────────────────────
+
+const ROLE_BADGE_VARIANT = {
+    super_admin: 'danger', SUPER_ADMIN: 'danger',
+    admin: 'secondary',   ADMIN: 'secondary',
+};
+
+const ADMIN_ROLES   = ['admin', 'superadmin', 'super_admin', 'ADMIN', 'SUPER_ADMIN'];
+const AUDITOR_ROLES = ['super_admin', 'SUPER_ADMIN'];
+
+// ── Componente principal ──────────────────────────────────────────────────────
+
 export default function ProfilePage() {
-    const { user, loading, updateUserProfile, signOut } = useAuth();
+    const { user, loading, updateUserProfile } = useAuth();
     const router = useRouter();
-    const [avatarSeed, setAvatarSeed] = useState('');
 
-    // Email Reveal State
-    const [isRevealed, setIsRevealed] = useState(false);
+    const [avatarSeed, setAvatarSeed]   = useState('');
+    const [isRevealed, setIsRevealed]   = useState(false);
+    const [activeTab,  setActiveTab]    = useState('perfil');
 
+    // Redirect instructores
     useEffect(() => {
-        if (user) {
-            if (user.rol === 'instructor' || user.rol === 'INSTRUCTOR') {
-                router.push('/induccion');
-                return;
-            }
-            // Prioritize saved avatarSeed, otherwise use email as default seed
-            setAvatarSeed(user.avatarSeed || user.email);
-        }
+        if (!user) return;
+        const rol = user.rol?.toLowerCase();
+        if (rol === 'instructor') { router.push('/induccion'); return; }
+        setAvatarSeed(user.avatarSeed || user.email);
     }, [user, router]);
 
-    const avatarSvg = useMemo(() => {
-        return createAvatar(lorelei, {
+    // Redirect si no autenticado
+    useEffect(() => {
+        if (!loading && !user) router.push('/login');
+    }, [user, loading, router]);
+
+    const avatarSvg = useMemo(() =>
+        createAvatar(lorelei, {
             seed: avatarSeed || 'placeholder',
             size: 120,
             backgroundColor: ['b6e3f4', 'c0aede', 'd1d4f9'],
-        }).toString();
-    }, [avatarSeed]);
+        }).toString(),
+    [avatarSeed]);
 
     const handleRandomizeAvatar = async () => {
         const newSeed = Math.random().toString(36).substring(7);
-        // Optimistically update local state
         setAvatarSeed(newSeed);
-
-        // Save to Firestore
-        if (user && user.uid) {
-            await updateUserProfile(user.uid, { avatarSeed: newSeed });
-        }
+        if (user?.uid) await updateUserProfile(user.uid, { avatarSeed: newSeed });
     };
 
-    useEffect(() => {
-        if (!loading && !user) {
-            router.push('/login');
-        }
-    }, [user, loading, router]);
-
+    // ── Loading skeleton ──────────────────────────────────────────────────────
     if (loading || !user) {
         return (
-            <div style={{ minHeight: '100vh', backgroundColor: 'var(--bg-primary)' }}>
-                <main className={styles.container}>
-                    <div className={styles.headerCard}>
-                        <Skeleton variant="rectangular" height={120} className={styles.bannerSkeleton} />
-                        <div className={styles.avatarSection}>
-                            <Skeleton variant="circular" width={120} height={120} style={{ marginTop: '-60px', border: '4px solid var(--card-background)', flexShrink: 0 }} />
-                            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+            <AdminLayout title="Perfil de Usuario">
+                <div className={styles.container}>
+                    <div className={styles.heroCard}>
+                        <Skeleton variant="rectangular" height={130} className={styles.bannerSkeleton} />
+                        <div className={styles.heroBody} style={{ marginTop: 0 }}>
+                            <Skeleton variant="circular" width={96} height={96} style={{ marginTop: '-48px', border: '4px solid var(--card-background)', flexShrink: 0 }} />
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', paddingBottom: 20 }}>
                                 <Skeleton variant="text" width={220} height={32} />
                                 <Skeleton variant="text" width={180} height={18} />
                                 <Skeleton variant="text" width={90} height={22} />
                             </div>
                         </div>
                     </div>
-                    <Skeleton variant="rectangular" height={48} style={{ borderRadius: 'var(--radius-lg)' }} />
-                    <Skeleton variant="rectangular" height={200} style={{ borderRadius: 'var(--radius-xl)' }} />
-                </main>
-            </div>
+                    <Skeleton variant="rectangular" height={52} style={{ borderRadius: '20px' }} />
+                    <Skeleton variant="rectangular" height={180} style={{ borderRadius: '20px' }} />
+                </div>
+            </AdminLayout>
         );
     }
 
-    // Role badge
-    const ROLE_BADGE_VARIANT = { super_admin: 'danger', SUPER_ADMIN: 'danger', admin: 'secondary', ADMIN: 'secondary' };
+    // ── Datos derivados ───────────────────────────────────────────────────────
     const roleBadgeVariant = ROLE_BADGE_VARIANT[user?.rol] ?? 'info';
-    const isAdmin = ['admin', 'superadmin', 'super_admin', 'ADMIN', 'SUPER_ADMIN'].includes(user?.rol);
-    const isAuditor = ['super_admin'].includes(user?.rol);
+    const isAdmin   = ADMIN_ROLES.includes(user?.rol);
+    const isAuditor = AUDITOR_ROLES.includes(user?.rol);
 
-    // Detail rows declarativos
     const detailRows = [
-        { icon: <Calendar  size={16} />, label: 'Fecha Ingreso', value: user?.fechaIngreso  || 'No definida'  },
+        { icon: <Calendar size={16} />, label: 'Fecha Ingreso', value: user?.fechaIngreso  || 'No definida'  },
         { icon: <User2     size={16} />, label: 'Género',        value: user?.genero        || 'No definido' },
     ];
 
-    // Tabs dinámicas
+    // ── Tabs declarativas ─────────────────────────────────────────────────────
     const profileTabs = [
         {
-            value: 'perfil', label: 'Perfil', icon: <User size={16} />,
+            value: 'perfil', label: 'Mi Perfil', icon: <User size={15} />,
             content: (
-                <Card hover={false} className={styles.detailsCard}>
-                    <CardHeader><CardTitle as="h3" className={styles.detailsTitle}>Detalles del Perfil</CardTitle></CardHeader>
-                    <CardContent className={styles.detailsContent}>
+                <div className={styles.detailsCard}>
+                    <h3 className={styles.detailsTitle}>Detalles del Perfil</h3>
+                    <div className={styles.detailsContent}>
                         {detailRows.map(({ icon, label, value }) => (
                             <div key={label} className={styles.detailRow}>
                                 <span className={styles.detailIcon}>{icon}</span>
@@ -108,36 +109,46 @@ export default function ProfilePage() {
                                 <span className={styles.detailValue}>{value}</span>
                             </div>
                         ))}
-                    </CardContent>
-                </Card>
+                    </div>
+                </div>
             ),
         },
         ...(isAdmin ? [{
-            value: 'administracion', label: 'Administración', icon: <Shield size={16} />,
-            content: <div className={styles.tabSection}><AdminSection /><AdminMuralSection /></div>,
+            value: 'administracion', label: 'Administración', icon: <Shield size={15} />,
+            content: (
+                <div className={styles.tabSection}>
+                    <AdminSection />
+                    <AdminMuralSection />
+                </div>
+            ),
         }] : []),
         ...(isAuditor ? [{
-            value: 'auditoria', label: 'Auditoría', icon: <BookOpen size={16} />,
-            content: <div className={styles.tabSection}><InduccionAuditSection /></div>,
+            value: 'auditoria', label: 'Auditoría', icon: <BookOpen size={15} />,
+            content: (
+                <div className={styles.tabSection}>
+                    <InduccionAuditSection />
+                </div>
+            ),
         }] : []),
     ];
 
+    const visibleTab = profileTabs.find(t => t.value === activeTab) ?? profileTabs[0];
+
+    // ── Render ────────────────────────────────────────────────────────────────
     return (
         <AdminLayout title="Perfil de Usuario">
             <main className={styles.container} id="main-content">
-                <BackButton onClick={() => router.back()} />
 
-                {/* ── Header Card Premium ── */}
-                <div className={styles.headerCard}>
-                    <div className={styles.banner} aria-hidden="true" />
+                {/* ── Hero Card ── */}
+                <div className={styles.heroCard}>
+                    <div className={styles.heroBanner} aria-hidden="true" />
 
-                    <div className={styles.avatarSection}>
-                        {/* Avatar con ring + hover overlay */}
+                    <div className={styles.heroBody}>
+                        {/* Avatar */}
                         <div className={styles.avatarWrapper}>
                             <div
                                 className={styles.avatar}
                                 dangerouslySetInnerHTML={{ __html: avatarSvg }}
-                                style={{ overflow: 'hidden' }}
                                 role="img"
                                 aria-label={`Avatar de ${user.name || user.displayName || 'Usuario'}`}
                             />
@@ -147,40 +158,41 @@ export default function ProfilePage() {
                                 aria-label="Cambiar avatar aleatorio"
                                 title="Cambiar Avatar"
                             >
-                                <RefreshCw size={18} />
+                                <RefreshCw size={14} />
                             </button>
                             <div className={styles.statusIndicator} role="status" aria-label="Estado: Activo" title="Activo" />
                         </div>
 
-                        {/* Texto: meta, nombre, email pill, badge */}
-                        <div className={styles.headerContent}>
+                        {/* Contenido textual */}
+                        <div className={styles.heroContent}>
                             {(user.puesto || user.departamento) && (
-                                <p className={styles.headerMeta}>
-                                    {[user.puesto, user.departamento].filter(Boolean).join(' · ')}
+                                <p className={styles.heroMeta}>
+                                    {user.puesto && <span>{user.puesto}</span>}
+                                    {user.puesto && user.departamento && <span className={styles.heroMetaDot} />}
+                                    {user.departamento && <span>{user.departamento}</span>}
                                 </p>
                             )}
 
-                            <h1 className={styles.pageTitle}>
+                            <h1 className={styles.heroName}>
                                 {user.name || user.displayName || 'Usuario'}
                             </h1>
 
-                            <div className={styles.emailSection}>
-                                <div
-                                    className={styles.emailPill}
-                                    onClick={() => setIsRevealed(!isRevealed)}
-                                    role="button"
-                                    tabIndex={0}
-                                    aria-pressed={isRevealed}
-                                    title={isRevealed ? 'Click para ocultar' : 'Click para ver email'}
-                                    onKeyDown={(e) => e.key === 'Enter' && setIsRevealed(!isRevealed)}
-                                >
-                                    <span className={styles.revealIcon} aria-hidden="true">
-                                        {isRevealed ? <Eye size={15} /> : <EyeOff size={15} />}
-                                    </span>
-                                    <span className={`${styles.emailText} ${isRevealed ? styles.noBlur : styles.blur}`}>
-                                        {user.email || 'correo@ejemplo.com'}
-                                    </span>
-                                </div>
+                            {/* Email pill con blur/reveal */}
+                            <div
+                                className={styles.emailPill}
+                                onClick={() => setIsRevealed(v => !v)}
+                                role="button"
+                                tabIndex={0}
+                                aria-pressed={isRevealed}
+                                title={isRevealed ? 'Click para ocultar email' : 'Click para revelar email'}
+                                onKeyDown={(e) => e.key === 'Enter' && setIsRevealed(v => !v)}
+                            >
+                                <span className={styles.revealIcon} aria-hidden="true">
+                                    {isRevealed ? <Eye size={14} /> : <EyeOff size={14} />}
+                                </span>
+                                <span className={`${styles.emailText} ${isRevealed ? styles.noBlur : styles.blur}`}>
+                                    {user.email || 'correo@ejemplo.com'}
+                                </span>
                             </div>
 
                             <div className={styles.badgeContainer}>
@@ -192,33 +204,57 @@ export default function ProfilePage() {
                     </div>
                 </div>
 
-                {/* ── Tabs organizadas ── */}
-                <TabsComplete tabs={profileTabs} defaultValue="perfil" className={styles.tabsContainer} />
+                {/* ── Tab Navigation ── */}
+                <nav className={styles.tabNav} role="tablist" aria-label="Secciones del perfil">
+                    {profileTabs.map(tab => (
+                        <button
+                            key={tab.value}
+                            role="tab"
+                            aria-selected={activeTab === tab.value}
+                            aria-controls={`tabpanel-${tab.value}`}
+                            className={`${styles.tabBtn} ${activeTab === tab.value ? styles.tabBtnActive : ''}`}
+                            onClick={() => setActiveTab(tab.value)}
+                        >
+                            {tab.icon}
+                            {tab.label}
+                        </button>
+                    ))}
+                </nav>
+
+                {/* ── Tab Content ── */}
+                <div
+                    id={`tabpanel-${visibleTab.value}`}
+                    role="tabpanel"
+                    className={styles.tabContent}
+                >
+                    {visibleTab.content}
+                </div>
+
             </main>
         </AdminLayout>
     );
 }
 
-// Subcomponente para evitar re-renders innecesarios y organizar código
+// ══════════════════════════════════════════════════════════════════════════════
+// SUB-COMPONENTES (lógica de negocio intacta, solo estilos actualizados)
+// ══════════════════════════════════════════════════════════════════════════════
 import { doc, getDoc, setDoc, onSnapshot, collection, query, orderBy, limit, where, getDocs } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import { AlertTriangle, Trash2, UploadCloud, FileEdit, ChevronDown, ChevronUp } from 'lucide-react';
 
+// ── ADMIN SECTION ─────────────────────────────────────────────────────────────
 function AdminSection() {
     const { toast } = useToast();
     const [isMaintenance, setIsMaintenance] = useState(false);
-    const [duration, setDuration] = useState(2); // Horas por defecto
-    const [loading, setLoading] = useState(true);
-    const [isOpen, setIsOpen] = useState(false);
+    const [duration, setDuration]           = useState(2);
+    const [loading, setLoading]             = useState(true);
+    const [isOpen, setIsOpen]               = useState(false);
 
     useEffect(() => {
         const configRef = doc(db, 'app_config', 'general');
         const unsubscribe = onSnapshot(configRef, (docSnap) => {
             if (docSnap.exists()) {
-                const data = docSnap.data();
-                setIsMaintenance(data.maintenanceMode || false);
-                // Si ya hay una fecha guardada, podríamos calcular las horas restantes para mostrar, 
-                // pero por simplicidad dejaremos el selector en su valor por defecto o último usado.
+                setIsMaintenance(docSnap.data().maintenanceMode || false);
             }
             setLoading(false);
         });
@@ -227,15 +263,12 @@ function AdminSection() {
 
     const toggleMaintenance = async () => {
         const newState = !isMaintenance;
-        setIsMaintenance(newState); // Optimistic
-
+        setIsMaintenance(newState);
         try {
             const updateData = {
                 maintenanceMode: newState,
-                maintenanceMessage: "Estamos realizando mejoras en la plataforma. Volveremos pronto."
+                maintenanceMessage: 'Estamos realizando mejoras en la plataforma. Volveremos pronto.',
             };
-
-            // Si se activa, calculamos la fecha de fin
             if (newState) {
                 const endDate = new Date();
                 endDate.setHours(endDate.getHours() + parseInt(duration));
@@ -243,245 +276,188 @@ function AdminSection() {
             } else {
                 updateData.maintenanceUntil = null;
             }
-
             await setDoc(doc(db, 'app_config', 'general'), updateData, { merge: true });
         } catch (error) {
-            console.error("Error updating maintenance mode:", error);
+            console.error('Error updating maintenance mode:', error);
             setIsMaintenance(!newState);
-            toast.error("Error al actualizar el modo mantenimiento");
+            toast.error('Error al actualizar el modo mantenimiento');
         }
     };
 
     if (loading) return null;
 
     return (
-        <div className={styles.card} style={{
-            borderColor: isMaintenance ? '#ef4444' : 'var(--border-color)',
-            padding: isOpen ? '20px' : '0',
-            overflow: 'hidden'
-        }}>
+        <div className={`${styles.accordionPanel} ${isMaintenance ? styles.accordionPanelDanger : ''}`}>
+            {/* Header */}
             <div
-                onClick={() => setIsOpen(!isOpen)}
-                style={{
-                    padding: isOpen ? '0 0 15px 0' : '20px',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'space-between',
-                    cursor: 'pointer',
-                    borderBottom: isOpen ? '1px solid var(--border-color)' : 'none'
-                }}
+                className={`${styles.accordionHeader} ${isOpen ? styles.accordionHeaderOpen : ''} ${isMaintenance ? styles.accordionHeaderDanger : ''}`}
+                onClick={() => setIsOpen(v => !v)}
+                role="button"
+                aria-expanded={isOpen}
+                tabIndex={0}
+                onKeyDown={(e) => e.key === 'Enter' && setIsOpen(v => !v)}
             >
-                <h3 className={styles.cardTitle} style={{ color: isMaintenance ? '#ef4444' : 'inherit', margin: 0 }}>
-                    <Shield className={styles.cardIcon} />
+                <h3 className={`${styles.accordionTitle} ${isMaintenance ? styles.accordionTitleDanger : ''}`}>
+                    <span className={`${styles.accordionIcon} ${isMaintenance ? styles.accordionIconDanger : ''}`}>
+                        <Shield size={18} />
+                    </span>
                     Administración del Sistema
                 </h3>
-                {isOpen ? <ChevronUp size={20} color="var(--text-secondary)" /> : <ChevronDown size={20} color="var(--text-secondary)" />}
+                <ChevronDown
+                    size={20}
+                    className={`${styles.accordionChevron} ${isOpen ? styles.accordionChevronOpen : ''}`}
+                />
             </div>
 
+            {/* Body */}
             {isOpen && (
-                <div style={{
-                    display: 'flex',
-                    flexDirection: 'column',
-                    gap: '1rem',
-                    padding: '1rem',
-                    backgroundColor: isMaintenance ? '#fef2f2' : 'var(--bg-secondary)',
-                    borderRadius: '8px',
-                    marginTop: '1rem'
-                }}>
-                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                        <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
-                            <div style={{
-                                padding: '0.5rem',
-                                borderRadius: '50%',
-                                backgroundColor: isMaintenance ? '#fee2e2' : '#e2e8f0',
-                                color: isMaintenance ? '#ef4444' : '#64748b'
-                            }}>
-                                <AlertTriangle size={24} />
+                <div className={styles.accordionBody}>
+                    <div className={styles.maintenanceBox}>
+                        <div className={styles.maintenanceRow}>
+                            <div className={styles.maintenanceInfo}>
+                                <div className={`${styles.maintenanceIcoWrap} ${isMaintenance ? styles.maintenanceIcoWrapOn : styles.maintenanceIcoWrapOff}`}>
+                                    <AlertTriangle size={20} />
+                                </div>
+                                <div>
+                                    <p className={styles.maintenanceLabel}>Modo Mantenimiento</p>
+                                    <p className={styles.maintenanceSub}>
+                                        {isMaintenance
+                                            ? 'La plataforma está bloqueada para usuarios.'
+                                            : 'La plataforma está accesible para todos.'
+                                        }
+                                    </p>
+                                </div>
                             </div>
-                            <div>
-                                <h4 style={{ margin: 0, fontSize: '0.95rem', fontWeight: 600, color: 'var(--text-primary)' }}>
-                                    Modo Mantenimiento
-                                </h4>
-                                <p style={{ margin: 0, fontSize: '0.8rem', color: 'var(--text-secondary)' }}>
-                                    {isMaintenance
-                                        ? 'La plataforma está bloqueada para usuarios.'
-                                        : 'La plataforma está accesible para todos.'}
-                                </p>
-                            </div>
+
+                            {/* Toggle visual */}
+                            <label className={styles.toggleWrap} title={isMaintenance ? 'Desactivar mantenimiento' : 'Activar mantenimiento'}>
+                                <input
+                                    type="checkbox"
+                                    className={styles.toggleInput}
+                                    checked={isMaintenance}
+                                    onChange={toggleMaintenance}
+                                    aria-label="Modo mantenimiento"
+                                />
+                                <span className={`${styles.toggleTrack} ${isMaintenance ? styles.toggleTrackOn : styles.toggleTrackOff}`}>
+                                    <span className={styles.toggleThumb} style={{ left: isMaintenance ? '24px' : '3px' }} />
+                                </span>
+                            </label>
                         </div>
 
-                        <label style={{ position: 'relative', display: 'inline-block', width: '50px', height: '26px', cursor: 'pointer' }}>
-                            <input
-                                type="checkbox"
-                                checked={isMaintenance}
-                                onChange={toggleMaintenance}
-                                style={{ opacity: 0, width: 0, height: 0 }}
-                            />
-                            <span style={{
-                                position: 'absolute',
-                                cursor: 'pointer',
-                                top: 0, left: 0, right: 0, bottom: 0,
-                                backgroundColor: isMaintenance ? '#ef4444' : '#ccc',
-                                transition: '.4s',
-                                borderRadius: '34px'
-                            }}>
-                                <span style={{
-                                    position: 'absolute',
-                                    content: '""',
-                                    height: '20px', width: '20px',
-                                    left: isMaintenance ? '26px' : '4px',
-                                    bottom: '3px',
-                                    backgroundColor: 'white',
-                                    transition: '.4s',
-                                    borderRadius: '50%'
-                                }}></span>
-                            </span>
-                        </label>
+                        {!isMaintenance && (
+                            <div className={styles.maintenanceDurationRow}>
+                                <span className={styles.maintenanceDurationLabel}>Duración estimada:</span>
+                                <select
+                                    value={duration}
+                                    onChange={(e) => setDuration(e.target.value)}
+                                    className={styles.maintenanceDurationSelect}
+                                >
+                                    {[1, 2, 4, 8, 12, 24, 48].map(h => (
+                                        <option key={h} value={h}>{h} {h === 1 ? 'hora' : 'horas'}</option>
+                                    ))}
+                                </select>
+                            </div>
+                        )}
                     </div>
 
-                    {!isMaintenance && (
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginLeft: '3.5rem' }}>
-                            <label style={{ fontSize: '0.85rem', color: 'var(--text-secondary)' }}>
-                                Duración estimada:
-                            </label>
-                            <select
-                                value={duration}
-                                onChange={(e) => setDuration(e.target.value)}
-                                style={{
-                                    padding: '4px 8px',
-                                    borderRadius: '4px',
-                                    border: '1px solid var(--border-color)',
-                                    fontSize: '0.85rem',
-                                    backgroundColor: 'var(--bg-primary)',
-                                    color: 'var(--text-primary)'
-                                }}
-                            >
-                                <option value="1">1 hora</option>
-                                <option value="2">2 horas</option>
-                                <option value="4">4 horas</option>
-                                <option value="8">8 horas</option>
-                                <option value="12">12 horas</option>
-                                <option value="24">24 horas</option>
-                                <option value="48">48 horas</option>
-                            </select>
-                        </div>
+                    {isMaintenance && (
+                        <p className={styles.maintenanceWarning}>
+                            ⚠ Tú sigues teniendo acceso por ser Administrador.
+                        </p>
                     )}
-                </div>
-            )}
-
-            {isMaintenance && (
-                <div style={{ marginTop: '10px', fontSize: '0.75rem', color: '#ef4444', fontWeight: 500 }}>
-                    ⚠ Tú sigues teniendo acceso por ser Administrador.
                 </div>
             )}
         </div>
     );
 }
 
-// ── ADMIN MURAL SECTION ──
+// ── ADMIN MURAL SECTION ───────────────────────────────────────────────────────
 import { Presentation, Save, RefreshCcw, Download, Pencil, Check, X as CancelIcon } from 'lucide-react';
 import { deleteDoc } from 'firebase/firestore';
 import QRCode from 'qrcode';
 
-// Helper para extraer nombre(s) asumiendo formato "ApellidoPaterno ApellidoMaterno Nombre(s)"
 const extractFirstName = (fullName) => {
     if (!fullName) return '';
     const parts = fullName.trim().split(/\s+/);
-    if (parts.length >= 3) {
-        return parts.slice(2).join(' '); // Retorna los nombres, ignorando los dos apellidos
-    } else if (parts.length === 2) {
-        return parts[1]; // Si son 2 palabras asume [Apellido] [Nombre]
-    }
+    if (parts.length >= 3) return parts.slice(2).join(' ');
+    if (parts.length === 2) return parts[1];
     return parts[0];
 };
 
 function AdminMuralSection() {
     const { toast } = useToast();
-    const [syncing, setSyncing] = useState(false);
-    const [loadingConfig, setLoadingConfig] = useState(true);
-    const [showManualForm, setShowManualForm] = useState(false);
-    const [muralList, setMuralList] = useState([]);
-    const [editingMuralId, setEditingMuralId] = useState(null);
-    const [editData, setEditData] = useState({});
-    const [isOpen, setIsOpen] = useState(false);
+    const [syncing,         setSyncing]         = useState(false);
+    const [loadingConfig,   setLoadingConfig]   = useState(true);
+    const [showManualForm,  setShowManualForm]  = useState(false);
+    const [muralList,       setMuralList]       = useState([]);
+    const [editingMuralId,  setEditingMuralId]  = useState(null);
+    const [editData,        setEditData]        = useState({});
+    const [isOpen,          setIsOpen]          = useState(false);
+    const [searchingM,      setSearchingM]      = useState(false);
+    const [availableThemes, setAvailableThemes] = useState([]);
 
     const [manualData, setManualData] = useState({
-        employeeId: '', firstName: '', currentPosition: '', promotionTo: '', score: '', requiredScore: '', recommendations: []
-    });
-    const [availableThemes, setAvailableThemes] = useState([]);
-    const [messages, setMessages] = useState({
-        successMessage: '',
-        motivationalMessage: ''
+        employeeId: '', firstName: '', currentPosition: '',
+        promotionTo: '', score: '', requiredScore: '', recommendations: [],
     });
 
-    // Cargar configuración de mensajes
+    const [messages, setMessages] = useState({
+        successMessage: '', motivationalMessage: '',
+    });
+
     useEffect(() => {
+        // Configuración de mensajes
         const fetchMuralConfig = async () => {
-            const docRef = doc(db, 'app_config', 'mural');
-            const docSnap = await getDoc(docRef);
+            const docSnap = await getDoc(doc(db, 'app_config', 'mural'));
             if (docSnap.exists()) {
                 setMessages(prev => ({ ...prev, ...docSnap.data() }));
             } else {
-                // Defaults
                 setMessages({
                     successMessage: '¡Felicidades! Has aprobado tu examen teórico. Estás un paso más cerca de tu promoción.',
-                    motivationalMessage: 'El aprendizaje es un proceso constante. Te invitamos a repasar y prepararte para tu siguiente intento. ¡Confiamos en ti!'
+                    motivationalMessage: 'El aprendizaje es un proceso constante. Te invitamos a repasar y prepararte para tu siguiente intento. ¡Confiamos en ti!',
                 });
             }
             setLoadingConfig(false);
         };
         fetchMuralConfig();
 
-        // Listener para la tabla del Mural
+        // Listener de mural_exams
         const unsubMural = onSnapshot(collection(db, 'mural_exams'), (snap) => {
             const arr = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-            // Ordenar por fecha descendente o nombre
             arr.sort((a, b) => (b.date || '').localeCompare(a.date || ''));
             setMuralList(arr);
         });
 
+        // Temas de examen
         const fetchThemes = async () => {
             try {
                 const qSnap = await getDocs(collection(db, 'exam_questions'));
                 const themes = new Set();
-                qSnap.forEach(doc => {
-                    const t = doc.data().theme;
-                    if (t) themes.add(t.trim().toUpperCase());
-                });
+                qSnap.forEach(d => { const t = d.data().theme; if (t) themes.add(t.trim().toUpperCase()); });
                 setAvailableThemes(Array.from(themes).sort());
-            } catch (error) {
-                console.error("Error fetching themes", error);
-            }
+            } catch (err) { console.error('Error fetching themes', err); }
         };
         fetchThemes();
 
         return () => unsubMural();
     }, []);
 
-    // ── Lógica de Autocompletado del Formulario (M) ──
-    const [searchingM, setSearchingM] = useState(false);
-
+    // Autocompletado por ID de empleado
     const fetchEmployeeData = async () => {
         const eid = manualData.employeeId?.trim();
         if (!eid) return;
-
         setSearchingM(true);
         try {
-            // 1. Buscar en training_records (donde el usuario indicó que está el nombre y puesto real)
             const trainingQuery = query(collection(db, 'training_records'), where('employeeId', '==', eid), limit(1));
-            const trainingSnap = await getDocs(trainingQuery);
-
-            let foundName = '';
-            let foundPosition = '';
+            const trainingSnap  = await getDocs(trainingQuery);
+            let foundName = '', foundPosition = '';
 
             if (!trainingSnap.empty) {
                 const data = trainingSnap.docs[0].data();
                 foundName = data.name || '';
                 foundPosition = data.position || '';
             } else {
-                // Fallback: Buscar en employees
-                const empQuery = query(collection(db, 'employees'), where('employeeId', '==', eid), limit(1));
-                const empSnap = await getDocs(empQuery);
+                const empSnap = await getDocs(query(collection(db, 'employees'), where('employeeId', '==', eid), limit(1)));
                 if (!empSnap.empty) {
                     const eData = empSnap.docs[0].data();
                     foundName = eData.name || '';
@@ -490,641 +466,478 @@ function AdminMuralSection() {
             }
 
             if (!foundName && !foundPosition) {
-                toast.warning("No se encontró al empleado con ese ID en los registros.");
-                setSearchingM(false);
+                toast.warning('No se encontró al empleado con ese ID en los registros.');
                 return;
             }
 
-            // 2. Buscar en promotion_rules para saber hacia dónve va y cuánto score requiere
-            let promoDest = '';
-            let reqScore = '';
-
+            let promoDest = '', reqScore = '';
             if (foundPosition) {
-                const rulesQuery = query(collection(db, 'promotion_rules'), where('currentPosition', '==', foundPosition), limit(1));
-                const rulesSnap = await getDocs(rulesQuery);
-
+                const rulesSnap = await getDocs(query(collection(db, 'promotion_rules'), where('currentPosition', '==', foundPosition), limit(1)));
                 if (!rulesSnap.empty) {
-                    const ruleData = rulesSnap.docs[0].data();
-                    promoDest = ruleData.promotionTo || '';
-                    reqScore = ruleData.examMinScore || 80;
+                    const rule = rulesSnap.docs[0].data();
+                    promoDest = rule.promotionTo || '';
+                    reqScore  = rule.examMinScore || 80;
                 }
             }
-
             setManualData(prev => ({
                 ...prev,
-                firstName: extractFirstName(foundName), // Solo el nombre real extraído
+                firstName:       extractFirstName(foundName),
                 currentPosition: foundPosition,
-                promotionTo: promoDest,
-                requiredScore: reqScore
+                promotionTo:     promoDest,
+                requiredScore:   reqScore,
             }));
-
         } catch (error) {
-            console.error("Error buscando datos del empleado:", error);
-            toast.error("Hubo un problema consultando la base de datos.");
+            console.error('Error buscando datos del empleado:', error);
+            toast.error('Hubo un problema consultando la base de datos.');
         } finally {
             setSearchingM(false);
         }
     };
 
-    // Guardar mensajes
     const saveMessages = async () => {
         try {
             await setDoc(doc(db, 'app_config', 'mural'), messages, { merge: true });
-            toast.success("Mensajes actualizados correctamente");
-        } catch (error) {
-            console.error("Error saving mural config:", error);
-            toast.error("No se pudieron guardar los mensajes");
+            toast.success('Mensajes actualizados correctamente');
+        } catch {
+            toast.error('No se pudieron guardar los mensajes');
         }
     };
 
-    // Script de Sincronización Segura
     const handleSyncMural = async () => {
-        if (!confirm("Esto extraerá las calificaciones más recientes de todos los empleados y las hará públicas en el Mural (búsqueda por número de empleado). ¿Proceder?")) return;
-
+        if (!confirm('Esto extraerá las calificaciones más recientes de todos los empleados y las hará públicas en el Mural. ¿Proceder?')) return;
         setSyncing(true);
         try {
-            // 1. Obtener Reglas de Promoción para saber a dónde va y cuánto necesita
             const rulesSnapshot = await getDocs(collection(db, 'promotion_rules'));
             const rulesMap = {};
-            rulesSnapshot.docs.forEach(doc => {
-                const data = doc.data();
-                if (data.currentPosition) {
-                    rulesMap[data.currentPosition.toLowerCase().trim()] = data;
-                }
+            rulesSnapshot.docs.forEach(d => {
+                const data = d.data();
+                if (data.currentPosition) rulesMap[data.currentPosition.toLowerCase().trim()] = data;
             });
 
-            // 2. Obtener Empleados
             const empSnapshot = await getDocs(collection(db, 'employees'));
             let syncedCount = 0;
 
-            // 3. Procesar e inyectar en mural_exams separando la DB
             for (const docSnap of empSnapshot.docs) {
                 const emp = docSnap.data();
                 const examAttempts = emp.promotionData?.examAttempts || [];
-
                 if (examAttempts.length > 0 && emp.employeeId) {
-                    const lastExam = examAttempts[examAttempts.length - 1];
-
-                    // Buscar regla aplicable para el puesto actual del empleado
-                    const empPosition = emp.puesto?.toLowerCase().trim() || '';
-                    const appliedRule = rulesMap[empPosition];
-
-                    let isApproved = lastExam.passed || false;
-                    let requiredScore = 80; // default
+                    const lastExam    = examAttempts[examAttempts.length - 1];
+                    const empPos      = emp.puesto?.toLowerCase().trim() || '';
+                    const appliedRule = rulesMap[empPos];
+                    let isApproved    = lastExam.passed || false;
+                    let requiredScore = 80;
                     let promotionDest = 'Siguiente Nivel';
 
                     if (appliedRule) {
                         requiredScore = appliedRule.examMinScore || 80;
-                        promotionDest = appliedRule.promotionTo || 'Siguiente Nivel';
-
-                        // Recalcular status basado strictamente en la regla (por si pasaron con 80 pero la regla pedia 90)
-                        isApproved = (lastExam.score >= requiredScore);
+                        promotionDest = appliedRule.promotionTo  || 'Siguiente Nivel';
+                        isApproved    = lastExam.score >= requiredScore;
                     }
 
-                    const safeData = {
-                        employeeId: emp.employeeId,
-                        firstName: extractFirstName(emp.name) || 'Colaborador',
-                        fullName: emp.name || '',
+                    await setDoc(doc(db, 'mural_exams', emp.employeeId.toString()), {
+                        employeeId:      emp.employeeId,
+                        firstName:       extractFirstName(emp.name) || 'Colaborador',
+                        fullName:        emp.name || '',
                         currentPosition: emp.puesto || 'Sin Puesto',
-                        promotionTo: promotionDest,
-                        passed: isApproved,
-                        score: lastExam.score || 0,
-                        requiredScore: requiredScore,
-                        date: lastExam.date || new Date().toISOString().split('T')[0],
-                        active: true,
-                        timestamp: new Date()
-                    };
-
-                    await setDoc(doc(db, 'mural_exams', emp.employeeId.toString()), safeData);
+                        promotionTo:     promotionDest,
+                        passed:          isApproved,
+                        score:           lastExam.score || 0,
+                        requiredScore,
+                        date:            lastExam.date || new Date().toISOString().split('T')[0],
+                        active:          true,
+                        timestamp:       new Date(),
+                    });
                     syncedCount++;
                 }
             }
-
             toast.success(`Sincronización Completa. ${syncedCount} empleados actualizados en el Mural.`);
         } catch (error) {
             console.error(error);
-            toast.error("Error durante la sincronización.");
+            toast.error('Error durante la sincronización.');
         } finally {
             setSyncing(false);
         }
     };
 
-    // Guardar Manualmente Examen en Mural
     const handleManualSubmit = async (e) => {
         e.preventDefault();
         try {
-            const scoreNum = Number(manualData.score);
+            const scoreNum    = Number(manualData.score);
             const reqScoreNum = Number(manualData.requiredScore);
-            const isApproved = scoreNum >= reqScoreNum;
-
-            const safeData = {
-                employeeId: manualData.employeeId,
-                firstName: manualData.firstName,
+            await setDoc(doc(db, 'mural_exams', manualData.employeeId.toString()), {
+                employeeId:      manualData.employeeId,
+                firstName:       manualData.firstName,
                 currentPosition: manualData.currentPosition,
-                promotionTo: manualData.promotionTo,
-                passed: isApproved,
-                score: scoreNum,
-                requiredScore: reqScoreNum,
+                promotionTo:     manualData.promotionTo,
+                passed:          scoreNum >= reqScoreNum,
+                score:           scoreNum,
+                requiredScore:   reqScoreNum,
                 recommendations: Array.isArray(manualData.recommendations) ? manualData.recommendations : [],
-                date: new Date().toISOString().split('T')[0],
-                active: true,
-                timestamp: new Date()
-            };
-
-            await setDoc(doc(db, 'mural_exams', manualData.employeeId.toString()), safeData);
-            toast.success("¡Examen guardado exitosamente en el Mural!");
+                date:            new Date().toISOString().split('T')[0],
+                active:          true,
+                timestamp:       new Date(),
+            });
+            toast.success('¡Examen guardado exitosamente en el Mural!');
             setManualData({ employeeId: '', firstName: '', currentPosition: '', promotionTo: '', score: '', requiredScore: '', recommendations: [] });
             setShowManualForm(false);
         } catch (error) {
             console.error(error);
-            toast.error("Error al guardar examen manual.");
+            toast.error('Error al guardar examen manual.');
         }
     };
 
-    // Funciones de Listado, Edición y PDF
-    const handleEditClick = (mural) => {
+    const handleEditClick   = (mural) => {
         setEditingMuralId(mural.id);
         const recs = Array.isArray(mural.recommendations)
             ? mural.recommendations
             : (typeof mural.recommendations === 'string' && mural.recommendations ? [mural.recommendations] : []);
         setEditData({ ...mural, recommendations: recs });
     };
-
-    const handleCancelEdit = () => {
-        setEditingMuralId(null);
-        setEditData({});
-    };
-
-    const handleSaveEdit = async () => {
+    const handleCancelEdit  = () => { setEditingMuralId(null); setEditData({}); };
+    const handleSaveEdit    = async () => {
         try {
             const scoreNum = Number(editData.score);
-            const reqScoreNum = Number(editData.requiredScore);
-            const isApproved = scoreNum >= reqScoreNum;
-
-            const safeData = {
-                ...editData,
-                score: scoreNum,
-                requiredScore: reqScoreNum,
-                passed: isApproved
-            };
-
-            delete safeData.id; // no guardar el ID dentro del doc
-
+            const reqNum   = Number(editData.requiredScore);
+            const safeData = { ...editData, score: scoreNum, requiredScore: reqNum, passed: scoreNum >= reqNum };
+            delete safeData.id;
             await setDoc(doc(db, 'mural_exams', editingMuralId), safeData, { merge: true });
-            toast.success("Registro actualizado correctamente.");
+            toast.success('Registro actualizado correctamente.');
             setEditingMuralId(null);
-        } catch (error) {
-            console.error("Error al actualizar:", error);
-            toast.error("No se pudo actualizar el registro.");
+        } catch {
+            toast.error('No se pudo actualizar el registro.');
         }
     };
-
     const handleDeleteMural = async (id) => {
-        if (!confirm("¿Estás seguro de eliminar este registro público del Mural?")) return;
+        if (!confirm('¿Estás seguro de eliminar este registro público del Mural?')) return;
         try {
             await deleteDoc(doc(db, 'mural_exams', id));
-            toast.success("Registro eliminado.");
-        } catch (error) {
-            console.error("Error al eliminar:", error);
-            toast.error("No se pudo eliminar.");
+            toast.success('Registro eliminado.');
+        } catch {
+            toast.error('No se pudo eliminar.');
         }
     };
 
     const handleGenerateQR = async (emp) => {
         try {
             const { jsPDF } = await import('jspdf');
-            const targetUrl = `https://vertxk.xyz/mural`;
-
-            const qrDataUrl = await QRCode.toDataURL(targetUrl, {
-                width: 600,
-                margin: 0,
-                color: { dark: '#1e1e1e', light: '#FFFFFF' }
-            });
-
+            const targetUrl = 'https://vertxk.xyz/mural';
+            const qrDataUrl = await QRCode.toDataURL(targetUrl, { width: 600, margin: 0, color: { dark: '#1e1e1e', light: '#FFFFFF' } });
             const pdf = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'letter' });
-            const W = pdf.internal.pageSize.getWidth();   // 215.9mm
-            const H = pdf.internal.pageSize.getHeight();  // 279.4mm
-            const CX = W / 2; // Centro horizontal
-
-            const C = {
-                black: [30, 30, 30],
-                orange: [204, 73, 22],
-                gray: [110, 110, 110],
-                lightGray: [210, 210, 210],
-                white: [255, 255, 255],
-            };
-
-            // ─── Borde perimetral ───
-            pdf.setDrawColor(...C.black);
-            pdf.setLineWidth(0.5);
-            pdf.rect(12, 12, W - 24, H - 24);
-
-            // ─── Badge "AVISO IMPORTANTE" ───
+            const W = pdf.internal.pageSize.getWidth();
+            const H = pdf.internal.pageSize.getHeight();
+            const CX = W / 2;
+            const C  = { black: [30,30,30], orange: [204,73,22], gray: [110,110,110], lightGray: [210,210,210], white: [255,255,255] };
+            pdf.setDrawColor(...C.black); pdf.setLineWidth(0.5); pdf.rect(12, 12, W - 24, H - 24);
             const badgeW = 58, badgeH = 8, badgeX = CX - badgeW / 2, badgeY = 23;
-            pdf.setDrawColor(...C.black);
-            pdf.setLineWidth(0.25);
-            pdf.roundedRect(badgeX, badgeY, badgeW, badgeH, 4, 4, 'S');
-            pdf.setFont('helvetica', 'bold');
-            pdf.setFontSize(6.5);
-            pdf.setTextColor(...C.black);
+            pdf.setLineWidth(0.25); pdf.roundedRect(badgeX, badgeY, badgeW, badgeH, 4, 4, 'S');
+            pdf.setFont('helvetica', 'bold'); pdf.setFontSize(6.5); pdf.setTextColor(...C.black);
             pdf.text('A V I S O   I M P O R T A N T E', CX, badgeY + 5.2, { align: 'center' });
-
-            // ─── Título principal (posiciones absolutas) ───
-            pdf.setFont('times', 'bold');
-            pdf.setFontSize(34);
-            pdf.setTextColor(...C.black);
+            pdf.setFont('times', 'bold'); pdf.setFontSize(34); pdf.setTextColor(...C.black);
             pdf.text('¿Realizaste la', CX, 50, { align: 'center' });
             pdf.text('evaluación de', CX, 63, { align: 'center' });
-
-            pdf.setFont('times', 'bolditalic');
-            pdf.setTextColor(...C.orange);
+            pdf.setFont('times', 'bolditalic'); pdf.setTextColor(...C.orange);
             pdf.text('conocimientos?', CX, 77, { align: 'center' });
-
-            // ─── Línea divisora corta ───
-            pdf.setDrawColor(...C.black);
-            pdf.setLineWidth(1.2);
-            pdf.line(CX - 10, 84, CX + 10, 84);
-
-            // ─── Subtítulo ───
-            pdf.setFont('helvetica', 'normal');
-            pdf.setFontSize(9);
-            pdf.setTextColor(...C.gray);
+            pdf.setDrawColor(...C.black); pdf.setLineWidth(1.2); pdf.line(CX - 10, 84, CX + 10, 84);
+            pdf.setFont('helvetica', 'normal'); pdf.setFontSize(9); pdf.setTextColor(...C.gray);
             pdf.text('L O S   R E S U L T A D O S   E S T Á N   L I S T O S', CX, 94, { align: 'center' });
-
-            // ─── Marco del QR (posición absolutamente fija) ───
-            const QR_SIZE = 90;           // tamaño imagen QR
-            const QR_PAD = 5;            // padding entre imagen y marco
-            const QR_IMG_X = CX - QR_SIZE / 2;
-            const QR_IMG_Y = 105;         // tope superior del QR (absoluto)
-            const FRAME_X = QR_IMG_X - QR_PAD;
-            const FRAME_Y = QR_IMG_Y - QR_PAD;
-            const FRAME_W = QR_SIZE + QR_PAD * 2;
-            const FRAME_H = QR_SIZE + QR_PAD * 2;
-
-            // Marco fino
-            pdf.setDrawColor(...C.black);
-            pdf.setLineWidth(0.3);
-            pdf.roundedRect(FRAME_X, FRAME_Y, FRAME_W, FRAME_H, 1.5, 1.5, 'S');
-
-            // Imagen QR
+            const QR_SIZE=90, QR_PAD=5, QR_IMG_X=CX-QR_SIZE/2, QR_IMG_Y=105;
+            const FRAME_X=QR_IMG_X-QR_PAD, FRAME_Y=QR_IMG_Y-QR_PAD, FRAME_W=QR_SIZE+QR_PAD*2, FRAME_H=QR_SIZE+QR_PAD*2;
+            pdf.setDrawColor(...C.black); pdf.setLineWidth(0.3); pdf.roundedRect(FRAME_X, FRAME_Y, FRAME_W, FRAME_H, 1.5, 1.5, 'S');
             pdf.addImage(qrDataUrl, 'PNG', QR_IMG_X, QR_IMG_Y, QR_SIZE, QR_SIZE);
-
-            // Adornos naranjas — 4 esquinas, fuera del marco
-            const ARM = 7;
-            const OX = FRAME_X - 1;
-            const OY = FRAME_Y - 1;
-            const OW = FRAME_W + 2;
-            const OH = FRAME_H + 2;
-            pdf.setDrawColor(...C.orange);
-            pdf.setLineWidth(1.8);
-            // Superior izquierda
-            pdf.line(OX, OY, OX + ARM, OY);
-            pdf.line(OX, OY, OX, OY + ARM);
-            // Superior derecha
-            pdf.line(OX + OW, OY, OX + OW - ARM, OY);
-            pdf.line(OX + OW, OY, OX + OW, OY + ARM);
-            // Inferior izquierda
-            pdf.line(OX, OY + OH, OX + ARM, OY + OH);
-            pdf.line(OX, OY + OH, OX, OY + OH - ARM);
-            // Inferior derecha
-            pdf.line(OX + OW, OY + OH, OX + OW - ARM, OY + OH);
-            pdf.line(OX + OW, OY + OH, OX + OW, OY + OH - ARM);
-
-            // ─── URL (fija, debajo del marco) ───
-            const URL_Y = FRAME_Y + FRAME_H + 12; // ~212mm
-            pdf.setFont('helvetica', 'bold');
-            pdf.setFontSize(13);
-            const wBlack = pdf.getTextWidth('vertxk.xyz');
-            const wOrange = pdf.getTextWidth('/mural');
-            const urlStartX = CX - (wBlack + wOrange) / 2;
-            pdf.setTextColor(...C.black);
-            pdf.text('vertxk.xyz', urlStartX, URL_Y);
-            pdf.setTextColor(...C.orange);
-            pdf.text('/mural', urlStartX + wBlack, URL_Y);
-
-            // Texto pequeño
-            pdf.setFont('helvetica', 'italic');
-            pdf.setFontSize(7.5);
-            pdf.setTextColor(...C.gray);
-            pdf.text('Si no puedes escanear, ingresa la dirección en tu navegador', CX, URL_Y + 6, { align: 'center' });
-
-            // ─── Separador tenue ───
-            pdf.setDrawColor(...C.lightGray);
-            pdf.setLineWidth(0.25);
-            pdf.line(22, URL_Y + 13, W - 22, URL_Y + 13);
-
-            // ─── "ESCANEA EL CÓDIGO QR" ───
-            const SCAN_Y = URL_Y + 21;
-            pdf.setFont('helvetica', 'bold');
-            pdf.setFontSize(10);
-            pdf.setTextColor(...C.black);
+            const ARM=7, OX=FRAME_X-1, OY=FRAME_Y-1, OW=FRAME_W+2, OH=FRAME_H+2;
+            pdf.setDrawColor(...C.orange); pdf.setLineWidth(1.8);
+            pdf.line(OX, OY, OX+ARM, OY); pdf.line(OX, OY, OX, OY+ARM);
+            pdf.line(OX+OW, OY, OX+OW-ARM, OY); pdf.line(OX+OW, OY, OX+OW, OY+ARM);
+            pdf.line(OX, OY+OH, OX+ARM, OY+OH); pdf.line(OX, OY+OH, OX, OY+OH-ARM);
+            pdf.line(OX+OW, OY+OH, OX+OW-ARM, OY+OH); pdf.line(OX+OW, OY+OH, OX+OW, OY+OH-ARM);
+            const URL_Y=FRAME_Y+FRAME_H+12;
+            pdf.setFont('helvetica', 'bold'); pdf.setFontSize(13);
+            const wBlack=pdf.getTextWidth('vertxk.xyz'), wOrange=pdf.getTextWidth('/mural');
+            const urlStartX=CX-(wBlack+wOrange)/2;
+            pdf.setTextColor(...C.black); pdf.text('vertxk.xyz', urlStartX, URL_Y);
+            pdf.setTextColor(...C.orange); pdf.text('/mural', urlStartX+wBlack, URL_Y);
+            pdf.setFont('helvetica', 'italic'); pdf.setFontSize(7.5); pdf.setTextColor(...C.gray);
+            pdf.text('Si no puedes escanear, ingresa la dirección en tu navegador', CX, URL_Y+6, { align: 'center' });
+            pdf.setDrawColor(...C.lightGray); pdf.setLineWidth(0.25); pdf.line(22, URL_Y+13, W-22, URL_Y+13);
+            const SCAN_Y=URL_Y+21;
+            pdf.setFont('helvetica','bold'); pdf.setFontSize(10); pdf.setTextColor(...C.black);
             pdf.text('E S C A N E A   E L   C Ó D I G O   Q R', CX, SCAN_Y, { align: 'center' });
-
-            pdf.setFont('helvetica', 'italic');
-            pdf.setFontSize(8.5);
-            pdf.setTextColor(...C.gray);
-            pdf.text('Usa la cámara de tu celular para acceder', CX, SCAN_Y + 6, { align: 'center' });
-
-            // ─── Pasos 1, 2, 3 ───
-            const STEP_Y = SCAN_Y + 18;
-            const steps = [
-                { num: '1', l1: 'Escanea el', l2: 'código QR' },
-                { num: '2', l1: 'Ingresa tu no.', l2: 'de empleado' },
-                { num: '3', l1: 'Consulta tus', l2: 'resultados' },
-            ];
-
-            const colPositions = [CX - 60, CX, CX + 60]; // centros de cada paso
-
-            steps.forEach((step, i) => {
-                const sx = colPositions[i];
-
-                // Círculo negro
-                pdf.setFillColor(...C.black);
-                pdf.circle(sx, STEP_Y, 4, 'F');
-
-                // Número en el círculo
-                pdf.setTextColor(...C.white);
-                pdf.setFont('helvetica', 'bold');
-                pdf.setFontSize(8);
-                pdf.text(step.num, sx, STEP_Y + 1.2, { align: 'center' });
-
-                // Texto del paso (centrado debajo del círculo)
-                pdf.setTextColor(...C.black);
-                pdf.setFont('helvetica', 'normal');
-                pdf.setFontSize(8);
-                pdf.text(step.l1, sx, STEP_Y + 9, { align: 'center' });
-                pdf.text(step.l2, sx, STEP_Y + 14, { align: 'center' });
+            pdf.setFont('helvetica','italic'); pdf.setFontSize(8.5); pdf.setTextColor(...C.gray);
+            pdf.text('Usa la cámara de tu celular para acceder', CX, SCAN_Y+6, { align: 'center' });
+            const STEP_Y=SCAN_Y+18;
+            const steps=[{num:'1',l1:'Escanea el',l2:'código QR'},{num:'2',l1:'Ingresa tu no.',l2:'de empleado'},{num:'3',l1:'Consulta tus',l2:'resultados'}];
+            [CX-60, CX, CX+60].forEach((sx, i) => {
+                pdf.setFillColor(...C.black); pdf.circle(sx, STEP_Y, 4, 'F');
+                pdf.setTextColor(...C.white); pdf.setFont('helvetica','bold'); pdf.setFontSize(8);
+                pdf.text(steps[i].num, sx, STEP_Y+1.2, { align: 'center' });
+                pdf.setTextColor(...C.black); pdf.setFont('helvetica','normal'); pdf.setFontSize(8);
+                pdf.text(steps[i].l1, sx, STEP_Y+9,  { align: 'center' });
+                pdf.text(steps[i].l2, sx, STEP_Y+14, { align: 'center' });
             });
-
-            const safeName = (emp.fullName || String(emp.employeeId)).replace(/[^a-zA-Z0-9]/g, '_');
-            pdf.save(`QR_Poster_${safeName}.pdf`);
-            toast.success("PDF generado exitosamente");
-
+            pdf.save(`QR_Poster_${(emp.fullName || String(emp.employeeId)).replace(/[^a-zA-Z0-9]/g, '_')}.pdf`);
+            toast.success('PDF generado exitosamente');
         } catch (error) {
             console.error(error);
-            toast.error("Error al generar el PDF");
+            toast.error('Error al generar el PDF');
         }
     };
+
+    // Toggle recomendación en lista
+    const toggleRec = (list, setFn, theme) =>
+        setFn(prev => ({
+            ...prev,
+            recommendations: list.includes(theme)
+                ? list.filter(t => t !== theme)
+                : [...list, theme],
+        }));
 
     if (loadingConfig) return null;
 
     return (
-        <div className={styles.card} style={{ marginTop: '20px', padding: isOpen ? '20px' : '0', overflow: 'hidden' }}>
+        <div className={styles.accordionPanel}>
+            {/* Header */}
             <div
-                onClick={() => setIsOpen(!isOpen)}
-                style={{
-                    padding: isOpen ? '0 0 15px 0' : '20px',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'space-between',
-                    cursor: 'pointer',
-                    borderBottom: isOpen ? '1px solid var(--border-color)' : 'none'
-                }}
+                className={`${styles.accordionHeader} ${isOpen ? styles.accordionHeaderOpen : ''}`}
+                onClick={() => setIsOpen(v => !v)}
+                role="button"
+                aria-expanded={isOpen}
+                tabIndex={0}
+                onKeyDown={(e) => e.key === 'Enter' && setIsOpen(v => !v)}
             >
-                <h3 className={styles.cardTitle} style={{ margin: 0 }}>
-                    <Presentation className={styles.cardIcon} />
+                <h3 className={styles.accordionTitle}>
+                    <span className={styles.accordionIcon}><Presentation size={18} /></span>
                     Gestión del Mural de Reconocimiento
                 </h3>
-                {isOpen ? <ChevronUp size={20} color="var(--text-secondary)" /> : <ChevronDown size={20} color="var(--text-secondary)" />}
+                <ChevronDown size={20} className={`${styles.accordionChevron} ${isOpen ? styles.accordionChevronOpen : ''}`} />
             </div>
 
             {isOpen && (
-                <div style={{ marginTop: '10px' }}>
-                    <div style={{ padding: '0 0 10px 0', fontSize: '0.85rem', color: 'var(--text-secondary)' }}>
-                        Configura los mensajes que verán los usuarios al buscar su calificación y mantén sincronizada su base pública para proteger la privacidad del empleado.
+                <div className={styles.accordionBody}>
+                    <p className={styles.sectionDesc}>
+                        Configura los mensajes que verán los usuarios al buscar su calificación y mantén sincronizada la base pública del Mural para proteger la privacidad del empleado.
+                    </p>
+
+                    {/* Mensajes del mural */}
+                    <div className={styles.fieldGroup}>
+                        <label className={styles.fieldLabel}>Mensaje para APROBADOS</label>
+                        <textarea
+                            className={styles.fieldTextarea}
+                            style={{ minHeight: 60 }}
+                            value={messages.successMessage}
+                            onChange={(e) => setMessages(m => ({ ...m, successMessage: e.target.value }))}
+                            placeholder="Usa [Nombre] para incluir el nombre del empleado..."
+                        />
                     </div>
 
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', marginTop: '10px' }}>
+                    <div className={styles.fieldGroup}>
+                        <label className={styles.fieldLabel}>Mensaje para REPROBADOS (Motivacional)</label>
+                        <textarea
+                            className={styles.fieldTextarea}
+                            style={{ minHeight: 60 }}
+                            value={messages.motivationalMessage}
+                            onChange={(e) => setMessages(m => ({ ...m, motivationalMessage: e.target.value }))}
+                            placeholder="Usa [Nombre] para incluir el nombre del empleado..."
+                        />
+                    </div>
 
-                        {/* Inputs de Configuración */}
-                        <div style={{ display: 'flex', flexDirection: 'column', gap: '5px' }}>
-                            <label style={{ fontSize: '0.8rem', fontWeight: 600, color: 'var(--text-primary)' }}>Mensaje para APROBADOS</label>
-                            <textarea
-                                style={{ width: '100%', padding: '10px', borderRadius: '8px', border: '1px solid var(--border-color)', background: 'var(--bg-secondary)', color: 'var(--text-primary)', minHeight: '60px', resize: 'vertical' }}
-                                value={messages.successMessage}
-                                onChange={(e) => setMessages(m => ({ ...m, successMessage: e.target.value }))}
-                                placeholder="Usa [Nombre] para incluir el nombre del empleado..."
-                            />
-                        </div>
+                    {/* Botones de acción */}
+                    <div className={styles.actionBtnRow}>
+                        <button onClick={saveMessages} className={styles.btnSecondary}>
+                            <Save size={15} /> Guardar Mensajes
+                        </button>
+                        <button onClick={handleSyncMural} disabled={syncing} className={styles.btnPrimary}>
+                            <RefreshCcw size={15} style={{ animation: syncing ? 'spin 1s linear infinite' : 'none' }} />
+                            {syncing ? 'Sincronizando…' : 'Auto-Sincronizar'}
+                        </button>
+                        <button onClick={() => setShowManualForm(v => !v)} className={styles.btnSuccess}>
+                            <FileEdit size={15} /> Captura Manual
+                        </button>
+                    </div>
 
-                        <div style={{ display: 'flex', flexDirection: 'column', gap: '5px' }}>
-                            <label style={{ fontSize: '0.8rem', fontWeight: 600, color: 'var(--text-primary)' }}>Mensaje para REPROBADOS (Motivacional)</label>
-                            <textarea
-                                style={{ width: '100%', padding: '10px', borderRadius: '8px', border: '1px solid var(--border-color)', background: 'var(--bg-secondary)', color: 'var(--text-primary)', minHeight: '60px', resize: 'vertical' }}
-                                value={messages.motivationalMessage}
-                                onChange={(e) => setMessages(m => ({ ...m, motivationalMessage: e.target.value }))}
-                                placeholder="Usa [Nombre] para incluir el nombre del empleado..."
-                            />
-                        </div>
-
-                        <div style={{ display: 'flex', gap: '10px', justifyContent: 'flex-end', marginTop: '5px' }}>
-                            <button
-                                onClick={saveMessages}
-                                style={{ padding: '8px 16px', background: 'var(--bg-secondary)', border: '1px solid var(--border-color)', borderRadius: '8px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--text-primary)' }}
-                            >
-                                <Save size={16} /> Guardar Mensajes
-                            </button>
-
-                            <button
-                                onClick={handleSyncMural}
-                                disabled={syncing}
-                                style={{ padding: '8px 16px', background: '#3b82f6', color: 'white', border: 'none', borderRadius: '8px', cursor: syncing ? 'not-allowed' : 'pointer', display: 'flex', alignItems: 'center', gap: '8px', fontWeight: 600 }}
-                            >
-                                <RefreshCcw size={16} className={syncing ? 'spinner' : ''} style={{ animation: syncing ? 'spin 1s linear infinite' : 'none' }} />
-                                {syncing ? '...' : 'Auto-Sincronizar Panel Exámenes'}
-                            </button>
-
-                            <button
-                                onClick={() => setShowManualForm(!showManualForm)}
-                                style={{ padding: '8px 16px', background: '#10b981', color: 'white', border: 'none', borderRadius: '8px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px', fontWeight: 600 }}
-                            >
-                                + Captura Manual Nuevo
-                            </button>
-                        </div>
-
-                        {/* ---------- FORMULARIO MANUAL ---------- */}
-                        {showManualForm && (
-                            <form onSubmit={handleManualSubmit} style={{ marginTop: '1rem', padding: '1.5rem', background: 'var(--bg-primary)', borderRadius: '12px', border: '1px solid var(--border-color)', display: 'grid', gap: '1rem', gridTemplateColumns: '1fr 1fr' }}>
-                                <h4 style={{ gridColumn: 'span 2', margin: '0 0 10px 0', color: 'var(--text-primary)', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                                    <BookOpen size={18} /> Registro Manual en Mural Público
-                                </h4>
-
-                                <div style={{ display: 'flex', flexDirection: 'column', gap: '5px' }}>
-                                    <label style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>No. Empleado (Ej. 2950)*</label>
-                                    <div style={{ display: 'flex', gap: '8px' }}>
-                                        <input required type="text" value={manualData.employeeId} onChange={e => setManualData({ ...manualData, employeeId: e.target.value })} style={{ flex: 1, padding: '8px', borderRadius: '6px', border: '1px solid var(--border-color)', background: 'var(--bg-secondary)', color: 'var(--text-primary)' }} placeholder="Digita el ID" />
-                                        <button type="button" onClick={fetchEmployeeData} disabled={!manualData.employeeId || searchingM} style={{ padding: '0 12px', background: 'var(--bg-secondary)', border: '1px solid var(--border-color)', borderRadius: '6px', cursor: (!manualData.employeeId || searchingM) ? 'not-allowed' : 'pointer', color: 'var(--text-primary)' }} title="Autorrellenar Info">
-                                            {searchingM ? '...' : '🔍'}
-                                        </button>
-                                    </div>
-                                </div>
-
-                                <div style={{ display: 'flex', flexDirection: 'column', gap: '5px' }}>
-                                    <label style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>Primer Nombre (Público)*</label>
-                                    <input required type="text" value={manualData.firstName} onChange={e => setManualData({ ...manualData, firstName: e.target.value })} style={{ padding: '8px', borderRadius: '6px', border: '1px solid var(--border-color)', background: 'var(--bg-secondary)', color: 'var(--text-primary)' }} />
-                                </div>
-
-                                <div style={{ display: 'flex', flexDirection: 'column', gap: '5px' }}>
-                                    <label style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>Puesto Actual*</label>
-                                    <input required type="text" value={manualData.currentPosition} onChange={e => setManualData({ ...manualData, currentPosition: e.target.value })} style={{ padding: '8px', borderRadius: '6px', border: '1px solid var(--border-color)', background: 'var(--bg-secondary)', color: 'var(--text-primary)' }} />
-                                </div>
-                                <div style={{ display: 'flex', flexDirection: 'column', gap: '5px' }}>
-                                    <label style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>Aplica Para (Puesto Objetivo)*</label>
-                                    <input required type="text" value={manualData.promotionTo} onChange={e => setManualData({ ...manualData, promotionTo: e.target.value })} style={{ padding: '8px', borderRadius: '6px', border: '1px solid var(--border-color)', background: 'var(--bg-secondary)', color: 'var(--text-primary)' }} />
-                                </div>
-
-                                <div style={{ display: 'flex', flexDirection: 'column', gap: '5px' }}>
-                                    <label style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>Calificación Alcanzada (%)*</label>
-                                    <input required type="number" min="0" max="100" value={manualData.score} onChange={e => setManualData({ ...manualData, score: e.target.value })} style={{ padding: '8px', borderRadius: '6px', border: '1px solid var(--border-color)', background: 'var(--bg-secondary)', color: 'var(--text-primary)' }} placeholder="Ej. 100" />
-                                </div>
-                                <div style={{ display: 'flex', flexDirection: 'column', gap: '5px' }}>
-                                    <label style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>Calificación Requerida (%)*</label>
-                                    <input required type="number" min="0" max="100" value={manualData.requiredScore} onChange={e => setManualData({ ...manualData, requiredScore: e.target.value })} style={{ padding: '8px', borderRadius: '6px', border: '1px solid var(--border-color)', background: 'var(--bg-secondary)', color: 'var(--text-primary)' }} placeholder="Ej. 85" />
-                                </div>
-
-                                <div style={{ gridColumn: 'span 2', display: 'flex', flexDirection: 'column', gap: '5px' }}>
-                                    <label style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>Recomendaciones o Feedback (Si no aprobó)*</label>
-                                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', padding: '10px', background: 'var(--bg-secondary)', borderRadius: '6px', border: '1px solid var(--border-color)' }}>
-                                        {availableThemes.map(theme => {
-                                            const isSel = (manualData.recommendations || []).includes(theme);
-                                            return (
-                                                <span key={theme}
-                                                    onClick={() => setManualData(prev => ({
-                                                        ...prev,
-                                                        recommendations: isSel ? prev.recommendations.filter(t => t !== theme) : [...(prev.recommendations || []), theme]
-                                                    }))}
-                                                    style={{ padding: '4px 10px', borderRadius: '16px', fontSize: '0.75rem', cursor: 'pointer', background: isSel ? '#3b82f6' : 'var(--bg-primary)', color: isSel ? '#fff' : 'var(--text-secondary)', border: `1px solid ${isSel ? '#3b82f6' : 'var(--border-color)'}` }}
-                                                >
-                                                    {theme}
-                                                </span>
-                                            );
-                                        })}
-                                        {availableThemes.length === 0 && <span style={{ fontSize: '0.75rem', color: 'var(--text-tertiary)' }}>No hay temas disponibles.</span>}
-                                    </div>
-                                </div>
-
-                                <div style={{ gridColumn: 'span 2', display: 'flex', justifyContent: 'flex-end', gap: '10px', marginTop: '10px' }}>
-                                    <button type="button" onClick={() => setShowManualForm(false)} style={{ padding: '8px 16px', background: 'transparent', color: '#ef4444', border: '1px solid #ef4444', borderRadius: '8px', cursor: 'pointer' }}>
-                                        Cancelar
-                                    </button>
-                                    <button type="submit" style={{ padding: '8px 16px', background: '#f59e0b', color: 'white', border: 'none', borderRadius: '8px', cursor: 'pointer', fontWeight: 600 }}>
-                                        Guardar y Publicar
-                                    </button>
-                                </div>
-                            </form>
-                        )}
-
-                        {/* ---------- TABLA DE REGISTROS MURAL ---------- */}
-                        <div style={{ marginTop: '2rem' }}>
-                            <h4 style={{ margin: '0 0 10px 0', color: 'var(--text-primary)', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                                <Presentation size={18} /> Registros Públicos Actuales ({muralList.length})
+                    {/* Formulario manual */}
+                    {showManualForm && (
+                        <form onSubmit={handleManualSubmit} className={styles.manualForm}>
+                            <h4 className={styles.manualFormTitle}>
+                                <BookOpen size={16} /> Registro Manual en Mural Público
                             </h4>
 
-                            <div style={{ overflowX: 'auto', borderRadius: '8px', border: '1px solid var(--border-color)' }}>
-                                <table style={{ minWidth: '750px', width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '0.85rem' }}>
-                                    <thead>
-                                        <tr style={{ backgroundColor: 'var(--bg-secondary)', color: 'var(--text-secondary)' }}>
-                                            <th style={{ padding: '12px', borderBottom: '1px solid var(--border-color)' }}>ID</th>
-                                            <th style={{ padding: '12px', borderBottom: '1px solid var(--border-color)' }}>Nombre</th>
-                                            <th style={{ padding: '12px', borderBottom: '1px solid var(--border-color)' }}>Actual</th>
-                                            <th style={{ padding: '12px', borderBottom: '1px solid var(--border-color)' }}>Destino</th>
-                                            <th style={{ padding: '12px', borderBottom: '1px solid var(--border-color)' }}>Estado</th>
-                                            <th style={{ padding: '12px', borderBottom: '1px solid var(--border-color)', minWidth: '150px' }}>Feedback / Recomendación</th>
-                                            <th style={{ padding: '12px', borderBottom: '1px solid var(--border-color)', textAlign: 'right' }}>Acciones</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        {muralList.map(item => {
-                                            const isEditing = editingMuralId === item.id;
-
-                                            if (isEditing) {
-                                                return (
-                                                    <tr key={item.id} style={{ backgroundColor: 'var(--bg-secondary)', borderBottom: '1px solid var(--border-color)' }}>
-                                                        <td style={{ padding: '12px' }}>{item.employeeId}</td>
-                                                        <td style={{ padding: '12px' }}>
-                                                            <input type="text" value={editData.firstName} onChange={e => setEditData({ ...editData, firstName: e.target.value })} style={{ width: '100%', padding: '4px', background: 'var(--bg-primary)', border: '1px solid var(--border-color)', color: 'var(--text-primary)' }} />
-                                                        </td>
-                                                        <td style={{ padding: '12px' }}>
-                                                            <input type="text" value={editData.currentPosition} onChange={e => setEditData({ ...editData, currentPosition: e.target.value })} style={{ width: '100%', padding: '4px', background: 'var(--bg-primary)', border: '1px solid var(--border-color)', color: 'var(--text-primary)' }} />
-                                                        </td>
-                                                        <td style={{ padding: '12px' }}>
-                                                            <input type="text" value={editData.promotionTo} onChange={e => setEditData({ ...editData, promotionTo: e.target.value })} style={{ width: '100%', padding: '4px', background: 'var(--bg-primary)', border: '1px solid var(--border-color)', color: 'var(--text-primary)' }} />
-                                                        </td>
-                                                        <td style={{ padding: '12px' }}>—</td>
-                                                        <td style={{ padding: '12px', verticalAlign: 'top' }}>
-                                                            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '4px', width: '250px', maxHeight: '150px', overflowY: 'auto', padding: '6px', background: 'var(--bg-primary)', border: '1px solid var(--border-color)', borderRadius: '6px' }}>
-                                                                {availableThemes.map(theme => {
-                                                                    const isSel = (editData.recommendations || []).includes(theme);
-                                                                    return (
-                                                                        <span key={theme}
-                                                                            onClick={() => setEditData(prev => ({
-                                                                                ...prev,
-                                                                                recommendations: isSel ? prev.recommendations.filter(t => t !== theme) : [...(prev.recommendations || []), theme]
-                                                                            }))}
-                                                                            style={{ padding: '2px 8px', borderRadius: '12px', fontSize: '0.7rem', cursor: 'pointer', background: isSel ? '#22c55e' : 'var(--bg-primary)', color: isSel ? '#fff' : 'var(--text-secondary)', border: `1px solid ${isSel ? '#22c55e' : 'var(--border-color)'}` }}
-                                                                        >
-                                                                            {theme}
-                                                                        </span>
-                                                                    );
-                                                                })}
-                                                                {availableThemes.length === 0 && <span style={{ fontSize: '0.7rem' }}>Sin temas.</span>}
-                                                            </div>
-                                                        </td>
-                                                        <td style={{ padding: '12px', display: 'flex', gap: '8px', justifyContent: 'flex-end' }}>
-                                                            <button onClick={handleSaveEdit} title="Guardar" style={{ padding: '6px', background: '#22c55e', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' }}><Check size={14} /></button>
-                                                            <button onClick={handleCancelEdit} title="Cancelar" style={{ padding: '6px', background: '#ef4444', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' }}><CancelIcon size={14} /></button>
-                                                        </td>
-                                                    </tr>
-                                                )
-                                            }
-
-                                            return (
-                                                <tr key={item.id} style={{ borderBottom: '1px solid var(--border-color)', color: 'var(--text-primary)' }}>
-                                                    <td style={{ padding: '12px' }}>{item.employeeId}</td>
-                                                    <td style={{ padding: '12px', fontWeight: 600 }}>{item.firstName}</td>
-                                                    <td style={{ padding: '12px', color: 'var(--text-secondary)' }}>{item.currentPosition}</td>
-                                                    <td style={{ padding: '12px', color: 'var(--text-secondary)' }}>{item.promotionTo}</td>
-                                                    <td style={{ padding: '12px' }}>
-                                                        {item.passed
-                                                            ? <span style={{ color: '#10b981', background: 'rgba(16,185,129,0.1)', padding: '2px 8px', borderRadius: '12px', fontSize: '0.75rem', fontWeight: 'bold' }}>APROBADO</span>
-                                                            : <span style={{ color: '#ef4444', background: 'rgba(239,68,68,0.1)', padding: '2px 8px', borderRadius: '12px', fontSize: '0.75rem', fontWeight: 'bold' }}>REPROBADO</span>
-                                                        }
-                                                    </td>
-                                                    <td style={{ padding: '12px', color: 'var(--text-secondary)', fontSize: '0.8rem' }}>
-                                                        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '4px', maxWidth: '250px' }}>
-                                                            {Array.isArray(item.recommendations) && item.recommendations.length > 0
-                                                                ? item.recommendations.map((rec, i) => (
-                                                                    <span key={i} style={{ padding: '2px 8px', background: 'var(--bg-secondary)', borderRadius: '12px', fontSize: '0.7rem', border: '1px solid var(--border-color)', color: 'var(--text-primary)' }}>
-                                                                        {rec}
-                                                                    </span>
-                                                                ))
-                                                                : (item.recommendations ? <span style={{ fontStyle: 'italic' }}>{item.recommendations}</span> : '—')}
-                                                        </div>
-                                                    </td>
-                                                    <td style={{ padding: '12px', display: 'flex', gap: '8px', justifyContent: 'flex-end' }}>
-                                                        <button onClick={() => handleGenerateQR(item)} title="Descargar Invitación QR" style={{ padding: '6px', background: 'transparent', color: '#3b82f6', border: '1px solid #3b82f6', borderRadius: '4px', cursor: 'pointer' }}>
-                                                            <Download size={14} />
-                                                        </button>
-                                                        <button onClick={() => handleEditClick(item)} title="Editar Registro" style={{ padding: '6px', background: 'transparent', color: '#f59e0b', border: '1px solid #f59e0b', borderRadius: '4px', cursor: 'pointer' }}>
-                                                            <Pencil size={14} />
-                                                        </button>
-                                                        <button onClick={() => handleDeleteMural(item.id)} title="Eliminar del Mural" style={{ padding: '6px', background: 'transparent', color: '#ef4444', border: '1px solid #ef4444', borderRadius: '4px', cursor: 'pointer' }}>
-                                                            <Trash2 size={14} />
-                                                        </button>
-                                                    </td>
-                                                </tr>
-                                            );
-                                        })}
-                                        {muralList.length === 0 && (
-                                            <tr>
-                                                <td colSpan="8" style={{ padding: '20px', textAlign: 'center', color: 'var(--text-tertiary)' }}>No hay resultados en el mural.</td>
-                                            </tr>
-                                        )}
-                                    </tbody>
-                                </table>
+                            <div className={styles.fieldGroup}>
+                                <label className={styles.fieldLabel}>No. Empleado *</label>
+                                <div className={styles.idSearchRow}>
+                                    <input
+                                        required type="text"
+                                        className={styles.fieldInput}
+                                        value={manualData.employeeId}
+                                        onChange={e => setManualData({ ...manualData, employeeId: e.target.value })}
+                                        placeholder="Ej. 2950"
+                                    />
+                                    <button
+                                        type="button"
+                                        onClick={fetchEmployeeData}
+                                        disabled={!manualData.employeeId || searchingM}
+                                        className={styles.idSearchBtn}
+                                        title="Auto-rellenar"
+                                    >
+                                        {searchingM ? '…' : '🔍'}
+                                    </button>
+                                </div>
                             </div>
-                        </div>
 
+                            <div className={styles.fieldGroup}>
+                                <label className={styles.fieldLabel}>Primer Nombre (Público) *</label>
+                                <input required type="text" className={styles.fieldInput} value={manualData.firstName} onChange={e => setManualData({ ...manualData, firstName: e.target.value })} />
+                            </div>
+
+                            <div className={styles.fieldGroup}>
+                                <label className={styles.fieldLabel}>Puesto Actual *</label>
+                                <input required type="text" className={styles.fieldInput} value={manualData.currentPosition} onChange={e => setManualData({ ...manualData, currentPosition: e.target.value })} />
+                            </div>
+
+                            <div className={styles.fieldGroup}>
+                                <label className={styles.fieldLabel}>Puesto Objetivo *</label>
+                                <input required type="text" className={styles.fieldInput} value={manualData.promotionTo} onChange={e => setManualData({ ...manualData, promotionTo: e.target.value })} />
+                            </div>
+
+                            <div className={styles.fieldGroup}>
+                                <label className={styles.fieldLabel}>Calificación alcanzada (%) *</label>
+                                <input required type="number" min="0" max="100" className={styles.fieldInput} value={manualData.score} onChange={e => setManualData({ ...manualData, score: e.target.value })} placeholder="Ej. 100" />
+                            </div>
+
+                            <div className={styles.fieldGroup}>
+                                <label className={styles.fieldLabel}>Calificación requerida (%) *</label>
+                                <input required type="number" min="0" max="100" className={styles.fieldInput} value={manualData.requiredScore} onChange={e => setManualData({ ...manualData, requiredScore: e.target.value })} placeholder="Ej. 85" />
+                            </div>
+
+                            <div className={`${styles.fieldGroup} ${styles.manualFormSpan2}`}>
+                                <label className={styles.fieldLabel}>Recomendaciones / Feedback</label>
+                                <div className={styles.tagsGrid}>
+                                    {availableThemes.map(theme => {
+                                        const isSel = (manualData.recommendations || []).includes(theme);
+                                        return (
+                                            <span
+                                                key={theme}
+                                                className={`${styles.tagChip} ${isSel ? styles.tagChipActive : ''}`}
+                                                onClick={() => toggleRec(manualData.recommendations || [], setManualData, theme)}
+                                            >
+                                                {theme}
+                                            </span>
+                                        );
+                                    })}
+                                    {availableThemes.length === 0 && <span style={{ fontSize: '0.75rem', color: 'var(--text-tertiary)' }}>No hay temas disponibles.</span>}
+                                </div>
+                            </div>
+
+                            <div className={styles.manualFormActions}>
+                                <button type="button" onClick={() => setShowManualForm(false)} className={styles.btnDanger}>
+                                    Cancelar
+                                </button>
+                                <button type="submit" className={styles.btnAmber}>
+                                    Guardar y Publicar
+                                </button>
+                            </div>
+                        </form>
+                    )}
+
+                    {/* Tabla de registros */}
+                    <div className={styles.tableWrapper}>
+                        <h4 className={styles.tableTitle}>
+                            <Presentation size={16} />
+                            Registros Públicos Actuales ({muralList.length})
+                        </h4>
+
+                        <div className={styles.tableScroll}>
+                            <table className={styles.muralTable}>
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Nombre</th>
+                                        <th>Puesto Actual</th>
+                                        <th>Destino</th>
+                                        <th>Estado</th>
+                                        <th>Feedback</th>
+                                        <th style={{ textAlign: 'right' }}>Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {muralList.map(item => {
+                                        const isEditing = editingMuralId === item.id;
+                                        if (isEditing) return (
+                                            <tr key={item.id}>
+                                                <td>{item.employeeId}</td>
+                                                <td><input type="text" className={styles.tableEditInput} value={editData.firstName} onChange={e => setEditData({ ...editData, firstName: e.target.value })} /></td>
+                                                <td><input type="text" className={styles.tableEditInput} value={editData.currentPosition} onChange={e => setEditData({ ...editData, currentPosition: e.target.value })} /></td>
+                                                <td><input type="text" className={styles.tableEditInput} value={editData.promotionTo} onChange={e => setEditData({ ...editData, promotionTo: e.target.value })} /></td>
+                                                <td>—</td>
+                                                <td>
+                                                    <div className={styles.tagsGrid} style={{ maxHeight: 120, overflowY: 'auto' }}>
+                                                        {availableThemes.map(theme => {
+                                                            const isSel = (editData.recommendations || []).includes(theme);
+                                                            return (
+                                                                <span key={theme}
+                                                                    className={`${styles.tagChip} ${isSel ? styles.tagChipActive : ''}`}
+                                                                    onClick={() => setEditData(prev => ({
+                                                                        ...prev,
+                                                                        recommendations: isSel
+                                                                            ? prev.recommendations.filter(t => t !== theme)
+                                                                            : [...(prev.recommendations || []), theme],
+                                                                    }))}
+                                                                >
+                                                                    {theme}
+                                                                </span>
+                                                            );
+                                                        })}
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <div className={styles.tableActions}>
+                                                        <button onClick={handleSaveEdit} className={`${styles.tableIconBtn} ${styles.tableIconBtnGreen}`} title="Guardar"><Check size={13} /></button>
+                                                        <button onClick={handleCancelEdit} className={`${styles.tableIconBtn} ${styles.tableIconBtnRed}`} title="Cancelar"><CancelIcon size={13} /></button>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        );
+
+                                        return (
+                                            <tr key={item.id}>
+                                                <td style={{ color: 'var(--text-secondary)' }}>{item.employeeId}</td>
+                                                <td style={{ fontWeight: 600 }}>{item.firstName}</td>
+                                                <td style={{ color: 'var(--text-secondary)' }}>{item.currentPosition}</td>
+                                                <td style={{ color: 'var(--text-secondary)' }}>{item.promotionTo}</td>
+                                                <td>
+                                                    {item.passed
+                                                        ? <span className={styles.statusApproved}>APROBADO</span>
+                                                        : <span className={styles.statusFailed}>REPROBADO</span>
+                                                    }
+                                                </td>
+                                                <td>
+                                                    <div className={styles.recTagsList}>
+                                                        {Array.isArray(item.recommendations) && item.recommendations.length > 0
+                                                            ? item.recommendations.map((rec, i) => <span key={i} className={styles.recTag}>{rec}</span>)
+                                                            : (item.recommendations
+                                                                ? <span className={styles.recTag}>{item.recommendations}</span>
+                                                                : <span style={{ color: 'var(--text-tertiary)', fontSize: '0.76rem' }}>—</span>
+                                                            )
+                                                        }
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <div className={styles.tableActions}>
+                                                        <button onClick={() => handleGenerateQR(item)} className={`${styles.tableIconBtn} ${styles.tableIconBtnBlue}`} title="Descargar QR"><Download size={13} /></button>
+                                                        <button onClick={() => handleEditClick(item)} className={`${styles.tableIconBtn} ${styles.tableIconBtnAmber}`} title="Editar"><Pencil size={13} /></button>
+                                                        <button onClick={() => handleDeleteMural(item.id)} className={`${styles.tableIconBtn} ${styles.tableIconBtnRed}`} title="Eliminar"><Trash2 size={13} /></button>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        );
+                                    })}
+                                    {muralList.length === 0 && (
+                                        <tr className={styles.tableEmptyRow}>
+                                            <td colSpan="7">No hay resultados en el mural.</td>
+                                        </tr>
+                                    )}
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
             )}
@@ -1132,21 +945,21 @@ function AdminMuralSection() {
     );
 }
 
-// ── Iconos/colores por tipo de acción ──
+// ── AUDIT LOG ─────────────────────────────────────────────────────────────────
 const ACTION_META = {
-    create: { label: 'Creó', color: '#22c55e', icon: BookOpen },
-    import: { label: 'Importó', color: '#3b82f6', icon: UploadCloud },
-    delete: { label: 'Eliminó', color: '#ef4444', icon: Trash2 },
-    publish: { label: 'Publicó', color: '#f59e0b', icon: Eye },
-    unpublish: { label: 'Archivó', color: '#6b7280', icon: EyeOff },
-    rename: { label: 'Renombró', color: '#a855f7', icon: FileEdit },
-    update: { label: 'Editó', color: '#0ea5e9', icon: RefreshCw },
+    create:    { label: 'Creó',     color: '#22c55e', icon: BookOpen    },
+    import:    { label: 'Importó',  color: '#3b82f6', icon: UploadCloud },
+    delete:    { label: 'Eliminó',  color: '#ef4444', icon: Trash2      },
+    publish:   { label: 'Publicó',  color: '#f59e0b', icon: Eye         },
+    unpublish: { label: 'Archivó',  color: '#6b7280', icon: EyeOff      },
+    rename:    { label: 'Renombró', color: '#a855f7', icon: FileEdit    },
+    update:    { label: 'Editó',    color: '#0ea5e9', icon: RefreshCw   },
 };
 
 function InduccionAuditSection() {
-    const [logs, setLogs] = useState([]);
+    const [logs,    setLogs]    = useState([]);
     const [loading, setLoading] = useState(true);
-    const [isOpen, setIsOpen] = useState(false);
+    const [isOpen,  setIsOpen]  = useState(false);
 
     useEffect(() => {
         const q = query(
@@ -1169,57 +982,48 @@ function InduccionAuditSection() {
     };
 
     return (
-        <div className={styles.card} style={{ marginTop: '20px', padding: isOpen ? '20px' : '0', overflow: 'hidden' }}>
+        <div className={styles.accordionPanel}>
             <div
-                onClick={() => setIsOpen(!isOpen)}
-                style={{
-                    padding: isOpen ? '0 0 15px 0' : '20px',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'space-between',
-                    cursor: 'pointer',
-                    borderBottom: isOpen ? '1px solid var(--border-color)' : 'none'
-                }}
+                className={`${styles.accordionHeader} ${isOpen ? styles.accordionHeaderOpen : ''}`}
+                onClick={() => setIsOpen(v => !v)}
+                role="button"
+                aria-expanded={isOpen}
+                tabIndex={0}
+                onKeyDown={(e) => e.key === 'Enter' && setIsOpen(v => !v)}
             >
-                <h3 className={styles.cardTitle} style={{ margin: 0 }}>
-                    <BookOpen className={styles.cardIcon} style={{ width: 18, height: 18 }} />
+                <h3 className={styles.accordionTitle}>
+                    <span className={styles.accordionIcon}><BookOpen size={18} /></span>
                     Actividad en Inducción
                 </h3>
-                {isOpen ? <ChevronUp size={20} color="var(--text-secondary)" /> : <ChevronDown size={20} color="var(--text-secondary)" />}
+                <ChevronDown size={20} className={`${styles.accordionChevron} ${isOpen ? styles.accordionChevronOpen : ''}`} />
             </div>
 
             {isOpen && (
-                <div style={{ marginTop: '10px' }}>
-
+                <div className={styles.accordionBody}>
                     {loading ? (
-                        <p style={{ fontSize: '0.8rem', color: 'var(--text-tertiary)', padding: '1rem 0' }}>Cargando historial...</p>
+                        <p className={styles.auditEmpty}>Cargando historial…</p>
                     ) : logs.length === 0 ? (
-                        <p style={{ fontSize: '0.8rem', color: 'var(--text-tertiary)', padding: '1rem 0' }}>No hay actividad registrada aún.</p>
+                        <p className={styles.auditEmpty}>No hay actividad registrada aún.</p>
                     ) : (
-                        <ul style={{ listStyle: 'none', padding: 0, margin: '0.75rem 0 0', display: 'flex', flexDirection: 'column', gap: 8 }}>
+                        <ul className={styles.auditList}>
                             {logs.map(log => {
                                 const meta = ACTION_META[log.action] || { label: log.action, color: 'var(--text-tertiary)', icon: RefreshCw };
                                 const Icon = meta.icon;
                                 return (
-                                    <li key={log.id} style={{ display: 'flex', alignItems: 'flex-start', gap: 10, padding: '8px 10px', borderRadius: 8, background: 'var(--bg-secondary)', border: '1px solid var(--border-color)' }}>
-                                        <span style={{ marginTop: 2, color: meta.color, flexShrink: 0 }}>
+                                    <li key={log.id} className={styles.auditItem}>
+                                        <span className={styles.auditDot} style={{ color: meta.color }}>
                                             <Icon size={14} />
                                         </span>
-                                        <div style={{ flex: 1, minWidth: 0 }}>
-                                            <p style={{ margin: 0, fontSize: '0.8rem', color: 'var(--text-primary)', lineHeight: 1.4 }}>
-                                                <strong style={{ color: meta.color }}>{meta.label}</strong>
-                                                {' '}
-                                                <span style={{ fontWeight: 600 }}>{log.userName}</span>
+                                        <div className={styles.auditBody}>
+                                            <p className={styles.auditMain}>
+                                                <strong className={styles.auditActionLabel} style={{ color: meta.color }}>{meta.label} </strong>
+                                                <strong>{log.userName}</strong>
                                                 {' — '}
-                                                <span style={{ color: 'var(--text-secondary)' }}>{log.target}</span>
+                                                <span className={styles.auditTarget}>{log.target}</span>
                                             </p>
-                                            {log.detail && (
-                                                <p style={{ margin: 0, fontSize: '0.72rem', color: 'var(--text-tertiary)', marginTop: 2 }}>{log.detail}</p>
-                                            )}
+                                            {log.detail && <p className={styles.auditDetail}>{log.detail}</p>}
                                         </div>
-                                        <span style={{ fontSize: '0.7rem', color: 'var(--text-tertiary)', flexShrink: 0, whiteSpace: 'nowrap' }}>
-                                            {formatTime(log.timestamp)}
-                                        </span>
+                                        <span className={styles.auditTime}>{formatTime(log.timestamp)}</span>
                                     </li>
                                 );
                             })}

@@ -4,12 +4,11 @@ import { useState, useEffect, useCallback, useRef } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useRouter } from 'next/navigation';
 import { useToast } from '@/components/ui/Toast/Toast';
-import { IconX as X, IconSearch as Search, IconZap as Zap, IconEdit as Edit3, IconLink as Link2 } from '@/lib/icons';
 import { Suspense } from 'react';
 import AdminLayout from '@/components/layout/AdminLayout/AdminLayout';
 import CourseWizardModal from '@/components/features/Courses/CourseWizardModal';
 import CoursePlayer from '@/components/features/Courses/CoursePlayer';
-import InteractiveCoursesView from '@/components/features/Induccion/views/InteractiveCoursesView';
+import KanbanCoursesView from '@/components/features/Induccion/views/KanbanCoursesView';
 import { useConfirm } from '@/hooks/useConfirm';
 import {
     importCourseFromJSON,
@@ -24,6 +23,7 @@ import {
 } from '@/lib/courseService';
 import { logInduccionAction } from '@/lib/induccionAudit';
 import styles from './page.module.css';
+
 
 function InduccionContent() {
     const { user, loading: authLoading } = useAuth();
@@ -224,86 +224,27 @@ function InduccionContent() {
         );
     }
 
-    // ── Filtros ──
+    // ── Filtros y ordenamiento alfabético ──
     const q = searchQuery.toLowerCase().trim();
-    const interactiveCourses = nativeCourses.filter(c => !c.tipo || c.tipo !== 'link');
-    const filteredNative = interactiveCourses.filter(c => c.title?.toLowerCase().includes(q));
+    const allCourses = nativeCourses
+        .filter(c => !c.tipo || c.tipo !== 'link')
+        .sort((a, b) => (a.title || '').localeCompare(b.title || '', 'es', { sensitivity: 'base' }));
+    const publishedCourses = allCourses.filter(c => c.published && c.title?.toLowerCase().includes(q));
+    const draftCourses = allCourses.filter(c => !c.published && c.title?.toLowerCase().includes(q));
 
     return (
         <AdminLayout title="Inducción">
             <div className={styles.main}>
                 <div className={styles.container}>
-
-                    <header className={styles.header}>
-                        <div className={styles.titleSectionParent}>
-                            <div className={styles.titleSection}>
-                                <h1 className={styles.pageTitle}>Inducción</h1>
-                                <p>Cursos interactivos y recursos URL / PDF para candidatos</p>
-                            </div>
-                        </div>
-                        <div className={styles.headerActions}>
-                            <div className={styles.searchInputWrapper}>
-                                <Search size={16} className={styles.searchIcon} aria-hidden="true" />
-                                <input
-                                    type="search"
-                                    placeholder="Buscar..."
-                                    className={styles.searchInput}
-                                    value={searchQuery}
-                                    onChange={e => setSearchQuery(e.target.value)}
-                                    aria-label="Buscar contenido"
-                                />
-                                {searchQuery && (
-                                    <button
-                                        type="button"
-                                        className={styles.searchClearBtn}
-                                        onClick={() => setSearchQuery('')}
-                                        aria-label="Limpiar búsqueda"
-                                    >
-                                        <X size={14} aria-hidden="true" />
-                                    </button>
-                                )}
-                            </div>
-                        </div>
-                    </header>
-
-                    <div className={styles.instructionsBanner}>
-                        <div className={styles.instructionStep}>
-                            <Zap size={20} className={styles.instructionIcon} />
-                            <div>
-                                <h4>1. Crea</h4>
-                                <p>Constrúyelo desde el botón de <strong>Opciones</strong>, en la seccion de <strong>Nuevo Curso</strong>.</p>
-                            </div>
-                        </div>
-                        <div className={styles.instructionStep}>
-                            <Edit3 size={20} className={styles.instructionIcon} />
-                            <div>
-                                <h4>2. Configura los cursos</h4>
-                                <p>Da clic en <strong>Configurar slides</strong> en el menú de opciones para agregar contenido.</p>
-                            </div>
-                        </div>
-                        <div className={styles.instructionStep}>
-                            <span className={styles.instructionIcon} style={{ fontSize: '18px' }}>📗</span>
-                            <div>
-                                <h4>3. ¡Importante!</h4>
-                                <p>Los cursos marcados como <strong>Borrador (🔒)</strong> están ocultos para los candidatos.</p>
-                            </div>
-                        </div>
-                        <div className={styles.instructionStep}>
-                            <Link2 size={20} className={styles.instructionIcon} />
-                            <div>
-                                <h4>4. ¿Necesitas editar un curso?</h4>
-                                <p>Al editar un curso, puedes marcar que la vista sea mediante una <strong>URL / PDF</strong> en lugar de los Cursos Interactivos.</p>
-                            </div>
-                        </div>
-                    </div>
-
                     <main className={styles.contentArea} id="main-content">
-                        <InteractiveCoursesView
+                        <KanbanCoursesView
                             canEdit={canEdit}
-                            nativeCourses={interactiveCourses}
+                            nativeCourses={allCourses}
                             nativeLoading={nativeLoading}
-                            filteredNative={filteredNative}
+                            publishedCourses={publishedCourses}
+                            draftCourses={draftCourses}
                             searchQuery={searchQuery}
+                            setSearchQuery={setSearchQuery}
                             includeDynamics={includeDynamics}
                             setIncludeDynamics={setIncludeDynamics}
                             includeQuizzes={includeQuizzes}
