@@ -19,7 +19,7 @@ export default function GestionarPreguntasPage() {
     const { showConfirm, confirmDialog } = useConfirm();
     const [questions, setQuestions] = useState([]);
     const [loading, setLoading] = useState(true);
-    
+
     // Filtros
     const [searchTerm, setSearchTerm] = useState('');
     const [selectedDept, setSelectedDept] = useState('Todos');
@@ -74,10 +74,10 @@ export default function GestionarPreguntasPage() {
             const matchesDept = selectedDept === 'Todos' || (item.department || 'Producción') === selectedDept;
             const matchesType = selectedType === 'Todos' || item.type === selectedType;
             const matchesTheme = selectedTheme === 'Todos' || (item.theme || 'General') === selectedTheme;
-            const matchesSearch = !q || 
-                                  item.question?.toLowerCase().includes(q) || 
-                                  item.theme?.toLowerCase().includes(q) ||
-                                  item.id.toLowerCase().includes(q);
+            const matchesSearch = !q ||
+                item.question?.toLowerCase().includes(q) ||
+                item.theme?.toLowerCase().includes(q) ||
+                item.id.toLowerCase().includes(q);
             return matchesDept && matchesType && matchesTheme && matchesSearch;
         });
     }, [questions, searchTerm, selectedDept, selectedType, selectedTheme]);
@@ -185,7 +185,7 @@ export default function GestionarPreguntasPage() {
             // Generar nombre de archivo con fecha
             const fileName = `Banco_Preguntas_VTX_${new Date().toISOString().split('T')[0]}.xlsx`;
             XLSX.writeFile(workbook, fileName);
-            
+
             toast.success("Descarga iniciada", "El archivo Excel se está generando.");
         } catch (error) {
             console.error("Download error:", error);
@@ -227,7 +227,7 @@ export default function GestionarPreguntasPage() {
                                 <Search size={18} className={styles.searchIcon} />
                                 <input
                                     type="text"
-                                    placeholder="Buscar por pregunta, ID o tema..."
+                                    placeholder="BUSCAR"
                                     value={searchTerm}
                                     onChange={(e) => setSearchTerm(e.target.value)}
                                     className={styles.searchInput}
@@ -241,11 +241,11 @@ export default function GestionarPreguntasPage() {
                                 value={selectedDept}
                                 onChange={(e) => setSelectedDept(e.target.value)}
                             >
-                                <option value="Todos">Todos los departamentos</option>
-                                <option value="Producción">Producción</option>
-                                <option value="Calidad">Calidad</option>
-                                <option value="Moldes">Moldes</option>
-                                <option value="Recursos Humanos">Recursos Humanos</option>
+                                <option value="Todos">DEPARTAMENTOS</option>
+                                <option value="Producción">PRODUCCIÓN</option>
+                                <option value="Calidad">CALIDAD</option>
+                                <option value="Moldes">MOLDES</option>
+                                <option value="Recursos Humanos">RECURSOS HUMANOS</option>
                             </select>
 
                             <select
@@ -253,9 +253,9 @@ export default function GestionarPreguntasPage() {
                                 value={selectedType}
                                 onChange={(e) => setSelectedType(e.target.value)}
                             >
-                                <option value="Todos">Todos los tipos</option>
-                                <option value="Múltiple">Múltiple</option>
-                                <option value="Abierta">Abierta</option>
+                                <option value="Todos">TIPOS</option>
+                                <option value="Múltiple">MÚLTIPLE</option>
+                                <option value="Abierta">ABIERTA</option>
                             </select>
 
                             <select
@@ -265,7 +265,7 @@ export default function GestionarPreguntasPage() {
                             >
                                 {uniqueThemes.map(theme => (
                                     <option key={theme} value={theme}>
-                                        {theme === 'Todos' ? 'Todos los temas' : theme}
+                                        {theme === 'Todos' ? 'TEMAS' : theme}
                                     </option>
                                 ))}
                             </select>
@@ -302,7 +302,7 @@ export default function GestionarPreguntasPage() {
                                     </div>
 
                                     <div className={styles.cardMeta}>
-                                        <span className={styles.idBadge}>#{q.id.substring(0,6)}</span>
+                                        <span className={styles.idBadge}>#{q.id.substring(0, 6)}</span>
                                         <span className={styles.deptBadge}>{q.department || 'Producción'}</span>
                                         {q.theme && <span className={styles.temaBadge}>{q.theme}</span>}
                                         <span className={`${styles.tipoBadge} ${q.type === 'Múltiple' ? styles.tipoMultiple : styles.tipoAbierta}`}>
@@ -310,7 +310,7 @@ export default function GestionarPreguntasPage() {
                                         </span>
                                         {q.isFixed && <span className={styles.fixedBadge}>★ Fija</span>}
                                     </div>
-                                    
+
                                     <p className={styles.preguntaText}>{q.question}</p>
 
                                     {q.type === 'Múltiple' ? (
