@@ -52,7 +52,7 @@ const formatFullName = (fullName) => {
 
     const apellidos = apellidosStr.trim();
     const nombres = parts.slice(currIdx).join(' ');
-    
+
     if (!nombres) return nameStr;
     return `${nombres} ${apellidos}`;
 };
@@ -108,7 +108,7 @@ function TrainingBtn({ item, onToggle, disabled }) {
     const tooltip = dueDate && !isDelivered ? `Límite: ${formatDate(dueDate)}` : `Plan de formación: ${labelText}`;
 
     return (
-        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: '4px' }}>
             <button
                 className={`${styles.trainingBtn} ${chipClass}`}
                 onClick={onToggle}
@@ -758,7 +758,7 @@ export default function ContratosPage() {
                         aria-label="Filtrar por turno"
                     >
                         <option value="">Turno</option>
-                        {shifts.map(s => <option key={s} value={s}>Turno: {s}</option>)}
+                        {shifts.map(s => <option key={s} value={s}>{s}</option>)}
                     </select>
 
                     {/* Botones de acción */}
