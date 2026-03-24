@@ -475,7 +475,7 @@
     }
 }
 
-.selectDept, .selectType {
+.selectDept, .selectType, .selectTheme {
     padding: 0.6rem 1rem;
     border-radius: 8px;
     border: 1px solid var(--border-color);
@@ -488,7 +488,7 @@
     transition: border-color 0.2s ease;
 }
 
-.selectDept:focus, .selectType:focus {
+.selectDept:focus, .selectType:focus, .selectTheme:focus {
     outline: none;
     border-color: var(--color-primary);
     box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);

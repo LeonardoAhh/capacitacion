@@ -24,6 +24,7 @@ export default function GestionarPreguntasPage() {
     const [searchTerm, setSearchTerm] = useState('');
     const [selectedDept, setSelectedDept] = useState('Todos');
     const [selectedType, setSelectedType] = useState('Todos');
+    const [selectedTheme, setSelectedTheme] = useState('Todos');
 
     // Estado del Formulario Modal
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -62,18 +63,24 @@ export default function GestionarPreguntasPage() {
         loadQuestions();
     }, [loadQuestions]);
 
+    const uniqueThemes = useMemo(() => {
+        const themes = questions.map(q => q.theme || 'General');
+        return ['Todos', ...new Set(themes)].sort();
+    }, [questions]);
+
     const filteredQuestions = useMemo(() => {
         const q = searchTerm.trim().toLowerCase();
         return questions.filter(item => {
             const matchesDept = selectedDept === 'Todos' || (item.department || 'Producción') === selectedDept;
             const matchesType = selectedType === 'Todos' || item.type === selectedType;
+            const matchesTheme = selectedTheme === 'Todos' || (item.theme || 'General') === selectedTheme;
             const matchesSearch = !q || 
                                   item.question?.toLowerCase().includes(q) || 
                                   item.theme?.toLowerCase().includes(q) ||
                                   item.id.toLowerCase().includes(q);
-            return matchesDept && matchesType && matchesSearch;
+            return matchesDept && matchesType && matchesTheme && matchesSearch;
         });
-    }, [questions, searchTerm, selectedDept, selectedType]);
+    }, [questions, searchTerm, selectedDept, selectedType, selectedTheme]);
 
     const handleCreateClick = () => {
         setFormData(initialFormState());
@@ -249,6 +256,18 @@ export default function GestionarPreguntasPage() {
                                 <option value="Todos">Todos los tipos</option>
                                 <option value="Múltiple">Múltiple</option>
                                 <option value="Abierta">Abierta</option>
+                            </select>
+
+                            <select
+                                className={styles.selectTheme}
+                                value={selectedTheme}
+                                onChange={(e) => setSelectedTheme(e.target.value)}
+                            >
+                                {uniqueThemes.map(theme => (
+                                    <option key={theme} value={theme}>
+                                        {theme === 'Todos' ? 'Todos los temas' : theme}
+                                    </option>
+                                ))}
                             </select>
                         </div>
 

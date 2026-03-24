@@ -215,6 +215,30 @@
     color: white;
 }
 
+.selectTheme {
+    padding: 0.6rem 1rem;
+    border-radius: var(--radius-full, 50px);
+    border: 1px solid var(--border-color);
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    font-family: var(--font-body);
+    font-size: 0.875rem;
+    font-weight: 500;
+    cursor: pointer;
+    min-width: 220px;
+    outline: none;
+    transition: all 0.2s ease;
+}
+
+.selectTheme:hover {
+    border-color: var(--color-primary);
+}
+
+.selectTheme:focus {
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
 @keyframes spin {
     to {
         transform: rotate(360deg);

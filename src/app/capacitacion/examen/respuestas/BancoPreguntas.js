@@ -9,6 +9,7 @@ export function BancoPreguntas() {
     const [searchQuery, setSearchQuery] = useState('');
     const [preguntas, setPreguntas] = useState([]);
     const [filterType, setFilterType] = useState('Todos');
+    const [filterTheme, setFilterTheme] = useState('Todos');
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
@@ -47,12 +48,20 @@ export function BancoPreguntas() {
         loadFromFirestore();
     }, []);
 
+    const uniqueThemes = useMemo(() => {
+        const themes = preguntas.map(p => p.TEMA || 'General');
+        return ['Todos', ...new Set(themes)].sort();
+    }, [preguntas]);
+
     const filteredPreguntas = useMemo(() => {
         const q = searchQuery.trim().toLowerCase();
         
         return preguntas.filter((p) => {
             // Filtro por tipo
             if (filterType !== 'Todos' && p.TIPO !== filterType) return false;
+            
+            // Filtro por tema
+            if (filterTheme !== 'Todos' && p.TEMA !== filterTheme) return false;
             
             // Filtro por búsqueda (solo si hay búsqueda)
             if (!q) return true; 
@@ -63,7 +72,7 @@ export function BancoPreguntas() {
                 p.TEMA?.toLowerCase().includes(q)
             );
         });
-    }, [searchQuery, preguntas, filterType]);
+    }, [searchQuery, preguntas, filterType, filterTheme]);
 
     const getRespuesta = (p) => {
         const r = p.RESPUESTA?.trim();
@@ -121,6 +130,18 @@ export function BancoPreguntas() {
                 >
                     Abierta
                 </button>
+
+                <select
+                    className={styles.selectTheme}
+                    value={filterTheme}
+                    onChange={(e) => setFilterTheme(e.target.value)}
+                >
+                    {uniqueThemes.map(theme => (
+                        <option key={theme} value={theme}>
+                            {theme === 'Todos' ? 'Todos los temas' : theme}
+                        </option>
+                    ))}
+                </select>
             </div>
 
             <div className={styles.statusRow}>
