@@ -21,6 +21,20 @@ import EmployeeSearchBar from '@/components/ui/EmployeeSearchBar/EmployeeSearchB
 import { useConfirm } from '@/hooks/useConfirm';
 import { Select } from '@/components/ui';
 
+// Redirect old Drive thumbnail/uc URLs through the internal proxy to avoid 403s
+function normalizePhotoUrl(url) {
+    if (!url) return url;
+    if (url.startsWith('/api/drive-image')) return url;
+    try {
+        const u = new URL(url);
+        if (u.hostname === 'drive.google.com') {
+            const id = u.searchParams.get('id');
+            if (id) return `/api/drive-image?id=${id}`;
+        }
+    } catch { /* not a valid URL, return as-is */ }
+    return url;
+}
+
 export default function EmpleadosPage() {
     const { user, loading: authLoading, canWrite } = useAuth();
     const router = useRouter();
@@ -537,12 +551,12 @@ export default function EmpleadosPage() {
                                             <div className={styles.employeeInfo}>
                                                 <div
                                                     className={styles.avatarWrapper}
-                                                    onClick={(e) => { e.stopPropagation(); emp.photoUrl && setPreviewImage({ url: emp.photoUrl, name: emp.name }); }}
+                                                    onClick={(e) => { e.stopPropagation(); emp.photoUrl && setPreviewImage({ url: normalizePhotoUrl(emp.photoUrl), name: emp.name }); }}
                                                     style={{ cursor: emp.photoUrl ? 'pointer' : 'default' }}
                                                 >
                                                     {emp.photoUrl ? (
                                                         // eslint-disable-next-line @next/next/no-img-element
-                                                        <img src={emp.photoUrl} alt={emp.name} referrerPolicy="no-referrer" />
+                                                        <img src={normalizePhotoUrl(emp.photoUrl)} alt={emp.name} referrerPolicy="no-referrer" />
                                                     ) : getInitials(emp.name)}
                                                 </div>
                                                 <div className={styles.employeeDetails}>
@@ -672,7 +686,7 @@ export default function EmpleadosPage() {
                                         }}>
                                             {photoPreview || editingEmp?.photoUrl ? (
                                                 // eslint-disable-next-line @next/next/no-img-element
-                                                <img src={photoPreview || editingEmp?.photoUrl} alt="Vista previa" referrerPolicy="no-referrer" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                                                <img src={photoPreview || normalizePhotoUrl(editingEmp?.photoUrl)} alt="Vista previa" referrerPolicy="no-referrer" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                                             ) : (
                                                 <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" style={{ opacity: 0.4 }}>
                                                     <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
