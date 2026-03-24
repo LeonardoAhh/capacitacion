@@ -26,6 +26,38 @@ const DEPARTMENTS = [
     'PRODUCCIÓN', 'PROYECTOS', 'RECURSOS HUMANOS', 'SGI', 'SISTEMAS', 'VENTAS',
 ];
 
+// Helper: Convierte PATERNO MATERNO NOMBRES -> NOMBRES PATERNO MATERNO
+const formatFullName = (fullName) => {
+    if (!fullName) return '';
+    const nameStr = fullName.trim();
+    const parts = nameStr.split(/\s+/);
+    if (parts.length < 3) return nameStr;
+
+    let apellidosStr = '';
+    let currIdx = 0;
+    let numApellidos = 0;
+    const preposiciones = new Set(['DE', 'DEL', 'LA', 'LAS', 'LOS', 'Y', 'MAC', 'MC', 'SAN', 'SANTA']);
+
+    while (currIdx < parts.length && numApellidos < 2) {
+        const word = parts[currIdx];
+        if (preposiciones.has(word.toUpperCase())) {
+            apellidosStr += word + ' ';
+            currIdx++;
+        } else {
+            apellidosStr += word + ' ';
+            currIdx++;
+            numApellidos++;
+        }
+    }
+
+    const apellidos = apellidosStr.trim();
+    const nombres = parts.slice(currIdx).join(' ');
+    
+    if (!nombres) return nameStr;
+    return `${nombres} ${apellidos}`;
+};
+
+
 // ── Sub-componente: EvalChip ──────────────────────────────────────────────────
 function EvalChip({ evalDate, score, label, onClick }) {
     const { status, label: statusLabel } = getEvalStatus(evalDate, score);
@@ -808,7 +840,7 @@ export default function ContratosPage() {
                                             <tr key={item.id} className={styles.tableRow}>
                                                 {/* Empleado */}
                                                 <td className={styles.empCell}>
-                                                    <div className={styles.empName}>{item.name || '—'}</div>
+                                                    <div className={styles.empName}>{formatFullName(item.name) || '—'}</div>
                                                     <div className={styles.empId}>#{item.employeeId}</div>
                                                 </td>
 
@@ -908,7 +940,7 @@ export default function ContratosPage() {
                             <div key={item.id} className={`${styles.contractCard} ${cardBorder}`}>
                                 <div className={styles.cardTop}>
                                     <div className={styles.cardEmployeeInfo}>
-                                        <div className={styles.cardName}>{item.name}</div>
+                                        <div className={styles.cardName}>{formatFullName(item.name)}</div>
                                         <div className={styles.cardIdPos}>
                                             <span>#{item.employeeId}</span>
                                             <span className={styles.cardIdDot} />
