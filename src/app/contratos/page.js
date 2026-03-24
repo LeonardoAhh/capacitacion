@@ -17,39 +17,39 @@ import { useToast } from '@/components/ui/Toast/Toast';
 import { useConfirm } from '@/hooks/useConfirm';
 
 // ── Constantes ────────────────────────────────────────────────────────────────
-const EVAL_KEYS   = ['first', 'second', 'third'];
+const EVAL_KEYS = ['first', 'second', 'third'];
 const EVAL_LABELS = { first: '1ª Eval', second: '2ª Eval', third: '3ª Eval' };
-const EVAL_DAYS   = { first: 30, second: 60, third: 80 };
+const EVAL_DAYS = { first: 30, second: 60, third: 80 };
 
 const DEPARTMENTS = [
     'ALMACÉN', 'CALIDAD', 'LOGÍSTICA', 'MANTENIMIENTO', 'METROLOGÍA', 'MOLDES',
-    'PRODUCCIÓN', 'PROYECTOS', 'RECURSOS HUMANOS', 'SGI', 'SISTEMAS', 'VENTAS', 
+    'PRODUCCIÓN', 'PROYECTOS', 'RECURSOS HUMANOS', 'SGI', 'SISTEMAS', 'VENTAS',
 ];
 
 // ── Sub-componente: EvalChip ──────────────────────────────────────────────────
 function EvalChip({ evalDate, score, label, onClick }) {
     const { status, label: statusLabel } = getEvalStatus(evalDate, score);
     const chipClass = {
-        na:       styles.evalChipNa,
-        pending:  styles.evalChipPending,
+        na: styles.evalChipNa,
+        pending: styles.evalChipPending,
         upcoming: styles.evalChipUpcoming,
-        overdue:  styles.evalChipOverdue,
+        overdue: styles.evalChipOverdue,
         approved: styles.evalChipApproved,
-        failed:   styles.evalChipFailed,
+        failed: styles.evalChipFailed,
     }[status] ?? styles.evalChipPending;
 
     const icon = {
-        na:       null,
-        pending:  <Clock size={11} />,
+        na: null,
+        pending: <Clock size={11} />,
         upcoming: <AlertTriangle size={11} />,
-        overdue:  <AlertTriangle size={11} />,
+        overdue: <AlertTriangle size={11} />,
         approved: <CheckCircle2 size={11} />,
-        failed:   <X size={11} />,
+        failed: <X size={11} />,
     }[status];
 
     const canClick = status !== 'na';
     const isScored = status === 'approved' || status === 'failed';
-    
+
     return (
         <button
             className={`${styles.evalChip} ${chipClass}`}
@@ -67,10 +67,10 @@ function EvalChip({ evalDate, score, label, onClick }) {
 // ── Sub-componente: TrainingBtn ───────────────────────────────────────────────
 function TrainingBtn({ item, onToggle, disabled }) {
     const { isDelivered, isOverdue, dueDate } = getTrainingPlanStatus(item.entryDate, item.department, item.trainingPlan);
-    
+
     const chipClass = isDelivered ? styles.trainingEntregado
-                    : isOverdue ? styles.trainingVencido
-                    : styles.trainingPendiente;
+        : isOverdue ? styles.trainingVencido
+            : styles.trainingPendiente;
 
     const Icon = isDelivered ? CheckCircle2 : (isOverdue ? AlertTriangle : Clock);
     const labelText = isDelivered ? 'Entregado' : (isOverdue ? 'Vencido' : 'Pendiente');
@@ -90,9 +90,9 @@ function TrainingBtn({ item, onToggle, disabled }) {
                 {labelText}
             </button>
             {!isDelivered && dueDate && (
-                <span style={{ 
-                    fontSize: '0.6875rem', 
-                    fontWeight: 600, 
+                <span style={{
+                    fontSize: '0.6875rem',
+                    fontWeight: 600,
                     color: isOverdue ? 'var(--c-danger)' : 'var(--c-muted)',
                     whiteSpace: 'nowrap'
                 }}>
@@ -186,7 +186,7 @@ function ScoreModal({ item, evalKey, onClose, onSave }) {
     useEffect(() => { inputRef.current?.focus(); }, []);
 
     const evalDates = getEvalDates(item?.entryDate);
-    const evalDate  = evalDates[evalKey];
+    const evalDate = evalDates[evalKey];
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -286,7 +286,7 @@ function ContratoModal({ initial, onClose, onSave }) {
                 </div>
 
                 <form className={styles.modalBody} onSubmit={handleSubmit}>
-                    
+
                     <div className={styles.stepperHead}>
                         <div className={`${styles.stepIndicator} ${step >= 1 ? styles.stepActive : ''}`}>
                             <span className={styles.stepNum}>1</span>
@@ -492,17 +492,17 @@ export default function ContratosPage() {
     const { toast } = useToast();
     const { showConfirm, confirmDialog } = useConfirm();
 
-    const [contratos,     setContratos]     = useState([]);
-    const [loading,       setLoading]       = useState(true);
-    const [search,        setSearch]        = useState('');
-    const [filterDept,    setFilterDept]    = useState('');
-    const [filterStatus,  setFilterStatus]  = useState('');
-    const [filterShift,   setFilterShift]   = useState('');
-    const [showModal,     setShowModal]     = useState(false);
-    const [editingItem,   setEditingItem]   = useState(null);
+    const [contratos, setContratos] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [search, setSearch] = useState('');
+    const [filterDept, setFilterDept] = useState('');
+    const [filterStatus, setFilterStatus] = useState('');
+    const [filterShift, setFilterShift] = useState('');
+    const [showModal, setShowModal] = useState(false);
+    const [editingItem, setEditingItem] = useState(null);
     const [importLoading, setImportLoading] = useState(false);
-    const [togglingId,    setTogglingId]    = useState(null);
-    const [scoreModal,    setScoreModal]    = useState(null); // { item, evalKey }
+    const [togglingId, setTogglingId] = useState(null);
+    const [scoreModal, setScoreModal] = useState(null); // { item, evalKey }
 
     // ── Paginación local ──────────────────────────────────────────────────────
     const [currentPage, setCurrentPage] = useState(1);
@@ -522,11 +522,11 @@ export default function ContratosPage() {
     // ── Opciones para filtros ─────────────────────────────────────────────────
     const departments = useMemo(() =>
         [...new Set(contratos.map(c => c.department).filter(Boolean))].sort(),
-    [contratos]);
+        [contratos]);
 
     const shifts = useMemo(() =>
         [...new Set(contratos.map(c => c.shift).filter(Boolean))].sort(),
-    [contratos]);
+        [contratos]);
 
     // ── Filtrado y búsqueda ───────────────────────────────────────────────────
     const filtered = useMemo(() => {
@@ -574,7 +574,7 @@ export default function ContratosPage() {
 
     // Calcular la lista de página actual
     const totalPages = Math.ceil(filtered.length / ITEMS_PER_PAGE);
-    
+
     const paginated = useMemo(() => {
         const start = (currentPage - 1) * ITEMS_PER_PAGE;
         return filtered.slice(start, start + ITEMS_PER_PAGE);
@@ -592,7 +592,7 @@ export default function ContratosPage() {
         setImportLoading(true);
         try {
             const text = await file.text();
-            const arr  = JSON.parse(text);
+            const arr = JSON.parse(text);
             if (!Array.isArray(arr)) throw new Error('El archivo debe ser un array JSON.');
             await bulkImportContratos(arr);
             toast.success(`${arr.length} registros importados correctamente.`);
@@ -689,7 +689,7 @@ export default function ContratosPage() {
                         <input
                             type="search"
                             className={styles.searchInput}
-                            placeholder="Buscar por nombre, ID, puesto…"
+                            placeholder="Busqueda"
                             value={search}
                             onChange={e => setSearch(e.target.value)}
                             aria-label="Buscar empleado"
@@ -703,7 +703,7 @@ export default function ContratosPage() {
                         onChange={e => setFilterDept(e.target.value)}
                         aria-label="Filtrar por departamento"
                     >
-                        <option value="">Todos los departamentos</option>
+                        <option value="">Departamento</option>
                         {departments.map(d => <option key={d} value={d}>{d}</option>)}
                     </select>
 
@@ -714,7 +714,7 @@ export default function ContratosPage() {
                         onChange={e => setFilterStatus(e.target.value)}
                         aria-label="Filtrar por estado"
                     >
-                        <option value="">Todos los estados</option>
+                        <option value="">Estado</option>
                         <option value="pending_training">Plan pendiente</option>
                         <option value="pending_evals">Evals pendientes</option>
                         <option value="expiring">Contrato por vencer</option>
@@ -727,7 +727,7 @@ export default function ContratosPage() {
                         onChange={e => setFilterShift(e.target.value)}
                         aria-label="Filtrar por turno"
                     >
-                        <option value="">Todos los turnos</option>
+                        <option value="">Turno</option>
                         {shifts.map(s => <option key={s} value={s}>Turno: {s}</option>)}
                     </select>
 
@@ -739,7 +739,7 @@ export default function ContratosPage() {
                             accept=".json"
                             className={styles.fileInput}
                             onChange={handleImportJSON}
-                            aria-label="Importar JSON"
+                            aria-label="Importar"
                         />
                         <button
                             className={styles.btnImport}
@@ -749,7 +749,7 @@ export default function ContratosPage() {
                             type="button"
                         >
                             <Upload size={15} />
-                            {importLoading ? 'Importando…' : 'Importar JSON'}
+                            {importLoading ? 'Importando…' : 'Importar'}
                         </button>
                         <button
                             className={styles.btnPrimary}
@@ -757,7 +757,7 @@ export default function ContratosPage() {
                             title="Registrar nuevo empleado"
                             type="button"
                         >
-                            <Plus size={15} /> Nuevo Empleado
+                            <Plus size={15} /> Empleado
                         </button>
                     </div>
                 </div>
@@ -801,11 +801,11 @@ export default function ContratosPage() {
                                 </thead>
                                 <tbody>
                                     {paginated.map(item => {
-                                        const evalDates    = getEvalDates(item.entryDate);
-                                        const contractSt   = getContractStatus(item.contractEndDate);
-                                        const dateClass    = contractSt === 'expiring' ? styles.dateExpiring
-                                                           : contractSt === 'expired'  ? styles.dateExpired
-                                                           : '';
+                                        const evalDates = getEvalDates(item.entryDate);
+                                        const contractSt = getContractStatus(item.contractEndDate);
+                                        const dateClass = contractSt === 'expiring' ? styles.dateExpiring
+                                            : contractSt === 'expired' ? styles.dateExpired
+                                                : '';
                                         return (
                                             <tr key={item.id} className={styles.tableRow}>
                                                 {/* Empleado */}
@@ -901,11 +901,11 @@ export default function ContratosPage() {
                             <p className={styles.emptyDesc}>Importa un .json o crea un empleado con el botón +.</p>
                         </div>
                     ) : paginated.map(item => {
-                        const evalDates  = getEvalDates(item.entryDate);
+                        const evalDates = getEvalDates(item.entryDate);
                         const contractSt = getContractStatus(item.contractEndDate);
                         const cardBorder = contractSt === 'expiring' ? styles.contractCardBorderExpiring
-                                         : contractSt === 'expired'  ? styles.contractCardBorderExpired
-                                         : '';
+                            : contractSt === 'expired' ? styles.contractCardBorderExpired
+                                : '';
                         return (
                             <div key={item.id} className={`${styles.contractCard} ${cardBorder}`}>
                                 <div className={styles.cardTop}>
