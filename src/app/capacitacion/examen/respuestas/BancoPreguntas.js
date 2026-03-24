@@ -1,31 +1,69 @@
 'use client';
 
 import { useState, useMemo, useEffect } from 'react';
+import { db } from '@/lib/firebase';
+import { collection, getDocs, query, orderBy } from 'firebase/firestore';
 import styles from './respuestas.module.css';
 
 export function BancoPreguntas() {
     const [searchQuery, setSearchQuery] = useState('');
     const [preguntas, setPreguntas] = useState([]);
+    const [filterType, setFilterType] = useState('Todos');
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        fetch('/evaluaciones.json')
-            .then((res) => res.json())
-            .then((data) => setPreguntas(Array.isArray(data) ? data : []))
-            .catch(() => setPreguntas([]))
-            .finally(() => setLoading(false));
+        const loadFromFirestore = async () => {
+            try {
+                const q = query(collection(db, 'exam_questions'), orderBy('question'));
+                const snap = await getDocs(q);
+                // Mapeamos los campos de Firestore (minúsculas/inglés) a los que espera este componente (Mayúsculas/Español)
+                // para no romper el resto del componente visual
+                const data = snap.docs.map(d => {
+                    const fd = d.data();
+                    const isMult = fd.type === 'Múltiple';
+                    return {
+                        ID: d.id.substring(0, 6).toUpperCase(),
+                        'PREGUNTA ': fd.question,
+                        TEMA: fd.theme || 'General',
+                        TIPO: fd.type,
+                        // Solo convertimos a Mayúscula si es de una sola letra (A, B, C)
+                        RESPUESTA: (isMult && fd.correctAnswer?.length === 1) 
+                            ? fd.correctAnswer.toUpperCase() 
+                            : fd.correctAnswer,
+                        'OPCIÓN A ': fd.options?.a,
+                        'OPCIÓN B ': fd.options?.b,
+                        'OPCIÓN C ': fd.options?.c
+                    };
+                });
+                setPreguntas(data);
+            } catch (error) {
+                console.error("Error al sincronizar con Firestore:", error);
+                setPreguntas([]);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        loadFromFirestore();
     }, []);
 
     const filteredPreguntas = useMemo(() => {
         const q = searchQuery.trim().toLowerCase();
-        if (!q) return [];
-        return preguntas.filter(
-            (p) =>
+        
+        return preguntas.filter((p) => {
+            // Filtro por tipo
+            if (filterType !== 'Todos' && p.TIPO !== filterType) return false;
+            
+            // Filtro por búsqueda (solo si hay búsqueda)
+            if (!q) return true; 
+
+            return (
                 p['PREGUNTA ']?.toLowerCase().includes(q) ||
-                p.ID === q ||
+                p.ID?.toLowerCase().includes(q) ||
                 p.TEMA?.toLowerCase().includes(q)
-        );
-    }, [searchQuery, preguntas]);
+            );
+        });
+    }, [searchQuery, preguntas, filterType]);
 
     const getRespuesta = (p) => {
         const r = p.RESPUESTA?.trim();
@@ -62,6 +100,27 @@ export function BancoPreguntas() {
                         ✕
                     </button>
                 )}
+            </div>
+
+            <div className={styles.filtersRow}>
+                <button 
+                    className={`${styles.filterBtn} ${filterType === 'Todos' ? styles.filterBtnActive : ''}`}
+                    onClick={() => setFilterType('Todos')}
+                >
+                    Todas
+                </button>
+                <button 
+                    className={`${styles.filterBtn} ${filterType === 'Múltiple' ? styles.filterBtnActive : ''}`}
+                    onClick={() => setFilterType('Múltiple')}
+                >
+                    Múltiple
+                </button>
+                <button 
+                    className={`${styles.filterBtn} ${filterType === 'Abierta' ? styles.filterBtnActive : ''}`}
+                    onClick={() => setFilterType('Abierta')}
+                >
+                    Abierta
+                </button>
             </div>
 
             <div className={styles.statusRow}>

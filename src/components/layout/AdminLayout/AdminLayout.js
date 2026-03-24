@@ -59,7 +59,7 @@ export default function AdminLayout({ children, title = 'Viñoplastic RH' }) {
             />
 
             {/* Contenedor principal scrollable */}
-            <div className={`${styles.scrollContent} ${isSidebarCollapsed ? styles.scrollContentExpanded : ''}`}>
+            <div className={styles.scrollContent}>
 
                 {/* Header desktop — solo visible en ≥768px */}
                 <header className={styles.desktopHeader} aria-label={`Sección: ${title}`}>

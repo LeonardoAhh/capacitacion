@@ -381,31 +381,21 @@
 }
 
 /* ═══════════════════════════════════════════════
-   DESKTOP COLLAPSED — icono solo
+   DESKTOP COLLAPSED — Ocultar por completo (Width 0)
    ═══════════════════════════════════════════════ */
 @media (min-width: 768px) {
     .collapsed {
-        width: var(--s-width-sm);
-        min-width: var(--s-width-sm);
+        width: 0;
+        min-width: 0;
+        border-right-width: 0;
+        padding: 0;
+        opacity: 0;
+        pointer-events: none;
     }
-
-    .collapsed .brandName,
-    .collapsed .sectionLabel,
-    .collapsed .parentLabel,
-    .collapsed .chevron,
-    .collapsed .subMenu,
-    .collapsed .subLabel,
-    .collapsed .profileInfo { opacity: 0; width: 0; overflow: hidden; }
-
-    .collapsed .parentItem { justify-content: center; padding: 9px; }
-    .collapsed .parentLeft { gap: 0; }
-
-    .collapsed .footer { justify-content: center; padding: 10px 8px; background: transparent; }
-    .collapsed .profileCard { flex: 0; padding: 8px; justify-content: center; gap: 0; }
-    .collapsed .logoutBtn { display: none; }
-
-    .collapsed .divider { margin: 6px 8px 10px; }
-    .collapsed .sectionLabel { padding: 6px 0; }
+    
+    .collapsed * {
+        white-space: nowrap;
+    }
 }
 
 /* ═══════════════════════════════════════════════

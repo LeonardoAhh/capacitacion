@@ -745,9 +745,9 @@ export default function ContratosPage() {
                         aria-label="Filtrar por estado"
                     >
                         <option value="">Estado</option>
-                        <option value="pending_training">Plan pendiente</option>
-                        <option value="pending_evals">Evals pendientes</option>
-                        <option value="expiring">Contrato por vencer</option>
+                        <option value="pending_training">PLAN PENDIENTE</option>
+                        <option value="pending_evals">EVALUACIONES PENDIENTES</option>
+                        <option value="expiring">CONTRATO POR VENCER</option>
                     </select>
 
                     {/* Filtro turno */}

@@ -8,7 +8,6 @@ import { Button } from '@/components/ui/Button/Button';
 import { Select } from '@/components/ui';
 import { useToast } from '@/components/ui/Toast/Toast';
 import { Card, CardContent } from '@/components/ui/Card/Card';
-import QuestionManager from '@/components/features/QuestionManager/QuestionManager'; // [NEW]
 import Link from 'next/link';
 import styles from './page.module.css';
 
@@ -20,7 +19,6 @@ export default function ExamenPage() {
     const { user, loading: authLoading } = useAuth();
     const router = useRouter();
     const { toast } = useToast();
-    const [showQuestionManager, setShowQuestionManager] = useState(false); // [NEW]
 
     // Auth Protection
     useEffect(() => {
@@ -393,9 +391,11 @@ export default function ExamenPage() {
                 <div className={styles.header}>
                     <div className={styles.titleRow}>
                         <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
-                            <Button variant="outline" size="sm" onClick={() => setShowQuestionManager(true)}>
-                                Gestionar Preguntas
-                            </Button>
+                            <Link href="/capacitacion/examen/gestionar">
+                                <Button variant="outline" size="sm">
+                                    ⚙️ Gestionar Preguntas
+                                </Button>
+                            </Link>
                             <Link href="/capacitacion/examen/respuestas">
                                 <Button variant="outline" size="sm">
                                     📋 Ver Respuestas
@@ -404,11 +404,6 @@ export default function ExamenPage() {
                         </div>
                     </div>
                 </div>
-
-                <QuestionManager
-                    isOpen={showQuestionManager}
-                    onClose={() => setShowQuestionManager(false)}
-                />
 
                 <div className={styles.configCard}>
                     <div className={styles.formGroup}>

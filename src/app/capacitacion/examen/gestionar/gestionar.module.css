@@ -1,4 +1,4 @@
-/* ===== BANCO DE PREGUNTAS - PÁGINA RESPUESTAS ===== */
+/* ===== GESTIÓN DE PREGUNTAS ===== */
 
 .pageWrapper {
     min-height: 100vh;
@@ -7,33 +7,10 @@
     flex-direction: column;
 }
 
-/* Header */
-.header {
-    position: sticky;
-    top: 0;
-    z-index: 40;
-    height: 64px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 0 1.5rem;
-    background: var(--bg-primary);
-    border-bottom: 1px solid var(--border-color);
-    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
-}
-
-.headerTitle {
-    font-size: 1.1rem;
-    font-weight: 700;
-    color: var(--text-primary);
-    letter-spacing: -0.02em;
-}
-
 /* Main content */
 .main {
     flex: 1;
     max-width: 100%;
-    /* Aprovechar toda la pantalla en PC */
     width: 100%;
     margin: 0 auto;
     padding: 2rem 2rem;
@@ -41,9 +18,10 @@
 
 .pageHeader {
     display: flex;
+    justify-content: space-between;
     align-items: center;
-    gap: 1.5rem;
     margin-bottom: 2rem;
+    gap: 1.5rem;
 }
 
 .backIconBtn {
@@ -80,13 +58,27 @@
 .pageSubtitle {
     color: var(--text-secondary);
     font-size: 0.95rem;
-    margin: 0 0 2rem 0;
+    margin: 0;
 }
 
-/* ===== COMPONENTE BANCO PREGUNTAS ===== */
+.headerActions {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+}
+
+/* ===== COMPONENTE LISITA PREGUNTAS ===== */
 
 .wrapper {
     width: 100%;
+}
+
+.filtersRow {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1rem;
+    align-items: center;
+    flex-wrap: wrap;
 }
 
 /* Buscador */
@@ -98,7 +90,8 @@
     border: 1.5px solid var(--border-color);
     border-radius: var(--radius-xl);
     padding: 0 1rem;
-    margin-bottom: 1rem;
+    flex: 1;
+    min-width: 250px;
     transition: border-color 0.2s, box-shadow 0.2s;
 }
 
@@ -108,9 +101,9 @@
 }
 
 .searchIcon {
-    font-size: 1.1rem;
     margin-right: 0.75rem;
     flex-shrink: 0;
+    color: var(--text-secondary);
 }
 
 .searchInput {
@@ -122,10 +115,6 @@
     font-size: 1rem;
     padding: 0.9rem 0;
     min-width: 0;
-}
-
-.searchInput::placeholder {
-    color: var(--text-tertiary, var(--text-secondary));
 }
 
 .clearBtn {
@@ -147,9 +136,25 @@
     transform: scale(1.1);
 }
 
-.clearBtn:hover {
-    background: var(--border-color);
+.searchInput::placeholder {
+    color: var(--text-tertiary, var(--text-secondary));
+}
+
+.selectDept {
+    border: 1.5px solid var(--border-color);
+    border-radius: var(--radius-xl);
+    padding: 0.9rem 1rem;
+    font-size: 0.95rem;
     color: var(--text-primary);
+    background: var(--bg-primary);
+    min-width: 200px;
+    outline: none;
+    cursor: pointer;
+    transition: border-color 0.2s;
+}
+
+.selectDept:focus {
+    border-color: var(--color-primary);
 }
 
 /* Estado / Status */
@@ -177,48 +182,8 @@
     animation: spin 0.7s linear infinite;
 }
 
-/* Estilos para filtros por tipo */
-.filtersRow {
-    display: flex;
-    gap: 0.75rem;
-    margin-bottom: 1.5rem;
-    flex-wrap: wrap;
-}
-
-.filterBtn {
-    padding: 0.6rem 1.25rem;
-    border-radius: var(--radius-full, 50px);
-    border: 1px solid var(--border-color);
-    background: var(--bg-primary);
-    color: var(--text-secondary);
-    font-size: 0.875rem;
-    font-weight: 500;
-    cursor: pointer;
-    transition: all 0.2s ease;
-}
-
-.filterBtn:hover {
-    border-color: var(--color-primary);
-    color: var(--color-primary);
-    background: var(--bg-secondary);
-}
-
-.filterBtnActive {
-    background: var(--color-primary);
-    color: white;
-    border-color: var(--color-primary);
-    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.25);
-}
-
-.filterBtnActive:hover {
-    background: #2563eb;
-    color: white;
-}
-
 @keyframes spin {
-    to {
-        transform: rotate(360deg);
-    }
+    to { transform: rotate(360deg); }
 }
 
 /* Lista de resultados */
@@ -235,10 +200,45 @@
     border-radius: var(--radius-xl);
     padding: 1.25rem 1.5rem;
     transition: box-shadow 0.2s;
+    position: relative;
 }
 
 .card:hover {
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.cardActions {
+    position: absolute;
+    top: 1.25rem;
+    right: 1.5rem;
+    display: flex;
+    gap: 0.5rem;
+}
+
+.actionBtn {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    color: var(--text-secondary);
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.editBtn:hover {
+    background: rgba(59, 130, 246, 0.1);
+    color: #3b82f6;
+    border-color: #3b82f6;
+}
+
+.deleteBtn:hover {
+    background: rgba(239, 68, 68, 0.1);
+    color: #ef4444;
+    border-color: #ef4444;
 }
 
 /* Meta info */
@@ -248,16 +248,27 @@
     gap: 0.5rem;
     flex-wrap: wrap;
     margin-bottom: 0.75rem;
+    padding-right: 80px; /* Evitar solapar botones de acción */
 }
 
-.idBadge {
+.deptBadge {
     font-size: 0.75rem;
     font-family: monospace;
+    font-weight: 600;
     color: var(--text-secondary);
     background: var(--bg-secondary);
     padding: 0.2rem 0.5rem;
     border-radius: var(--radius-sm);
     border: 1px solid var(--border-color);
+}
+
+.fixedBadge {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: #000;
+    background: #f59e0b; /* Amber */
+    padding: 0.2rem 0.5rem;
+    border-radius: var(--radius-sm);
 }
 
 .temaBadge {
@@ -295,6 +306,7 @@
     color: var(--text-primary);
     line-height: 1.5;
     margin: 0 0 1rem 0;
+    padding-right: 80px;
 }
 
 /* Opciones de respuesta múltiple */
@@ -313,6 +325,7 @@
     border: 1px solid transparent;
     font-size: 0.875rem;
     color: var(--text-secondary);
+    background: var(--bg-secondary);
     transition: background 0.15s;
 }
 
@@ -326,6 +339,7 @@
     font-weight: 700;
     flex-shrink: 0;
     width: 1.25rem;
+    text-transform: uppercase;
 }
 
 .opcionCorrecta .opcionLetra {
@@ -350,7 +364,7 @@
     display: flex;
     align-items: flex-start;
     gap: 0.5rem;
-    background: rgba(34, 197, 94, 0.08);
+    background: rgba(34, 197, 94, 0.08); /* Suave verde indicando respuesta */
     border: 1px solid rgba(34, 197, 94, 0.25);
     border-radius: var(--radius-md);
     padding: 0.75rem 1rem;
@@ -369,6 +383,78 @@
     line-height: 1.5;
 }
 
+/* ===== FORMULARIO (MODAL) ===== */
+.formGroup {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    margin-bottom: 1.25rem;
+}
+
+.formGroup label {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+}
+
+.input, .select, .textarea {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    font-size: 0.95rem;
+    color: var(--text-primary);
+    background: var(--bg-primary);
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.textarea {
+    resize: vertical;
+    min-height: 80px;
+}
+
+.input:focus, .select:focus, .textarea:focus {
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.checkboxWrap {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 0;
+    cursor: pointer;
+}
+
+.checkboxWrap input {
+    width: 1.1rem;
+    height: 1.1rem;
+    accent-color: var(--color-primary);
+    cursor: pointer;
+}
+
+.checkboxWrap label {
+    margin: 0;
+    cursor: pointer;
+}
+
+.optionsGrid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0.5rem 1rem;
+    background: var(--bg-secondary);
+    padding: 1rem;
+    border-radius: var(--radius-md);
+    margin-bottom: 1.25rem;
+}
+
+@media (min-width: 640px) {
+    .optionsGrid {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+
 /* ===== RESPONSIVE ===== */
 @media (max-width: 640px) {
     .main {
@@ -383,7 +469,37 @@
         padding: 1rem 1.1rem;
     }
 
-    .header {
-        padding: 0 1rem;
+    .pageHeader {
+        flex-direction: column;
+        gap: 1rem;
+    }
+}
+
+.selectDept, .selectType {
+    padding: 0.6rem 1rem;
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    font-family: var(--font-body);
+    font-size: 0.9rem;
+    cursor: pointer;
+    min-width: 200px;
+    transition: border-color 0.2s ease;
+}
+
+.selectDept:focus, .selectType:focus {
+    outline: none;
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+@media (max-width: 768px) {
+    .filtersRow {
+        flex-direction: column;
+    }
+    
+    .selectDept, .selectType {
+        min-width: 100%;
     }
 }

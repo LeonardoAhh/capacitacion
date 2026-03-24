@@ -41,14 +41,14 @@
     z-index: 10;
     min-height: 100vh;
     padding: 0 clamp(1rem, 4vw, 2rem) 8rem; /* Quitamos padding top para manejarlo en el header */
-    width: 100%;
+    min-width: 0; /* Crucial para evitar que contenido ancho force el ancho flex */
     overflow-x: hidden;
-    transition: margin-left 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-/* Cuando el sidebar está colapsado en desktop, el contenido ocupa todo el ancho */
-.scrollContentExpanded {
-    margin-left: 0;
+@media (max-width: 767px) {
+    .scrollContent {
+        padding-top: 1.5rem; /* Separación del nuevo header estilo shadcn */
+    }
 }
 
 .loading {
