@@ -24,9 +24,9 @@ function useDataFetching() {
     const [candidates, setCandidates] = useState([]);
     const [coursesMapRef, setCoursesMapRef] = useState({});
 
-    const fetchData = useCallback(async () => {
+    const fetchData = useCallback(async (silent = false) => {
         try {
-            setLoading(true);
+            if (!silent) setLoading(true);
             setError(null);
 
             // Parallel fetching for better performance
@@ -190,32 +190,54 @@ function useDataFetching() {
             console.error("Error fetching dashboard data:", error);
             setError('Error al cargar los datos. Por favor, intenta de nuevo.');
         } finally {
-            setLoading(false);
+            if (!silent) setLoading(false);
         }
     }, []);
 
-    return { loading, error, candidates, coursesMapRef, fetchData };
+    return { loading, error, candidates, setCandidates, coursesMapRef, fetchData };
 }
 
 /**
  * Calcula cuánto tiempo le queda al candidato para terminar sus cursos.
- * Base: fechaIngreso + 3 días. Si existe `fechaLimite` en Firestore, se usa ese valor.
+ * Base: fechaIngreso + 3 días al final del día. Si existe `fechaLimite` en Firestore, se usa ese valor exacto.
  * @param {Object} candidate
  * @returns {{ daysLeft: number, hoursLeft: number, isExpired: boolean, isUrgent: boolean, label: string }}
  */
 function getDeadlineInfo(candidate) {
-    // Si se reabrió el plazo, usar la fecha límite personalizada
-    const ingreso = candidate.fechaLimite || candidate.startDate || candidate.fechaIngreso || candidate.createdAt;
-    if (!ingreso) return null;
+    if (!candidate) return null;
 
     try {
-        const start = new Date(ingreso);
-        if (isNaN(start.getTime())) return null;
+        let deadline;
 
-        // Si es fechaLimite ya es la fecha absoluta de vencimiento
-        const deadline = candidate.fechaLimite
-            ? new Date(ingreso)
-            : new Date(start.getTime() + 3 * 24 * 60 * 60 * 1000);
+        if (candidate.fechaLimite) {
+            deadline = new Date(candidate.fechaLimite);
+        } else {
+            // Priority: startDate > fechaIngreso > createdAt
+            const baseDateRaw = candidate.startDate || candidate.fechaIngreso || candidate.createdAt;
+            if (!baseDateRaw) return null;
+            
+            // Si viene con formato 'YYYY-MM-DD' hay que protegerlo de la zona horaria UTC.
+            const baseStr = String(baseDateRaw);
+            let start;
+            if (baseStr.includes('T')) {
+                start = new Date(baseDateRaw);
+            } else if (baseStr.match(/^\d{4}-\d{2}-\d{2}$/)) {
+                // Forzar hora local agregando ' T00:00:00'
+                start = new Date(`${baseStr}T00:00:00`);
+            } else {
+                start = new Date(baseDateRaw);
+            }
+
+            if (isNaN(start.getTime())) return null;
+
+            // Plazo por defecto: 3 días a partir de la fecha de ingreso, al final del día
+            deadline = new Date(start.getTime());
+            deadline.setDate(deadline.getDate() + 3);
+            deadline.setHours(23, 59, 59, 0);
+        }
+
+        if (isNaN(deadline.getTime())) return null;
+
         const now = new Date();
         const diffMs = deadline - now;
 
@@ -232,7 +254,7 @@ function getDeadlineInfo(candidate) {
         else if (daysLeft === 1) label = `1 día ${hoursLeft}h`;
         else label = `${daysLeft} días ${hoursLeft}h`;
 
-        return { daysLeft, hoursLeft, isExpired: false, isUrgent, label };
+        return { daysLeft, hoursLeft, isExpired: false, isUrgent, label, deadlineDate: deadline };
     } catch {
         return null;
     }
@@ -331,7 +353,7 @@ export default function CandidateMonitoringPage() {
     const firstTemplateRef = useRef(null);
 
     // Data fetching hook
-    const { loading, error, candidates, coursesMapRef, fetchData } = useDataFetching();
+    const { loading, error, candidates, setCandidates, coursesMapRef, fetchData } = useDataFetching();
 
     // UI States
     const [searchTerm, setSearchTerm] = useState('');
@@ -501,27 +523,48 @@ export default function CandidateMonitoringPage() {
         }
     }, [user?.uid, updateUserProfile]);
 
-    // Reabrir / Extender el plazo del candidato N días desde hoy
+    // Reabrir / Extender el plazo del candidato N días desde hoy o desde su fecha de vencimiento actual
     const handleReopenDeadline = useCallback(async (candidate, extraDays = 3) => {
         if (!await showConfirm(
-            `¿Extender el plazo de ${formatFullName(candidate.name)} ${extraDays} días más a partir de hoy?`,
-            { title: 'Reabrir Plazo', confirmLabel: `Extender ${extraDays} días` }
+            `¿Extender el tiempo de capacitación de ${formatFullName(candidate.name)} por ${extraDays} día${extraDays > 1 ? 's' : ''} más?`,
+            { title: 'Reabrir Plazo', confirmLabel: `Extender ${extraDays} día${extraDays > 1 ? 's' : ''}` }
         )) return;
+
         try {
-            const newDeadline = new Date();
+            // Buscamos la fecha límite actual usando la función unificada
+            const dlInfo = getDeadlineInfo(candidate);
+            
+            // Si tiene fecha calculable y aún no está vencido, le sumamos a su tiempo actual. Si ya venció o no tiene, sumamos a partir de hoy.
+            let startDateForExtension = new Date();
+            if (dlInfo && !dlInfo.isExpired && dlInfo.deadlineDate) {
+                startDateForExtension = new Date(dlInfo.deadlineDate.getTime());
+            }
+
+            const newDeadline = new Date(startDateForExtension.getTime());
             newDeadline.setDate(newDeadline.getDate() + extraDays);
             newDeadline.setHours(23, 59, 59, 0); // hasta el final del día
+            const isoString = newDeadline.toISOString();
+
             await updateDoc(doc(db, 'employees', candidate.id), {
-                fechaLimite: newDeadline.toISOString()
+                fechaLimite: isoString
             });
+
+            // Actualización optimista local para no recargar todo
+            setCandidates(prev => prev.map(c => 
+                c.id === candidate.id ? { ...c, fechaLimite: isoString } : c
+            ));
+
             toast.success(`Plazo extendido ${extraDays} días para ${formatFullName(candidate.name)}`);
             setQuickDrawerOpen(false);
-            fetchData();
+
+            // Refresco silente en fondo por seguridad, sin activar spinner global
+            fetchData(true);
         } catch (err) {
             console.error('Error extending deadline:', err);
             toast.error('Error al extender el plazo');
         }
-    }, [showConfirm, toast, fetchData]);
+    }, [showConfirm, toast, setCandidates, fetchData]);
+
 
 
 

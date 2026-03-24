@@ -26,10 +26,25 @@ export default function CourseDeadlineTimer({ startDate, fechaLimite, courses = 
         if (!startDate) return;
 
         const calculateTimeRemaining = () => {
-            // Si el admin extendió el plazo, usar fechaLimite directamente; si no, startDate + 3 días
-            const deadline = fechaLimite
-                ? new Date(fechaLimite)
-                : new Date(new Date(startDate).getTime() + COURSE_DURATION_DAYS * 24 * 60 * 60 * 1000);
+            // Si el admin extendió el plazo, usar fechaLimite directamente; si no, startDate + COURSE_DURATION_DAYS días hasta 23:59:59
+            let deadline;
+            if (fechaLimite) {
+                deadline = new Date(fechaLimite);
+            } else {
+                const baseStr = String(startDate);
+                let start;
+                if (baseStr.includes('T')) {
+                    start = new Date(startDate);
+                } else if (baseStr.match(/^\d{4}-\d{2}-\d{2}$/)) {
+                    start = new Date(`${baseStr}T00:00:00`);
+                } else {
+                    start = new Date(startDate);
+                }
+                
+                deadline = new Date(start.getTime());
+                deadline.setDate(deadline.getDate() + COURSE_DURATION_DAYS);
+                deadline.setHours(23, 59, 59, 0);
+            }
             const now = new Date();
             const diff = deadline - now;
 
