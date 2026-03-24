@@ -2,13 +2,14 @@
 
 import styles from './Avatar.module.css';
 import { cn } from '@/lib/utils';
-import { getOptimizedImageUrl } from '@/lib/imageUtils';
+import { UserRound } from 'lucide-react';
 
 /**
- * Avatar component for displaying user photos or initials
+ * Avatar component — shows initials derived from name, or a generic icon as fallback.
+ * Drive image loading has been removed.
  */
 export function Avatar({
-    src,
+    src: _src,
     alt = '',
     name = '',
     size = 'md',
@@ -17,7 +18,7 @@ export function Avatar({
 }) {
     // Get initials from name
     const getInitials = (name) => {
-        if (!name) return '?';
+        if (!name) return null;
         const parts = name.trim().split(' ');
         if (parts.length >= 2) {
             return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
@@ -35,37 +36,21 @@ export function Avatar({
         return Math.abs(hash) % 360;
     };
 
+    const initials = getInitials(name);
     const hue = getColorFromName(name);
 
     return (
         <div
             className={cn(styles.avatar, styles[size], className)}
-            style={!src ? {
+            style={{
                 background: `linear-gradient(135deg, hsl(${hue}, 70%, 50%), hsl(${hue + 30}, 70%, 40%))`
-            } : undefined}
+            }}
             role="img"
             aria-label={alt || name || 'Avatar de usuario'}
             {...props}
         >
-            {src ? (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img
-                    src={getOptimizedImageUrl(src, size)}
-                    alt={alt || name || 'Foto de perfil'}
-                    className={styles.image}
-                    referrerPolicy="no-referrer"
-                    onError={(e) => {
-                        e.target.style.display = 'none';
-                        e.target.nextSibling.style.display = 'flex';
-                    }}
-                />
-            ) : null}
-            <span
-                className={styles.fallback}
-                style={{ display: src ? 'none' : 'flex' }}
-                aria-hidden="true"
-            >
-                {getInitials(name)}
+            <span className={styles.fallback} aria-hidden="true">
+                {initials ?? <UserRound size={size === 'sm' ? 14 : size === 'lg' ? 22 : 18} strokeWidth={1.5} />}
             </span>
         </div>
     );
