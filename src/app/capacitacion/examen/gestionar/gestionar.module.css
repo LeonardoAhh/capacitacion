@@ -7,14 +7,14 @@
     flex-direction: column;
 }
 
-/* Main content */
 .main {
     flex: 1;
-    max-width: 100%;
     width: 100%;
     margin: 0 auto;
-    padding: 2rem 2rem;
+    padding: 2rem;
 }
+
+/* ===== HEADER ===== */
 
 .pageHeader {
     display: flex;
@@ -22,6 +22,12 @@
     align-items: center;
     margin-bottom: 2rem;
     gap: 1.5rem;
+}
+
+.headerLeft {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
 }
 
 .backIconBtn {
@@ -67,7 +73,7 @@
     align-items: center;
 }
 
-/* ===== COMPONENTE LISITA PREGUNTAS ===== */
+/* ===== FILTROS ===== */
 
 .wrapper {
     width: 100%;
@@ -81,7 +87,6 @@
     flex-wrap: wrap;
 }
 
-/* Buscador */
 .searchBox {
     position: relative;
     display: flex;
@@ -117,6 +122,10 @@
     min-width: 0;
 }
 
+.searchInput::placeholder {
+    color: var(--text-tertiary, var(--text-secondary));
+}
+
 .clearBtn {
     background: none;
     border: none;
@@ -126,8 +135,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: all 0.2s ease;
-    font-size: 1.1rem;
+    transition: color 0.2s ease, transform 0.2s ease;
     line-height: 1;
 }
 
@@ -136,28 +144,28 @@
     transform: scale(1.1);
 }
 
-.searchInput::placeholder {
-    color: var(--text-tertiary, var(--text-secondary));
-}
-
-.selectDept {
-    border: 1.5px solid var(--border-color);
-    border-radius: var(--radius-xl);
+/* Select unificado para los 3 filtros */
+.filterSelect {
     padding: 0.9rem 1rem;
-    font-size: 0.95rem;
-    color: var(--text-primary);
+    border-radius: var(--radius-xl);
+    border: 1.5px solid var(--border-color);
     background: var(--bg-primary);
+    color: var(--text-primary);
+    font-family: var(--font-body);
+    font-size: 0.9rem;
     min-width: 200px;
     outline: none;
     cursor: pointer;
-    transition: border-color 0.2s;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
-.selectDept:focus {
+.filterSelect:focus {
     border-color: var(--color-primary);
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
 }
 
-/* Estado / Status */
+/* ===== STATUS ===== */
+
 .statusRow {
     min-height: 2rem;
     margin-bottom: 1rem;
@@ -180,20 +188,21 @@
     border-top-color: var(--color-primary);
     border-radius: 50%;
     animation: spin 0.7s linear infinite;
+    flex-shrink: 0;
 }
 
 @keyframes spin {
     to { transform: rotate(360deg); }
 }
 
-/* Lista de resultados */
+/* ===== TARJETAS ===== */
+
 .resultsList {
     display: flex;
     flex-direction: column;
     gap: 1rem;
 }
 
-/* Tarjeta de pregunta */
 .card {
     background: var(--bg-primary);
     border: 1px solid var(--border-color);
@@ -226,13 +235,13 @@
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    transition: all 0.2s;
+    transition: background 0.2s, color 0.2s, border-color 0.2s;
 }
 
 .editBtn:hover {
     background: rgba(59, 130, 246, 0.1);
-    color: #3b82f6;
-    border-color: #3b82f6;
+    color: var(--color-primary);
+    border-color: var(--color-primary);
 }
 
 .deleteBtn:hover {
@@ -241,34 +250,37 @@
     border-color: #ef4444;
 }
 
-/* Meta info */
+/* ===== BADGES / META ===== */
+
 .cardMeta {
     display: flex;
     align-items: center;
     gap: 0.5rem;
     flex-wrap: wrap;
     margin-bottom: 0.75rem;
-    padding-right: 80px; /* Evitar solapar botones de acción */
+    padding-right: 80px; /* evita solapar los botones de acción */
+}
+
+.idBadge {
+    font-size: 0.7rem;
+    font-family: var(--font-mono);
+    font-weight: 700;
+    color: var(--text-tertiary, var(--text-secondary));
+    background: var(--bg-secondary);
+    padding: 0.2rem 0.5rem;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border-color);
+    letter-spacing: 0.05em;
 }
 
 .deptBadge {
     font-size: 0.75rem;
-    font-family: monospace;
     font-weight: 600;
     color: var(--text-secondary);
     background: var(--bg-secondary);
     padding: 0.2rem 0.5rem;
     border-radius: var(--radius-sm);
     border: 1px solid var(--border-color);
-}
-
-.fixedBadge {
-    font-size: 0.75rem;
-    font-weight: 600;
-    color: #000;
-    background: #f59e0b; /* Amber */
-    padding: 0.2rem 0.5rem;
-    border-radius: var(--radius-sm);
 }
 
 .temaBadge {
@@ -280,26 +292,19 @@
     border-radius: var(--radius-sm);
 }
 
-.tipoBadge {
-    font-size: 0.7rem;
+/* Amber — color semántico para preguntas obligatorias */
+.fixedBadge {
+    font-size: 0.75rem;
     font-weight: 600;
-    padding: 0.2rem 0.6rem;
+    color: #92400e;
+    background: rgba(245, 158, 11, 0.15);
+    border: 1px solid rgba(245, 158, 11, 0.3);
+    padding: 0.2rem 0.5rem;
     border-radius: var(--radius-sm);
-    text-transform: uppercase;
-    letter-spacing: 0.04em;
 }
 
-.tipoMultiple {
-    color: #7c3aed;
-    background: rgba(124, 58, 237, 0.08);
-}
+/* ===== PREGUNTA Y OPCIONES ===== */
 
-.tipoAbierta {
-    color: #0891b2;
-    background: rgba(8, 145, 178, 0.08);
-}
-
-/* Texto de la pregunta */
 .preguntaText {
     font-size: 0.975rem;
     font-weight: 600;
@@ -309,7 +314,6 @@
     padding-right: 80px;
 }
 
-/* Opciones de respuesta múltiple */
 .opciones {
     display: flex;
     flex-direction: column;
@@ -359,31 +363,14 @@
     margin-left: auto;
 }
 
-/* Respuesta abierta */
-.respuestaAbierta {
-    display: flex;
-    align-items: flex-start;
-    gap: 0.5rem;
-    background: rgba(34, 197, 94, 0.08); /* Suave verde indicando respuesta */
-    border: 1px solid rgba(34, 197, 94, 0.25);
-    border-radius: var(--radius-md);
-    padding: 0.75rem 1rem;
-}
-
-.respuestaLabel {
-    font-weight: 700;
-    color: #16a34a;
-    font-size: 0.875rem;
-    flex-shrink: 0;
-}
-
-.respuestaTexto {
-    font-size: 0.875rem;
-    color: var(--text-primary);
-    line-height: 1.5;
-}
-
 /* ===== FORMULARIO (MODAL) ===== */
+
+.dialogHeaderInner {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
 .formGroup {
     display: flex;
     flex-direction: column;
@@ -397,7 +384,9 @@
     color: var(--text-secondary);
 }
 
-.input, .select, .textarea {
+.input,
+.select,
+.textarea {
     width: 100%;
     padding: 0.75rem 1rem;
     border: 1px solid var(--border-color);
@@ -414,31 +403,50 @@
     min-height: 80px;
 }
 
-.input:focus, .select:focus, .textarea:focus {
+.input:focus,
+.select:focus,
+.textarea:focus {
     border-color: var(--color-primary);
     box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
 }
 
-.checkboxWrap {
+/* Checkbox "Pregunta Fija" */
+.formGroup .fixedCheckboxLabel {
     display: flex;
     align-items: center;
-    gap: 0.5rem;
-    padding: 0.5rem 0;
+    gap: 0.75rem;
+    padding: 0.75rem 1rem;
+    border-radius: 12px;
+    border: 1px solid rgba(245, 158, 11, 0.25);
+    background: rgba(245, 158, 11, 0.08);
     cursor: pointer;
+    /* reset defaults de .formGroup label */
+    font-size: inherit;
+    font-weight: inherit;
+    color: inherit;
 }
 
-.checkboxWrap input {
+.fixedCheckboxLabel input[type="checkbox"] {
     width: 1.1rem;
     height: 1.1rem;
     accent-color: var(--color-primary);
     cursor: pointer;
+    flex-shrink: 0;
 }
 
-.checkboxWrap label {
-    margin: 0;
-    cursor: pointer;
+.fixedLabelText {
+    font-weight: 600;
+    color: #92400e;
 }
 
+.fixedHint {
+    font-size: 0.8rem;
+    color: var(--text-tertiary, var(--text-secondary));
+    padding-left: 2.5rem;
+    margin-top: -0.25rem;
+}
+
+/* Grid de opciones de respuesta */
 .optionsGrid {
     display: grid;
     grid-template-columns: 1fr;
@@ -446,7 +454,28 @@
     background: var(--bg-secondary);
     padding: 1rem;
     border-radius: var(--radius-md);
+    margin-top: 1rem;
     margin-bottom: 1.25rem;
+}
+
+.optionsHeaderGroup {
+    grid-column: 1 / -1;
+    margin-bottom: 0;
+}
+
+/* Más específico que .formGroup label para poder sobreescribir color y tamaño */
+.formGroup .optionsSectionLabel {
+    color: var(--color-primary);
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+/* Green para destacar el select de respuesta correcta */
+.correctAnswerSelect {
+    border-color: #16a34a;
+    border-width: 1.5px;
+    background: #f0fdf4;
 }
 
 @media (min-width: 640px) {
@@ -456,6 +485,17 @@
 }
 
 /* ===== RESPONSIVE ===== */
+
+@media (max-width: 768px) {
+    .filtersRow {
+        flex-direction: column;
+    }
+
+    .filterSelect {
+        min-width: 100%;
+    }
+}
+
 @media (max-width: 640px) {
     .main {
         padding: 1.25rem 0.75rem;
@@ -471,35 +511,11 @@
 
     .pageHeader {
         flex-direction: column;
+        align-items: stretch;
         gap: 1rem;
     }
-}
 
-.selectDept, .selectType, .selectTheme {
-    padding: 0.6rem 1rem;
-    border-radius: 8px;
-    border: 1px solid var(--border-color);
-    background: var(--bg-primary);
-    color: var(--text-primary);
-    font-family: var(--font-body);
-    font-size: 0.9rem;
-    cursor: pointer;
-    min-width: 200px;
-    transition: border-color 0.2s ease;
-}
-
-.selectDept:focus, .selectType:focus, .selectTheme:focus {
-    outline: none;
-    border-color: var(--color-primary);
-    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
-}
-
-@media (max-width: 768px) {
-    .filtersRow {
-        flex-direction: column;
-    }
-    
-    .selectDept, .selectType {
-        min-width: 100%;
+    .headerActions {
+        justify-content: flex-end;
     }
 }
