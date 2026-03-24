@@ -153,7 +153,7 @@ export const getContractStatus = (contractEndDate, today = new Date()) => {
     const diff = end.getTime() - today.setHours(0, 0, 0, 0);
     const msDay = 86_400_000;
     if (diff < 0)           return 'expired';
-    if (diff <= 15 * msDay) return 'expiring';
+    if (diff <= 30 * msDay) return 'expiring';
     return 'active';
 };
 

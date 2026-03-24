@@ -793,7 +793,7 @@ export default function ContratosPage() {
                                         <th style={{ textAlign: 'center' }}>2ª Eval</th>
                                         <th style={{ textAlign: 'center' }}>3ª Eval</th>
                                         <th>F. Contrato</th>
-                                        <th>Plan Form.</th>
+                                        <th>RG-REC-048</th>
                                         <th>Acciones</th>
                                     </tr>
                                 </thead>
@@ -941,11 +941,11 @@ export default function ContratosPage() {
                                     {/* Fechas */}
                                     <div className={styles.cardDates}>
                                         <div className={styles.cardDateItem}>
-                                            <span className={styles.cardDateLabel}>Ingreso</span>
+                                            <span className={styles.cardDateLabel}>F. Ingreso</span>
                                             <span className={styles.cardDateValue}>{item.entryDate || '—'}</span>
                                         </div>
                                         <div className={styles.cardDateItem}>
-                                            <span className={styles.cardDateLabel}>Vence</span>
+                                            <span className={styles.cardDateLabel}>F. Contrato</span>
                                             <span className={`${styles.cardDateValue} ${contractSt === 'expiring' ? styles.dateExpiring : contractSt === 'expired' ? styles.dateExpired : ''}`}>
                                                 {item.contractEndDate || '—'}
                                             </span>
@@ -964,7 +964,7 @@ export default function ContratosPage() {
 
                                     {/* Evaluaciones */}
                                     <div className={styles.cardEvalsRow}>
-                                        <span className={styles.cardEvalsLabel}>Evaluaciones:</span>
+                                        <span className={styles.cardEvalsLabel}>Evals:</span>
                                         {EVAL_KEYS.map(key => (
                                             <div key={key} className={styles.cardEvalItem}>
                                                 <span className={styles.cardEvalNum}>{EVAL_LABELS[key]}</span>
@@ -980,7 +980,7 @@ export default function ContratosPage() {
 
                                     {/* Plan de formación */}
                                     <div className={styles.cardTrainingRow}>
-                                        <span className={styles.cardTrainingLabel}>Plan de Formación</span>
+                                        <span className={styles.cardTrainingLabel}>RG-REC-048</span>
                                         <TrainingBtn
                                             item={item}
                                             onToggle={() => handleToggleTraining(item)}
