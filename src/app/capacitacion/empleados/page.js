@@ -549,15 +549,8 @@ export default function EmpleadosPage() {
                                     <div key={emp.id} className={styles.employeeCard}>
                                         <div className={styles.employeeRow} onClick={() => toggleExpand(emp.id)}>
                                             <div className={styles.employeeInfo}>
-                                                <div
-                                                    className={styles.avatarWrapper}
-                                                    onClick={(e) => { e.stopPropagation(); emp.photoUrl && setPreviewImage({ url: normalizePhotoUrl(emp.photoUrl), name: emp.name }); }}
-                                                    style={{ cursor: emp.photoUrl ? 'pointer' : 'default' }}
-                                                >
-                                                    {emp.photoUrl ? (
-                                                        // eslint-disable-next-line @next/next/no-img-element
-                                                        <img src={normalizePhotoUrl(emp.photoUrl)} alt={emp.name} referrerPolicy="no-referrer" />
-                                                    ) : getInitials(emp.name)}
+                                                <div className={styles.avatarWrapper}>
+                                                    {getInitials(emp.name)}
                                                 </div>
                                                 <div className={styles.employeeDetails}>
                                                     <span className={styles.empName}>{emp.name}</span>
@@ -684,15 +677,10 @@ export default function EmpleadosPage() {
                                             display: 'flex', alignItems: 'center', justifyContent: 'center',
                                             border: '2px solid var(--border-color, #e2e8f0)', boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)'
                                         }}>
-                                            {photoPreview || editingEmp?.photoUrl ? (
-                                                // eslint-disable-next-line @next/next/no-img-element
-                                                <img src={photoPreview || normalizePhotoUrl(editingEmp?.photoUrl)} alt="Vista previa" referrerPolicy="no-referrer" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                                            ) : (
-                                                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" style={{ opacity: 0.4 }}>
+                                            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" style={{ opacity: 0.4 }}>
                                                     <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
                                                     <circle cx="12" cy="7" r="4" />
                                                 </svg>
-                                            )}
                                         </div>
                                         <label htmlFor="photo-upload-col" style={{
                                             cursor: 'pointer', padding: '6px 14px', fontSize: '0.8rem', fontWeight: '600',
@@ -859,12 +847,7 @@ export default function EmpleadosPage() {
                                 <div className={styles.detailContent}>
                                     <div className={styles.detailHeader}>
                                         <div className={styles.detailAvatar}>
-                                            {viewingEmp.photoUrl ? (
-                                                // eslint-disable-next-line @next/next/no-img-element
-                                                <img src={viewingEmp.photoUrl} alt={viewingEmp.name} referrerPolicy="no-referrer" />
-                                            ) : (
-                                                <span>{viewingEmp.name?.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase()}</span>
-                                            )}
+                                            <span>{viewingEmp.name?.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase()}</span>
                                         </div>
                                         <h2>{viewingEmp.name}</h2>
                                         <p>ID: {viewingEmp.employeeId || viewingEmp.id}</p>
@@ -952,15 +935,10 @@ export default function EmpleadosPage() {
                                     border: '2px solid var(--border-color, #e2e8f0)',
                                     boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)'
                                 }}>
-                                    {photoPreview || editingEmp?.photoUrl ? (
-                                        // eslint-disable-next-line @next/next/no-img-element
-                                        <img src={photoPreview || editingEmp?.photoUrl} alt="Vista previa" referrerPolicy="no-referrer" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                                    ) : (
-                                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" style={{ opacity: 0.4 }}>
+                                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" style={{ opacity: 0.4 }}>
                                             <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
                                             <circle cx="12" cy="7" r="4" />
                                         </svg>
-                                    )}
                                 </div>
                                 <label htmlFor="photo-upload-modal" style={{
                                     cursor: 'pointer',
