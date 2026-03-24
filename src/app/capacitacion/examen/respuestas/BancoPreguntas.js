@@ -28,8 +28,8 @@ export function BancoPreguntas() {
                         TEMA: fd.theme || 'General',
                         TIPO: fd.type,
                         // Solo convertimos a Mayúscula si es de una sola letra (A, B, C)
-                        RESPUESTA: (isMult && fd.correctAnswer?.length === 1) 
-                            ? fd.correctAnswer.toUpperCase() 
+                        RESPUESTA: (isMult && fd.correctAnswer?.length === 1)
+                            ? fd.correctAnswer.toUpperCase()
                             : fd.correctAnswer,
                         'OPCIÓN A ': fd.options?.a,
                         'OPCIÓN B ': fd.options?.b,
@@ -49,27 +49,27 @@ export function BancoPreguntas() {
     }, []);
 
     const uniqueThemes = useMemo(() => {
-        const themes = preguntas.map(p => p.TEMA || 'General');
+        const themes = preguntas.map(p => p.TEMA || p.theme || 'General');
         return ['Todos', ...new Set(themes)].sort();
     }, [preguntas]);
 
     const filteredPreguntas = useMemo(() => {
-        const q = searchQuery.trim().toLowerCase();
-        
         return preguntas.filter((p) => {
             // Filtro por tipo
             if (filterType !== 'Todos' && p.TIPO !== filterType) return false;
-            
+
             // Filtro por tema
-            if (filterTheme !== 'Todos' && p.TEMA !== filterTheme) return false;
-            
+            const themeValue = p.TEMA || p.theme || 'General';
+            if (filterTheme !== 'Todos' && themeValue !== filterTheme) return false;
+
             // Filtro por búsqueda (solo si hay búsqueda)
-            if (!q) return true; 
+            if (!searchQuery.trim()) return true;
+            const q = searchQuery.trim().toLowerCase();
 
             return (
                 p['PREGUNTA ']?.toLowerCase().includes(q) ||
                 p.ID?.toLowerCase().includes(q) ||
-                p.TEMA?.toLowerCase().includes(q)
+                themeValue.toLowerCase().includes(q)
             );
         });
     }, [searchQuery, preguntas, filterType, filterTheme]);
@@ -112,19 +112,19 @@ export function BancoPreguntas() {
             </div>
 
             <div className={styles.filtersRow}>
-                <button 
+                <button
                     className={`${styles.filterBtn} ${filterType === 'Todos' ? styles.filterBtnActive : ''}`}
                     onClick={() => setFilterType('Todos')}
                 >
                     Todas
                 </button>
-                <button 
+                <button
                     className={`${styles.filterBtn} ${filterType === 'Múltiple' ? styles.filterBtnActive : ''}`}
                     onClick={() => setFilterType('Múltiple')}
                 >
                     Múltiple
                 </button>
-                <button 
+                <button
                     className={`${styles.filterBtn} ${filterType === 'Abierta' ? styles.filterBtnActive : ''}`}
                     onClick={() => setFilterType('Abierta')}
                 >

@@ -64,7 +64,7 @@ export default function GestionarPreguntasPage() {
     }, [loadQuestions]);
 
     const uniqueThemes = useMemo(() => {
-        const themes = questions.map(q => q.theme || 'General');
+        const themes = questions.map(q => q.theme || q.TEMA || 'General');
         return ['Todos', ...new Set(themes)].sort();
     }, [questions]);
 
@@ -73,10 +73,11 @@ export default function GestionarPreguntasPage() {
         return questions.filter(item => {
             const matchesDept = selectedDept === 'Todos' || (item.department || 'Producción') === selectedDept;
             const matchesType = selectedType === 'Todos' || item.type === selectedType;
-            const matchesTheme = selectedTheme === 'Todos' || (item.theme || 'General') === selectedTheme;
+            const themeValue = item.theme || item.TEMA || 'General';
+            const matchesTheme = selectedTheme === 'Todos' || themeValue === selectedTheme;
             const matchesSearch = !q ||
                 item.question?.toLowerCase().includes(q) ||
-                item.theme?.toLowerCase().includes(q) ||
+                themeValue.toLowerCase().includes(q) ||
                 item.id.toLowerCase().includes(q);
             return matchesDept && matchesType && matchesTheme && matchesSearch;
         });
