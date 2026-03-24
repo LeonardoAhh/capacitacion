@@ -23,10 +23,10 @@ export default function GestionarPreguntasPage() {
     // Filtros
     const [searchTerm, setSearchTerm] = useState('');
     const [selectedDept, setSelectedDept] = useState('Todos');
-    const [selectedType, setSelectedType] = useState('Todos');
     const [selectedTheme, setSelectedTheme] = useState('Todos');
 
     // Estado del Formulario Modal
+
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [editingQuestion, setEditingQuestion] = useState(null); // null = Crear nueva
     const [saving, setSaving] = useState(false);
@@ -36,8 +36,9 @@ export default function GestionarPreguntasPage() {
         return {
             theme: '',
             department: 'Producción',
-            type: 'Múltiple', // 'Múltiple' or 'Abierta'
+            type: 'Múltiple',
             question: '',
+
             options: { a: '', b: '', c: '' },
             correctAnswer: 'a', // 'a', 'b', 'c' (o vacio si es abierta)
             isFixed: false
@@ -72,16 +73,16 @@ export default function GestionarPreguntasPage() {
         const q = searchTerm.trim().toLowerCase();
         return questions.filter(item => {
             const matchesDept = selectedDept === 'Todos' || (item.department || 'Producción') === selectedDept;
-            const matchesType = selectedType === 'Todos' || item.type === selectedType;
             const themeValue = item.theme || item.TEMA || 'General';
             const matchesTheme = selectedTheme === 'Todos' || themeValue === selectedTheme;
             const matchesSearch = !q ||
                 item.question?.toLowerCase().includes(q) ||
                 themeValue.toLowerCase().includes(q) ||
                 item.id.toLowerCase().includes(q);
-            return matchesDept && matchesType && matchesTheme && matchesSearch;
+            return matchesDept && matchesTheme && matchesSearch;
+
         });
-    }, [questions, searchTerm, selectedDept, selectedType, selectedTheme]);
+    }, [questions, searchTerm, selectedDept, selectedTheme]);
 
     const handleCreateClick = () => {
         setFormData(initialFormState());
@@ -93,16 +94,18 @@ export default function GestionarPreguntasPage() {
         setFormData({
             theme: q.theme || '',
             department: q.department || 'Producción',
-            type: q.type || 'Múltiple',
+            type: 'Múltiple',
             question: q.question || '',
+
             options: {
                 a: q.options?.a || '',
                 b: q.options?.b || '',
                 c: q.options?.c || ''
             },
-            correctAnswer: q.correctAnswer || '',
+            correctAnswer: (q.correctAnswer && ['a', 'b', 'c'].includes(q.correctAnswer.toLowerCase())) ? q.correctAnswer.toLowerCase() : 'a',
             isFixed: q.isFixed || false
         });
+
         setEditingQuestion(q);
         setIsModalOpen(true);
     };
@@ -133,15 +136,17 @@ export default function GestionarPreguntasPage() {
             const payload = {
                 theme: formData.theme,
                 department: formData.department,
-                type: formData.type,
+                type: 'Múltiple',
                 question: formData.question,
-                options: formData.type === 'Múltiple' ? formData.options : null,
-                correctAnswer: formData.correctAnswer,
+                options: formData.options,
+                correctAnswer: (formData.correctAnswer && ['a', 'b', 'c'].includes(formData.correctAnswer.toLowerCase())) ? formData.correctAnswer.toLowerCase() : 'a',
                 isFixed: formData.isFixed,
                 updatedAt: serverTimestamp()
             };
 
+
             if (editingQuestion?.id) {
+
                 // Update
                 await updateDoc(doc(db, 'exam_questions', editingQuestion.id), payload);
                 setQuestions(prev => prev.map(q => q.id === editingQuestion.id ? { ...q, ...payload } : q));
@@ -171,8 +176,8 @@ export default function GestionarPreguntasPage() {
                 'ID': q.id.slice(-6).toUpperCase(),
                 'Departamento': q.department || 'N/A',
                 'Tema': q.theme || 'N/A',
-                'Tipo': q.type || 'N/A',
                 'Pregunta': q.question || '',
+
                 'Opción A': q.options?.a || '',
                 'Opción B': q.options?.b || '',
                 'Opción C': q.options?.c || '',
@@ -249,15 +254,6 @@ export default function GestionarPreguntasPage() {
                                 <option value="Recursos Humanos">RECURSOS HUMANOS</option>
                             </select>
 
-                            <select
-                                className={styles.selectType}
-                                value={selectedType}
-                                onChange={(e) => setSelectedType(e.target.value)}
-                            >
-                                <option value="Todos">TIPOS</option>
-                                <option value="Múltiple">MÚLTIPLE</option>
-                                <option value="Abierta">ABIERTA</option>
-                            </select>
 
                             <select
                                 className={styles.selectTheme}
@@ -306,35 +302,28 @@ export default function GestionarPreguntasPage() {
                                         <span className={styles.idBadge}>#{q.id.substring(0, 6)}</span>
                                         <span className={styles.deptBadge}>{q.department || 'Producción'}</span>
                                         {q.theme && <span className={styles.temaBadge}>{q.theme}</span>}
-                                        <span className={`${styles.tipoBadge} ${q.type === 'Múltiple' ? styles.tipoMultiple : styles.tipoAbierta}`}>
-                                            {q.type}
-                                        </span>
+
                                         {q.isFixed && <span className={styles.fixedBadge}>★ Fija</span>}
                                     </div>
 
                                     <p className={styles.preguntaText}>{q.question}</p>
 
-                                    {q.type === 'Múltiple' ? (
-                                        <div className={styles.opciones}>
-                                            {['a', 'b', 'c'].map(l => {
-                                                const texto = q.options?.[l];
-                                                if (!texto) return null;
-                                                const esCorrecta = q.correctAnswer === l;
-                                                return (
-                                                    <div key={l} className={`${styles.opcion} ${esCorrecta ? styles.opcionCorrecta : ''}`}>
-                                                        <span className={styles.opcionLetra}>{l})</span>
-                                                        <span className={styles.opcionTexto}>{texto}</span>
-                                                        {esCorrecta && <span className={styles.checkmark}>✓</span>}
-                                                    </div>
-                                                );
-                                            })}
-                                        </div>
-                                    ) : (
-                                        <div className={styles.respuestaAbierta}>
-                                            <span className={styles.respuestaLabel}>Formato:</span>
-                                            <span className={styles.respuestaTexto}>Pregunta Abierta (El evaluador revisará la respuesta escrita).</span>
-                                        </div>
-                                    )}
+                                    <div className={styles.opciones}>
+                                        {['a', 'b', 'c'].map(l => {
+                                            const texto = q.options?.[l];
+                                            if (!texto) return null;
+                                            const esCorrecta = q.correctAnswer?.toLowerCase() === l;
+
+                                            return (
+                                                <div key={l} className={`${styles.opcion} ${esCorrecta ? styles.opcionCorrecta : ''}`}>
+                                                    <span className={styles.opcionLetra}>{l})</span>
+                                                    <span className={styles.opcionTexto}>{texto}</span>
+                                                    {esCorrecta && <span className={styles.checkmark}>✓</span>}
+                                                </div>
+                                            );
+                                        })}
+                                    </div>
+
                                 </div>
                             ))}
                         </div>
@@ -393,29 +382,6 @@ export default function GestionarPreguntasPage() {
                             />
                         </div>
 
-                        <div className={styles.formGroup}>
-                            <label>Tipo de Pregunta</label>
-                            <div style={{ display: 'flex', gap: '1.5rem', marginTop: '0.25rem' }}>
-                                <label className={styles.checkboxWrap}>
-                                    <input
-                                        type="radio"
-                                        name="questionType"
-                                        checked={formData.type === 'Múltiple'}
-                                        onChange={() => setFormData({ ...formData, type: 'Múltiple' })}
-                                    />
-                                    <span>Opción Múltiple</span>
-                                </label>
-                                <label className={styles.checkboxWrap}>
-                                    <input
-                                        type="radio"
-                                        name="questionType"
-                                        checked={formData.type === 'Abierta'}
-                                        onChange={() => setFormData({ ...formData, type: 'Abierta' })}
-                                    />
-                                    <span>Abierta</span>
-                                </label>
-                            </div>
-                        </div>
 
                         <div className={styles.formGroup} style={{ marginTop: '0.5rem' }}>
                             <label className={styles.checkboxWrap} style={{ background: 'rgba(245, 158, 11, 0.1)', padding: '0.75rem 1rem', borderRadius: '12px', border: '1px solid rgba(245, 158, 11, 0.2)' }}>
@@ -431,67 +397,54 @@ export default function GestionarPreguntasPage() {
                             </span>
                         </div>
 
-                        {formData.type === 'Múltiple' ? (
-                            <div className={styles.optionsGrid} style={{ marginTop: '1rem' }}>
-                                <div className={styles.formGroup} style={{ gridColumn: '1 / -1', marginBottom: '0.5rem' }}>
-                                    <label style={{ color: 'var(--color-primary)', fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Configuración de Respuestas</label>
-                                </div>
-                                <div className={styles.formGroup}>
-                                    <label>Inciso A (Obligatorio)</label>
-                                    <input
-                                        className={styles.input}
-                                        value={formData.options.a}
-                                        onChange={e => setFormData({ ...formData, options: { ...formData.options, a: e.target.value } })}
-                                        placeholder="Texto para la opción A..."
-                                        required
-                                    />
-                                </div>
-                                <div className={styles.formGroup}>
-                                    <label>Inciso B (Obligatorio)</label>
-                                    <input
-                                        className={styles.input}
-                                        value={formData.options.b}
-                                        onChange={e => setFormData({ ...formData, options: { ...formData.options, b: e.target.value } })}
-                                        placeholder="Texto para la opción B..."
-                                        required
-                                    />
-                                </div>
-                                <div className={styles.formGroup}>
-                                    <label>Inciso C (Opcional)</label>
-                                    <input
-                                        className={styles.input}
-                                        value={formData.options.c}
-                                        onChange={e => setFormData({ ...formData, options: { ...formData.options, c: e.target.value } })}
-                                        placeholder="Texto opcional..."
-                                    />
-                                </div>
-                                <div className={styles.formGroup}>
-                                    <label>Respuesta Correcta</label>
-                                    <select
-                                        className={styles.select}
-                                        value={formData.correctAnswer}
-                                        onChange={e => setFormData({ ...formData, correctAnswer: e.target.value })}
-                                        style={{ border: '1.5px solid #16a34a', background: '#f0fdf4' }}
-                                    >
-                                        <option value="a">Opción A</option>
-                                        <option value="b">Opción B</option>
-                                        <option value="c">Opción C (si aplica)</option>
-                                    </select>
-                                </div>
+                        <div className={styles.optionsGrid} style={{ marginTop: '1rem' }}>
+                            <div className={styles.formGroup} style={{ gridColumn: '1 / -1', marginBottom: '0.5rem' }}>
+                                <label style={{ color: 'var(--color-primary)', fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Configuración de Respuestas</label>
                             </div>
-                        ) : (
-                            <div className={styles.formGroup} style={{ marginTop: '1rem' }}>
-                                <label style={{ color: 'var(--color-primary)', fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Respuesta de Guía</label>
-                                <textarea
-                                    className={styles.textarea}
-                                    value={formData.correctAnswer}
-                                    onChange={e => setFormData({ ...formData, correctAnswer: e.target.value })}
-                                    placeholder="Escribe la respuesta correcta o los puntos clave que el evaluador debe buscar..."
-                                    style={{ border: '1.5px solid #16a34a', background: '#f0fdf4' }}
+                            <div className={styles.formGroup}>
+                                <label>Inciso A (Obligatorio)</label>
+                                <input
+                                    className={styles.input}
+                                    value={formData.options.a}
+                                    onChange={e => setFormData({ ...formData, options: { ...formData.options, a: e.target.value } })}
+                                    placeholder="Texto para la opción A..."
                                     required
                                 />
                             </div>
-                        )}
+                            <div className={styles.formGroup}>
+                                <label>Inciso B (Obligatorio)</label>
+                                <input
+                                    className={styles.input}
+                                    value={formData.options.b}
+                                    onChange={e => setFormData({ ...formData, options: { ...formData.options, b: e.target.value } })}
+                                    placeholder="Texto para la opción B..."
+                                    required
+                                />
+                            </div>
+                            <div className={styles.formGroup}>
+                                <label>Inciso C (Opcional)</label>
+                                <input
+                                    className={styles.input}
+                                    value={formData.options.c}
+                                    onChange={e => setFormData({ ...formData, options: { ...formData.options, c: e.target.value } })}
+                                    placeholder="Texto opcional..."
+                                />
+                            </div>
+                            <div className={styles.formGroup}>
+                                <label>Respuesta Correcta</label>
+                                <select
+                                    className={styles.select}
+                                    value={formData.correctAnswer}
+                                    onChange={e => setFormData({ ...formData, correctAnswer: e.target.value })}
+                                    style={{ border: '1.5px solid #16a34a', background: '#f0fdf4' }}
+                                >
+                                    <option value="a">Opción A</option>
+                                    <option value="b">Opción B</option>
+                                    <option value="c">Opción C (si aplica)</option>
+                                </select>
+                            </div>
+                        </div>
+
                     </form>
                 </DialogBody>
 
