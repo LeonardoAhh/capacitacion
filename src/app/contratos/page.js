@@ -58,7 +58,6 @@ function EvalChip({ evalDate, score, label, onClick }) {
             title={evalDate ? `Fecha: ${formatDate(evalDate)}` : ''}
             type="button"
         >
-            {icon}
             {isScored ? score : statusLabel}
         </button>
     );
@@ -86,7 +85,6 @@ function TrainingBtn({ item, onToggle, disabled }) {
                 aria-pressed={isDelivered}
                 title={tooltip}
             >
-                <Icon size={12} />
                 {labelText}
             </button>
             {!isDelivered && dueDate && (
@@ -791,10 +789,10 @@ export default function ContratosPage() {
                                         <th>Puesto / Área</th>
                                         <th style={{ textAlign: 'center' }}>Turno</th>
                                         <th>F. Ingreso</th>
-                                        <th style={{ textAlign: 'center' }}>1ª Eval <small>(+30d)</small></th>
-                                        <th style={{ textAlign: 'center' }}>2ª Eval <small>(+60d)</small></th>
-                                        <th style={{ textAlign: 'center' }}>3ª Eval <small>(+80d)</small></th>
-                                        <th>Vence</th>
+                                        <th style={{ textAlign: 'center' }}>1ª Eval</th>
+                                        <th style={{ textAlign: 'center' }}>2ª Eval</th>
+                                        <th style={{ textAlign: 'center' }}>3ª Eval</th>
+                                        <th>F. Contrato</th>
                                         <th>Plan Form.</th>
                                         <th>Acciones</th>
                                     </tr>
