@@ -74,7 +74,7 @@ export default function PromoteModal({ isOpen, onClose, employee, newPosition, o
                 <Button
                     onClick={handleConfirm}
                     disabled={!effectiveDate || isSubmitting}
-                    style={{ background: 'linear-gradient(135deg, #10b981, #059669)', color: 'white', border: 'none' }}
+                    style={{ background: 'var(--c-success)', color: 'white', border: 'none' }}
                 >
                     {isSubmitting ? 'Promoviendo...' : 'Confirmar Promoción'}
                 </Button>

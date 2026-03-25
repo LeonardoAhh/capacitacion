@@ -4,9 +4,10 @@ import {
     MapPin, Clock, Award, TrendingUp, BookOpen,
     FileText, CheckCircle, AlertCircle, ChevronRight
 } from 'lucide-react';
+import ProfileHeader from '../ProfileHeader';
 import styles from './GeneralView.module.css';
 
-export default function GeneralView({ employee, seniority, trainingStats, promotionInfo, onNavigate, documentsCount, iluoCount }) {
+export default function GeneralView({ employee, seniority, trainingStats, promotionInfo, onNavigate, documentsCount, iluoCount, employeeGroups }) {
 
     // Animation variants
     const containerVariants = {
@@ -47,7 +48,7 @@ export default function GeneralView({ employee, seniority, trainingStats, promot
                     <div className={styles.navSubtitle}>{subtitle}</div>
                 </div>
             </div>
-            <ChevronRight size={20} className="text-gray-400" />
+            <ChevronRight size={20} className={styles.navChevron} />
         </button>
     );
 
@@ -62,7 +63,10 @@ export default function GeneralView({ employee, seniority, trainingStats, promot
             {/* Personal Information */}
             <motion.div variants={itemVariants} className={styles.section}>
                 <h3 className={styles.sectionTitle}>Información Personal</h3>
-                <div className={styles.grid}>
+                
+                <ProfileHeader employee={employee} employeeGroups={employeeGroups} onBack={() => {}} />
+
+                <div className={`${styles.grid} ${styles.hideOnMobile}`}>
                     <InfoItem
                         icon={User}
                         colorClass="iconBlue"
@@ -85,7 +89,7 @@ export default function GeneralView({ employee, seniority, trainingStats, promot
             </motion.div>
 
             {/* Work Information */}
-            <motion.div variants={itemVariants} className={styles.section}>
+            <motion.div variants={itemVariants} className={`${styles.section} ${styles.hideOnMobile}`}>
                 <h3 className={styles.sectionTitle}>Información Laboral</h3>
                 <div className={styles.grid}>
                     <InfoItem icon={Briefcase} colorClass="iconOrange" label="Puesto" value={employee.position || 'N/A'} />
@@ -119,13 +123,6 @@ export default function GeneralView({ employee, seniority, trainingStats, promot
                         icon={TrendingUp}
                         colorClass="iconGreen"
                         onClick={() => onNavigate('promotion')}
-                    />
-                    <NavButton
-                        title="Habilidades ILUO"
-                        subtitle={`${iluoCount} habilidades evaluadas`}
-                        icon={Award}
-                        colorClass="iconPurple"
-                        onClick={() => onNavigate('iluo')}
                     />
                     <NavButton
                         title="Documentos"

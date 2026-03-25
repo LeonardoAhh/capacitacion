@@ -5,6 +5,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
 import styles from './page.module.css';
+import { Select } from '@/components/ui/Select/Select';
 
 export default function CompleteProfilePage() {
     const { user, loading: authLoading, updateUserProfile } = useAuth();
@@ -98,22 +99,20 @@ export default function CompleteProfilePage() {
 
                     <div className={styles.inputGroup}>
                         <label>Departamento *</label>
-                        <select
-                            name="departamento"
+                        <Select
                             value={formData.departamento}
-                            onChange={handleChange}
-                            required
-                            className={styles.input}
-                        >
-                            <option value="">Selecciona...</option>
-                            <option value="Recursos Humanos">Recursos Humanos</option>
-                            <option value="Producción">Producción</option>
-                            <option value="Calidad">Calidad</option>
-                            <option value="Logística">Logística</option>
-                            <option value="Mantenimiento">Mantenimiento</option>
-                            <option value="Administración">Administración</option>
-                            <option value="Sistemas">Sistemas</option>
-                        </select>
+                            onChange={(value) => setFormData({ ...formData, departamento: value })}
+                            options={[
+                                { value: 'Recursos Humanos', label: 'Recursos Humanos' },
+                                { value: 'Producción', label: 'Producción' },
+                                { value: 'Calidad', label: 'Calidad' },
+                                { value: 'Logística', label: 'Logística' },
+                                { value: 'Mantenimiento', label: 'Mantenimiento' },
+                                { value: 'Administración', label: 'Administración' },
+                                { value: 'Sistemas', label: 'Sistemas' },
+                            ]}
+                            placeholder="Selecciona..."
+                        />
                     </div>
 
                     <div className={styles.inputGroup}>
@@ -131,18 +130,16 @@ export default function CompleteProfilePage() {
 
                     <div className={styles.inputGroup}>
                         <label>Género *</label>
-                        <select
-                            name="genero"
+                        <Select
                             value={formData.genero}
-                            onChange={handleChange}
-                            required
-                            className={styles.input}
-                        >
-                            <option value="">Selecciona...</option>
-                            <option value="Masculino">Masculino</option>
-                            <option value="Femenino">Femenino</option>
-                            <option value="Otro">Prefiero no decirlo</option>
-                        </select>
+                            onChange={(value) => setFormData({ ...formData, genero: value })}
+                            options={[
+                                { value: 'Masculino', label: 'Masculino' },
+                                { value: 'Femenino', label: 'Femenino' },
+                                { value: 'Otro', label: 'Prefiero no decirlo' },
+                            ]}
+                            placeholder="Selecciona..."
+                        />
                     </div>
 
                     <button

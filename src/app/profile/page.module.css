@@ -577,14 +577,22 @@
 .maintenanceDurationSelect:focus { border-color: var(--c-primary); }
 
 .maintenanceWarning {
-    font-size: 0.74rem;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 0.8rem;
     color: var(--c-danger);
     font-weight: 500;
     font-family: var(--font-body), sans-serif;
-    padding: 8px 12px;
-    background: rgba(239,68,68,0.07);
-    border-radius: var(--r-sm);
-    border: 1px solid rgba(239,68,68,0.18);
+    padding: 12px 16px;
+    background: rgba(239, 68, 68, 0.05); /* Más sutil */
+    border-radius: var(--r-md);
+    border: 1px solid rgba(239, 68, 68, 0.15);
+    margin-top: 4px;
+}
+
+.maintenanceWarning span {
+    line-height: 1.4;
 }
 
 /* ── Botones de acción (Guardar, Sincronizar, etc.) ── */

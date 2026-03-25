@@ -15,6 +15,7 @@ import {
 import CandidateDrawer from '@/components/features/Dashboard/CandidateDrawer';
 import { useConfirm } from '@/hooks/useConfirm';
 import AdminLayout from '@/components/layout/AdminLayout/AdminLayout';
+import { Select } from '@/components/ui/Select/Select';
 
 // ── Data fetching ──────────────────────────────────────────────────────────────
 function useDataFetching() {
@@ -461,31 +462,34 @@ export default function CandidateMonitoringPage() {
 
                 {/* Toolbar */}
                 <div className={styles.toolbar} role="toolbar" aria-label="Filtros y acciones">
-                    <div className={styles.searchBox}>
-                        <Search size={16} className={styles.searchIcon} aria-hidden="true" />
-                        <input
-                            type="search"
-                            className={styles.searchInput}
-                            placeholder="BUSCAR..."
-                            value={search}
-                            onChange={e => setSearch(e.target.value)}
-                            aria-label="Buscar candidato"
+                    <div className={styles.filters}>
+                        <div className={styles.searchBox}>
+                            <Search size={16} className={styles.searchIcon} aria-hidden="true" />
+                            <input
+                                type="search"
+                                className={styles.searchInput}
+                                placeholder="BUSCAR..."
+                                value={search}
+                                onChange={e => setSearch(e.target.value)}
+                                aria-label="Buscar candidato"
+                            />
+                        </div>
+
+                        <Select
+                            value={statusFilter}
+                            onChange={value => setStatusFilter(value)}
+                            options={[
+                                { value: 'all', label: 'TODOS' },
+                                { value: 'completed', label: 'COMPLETADOS' },
+                                { value: 'inProgress', label: 'EN PROCESO' },
+                                { value: 'inactive', label: 'INACTIVOS' },
+                                { value: 'notStarted', label: 'SIN INICIAR' },
+                                { value: 'archived', label: 'ARCHIVADOS' },
+                            ]}
+                            className={styles.filterSelect}
+                            aria-label="Filtrar por estatus"
                         />
                     </div>
-
-                    <select
-                        className={styles.filterSelect}
-                        value={statusFilter}
-                        onChange={e => setStatusFilter(e.target.value)}
-                        aria-label="Filtrar por estatus"
-                    >
-                        <option value="all">TODOS</option>
-                        <option value="completed">COMPLETADOS</option>
-                        <option value="inProgress">EN PROCESO</option>
-                        <option value="inactive">INACTIVOS</option>
-                        <option value="notStarted">SIN INICIAR</option>
-                        <option value="archived">ARCHIVADOS</option>
-                    </select>
 
                     <div className={styles.toolbarActions}>
                         <button

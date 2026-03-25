@@ -14,7 +14,7 @@ import styles from './page.module.css';
 import { generateDC3 } from '@/utils/dc3Generator';
 import { exportToExcel, exportPDFCompliance } from '@/utils/exportUtils';
 import { Dialog, DialogHeader, DialogTitle, DialogBody, DialogFooter, DialogClose } from '@/components/ui/Dialog/Dialog';
-import { Select } from '@/components/ui';
+
 import YearlyCardStack from '@/components/ui/CardStack/YearlyCardStack';
 
 export default function AnalisisPage() {
@@ -412,17 +412,10 @@ export default function AnalisisPage() {
         <AdminLayout title="Análisis de Capacitación">
             <div className={styles.pageWrapper}>
                 <main className={styles.main} id="main-content">
-                    {/* Background Effects */}
-                    <div className={styles.bgDecoration}>
-                        <div className={`${styles.blob} ${styles.blob1}`}></div>
-                        <div className={`${styles.blob} ${styles.blob2}`}></div>
-                    </div>
+
 
                     <div className={styles.container}>
                         <div className={styles.header}>
-                            <div className={styles.headerLeft}>
-                                <h1 className={styles.pageTitle}>Análisis de Cumplimiento</h1>
-                            </div>
                             <div className={styles.headerRight}>
                                 <Button
                                     variant="primary"
@@ -487,19 +480,60 @@ export default function AnalisisPage() {
                         {/* KPI Dashboard - Only Show if Data Exists */}
                         {records.length > 0 && (
                             <>
-                                <div className={styles.kpiContainer}>
+                                <div className={styles.kpiGrid}>
                                     {/* Global Score Card */}
-                                    <Card className={styles.kpiCardMain}>
-                                        <CardContent>
-                                            <div className={styles.kpiContent}>
-                                                <div className={styles.kpiLabel}>Cumplimiento Global</div>
-                                                <div className={`${styles.kpiScore} ${getScoreColorClass(kpiData.globalScore)}`}>
-                                                    {kpiData.globalScore}%
-                                                </div>
-                                                <div className={styles.kpiSubtitle}>Promedio Planta</div>
+                                    <div className={styles.kpiCardMain}>
+                                        <div className={styles.kpiLabel}>Cumplimiento Global</div>
+                                        <div className={`${styles.kpiScore} ${getScoreColorClass(kpiData.globalScore)}`}>
+                                            {kpiData.globalScore}%
+                                        </div>
+                                        <div className="text-sm text-gray-500 font-medium">Promedio Planta</div>
+                                    </div>
+
+                                    {/* Top Missing Courses */}
+                                    <div className={styles.kpiCardMain}>
+                                        <div className={styles.kpiLabel}>Cursos más Requeridos (Faltantes)</div>
+                                        {kpiData.topMissing?.length > 0 ? (
+                                            <div className={styles.kpiList}>
+                                                {kpiData.topMissing.map((item, idx) => (
+                                                    <div key={idx} className={styles.topMissingItem}>
+                                                        <span>{item.name}</span>
+                                                        <span className={styles.missingCount}>{item.count}</span>
+                                                    </div>
+                                                ))}
                                             </div>
-                                        </CardContent>
-                                    </Card>
+                                        ) : (
+                                            <div className="text-sm text-gray-400 mt-4">Todos los cursos están cubiertos</div>
+                                        )}
+                                    </div>
+
+                                    {/* Top Departments */}
+                                    <div className={styles.kpiCardMain}>
+                                        <div className={styles.kpiLabel}>Desempeño por Departamento</div>
+                                        {kpiData.deptScores?.length > 0 ? (
+                                            <div className={styles.kpiList}>
+                                                {kpiData.deptScores.slice(0, 4).map((dept, idx) => (
+                                                    <div key={idx} className={styles.deptScoreItem}>
+                                                        <div className={styles.deptScoreHeader}>
+                                                            <span>{dept.name}</span>
+                                                            <span className={getScoreColorClass(dept.score)}>{dept.score}%</span>
+                                                        </div>
+                                                        <div style={{ height: '4px', background: 'var(--border-color)', borderRadius: '2px', overflow: 'hidden' }}>
+                                                            <div 
+                                                                style={{ 
+                                                                    height: '100%', 
+                                                                    width: `${dept.score}%`, 
+                                                                    background: dept.score >= 90 ? 'var(--c-success, #10b981)' : (dept.score >= 70 ? 'var(--c-primary, #f59e0b)' : 'var(--c-danger, #ef4444)') 
+                                                                }} 
+                                                            />
+                                                        </div>
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        ) : (
+                                            <div className="text-sm text-gray-400 mt-4">Sin datos de departamentos</div>
+                                        )}
+                                    </div>
                                 </div>
 
                                 {/* Yearly Statistics Cards */}
@@ -541,9 +575,9 @@ export default function AnalisisPage() {
                             };
 
                             const yearColors = {
-                                2024: '#3b82f6',
-                                2025: '#10b981',
-                                2026: '#f59e0b'
+                                2024: '#f59e0b',
+                                2025: '#ef4444',
+                                2026: '#3b82f6'
                             };
 
                             // Calculate trend line (linear regression)
@@ -730,243 +764,15 @@ export default function AnalisisPage() {
                         })()}
 
 
-                        {/* Controls Bar */}
-                        <div className={styles.controlsBar}>
-                            <div className={styles.searchBar}>
-                                <input
-                                    type="text"
-                                    placeholder="Buscar por ID, nombre o puesto..."
-                                    value={filterName}
-                                    onChange={(e) => setFilterName(e.target.value)}
-                                />
+                        {/* Loading State */}
+                        {loading && (
+                            <div className={styles.emptyState}>
+                                <div className="spinner"></div>
+                                <p style={{ marginTop: '16px' }}>Cargando datos de análisis...</p>
                             </div>
-
-                            <div className={styles.filters}>
-                                <Select
-                                    value={filterDept}
-                                    onChange={(val) => setFilterDept(val)}
-                                    options={departments.map(d => ({ value: d, label: d }))}
-                                />
-
-                                <Select
-                                    value={filterStatus}
-                                    onChange={(val) => setFilterStatus(val)}
-                                    options={[
-                                        { value: 'Todos', label: 'Todos' },
-                                        { value: 'Crítico', label: 'Crítico (<70%)' },
-                                        { value: 'Regular', label: 'Regular (70-90%)' },
-                                        { value: 'Excelente', label: 'Excelente (>90%)' },
-                                    ]}
-                                />
-                            </div>
-                        </div>
-
-                        {loading ? (
-                            <div className="spinner"></div>
-                        ) : filteredRecords.length === 0 ? (
-                            <div className={styles.emptyState}>No hay registros de análisis.</div>
-                        ) : (
-                            <>
-                                <div className={styles.employeesList}>
-                                    {filteredRecords.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage).map(rec => (
-                                        <div key={rec.id} className={styles.employeeCard}>
-                                            <div className={styles.employeeRow} onClick={() => toggleExpand(rec.id)}>
-                                                <div className={styles.employeeInfo}>
-                                                    <div className={styles.avatarWrapper}>
-                                                        {getInitials(rec.name)}
-                                                    </div>
-                                                    <div className={styles.employeeDetails}>
-                                                        <span className={styles.empName}>{rec.name}</span>
-                                                        <span className={styles.empMeta}>{rec.position} • {rec.department || 'N/A'}</span>
-                                                    </div>
-                                                </div>
-                                                <div className={styles.employeeActions}>
-                                                    <span className={`${styles.complianceBadge} ${getComplianceColor(rec.matrix?.compliancePercentage || 0)}`}>
-                                                        {rec.matrix?.compliancePercentage || 0}%
-                                                    </span>
-                                                    <button className={`${styles.expandBtn} ${expandedId === rec.id ? styles.expanded : ''}`}>
-                                                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                                            <polyline points="6 9 12 15 18 9" />
-                                                        </svg>
-                                                    </button>
-                                                </div>
-                                            </div>
-
-                                            {expandedId === rec.id && (
-                                                <div className={styles.expandedContent}>
-                                                    <div className={styles.quickStats}>
-                                                        <div className={styles.quickStat}>
-                                                            <span>{rec.matrix?.completedCount || 0}</span>
-                                                            <span>Aprobados</span>
-                                                        </div>
-                                                        <div className={styles.quickStat}>
-                                                            <span>{rec.matrix?.requiredCount || 0}</span>
-                                                            <span>Requeridos</span>
-                                                        </div>
-                                                        <div className={styles.quickStat}>
-                                                            <span>{rec.matrix?.missingCourses?.length || 0}</span>
-                                                            <span>Pendientes</span>
-                                                        </div>
-                                                    </div>
-
-                                                    <div className={styles.detailsGrid}>
-                                                        <div className={styles.detailItem}>
-                                                            <span className={styles.detailLabel}>ID Empleado</span>
-                                                            <span className={styles.detailValue}>{rec.employeeId || rec.id}</span>
-                                                        </div>
-                                                        <div className={styles.detailItem}>
-                                                            <span className={styles.detailLabel}>Departamento</span>
-                                                            <span className={styles.detailValue}>{rec.department || 'N/A'}</span>
-                                                        </div>
-                                                        <div className={styles.detailItem}>
-                                                            <span className={styles.detailLabel}>Puesto</span>
-                                                            <span className={styles.detailValue}>{rec.position}</span>
-                                                        </div>
-                                                        <div className={styles.detailItem}>
-                                                            <span className={styles.detailLabel}>Cumplimiento</span>
-                                                            <span className={styles.detailValue}>{rec.matrix?.compliancePercentage || 0}%</span>
-                                                        </div>
-                                                    </div>
-
-                                                    <div className={styles.actionButtonsRow}>
-                                                        <button className={`${styles.actionBtn} ${styles.primary}`} onClick={() => openDetail(rec)}>
-                                                            👁️ Ver Detalle Completo
-                                                        </button>
-                                                    </div>
-                                                </div>
-                                            )}
-                                        </div>
-                                    ))}
-                                </div>
-
-                                {/* Pagination Controls */}
-                                <div className={styles.paginationControls}>
-                                    <Button
-                                        variant="outline"
-                                        size="sm"
-                                        disabled={currentPage === 1}
-                                        onClick={() => setCurrentPage(prev => prev - 1)}
-                                    >
-                                        ←
-                                    </Button>
-                                    <span className={styles.pageInfo}>
-                                        Página {currentPage} de {Math.ceil(filteredRecords.length / itemsPerPage)} ({filteredRecords.length} registros)
-                                    </span>
-                                    <Button
-                                        variant="outline"
-                                        size="sm"
-                                        disabled={currentPage >= Math.ceil(filteredRecords.length / itemsPerPage)}
-                                        onClick={() => setCurrentPage(prev => prev + 1)}
-                                    >
-                                        →
-                                    </Button>
-                                </div>
-                            </>
                         )}
                     </div>
                 </main>
-
-                {/* Detail Slider Panel */}
-                <div className={`${styles.sliderOverlay} ${showDetailModal ? styles.active : ''}`} onClick={() => setShowDetailModal(false)} />
-                <div className={`${styles.sliderPanel} ${showDetailModal ? styles.active : ''}`}>
-                    <div className={styles.sliderHeader}>
-                        <h2 className={styles.sliderTitle}>{selectedEmployee?.name}</h2>
-                        <button className={styles.sliderCloseBtn} onClick={() => setShowDetailModal(false)}>
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                <line x1="18" y1="6" x2="6" y2="18" />
-                                <line x1="6" y1="6" x2="18" y2="18" />
-                            </svg>
-                        </button>
-                    </div>
-                    <div className={styles.sliderBody}>
-                        {selectedEmployee && (
-                            <div className={styles.detailContainer}>
-                                {/* Stats Header */}
-                                <div className={styles.detailHeader}>
-                                    <div className={styles.statBox}>
-                                        <label>Puesto</label>
-                                        <span>{selectedEmployee.position}</span>
-                                    </div>
-                                    <div className={styles.statBox}>
-                                        <label>Cumplimiento Global</label>
-                                        <span className={getComplianceColor(selectedEmployee.matrix.compliancePercentage)}>
-                                            {selectedEmployee.matrix.compliancePercentage}%
-                                        </span>
-                                    </div>
-                                </div>
-
-                                {/* Missing/Pending Courses Section */}
-                                {(() => {
-                                    const missingCourses = selectedEmployee.matrix.missingCourses || getMissingCourses(selectedEmployee);
-                                    return missingCourses.length > 0 ? (
-                                        <div className={styles.coursesSection}>
-                                            <div className={styles.courseCategory}>
-                                                <div className={styles.categoryHeader}>
-                                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                                        <circle cx="12" cy="12" r="10" />
-                                                        <line x1="15" y1="9" x2="9" y2="15" />
-                                                        <line x1="9" y1="9" x2="15" y2="15" />
-                                                    </svg>
-                                                    <h4>Cursos Faltantes</h4>
-                                                    <span className={styles.categoryCount}>{missingCourses.length}</span>
-                                                </div>
-                                                <div className={styles.courseList}>
-                                                    {missingCourses.map((c, i) => (
-                                                        <div key={i} className={`${styles.courseItem} ${styles.pending}`}>
-                                                            {c}
-                                                        </div>
-                                                    ))}
-                                                </div>
-                                            </div>
-                                        </div>
-                                    ) : (
-                                        <div className={styles.successMessage}>
-                                            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
-                                                <polyline points="22 4 12 14.01 9 11.01" />
-                                            </svg>
-                                            <p>¡Todo al día!</p>
-                                        </div>
-                                    );
-                                })()}
-
-                                {/* History Section */}
-                                <div className={styles.historySection}>
-                                    <h3>Historial Completo</h3>
-                                    <div className={styles.historyList}>
-                                        {selectedEmployee.history?.sort((a, b) => new Date(b.date) - new Date(a.date)).map((h, i) => (
-                                            <div key={i} className={styles.historyItem}>
-                                                <div className={styles.historyLeft}>
-                                                    <div className={styles.historyName}>{h.courseName}</div>
-                                                    <div className={styles.historyDate}>{h.date}</div>
-                                                </div>
-                                                <div className={styles.historyRight}>
-                                                    <span className={h.status === 'approved' ? styles.tagSuccess : styles.tagFail}>
-                                                        {h.score}
-                                                    </span>
-                                                    {h.status === 'approved' && (
-                                                        <button
-                                                            className={styles.downloadBtn}
-                                                            onClick={() => generateDC3(selectedEmployee, coursesMap[h.courseName] || { name: h.courseName }, { date: h.date })}
-                                                            title="Descargar DC-3"
-                                                        >
-                                                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
-                                                                <polyline points="14 2 14 8 20 8" />
-                                                                <line x1="12" y1="18" x2="12" y2="12" />
-                                                                <line x1="9" y1="15" x2="15" y2="15" />
-                                                            </svg>
-                                                        </button>
-                                                    )}
-                                                </div>
-                                            </div>
-                                        ))}
-                                    </div>
-                                </div>
-                            </div>
-                        )}
-                    </div>
-                </div>
 
                 {/* Yearly Details Modal */}
                 <Dialog open={showYearlyModal} onOpenChange={setShowYearlyModal}>

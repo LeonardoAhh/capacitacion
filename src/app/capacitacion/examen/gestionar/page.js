@@ -17,6 +17,7 @@ import {
 } from '@/components/ui/Dialog/Dialog';
 import AdminLayout from '@/components/layout/AdminLayout/AdminLayout';
 import Link from 'next/link';
+import { Select } from '@/components/ui/Select/Select';
 import styles from './gestionar.module.css';
 
 // ─── Constantes ──────────────────────────────────────────────────────────────
@@ -228,79 +229,64 @@ export default function GestionarPreguntasPage() {
             <div className={styles.pageWrapper}>
                 <main className={styles.main}>
 
-                    {/* Header */}
-                    <div className={styles.pageHeader}>
-                        <div className={styles.headerLeft}>
-                            <Link href="/capacitacion/examen" className={styles.backIconBtn} title="Volver al Generador">
-                                <ArrowLeft size={24} />
-                            </Link>
-                            <div>
-                                <h1 className={styles.pageTitle}>Gestión de Preguntas</h1>
-                                <p className={styles.pageSubtitle}>
-                                    Administra el banco de preguntas para los exámenes de capacitación.
-                                </p>
-                            </div>
-                        </div>
-                        <div className={styles.headerActions}>
-                            <Button
-                                variant="outline"
-                                onClick={handleDownloadExcel}
-                                title={`Descargar ${questionCount} pregunta${questionCount !== 1 ? 's' : ''} visibles en Excel`}
-                            >
-                                <Download size={18} style={{ marginRight: 8 }} />
-                                Descargar Excel
-                            </Button>
-                            <Button onClick={handleCreateClick}>
-                                <Plus size={18} style={{ marginRight: 8 }} />
-                                Nueva Pregunta
-                            </Button>
-                        </div>
-                    </div>
-
                     <div className={styles.wrapper}>
 
-                        {/* Filtros */}
+                        {/* Filtros y Acciones */}
                         <div className={styles.filtersRow}>
-                            <div className={styles.searchBox}>
-                                <Search size={18} className={styles.searchIcon} />
-                                <input
-                                    type="text"
-                                    placeholder="BUSCAR"
-                                    value={searchTerm}
-                                    onChange={(e) => setSearchTerm(e.target.value)}
-                                    className={styles.searchInput}
+                            <div className={styles.filters}>
+                                <div className={styles.searchBox}>
+                                    <Search size={18} className={styles.searchIcon} />
+                                    <input
+                                        type="text"
+                                        placeholder="BUSCAR"
+                                        value={searchTerm}
+                                        onChange={(e) => setSearchTerm(e.target.value)}
+                                        className={styles.searchInput}
+                                        aria-label="Buscar pregunta"
+                                    />
+                                    {searchTerm && (
+                                        <button
+                                            className={styles.clearBtn}
+                                            onClick={() => setSearchTerm('')}
+                                            aria-label="Limpiar búsqueda"
+                                        >
+                                            <X size={14} />
+                                        </button>
+                                    )}
+                                </div>
+                                <Select
+                                    value={selectedDept}
+                                    onChange={(value) => setSelectedDept(value)}
+                                    options={[
+                                        { value: 'Todos', label: 'DEPARTAMENTOS' },
+                                        ...DEPARTMENTS.map(dept => ({ value: dept, label: dept.toUpperCase() })),
+                                    ]}
+                                    className={styles.filterSelect}
+                                    aria-label="Filtrar por departamento"
                                 />
-                                {searchTerm && (
-                                    <button
-                                        className={styles.clearBtn}
-                                        onClick={() => setSearchTerm('')}
-                                        aria-label="Limpiar búsqueda"
-                                    >
-                                        <X size={14} />
-                                    </button>
-                                )}
+                                <Select
+                                    value={selectedTheme}
+                                    onChange={(value) => setSelectedTheme(value)}
+                                    options={uniqueThemes.map(theme => ({ value: theme, label: theme === 'Todos' ? 'TEMAS' : theme }))}
+                                    className={styles.filterSelect}
+                                    aria-label="Filtrar por tema"
+                                />
                             </div>
-                            <select
-                                className={styles.filterSelect}
-                                value={selectedDept}
-                                onChange={(e) => setSelectedDept(e.target.value)}
-                            >
-                                <option value="Todos">DEPARTAMENTOS</option>
-                                {DEPARTMENTS.map(dept => (
-                                    <option key={dept} value={dept}>{dept.toUpperCase()}</option>
-                                ))}
-                            </select>
-                            <select
-                                className={styles.filterSelect}
-                                value={selectedTheme}
-                                onChange={(e) => setSelectedTheme(e.target.value)}
-                            >
-                                {uniqueThemes.map(theme => (
-                                    <option key={theme} value={theme}>
-                                        {theme === 'Todos' ? 'TEMAS' : theme}
-                                    </option>
-                                ))}
-                            </select>
+
+                            <div className={styles.headerActions}>
+                                <Button
+                                    variant="outline"
+                                    onClick={handleDownloadExcel}
+                                    title={`Descargar ${questionCount} pregunta${questionCount !== 1 ? 's' : ''} visibles en Excel`}
+                                >
+                                    <Download size={18} style={{ marginRight: 8 }} />
+                                    Excel
+                                </Button>
+                                <Button onClick={handleCreateClick}>
+                                    <Plus size={18} style={{ marginRight: 8 }} />
+                                    Nueva Pregunta
+                                </Button>
+                            </div>
                         </div>
 
                         {/* Status */}
@@ -310,11 +296,7 @@ export default function GestionarPreguntasPage() {
                                     <span className={styles.spinner} /> Cargando preguntas...
                                 </p>
                             )}
-                            {!loading && questionCount > 0 && (
-                                <p className={styles.statusText}>
-                                    📚 {questionCount} pregunta{questionCount !== 1 ? 's' : ''} disponible{questionCount !== 1 ? 's' : ''}.
-                                </p>
-                            )}
+
                             {!loading && questionCount === 0 && (
                                 <p className={styles.statusText}>Sin resultados para esta búsqueda.</p>
                             )}
@@ -397,15 +379,11 @@ export default function GestionarPreguntasPage() {
 
                         <div className={styles.formGroup}>
                             <label>Departamento</label>
-                            <select
-                                className={styles.select}
+                            <Select
                                 value={formData.department}
-                                onChange={e => setFormData({ ...formData, department: e.target.value })}
-                            >
-                                {DEPARTMENTS.map(dept => (
-                                    <option key={dept} value={dept}>{dept}</option>
-                                ))}
-                            </select>
+                                onChange={value => setFormData({ ...formData, department: value })}
+                                options={DEPARTMENTS.map(dept => ({ value: dept, label: dept }))}
+                            />
                         </div>
 
                         <div className={styles.formGroup}>
@@ -480,15 +458,15 @@ export default function GestionarPreguntasPage() {
                             </div>
                             <div className={styles.formGroup}>
                                 <label>Respuesta Correcta</label>
-                                <select
-                                    className={`${styles.select} ${styles.correctAnswerSelect}`}
+                                <Select
                                     value={formData.correctAnswer}
-                                    onChange={e => setFormData({ ...formData, correctAnswer: e.target.value })}
-                                >
-                                    <option value="a">Opción A</option>
-                                    <option value="b">Opción B</option>
-                                    <option value="c">Opción C (si aplica)</option>
-                                </select>
+                                    onChange={value => setFormData({ ...formData, correctAnswer: value })}
+                                    options={[
+                                        { value: 'a', label: 'Opción A' },
+                                        { value: 'b', label: 'Opción B' },
+                                        { value: 'c', label: 'Opción C (si aplica)' },
+                                    ]}
+                                />
                             </div>
                         </div>
 

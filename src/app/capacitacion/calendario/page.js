@@ -351,7 +351,8 @@ export default function CalendarPage() {
         const lastDay = new Date(year, month + 1, 0);
 
         const days = [];
-        const startPadding = firstDay.getDay();
+        // Si el mes empieza en Domingo (0), no hay celdas del mes anterior de Lunes a Sábado, así que el padding es 0.
+        let startPadding = firstDay.getDay() === 0 ? 0 : firstDay.getDay() - 1;
         const totalDays = lastDay.getDate();
 
         for (let i = 0; i < startPadding; i++) {
@@ -359,7 +360,19 @@ export default function CalendarPage() {
         }
 
         for (let i = 1; i <= totalDays; i++) {
-            days.push(new Date(year, month, i));
+            const d = new Date(year, month, i);
+            if (d.getDay() !== 0) { // Omitir domingo
+                days.push(d);
+            }
+        }
+
+        // Padding final para completar la fila de 6 días (Lunes - Sábado)
+        const remainder = days.length % 6;
+        if (remainder !== 0) {
+            const endPadding = 6 - remainder;
+            for (let i = 0; i < endPadding; i++) {
+                days.push(null);
+            }
         }
 
         setCalendarDays(days);
@@ -699,13 +712,20 @@ export default function CalendarPage() {
     return (
         <AdminLayout title="Calendario de Capacitación">
             <div className={styles.container}>
-                {/* Header */}
+                {/* Header Unificado */}
                 <div className={styles.headerSection}>
                     <div className={styles.header}>
-                        <div className={styles.titleGroup}>
-                            <h1 className={styles.pageTitle}>Calendario de Capacitación</h1>
-                            <p className={styles.pageSubtitle}>Visualiza los cursos impartidos y programados</p>
+                        <div className={styles.legendRow}>
+                            <div className={styles.legendItem}>
+                                <span className={styles.dotDone}></span>
+                                <span style={{ fontWeight: 600 }}>Realizado</span>
+                            </div>
+                            <div className={styles.doneBadge}>
+                                <span className={styles.doneCount}>{uniqueDoneThisMonth}</span>
+                                <span>curso{uniqueDoneThisMonth !== 1 ? 's' : ''} este mes</span>
+                            </div>
                         </div>
+
                         <div className={styles.headerActions}>
                             <div className={styles.controls}>
                                 <button className={styles.navBtn} onClick={prevMonth}>
@@ -731,21 +751,9 @@ export default function CalendarPage() {
                     </div>
                 </div>
 
-                {/* Legend + Contador */}
-                <div className={styles.legend} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '0.75rem' }}>
-                    <div className={styles.legendItem}>
-                        <span className={styles.dotDone}></span>
-                        <span>Realizado</span>
-                    </div>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', background: 'var(--bg-secondary)', border: '1px solid var(--border-color)', borderRadius: '999px', padding: '4px 14px', fontSize: '0.85rem', color: 'var(--text-primary)' }}>
-                        <span style={{ fontWeight: 700, fontSize: '1.05rem', color: 'var(--color-success, #22c55e)' }}>{uniqueDoneThisMonth}</span>
-                        <span style={{ color: 'var(--text-secondary)' }}>curso{uniqueDoneThisMonth !== 1 ? 's' : ''} impartido{uniqueDoneThisMonth !== 1 ? 's' : ''} este mes</span>
-                    </div>
-                </div>
-
                 {/* Calendar Grid */}
                 <div className={styles.grid}>
-                    {['DOM', 'LUN', 'MAR', 'MIE', 'JUE', 'VIE', 'SAB'].map(d => (
+                    {['LUN', 'MAR', 'MIE', 'JUE', 'VIE', 'SAB'].map(d => (
                         <div key={d} className={styles.dayHeader}>{d}</div>
                     ))}
 

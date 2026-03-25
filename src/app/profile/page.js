@@ -13,6 +13,7 @@ import { useToast } from '@/components/ui/Toast/Toast';
 import { Badge } from '@/components/ui/Badge/Badge';
 import { Skeleton } from '@/components/ui/Skeleton/Skeleton';
 import AdminLayout from '@/components/layout/AdminLayout/AdminLayout';
+import { Select } from '@/components/ui/Select/Select';
 
 // ── Helpers ──────────────────────────────────────────────────────────────────
 
@@ -347,23 +348,21 @@ function AdminSection() {
                         {!isMaintenance && (
                             <div className={styles.maintenanceDurationRow}>
                                 <span className={styles.maintenanceDurationLabel}>Duración estimada:</span>
-                                <select
-                                    value={duration}
-                                    onChange={(e) => setDuration(e.target.value)}
+                                <Select
+                                    value={String(duration)}
+                                    onChange={(value) => setDuration(value)}
+                                    options={[1, 2, 4, 8, 12, 24, 48, 72].map(h => ({ value: String(h), label: `${h} ${h === 1 ? 'hora' : 'horas'}` }))}
                                     className={styles.maintenanceDurationSelect}
-                                >
-                                    {[1, 2, 4, 8, 12, 24, 48].map(h => (
-                                        <option key={h} value={h}>{h} {h === 1 ? 'hora' : 'horas'}</option>
-                                    ))}
-                                </select>
+                                />
                             </div>
                         )}
                     </div>
 
                     {isMaintenance && (
-                        <p className={styles.maintenanceWarning}>
-                            ⚠ Tú sigues teniendo acceso por ser Administrador.
-                        </p>
+                        <div className={styles.maintenanceWarning}>
+                            <AlertTriangle size={14} />
+                            <span>Tú sigues teniendo acceso total por ser Administrador.</span>
+                        </div>
                     )}
                 </div>
             )}

@@ -28,7 +28,6 @@ export default function DocumentsView({ documents, onBack }) {
         >
             <div className={styles.headerRow}>
                 <BackButton onClick={onBack} />
-                <h2 className={styles.viewTitle}>Documentos del Empleado</h2>
             </div>
 
             {documents && documents.length > 0 ? (
@@ -69,7 +68,7 @@ export default function DocumentsView({ documents, onBack }) {
                                     <span className={styles.documentName}>{docItem.name}</span>
                                     <span className={styles.documentDate}>{new Date(docItem.uploadDate).toLocaleDateString()}</span>
                                 </div>
-                                <ChevronRight size={20} className="text-slate-400" />
+                                <ChevronRight size={20} className={styles.navChevron} />
                             </motion.a>
                         );
                     })}
@@ -80,8 +79,8 @@ export default function DocumentsView({ documents, onBack }) {
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                 >
-                    <File size={48} className="mb-4 text-slate-300" />
-                    <p className="text-lg font-medium text-slate-500">No hay documentos cargados</p>
+                    <File size={48} className={styles.emptyStateIcon} />
+                    <p className={styles.emptyStateText}>No hay documentos cargados</p>
                 </motion.div>
             )}
         </motion.div>

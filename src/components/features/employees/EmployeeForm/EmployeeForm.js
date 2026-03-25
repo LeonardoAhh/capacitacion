@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { Combobox } from '@/components/ui/Combobox/Combobox';
+import { Select } from '@/components/ui/Select/Select';
 import styles from './EmployeeForm.module.css';
 import { uploadFile } from '@/lib/upload';
 import { useEmployeeDates } from '@/hooks/useEmployeeDates';
@@ -327,20 +328,19 @@ export default function EmployeeForm({
                                     required
                                 />
                                 <div className={styles.inputGroup}>
-                                    <label htmlFor="shift">Turno</label>
-                                    <select
-                                        id="shift"
+                                    <label>Turno</label>
+                                    <Select
                                         value={formData.shift}
-                                        onChange={(e) => setFormData({ ...formData, shift: e.target.value })}
-                                        required
-                                    >
-                                        <option value="">Seleccionar turno</option>
-                                        <option value="1">Turno 1</option>
-                                        <option value="2">Turno 2</option>
-                                        <option value="3">Turno 3</option>
-                                        <option value="4">Turno 4</option>
-                                        <option value="Mixto">Mixto</option>
-                                    </select>
+                                        onChange={(value) => setFormData({ ...formData, shift: value })}
+                                        options={[
+                                            { value: '1', label: 'Turno 1' },
+                                            { value: '2', label: 'Turno 2' },
+                                            { value: '3', label: 'Turno 3' },
+                                            { value: '4', label: 'Turno 4' },
+                                            { value: 'Mixto', label: 'Mixto' },
+                                        ]}
+                                        placeholder="Seleccionar turno"
+                                    />
                                 </div>
                                 <div className={styles.inputGroup}>
                                     <label htmlFor="startDate">Fecha de Inicio</label>

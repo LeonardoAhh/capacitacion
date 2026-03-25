@@ -1,7 +1,10 @@
+'use client';
+
 import React from 'react';
 import { IconPlus, IconTrash2 } from '@/lib/icons';
 import ImageUploader from '../ImageUploader';
 import RichTextEditor from '../RichTextEditor';
+import { Select } from '@/components/ui/Select/Select';
 
 const BODY_MAX_CHARS = 600;
 
@@ -132,16 +135,16 @@ export default function ContentSlideEditor({ formData, handleChange, setFormData
                 {formData.snippet && (
                     <div style={{ marginTop: 16, display: 'flex', flexDirection: 'column', gap: 12 }}>
                         <div style={{ display: 'grid', gridTemplateColumns: 'minmax(120px, 1fr) 2fr', gap: 10 }}>
-                            <select
-                                className={styles.select}
+                            <Select
                                 value={formData.snippet.type || 'info'}
-                                onChange={e => handleChange('snippet', { ...formData.snippet, type: e.target.value })}
-                            >
-                                <option value="info">ℹ️ Información</option>
-                                <option value="success">✅ Éxito</option>
-                                <option value="warning">⚠️ Advertencia</option>
-                                <option value="danger">🚨 Peligro</option>
-                            </select>
+                                onChange={value => handleChange('snippet', { ...formData.snippet, type: value })}
+                                options={[
+                                    { value: 'info', label: 'ℹ️ Información' },
+                                    { value: 'success', label: '✅ Éxito' },
+                                    { value: 'warning', label: '⚠️ Advertencia' },
+                                    { value: 'danger', label: '🚨 Peligro' },
+                                ]}
+                            />
                             <input
                                 className={styles.input}
                                 placeholder="Título (ej. Recuerda)"

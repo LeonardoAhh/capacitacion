@@ -80,12 +80,16 @@
 
 .headerRight {
     display: flex;
+    align-items: center;
     gap: var(--spacing-md);
+    margin-left: auto;
 }
 
 /* ==================== CONTROLS BAR ==================== */
 .controlsBar {
     display: flex;
+    justify-content: space-between;
+    align-items: center;
     gap: var(--spacing-md);
     padding: var(--spacing-lg);
     background: var(--bg-secondary);
@@ -93,7 +97,15 @@
     border-radius: var(--radius-lg);
     margin-bottom: var(--spacing-xl);
     flex-wrap: wrap;
+    box-shadow: var(--shadow-sm);
+}
+
+.filters {
+    display: flex;
     align-items: center;
+    gap: var(--spacing-md);
+    flex: 1;
+    min-width: 320px;
 }
 
 [data-theme="dark"] .controlsBar {
@@ -103,8 +115,8 @@
 
 .searchBar {
     position: relative;
-    flex: 1;
-    min-width: 280px;
+    flex: 1.5;
+    min-width: 180px;
 }
 
 .searchBar svg {
@@ -142,7 +154,8 @@
 }
 
 .deptFilter {
-    flex: 0 0 200px;
+    flex: 1;
+    min-width: 140px;
 }
 
 /* ==================== VIEW TOGGLES ==================== */
@@ -688,25 +701,33 @@
         z-index: 9999;
     }
 
-    .header {
-        flex-direction: column;
-    }
-
-    .headerLeft h1 {
-        font-size: 1.5rem;
-    }
-
     .controlsBar {
         flex-direction: column;
         align-items: stretch;
     }
 
+    .filters {
+        flex-direction: column;
+        align-items: stretch;
+        width: 100%;
+        min-width: 0;
+    }
+
+    .headerRight {
+        width: 100%;
+        justify-content: space-between;
+        margin-left: 0;
+    }
+
     .searchBar {
-        min-width: auto;
+        width: 100%;
+        min-width: 0;
+        flex: none;
     }
 
     .deptFilter {
-        flex: 1 1 100%;
+        width: 100%;
+        flex: none;
     }
 
     .viewToggles {

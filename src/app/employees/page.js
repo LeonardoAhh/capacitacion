@@ -13,6 +13,7 @@ import { useConfirm } from '@/hooks/useConfirm';
 import { formatFullName } from '@/lib/employeeUtils';
 import EmployeeImportPreview from './components/EmployeeImportPreview';
 import { generateEmployeeTemplate, parseImportFile, validateEmployeeImportRecords } from '@/utils/importUtils';
+import { Select } from '@/components/ui/Select/Select';
 
 // ── Constantes ─────────────────────────────────────────────────────────────────
 const DEPARTMENTS = [
@@ -223,26 +224,26 @@ function EmployeeModal({ initial, onClose, onSave }) {
 
                                 <div className={styles.fieldGroup}>
                                     <label className={styles.fieldLabel}>Estatus</label>
-                                    <select
-                                        className={styles.fieldInput}
+                                    <Select
                                         value={form.status}
-                                        onChange={e => set('status', e.target.value)}
-                                    >
-                                        <option value="Activo">Activo</option>
-                                        <option value="Inactivo">Inactivo</option>
-                                    </select>
+                                        onChange={value => set('status', value)}
+                                        options={[
+                                            { value: 'Activo', label: 'Activo' },
+                                            { value: 'Inactivo', label: 'Inactivo' },
+                                        ]}
+                                    />
                                 </div>
 
                                 <div className={styles.fieldGroup}>
                                     <label className={styles.fieldLabel}>Tipo</label>
-                                    <select
-                                        className={styles.fieldInput}
+                                    <Select
                                         value={form.isCandidato ? 'candidato' : 'empleado'}
-                                        onChange={e => set('isCandidato', e.target.value === 'candidato')}
-                                    >
-                                        <option value="empleado">Empleado</option>
-                                        <option value="candidato">Candidato</option>
-                                    </select>
+                                        onChange={value => set('isCandidato', value === 'candidato')}
+                                        options={[
+                                            { value: 'empleado', label: 'Empleado' },
+                                            { value: 'candidato', label: 'Candidato' },
+                                        ]}
+                                    />
                                 </div>
                             </>
                         )}
@@ -262,17 +263,12 @@ function EmployeeModal({ initial, onClose, onSave }) {
 
                                 <div className={styles.fieldGroup}>
                                     <label className={styles.fieldLabel}>Departamento</label>
-                                    <input
-                                        type="text"
-                                        className={styles.fieldInput}
-                                        list="dept-list-emp"
+                                    <Select
                                         value={form.department}
-                                        onChange={e => set('department', e.target.value)}
-                                        placeholder="Ej. PRODUCCIÓN"
+                                        onChange={value => set('department', value)}
+                                        options={DEPARTMENTS.map(d => ({ value: d, label: d }))}
+                                        placeholder="Seleccionar Departamento"
                                     />
-                                    <datalist id="dept-list-emp">
-                                        {DEPARTMENTS.map(d => <option key={d} value={d} />)}
-                                    </datalist>
                                 </div>
 
                                 <div className={styles.fieldGroup}>
@@ -288,17 +284,12 @@ function EmployeeModal({ initial, onClose, onSave }) {
 
                                 <div className={styles.fieldGroup}>
                                     <label className={styles.fieldLabel}>Turno</label>
-                                    <input
-                                        type="text"
-                                        className={styles.fieldInput}
-                                        list="shift-list-emp"
+                                    <Select
                                         value={form.shift}
-                                        onChange={e => set('shift', e.target.value)}
-                                        placeholder="1, 2, 3, 4, Mixto"
+                                        onChange={value => set('shift', value)}
+                                        options={['1', '2', '3', '4', 'Mixto'].map(s => ({ value: s, label: s }))}
+                                        placeholder="Seleccionar Turno"
                                     />
-                                    <datalist id="shift-list-emp">
-                                        {['1', '2', '3', '4', 'Mixto'].map(s => <option key={s} value={s} />)}
-                                    </datalist>
                                 </div>
 
                                 <div className={styles.fieldGroup}>
@@ -505,37 +496,36 @@ export default function EmployeesPage() {
                         />
                     </div>
 
-                    <select
-                        className={styles.filterSelect}
-                        value={filterDept}
-                        onChange={e => setFilterDept(e.target.value)}
-                        aria-label="Filtrar por departamento"
-                    >
-                        <option value="">DEPARTAMENTO</option>
-                        {departments.map(d => <option key={d} value={d}>{d}</option>)}
-                    </select>
+                    <div className={styles.filters}>
+                        <Select
+                            value={filterDept}
+                            onChange={value => setFilterDept(value)}
+                            options={[{ value: '', label: 'DEPARTAMENTO' }, ...departments.map(d => ({ value: d, label: d }))]}
+                            className={styles.filterSelect}
+                            aria-label="Filtrar por departamento"
+                        />
 
-                    <select
-                        className={styles.filterSelect}
-                        value={filterShift}
-                        onChange={e => setFilterShift(e.target.value)}
-                        aria-label="Filtrar por turno"
-                    >
-                        <option value="">TURNO</option>
-                        {shifts.map(s => <option key={s} value={s}>{s}</option>)}
-                    </select>
+                        <Select
+                            value={filterShift}
+                            onChange={value => setFilterShift(value)}
+                            options={[{ value: '', label: 'TURNO' }, ...shifts.map(s => ({ value: s, label: s }))]}
+                            className={styles.filterSelect}
+                            aria-label="Filtrar por turno"
+                        />
 
-                    <select
-                        className={styles.filterSelect}
-                        value={filterStatus}
-                        onChange={e => setFilterStatus(e.target.value)}
-                        aria-label="Filtrar por estatus"
-                    >
-                        <option value="">ESTATUS</option>
-                        <option value="active">ACTIVOS</option>
-                        <option value="inactive">INACTIVOS</option>
-                        <option value="candidato">CANDIDATOS</option>
-                    </select>
+                        <Select
+                            value={filterStatus}
+                            onChange={value => setFilterStatus(value)}
+                            options={[
+                                { value: '', label: 'ESTATUS' },
+                                { value: 'active', label: 'ACTIVOS' },
+                                { value: 'inactive', label: 'INACTIVOS' },
+                                { value: 'candidato', label: 'CANDIDATOS' },
+                            ]}
+                            className={styles.filterSelect}
+                            aria-label="Filtrar por estatus"
+                        />
+                    </div>
 
                     <div className={styles.toolbarActions}>
                         <input

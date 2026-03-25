@@ -1,45 +1,91 @@
+/* ==================== DOCUMENTS VIEW - EDITORIAL WHITE ==================== */
+
 .container {
     display: flex;
     flex-direction: column;
 }
 
+.headerRow {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 24px;
+}
+
+.viewTitle {
+    font-size: 1.5rem;
+    font-family: var(--font-serif, "Montserrat", serif);
+    font-weight: 700;
+    color: var(--c-ink, #111827);
+    margin: 0;
+}
+
+.emptyState {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 64px 24px;
+    text-align: center;
+    background: var(--c-surface, #ffffff);
+    border-radius: var(--r-xl, 16px);
+    border: 1px dashed var(--c-line-strong, #9ca3af);
+    margin-top: 24px;
+}
+
+.emptyStateIcon {
+    color: var(--c-line-strong, #9ca3af);
+    margin-bottom: 16px;
+}
+
+.emptyStateText {
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: var(--c-muted, #6b7280);
+    margin: 0;
+}
+
 .documentsGrid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-    gap: 1rem;
+    gap: 16px;
 }
 
 .documentCard {
     display: flex;
     align-items: center;
-    gap: 1rem;
-    padding: 1rem;
-    background: var(--card-background);
-    border-radius: 16px;
-    border: 1px solid var(--card-border);
-    transition: all 0.2s ease;
+    gap: 16px;
+    padding: 16px;
+    background: var(--c-surface, #ffffff);
+    border-radius: var(--r-xl, 16px);
+    border: 1px solid var(--c-line, #e5e7eb);
+    transition: transform var(--t, 0.2s) var(--ease, ease), box-shadow var(--t) var(--ease), border-color var(--t) var(--ease);
     text-decoration: none;
     color: inherit;
+    box-shadow: var(--sh-sm, 0 1px 2px rgba(0,0,0,0.05));
 }
-
-
 
 .documentCard:hover {
     transform: translateY(-2px);
-    background: rgba(255, 255, 255, 0.8);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    background: var(--c-bg, #fafaf8);
+    box-shadow: var(--sh-md, 0 4px 6px -1px rgba(0,0,0,0.05));
+    border-color: var(--c-primary-dim, rgba(0, 60, 204, 0.08));
 }
 
-
+.documentCard:hover .navChevron {
+    transform: translateX(4px);
+    color: var(--c-primary, #003ccc);
+}
 
 .documentIcon {
     width: 48px;
     height: 48px;
-    border-radius: 12px;
+    border-radius: var(--r-md, 8px);
     display: flex;
     align-items: center;
     justify-content: center;
     flex-shrink: 0;
+    border: 1px solid transparent;
 }
 
 .documentInfo {
@@ -47,84 +93,24 @@
     flex-direction: column;
     flex-grow: 1;
     overflow: hidden;
+    gap: 4px;
 }
 
 .documentName {
     font-weight: 600;
-    color: var(--text-primary);
+    color: var(--c-ink, #111827);
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
     font-size: 0.95rem;
 }
 
-
-
 .documentDate {
     font-size: 0.8rem;
-    color: var(--text-secondary);
-    margin-top: 0.125rem;
+    color: var(--c-muted, #6b7280);
 }
 
-
-
-.emptyState {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    padding: 4rem;
-    text-align: center;
-    color: #94a3b8;
-    background: rgba(255, 255, 255, 0.3);
-    border-radius: 20px;
-    border: 2px dashed rgba(0, 0, 0, 0.05);
+.navChevron {
+    color: var(--c-line-strong, #d1d5db);
+    transition: transform var(--t, 0.2s) var(--ease, ease), color var(--t) var(--ease);
 }
-
-
-
-/* Back Button & Header */
-.headerRow {
-    display: flex;
-    align-items: center;
-    margin-bottom: 1.5rem;
-}
-
-.backBtn {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
-    padding: 0.625rem 1.125rem;
-    background: rgba(255, 255, 255, 0.8);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    border: 1px solid rgba(148, 163, 184, 0.2);
-    border-radius: 12px;
-    color: var(--text-secondary);
-    font-size: 0.9rem;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
-}
-
-
-
-.backBtn:hover {
-    background: rgba(255, 255, 255, 1);
-    border-color: #3b82f6;
-    color: #3b82f6;
-    transform: translateX(-2px);
-    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.15);
-}
-
-
-
-.viewTitle {
-    font-size: 1.5rem;
-    font-weight: 700;
-    color: var(--text-primary);
-    margin-left: 1rem;
-}
-
-

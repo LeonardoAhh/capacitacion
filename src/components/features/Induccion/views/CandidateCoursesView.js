@@ -3,6 +3,7 @@
 import React from 'react';
 import { Button } from '@/components/ui/Button/Button';
 import { Combobox } from '@/components/ui/Combobox/Combobox';
+import { Select } from '@/components/ui/Select/Select';
 import {
     IconChevronRight as ChevronRight,
     IconPlus as Plus,
@@ -114,10 +115,13 @@ export default function CandidateCoursesView({
                                 {candidateFormData.tipo === 'native' ? (
                                     <div className={styles.inputGroup}>
                                         <label>Curso interactivo</label>
-                                        <select className={styles.input} value={candidateFormData.nativeCourseId} onChange={e => handleCandidateFormChange('nativeCourseId', e.target.value)}>
-                                            <option value="">— Seleccionar curso —</option>
-                                            {nativeCourses.map(c => <option key={c.id} value={c.id}>{c.title}</option>)}
-                                        </select>
+                                        <Select
+                                            value={candidateFormData.nativeCourseId}
+                                            onChange={value => handleCandidateFormChange('nativeCourseId', value)}
+                                            options={nativeCourses.map(c => ({ value: c.id, label: c.title }))}
+                                            placeholder="— Seleccionar curso —"
+                                            searchable
+                                        />
                                     </div>
                                 ) : (
                                     <div className={styles.inputGroup}>

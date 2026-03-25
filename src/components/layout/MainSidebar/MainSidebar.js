@@ -8,7 +8,7 @@ import {
     LogOut, X, ChevronDown,
     Users, CheckSquare, Calendar, BarChart2, BookOpen,
     UserCheck, Briefcase, FileText, FileCheck, Layers,
-    Zap, CalendarRange, LayoutDashboard, Award, GraduationCap,
+    Zap, CalendarRange, LayoutDashboard, Award, GraduationCap, Settings
 } from 'lucide-react';
 import styles from './MainSidebar.module.css';
 
@@ -37,7 +37,8 @@ const NAV_SECTIONS = [
             { id: 'cumplimiento', label: 'Detalle Curso', href: '/capacitacion/cumplimiento', icon: FileCheck },
             { id: 'perfil', label: 'Detalle Individual', href: '/capacitacion/perfil', icon: UserCheck },
             { id: 'categorias', label: 'Control Categorías', href: '/capacitacion/promociones', icon: Briefcase },
-            { id: 'examenes', label: 'Exámenes', href: '/capacitacion/examen', icon: FileText },
+            { id: 'examenes', label: 'Exámenes', href: '/capacitacion/examen', icon: FileText, exact: true },
+            { id: 'gestionarExamen', label: 'Gestionar Preguntas', href: '/capacitacion/examen/gestionar', icon: Settings },
             { id: 'calendario', label: 'Calendario', href: '/capacitacion/calendario', icon: Calendar },
         ],
     },
@@ -166,7 +167,9 @@ export default function MainSidebar({ user, handleLogout, isOpen, onClose, isCol
                                 <div className={`${styles.subMenu} ${isOpen_ ? styles.subMenuOpen : ''}`}>
                                     {section.items.map(item => {
                                         const ItemIcon = item.icon;
-                                        const active = pathname === item.href || pathname.startsWith(item.href + '/');
+                                        const active = item.exact 
+                                            ? pathname === item.href 
+                                            : (pathname === item.href || pathname.startsWith(item.href + '/'));
                                         return (
                                             <Link
                                                 key={item.id}

@@ -11,9 +11,11 @@ import {
     Search, RefreshCw, UserPlus, Edit2, FileText, ArrowLeft, ChevronRight,
 } from 'lucide-react';
 import EditEmployeeModal from '@/components/features/Training/EditEmployeeModal';
+import CreateEmployeeModal from '@/components/features/Training/CreateEmployeeModal';
 import EmployeeAssignmentsModal from '@/components/features/Training/EmployeeAssignmentsModal';
 import MonitoringTable from '@/components/features/Training/MonitoringTable';
 import useIsMobile from '@/hooks/useIsMobile';
+import { Select } from '@/components/ui/Select/Select';
 import styles from './page.module.css';
 
 const STEP_LABELS = ['Empleados', 'Curso', 'Confirmar'];
@@ -59,6 +61,7 @@ export default function ProgramacionPage() {
     const [todayCount, setTodayCount] = useState(0);
     const [editingEmployee, setEditingEmployee] = useState(null);
     const [historyEmployee, setHistoryEmployee] = useState(null);
+    const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
 
     // Mobile stepper
     const [mobileStep, setMobileStep] = useState(0);
@@ -285,31 +288,32 @@ export default function ProgramacionPage() {
                         <Users size={16} aria-hidden="true" /> Empleados
                     </h2>
                     <div className={styles.panelToolbar}>
-                        <div className={styles.searchBox}>
-                            <Search size={15} className={styles.searchIcon} aria-hidden="true" />
-                            <input
-                                type="search"
-                                className={styles.searchInput}
-                                placeholder="Buscar empleado…"
-                                value={searchTerm}
-                                onChange={e => setSearchTerm(e.target.value)}
-                                aria-label="Buscar empleado"
+                        <div className={styles.filters}>
+                            <div className={styles.searchBox}>
+                                <Search size={15} className={styles.searchIcon} aria-hidden="true" />
+                                <input
+                                    type="search"
+                                    className={styles.searchInput}
+                                    placeholder="Buscar empleado…"
+                                    value={searchTerm}
+                                    onChange={e => setSearchTerm(e.target.value)}
+                                    aria-label="Buscar empleado"
+                                />
+                            </div>
+                            <Select
+                                value={selectedArea}
+                                onChange={value => setSelectedArea(value)}
+                                options={[
+                                    { value: 'all', label: 'Todas las áreas' },
+                                    ...areas.filter(a => a !== 'all').map(a => ({ value: a, label: a })),
+                                ]}
+                                className={styles.filterSelect}
+                                aria-label="Filtrar por área"
                             />
                         </div>
-                        <select
-                            className={styles.filterSelect}
-                            value={selectedArea}
-                            onChange={e => setSelectedArea(e.target.value)}
-                            aria-label="Filtrar por área"
-                        >
-                            <option value="all">Todas las áreas</option>
-                            {areas.filter(a => a !== 'all').map(a => (
-                                <option key={a} value={a}>{a}</option>
-                            ))}
-                        </select>
                         <button
                             className={styles.btnOutline}
-                            onClick={() => router.push('/training/registro')}
+                            onClick={() => setIsCreateModalOpen(true)}
                             type="button"
                             title="Nuevo empleado"
                         >
@@ -393,38 +397,38 @@ export default function ProgramacionPage() {
                             <h3 className={styles.mobileStepTitle}>
                                 <Users size={16} aria-hidden="true" /> Seleccionar Empleados
                             </h3>
-                            <div className={styles.searchBox}>
-                                <Search size={15} className={styles.searchIcon} aria-hidden="true" />
-                                <input
-                                    type="search"
-                                    className={styles.searchInput}
-                                    placeholder="Buscar empleado…"
-                                    value={mobileSearch}
-                                    onChange={e => setMobileSearch(e.target.value)}
-                                    aria-label="Buscar empleado"
-                                />
-                            </div>
                             <div className={styles.mobileFilters}>
-                                <select
-                                    className={styles.filterSelect}
-                                    style={{ flex: 1 }}
-                                    value={selectedArea}
-                                    onChange={e => setSelectedArea(e.target.value)}
-                                    aria-label="Filtrar por área"
-                                >
-                                    <option value="all">Todas las áreas</option>
-                                    {areas.filter(a => a !== 'all').map(a => (
-                                        <option key={a} value={a}>{a}</option>
-                                    ))}
-                                </select>
-                                <button
-                                    className={styles.btnOutline}
-                                    onClick={() => router.push('/training/registro')}
-                                    type="button"
-                                    title="Nuevo empleado"
-                                >
-                                    <UserPlus size={14} />
-                                </button>
+                                <div className={styles.searchBox}>
+                                    <Search size={15} className={styles.searchIcon} aria-hidden="true" />
+                                    <input
+                                        type="search"
+                                        className={styles.searchInput}
+                                        placeholder="Buscar empleado…"
+                                        value={mobileSearch}
+                                        onChange={e => setMobileSearch(e.target.value)}
+                                        aria-label="Buscar empleado"
+                                    />
+                                </div>
+                                <div className={styles.mobileFilterGroup}>
+                                    <Select
+                                        value={selectedArea}
+                                        onChange={value => setSelectedArea(value)}
+                                        options={[
+                                            { value: 'all', label: 'Todas las áreas' },
+                                            ...areas.filter(a => a !== 'all').map(a => ({ value: a, label: a })),
+                                        ]}
+                                        className={styles.filterSelect}
+                                        aria-label="Filtrar por área"
+                                    />
+                                    <button
+                                        className={styles.btnOutline}
+                                        onClick={() => setIsCreateModalOpen(true)}
+                                        type="button"
+                                        title="Nuevo empleado"
+                                    >
+                                        <UserPlus size={18} />
+                                    </button>
+                                </div>
                             </div>
                             <div className={styles.empListWrap}>
                                 {renderEmployeeList()}
@@ -576,6 +580,13 @@ export default function ProgramacionPage() {
 
             </main>
 
+            {isCreateModalOpen && (
+                <CreateEmployeeModal 
+                    isOpen={isCreateModalOpen}
+                    onClose={() => setIsCreateModalOpen(false)}
+                    onSuccess={() => fetchData(true)}
+                />
+            )}
             {editingEmployee && (
                 <EditEmployeeModal
                     employee={editingEmployee}

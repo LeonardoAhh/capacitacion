@@ -119,6 +119,12 @@
     color: transparent;
 }
 
+.content {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
 .loading .content {
     visibility: hidden;
 }

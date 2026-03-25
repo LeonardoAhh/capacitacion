@@ -1,0 +1,129 @@
+.wrapper {
+    position: relative;
+    width: 100%;
+    flex: 1;
+    max-width: 400px;
+    min-width: 0;
+}
+
+.trigger {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    padding: 0.875rem 1.2rem;
+    background: var(--bg-primary);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-lg, 12px);
+    font-family: var(--font-body);
+    font-size: 0.85rem;
+    color: var(--text-primary);
+    cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    outline: none;
+    text-align: left;
+}
+
+.trigger:hover {
+    border-color: rgba(0, 0, 0, 0.18);
+}
+
+.trigger:focus-visible,
+.trigger[aria-expanded="true"] {
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 1px var(--color-primary);
+}
+
+[data-theme="dark"] .trigger:hover {
+    border-color: rgba(255, 255, 255, 0.15);
+}
+
+.triggerText {
+    flex: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    padding-right: 12px;
+}
+
+.arrow {
+    flex-shrink: 0;
+    color: var(--text-secondary);
+    transition: transform 0.2s ease;
+}
+
+.arrowOpen {
+    transform: rotate(180deg);
+}
+
+.dropdown {
+    position: absolute;
+    top: calc(100% + 8px);
+    left: 0;
+    right: 0;
+    max-height: 250px;
+    overflow-y: auto;
+    background: var(--bg-primary);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-lg, 12px);
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+    list-style: none;
+    padding: 6px;
+    margin: 0;
+    z-index: 50;
+    animation: slideDown 0.15s ease-out;
+}
+
+[data-theme="dark"] .dropdown {
+    background: #1e1e24;
+    border-color: rgba(255, 255, 255, 0.08);
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3);
+}
+
+.option {
+    padding: 10px 14px;
+    font-family: var(--font-body);
+    font-size: 0.85rem;
+    color: var(--text-primary);
+    cursor: pointer;
+    border-radius: 8px;
+    transition: background 0.15s, color 0.15s;
+    /* Permite line-wrap para opciones largas para que no haya scroll horizontal nunca */
+    word-break: break-word;
+    line-height: 1.4;
+}
+
+.option:hover {
+    background: var(--bg-secondary);
+}
+
+[data-theme="dark"] .option:hover {
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.optionActive {
+    background: color-mix(in srgb, var(--color-primary) 10%, transparent);
+    color: var(--color-primary);
+    font-weight: 600;
+}
+
+[data-theme="dark"] .optionActive {
+    background: color-mix(in srgb, var(--color-primary) 15%, transparent);
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-8px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@media (max-width: 768px) {
+    .wrapper {
+        max-width: none;
+    }
+}

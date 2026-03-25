@@ -1,27 +1,50 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-
+import { useState, useEffect, useMemo, useCallback } from 'react';
 import AdminLayout from '@/components/layout/AdminLayout/AdminLayout';
 import { useAuth } from '@/contexts/AuthContext';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { Card, CardContent } from '@/components/ui/Card/Card';
-import { Button } from '@/components/ui/Button/Button';
 import { useToast } from '@/components/ui/Toast/Toast';
 import { db } from '@/lib/firebase';
 import { uploadFile } from '@/lib/upload';
-import { collection, getDocs, query, orderBy, doc, updateDoc, setDoc, getDoc, deleteDoc, where, limit, writeBatch } from 'firebase/firestore';
-import { Users, CheckCircle, AlertTriangle, UserPlus } from 'lucide-react';
-
-import { Dialog, DialogHeader, DialogTitle, DialogBody, DialogFooter, DialogClose } from '@/components/ui/Dialog/Dialog';
-import { Avatar } from '@/components/ui/Avatar/Avatar';
+import {
+    collection, getDocs, query, orderBy, doc,
+    updateDoc, setDoc, getDoc, deleteDoc, where, limit, writeBatch
+} from 'firebase/firestore';
+import {
+    Users, CheckCircle, AlertTriangle, UserPlus,
+    Search, Edit2, Trash2, X, Save, Paperclip, BookOpen
+} from 'lucide-react';
 import styles from './page.module.css';
-import EmployeeSearchBar from '@/components/ui/EmployeeSearchBar/EmployeeSearchBar';
 import { useConfirm } from '@/hooks/useConfirm';
-import { Select } from '@/components/ui';
+import { Select } from '@/components/ui/Select/Select';
 
-// Redirect old Drive thumbnail/uc URLs through the internal proxy to avoid 403s
+
+// ── Opciones estáticas ─────────────────────────────────────────────────────────
+const AREA_OPTIONS = [
+    'A. CALIDAD 1ER TURNO', 'A. CALIDAD 2DO TURNO', 'ALMACÉN', 'CALIDAD ADMTVO',
+    'GERENCIA', 'LOGÍSTICA', 'MANTENIMIENTO', 'METROLOGÍA', 'MOLDES',
+    'PRODUCCIÓN 1ER TURNO', 'PRODUCCIÓN 2DO TURNO', 'PRODUCCIÓN 3ER TURNO',
+    'PRODUCCIÓN 4TO TURNO', 'PRODUCCIÓN ADMTVO', 'PRODUCCIÓN MONTAJE',
+    'PROYECTOS', 'RECURSOS HUMANOS', 'RESIDENTES DE CALIDAD', 'SGI', 'SISTEMAS',
+].map(v => ({ value: v, label: v }));
+
+const SHIFT_OPTIONS = ['1', '2', '3', '4', '5'].map(v => ({ value: v, label: v }));
+
+const EDUCATION_OPTIONS = [
+    'BACHILLERATO', 'CARRERA TECNICA', 'INGENIERIA', 'LICENCIATURA', 'MAESTRIA',
+    'PASANTE INGENIERIA', 'POSGRADO', 'PREPARATORIA', 'PRIMARIA', 'SECUNDARIA', 'TSU',
+].map(v => ({ value: v, label: v }));
+
+const ITEMS_PER_PAGE = 50;
+
+// ── Helpers ────────────────────────────────────────────────────────────────────
+function getInitials(name) {
+    if (!name) return '?';
+    return name.split(' ').slice(0, 2).map(n => n[0]).join('').toUpperCase();
+}
+
 function normalizePhotoUrl(url) {
     if (!url) return url;
     if (url.startsWith('/api/drive-image')) return url;
@@ -31,1145 +54,808 @@ function normalizePhotoUrl(url) {
             const id = u.searchParams.get('id');
             if (id) return `/api/drive-image?id=${id}`;
         }
-    } catch { /* not a valid URL, return as-is */ }
+    } catch { /* no válido, devolver tal cual */ }
     return url;
 }
 
-export default function EmpleadosPage() {
+function getComplianceClass(score) {
+    if (score >= 80) return styles.complianceHigh;
+    if (score >= 60) return styles.complianceMedium;
+    return styles.complianceLow;
+}
+
+const EMPTY_FORM = {
+    id: '', name: '', position: '', department: '', curp: '',
+    occupation: '', area: '', education: '', startDate: '', shift: '',
+    performanceScore: '', performancePeriod: '', positionStartDate: '',
+};
+
+// ── Modal Crear / Editar ───────────────────────────────────────────────────────
+function EmployeeModal({ initial, isCreating, onClose, onSave, positions, departments }) {
+    const [form, setForm] = useState(() => {
+        if (!initial && !isCreating) return { ...EMPTY_FORM };
+        if (isCreating) return { ...EMPTY_FORM };
+        return {
+            id: initial?.id || '',
+            name: initial?.name || '',
+            position: initial?.position || '',
+            department: initial?.department || '',
+            curp: initial?.curp || '',
+            occupation: initial?.occupation || '',
+            area: initial?.area || '',
+            education: initial?.education || '',
+            startDate: initial?.startDate || '',
+            shift: initial?.shift || '',
+            performanceScore: initial?.promotionData?.performanceScore || '',
+            performancePeriod: initial?.promotionData?.performancePeriod || '',
+            positionStartDate: initial?.promotionData?.positionStartDate || '',
+        };
+    });
+
+    const [step, setStep] = useState(1);
+    const [saving, setSaving] = useState(false);
+    const [docFiles, setDocFiles] = useState([]);
+
+    const set = (field, val) => setForm(prev => ({ ...prev, [field]: val }));
+
+    const handleDocChange = (e) => {
+        if (e.target.files?.length > 0) {
+            setDocFiles(prev => [...prev, ...Array.from(e.target.files)]);
+        }
+    };
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        if (step === 1) { setStep(2); return; }
+        setSaving(true);
+        await onSave({ form, docFiles });
+        setSaving(false);
+    };
+
+    const handleOverlayClick = (e) => { if (e.target === e.currentTarget) onClose(); };
+
+    return (
+        <div className={styles.modalOverlay} onClick={handleOverlayClick} role="dialog" aria-modal="true">
+            <div className={styles.modal}>
+                {/* Header */}
+                <div className={styles.modalHeader}>
+                    <h2 className={styles.modalTitle}>
+                        {isCreating ? 'Nuevo Empleado' : 'Editar Empleado'}
+                    </h2>
+                    <button className={styles.modalCloseBtn} onClick={onClose} type="button" aria-label="Cerrar">
+                        <X size={16} />
+                    </button>
+                </div>
+
+                {/* Body */}
+                <form className={styles.modalBody} onSubmit={handleSubmit}>
+                    {/* Stepper */}
+                    <div className={styles.stepperHead}>
+                        <div className={`${styles.stepIndicator} ${step >= 1 ? styles.stepActive : ''}`}>
+                            <span className={styles.stepNum}>1</span>
+                            <span className={styles.stepLabel}>Datos Personales</span>
+                        </div>
+                        <div className={styles.stepDivider} />
+                        <div className={`${styles.stepIndicator} ${step >= 2 ? styles.stepActive : ''}`}>
+                            <span className={styles.stepNum}>2</span>
+                            <span className={styles.stepLabel}>Datos Laborales</span>
+                        </div>
+                    </div>
+
+                    {/* Paso 1 — Datos Personales */}
+                    {step === 1 && (
+                        <>
+                            {/* Campos */}
+                            <div className={styles.formGrid}>
+                                <div className={`${styles.fieldGroup} ${styles.formGridFull}`}>
+                                    <label className={styles.fieldLabel}>Nombre Completo *</label>
+                                    <input
+                                        required
+                                        type="text"
+                                        className={styles.fieldInput}
+                                        value={form.name}
+                                        onChange={e => set('name', e.target.value)}
+                                        placeholder="Ej. HERNÁNDEZ HERRERA LEONARDO"
+                                    />
+                                </div>
+
+                                <div className={styles.fieldGroup}>
+                                    <label className={styles.fieldLabel}>ID Empleado</label>
+                                    <input
+                                        type="text"
+                                        className={styles.fieldInput}
+                                        value={form.id}
+                                        onChange={e => isCreating && set('id', e.target.value)}
+                                        placeholder={isCreating ? 'EJ. 3204' : ''}
+                                        disabled={!isCreating}
+                                    />
+                                </div>
+
+                                <div className={styles.fieldGroup}>
+                                    <label className={styles.fieldLabel}>CURP</label>
+                                    <input
+                                        type="text"
+                                        className={styles.fieldInput}
+                                        value={form.curp}
+                                        onChange={e => set('curp', e.target.value)}
+                                        placeholder="Importante para DC-3"
+                                        maxLength={18}
+                                    />
+                                </div>
+
+                                <div className={styles.fieldGroup}>
+                                    <label className={styles.fieldLabel}>Escolaridad</label>
+                                    <Select
+                                        value={form.education}
+                                        onChange={value => set('education', value)}
+                                        options={EDUCATION_OPTIONS}
+                                        placeholder="-- Seleccionar --"
+                                    />
+                                </div>
+
+                                <div className={styles.fieldGroup}>
+                                    <label className={styles.fieldLabel}>Fecha de Ingreso</label>
+                                    <input
+                                        type="date"
+                                        className={styles.fieldInput}
+                                        value={form.startDate}
+                                        onChange={e => set('startDate', e.target.value)}
+                                    />
+                                </div>
+                            </div>
+
+                            {/* Documentos */}
+                            <div className={styles.docsSection}>
+                                <div className={styles.docsSectionHeader}>
+                                    <h4 className={styles.docsSectionTitle}>Documentos adjuntos</h4>
+                                    <label htmlFor="doc-upload" className={styles.docUploadLabel}>
+                                        <Paperclip size={13} /> Adjuntar
+                                    </label>
+                                    <input id="doc-upload" type="file" multiple accept=".pdf,.doc,.docx,.jpg,.png" onChange={handleDocChange} style={{ display: 'none' }} />
+                                </div>
+
+                                {/* Docs existentes */}
+                                {initial?.documents?.map((doc, i) => (
+                                    <div key={i} className={styles.docItem}>
+                                        <span className={styles.docItemName}>📄 {doc.name}</span>
+                                        <button type="button" className={styles.docRemoveBtn} onClick={() => {
+                                            // La eliminación real se maneja en handleSave via el initial modificado
+                                        }}>✕</button>
+                                    </div>
+                                ))}
+
+                                {/* Nuevos docs a subir */}
+                                {docFiles.map((file, i) => (
+                                    <div key={i} className={`${styles.docItem} ${styles.docItemNew}`}>
+                                        <span className={`${styles.docItemName} ${styles.docItemNameNew}`}>{file.name}</span>
+                                        <button type="button" className={styles.docRemoveBtn}
+                                            onClick={() => setDocFiles(prev => prev.filter((_, j) => j !== i))}>✕</button>
+                                    </div>
+                                ))}
+                            </div>
+                        </>
+                    )}
+
+                    {/* Paso 2 — Datos Laborales */}
+                    {step === 2 && (
+                        <div className={styles.formGrid}>
+                            <div className={styles.fieldGroup}>
+                                <label className={styles.fieldLabel}>Puesto</label>
+                                <Select
+                                    value={form.position}
+                                    onChange={value => set('position', value)}
+                                    options={positions.map(p => ({ value: p, label: p }))}
+                                    placeholder="-- Seleccionar --"
+                                    searchable
+                                />
+                            </div>
+
+                            <div className={styles.fieldGroup}>
+                                <label className={styles.fieldLabel}>Departamento</label>
+                                <Select
+                                    value={form.department}
+                                    onChange={value => set('department', value)}
+                                    options={departments.map(d => ({ value: d, label: d }))}
+                                    placeholder="-- Seleccionar --"
+                                />
+                            </div>
+
+                            <div className={styles.fieldGroup}>
+                                <label className={styles.fieldLabel}>Área</label>
+                                <Select
+                                    value={form.area}
+                                    onChange={value => set('area', value)}
+                                    options={AREA_OPTIONS}
+                                    placeholder="-- Seleccionar --"
+                                    searchable
+                                />
+                            </div>
+
+                            <div className={styles.fieldGroup}>
+                                <label className={styles.fieldLabel}>Turno</label>
+                                <Select
+                                    value={form.shift}
+                                    onChange={value => set('shift', value)}
+                                    options={SHIFT_OPTIONS}
+                                    placeholder="-- Seleccionar --"
+                                />
+                            </div>
+
+                            <div className={`${styles.fieldGroup} ${styles.formGridFull}`}>
+                                <label className={styles.fieldLabel}>Ocupación (SSO)</label>
+                                <input
+                                    type="text"
+                                    className={styles.fieldInput}
+                                    value={form.occupation}
+                                    onChange={e => set('occupation', e.target.value)}
+                                    placeholder="Ej. OPERARIO DE PRODUCCIÓN"
+                                />
+                            </div>
+
+                            <div className={styles.fieldGroup}>
+                                <label className={styles.fieldLabel}>Calificación de Desempeño</label>
+                                <input
+                                    type="number"
+                                    step="0.1"
+                                    min="0"
+                                    max="10"
+                                    className={styles.fieldInput}
+                                    value={form.performanceScore}
+                                    onChange={e => set('performanceScore', e.target.value)}
+                                    placeholder="0 – 10"
+                                />
+                            </div>
+
+                            <div className={styles.fieldGroup}>
+                                <label className={styles.fieldLabel}>Periodo de Desempeño</label>
+                                <input
+                                    type="text"
+                                    className={styles.fieldInput}
+                                    value={form.performancePeriod}
+                                    onChange={e => set('performancePeriod', e.target.value)}
+                                    placeholder="Ej. Q1 2025"
+                                />
+                            </div>
+
+                            <div className={styles.fieldGroup}>
+                                <label className={styles.fieldLabel}>Inicio en Puesto Actual</label>
+                                <input
+                                    type="date"
+                                    className={styles.fieldInput}
+                                    value={form.positionStartDate}
+                                    onChange={e => set('positionStartDate', e.target.value)}
+                                />
+                            </div>
+                        </div>
+                    )}
+
+                    {/* Footer */}
+                    <div className={styles.modalFooter}>
+                        {step === 1 ? (
+                            <>
+                                <button type="button" onClick={onClose} className={styles.btnCancel}>Cancelar</button>
+                                <button type="submit" className={styles.btnSave}>Siguiente →</button>
+                            </>
+                        ) : (
+                            <>
+                                <button type="button" onClick={() => setStep(1)} className={styles.btnCancel}>← Atrás</button>
+                                <button type="submit" disabled={saving} className={styles.btnSave}>
+                                    <Save size={14} /> {saving ? 'Guardando…' : 'Guardar'}
+                                </button>
+                            </>
+                        )}
+                    </div>
+                </form>
+            </div>
+        </div>
+    );
+}
+
+// ── Componente principal ───────────────────────────────────────────────────────
+export default function EmpleadosCapacitacionPage() {
     const { user, loading: authLoading, canWrite } = useAuth();
     const router = useRouter();
     const { toast } = useToast();
     const { showConfirm, confirmDialog } = useConfirm();
+
     const [employees, setEmployees] = useState([]);
-    const [filteredEmployees, setFilteredEmployees] = useState([]);
     const [loading, setLoading] = useState(true);
 
-    // Filters
+    // Filtros
     const [searchTerm, setSearchTerm] = useState('');
-    const [deptFilter, setDeptFilter] = useState('Todos');
-    const [posFilter, setPosFilter] = useState('Todos');
-    const [departments, setDepartments] = useState([]);
-    const [positions, setPositions] = useState([]);
+    const [deptFilter, setDeptFilter] = useState('');
+    const [posFilter, setPosFilter] = useState('');
 
-    // Pagination
+    // Paginación
     const [currentPage, setCurrentPage] = useState(1);
-    const itemsPerPage = 50;
 
-    // Modals State
-    const [editingEmp, setEditingEmp] = useState(null); // Edit Mode
-    const [viewingEmp, setViewingEmp] = useState(null); // Detail Mode
-    const [isCreating, setIsCreating] = useState(false); // Create Mode
-    const [previewImage, setPreviewImage] = useState(null); // Photo Lightbox Mode
+    // Modal
+    const [showModal, setShowModal] = useState(false);
+    const [editingEmp, setEditingEmp] = useState(null);
+    const [isCreatingNew, setIsCreatingNew] = useState(false);
 
+    // Catálogos dinámicos
+    const departments = useMemo(() =>
+        [...new Set(employees.map(e => e.department).filter(Boolean))].sort()
+        , [employees]);
 
-    const [isDesktop, setIsDesktop] = useState(false); // Responsive Mode
+    const positions = useMemo(() =>
+        [...new Set(employees.map(e => e.position).filter(Boolean))].sort()
+        , [employees]);
 
-    // Auth Protection
+    // Auth guard
     useEffect(() => {
-        if (!authLoading && !user) {
-            router.push('/login');
-        } else if (!authLoading && user && (user.rol === 'demo' || user.email?.includes('demo'))) {
-            router.push('/induccion');
-        }
+        if (!authLoading && !user) router.push('/login');
+        else if (!authLoading && user && (user.rol === 'demo' || user.email?.includes('demo'))) router.push('/induccion');
     }, [user, authLoading, router]);
 
-
-
-    useEffect(() => {
-        const checkDesktop = () => setIsDesktop(window.innerWidth >= 1024);
-        checkDesktop();
-        window.addEventListener('resize', checkDesktop);
-        return () => window.removeEventListener('resize', checkDesktop);
-    }, []);
-
-    const [formData, setFormData] = useState({
-        id: '',
-        name: '',
-        position: '',
-        department: '',
-        curp: '',
-        occupation: '',
-        area: '',
-        education: '',
-        startDate: '',
-        shift: '',
-        performanceScore: '',
-        performancePeriod: '',
-        positionStartDate: ''
-    });
-    const [saving, setSaving] = useState(false);
-
-    // File Upload States
-    const [photoFile, setPhotoFile] = useState(null);
-    const [photoPreview, setPhotoPreview] = useState(null);
-    const [docFiles, setDocFiles] = useState([]);
-    const [uploading, setUploading] = useState(false);
-
-    // Reset files when closing
-    useEffect(() => {
-        if (!isCreating && !editingEmp) {
-            setPhotoFile(null);
-            setPhotoPreview(null);
-            setDocFiles([]);
-        }
-    }, [isCreating, editingEmp]);
-
-    const handleFileChange = (e) => {
-        if (e.target.files[0]) {
-            const file = e.target.files[0];
-            setPhotoFile(file);
-            setPhotoPreview(URL.createObjectURL(file));
-        }
-    };
-
-    const handleDocChange = (e) => {
-        if (e.target.files && e.target.files.length > 0) {
-            const newDocs = Array.from(e.target.files);
-            setDocFiles(prev => [...prev, ...newDocs]);
-        }
-    };
-
-    const removeNewDoc = (index) => {
-        setDocFiles(prev => prev.filter((_, i) => i !== index));
-    };
-
-    const removeExistingDoc = async (index, empId) => {
-        if (!editingEmp) return;
-        const updatedDocs = [...(editingEmp.documents || [])];
-        updatedDocs.splice(index, 1);
-        setEditingEmp({ ...editingEmp, documents: updatedDocs });
-    };
-
-    const handleUploadPhoto = async (empId) => {
-        if (!photoFile) return null;
-        try {
-            const result = await uploadFile(photoFile, { employeeId: empId, docType: 'profile' });
-            if (!result.success) {
-                console.error("Upload Error:", result.error);
-                throw new Error(result.error || 'Error del servidor al subir foto');
-            }
-            return { photoUrl: result.data.viewLink, photoDriveId: result.data.id };
-        } catch (error) {
-            console.error("Upload Error:", error);
-            toast.error("Error de Subida", error.message);
-            return null;
-        }
-    };
-
-    const handleUploadDocs = async (empId) => {
-        if (docFiles.length === 0) return [];
-        const uploadedDocs = [];
-        for (const file of docFiles) {
-            try {
-                const result = await uploadFile(file, { employeeId: empId, docType: 'documents' });
-                if (result.success) {
-                    uploadedDocs.push({
-                        name: file.name,
-                        url: result.data.viewLink,
-                        driveId: result.data.id,
-                        uploadDate: new Date().toISOString()
-                    });
-                }
-            } catch (error) {
-                console.error("Error subiendo documento:", file.name, error);
-            }
-        }
-        return uploadedDocs;
-    };
-
-    useEffect(() => {
-        loadEmployees();
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
-
-    useEffect(() => {
-        let result = employees;
-        if (searchTerm) {
-            const term = searchTerm.toLowerCase();
-            result = result.filter(e =>
-                e.name.toLowerCase().includes(term) ||
-                (e.id && e.id.toLowerCase().includes(term))
-            );
-        }
-        if (deptFilter !== 'Todos') {
-            result = result.filter(e => e.department === deptFilter);
-        }
-        if (posFilter !== 'Todos') {
-            result = result.filter(e => e.position === posFilter);
-        }
-        setFilteredEmployees(result);
-        setCurrentPage(1);
-    }, [searchTerm, deptFilter, posFilter, employees]);
+    // Carga inicial
+    useEffect(() => { loadEmployees(); }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
     const loadEmployees = async () => {
         setLoading(true);
         try {
             const q = query(collection(db, 'training_records'), orderBy('name'));
             const snapshot = await getDocs(q);
-            const data = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
-            setEmployees(data);
-            setFilteredEmployees(data);
-            const depts = new Set(data.map(e => e.department).filter(Boolean));
-            setDepartments(Array.from(depts).sort());
-            const pos = new Set(data.map(e => e.position).filter(Boolean));
-            setPositions(Array.from(pos).sort());
+            setEmployees(snapshot.docs.map(d => ({ id: d.id, ...d.data() })));
         } catch (error) {
-            console.error("Error loading employees:", error);
-            toast.error("Error", "No se pudieron cargar los empleados.");
+            console.error('Error loading employees:', error);
+            toast.error('No se pudieron cargar los empleados.');
         } finally {
             setLoading(false);
         }
     };
 
-    const handleCreate = () => {
-        setFormData({
-            id: '', name: '', position: '', department: '', curp: '', occupation: '', area: '', education: '', startDate: '', shift: '', performanceScore: '', performancePeriod: '', positionStartDate: ''
+    // Filtrado
+    const filtered = useMemo(() => {
+        const term = searchTerm.toLowerCase();
+        return employees.filter(e => {
+            const matchSearch = !term || e.name?.toLowerCase().includes(term) || e.id?.toLowerCase().includes(term);
+            const matchDept = !deptFilter || e.department === deptFilter;
+            const matchPos = !posFilter || e.position === posFilter;
+            return matchSearch && matchDept && matchPos;
         });
-        setIsCreating(true);
-    };
+    }, [employees, searchTerm, deptFilter, posFilter]);
 
-    const handleEdit = (emp) => {
-        setFormData({
-            id: emp.id,
-            name: emp.name || '',
-            position: emp.position || '',
-            department: emp.department || '',
-            curp: emp.curp || '',
-            occupation: emp.occupation || '',
-            area: emp.area || '',
-            education: emp.education || '',
-            startDate: emp.startDate || '',
-            shift: emp.shift || '',
-            performanceScore: emp.promotionData?.performanceScore || '',
-            performancePeriod: emp.promotionData?.performancePeriod || '',
-            positionStartDate: emp.promotionData?.positionStartDate || ''
-        });
-        setEditingEmp(emp);
-    };
+    // Paginación
+    const totalPages = Math.max(1, Math.ceil(filtered.length / ITEMS_PER_PAGE));
+    const paginated = useMemo(() =>
+        filtered.slice((currentPage - 1) * ITEMS_PER_PAGE, currentPage * ITEMS_PER_PAGE)
+        , [filtered, currentPage]);
 
-    const handleDelete = async (emp) => {
+    // Resetear página al filtrar
+    useEffect(() => { setCurrentPage(1); }, [searchTerm, deptFilter, posFilter]);
+
+    // KPIs
+    const kpis = useMemo(() => ({
+        total: employees.length,
+        highCompliance: employees.filter(e => (e.matrix?.compliancePercentage || 0) >= 80).length,
+        needsAttention: employees.filter(e => (e.matrix?.compliancePercentage || 0) < 70).length,
+        noDept: employees.filter(e => !e.department).length,
+    }), [employees]);
+
+    // ── Acciones ──────────────────────────────────────────────────────────────
+    const openNew = useCallback(() => { setEditingEmp(null); setIsCreatingNew(true); setShowModal(true); }, []);
+    const openEdit = useCallback((emp) => { setEditingEmp(emp); setIsCreatingNew(false); setShowModal(true); }, []);
+    const closeModal = useCallback(() => { setShowModal(false); setEditingEmp(null); setIsCreatingNew(false); }, []);
+
+    const handleSave = useCallback(async ({ form, docFiles }) => {
         if (user?.rol !== 'super_admin') {
-            toast.error("Acceso Denegado", "Solo Super Admin puede eliminar.");
+            toast.error('Solo Super Admin puede modificar datos.');
             return;
         }
-
-        if (!await showConfirm(`¿Estás seguro de eliminar a ${emp.name}? Esta acción es irreversible y eliminará al empleado de todos los registros (Capacitación, Instructores, etc).`, { title: 'Eliminar Empleado', confirmLabel: 'Eliminar' })) return;
+        if (!form.name.trim()) {
+            toast.error('El nombre es obligatorio.');
+            return;
+        }
 
         try {
-            const batch = writeBatch(db);
-
-            // 1. Delete Main Record (training_records)
-            const empRef = doc(db, 'training_records', emp.id);
-            batch.delete(empRef);
-
-            // 2. Delete Instructor Record (instructors) if exists
-            // Try to delete using employeeId (which is the key in instructors collection)
-            if (emp.employeeId || emp.id) {
-                // In migration we used employeeId as key. If not present, fallback to doc ID.
-                const targetId = emp.employeeId || emp.id;
-                const instructorRef = doc(db, 'instructors', targetId);
-                batch.delete(instructorRef);
-            }
-
-            await batch.commit();
-
-            setEmployees(prev => prev.filter(e => e.id !== emp.id));
-            setFilteredEmployees(prev => prev.filter(e => e.id !== emp.id));
-            toast.success("Eliminado", "Empleado y datos asociados eliminados.");
-        } catch (e) {
-            console.error("Error deleting", e);
-            toast.error("Error", "No se pudo eliminar el registro completamente.");
-        }
-    };
-
-    const handleSave = async () => {
-        if (user?.rol !== 'super_admin') {
-            toast.error("Acceso Denegado", "Tu rol actual (Lectura) no permite modificar datos.");
-            return;
-        }
-
-        if (!formData.name.trim()) {
-            toast.error("Error", "El nombre es obligatorio.");
-            return;
-        }
-
-        setSaving(true);
-        setUploading(true); // Mostrar estado de carga
-        try {
-            const empId = isCreating ? formData.id.trim() || formData.name.replace(/\s+/g, '-').toUpperCase() : editingEmp.id;
+            const empId = isCreatingNew
+                ? (form.id.trim() || form.name.replace(/\s+/g, '-').toUpperCase())
+                : editingEmp.id;
             const ref = doc(db, 'training_records', empId);
 
-            // 1. Subir archivos
-            let photoData = {};
-            if (photoFile) {
-                const res = await handleUploadPhoto(empId);
-                if (res) photoData = res;
+            // Subir documentos nuevos
+            const uploadedDocs = [];
+            for (const file of docFiles) {
+                try {
+                    const res = await uploadFile(file, { employeeId: empId, docType: 'documents' });
+                    if (res.success) {
+                        uploadedDocs.push({ name: file.name, url: res.data.viewLink, driveId: res.data.id, uploadDate: new Date().toISOString() });
+                    }
+                } catch (err) {
+                    console.error('Error subiendo documento:', file.name, err);
+                }
             }
 
-            const newDocs = await handleUploadDocs(empId);
-            // Combinar documentos existentes (que pudieron ser borrados en la UI) con los nuevos
-            const existingDocs = isCreating ? [] : (editingEmp?.documents || []);
-            const allDocs = [...existingDocs, ...newDocs];
+            const existingDocs = isCreatingNew ? [] : (editingEmp?.documents || []);
+            const allDocs = [...existingDocs, ...uploadedDocs];
 
             const payload = {
-                name: (formData.name || '').trim().toUpperCase(),
-                position: (formData.position || '').trim().toUpperCase(),
-                department: (formData.department || '').trim().toUpperCase(),
-                curp: (formData.curp || '').trim().toUpperCase(),
-                occupation: formData.occupation ? formData.occupation.trim().toUpperCase() : (formData.position || '').trim().toUpperCase(),
-                area: (formData.area || '').trim().toUpperCase(),
-                education: (formData.education || '').trim(),
-                startDate: formData.startDate || '',
-                shift: (formData.shift || '').trim().toUpperCase(),
+                name: (form.name || '').trim().toUpperCase(),
+                position: (form.position || '').trim().toUpperCase(),
+                department: (form.department || '').trim().toUpperCase(),
+                curp: (form.curp || '').trim().toUpperCase(),
+                occupation: form.occupation ? form.occupation.trim().toUpperCase() : (form.position || '').trim().toUpperCase(),
+                area: (form.area || '').trim().toUpperCase(),
+                education: (form.education || '').trim(),
+                startDate: form.startDate || '',
+                shift: (form.shift || '').trim().toUpperCase(),
                 promotionData: {
                     ...(editingEmp?.promotionData || {}),
-                    performanceScore: formData.performanceScore ? parseFloat(formData.performanceScore) : null,
-                    performancePeriod: formData.performancePeriod || '',
-                    positionStartDate: formData.positionStartDate || ''
+                    performanceScore: form.performanceScore ? parseFloat(form.performanceScore) : null,
+                    performancePeriod: form.performancePeriod || '',
+                    positionStartDate: form.positionStartDate || '',
                 },
                 updatedAt: new Date().toISOString(),
-                ...photoData, // { photoUrl, photoDriveId }
-                documents: allDocs
+                documents: allDocs,
             };
 
-            // Calculate Matrix Requirements
+            // Calcular matrix
             let matrixData = { requiredCount: 0, completedCount: 0, compliancePercentage: 0, requiredCourses: [] };
             try {
-                // Robust Matrix Lookup
                 const posName = payload.position;
                 const posColl = collection(db, 'positions');
                 let matrixDoc = null;
 
-                // 1. Exact Match
-                let q = query(posColl, where('name', '==', posName), limit(1));
-                let snap = await getDocs(q);
-
+                let snap = await getDocs(query(posColl, where('name', '==', posName), limit(1)));
                 if (!snap.empty) {
                     matrixDoc = snap.docs[0].data();
                 } else {
-                    // 2. Normalized Match (No Accents)
                     const allPosSnap = await getDocs(query(posColl));
-                    const targetNorm = posName.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toUpperCase().trim();
-
+                    const targetNorm = posName.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toUpperCase().trim();
                     const found = allPosSnap.docs.find(d => {
                         const dName = d.data().name.toUpperCase().trim();
-                        const dNorm = dName.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+                        const dNorm = dName.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
                         return dName === posName || dNorm === targetNorm;
                     });
-
-                    if (found) {
-                        matrixDoc = found.data();
-                    }
+                    if (found) matrixDoc = found.data();
                 }
 
                 if (matrixDoc) {
                     const requiredCourses = matrixDoc.requiredCourses || [];
-                    const history = isCreating ? [] : (editingEmp.history || []);
-                    const completed = requiredCourses.filter(reqCourse =>
-                        history.some(h => h.courseName === reqCourse && h.status === 'approved')
+                    const history = isCreatingNew ? [] : (editingEmp?.history || []);
+                    const completed = requiredCourses.filter(rc =>
+                        history.some(h => h.courseName === rc && h.status === 'approved')
                     );
-
                     matrixData = {
                         requiredCount: requiredCourses.length,
                         completedCount: completed.length,
                         compliancePercentage: requiredCourses.length > 0
                             ? Math.round((completed.length / requiredCourses.length) * 100)
                             : 0,
-                        requiredCourses: requiredCourses
+                        requiredCourses,
                     };
                 }
             } catch (err) {
-                console.error("Error fetching matrix:", err);
+                console.error('Error fetching matrix:', err);
             }
 
-            if (isCreating) {
-                // Check if exists
+            if (isCreatingNew) {
                 const check = await getDoc(ref);
                 if (check.exists()) {
-                    toast.error("ID Duplicado", `El ID de empleado "${empId}" ya existe. Por favor usa un ID diferente.`);
-                    setSaving(false);
-                    setUploading(false);
+                    toast.error(`El ID "${empId}" ya existe. Usa un ID diferente.`);
                     return;
                 }
-                await setDoc(ref, {
-                    ...payload,
-                    employeeId: empId,
-                    history: [],
-                    matrix: matrixData
-                });
-                toast.success("Creado", "Empleado registrado correctamente.");
-
-                // Add to local list
-                setEmployees(prev => [...prev, { id: empId, ...payload, history: [], matrix: {} }].sort((a, b) => a.name.localeCompare(b.name)));
+                await setDoc(ref, { ...payload, employeeId: empId, history: [], matrix: matrixData });
+                setEmployees(prev => [...prev, { id: empId, ...payload, history: [], matrix: matrixData }]
+                    .sort((a, b) => a.name.localeCompare(b.name)));
+                toast.success('Empleado registrado correctamente.');
             } else {
-                await updateDoc(ref, {
-                    ...payload,
-                    matrix: matrixData
-                });
-                toast.success("Actualizado", "Datos guardados.");
-
-                // Update local list
+                await updateDoc(ref, { ...payload, matrix: matrixData });
                 setEmployees(prev => prev.map(e => e.id === empId ? { ...e, ...payload, matrix: matrixData } : e));
+                toast.success('Datos del empleado actualizados.');
             }
 
-            setIsCreating(false);
-            setEditingEmp(null);
-            setFormData({ id: '', name: '', position: '', department: '', curp: '', occupation: '' });
-
+            closeModal();
         } catch (error) {
-            console.error("Error saving employee:", error);
-            toast.error("Error", "No se pudo guardar.");
-        } finally {
-            setSaving(false);
-            setUploading(false);
+            console.error('Error saving employee:', error);
+            toast.error('No se pudo guardar. Intenta nuevamente.');
         }
-    };
+    }, [isCreatingNew, editingEmp, closeModal, toast, user]);
 
-    const getComplianceColor = (score) => {
-        if (score >= 95) return styles.complianceHigh;
-        if (score >= 80) return styles.complianceMedium;
-        return styles.complianceLow;
-    };
-
-    // State for expanded employee
-    const [expandedId, setExpandedId] = useState(null);
-    const toggleExpand = (id) => setExpandedId(expandedId === id ? null : id);
-
-    const getInitials = (name) => {
-        if (!name) return '?';
-        return name.split(' ').slice(0, 2).map(n => n[0]).join('').toUpperCase();
-    };
-
-    if (authLoading || !user) {
-        return (
-            <div className={styles.main}>
-                <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', color: 'var(--text-primary)' }}>
-                    <div className="spinner"></div>
-                </div>
-            </div>
+    const handleDelete = useCallback(async (emp) => {
+        if (user?.rol !== 'super_admin') {
+            toast.error('Solo Super Admin puede eliminar empleados.');
+            return;
+        }
+        const ok = await showConfirm(
+            `¿Estás seguro de eliminar a ${emp.name}? Esta acción eliminará al empleado de todos los registros.`,
+            { title: 'Eliminar Empleado', confirmLabel: 'Eliminar', danger: true }
         );
-    }
+        if (!ok) return;
+
+        try {
+            const batch = writeBatch(db);
+            batch.delete(doc(db, 'training_records', emp.id));
+            const targetId = emp.employeeId || emp.id;
+            batch.delete(doc(db, 'instructors', targetId));
+            await batch.commit();
+            setEmployees(prev => prev.filter(e => e.id !== emp.id));
+            toast.success('Empleado y datos asociados eliminados.');
+        } catch (e) {
+            console.error('Error deleting', e);
+            toast.error('No se pudo eliminar el registro completamente.');
+        }
+    }, [user, showConfirm, toast]);
+
+    // ── Render ────────────────────────────────────────────────────────────────
+    if (authLoading || !user) return null;
+
+    const kpiItems = [
+        { value: kpis.total, label: 'Total Empleados', color: 'Primary', icon: <Users size={20} /> },
+        { value: kpis.highCompliance, label: 'Cumplimiento ≥80%', color: 'Success', icon: <CheckCircle size={20} /> },
+        { value: kpis.needsAttention, label: 'Requieren Atención', color: 'Warn', icon: <AlertTriangle size={20} /> },
+        { value: kpis.noDept, label: 'Sin Departamento', color: 'Amber', icon: <BookOpen size={20} /> },
+    ];
 
     return (
-        <AdminLayout title="Gestión de Empleados">
-            {/* Background Effects */}
-            <div className={styles.bgDecoration}>
-                <div className={`${styles.blob} ${styles.blob1}`}></div>
-                <div className={`${styles.blob} ${styles.blob2}`}></div>
-            </div>
+        <AdminLayout title="Empleados de Capacitación">
+            {confirmDialog}
+            <main className={styles.page} id="main-content">
 
-            <div className={styles.container}>
-                {/* Header */}
-                <div className={styles.header}>
-                    <div className={styles.headerLeft}>
-                        <div className={styles.headerContent}>
-                            <h1 className={styles.pageTitle}>Gestión de Empleados</h1>
-                            <p className={styles.pageSubtitle}>Administración de personal y datos maestros</p>
+
+
+                {/* ── KPIs ── */}
+                <div className={styles.statsGrid} role="region" aria-label="Indicadores">
+                    {kpiItems.map(({ value, label, color, icon }) => (
+                        <div key={label} className={`${styles.statCard} ${styles[`statCard${color}`]}`}>
+                            <div className={`${styles.statIconWrap} ${styles[`statIconWrap${color}`]}`}>{icon}</div>
+                            <div className={styles.statInfo}>
+                                <div className={styles.statValue}>{value}</div>
+                                <div className={styles.statLabel}>{label}</div>
+                            </div>
                         </div>
-                    </div>
-                    <button
-                        className={styles.newEmployeeBtn}
-                        onClick={() => setIsCreating(true)}
-                    >
-                        <UserPlus size={16} />
-                        <span>Nuevo Empleado</span>
-                    </button>
+                    ))}
                 </div>
 
-                {/* Stats Summary & Search Bar */}
-                <div className={styles.topSection}>
-                    <div className={styles.statCard}>
-                        <div className={`${styles.statIcon} ${styles.statIconBlue}`}>
-                            <Users size={18} />
+                {/* ── Toolbar ── */}
+                <div className={styles.toolbar} role="toolbar" aria-label="Filtros y búsqueda">
+                    <div className={styles.filters}>
+                        <div className={styles.searchBox}>
+                            <Search size={16} className={styles.searchIcon} aria-hidden="true" />
+                            <input
+                                type="search"
+                                className={styles.searchInput}
+                                placeholder="Buscar por nombre o ID…"
+                                value={searchTerm}
+                                onChange={e => setSearchTerm(e.target.value)}
+                                aria-label="Buscar empleado"
+                            />
                         </div>
-                        <div className={styles.statInfo}>
-                            <span className={styles.statValue}>{filteredEmployees.length}</span>
-                            <span className={styles.statLabel}>Empleados</span>
-                        </div>
-                    </div>
-                    <div className={styles.statCard}>
-                        <div className={`${styles.statIcon} ${styles.statIconGreen}`}>
-                            <CheckCircle size={18} />
-                        </div>
-                        <div className={styles.statInfo}>
-                            <span className={styles.statValue}>{filteredEmployees.filter(e => (e.matrix?.compliancePercentage || 0) >= 80).length}</span>
-                            <span className={styles.statLabel}>Cumplimiento ≥80%</span>
-                        </div>
-                    </div>
-                    <div className={styles.statCard}>
-                        <div className={`${styles.statIcon} ${styles.statIconOrange}`}>
-                            <AlertTriangle size={18} />
-                        </div>
-                        <div className={styles.statInfo}>
-                            <span className={styles.statValue}>{filteredEmployees.filter(e => (e.matrix?.compliancePercentage || 0) < 70).length}</span>
-                            <span className={styles.statLabel}>Requieren Atención</span>
-                        </div>
-                    </div>
 
-                    <div className={styles.searchWrapper}>
-                        <EmployeeSearchBar
-                            searchTerm={searchTerm}
-                            onSearchChange={setSearchTerm}
-                            onAddEmployee={handleCreate}
-                            canWrite={canWrite()}
-                        />
-                    </div>
-                </div>
-
-
-
-                {/* Filters */}
-                <div className={styles.filterCard}>
-                    <div className={styles.filterContent}>
                         <Select
-                            label="Departamento"
                             value={deptFilter}
-                            onChange={(val) => setDeptFilter(val)}
-                            options={[{ value: 'Todos', label: 'Todos' }, ...departments.map(d => ({ value: d, label: d }))]}
+                            onChange={value => setDeptFilter(value)}
+                            options={[{ value: '', label: 'DEPARTAMENTO' }, ...departments.map(d => ({ value: d, label: d }))]}
+                            className={styles.filterSelect}
+                            aria-label="Filtrar por departamento"
                         />
+
                         <Select
-                            label="Puesto"
                             value={posFilter}
-                            onChange={(val) => setPosFilter(val)}
-                            options={[{ value: 'Todos', label: 'Todos' }, ...positions.map(p => ({ value: p, label: p }))]}
+                            onChange={value => setPosFilter(value)}
+                            options={[{ value: '', label: 'PUESTO' }, ...positions.map(p => ({ value: p, label: p }))]}
+                            className={styles.filterSelect}
+                            aria-label="Filtrar por puesto"
                         />
-                        <div className={styles.countBadge}>{filteredEmployees.length} Registros</div>
+                    </div>
+
+                    <div className={styles.toolbarActions}>
+                        {canWrite() && (
+                            <button className={styles.btnPrimary} onClick={openNew} type="button">
+                                <UserPlus size={15} /> Nuevo Empleado
+                            </button>
+                        )}
+                        <div className={styles.recordCount}>{filtered.length} registros</div>
                     </div>
                 </div>
 
-                {/* Employees List with Two Column Layout */}
-                {loading ? (
-                    <div className={styles.loadingContainer}><div className="spinner"></div></div>
-                ) : (
-                    <div className={styles.mainContent}>
-                        {/* Left Column - Employee List */}
-                        <div className={styles.listColumn}>
-                            <div className={styles.employeesList}>
-                                {filteredEmployees.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage).map(emp => (
-                                    <div key={emp.id} className={styles.employeeCard}>
-                                        <div className={styles.employeeRow} onClick={() => toggleExpand(emp.id)}>
-                                            <div className={styles.employeeInfo}>
-                                                <div className={styles.avatarWrapper}>
+                {/* ── VISTA DESKTOP — Tabla ── */}
+                <div className={`${styles.tableContainer} ${styles.tableView}`}>
+                    {loading ? (
+                        <div className={styles.loadingRow} role="status">
+                            <span className={styles.spinner} aria-hidden="true" />
+                            Cargando empleados…
+                        </div>
+                    ) : paginated.length === 0 ? (
+                        <div className={styles.emptyState}>
+                            <Users size={48} className={styles.emptyIcon} aria-hidden="true" />
+                            <p className={styles.emptyTitle}>{employees.length === 0 ? 'Sin empleados aún' : 'Sin resultados'}</p>
+                            <p className={styles.emptyDesc}>
+                                {employees.length === 0
+                                    ? 'Registra el primer empleado con el botón + Nuevo Empleado.'
+                                    : 'Prueba ajustando la búsqueda o los filtros.'}
+                            </p>
+                        </div>
+                    ) : (
+                        <div className={styles.tableScroll}>
+                            <table className={styles.table} aria-label="Lista de empleados">
+                                <thead>
+                                    <tr>
+                                        <th style={{ width: 52 }}></th>
+                                        <th>Empleado</th>
+                                        <th>Puesto / Dpto.</th>
+                                        <th>Área / Turno</th>
+                                        <th>F. Ingreso</th>
+                                        <th style={{ textAlign: 'center' }}>Cumplimiento</th>
+                                        <th>Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {paginated.map(emp => (
+                                        <tr key={emp.id} className={styles.tableRow}>
+                                            <td>
+                                                <div className={styles.avatarCell}>
                                                     {getInitials(emp.name)}
                                                 </div>
-                                                <div className={styles.employeeDetails}>
-                                                    <span className={styles.empName}>{emp.name}</span>
-                                                    <span className={styles.empMeta}>{emp.position || 'Sin puesto'} • ID: {emp.employeeId || emp.id}</span>
+                                            </td>
+                                            <td className={styles.empCell}>
+                                                <div className={styles.empNameRow}>
+                                                    <span className={styles.empName}>{emp.name || '—'}</span>
                                                 </div>
-                                            </div>
-                                            <div className={styles.employeeActions}>
-                                                <span className={`${styles.complianceBadge} ${getComplianceColor(emp.matrix?.compliancePercentage || 0)}`}>
+                                                <div className={styles.empId}>#{emp.employeeId || emp.id}</div>
+                                            </td>
+                                            <td className={styles.posCell}>
+                                                <div className={styles.posName}>{emp.position || '—'}</div>
+                                                <div className={styles.posDept}>{emp.department || '—'}</div>
+                                            </td>
+                                            <td>
+                                                <div className={styles.posName}>{emp.area || '—'}</div>
+                                                <div className={styles.posDept}>Turno {emp.shift || '—'}</div>
+                                            </td>
+                                            <td className={styles.dateCell}>{emp.startDate || '—'}</td>
+                                            <td style={{ textAlign: 'center' }}>
+                                                <span className={`${styles.complianceBadge} ${getComplianceClass(emp.matrix?.compliancePercentage || 0)}`}>
                                                     {emp.matrix?.compliancePercentage || 0}%
                                                 </span>
-                                                <button className={`${styles.expandBtn} ${expandedId === emp.id ? styles.expanded : ''}`}>
-                                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                                        <polyline points="6 9 12 15 18 9" />
-                                                    </svg>
-                                                </button>
-                                            </div>
-                                        </div>
-
-                                        {expandedId === emp.id && (
-                                            <div className={styles.expandedContent}>
-                                                <div className={styles.quickStats}>
-                                                    <div className={styles.quickStat}>
-                                                        <span>{emp.matrix?.completedCount || 0}</span>
-                                                        <span>Aprobados</span>
-                                                    </div>
-                                                    <div className={styles.quickStat}>
-                                                        <span>{emp.matrix?.requiredCount || 0}</span>
-                                                        <span>Requeridos</span>
-                                                    </div>
-                                                    <div className={styles.quickStat}>
-                                                        <span>{emp.department || '—'}</span>
-                                                        <span>Departamento</span>
-                                                    </div>
-                                                </div>
-
-                                                <div className={styles.detailsGrid}>
-                                                    <div className={styles.detailItem}>
-                                                        <span className={styles.detailLabel}>Área</span>
-                                                        <span className={styles.detailValue}>{emp.area || '—'}</span>
-                                                    </div>
-                                                    <div className={styles.detailItem}>
-                                                        <span className={styles.detailLabel}>Turno</span>
-                                                        <span className={styles.detailValue}>{emp.shift || '—'}</span>
-                                                    </div>
-                                                    <div className={styles.detailItem}>
-                                                        <span className={styles.detailLabel}>CURP</span>
-                                                        <span className={styles.detailValue}>{emp.curp || '—'}</span>
-                                                    </div>
-                                                    <div className={styles.detailItem}>
-                                                        <span className={styles.detailLabel}>Fecha Ingreso</span>
-                                                        <span className={styles.detailValue}>{emp.startDate || '—'}</span>
-                                                    </div>
-                                                </div>
-
-                                                {emp.history && emp.history.length > 0 && (
-                                                    <div className={styles.trainingHistory}>
-                                                        <h4>Historial Reciente</h4>
-                                                        <div className={styles.historyList}>
-                                                            {emp.history.slice().reverse().slice(0, 3).map((h, i) => (
-                                                                <div key={i} className={styles.historyItem}>
-                                                                    <span className={styles.historyName}>{h.courseName}</span>
-                                                                    <div className={styles.historyMeta}>
-                                                                        <span>{h.date}</span>
-                                                                        <span className={h.status === 'approved' ? styles.statusApproved : styles.statusRejected}>
-                                                                            {h.status === 'approved' ? '✓' : '✗'} {h.score}
-                                                                        </span>
-                                                                    </div>
-                                                                </div>
-                                                            ))}
-                                                        </div>
-                                                    </div>
-                                                )}
-
-                                                <div className={styles.actionButtonsRow}>
+                                            </td>
+                                            <td>
+                                                <div className={styles.actionsCell}>
                                                     {canWrite() && (
                                                         <>
-                                                            <button className={`${styles.actionBtn} ${styles.danger}`} onClick={(e) => { e.stopPropagation(); handleDelete(emp); }}>
-                                                                🗑️ Eliminar
+                                                            <button
+                                                                className={`${styles.iconBtn} ${styles.iconBtnAmber}`}
+                                                                onClick={() => openEdit(emp)}
+                                                                title="Editar"
+                                                                type="button"
+                                                                aria-label={`Editar ${emp.name}`}
+                                                            >
+                                                                <Edit2 size={13} />
                                                             </button>
-                                                            <button className={`${styles.actionBtn} ${styles.primary}`} onClick={(e) => { e.stopPropagation(); handleEdit(emp); }}>
-                                                                ✏️ Editar
+                                                            <button
+                                                                className={`${styles.iconBtn} ${styles.iconBtnRed}`}
+                                                                onClick={() => handleDelete(emp)}
+                                                                title="Eliminar"
+                                                                type="button"
+                                                                aria-label={`Eliminar ${emp.name}`}
+                                                            >
+                                                                <Trash2 size={13} />
                                                             </button>
                                                         </>
                                                     )}
                                                 </div>
-                                            </div>
-                                        )}
-                                    </div>
-                                ))}
+                                            </td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                        </div>
+                    )}
+                </div>
 
-                                {filteredEmployees.length === 0 && (
-                                    <div className={styles.emptyState}>No se encontraron resultados.</div>
+                {/* ── VISTA MOBILE — Cards ── */}
+                <div className={`${styles.cardList} ${styles.cardsView}`}>
+                    {loading ? (
+                        <div className={styles.loadingRow} role="status">
+                            <span className={styles.spinner} aria-hidden="true" /> Cargando…
+                        </div>
+                    ) : paginated.length === 0 ? (
+                        <div className={styles.emptyState}>
+                            <Users size={40} className={styles.emptyIcon} />
+                            <p className={styles.emptyTitle}>Sin empleados</p>
+                            <p className={styles.emptyDesc}>Usa el botón + para registrar uno.</p>
+                        </div>
+                    ) : paginated.map(emp => (
+                        <div key={emp.id} className={styles.employeeCard}>
+                            <div className={styles.cardTop}>
+                                <div className={styles.avatarCellLg}>{getInitials(emp.name)}</div>
+                                <div className={styles.cardEmployeeInfo}>
+                                    <div className={styles.cardNameRow}>
+                                        <span className={styles.cardName}>{emp.name || '—'}</span>
+                                    </div>
+                                    <div className={styles.cardMeta}>
+                                        <span>#{emp.employeeId || emp.id}</span>
+                                        <span className={styles.cardMetaDot} />
+                                        <span>{emp.position || '—'}</span>
+                                    </div>
+                                </div>
+                                {canWrite() && (
+                                    <div className={styles.cardActions}>
+                                        <button
+                                            className={`${styles.iconBtn} ${styles.iconBtnAmber}`}
+                                            onClick={() => openEdit(emp)}
+                                            title="Editar"
+                                            type="button"
+                                        >
+                                            <Edit2 size={13} />
+                                        </button>
+                                        <button
+                                            className={`${styles.iconBtn} ${styles.iconBtnRed}`}
+                                            onClick={() => handleDelete(emp)}
+                                            title="Eliminar"
+                                            type="button"
+                                        >
+                                            <Trash2 size={13} />
+                                        </button>
+                                    </div>
                                 )}
                             </div>
 
-                            {/* Pagination */}
-                            <div className={styles.paginationControls}>
-                                <span className={styles.pageInfo}>
-                                    Página {currentPage} de {Math.ceil(filteredEmployees.length / itemsPerPage) || 1}
-                                </span>
-                                <div className={styles.pageButtons}>
-                                    <Button variant="outline" size="sm" disabled={currentPage === 1} onClick={() => setCurrentPage(prev => prev - 1)}>←</Button>
-                                    <Button variant="outline" size="sm" disabled={currentPage >= Math.ceil(filteredEmployees.length / itemsPerPage)} onClick={() => setCurrentPage(prev => prev + 1)}>→</Button>
+                            <div className={styles.cardDivider} />
+
+                            <div className={styles.cardBottom}>
+                                <div className={styles.cardMiniStats}>
+                                    <div className={styles.cardMiniItem}>
+                                        <span className={styles.cardMiniLabel}>Depto.</span>
+                                        <span className={styles.cardMiniValue}>{emp.department || '—'}</span>
+                                    </div>
+                                    <div className={styles.cardMiniItem}>
+                                        <span className={styles.cardMiniLabel}>Turno</span>
+                                        <span className={styles.cardMiniValue}>{emp.shift || '—'}</span>
+                                    </div>
                                 </div>
+                                <span className={`${styles.complianceBadge} ${getComplianceClass(emp.matrix?.compliancePercentage || 0)}`}>
+                                    {emp.matrix?.compliancePercentage || 0}%
+                                </span>
                             </div>
                         </div>
+                    ))}
+                </div>
 
-                        {/* Right Column - Dynamic Content (Desktop only) */}
-                        <div className={styles.detailColumn}>
-                            {isCreating || editingEmp ? (
-                                <div className={styles.detailContent} style={{ padding: '0 10px' }}>
-                                    <div className={styles.header} style={{ marginBottom: '16px', borderBottom: '1px solid var(--border-color)', paddingBottom: '10px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                                        <h2 style={{ fontSize: '1.25rem', fontWeight: '600', margin: 0 }}>
-                                            {isCreating ? 'Nuevo Empleado' : 'Editar Empleado'}
-                                        </h2>
-                                        <Button variant="ghost" size="sm" onClick={() => { setIsCreating(false); setEditingEmp(null); }}>✕</Button>
-                                    </div>
-
-                                    {/* Foto de Perfil Form */}
-                                    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginBottom: '24px' }}>
-                                        <div style={{
-                                            width: '90px', height: '90px', borderRadius: '50%', overflow: 'hidden',
-                                            background: 'var(--bg-tertiary, #f0f0f0)', marginBottom: '12px',
-                                            display: 'flex', alignItems: 'center', justifyContent: 'center',
-                                            border: '2px solid var(--border-color, #e2e8f0)', boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)'
-                                        }}>
-                                            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" style={{ opacity: 0.4 }}>
-                                                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
-                                                    <circle cx="12" cy="7" r="4" />
-                                                </svg>
-                                        </div>
-                                        <label htmlFor="photo-upload-col" style={{
-                                            cursor: 'pointer', padding: '6px 14px', fontSize: '0.8rem', fontWeight: '600',
-                                            color: 'var(--color-primary, #2563eb)', background: 'rgba(37, 99, 235, 0.1)',
-                                            borderRadius: '50px', transition: 'all 0.2s'
-                                        }}>
-                                            {photoPreview || editingEmp?.photoUrl ? 'Cambiar Foto' : 'Subir Foto'}
-                                        </label>
-                                        <input id="photo-upload-col" type="file" accept="image/*" onChange={handleFileChange} style={{ display: 'none' }} />
-                                    </div>
-
-                                    <div className={styles.formGroup}>
-                                        <label>Nombre Completo</label>
-                                        <input type="text" value={formData.name} onChange={(e) => setFormData({ ...formData, name: e.target.value })} className={styles.input} />
-                                    </div>
-
-                                    <div className={styles.formGrid}>
-                                        <div className={styles.formGroup}>
-                                            <label>ID Empleado</label>
-                                            <input type="text" value={formData.id} onChange={(e) => isCreating && setFormData({ ...formData, id: e.target.value })}
-                                                placeholder={isCreating ? "Auto" : ""} readOnly={!isCreating}
-                                                className={styles.input} style={!isCreating ? { opacity: 0.7, background: 'var(--bg-tertiary)' } : {}} />
-                                        </div>
-                                        <div className={styles.formGroup}>
-                                            <label>CURP</label>
-                                            <input type="text" value={formData.curp} onChange={(e) => setFormData({ ...formData, curp: e.target.value })} maxLength={18} className={styles.input} />
-                                        </div>
-                                    </div>
-
-                                    <div className={styles.formGrid}>
-                                        <Select
-                                            label="Puesto"
-                                            value={formData.position}
-                                            onChange={(val) => setFormData({ ...formData, position: val })}
-                                            placeholder="-- Seleccionar --"
-                                            searchable
-                                            options={positions.map(p => ({ value: p, label: p }))}
-                                        />
-                                        <Select
-                                            label="Departamento"
-                                            value={formData.department}
-                                            onChange={(val) => setFormData({ ...formData, department: val })}
-                                            placeholder="-- Seleccionar --"
-                                            searchable
-                                            options={departments.map(d => ({ value: d, label: d }))}
-                                        />
-                                    </div>
-
-                                    <div className={styles.formGrid}>
-                                        <Select
-                                            label="Área"
-                                            value={formData.area}
-                                            onChange={(val) => setFormData({ ...formData, area: val })}
-                                            placeholder="-- Seleccionar --"
-                                            options={[
-                                                { value: 'A. CALIDAD 1ER TURNO', label: 'A. CALIDAD 1ER TURNO' },
-                                                { value: 'A. CALIDAD 2DO TURNO', label: 'A. CALIDAD 2DO TURNO' },
-                                                { value: 'ALMACÉN', label: 'ALMACÉN' },
-                                                { value: 'CALIDAD ADMTVO', label: 'CALIDAD ADMTVO' },
-                                                { value: 'GERENCIA', label: 'GERENCIA' },
-                                                { value: 'LOGÍSTICA', label: 'LOGÍSTICA' },
-                                                { value: 'MANTENIMIENTO', label: 'MANTENIMIENTO' },
-                                                { value: 'METROLOGÍA', label: 'METROLOGÍA' },
-                                                { value: 'MOLDES', label: 'MOLDES' },
-                                                { value: 'PRODUCCIÓN 1ER TURNO', label: 'PRODUCCIÓN 1ER TURNO' },
-                                                { value: 'PRODUCCIÓN 2DO TURNO', label: 'PRODUCCIÓN 2DO TURNO' },
-                                                { value: 'PRODUCCIÓN 3ER TURNO', label: 'PRODUCCIÓN 3ER TURNO' },
-                                                { value: 'PRODUCCIÓN 4TO TURNO', label: 'PRODUCCIÓN 4TO TURNO' },
-                                                { value: 'PRODUCCIÓN ADMTVO', label: 'PRODUCCIÓN ADMTVO' },
-                                                { value: 'PRODUCCIÓN MONTAJE', label: 'PRODUCCIÓN MONTAJE' },
-                                                { value: 'PROYECTOS', label: 'PROYECTOS' },
-                                                { value: 'RECURSOS HUMANOS', label: 'RECURSOS HUMANOS' },
-                                                { value: 'RESIDENTES DE CALIDAD', label: 'RESIDENTES DE CALIDAD' },
-                                                { value: 'SGI', label: 'SGI' },
-                                                { value: 'SISTEMAS', label: 'SISTEMAS' },
-                                            ]}
-                                        />
-                                        <Select
-                                            label="Turno"
-                                            value={formData.shift}
-                                            onChange={(val) => setFormData({ ...formData, shift: val })}
-                                            placeholder="-- Seleccionar --"
-                                            options={[
-                                                { value: '1', label: '1' },
-                                                { value: '2', label: '2' },
-                                                { value: '3', label: '3' },
-                                                { value: '4', label: '4' },
-                                                { value: '5', label: '5' },
-                                            ]}
-                                        />
-                                    </div>
-
-                                    <div className={styles.formGrid}>
-                                        <Select
-                                            label="Escolaridad"
-                                            value={formData.education}
-                                            onChange={(val) => setFormData({ ...formData, education: val })}
-                                            placeholder="-- Seleccionar --"
-                                            options={[
-                                                { value: 'BACHILLERATO', label: 'BACHILLERATO' },
-                                                { value: 'CARRERA TECNICA', label: 'CARRERA TECNICA' },
-                                                { value: 'INGENIERIA', label: 'INGENIERIA' },
-                                                { value: 'LICENCIATURA', label: 'LICENCIATURA' },
-                                                { value: 'MAESTRIA', label: 'MAESTRIA' },
-                                                { value: 'PASANTE INGENIERIA', label: 'PASANTE INGENIERIA' },
-                                                { value: 'POSGRADO', label: 'POSGRADO' },
-                                                { value: 'PREPARATORIA', label: 'PREPARATORIA' },
-                                                { value: 'PRIMARIA', label: 'PRIMARIA' },
-                                                { value: 'SECUNDARIA', label: 'SECUNDARIA' },
-                                                { value: 'TSU', label: 'TSU' },
-                                            ]}
-                                        />
-                                        <div className={styles.formGroup}>
-                                            <label>Fecha Ingreso</label>
-                                            <input type="date" value={formData.startDate} onChange={(e) => setFormData({ ...formData, startDate: e.target.value })} className={styles.input} />
-                                        </div>
-                                    </div>
-
-                                    {/* Documentos Section */}
-                                    <div className={styles.formGroup} style={{ marginTop: '20px', borderTop: '1px solid var(--border-color)', paddingTop: '15px' }}>
-                                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
-                                            <h4 style={{ margin: 0, fontSize: '0.95rem' }}>Documentos</h4>
-                                            <label htmlFor="doc-upload-col" style={{ cursor: 'pointer', fontSize: '0.85rem', color: 'var(--color-primary)', display: 'flex', alignItems: 'center', gap: '4px' }}>
-                                                📎 Adjuntar
-                                            </label>
-                                            <input id="doc-upload-col" type="file" multiple accept=".pdf,.doc,.docx,.jpg,.png" onChange={handleDocChange} style={{ display: 'none' }} />
-                                        </div>
-
-                                        {/* Existing Docs */}
-                                        {editingEmp?.documents && editingEmp.documents.length > 0 && (
-                                            <ul style={{ listStyle: 'none', padding: 0, margin: '0 0 10px 0' }}>
-                                                {editingEmp.documents.map((doc, index) => (
-                                                    <li key={index} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '6px 8px', background: 'var(--bg-tertiary)', marginBottom: '4px', borderRadius: '6px', fontSize: '0.85rem' }}>
-                                                        <a href={doc.url} target="_blank" rel="noopener noreferrer" style={{ textDecoration: 'none', color: 'var(--text-primary)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', maxWidth: '85%' }}>
-                                                            📄 {doc.name}
-                                                        </a>
-                                                        <button type="button" onClick={() => removeExistingDoc(index, editingEmp.id)} style={{ border: 'none', background: 'transparent', color: '#ef4444', cursor: 'pointer' }}>✕</button>
-                                                    </li>
-                                                ))}
-                                            </ul>
-                                        )}
-
-                                        {/* New Docs */}
-                                        {docFiles.length > 0 && (
-                                            <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
-                                                {docFiles.map((file, index) => (
-                                                    <li key={index} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '6px 8px', background: 'rgba(37, 99, 235, 0.05)', border: '1px dashed var(--color-primary)', marginBottom: '4px', borderRadius: '6px', fontSize: '0.85rem' }}>
-                                                        <span style={{ color: 'var(--color-primary)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', maxWidth: '85%' }}>{file.name}</span>
-                                                        <button type="button" onClick={() => removeNewDoc(index)} style={{ border: 'none', background: 'transparent', color: 'var(--text-secondary)', cursor: 'pointer' }}>✕</button>
-                                                    </li>
-                                                ))}
-                                            </ul>
-                                        )}
-                                    </div>
-
-                                    <div style={{ display: 'flex', gap: '10px', marginTop: '24px', paddingTop: '16px', borderTop: '1px solid var(--border-color)' }}>
-                                        <Button variant="ghost" style={{ flex: 1 }} onClick={() => { setIsCreating(false); setEditingEmp(null); }}>Cancelar</Button>
-                                        <Button style={{ flex: 1 }} onClick={handleSave} disabled={saving}>
-                                            {saving ? 'Guardando...' : 'Guardar'}
-                                        </Button>
-                                    </div>
-                                </div>
-                            ) : viewingEmp ? (
-                                <div className={styles.detailContent}>
-                                    <div className={styles.detailHeader}>
-                                        <div className={styles.detailAvatar}>
-                                            <span>{viewingEmp.name?.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase()}</span>
-                                        </div>
-                                        <h2>{viewingEmp.name}</h2>
-                                        <p>ID: {viewingEmp.employeeId || viewingEmp.id}</p>
-                                    </div>
-                                    <div className={styles.detailsGrid}>
-                                        <div className={styles.detailItem}>
-                                            <span className={styles.detailLabel}>Puesto</span>
-                                            <span className={styles.detailValue}>{viewingEmp.position || '—'}</span>
-                                        </div>
-                                        <div className={styles.detailItem}>
-                                            <span className={styles.detailLabel}>Departamento</span>
-                                            <span className={styles.detailValue}>{viewingEmp.department || '—'}</span>
-                                        </div>
-                                        <div className={styles.detailItem}>
-                                            <span className={styles.detailLabel}>Área</span>
-                                            <span className={styles.detailValue}>{viewingEmp.area || '—'}</span>
-                                        </div>
-                                        <div className={styles.detailItem}>
-                                            <span className={styles.detailLabel}>Turno</span>
-                                            <span className={styles.detailValue}>{viewingEmp.shift || '—'}</span>
-                                        </div>
-                                        <div className={styles.detailItem}>
-                                            <span className={styles.detailLabel}>CURP</span>
-                                            <span className={styles.detailValue}>{viewingEmp.curp || '—'}</span>
-                                        </div>
-                                        <div className={styles.detailItem}>
-                                            <span className={styles.detailLabel}>Fecha Ingreso</span>
-                                            <span className={styles.detailValue}>{viewingEmp.startDate || '—'}</span>
-                                        </div>
-                                        <div className={styles.detailItem}>
-                                            <span className={styles.detailLabel}>Cumplimiento</span>
-                                            <span className={styles.detailValue}>{viewingEmp.matrix?.compliancePercentage || 0}%</span>
-                                        </div>
-                                        <div className={styles.detailItem}>
-                                            <span className={styles.detailLabel}>Cursos Requeridos</span>
-                                            <span className={styles.detailValue}>{viewingEmp.matrix?.requiredCount || 0}</span>
-                                        </div>
-                                    </div>
-                                    {canWrite() && (
-                                        <div className={styles.detailActions}>
-                                            <Button onClick={() => handleEdit(viewingEmp)}>✏️ Editar</Button>
-                                            <Button variant="outline" onClick={() => handleDelete(viewingEmp)}>🗑️ Eliminar</Button>
-                                        </div>
-                                    )}
-                                </div>
-                            ) : (
-                                <div className={styles.emptyDetail}>
-                                    <div className={styles.emptyDetailIcon}>
-                                        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-                                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
-                                            <circle cx="12" cy="7" r="4" />
-                                        </svg>
-                                    </div>
-                                    <h3 className={styles.emptyDetailTitle}>Selecciona un empleado</h3>
-                                    <p className={styles.emptyDetailText}>Haz clic en su tarjeta para ver detalles o editar</p>
-                                </div>
-                            )}
+                {/* ── Paginación ── */}
+                {!loading && filtered.length > ITEMS_PER_PAGE && (
+                    <div className={styles.pagination}>
+                        <div className={styles.paginationInfo}>
+                            Página {currentPage} de {totalPages} — {filtered.length} registros
+                        </div>
+                        <div className={styles.paginationControls}>
+                            <button
+                                className={styles.pageBtn}
+                                onClick={() => setCurrentPage(p => p - 1)}
+                                disabled={currentPage === 1}
+                                type="button"
+                                aria-label="Página anterior"
+                            >
+                                Anterior
+                            </button>
+                            <span className={styles.pageCurrent}>{currentPage}</span>
+                            <button
+                                className={styles.pageBtn}
+                                onClick={() => setCurrentPage(p => p + 1)}
+                                disabled={currentPage >= totalPages}
+                                type="button"
+                                aria-label="Página siguiente"
+                            >
+                                Siguiente
+                            </button>
                         </div>
                     </div>
                 )}
-            </div>
 
-            {/* Create/Edit Modal - Mobile Only */}
-            {
-                !isDesktop && (
-                    <Dialog open={isCreating || !!editingEmp} onOpenChange={(open) => !open && (setIsCreating(false), setEditingEmp(null))}>
-                        <DialogHeader>
-                            <DialogTitle>{isCreating ? 'Nuevo Empleado' : 'Editar Empleado'}</DialogTitle>
-                            <DialogClose onClose={() => { setIsCreating(false); setEditingEmp(null); }} />
-                        </DialogHeader>
-                        <DialogBody>
-                            {/* Foto de Perfil */}
-                            {/* Foto de Perfil */}
-                            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginBottom: '24px', paddingTop: '10px' }}>
-                                <div style={{
-                                    width: '90px',
-                                    height: '90px',
-                                    borderRadius: '50%',
-                                    overflow: 'hidden',
-                                    background: 'var(--bg-tertiary, #f0f0f0)',
-                                    marginBottom: '12px',
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    justifyContent: 'center',
-                                    border: '2px solid var(--border-color, #e2e8f0)',
-                                    boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)'
-                                }}>
-                                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" style={{ opacity: 0.4 }}>
-                                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
-                                            <circle cx="12" cy="7" r="4" />
-                                        </svg>
-                                </div>
-                                <label htmlFor="photo-upload-modal" style={{
-                                    cursor: 'pointer',
-                                    padding: '6px 14px',
-                                    fontSize: '0.8rem',
-                                    fontWeight: '600',
-                                    color: 'var(--color-primary, #2563eb)',
-                                    background: 'rgba(37, 99, 235, 0.1)',
-                                    borderRadius: '50px',
-                                    transition: 'all 0.2s'
-                                }}>
-                                    {photoPreview || editingEmp?.photoUrl ? 'Cambiar Foto' : 'Subir Foto'}
-                                </label>
-                                <input
-                                    id="photo-upload-modal"
-                                    type="file"
-                                    accept="image/*"
-                                    onChange={handleFileChange}
-                                    style={{ display: 'none' }}
-                                />
-                            </div>
+                {/* ── Modal ── */}
+                {showModal && (
+                    <EmployeeModal
+                        initial={editingEmp}
+                        isCreating={isCreatingNew}
+                        onClose={closeModal}
+                        onSave={handleSave}
+                        positions={positions}
+                        departments={departments}
+                    />
+                )}
 
-                            <div className={styles.formGroup}>
-                                <label>Nombre Completo</label>
-                                <input
-                                    type="text"
-                                    value={formData.name}
-                                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                                />
-                            </div>
-
-                            <div className={styles.formGrid}>
-                                <div className={styles.formGroup}>
-                                    <label>ID Empleado</label>
-                                    <input
-                                        type="text"
-                                        value={formData.id}
-                                        onChange={(e) => isCreating && setFormData({ ...formData, id: e.target.value })}
-                                        placeholder={isCreating ? "Auto-generado si vacío" : ""}
-                                        readOnly={!isCreating}
-                                        disabled={!isCreating}
-                                        style={!isCreating ? { opacity: 0.7, cursor: 'not-allowed', background: '#f5f5f5' } : {}}
-                                    />
-                                </div>
-                                <div className={styles.formGroup}>
-                                    <label>CURP</label>
-                                    <input
-                                        type="text"
-                                        value={formData.curp}
-                                        onChange={(e) => setFormData({ ...formData, curp: e.target.value })}
-                                        placeholder="Importante para DC-3"
-                                        maxLength={18}
-                                    />
-                                </div>
-                            </div>
-
-                            <div className={styles.formGrid}>
-                                <Select
-                                    label="Puesto (Categoría)"
-                                    value={formData.position}
-                                    onChange={(val) => setFormData({ ...formData, position: val })}
-                                    placeholder="-- Seleccionar --"
-                                    searchable
-                                    options={positions.map(p => ({ value: p, label: p }))}
-                                />
-                                <Select
-                                    label="Departamento"
-                                    value={formData.department}
-                                    onChange={(val) => setFormData({ ...formData, department: val })}
-                                    placeholder="-- Seleccionar --"
-                                    searchable
-                                    options={departments.map(d => ({ value: d, label: d }))}
-                                />
-                            </div>
-
-                            <div className={styles.formGrid}>
-                                <Select
-                                    label="Área"
-                                    value={formData.area}
-                                    onChange={(val) => setFormData({ ...formData, area: val })}
-                                    placeholder="-- Seleccionar --"
-                                    options={[
-                                        { value: 'A. CALIDAD 1ER TURNO', label: 'A. CALIDAD 1ER TURNO' },
-                                        { value: 'A. CALIDAD 2DO TURNO', label: 'A. CALIDAD 2DO TURNO' },
-                                        { value: 'ALMACÉN', label: 'ALMACÉN' },
-                                        { value: 'CALIDAD ADMTVO', label: 'CALIDAD ADMTVO' },
-                                        { value: 'GERENCIA', label: 'GERENCIA' },
-                                        { value: 'LOGÍSTICA', label: 'LOGÍSTICA' },
-                                        { value: 'MANTENIMIENTO', label: 'MANTENIMIENTO' },
-                                        { value: 'METROLOGÍA', label: 'METROLOGÍA' },
-                                        { value: 'MOLDES', label: 'MOLDES' },
-                                        { value: 'PRODUCCIÓN 1ER TURNO', label: 'PRODUCCIÓN 1ER TURNO' },
-                                        { value: 'PRODUCCIÓN 2DO TURNO', label: 'PRODUCCIÓN 2DO TURNO' },
-                                        { value: 'PRODUCCIÓN 3ER TURNO', label: 'PRODUCCIÓN 3ER TURNO' },
-                                        { value: 'PRODUCCIÓN 4TO TURNO', label: 'PRODUCCIÓN 4TO TURNO' },
-                                        { value: 'PRODUCCIÓN ADMTVO', label: 'PRODUCCIÓN ADMTVO' },
-                                        { value: 'PRODUCCIÓN MONTAJE', label: 'PRODUCCIÓN MONTAJE' },
-                                        { value: 'PROYECTOS', label: 'PROYECTOS' },
-                                        { value: 'RECURSOS HUMANOS', label: 'RECURSOS HUMANOS' },
-                                        { value: 'RESIDENTES DE CALIDAD', label: 'RESIDENTES DE CALIDAD' },
-                                        { value: 'SGI', label: 'SGI' },
-                                        { value: 'SISTEMAS', label: 'SISTEMAS' },
-                                    ]}
-                                />
-                                <Select
-                                    label="Turno"
-                                    value={formData.shift}
-                                    onChange={(val) => setFormData({ ...formData, shift: val })}
-                                    placeholder="-- Seleccionar --"
-                                    options={[
-                                        { value: '1', label: '1' },
-                                        { value: '2', label: '2' },
-                                        { value: '3', label: '3' },
-                                        { value: '4', label: '4' },
-                                        { value: '5', label: '5' },
-                                    ]}
-                                />
-                            </div>
-
-                            <div className={styles.formGrid}>
-                                <Select
-                                    label="Escolaridad"
-                                    value={formData.education}
-                                    onChange={(val) => setFormData({ ...formData, education: val })}
-                                    placeholder="-- Seleccionar --"
-                                    options={[
-                                        { value: 'BACHILLERATO', label: 'BACHILLERATO' },
-                                        { value: 'CARRERA TECNICA', label: 'CARRERA TECNICA' },
-                                        { value: 'INGENIERIA', label: 'INGENIERIA' },
-                                        { value: 'LICENCIATURA', label: 'LICENCIATURA' },
-                                        { value: 'MAESTRIA', label: 'MAESTRIA' },
-                                        { value: 'PASANTE INGENIERIA', label: 'PASANTE INGENIERIA' },
-                                        { value: 'POSGRADO', label: 'POSGRADO' },
-                                        { value: 'PREPARATORIA', label: 'PREPARATORIA' },
-                                        { value: 'PRIMARIA', label: 'PRIMARIA' },
-                                        { value: 'SECUNDARIA', label: 'SECUNDARIA' },
-                                        { value: 'TSU', label: 'TSU' },
-                                    ]}
-                                />
-                                <div className={styles.formGroup}>
-                                    <label>Fecha Ingreso</label>
-                                    <input
-                                        type="date"
-                                        value={formData.startDate}
-                                        onChange={(e) => setFormData({ ...formData, startDate: e.target.value })}
-                                    />
-                                </div>
-                            </div>
-
-                        </DialogBody>
-                        <DialogFooter>
-                            <Button variant="ghost" onClick={() => { setIsCreating(false); setEditingEmp(null); }}>Cancelar</Button>
-                            <Button onClick={handleSave} disabled={saving}>
-                                {saving ? 'Guardando...' : 'Guardar'}
-                            </Button>
-                        </DialogFooter>
-                    </Dialog>
-                )
-            }
-
-            {/* View Detail Modal - Only on mobile devices */}
-            <Dialog open={!!viewingEmp && !isDesktop} onOpenChange={(open) => !open && setViewingEmp(null)}>
-                <DialogHeader>
-                    <DialogTitle>{viewingEmp?.name}</DialogTitle>
-                    <div className={styles.subtitle}>{viewingEmp?.position} - {viewingEmp?.department}</div>
-                    <DialogClose onClose={() => setViewingEmp(null)} />
-                </DialogHeader>
-                <DialogBody>
-                    <div className={styles.detailStats}>
-                        <div className={styles.statBox}>
-                            <div className={styles.statLabel}>Cumplimiento</div>
-                            <div className={`${styles.statValue} ${getComplianceColor(viewingEmp?.matrix?.compliancePercentage || 0)}`}>
-                                {viewingEmp?.matrix?.compliancePercentage || 0}%
-                            </div>
-                        </div>
-                        <div className={styles.statBox}>
-                            <div className={styles.statLabel}>Cursos Aprobados</div>
-                            <div className={styles.statValue}>{viewingEmp?.matrix?.completedCount || 0} / {viewingEmp?.matrix?.requiredCount || 0}</div>
-                        </div>
-                    </div>
-
-                    <h4 className={styles.sectionTitle}>Historial Reciente</h4>
-                    <div className={styles.historyList}>
-                        {viewingEmp?.history?.slice().reverse().slice(0, 5).map((h, i) => (
-                            <div key={i} className={styles.historyItem}>
-                                <div className={styles.historyName}>{h.courseName}</div>
-                                <div className={styles.historyMeta}>
-                                    <span>{h.date}</span>
-                                    <span className={h.status === 'approved' ? styles.statusApproved : styles.statusRejected}>
-                                        {h.status === 'approved' ? 'Aprobado' : 'Reprobado'} ({h.score})
-                                    </span>
-                                </div>
-                            </div>
-                        ))}
-                    </div>
-
-                    <div style={{ marginTop: '1rem', textAlign: 'right' }}>
-                        <Link href={`/capacitacion/analisis`} onClick={() => setViewingEmp(null)} className={styles.viewAnalysisLink}>
-                            Ver análisis completo →
-                        </Link>
-                    </div>
-                </DialogBody>
-                <DialogFooter>
-                    <Button onClick={() => setViewingEmp(null)}>Cerrar</Button>
-                </DialogFooter>
-            </Dialog>
-
-            {/* Photo Preview Modal */}
-            <Dialog open={!!previewImage} onOpenChange={(open) => !open && setPreviewImage(null)}>
-                <DialogHeader>
-                    <DialogTitle>{previewImage?.name}</DialogTitle>
-                    <DialogClose onClose={() => setPreviewImage(null)} />
-                </DialogHeader>
-                <DialogBody>
-                    <div style={{ display: 'flex', justifyContent: 'center', background: '#f8fafc', padding: '10px', borderRadius: '8px' }}>
-                        {previewImage && (
-                            // eslint-disable-next-line @next/next/no-img-element
-                            <img
-                                src={previewImage.url}
-                                alt={previewImage.name}
-                                referrerPolicy="no-referrer"
-                                style={{ maxWidth: '100%', maxHeight: '70vh', borderRadius: '4px', objectFit: 'contain' }}
-                            />
-                        )}
-                    </div>
-                </DialogBody>
-                <DialogFooter>
-                    <Button onClick={() => setPreviewImage(null)}>Cerrar</Button>
-                </DialogFooter>
-            </Dialog>
-            {confirmDialog}
-        </AdminLayout >
+            </main>
+        </AdminLayout>
     );
 }

@@ -16,7 +16,7 @@
 
 /* ==================== HEADER ==================== */
 .headerSection {
-    margin-bottom: var(--spacing-xl);
+    margin-bottom: 1.5rem;
 }
 
 .backBtn {
@@ -48,7 +48,7 @@
 .header {
     display: flex;
     justify-content: space-between;
-    align-items: flex-start;
+    align-items: center;
     gap: var(--spacing-lg);
     flex-wrap: wrap;
 }
@@ -124,20 +124,11 @@
 }
 
 /* ==================== LEGEND ==================== */
-.legend {
+.legendRow {
     display: flex;
     gap: var(--spacing-xl);
-    margin-bottom: var(--spacing-xl);
-    padding: var(--spacing-md) var(--spacing-lg);
-    background: var(--bg-secondary);
-    border-radius: var(--radius-lg);
-    border: 1px solid var(--border-color);
-    width: fit-content;
-}
-
-[data-theme="dark"] .legend {
-    background: #1C1C1E;
-    border-color: rgba(84, 84, 88, 0.4);
+    align-items: center;
+    flex-wrap: wrap;
 }
 
 .legendItem {
@@ -148,10 +139,28 @@
     color: var(--text-secondary);
 }
 
+.doneBadge {
+    display: flex; 
+    align-items: center; 
+    gap: 0.5rem; 
+    background: var(--bg-secondary); 
+    border: 1px solid var(--border-color); 
+    border-radius: 999px; 
+    padding: 6px 14px; 
+    font-size: 0.85rem; 
+    color: var(--text-secondary);
+}
+
+.doneCount {
+    font-weight: 700; 
+    font-size: 0.95rem; 
+    color: var(--color-success, #22c55e);
+}
+
 /* ==================== CALENDAR GRID ==================== */
 .grid {
     display: grid;
-    grid-template-columns: repeat(7, 1fr);
+    grid-template-columns: repeat(6, 1fr);
     border-radius: var(--radius-xl);
     overflow: hidden;
     border: 1px solid var(--border-color);
@@ -202,7 +211,7 @@
     border-color: rgba(84, 84, 88, 0.4);
 }
 
-.dayCell:nth-child(7n) {
+.dayCell:nth-child(6n) {
     border-right: none;
 }
 
@@ -343,7 +352,7 @@
     border-color: rgba(84, 84, 88, 0.4);
 }
 
-.emptyCell:nth-child(7n) {
+.emptyCell:nth-child(6n) {
     border-right: none;
 }
 

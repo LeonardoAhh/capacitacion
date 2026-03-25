@@ -9,6 +9,7 @@ import { useToast } from '@/components/ui/Toast/Toast';
 import { Dialog, DialogHeader, DialogTitle, DialogBody, DialogFooter, DialogClose } from '@/components/ui/Dialog/Dialog';
 import { db } from '@/lib/firebase';
 import { collection, getDocs, addDoc, updateDoc, deleteDoc, doc, query, where } from 'firebase/firestore';
+import { Select } from '@/components/ui/Select/Select';
 import styles from './page.module.css';
 
 export default function CatalogPage() {
@@ -18,6 +19,15 @@ export default function CatalogPage() {
     const [courses, setCourses] = useState([]);
     const [loading, setLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState('');
+    const [isMobile, setIsMobile] = useState(false);
+
+    // Detectar móvil para comportamiento condicional
+    useEffect(() => {
+        const checkMobile = () => setIsMobile(window.innerWidth <= 768);
+        checkMobile();
+        window.addEventListener('resize', checkMobile);
+        return () => window.removeEventListener('resize', checkMobile);
+    }, []);
 
     // Modal states
     const [showModal, setShowModal] = useState(false);
@@ -33,10 +43,11 @@ export default function CatalogPage() {
         duration: '',
         instructor: '',
         validityYears: 0,
-        category: 'GENERAL'
+        category: 'RECURSOS HUMANOS'
     });
 
-    const categories = ['GENERAL', 'SEGURIDAD', 'CALIDAD', 'TÉCNICO', 'NORMATIVO', 'STPS'];
+    const categories = ['RECURSOS HUMANOS', 'SEGURIDAD', 'CALIDAD', 'TÉCNICO', 'NORMATIVO', 'STPS'];
+    const categoryOptions = categories.map(cat => ({ label: cat, value: cat }));
 
     const loadCourses = useCallback(async () => {
         setLoading(true);
@@ -75,7 +86,7 @@ export default function CatalogPage() {
     }
 
     const openCreateModal = () => {
-        setFormData({ name: '', duration: '', instructor: '', validityYears: 0, category: 'GENERAL' });
+        setFormData({ name: '', duration: '', instructor: '', validityYears: 0, category: 'RECURSOS HUMANOS' });
         setIsEditing(false);
         setEditingCourse(null);
         setShowModal(true);
@@ -87,7 +98,7 @@ export default function CatalogPage() {
             duration: course.duration || '',
             instructor: course.instructor || '',
             validityYears: course.validityYears || 0,
-            category: course.category || 'GENERAL'
+            category: course.category || ''
         });
         setIsEditing(true);
         setEditingCourse(course);
@@ -177,60 +188,67 @@ export default function CatalogPage() {
             'TÉCNICO': '#8b5cf6',
             'NORMATIVO': '#f59e0b',
             'STPS': '#10b981',
-            'GENERAL': '#6b7280'
+            'RECURSOS HUMANOS': '#6b7280'
         };
-        return colors[cat] || colors['GENERAL'];
+        return colors[cat] || colors['RECURSOS HUMANOS'];
     };
 
     return (
         <AdminLayout title="Catálogo de Cursos">
             <main className={styles.main}>
                 <div className={styles.container}>
-                    <div className={styles.header}>
-                        <div className={styles.headerLeft}>
-                            <h1 className={styles.pageTitle}>Catálogo de Cursos</h1>
+                    {/* Header Unificado (Editorial White style) */}
+                    <div className={styles.catalogHeader}>
+                        <div className={styles.statsBar}>
+                            <div className={styles.statLine}>
+                                <div className={styles.statItem}>
+                                    <span className={styles.statLabel}>Total Cursos</span>
+                                    <span className={styles.statValue}>{courses.length}</span>
+                                </div>
+                                <div className={styles.statItem}>
+                                    <span className={styles.statLabel}>Cursos STPS</span>
+                                    <span className={styles.statValue}>{courses.filter(c => c.category === 'STPS').length}</span>
+                                </div>
+                                <div className={styles.statItem}>
+                                    <span className={styles.statLabel}>Con Vigencia</span>
+                                    <span className={styles.statValue}>{courses.filter(c => c.validityYears > 0).length}</span>
+                                </div>
+                            </div>
                         </div>
-                        <div className={styles.headerRight}>
-                            <Button onClick={openCreateModal}>
+
+                        <div className={styles.actionBar}>
+                            <div className={styles.searchWrapper}>
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                    <circle cx="11" cy="11" r="8" />
+                                    <line x1="21" y1="21" x2="16.65" y2="16.65" />
+                                </svg>
+                                <input
+                                    type="text"
+                                    placeholder="BUSCAR..."
+                                    value={searchTerm}
+                                    onChange={(e) => setSearchTerm(e.target.value)}
+                                />
+                            </div>
+                            <Button onClick={openCreateModal} className={styles.createBtn}>
                                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                                     <line x1="12" y1="5" x2="12" y2="19" />
                                     <line x1="5" y1="12" x2="19" y2="12" />
                                 </svg>
-                                Nuevo Curso
+                                <span>Nuevo Curso</span>
                             </Button>
                         </div>
                     </div>
 
-                    <div className={styles.statsBar}>
-                        <div className={styles.stat}>
-                            <span className={styles.statValue}>{courses.length}</span>
-                            <span className={styles.statLabel}>Total Cursos</span>
-                        </div>
-                        <div className={styles.stat}>
-                            <span className={styles.statValue}>{courses.filter(c => c.category === 'STPS').length}</span>
-                            <span className={styles.statLabel}>Cursos STPS</span>
-                        </div>
-                        <div className={styles.stat}>
-                            <span className={styles.statValue}>{courses.filter(c => c.validityYears > 0).length}</span>
-                            <span className={styles.statLabel}>Con Vigencia</span>
-                        </div>
-                    </div>
-
-                    <div className={styles.searchBar}>
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                            <circle cx="11" cy="11" r="8" />
-                            <line x1="21" y1="21" x2="16.65" y2="16.65" />
-                        </svg>
-                        <input
-                            type="text"
-                            placeholder="Buscar por nombre, categoría o instructor..."
-                            value={searchTerm}
-                            onChange={(e) => setSearchTerm(e.target.value)}
-                        />
-                    </div>
-
                     {loading ? (
                         <div className="spinner"></div>
+                    ) : isMobile && !searchTerm ? (
+                        <div className={styles.emptySearchState}>
+                            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1" style={{ opacity: 0.2, marginBottom: '1rem' }}>
+                                <circle cx="11" cy="11" r="8" />
+                                <line x1="21" y1="21" x2="16.65" y2="16.65" />
+                            </svg>
+                            <p>Ingresa un nombre para buscar cursos.</p>
+                        </div>
                     ) : filteredCourses.length === 0 ? (
                         <div className={styles.emptyState}>
                             No se encontraron cursos.
@@ -319,14 +337,11 @@ export default function CatalogPage() {
                         </div>
                         <div className={styles.formGroup}>
                             <label>Categoría</label>
-                            <select
+                            <Select
                                 value={formData.category}
-                                onChange={(e) => setFormData({ ...formData, category: e.target.value })}
-                            >
-                                {categories.map(cat => (
-                                    <option key={cat} value={cat}>{cat}</option>
-                                ))}
-                            </select>
+                                onChange={(val) => setFormData({ ...formData, category: val })}
+                                options={categoryOptions}
+                            />
                         </div>
                         <div className={styles.formGroup}>
                             <label>Duración</label>

@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { X, Save, Trash2, UserCog, Copy, CheckCircle2 } from 'lucide-react';
+import { Select } from '@/components/ui/Select/Select';
 import { db } from '@/lib/firebase';
 import { doc, updateDoc, deleteDoc, collection, query, where, getDocs, writeBatch } from 'firebase/firestore';
 import styles from './EditEmployeeModal.module.css';
@@ -162,21 +163,19 @@ export default function EditEmployeeModal({ employee, onClose, onUpdate, onDelet
                             </div>
 
                             <div className={styles.inputGroup}>
-                                <label className={styles.label} htmlFor="em-shift">Turno</label>
-                                <select
-                                    id="em-shift"
-                                    className={styles.select}
-                                    name="shift"
+                                <label className={styles.label}>Turno</label>
+                                <Select
                                     value={formData.shift || ''}
-                                    onChange={handleChange}
-                                >
-                                    <option value="">Seleccionar turno</option>
-                                    <option value="1">Turno 1</option>
-                                    <option value="2">Turno 2</option>
-                                    <option value="3">Turno 3</option>
-                                    <option value="4">Turno 4</option>
-                                    <option value="Mixto">Mixto</option>
-                                </select>
+                                    onChange={(value) => setFormData({ ...formData, shift: value })}
+                                    options={[
+                                        { value: '1', label: 'Turno 1' },
+                                        { value: '2', label: 'Turno 2' },
+                                        { value: '3', label: 'Turno 3' },
+                                        { value: '4', label: 'Turno 4' },
+                                        { value: 'Mixto', label: 'Mixto' },
+                                    ]}
+                                    placeholder="Seleccionar turno"
+                                />
                             </div>
                         </div>
 

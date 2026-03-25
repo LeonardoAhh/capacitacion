@@ -200,8 +200,8 @@
     display: flex;
     align-items: center;
     gap: 8px;
-    flex: 1;
-    min-width: 160px;
+    flex: 1.5;
+    min-width: 140px;
     background: var(--c-bg);
     border: 1.5px solid var(--c-line-strong);
     border-radius: var(--r-full);
@@ -229,17 +229,15 @@
 .searchInput::placeholder { color: var(--c-muted); }
 
 .filterSelect {
-    padding: 7px 12px;
-    border: 1.5px solid var(--c-line-strong);
-    border-radius: var(--r-full);
-    background: var(--c-bg);
-    color: var(--c-ink);
-    font-size: 0.84rem;
-    font-family: var(--font-body), sans-serif;
-    outline: none;
-    cursor: pointer;
-    transition: border-color var(--t);
-    white-space: nowrap;
+    flex: 1;
+    min-width: 110px;
+}
+
+.filters {
+    display: flex;
+    gap: 8px;
+    flex: 1;
+    min-width: 280px;
 }
 
 .filterSelect:focus { border-color: var(--c-primary-mid); }
@@ -686,8 +684,34 @@
 
 .mobileFilters {
     display: flex;
-    gap: 8px;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.mobileFilterGroup {
+    display: flex;
+    gap: 12px;
     align-items: center;
+    width: 100%;
+}
+
+/* El select ahora compartirá espacio correctamente con el botón */
+.mobileFilterGroup .filterSelect {
+    flex: 1;
+    min-width: 0;
+}
+
+.mobileFilterGroup .btnOutline {
+    padding: 0 14px;
+    height: 48px; /* Sincronizado con la altura del Select trigger (46-48px) */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--c-primary-dim);
+    border-color: var(--c-primary-mid);
+    color: var(--c-primary);
+    flex-shrink: 0;
+    border-radius: 12px;
 }
 
 /* ── Confirm card ── */
@@ -885,13 +909,25 @@
     }
 
     .tabSpacer { display: none; }
+}
 
+@media (max-width: 500px) {
     .panelToolbar {
         flex-direction: column;
         align-items: stretch;
+        gap: 12px;
     }
 
-    .searchBox { min-width: 0; }
+    .filters {
+        flex-direction: column;
+        min-width: 0;
+    }
+
+    .searchBox,
+    .filterSelect {
+        width: 100%;
+        flex: none;
+    }
 }
 
 @media (max-width: 600px) {

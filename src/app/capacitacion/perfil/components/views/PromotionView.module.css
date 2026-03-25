@@ -1,160 +1,152 @@
-.promotionPath {
+/* ==================== PROMOTION VIEW - EDITORIAL WHITE ==================== */
+
+.headerRow {
     display: flex;
     align-items: center;
-    justify-content: center;
-    gap: 1rem;
-    margin-bottom: 2.5rem;
-    background: rgba(255, 255, 255, 0.4);
-    padding: 1.5rem;
-    border-radius: 20px;
-    border: 1px dashed rgba(0, 0, 0, 0.1);
+    gap: 16px;
+    margin-bottom: 24px;
 }
 
-
-
-.positionBadge {
-    padding: 0.75rem 1.5rem;
-    background: var(--card-background);
-    border-radius: 12px;
-    font-weight: 600;
-    color: var(--text-primary);
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
-    text-align: center;
-    min-width: 140px;
-}
-
-
-
-.criteriaList {
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-}
-
-.criteriaItem {
-    display: flex;
-    align-items: flex-start;
-    gap: 1rem;
-    padding: 1.25rem;
-    background: var(--card-background);
-    border-radius: 16px;
-    border: 1px solid transparent;
-    transition: all 0.2s ease;
-}
-
-
-
-.criteriaMet {
-    border-color: rgba(34, 197, 94, 0.3);
-    background: rgba(220, 252, 231, 0.4);
-}
-
-
-
-.criteriaNotMet {
-    border-color: rgba(239, 68, 68, 0.2);
-}
-
-.criteriaCheck {
-    width: 28px;
-    height: 28px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+.viewTitle {
+    font-size: 1.5rem;
+    font-family: var(--font-serif, "Montserrat", serif);
     font-weight: 700;
-    flex-shrink: 0;
+    color: var(--c-ink, #111827);
+    margin: 0;
 }
-
-.criteriaMet .criteriaCheck {
-    background: #22c55e;
-    color: white;
-}
-
-.criteriaNotMet .criteriaCheck {
-    background: #fee2e2;
-    color: #ef4444;
-}
-
-
-
-.criteriaInfo {
-    display: flex;
-    flex-direction: column;
-}
-
-.criteriaName {
-    font-weight: 600;
-    color: var(--text-primary);
-    margin-bottom: 0.25rem;
-}
-
-
-
-.criteriaDetail {
-    font-size: 0.9rem;
-    color: var(--text-secondary);
-}
-
-
 
 .emptyState {
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    padding: 4rem 2rem;
+    padding: 64px 24px;
     text-align: center;
-    color: #94a3b8;
-    background: rgba(255, 255, 255, 0.4);
-    border-radius: 20px;
-    border: 2px dashed rgba(0, 0, 0, 0.05);
+    background: var(--c-surface, #ffffff);
+    border-radius: var(--r-xl, 16px);
+    border: 1px dashed var(--c-line-strong, #9ca3af);
+    margin-top: 24px;
 }
 
-
-
-/* Back Button & Header */
-.headerRow {
+.promotionPath {
     display: flex;
     align-items: center;
-    margin-bottom: 1.5rem;
+    justify-content: center;
+    gap: 24px;
+    margin-bottom: 32px;
+    background: var(--c-surface, #ffffff);
+    padding: 32px;
+    border-radius: var(--r-xl, 16px);
+    border: 1px solid var(--c-line, #e5e7eb);
+    box-shadow: var(--sh-sm, 0 1px 2px rgba(0,0,0,0.05));
 }
 
-.backBtn {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
-    padding: 0.625rem 1.125rem;
-    background: rgba(255, 255, 255, 0.8);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    border: 1px solid rgba(148, 163, 184, 0.2);
-    border-radius: 12px;
-    color: var(--text-secondary);
-    font-size: 0.9rem;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
-}
-
-
-
-.backBtn:hover {
-    background: rgba(255, 255, 255, 1);
-    border-color: #3b82f6;
-    color: #3b82f6;
-    transform: translateX(-2px);
-    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.15);
-}
-
-
-
-.viewTitle {
-    font-size: 1.5rem;
+.positionBadge {
+    padding: 12px 24px;
+    background: var(--c-bg, #fafaf8);
+    border: 1px solid var(--c-line, #e5e7eb);
+    border-radius: var(--r-lg, 12px);
     font-weight: 700;
-    color: var(--text-primary);
-    margin-left: 1rem;
+    color: var(--c-ink, #111827);
+    text-align: center;
+    min-width: 140px;
+    font-size: 1rem;
 }
 
+.positionBadgeTarget {
+    border: 2px solid var(--c-primary, #003ccc);
+    background: var(--c-primary-dim, rgba(0, 60, 204, 0.08));
+    color: var(--c-amber, #003ccc); /* un poco más oscuro para legibilidad */
+}
 
+.pathArrow {
+    color: var(--c-muted, #6b7280);
+}
+
+.criteriaList {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.criteriaItem {
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+    padding: 20px;
+    background: var(--c-surface, #ffffff);
+    border-radius: var(--r-xl, 16px);
+    border: 1px solid transparent;
+    transition: transform var(--t, 0.2s) var(--ease, ease), border-color var(--t) var(--ease);
+    box-shadow: var(--sh-sm, 0 1px 2px rgba(0,0,0,0.05));
+}
+
+.criteriaItem:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--sh-md, 0 4px 6px -1px rgba(0,0,0,0.05));
+}
+
+.criteriaMet {
+    border-color: var(--c-success, #16a34a);
+}
+
+.criteriaNotMet {
+    border-color: var(--c-line, #e5e7eb);
+}
+
+.criteriaCheck {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    flex-shrink: 0;
+    font-size: 1.1rem;
+}
+
+.criteriaMet .criteriaCheck {
+    background: var(--c-success-dim, rgba(22, 163, 74, 0.1));
+    color: var(--c-success, #16a34a);
+}
+
+.criteriaNotMet .criteriaCheck {
+    background: var(--c-bg, #e5e7eb);
+    color: var(--c-muted, #6b7280);
+}
+
+.criteriaInfo {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.criteriaName {
+    font-weight: 700;
+    color: var(--c-ink, #111827);
+    font-size: 1rem;
+    font-family: var(--font-serif, "Montserrat", serif);
+}
+
+.criteriaDetail {
+    font-size: 0.9rem;
+    color: var(--c-muted, #6b7280);
+}
+
+@media (max-width: 640px) {
+    .promotionPath {
+        flex-direction: column;
+        padding: 24px 16px;
+        gap: 16px;
+    }
+    
+    .pathArrow {
+        transform: rotate(90deg);
+    }
+    
+    .positionBadge {
+        width: 100%;
+        min-width: 0;
+    }
+}

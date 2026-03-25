@@ -7,6 +7,7 @@ import { collection, getDocs, query, where, documentId } from 'firebase/firestor
 import { db } from '@/lib/firebase';
 import { useToast } from '@/components/ui/Toast/Toast';
 import { generateTrainingReportHTML, generateFullReportHTML } from '@/utils/pdfGenerator';
+import { Select } from '@/components/ui/Select/Select';
 import styles from './GroupReportModal.module.css';
 
 const PASSING_SCORE = 80;
@@ -75,8 +76,8 @@ export default function GroupReportModal({ isOpen, onClose }) {
     }, [selectedArea, positionsByArea]);
 
     // Handle Area change
-    const handleAreaChange = (e) => {
-        setSelectedArea(e.target.value);
+    const handleAreaChange = (value) => {
+        setSelectedArea(value);
         setSelectedPositions([]); // Reset positions when area changes
     };
 
@@ -240,7 +241,7 @@ export default function GroupReportModal({ isOpen, onClose }) {
                 >
                     <div className={styles.modalHeader}>
                         <div className={styles.headerTitle}>
-                            <Users size={20} className="text-amber-500" />
+                            <Users size={20} className={styles.headerTitleIcon} />
                             <h3>Reporte Grupal de Capacitación</h3>
                         </div>
                         <button onClick={onClose} className={styles.closeBtn} disabled={generatingPdf}>
@@ -257,19 +258,14 @@ export default function GroupReportModal({ isOpen, onClose }) {
                         ) : (
                             <div className={styles.filtersContainer}>
                                 <div className={styles.filterGroup}>
-                                    <label htmlFor="area-select">1. Seleccionar Área / Departamento</label>
-                                    <select
-                                        id="area-select"
+                                    <label>1. Seleccionar Área / Departamento</label>
+                                    <Select
                                         value={selectedArea}
                                         onChange={handleAreaChange}
-                                        className={styles.selectInput}
+                                        options={areas.map(area => ({ value: area, label: area }))}
+                                        placeholder="-- Elige un área --"
                                         disabled={generatingPdf}
-                                    >
-                                        <option value="">-- Elige un área --</option>
-                                        {areas.map(area => (
-                                            <option key={area} value={area}>{area}</option>
-                                        ))}
-                                    </select>
+                                    />
                                 </div>
 
                                 <div className={styles.filterGroup}>
@@ -313,13 +309,13 @@ export default function GroupReportModal({ isOpen, onClose }) {
                                                             type="checkbox" 
                                                             checked={isSelected}
                                                             onChange={() => togglePosition(pos.name)}
-                                                            className="sr-only"
+                                                            className={styles.srOnly}
                                                             disabled={generatingPdf}
                                                         />
                                                         {isSelected ? (
-                                                            <CheckSquare size={18} className="text-amber-500" />
+                                                            <CheckSquare size={18} className={styles.checkIconActive} />
                                                         ) : (
-                                                            <Square size={18} className="text-slate-300" />
+                                                            <Square size={18} className={styles.checkIconInactive} />
                                                         )}
                                                         <span>{pos.name}</span>
                                                     </label>

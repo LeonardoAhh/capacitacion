@@ -25,9 +25,10 @@ import EditEmployeeModal from './components/EditEmployeeModal';
 import ExamModal from './components/ExamModal';
 import RulesModal from './components/RulesModal';
 import EmployeeCard from './components/EmployeeCard';
+import EmployeeDetailModal from './components/EmployeeDetailModal';
 import FiltersBar from './components/FiltersBar';
 import PromoteModal from './components/PromoteModal';
-import PromotionsDashboard from './components/PromotionsDashboard';
+
 import { usePromotionsData } from './hooks/usePromotionsData';
 
 export default function PromocionesPage() {
@@ -70,8 +71,8 @@ export default function PromocionesPage() {
     const [currentPage, setCurrentPage] = useState(1);
     const itemsPerPage = 20;
 
-    // Expanded rows
-    const [expandedId, setExpandedId] = useState(null);
+    // Expanded rows or View Detail
+    const [selectedEmployeeForDetails, setSelectedEmployeeForDetails] = useState(null);
 
     // Modals
     const [editingEmployee, setEditingEmployee] = useState(null);
@@ -175,8 +176,8 @@ export default function PromocionesPage() {
         filterEmployees();
     }, [filterEmployees]);
 
-    const toggleExpand = (id) => {
-        setExpandedId(expandedId === id ? null : id);
+    const toggleExpand = (emp) => {
+        setSelectedEmployeeForDetails(emp);
     };
 
     const handleEditEmployee = (emp) => {
@@ -418,25 +419,7 @@ export default function PromocionesPage() {
         <>
             <AdminLayout title="Promociones">
                 <div className={styles.container}>
-                    <div className={styles.header}>
-                        <div>
-                            <h1 className={styles.pageTitle}>Control de Promociones</h1>
-                            <p className={styles.pageSubtitle}>Monitoreo de elegibilidad para cambio de categoría</p>
-                        </div>
-                    </div>
 
-                    {/* Promotions KPIs Dashboard */}
-                    <PromotionsDashboard
-                        employees={employees}
-                        promotionRules={promotionRules}
-                    >
-                        <button className={styles.headerActionBtn} onClick={handleExportExcel}>
-                            <Download size={18} /> Exportar Excel
-                        </button>
-                        <button className={styles.headerActionBtn} onClick={() => setRulesModal(true)}>
-                            <SlidersHorizontal size={18} /> Reglas ({promotionRules.length})
-                        </button>
-                    </PromotionsDashboard>
 
                     {/* Filters */}
                     <FiltersBar
@@ -456,6 +439,9 @@ export default function PromocionesPage() {
                         setViewMode={setViewMode}
                         departments={departments}
                         filteredCount={filteredEmployees.length}
+                        onExport={handleExportExcel}
+                        onOpenRules={() => setRulesModal(true)}
+                        rulesCount={promotionRules.length}
                     />
 
                     {/* Employee List */}
@@ -467,7 +453,7 @@ export default function PromocionesPage() {
                             <p className={styles.subText}>Configure las reglas de promoción para ver empleados elegibles.</p>
                         </div>
                     ) : (
-                        <>
+                        <div className={!searchTerm ? styles.hideOnMobileContent : ''}>
                             {/* Table View */}
                             {viewMode === 'table' ? (
                                 <div className={styles.tableContainer}>
@@ -497,7 +483,7 @@ export default function PromocionesPage() {
                                                     const progressPercent = (criteria.overall.metCount / 4) * 100;
 
                                                     return (
-                                                        <tr key={emp.id} onClick={() => toggleExpand(emp.id)} className={`${styles.tableRow} ${emp.promotionData?.scheduledExam ? styles.rowScheduled : ''}`}>
+                                                        <tr key={emp.id} onClick={() => toggleExpand(emp)} className={`${styles.tableRow} ${emp.promotionData?.scheduledExam ? styles.rowScheduled : ''}`}>
                                                             <td>
                                                                 <div className={styles.empNameCell}>
                                                                     <strong>
@@ -569,17 +555,15 @@ export default function PromocionesPage() {
                                             if (!rule) return null;
 
                                             const criteria = emp._criteria || checkPromotionCriteria(emp, rule);
-                                            const isExpanded = expandedId === emp.id;
 
                                             return (
-                                                <EmployeeCard
-                                                    key={emp.id}
-                                                    emp={emp}
-                                                    rule={rule}
-                                                    criteria={criteria}
-                                                    isExpanded={isExpanded}
-                                                    onToggleExpand={toggleExpand}
-                                                    canWrite={canWrite()}
+                                                    <EmployeeCard
+                                                        key={emp.id}
+                                                        emp={emp}
+                                                        rule={rule}
+                                                        criteria={criteria}
+                                                        onViewDetails={setSelectedEmployeeForDetails}
+                                                        canWrite={canWrite()}
                                                     onEditEmployee={handleEditEmployee}
                                                     onOpenExamModal={handleOpenExamModal}
                                                     onToggleScheduledExam={handleToggleScheduledExam}
@@ -612,10 +596,24 @@ export default function PromocionesPage() {
                                     </button>
                                 </div>
                             )}
-                        </>
+                        </div>
                     )}
                 </div>
             </AdminLayout>
+
+            {/* Employee Details Modal */}
+            {selectedEmployeeForDetails && (
+                <EmployeeDetailModal
+                    emp={selectedEmployeeForDetails}
+                    rule={selectedEmployeeForDetails._rule || promotionRules.find(r => r.currentPosition === selectedEmployeeForDetails.position?.toUpperCase()?.trim())}
+                    criteria={selectedEmployeeForDetails._criteria || checkPromotionCriteria(selectedEmployeeForDetails, selectedEmployeeForDetails._rule || promotionRules.find(r => r.currentPosition === selectedEmployeeForDetails.position?.toUpperCase()?.trim()))}
+                    onClose={() => setSelectedEmployeeForDetails(null)}
+                    canWrite={canWrite()}
+                    onEditEmployee={handleEditEmployee}
+                    onOpenExamModal={handleOpenExamModal}
+                    onToggleScheduledExam={handleToggleScheduledExam}
+                />
+            )}
 
             {/* Edit Employee Modal */}
             <EditEmployeeModal

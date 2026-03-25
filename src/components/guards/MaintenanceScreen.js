@@ -43,7 +43,7 @@ export default function MaintenanceScreen({ message, targetDate }) {
             }
 
             setTimeLeft({
-                hours:   String(Math.floor((distance % 86_400_000) / 3_600_000)).padStart(2, '0'),
+                hours:   String(Math.floor(distance / 3_600_000)).padStart(2, '0'),
                 minutes: String(Math.floor((distance % 3_600_000) / 60_000)).padStart(2, '0'),
                 seconds: String(Math.floor((distance % 60_000) / 1_000)).padStart(2, '0'),
                 indefinite: false,

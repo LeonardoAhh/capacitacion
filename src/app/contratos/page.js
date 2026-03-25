@@ -15,6 +15,7 @@ import {
 } from '@/lib/contratosService';
 import { useToast } from '@/components/ui/Toast/Toast';
 import { useConfirm } from '@/hooks/useConfirm';
+import { Select } from '@/components/ui/Select/Select';
 
 // ── Constantes ────────────────────────────────────────────────────────────────
 const EVAL_KEYS = ['first', 'second', 'third'];
@@ -375,18 +376,14 @@ function ContratoModal({ initial, onClose, onSave }) {
                                 {/* Departamento */}
                                 <div className={styles.fieldGroup}>
                                     <label className={styles.fieldLabel}>Departamento *</label>
-                                    <input
-                                        required
-                                        type="text"
-                                        className={styles.fieldInput}
-                                        list="dept-list"
+                                    <Select
                                         value={form.department}
-                                        onChange={e => set('department', e.target.value)}
-                                        placeholder="Ej. PRODUCCIÓN"
+                                        onChange={value => set('department', value)}
+                                        options={DEPARTMENTS.map(d => ({ value: d, label: d }))}
+                                        placeholder="Seleccionar departamento..."
+                                        className={styles.fieldSelect}
+                                        aria-label="Seleccionar departamento"
                                     />
-                                    <datalist id="dept-list">
-                                        {DEPARTMENTS.map(d => <option key={d} value={d} />)}
-                                    </datalist>
                                 </div>
 
                                 {/* Área */}
@@ -404,21 +401,20 @@ function ContratoModal({ initial, onClose, onSave }) {
                                 {/* Turno */}
                                 <div className={styles.fieldGroup}>
                                     <label className={styles.fieldLabel}>Turno</label>
-                                    <input
-                                        type="text"
-                                        className={styles.fieldInput}
-                                        list="shift-list"
+                                    <Select
                                         value={form.shift || ''}
-                                        onChange={e => set('shift', e.target.value)}
-                                        placeholder="1, 2, 3, 4, Mixto"
+                                        onChange={value => set('shift', value)}
+                                        options={[
+                                            { value: '1', label: '1' },
+                                            { value: '2', label: '2' },
+                                            { value: '3', label: '3' },
+                                            { value: '4', label: '4' },
+                                            { value: 'Mixto', label: 'Mixto' },
+                                        ]}
+                                        placeholder="Seleccionar turno..."
+                                        className={styles.fieldSelect}
+                                        aria-label="Seleccionar turno"
                                     />
-                                    <datalist id="shift-list">
-                                        <option value="1" />
-                                        <option value="2" />
-                                        <option value="3" />
-                                        <option value="4" />
-                                        <option value="Mixto" />
-                                    </datalist>
                                 </div>
                             </>
                         )}
@@ -713,53 +709,52 @@ export default function ContratosPage() {
 
                 {/* Toolbar */}
                 <div className={styles.toolbar} role="toolbar" aria-label="Acciones y filtros">
-                    {/* Búsqueda */}
-                    <div className={styles.searchBox}>
-                        <Search size={16} className={styles.searchIcon} aria-hidden="true" />
-                        <input
-                            type="search"
-                            className={styles.searchInput}
-                            placeholder="Busqueda"
-                            value={search}
-                            onChange={e => setSearch(e.target.value)}
-                            aria-label="Buscar empleado"
+                    <div className={styles.filters}>
+                        {/* Búsqueda */}
+                        <div className={styles.searchBox}>
+                            <Search size={16} className={styles.searchIcon} aria-hidden="true" />
+                            <input
+                                type="search"
+                                className={styles.searchInput}
+                                placeholder="Busqueda"
+                                value={search}
+                                onChange={e => setSearch(e.target.value)}
+                                aria-label="Buscar empleado"
+                            />
+                        </div>
+
+                        {/* Filtro departamento */}
+                        <Select
+                            value={filterDept}
+                            onChange={value => setFilterDept(value)}
+                            options={[{ value: '', label: 'Departamento' }, ...departments.map(d => ({ value: d, label: d }))]}
+                            className={styles.filterSelect}
+                            aria-label="Filtrar por departamento"
+                        />
+
+                        {/* Filtro estado */}
+                        <Select
+                            value={filterStatus}
+                            onChange={value => setFilterStatus(value)}
+                            options={[
+                                { value: '', label: 'Estado' },
+                                { value: 'pending_training', label: 'PLAN PENDIENTE' },
+                                { value: 'pending_evals', label: 'EVALUACIONES PENDIENTES' },
+                                { value: 'expiring', label: 'CONTRATO POR VENCER' },
+                            ]}
+                            className={styles.filterSelect}
+                            aria-label="Filtrar por estado"
+                        />
+
+                        {/* Filtro turno */}
+                        <Select
+                            value={filterShift}
+                            onChange={value => setFilterShift(value)}
+                            options={[{ value: '', label: 'Turno' }, ...shifts.map(s => ({ value: s, label: s }))]}
+                            className={styles.filterSelect}
+                            aria-label="Filtrar por turno"
                         />
                     </div>
-
-                    {/* Filtro departamento */}
-                    <select
-                        className={styles.filterSelect}
-                        value={filterDept}
-                        onChange={e => setFilterDept(e.target.value)}
-                        aria-label="Filtrar por departamento"
-                    >
-                        <option value="">Departamento</option>
-                        {departments.map(d => <option key={d} value={d}>{d}</option>)}
-                    </select>
-
-                    {/* Filtro estado */}
-                    <select
-                        className={styles.filterSelect}
-                        value={filterStatus}
-                        onChange={e => setFilterStatus(e.target.value)}
-                        aria-label="Filtrar por estado"
-                    >
-                        <option value="">Estado</option>
-                        <option value="pending_training">PLAN PENDIENTE</option>
-                        <option value="pending_evals">EVALUACIONES PENDIENTES</option>
-                        <option value="expiring">CONTRATO POR VENCER</option>
-                    </select>
-
-                    {/* Filtro turno */}
-                    <select
-                        className={styles.filterSelect}
-                        value={filterShift}
-                        onChange={e => setFilterShift(e.target.value)}
-                        aria-label="Filtrar por turno"
-                    >
-                        <option value="">Turno</option>
-                        {shifts.map(s => <option key={s} value={s}>{s}</option>)}
-                    </select>
 
                     {/* Botones de acción */}
                     <div className={styles.toolbarActions}>

@@ -20,25 +20,6 @@ export default function ProfileHeader({ employee, onBack, employeeGroups = [] })
             transition={{ duration: 0.5 }}
         >
             <div className={styles.avatarSection}>
-                <motion.div
-                    className={styles.avatarContainer}
-                    whileHover={{ scale: 1.05 }}
-                    transition={{ type: "spring", stiffness: 300 }}
-                >
-                    {employee.photoUrl ? (
-                        // eslint-disable-next-line @next/next/no-img-element
-                        <img
-                            src={employee.photoUrl}
-                            alt={employee.name}
-                            className={styles.avatar}
-                            referrerPolicy="no-referrer"
-                        />
-                    ) : (
-                        <div className={styles.initials}>
-                            {getInitials(employee.name)}
-                        </div>
-                    )}
-                </motion.div>
 
                 <h1 className={styles.pageTitle}>{employee.name}</h1>
 

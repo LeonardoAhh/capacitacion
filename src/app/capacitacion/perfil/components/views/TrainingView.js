@@ -36,7 +36,7 @@ export default function TrainingView({ trainingStats, matrixCompliance, onBack, 
   .stat .lbl { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.5px; margin-top: 4px; }
   .green { background: #f0fdf4; } .green .num { color: #16a34a; } .green .lbl { color: #16a34a; }
   .red   { background: #fef2f2; } .red .num { color: #dc2626; }   .red .lbl { color: #dc2626; }
-  .yellow{ background: #fffbeb; } .yellow .num { color: #d97706; } .yellow .lbl { color: #d97706; }
+  .yellow{ background: #fffbeb; } .yellow .num { color: #003ccc; } .yellow .lbl { color: #003ccc; }
   .purple{ background: #f5f3ff; } .purple .num { color: #7c3aed; } .purple .lbl { color: #7c3aed; }
   h3 { font-size: 1rem; font-weight: 700; margin: 20px 0 10px; display: flex; align-items: center; gap: 6px; }
   table { width: 100%; border-collapse: collapse; margin-bottom: 20px; font-size: 0.875rem; }
@@ -44,11 +44,11 @@ export default function TrainingView({ trainingStats, matrixCompliance, onBack, 
   td { padding: 10px 14px; border-bottom: 1px solid #f1f5f9; color: #1e293b; }
   tr:last-child td { border-bottom: none; }
   .score { font-weight: 700; }
-  .approved { color: #16a34a; } .failed { color: #dc2626; } .pending { color: #d97706; }
+  .approved { color: #16a34a; } .failed { color: #dc2626; } .pending { color: #003ccc; }
   .badge { padding: 3px 10px; border-radius: 20px; font-size: 0.75rem; font-weight: 600; }
   .badge-green { background: #dcfce7; color: #16a34a; }
   .badge-red   { background: #fee2e2; color: #dc2626; }
-  .badge-yellow{ background: #fef9c3; color: #d97706; }
+  .badge-yellow{ background: #fef9c3; color: #003ccc; }
   footer { margin-top: 32px; padding-top: 16px; border-top: 1px solid #e2e8f0; font-size: 0.8rem; color: #94a3b8; text-align: center; }
   @media print { body { padding: 16px; } button { display: none !important; } }
 </style>
@@ -83,7 +83,6 @@ ${htmlContent}
             <div className={styles.viewHeader}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
                     <BackButton onClick={onBack} />
-                    <h2 className={styles.viewTitle}>Capacitación</h2>
                 </div>
                 <button
                     className={styles.downloadBtn}
@@ -111,34 +110,51 @@ ${htmlContent}
             </motion.div>
 
             <motion.div variants={itemVariants} className={styles.metricCard}>
-                <div className="p-3 bg-purple-100 dark:bg-purple-900/30 rounded-xl text-purple-600 dark:text-purple-400">
+                <div className={styles.metricIcon}>
                     <BarChart size={24} />
                 </div>
-                <div className="flex flex-col flex-1">
-                    <span className="text-sm font-medium text-slate-500 dark:text-slate-400">Cumplimiento de Matriz</span>
-                    <div className="flex items-center gap-3">
-                        <div className="h-2 flex-1 bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden">
+                <div className={styles.metricContent}>
+                    <span className={styles.metricLabel}>Cumplimiento de Matriz</span>
+                    <div className={styles.metricBarContainer}>
+                        <div className={styles.metricBarTrack}>
                             <div
-                                className="h-full bg-purple-500 rounded-full"
+                                className={styles.metricBarFill}
                                 style={{ width: `${complianceValue}%` }}
                             />
                         </div>
-                        <span className="font-bold text-slate-700 dark:text-slate-200">{complianceValue}%</span>
+                        <span className={styles.metricValue}>{complianceValue}%</span>
                     </div>
                 </div>
             </motion.div>
 
+            {trainingStats.pending.length > 0 && (
+                <motion.div variants={itemVariants} className={styles.courseSection}>
+                    <h4 className={styles.sectionTitle}>
+                        <Clock size={18} color="var(--c-primary, #003ccc)" />
+                        Cursos Pendientes
+                    </h4>
+                    <div className={styles.courseList}>
+                        {trainingStats.pending.map((c, i) => (
+                            <div key={i} className={styles.courseItem}>
+                                <span className={styles.courseName}>{typeof c === 'string' ? c : c.name}</span>
+                                <span className={styles.courseScore} style={{ color: 'var(--c-primary, #003ccc)' }}>Pendiente</span>
+                            </div>
+                        ))}
+                    </div>
+                </motion.div>
+            )}
+
             {trainingStats.approved.length > 0 && (
                 <motion.div variants={itemVariants} className={styles.courseSection}>
                     <h4 className={styles.sectionTitle}>
-                        <CheckCircle size={18} className="text-green-500" />
+                        <CheckCircle size={18} color="var(--c-success, #16a34a)" />
                         Cursos Aprobados
                     </h4>
                     <div className={styles.courseList}>
                         {trainingStats.approved.map((c, i) => (
                             <div key={i} className={styles.courseItem}>
                                 <span className={styles.courseName}>{c.name}</span>
-                                <span className={styles.courseScore} style={{ color: '#22c55e' }}>{c.score}%</span>
+                                <span className={styles.courseScore} style={{ color: 'var(--c-success, #16a34a)' }}>{c.score}%</span>
                             </div>
                         ))}
                     </div>
@@ -148,31 +164,14 @@ ${htmlContent}
             {trainingStats.failed.length > 0 && (
                 <motion.div variants={itemVariants} className={styles.courseSection}>
                     <h4 className={styles.sectionTitle}>
-                        <XCircle size={18} className="text-red-500" />
+                        <XCircle size={18} color="var(--c-danger, #ef4444)" />
                         Cursos Reprobados
                     </h4>
                     <div className={styles.courseList}>
                         {trainingStats.failed.map((c, i) => (
                             <div key={i} className={styles.courseItem}>
                                 <span className={styles.courseName}>{c.name}</span>
-                                <span className={styles.courseScore} style={{ color: '#ef4444' }}>{c.score}%</span>
-                            </div>
-                        ))}
-                    </div>
-                </motion.div>
-            )}
-
-            {trainingStats.pending.length > 0 && (
-                <motion.div variants={itemVariants} className={styles.courseSection}>
-                    <h4 className={styles.sectionTitle}>
-                        <Clock size={18} className="text-amber-500" />
-                        Cursos Pendientes
-                    </h4>
-                    <div className={styles.courseList}>
-                        {trainingStats.pending.map((c, i) => (
-                            <div key={i} className={styles.courseItem}>
-                                <span className={styles.courseName}>{typeof c === 'string' ? c : c.name}</span>
-                                <span className={styles.courseScore} style={{ color: '#f59e0b' }}>Pendiente</span>
+                                <span className={styles.courseScore} style={{ color: 'var(--c-danger, #ef4444)' }}>{c.score}%</span>
                             </div>
                         ))}
                     </div>

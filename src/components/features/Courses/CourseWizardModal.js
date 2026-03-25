@@ -6,6 +6,7 @@ import {
     IconFileText, IconBars, IconCheckSquare, IconZap, IconList
 } from '@/lib/icons';
 import styles from './CourseWizardModal.module.css';
+import { Select } from '@/components/ui/Select/Select';
 
 const MAX_STEPS = 3;
 
@@ -157,20 +158,18 @@ export default function CourseWizardModal({ onComplete, onCancel }) {
 
                         <div className={styles.formGroup}>
                             <label className={styles.label}>Categoría</label>
-                            <div className={styles.selectWrapper}>
-                                <select
-                                    className={styles.select}
-                                    value={category}
-                                    onChange={e => setCategory(e.target.value)}
-                                >
-                                    <option value="General">General</option>
-                                    <option value="Seguridad Industrial">Seguridad Industrial</option>
-                                    <option value="Operaciones">Operaciones</option>
-                                    <option value="Calidad">Calidad</option>
-                                    <option value="Cultura">Cultura Organizacional</option>
-                                    <option value="Soft Skills">Soft Skills</option>
-                                </select>
-                            </div>
+                            <Select
+                                value={category}
+                                onChange={value => setCategory(value)}
+                                options={[
+                                    { value: 'General', label: 'General' },
+                                    { value: 'Seguridad Industrial', label: 'Seguridad Industrial' },
+                                    { value: 'Operaciones', label: 'Operaciones' },
+                                    { value: 'Calidad', label: 'Calidad' },
+                                    { value: 'Cultura', label: 'Cultura Organizacional' },
+                                    { value: 'Soft Skills', label: 'Soft Skills' },
+                                ]}
+                            />
                         </div>
                     </div>
                 );

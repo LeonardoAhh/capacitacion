@@ -14,15 +14,12 @@ import { collection, getDocs, query, where, doc, getDoc } from 'firebase/firesto
 // Utils
 import { checkPromotionCriteria, calculateMonthsInPosition } from '@/lib/promotionUtils';
 
-// Components
 import AdminLayout from '@/components/layout/AdminLayout/AdminLayout';
-import { BackgroundLines } from '@/components/ui/BackgroundLines';
 import { useToast } from '@/components/ui/Toast/Toast';
 import ProfileHeader from './components/ProfileHeader';
 import GeneralView from './components/views/GeneralView';
 import TrainingView from './components/views/TrainingView';
 import PromotionView from './components/views/PromotionView';
-import ILUOView from './components/views/ILUOView';
 import DocumentsView from './components/views/DocumentsView';
 import GroupReportModal from './components/GroupReportModal';
 
@@ -248,8 +245,6 @@ export default function PerfilPage() {
     return (
         <AdminLayout title="Perfiles de Puesto">
             <div className={styles.pageWrapper}>
-                <BackgroundLines className={styles.bgDecoration} />
-
                 <div className={styles.container}>
                     {/* Barra de búsqueda debajo del ProfileDropdown */}
                     <div className={styles.searchRow}>
@@ -333,16 +328,7 @@ export default function PerfilPage() {
                         {/* Content Section */}
                         {employee ? (
                             <>
-                                {/* Left Column: Profile Card */}
-                                <div className={`${styles.colProfile} ${styles.stickyProfile}`}>
-                                    <ProfileHeader
-                                        employee={employee}
-                                        onBack={() => { }}
-                                        employeeGroups={employeeGroups}
-                                    />
-                                </div>
-
-                                {/* Right Column: Views */}
+                                {/* Main Content Column */}
                                 <div className={styles.colContent}>
                                     <div className={styles.contentArea}>
                                         <AnimatePresence mode="wait">
@@ -350,12 +336,12 @@ export default function PerfilPage() {
                                                 <GeneralView
                                                     key="general"
                                                     employee={employee}
+                                                    employeeGroups={employeeGroups}
                                                     seniority={seniority}
                                                     trainingStats={training}
                                                     promotionInfo={promotionInfo}
                                                     onNavigate={setActiveView}
                                                     documentsCount={employee.documents?.length || 0}
-                                                    iluoCount={positionData?.iluoSkills?.length || 0}
                                                 />
                                             )}
 
@@ -376,16 +362,6 @@ export default function PerfilPage() {
                                                     promotionRule={promotionRule}
                                                     promotionInfo={promotionInfo}
                                                     monthsInPosition={monthsInPosition}
-                                                    onBack={() => setActiveView('profile')}
-                                                />
-                                            )}
-
-                                            {activeView === 'iluo' && (
-                                                <ILUOView
-                                                    key="iluo"
-                                                    employee={employee}
-                                                    positionData={positionData}
-                                                    setEmployee={setEmployee}
                                                     onBack={() => setActiveView('profile')}
                                                 />
                                             )}

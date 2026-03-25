@@ -13,6 +13,7 @@ import {
     Play, X, ChevronLeft, ChevronRight, Download,
     LayoutGrid, List, Eye,
 } from 'lucide-react';
+import { Select } from '@/components/ui/Select/Select';
 import SkeletonCard from '@/components/ui/SkeletonCard/SkeletonCard';
 import styles from './GallerySection.module.css';
 
@@ -236,12 +237,17 @@ export default function GallerySection({ items = [], canEdit = false, userId, us
                     value={search}
                     onChange={e => setSearch(e.target.value)}
                 />
-                <select className={styles.sortSelect} value={sort} onChange={e => setSort(e.target.value)}>
-                    <option value="fecha_desc">Más recientes</option>
-                    <option value="fecha_asc">Más antiguos</option>
-                    <option value="nombre_asc">Nombre A-Z</option>
-                    <option value="tipo">Por tipo</option>
-                </select>
+                <Select
+                    value={sort}
+                    onChange={value => setSort(value)}
+                    options={[
+                        { value: 'fecha_desc', label: 'Más recientes' },
+                        { value: 'fecha_asc', label: 'Más antiguos' },
+                        { value: 'nombre_asc', label: 'Nombre A-Z' },
+                        { value: 'tipo', label: 'Por tipo' },
+                    ]}
+                    className={styles.sortSelect}
+                />
                 <div className={styles.viewToggle}>
                     <button className={`${styles.viewBtn} ${viewMode === 'grid' ? styles.viewBtnActive : ''}`} onClick={() => setViewMode('grid')} title="Vista grilla">
                         <LayoutGrid size={14} />
@@ -381,9 +387,12 @@ export default function GallerySection({ items = [], canEdit = false, userId, us
                         {/* Categoría */}
                         <div className={styles.inputGroup}>
                             <label>Categoría</label>
-                            <select className={styles.input} value={categoriaModal} onChange={e => setCategoriaModal(e.target.value)} disabled={uploading}>
-                                {CATEGORIAS.map(c => <option key={c} value={c}>{c}</option>)}
-                            </select>
+                            <Select
+                                value={categoriaModal}
+                                onChange={value => setCategoriaModal(value)}
+                                options={CATEGORIAS.map(c => ({ value: c, label: c }))}
+                                disabled={uploading}
+                            />
                         </div>
 
                         {/* Zona drag & drop */}

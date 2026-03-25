@@ -1,31 +1,15 @@
 "use client";
 
-import { motion } from "framer-motion";
-import { useState } from "react";
 import styles from "./YearlyCardStack.module.css";
 
-const Card = ({ metric, index, totalCards, isExpanded, yearNumber, openDetails }) => {
-    // Calculamos el centro de las cartas apiladas
-    const centerOffset = (totalCards - 1) * 5;
+export default function YearlyCardStack({ stats, yearNumber, openDetails }) {
+    // Definimos las estadísticas base
+    const compliance = stats?.compliance || 0;
+    const avancePlan = stats?.avancePlan || 0;
+    const coursesCompleted = stats?.coursesCompleted || 0;
+    const totalRequiredCourses = stats?.totalRequiredCourses || 0;
 
-    // Posición comprimida (stacks)
-    const defaultX = index * 8 - centerOffset;
-    const defaultY = index * 4;
-    const defaultRotate = index * 2;
-    const defaultScale = 1;
-
-    // Posición expandida
-    const cardWidth = 280;
-    const cardGap = 20; // Transformamos el overlap en gap
-    const totalExpandedWidth = cardWidth * totalCards + cardGap * (totalCards - 1);
-    const expandedCenterOffset = totalExpandedWidth / 2;
-
-    const spreadX = index * (cardWidth + cardGap) - expandedCenterOffset + cardWidth / 2;
-    const spreadY = 0;
-    const spreadRotate = index * 2 - (totalCards - 1);
-    const spreadScale = 1;
-
-    // Función para determinar color según el score
+    // Función para determinar color del KPI principal
     const getScoreColorClass = (score) => {
         if (score >= 90) return styles.colorGreen;
         if (score >= 70) return styles.colorYellow;
@@ -33,130 +17,65 @@ const Card = ({ metric, index, totalCards, isExpanded, yearNumber, openDetails }
     };
 
     return (
-        <motion.div
-            animate={{
-                x: isExpanded ? spreadX : defaultX,
-                y: isExpanded ? spreadY : defaultY,
-                rotate: isExpanded ? spreadRotate : defaultRotate,
-                scale: isExpanded ? spreadScale : defaultScale,
-                zIndex: totalCards - index,
-            }}
-            initial={{
-                x: defaultX,
-                y: defaultY,
-                rotate: defaultRotate,
-                scale: defaultScale,
-            }}
-            transition={{
-                type: "spring",
-                stiffness: 350,
-                damping: 30,
-                mass: 0.8,
-            }}
-            className={styles.card}
-        >
-            <div className={styles.cardContent}>
-
-                {/* Header: Año y Badge */}
-                <div className={styles.header}>
-                    <div className={styles.yearNumber}>{yearNumber}</div>
-                    <div className={styles.badge}>
-                        {metric.badge}
-                    </div>
-                </div>
-
-                {/* Main Metric Value */}
-                <div className={styles.mainMetric}>
-                    <h2 className={styles.metricTitle}>{metric.title}</h2>
-                    <div className={styles.metricValueContainer}>
-                        <span className={`${styles.metricPercentage} ${getScoreColorClass(metric.percentage)}`}>
-                            {metric.percentage}%
-                        </span>
-                        <span className={styles.metricSubtext}>
-                            {metric.subtext}
-                        </span>
-                    </div>
-                </div>
-
-                {/* Footer Specifications */}
-                <div className={styles.specsGrid}>
-                    {metric.specs.map((spec, i) => (
-                        <div key={i} className={styles.specItem}>
-                            <span className={styles.specLabel} title={spec.label}>{spec.label}</span>
-                            <span className={styles.specValue}>{spec.value}</span>
-                        </div>
-                    ))}
-                </div>
-
-                {/* Details Button */}
-                {isExpanded && (
-                    <button
-                        onClick={(e) => {
-                            e.stopPropagation();
-                            openDetails(yearNumber);
-                        }}
-                        className={styles.detailsBtn}
-                    >
-                        Ver Detalles
-                    </button>
-                )}
+        <div className={styles.flatCard}>
+            {/* Header: Año y Botón de Detalles */}
+            <div className={styles.header}>
+                <h2 className={styles.yearTitle}>{yearNumber}</h2>
+                <button 
+                    onClick={() => openDetails(yearNumber)} 
+                    className={styles.detailsBtn}
+                    aria-label={`Ver detalles del año ${yearNumber}`}
+                >
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                        <polyline points="14 2 14 8 20 8" />
+                        <line x1="16" y1="13" x2="8" y2="13" />
+                        <line x1="16" y1="17" x2="8" y2="17" />
+                        <polyline points="10 9 9 9 8 9" />
+                    </svg>
+                    Ver Cursos
+                </button>
             </div>
-        </motion.div>
-    );
-};
 
-export default function YearlyCardStack({ stats, yearNumber, openDetails }) {
-    const [isExpanded, setIsExpanded] = useState(false);
+            {/* Métrica Primaria: Colaboradores al 100% */}
+            <div className={styles.primaryMetric}>
+                <div className={styles.metricLabel}>Colaboradores al 100%</div>
+                <div className={`${styles.mainPercentage} ${getScoreColorClass(compliance)}`}>
+                    {compliance}%
+                </div>
+                <div className={styles.metricSubtext}>Matriz Oficial Cubierta</div>
+            </div>
 
-    // Definimos las cartas basadas en las estadísticas de este año
-    const metrics = [
-        {
-            id: 'opcion-a',
-            badge: 'Opción A',
-            title: 'Empleados al 100%',
-            percentage: stats?.compliance || 0,
-            subtext: 'Matriz Cubierta',
-            specs: []
-        },
-        {
-            id: 'opcion-b',
-            badge: 'Opción B',
-            title: 'Avance del Plan',
-            percentage: stats?.avancePlan || 0,
-            subtext: 'Volumen Total',
-            specs: [
-                { label: "Aprobados", value: stats?.coursesCompleted || 0 },
-                { label: "Total Esperado", value: stats?.totalRequiredCourses || 0 }
-            ]
-        }
-    ];
+            <div className={styles.divider} />
 
-    const handleToggle = () => setIsExpanded(!isExpanded);
-
-    return (
-        <div className={styles.cardStackContainer}>
-            <div
-                aria-label="Toggle card stack"
-                className={styles.cardStackButton}
-                onClick={handleToggle}
-                role="button"
-                tabIndex={0}
-            >
-                {metrics.map((metric, index) => (
-                    <Card
-                        key={metric.id}
-                        index={index}
-                        isExpanded={isExpanded}
-                        metric={metric}
-                        totalCards={metrics.length}
-                        yearNumber={yearNumber}
-                        openDetails={openDetails}
+            {/* Métrica Secundaria: Avance del Plan (Progreso y Conteo) */}
+            <div className={styles.secondaryMetric}>
+                <div className={styles.secondaryHeader}>
+                    <span className={styles.metricLabelSmall}>Avance General del Plan</span>
+                    <span className={styles.secondaryPercentage}>{avancePlan}%</span>
+                </div>
+                
+                {/* Barra de Progreso */}
+                <div className={styles.progressBarBg}>
+                    <div 
+                        className={styles.progressBarFill} 
+                        style={{ width: `${Math.min(avancePlan, 100)}%`, backgroundColor: 'var(--c-primary)' }} 
                     />
-                ))}
+                </div>
+
+                {/* Especificaciones */}
+                <div className={styles.specsRow}>
+                    <div className={styles.spec}>
+                        <span className={styles.specLabel}>Aprobados</span>
+                        <strong className={styles.specValue}>{coursesCompleted}</strong>
+                    </div>
+                    <div className={styles.spec}>
+                        <span className={styles.specLabel}>Total Esperado</span>
+                        <strong className={styles.specValue}>{totalRequiredCourses}</strong>
+                    </div>
+                </div>
             </div>
-            <p className={styles.instructionText}>
-                {isExpanded ? "Haz clic para apilar las tarjetas" : "Haz clic para expandir las métricas"}
-            </p>
+            
         </div>
     );
 }

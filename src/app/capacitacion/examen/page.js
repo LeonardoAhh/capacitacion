@@ -5,7 +5,7 @@ import BackButton from '@/components/ui/BackButton/BackButton';
 import { db } from '@/lib/firebase';
 import { collection, getDocs, query, orderBy, where } from 'firebase/firestore';
 import { Button } from '@/components/ui/Button/Button';
-import { Select } from '@/components/ui';
+import { Select } from '@/components/ui/Select/Select';
 import { useToast } from '@/components/ui/Toast/Toast';
 import { Card, CardContent } from '@/components/ui/Card/Card';
 import Link from 'next/link';
@@ -301,7 +301,7 @@ export default function ExamenPage() {
                         {/* Print Control Bar (Hidden when printing) */}
                         <div className={styles.noPrintControl}>
                             <Button variant="outline" onClick={handleReset}>←</Button>
-                            <Button onClick={handlePrint}>🖨️ Imprimir</Button>
+                            <Button onClick={handlePrint}>Imprimir</Button>
                         </div>
 
                         {/* Printable Exam Sheet */}
@@ -390,18 +390,7 @@ export default function ExamenPage() {
             <div className={styles.pageWrapper}>
                 <div className={styles.header}>
                     <div className={styles.titleRow}>
-                        <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
-                            <Link href="/capacitacion/examen/gestionar">
-                                <Button variant="outline" size="sm">
-                                    ⚙️ Gestionar Preguntas
-                                </Button>
-                            </Link>
-                            <Link href="/capacitacion/examen/respuestas">
-                                <Button variant="outline" size="sm">
-                                    📋 Ver Respuestas
-                                </Button>
-                            </Link>
-                        </div>
+                        {/* El botón de gestionar se movió al sidebar */}
                     </div>
                 </div>
 
@@ -411,7 +400,7 @@ export default function ExamenPage() {
                         <div className={styles.autocompleteWrapper}>
                             <input
                                 type="text"
-                                placeholder="Buscar por nombre..."
+                                placeholder="BUSCAR..."
                                 className={styles.input}
                                 value={searchTerm}
                                 onChange={(e) => {
@@ -436,44 +425,50 @@ export default function ExamenPage() {
                         )}
                     </div>
 
-                    <Select
-                        label="2. Departamento del Examen"
-                        value={department}
-                        onChange={(val) => setDepartment(val)}
-                        options={[
-                            { value: 'Producción', label: 'Producción' },
-                            { value: 'Calidad', label: 'Calidad' },
-                            { value: 'Moldes', label: 'Moldes' },
-                            { value: 'Recursos Humanos', label: 'Recursos Humanos' },
-                        ]}
-                    />
+                    <div className={styles.formGroup}>
+                        <label>2. Departamento del Examen</label>
+                        <Select
+                            value={department}
+                            onChange={(value) => setDepartment(value)}
+                            options={[
+                                { value: 'Producción', label: 'PRODUCCIÓN' },
+                                { value: 'Calidad', label: 'CALIDAD' },
+                                { value: 'Moldes', label: 'MOLDES' },
+                                { value: 'Recursos Humanos', label: 'RECURSOS HUMANOS' },
+                            ]}
+                        />
+                    </div>
 
-                    <Select
-                        label="3. Tipo de Promoción (Categoría)"
-                        value={category}
-                        onChange={(val) => setCategory(val)}
-                        options={
-                            department === 'Moldes' ? [
-                                { value: 'E_D', label: 'Categoría E a D (20 preguntas)' },
-                                { value: 'D_C', label: 'Categoría D a C (20 preguntas)' },
-                                { value: 'C_B', label: 'Categoría C a B (20 preguntas)' },
-                                { value: 'B_A', label: 'Categoría B a A (Todas)' },
-                            ] : department === 'Recursos Humanos' ? [
-                                { value: 'RH_ALL', label: 'Examen Completo (Todas las preguntas)' },
-                            ] : [
-                                { value: 'D_C', label: 'Categoría D a C (20 Preguntas)' },
-                                { value: 'C_B', label: 'Categoría C a B (30 Preguntas)' },
-                                { value: 'B_A', label: 'Categoría B a A (40 Preguntas)' },
-                            ]
-                        }
-                    />
+                    <div className={styles.formGroup}>
+                        <label>3. Tipo de Promoción (Categoría)</label>
+                        <Select
+                            value={category}
+                            onChange={(value) => setCategory(value)}
+                            options={
+                                department === 'Moldes'
+                                    ? [
+                                        { value: 'E_D', label: 'CATEGORÍA E A D' },
+                                        { value: 'D_C', label: 'CATEGORÍA D A C' },
+                                        { value: 'C_B', label: 'CATEGORÍA C A B' },
+                                        { value: 'B_A', label: 'CATEGORÍA B A A' },
+                                    ]
+                                    : department === 'Recursos Humanos'
+                                        ? [{ value: 'RH_ALL', label: 'EXÁMEN GENERAL' }]
+                                        : [
+                                            { value: 'D_C', label: 'CATEGORÍA D A C' },
+                                            { value: 'C_B', label: 'CATEGORÍA C A B' },
+                                            { value: 'B_A', label: 'CATEGORÍA B A A' },
+                                        ]
+                            }
+                        />
+                    </div>
 
                     <Button
                         onClick={handleGenerate}
                         disabled={loading || !selectedEmployee}
                         className={styles.generateBtn}
                     >
-                        {loading ? 'Generando...' : 'Generar Examen'}
+                        {loading ? 'GENERANDO...' : 'GENERAR EXAMEN'}
                     </Button>
                 </div>
             </div>

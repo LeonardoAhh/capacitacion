@@ -7,11 +7,12 @@ import AdminLayout from '@/components/layout/AdminLayout/AdminLayout';
 import { useAuth } from '@/contexts/AuthContext';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/Button/Button';
-import { Select } from '@/components/ui';
+
 import { useToast } from '@/components/ui/Toast/Toast';
 import { db } from '@/lib/firebase';
 import { collection, getDocs, query, orderBy } from 'firebase/firestore';
 import styles from './page.module.css';
+import CourseSelect from '@/components/CourseSelect/CourseSelect';
 
 // Normalize string for comparison
 const normalize = (str) => str?.trim().toUpperCase() || '';
@@ -35,8 +36,16 @@ export default function CumplimientoPage() {
     const [exportFilter, setExportFilter] = useState('all'); // 'all' | 'pending' | 'approved'
     const [filterOpen, setFilterOpen] = useState(false);
     const [filterMenuStyle, setFilterMenuStyle] = useState({});
+    const [isMobile, setIsMobile] = useState(false);
     const filterRef = useRef(null);
     const filterBtnRef = useRef(null);
+
+    useEffect(() => {
+        const handleResize = () => setIsMobile(window.innerWidth <= 600);
+        handleResize(); // set initial
+        window.addEventListener('resize', handleResize);
+        return () => window.removeEventListener('resize', handleResize);
+    }, []);
 
     const toggleRow = (empId) => {
         setExpandedRows(prev => {
@@ -186,6 +195,14 @@ export default function CumplimientoPage() {
     // Filter by search term and sort: pendientes primero, aprobados al final
     const filteredEmployees = useMemo(() => {
         let list = courseEmployees;
+
+        // Apply visual filter
+        if (exportFilter === 'pending') {
+            list = list.filter(emp => emp.status !== 'approved');
+        } else if (exportFilter === 'approved') {
+            list = list.filter(emp => emp.status === 'approved');
+        }
+
         if (searchTerm) {
             const term = searchTerm.toLowerCase();
             list = list.filter(emp =>
@@ -195,7 +212,7 @@ export default function CumplimientoPage() {
             );
         }
         return [...list].sort((a, b) => (STATUS_ORDER[a.status] ?? 0) - (STATUS_ORDER[b.status] ?? 0));
-    }, [courseEmployees, searchTerm]);
+    }, [courseEmployees, searchTerm, exportFilter]);
 
     // Pagination
     const totalPages = Math.ceil(filteredEmployees.length / itemsPerPage);
@@ -318,7 +335,7 @@ export default function CumplimientoPage() {
   header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:24px;padding-bottom:16px;border-bottom:2px solid #e2e8f0}
   .logo{font-size:1.3rem;font-weight:800;color:#3b82f6}
   .title{font-size:1.4rem;font-weight:700;margin-top:6px}
-  .filterTag{display:inline-block;margin-top:6px;padding:3px 10px;border-radius:20px;font-size:0.75rem;font-weight:600;background:${exportFilter==='pending'?'#fffbeb':exportFilter==='approved'?'#f0fdf4':'#eff6ff'};color:${exportFilter==='pending'?'#d97706':exportFilter==='approved'?'#16a34a':'#2563eb'}}
+  .filterTag{display:inline-block;margin-top:6px;padding:3px 10px;border-radius:20px;font-size:0.75rem;font-weight:600;background:${exportFilter === 'pending' ? '#fffbeb' : exportFilter === 'approved' ? '#f0fdf4' : '#eff6ff'};color:${exportFilter === 'pending' ? '#d97706' : exportFilter === 'approved' ? '#16a34a' : '#2563eb'}}
   .meta{text-align:right;font-size:0.85rem;color:#64748b}
   .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:24px}
   .stat{padding:14px;border-radius:10px;text-align:center}
@@ -362,283 +379,286 @@ export default function CumplimientoPage() {
         <AdminLayout title="Cumplimiento">
 
             <div className={styles.container}>
-                <div className={styles.header}>
-                    <div className={styles.headerLeft}>
-                        <h1 className={styles.pageTitle}>Cumplimiento por Curso</h1>
-                        <p className={styles.pageSubtitle}>Visualiza el progreso de capacitación por cada curso</p>
-                    </div>
-                </div>
-
                 {loading ? (
-                    <div className="spinner"></div>
+                    <div style={{ display: 'flex', justifyContent: 'center', margin: '4rem 0' }}>
+                        <div className="spinner"></div>
+                    </div>
                 ) : (
                     <>
-                        {/* Course Selector */}
-                        <div className={styles.selectorCard}>
-                            <div className={styles.selectorRow}>
-                                <Select
-                                    label="Seleccionar Curso"
-                                    value={selectedCourse}
-                                    onChange={(val) => { setSelectedCourse(val); setCurrentPage(1); }}
-                                    placeholder="-- Selecciona un curso --"
-                                    searchable
-                                    options={courses.map(c => ({ value: c.name, label: c.name }))}
-                                />
-                                {selectedCourse && courseEmployees.length > 0 && (
-                                    <div style={{ display: 'flex', gap: '0.5rem', marginTop: 'auto', alignItems: 'center', flexWrap: 'wrap' }}>
-                                        {/* Botón ícono de filtro */}
-                                        <div className={styles.filterWrapper}>
-                                            <button
-                                                ref={filterBtnRef}
-                                                className={`${styles.filterBtn} ${exportFilter !== 'all' ? styles.filterActive : ''}`}
-                                                onClick={() => {
-                                                    if (!filterOpen && filterBtnRef.current) {
-                                                        const rect = filterBtnRef.current.getBoundingClientRect();
-                                                        setFilterMenuStyle({
-                                                            position: 'fixed',
-                                                            top: rect.bottom + 6,
-                                                            right: window.innerWidth - rect.right,
-                                                            zIndex: 99999,
-                                                        });
+                        {/* Course Selector & Actions (Unificado sin título) */}
+                        <div className={styles.headerTop}>
+                            <CourseSelect
+                                courses={courses}
+                                value={selectedCourse}
+                                onChange={(name) => {
+                                    setSelectedCourse(name);
+                                    setCurrentPage(1);
+                                }}
+                            />
+                            {selectedCourse && courseEmployees.length > 0 && (
+                                <div className={styles.headerActions}>
+                                    {/* Botón ícono de filtro */}
+                                    <div className={styles.filterWrapper}>
+                                        <button
+                                            ref={filterBtnRef}
+                                            className={`${styles.filterBtn} ${exportFilter !== 'all' ? styles.filterActive : ''}`}
+                                            onClick={() => {
+                                                if (!filterOpen && filterBtnRef.current) {
+                                                    const rect = filterBtnRef.current.getBoundingClientRect();
+                                                    const menuWidth = 160;
+                                                    const style = {
+                                                        position: 'fixed',
+                                                        top: rect.bottom + 6,
+                                                        zIndex: 99999,
+                                                    };
+                                                    if (rect.left + menuWidth > window.innerWidth - 20) {
+                                                        style.right = window.innerWidth - rect.right;
+                                                    } else {
+                                                        style.left = rect.left;
                                                     }
-                                                    setFilterOpen(p => !p);
-                                                }}
-                                                title={exportFilter === 'all' ? 'Filtrar exportación' : exportFilter === 'pending' ? 'Solo Pendientes' : 'Solo Aprobados'}
+                                                    setFilterMenuStyle(style);
+                                                }
+                                                setFilterOpen(p => !p);
+                                            }}
+                                            title={exportFilter === 'all' ? 'Filtrar exportación' : exportFilter === 'pending' ? 'Solo Pendientes' : 'Solo Aprobados'}
+                                        >
+                                            <Filter size={16} />
+                                        </button>
+                                        {filterOpen && typeof document !== 'undefined' && createPortal(
+                                            <div
+                                                className={styles.filterMenu}
+                                                style={filterMenuStyle}
+                                                data-filter-menu
                                             >
-                                                <Filter size={16} />
-                                            </button>
-                                            {filterOpen && typeof document !== 'undefined' && createPortal(
-                                                <div
-                                                    className={styles.filterMenu}
-                                                    style={filterMenuStyle}
-                                                    data-filter-menu
-                                                >
-                                                    {[
-                                                        { value: 'all', label: 'Todo' },
-                                                        { value: 'pending', label: 'Solo Pendientes' },
-                                                        { value: 'approved', label: 'Solo Aprobados' },
-                                                    ].map(opt => (
-                                                        <button
-                                                            key={opt.value}
-                                                            className={`${styles.filterOption} ${exportFilter === opt.value ? styles.filterOptionActive : ''}`}
-                                                            onClick={() => { setExportFilter(opt.value); setFilterOpen(false); }}
-                                                        >
-                                                            {opt.label}
-                                                        </button>
-                                                    ))}
-                                                </div>,
-                                                document.body
-                                            )}
-                                        </div>
-                                        <Button
-                                            variant="outline"
-                                            onClick={downloadReport}
-                                        >
-                                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
-                                                <polyline points="7 10 12 15 17 10" />
-                                                <line x1="12" y1="15" x2="12" y2="3" />
-                                            </svg>
-                                            CSV
-                                        </Button>
-                                        <Button
-                                            variant="primary"
-                                            onClick={downloadPDF}
-                                        >
-                                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
-                                                <polyline points="14 2 14 8 20 8" />
-                                                <line x1="16" y1="13" x2="8" y2="13" />
-                                                <line x1="16" y1="17" x2="8" y2="17" />
-                                                <polyline points="10 9 9 9 8 9" />
-                                            </svg>
-                                            PDF
-                                        </Button>
+                                                {[
+                                                    { value: 'all', label: 'Todo' },
+                                                    { value: 'pending', label: 'Solo Pendientes' },
+                                                    { value: 'approved', label: 'Solo Aprobados' },
+                                                ].map(opt => (
+                                                    <button
+                                                        key={opt.value}
+                                                        className={`${styles.filterOption} ${exportFilter === opt.value ? styles.filterOptionActive : ''}`}
+                                                        onClick={() => {
+                                                            setExportFilter(opt.value);
+                                                            setFilterOpen(false);
+                                                            setCurrentPage(1);
+                                                        }}
+                                                    >
+                                                        {opt.label}
+                                                    </button>
+                                                ))}
+                                            </div>,
+                                            document.body
+                                        )}
                                     </div>
-                                )}
+                                    <Button
+                                        variant="outline"
+                                        onClick={downloadReport}
+                                    >
+                                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                                            <polyline points="7 10 12 15 17 10" />
+                                            <line x1="12" y1="15" x2="12" y2="3" />
+                                        </svg>
+                                        CSV
+                                    </Button>
+                                    <Button
+                                        variant="primary"
+                                        onClick={downloadPDF}
+                                    >
+                                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                                            <polyline points="14 2 14 8 20 8" />
+                                            <line x1="16" y1="13" x2="8" y2="13" />
+                                            <line x1="16" y1="17" x2="8" y2="17" />
+                                            <polyline points="10 9 9 9 8 9" />
+                                        </svg>
+                                        PDF
+                                    </Button>
+                                </div>
+                            )}
+                        </div>
+
+                {selectedCourse && (
+                    <>
+                        {/* Stats Cards */}
+                        <div className={styles.statsGrid} style={{ marginTop: '40px' }}>
+                            <div className={`${styles.statCard} ${styles.statPrimary}`}>
+                                <div className={styles.statIcon}>
+                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+                                        <circle cx="9" cy="7" r="4" />
+                                        <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
+                                        <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+                                    </svg>
+                                </div>
+                                <div className={styles.statContent}>
+                                    <span className={styles.statValue}>{stats.assigned}</span>
+                                    <span className={styles.statLabel}>Empleados Asignados</span>
+                                </div>
+                            </div>
+
+                            <div className={`${styles.statCard} ${styles.statSuccess}`}>
+                                <div className={styles.statIcon}>
+                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
+                                        <polyline points="22 4 12 14.01 9 11.01" />
+                                    </svg>
+                                </div>
+                                <div className={styles.statContent}>
+                                    <span className={styles.statValue}>{stats.approved}</span>
+                                    <span className={styles.statLabel}>Empleados Aprobados</span>
+                                </div>
+                            </div>
+
+                            <div className={`${styles.statCard} ${styles.statWarning}`}>
+                                <div className={styles.statIcon}>
+                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                        <circle cx="12" cy="12" r="10" />
+                                        <polyline points="12 6 12 12 16 14" />
+                                    </svg>
+                                </div>
+                                <div className={styles.statContent}>
+                                    <span className={styles.statValue}>{stats.pending}</span>
+                                    <span className={styles.statLabel}>Empleados Pendientes</span>
+                                </div>
+                            </div>
+
+                            <div className={`${styles.statCard} ${styles.statInfo}`}>
+                                <div className={styles.statIcon}>
+                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                        <path d="M21.21 15.89A10 10 0 1 1 8 2.83" />
+                                        <path d="M22 12A10 10 0 0 0 12 2v10z" />
+                                    </svg>
+                                </div>
+                                <div className={styles.statContent}>
+                                    <span className={styles.statValue}>{stats.percentage}%</span>
+                                    <span className={styles.statLabel}>Cumplimiento</span>
+                                </div>
                             </div>
                         </div>
 
-                        {selectedCourse && (
-                            <>
-                                {/* Stats Cards */}
-                                <div className={styles.statsGrid} style={{ marginTop: '40px' }}>
-                                    <div className={`${styles.statCard} ${styles.statPrimary}`}>
-                                        <div className={styles.statIcon}>
-                                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
-                                                <circle cx="9" cy="7" r="4" />
-                                                <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
-                                                <path d="M16 3.13a4 4 0 0 1 0 7.75" />
-                                            </svg>
-                                        </div>
-                                        <div className={styles.statContent}>
-                                            <span className={styles.statValue}>{stats.assigned}</span>
-                                            <span className={styles.statLabel}>Empleados Asignados</span>
-                                        </div>
-                                    </div>
-
-                                    <div className={`${styles.statCard} ${styles.statSuccess}`}>
-                                        <div className={styles.statIcon}>
-                                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
-                                                <polyline points="22 4 12 14.01 9 11.01" />
-                                            </svg>
-                                        </div>
-                                        <div className={styles.statContent}>
-                                            <span className={styles.statValue}>{stats.approved}</span>
-                                            <span className={styles.statLabel}>Empleados Aprobados</span>
-                                        </div>
-                                    </div>
-
-                                    <div className={`${styles.statCard} ${styles.statWarning}`}>
-                                        <div className={styles.statIcon}>
-                                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                                <circle cx="12" cy="12" r="10" />
-                                                <polyline points="12 6 12 12 16 14" />
-                                            </svg>
-                                        </div>
-                                        <div className={styles.statContent}>
-                                            <span className={styles.statValue}>{stats.pending}</span>
-                                            <span className={styles.statLabel}>Empleados Pendientes</span>
-                                        </div>
-                                    </div>
-
-                                    <div className={`${styles.statCard} ${styles.statInfo}`}>
-                                        <div className={styles.statIcon}>
-                                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                                <path d="M21.21 15.89A10 10 0 1 1 8 2.83" />
-                                                <path d="M22 12A10 10 0 0 0 12 2v10z" />
-                                            </svg>
-                                        </div>
-                                        <div className={styles.statContent}>
-                                            <span className={styles.statValue}>{stats.percentage}%</span>
-                                            <span className={styles.statLabel}>Cumplimiento</span>
-                                        </div>
-                                    </div>
+                        {/* Search and Table */}
+                        <div className={styles.tableCard}>
+                            <div className={styles.tableHeader}>
+                                <h3>Listado de Personal</h3>
+                                <div className={styles.searchBox}>
+                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                        <circle cx="11" cy="11" r="8" />
+                                        <line x1="21" y1="21" x2="16.65" y2="16.65" />
+                                    </svg>
+                                    <input
+                                        type="text"
+                                        placeholder="Buscar por nombre, ID o departamento..."
+                                        value={searchTerm}
+                                        onChange={(e) => {
+                                            setSearchTerm(e.target.value);
+                                            setCurrentPage(1);
+                                        }}
+                                    />
                                 </div>
+                            </div>
 
-                                {/* Search and Table */}
-                                <div className={styles.tableCard}>
-                                    <div className={styles.tableHeader}>
-                                        <h3>Listado de Personal</h3>
-                                        <div className={styles.searchBox}>
-                                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                                <circle cx="11" cy="11" r="8" />
-                                                <line x1="21" y1="21" x2="16.65" y2="16.65" />
-                                            </svg>
-                                            <input
-                                                type="text"
-                                                placeholder="Buscar por nombre, ID o departamento..."
-                                                value={searchTerm}
-                                                onChange={(e) => {
-                                                    setSearchTerm(e.target.value);
-                                                    setCurrentPage(1);
-                                                }}
-                                            />
-                                        </div>
+                            <div className={styles.employeeList}>
+                                {paginatedEmployees.length === 0 ? (
+                                    <div className={styles.emptyState}>
+                                        No se encontraron empleados para este curso.
                                     </div>
-
-                                    <div className={styles.employeeList}>
-                                        {paginatedEmployees.length === 0 ? (
-                                            <div className={styles.emptyState}>
-                                                No se encontraron empleados para este curso.
-                                            </div>
-                                        ) : (
-                                            paginatedEmployees.map(emp => (
-                                                <div
-                                                    key={emp.id}
-                                                    className={`${styles.employeeRow} ${expandedRows.has(emp.id) ? styles.expanded : ''}`}
-                                                >
-                                                    <div
-                                                        className={styles.employeeHeader}
-                                                        onClick={() => toggleRow(emp.id)}
+                                ) : (
+                                    paginatedEmployees.map(emp => (
+                                        <div
+                                            key={emp.id}
+                                            className={`${styles.employeeRow} ${expandedRows.has(emp.id) ? styles.expanded : ''}`}
+                                        >
+                                            <div
+                                                className={styles.employeeHeader}
+                                                onClick={() => toggleRow(emp.id)}
+                                            >
+                                                <div className={styles.employeeMain}>
+                                                    <span className={styles.employeeId}>{emp.id}</span>
+                                                    <span className={styles.employeeName}>{emp.name}</span>
+                                                </div>
+                                                <div className={styles.employeeActions}>
+                                                    {getStatusBadge(emp.status)}
+                                                    <svg
+                                                        className={styles.chevron}
+                                                        width="20"
+                                                        height="20"
+                                                        viewBox="0 0 24 24"
+                                                        fill="none"
+                                                        stroke="currentColor"
+                                                        strokeWidth="2"
                                                     >
-                                                        <div className={styles.employeeMain}>
-                                                            <span className={styles.employeeId}>{emp.id}</span>
-                                                            <span className={styles.employeeName}>{emp.name}</span>
-                                                        </div>
-                                                        <div className={styles.employeeActions}>
-                                                            {getStatusBadge(emp.status)}
-                                                            <svg
-                                                                className={styles.chevron}
-                                                                width="20"
-                                                                height="20"
-                                                                viewBox="0 0 24 24"
-                                                                fill="none"
-                                                                stroke="currentColor"
-                                                                strokeWidth="2"
-                                                            >
-                                                                <polyline points="6 9 12 15 18 9" />
-                                                            </svg>
-                                                        </div>
-                                                    </div>
+                                                        <polyline points="6 9 12 15 18 9" />
+                                                    </svg>
+                                                </div>
+                                            </div>
 
-                                                    <div className={styles.employeeDetails}>
-                                                        <div className={styles.detailGrid}>
-                                                            <div className={styles.detailItem}>
-                                                                <span className={styles.detailLabel}>Departamento</span>
-                                                                <span className={styles.detailValue}>{emp.department}</span>
-                                                            </div>
-                                                            <div className={styles.detailItem}>
-                                                                <span className={styles.detailLabel}>Puesto</span>
-                                                                <span className={styles.detailValue}>{emp.position}</span>
-                                                            </div>
-                                                            <div className={styles.detailItem}>
-                                                                <span className={styles.detailLabel}>Fecha</span>
-                                                                <span className={styles.detailValue}>{emp.date}</span>
-                                                            </div>
-                                                            <div className={styles.detailItem}>
-                                                                <span className={styles.detailLabel}>Calificación</span>
-                                                                <span className={styles.detailValue}>
-                                                                    {emp.score !== '-' ? (
-                                                                        <span className={`${styles.scoreBadge} ${emp.score >= 70 ? styles.scorePass : styles.scoreFail}`}>
-                                                                            {emp.score}
-                                                                        </span>
-                                                                    ) : '-'}
+                                            <div className={styles.employeeDetails}>
+                                                <div className={styles.detailGrid}>
+                                                    <div className={styles.detailItem}>
+                                                        <span className={styles.detailLabel}>Departamento</span>
+                                                        <span className={styles.detailValue}>{emp.department}</span>
+                                                    </div>
+                                                    <div className={styles.detailItem}>
+                                                        <span className={styles.detailLabel}>Puesto</span>
+                                                        <span className={styles.detailValue}>{emp.position}</span>
+                                                    </div>
+                                                    <div className={styles.detailItem}>
+                                                        <span className={styles.detailLabel}>Fecha</span>
+                                                        <span className={styles.detailValue}>{emp.date}</span>
+                                                    </div>
+                                                    <div className={styles.detailItem}>
+                                                        <span className={styles.detailLabel}>Calificación</span>
+                                                        <span className={styles.detailValue}>
+                                                            {emp.score !== '-' ? (
+                                                                <span className={`${styles.scoreBadge} ${emp.score >= 70 ? styles.scorePass : styles.scoreFail}`}>
+                                                                    {emp.score}
                                                                 </span>
-                                                            </div>
-                                                        </div>
+                                                            ) : '-'}
+                                                        </span>
                                                     </div>
                                                 </div>
-                                            ))
-                                        )}
-                                    </div>
-
-                                    {/* Pagination */}
-                                    {totalPages > 1 && (
-                                        <div className={styles.pagination}>
-                                            <span className={styles.pageInfo}>
-                                                Mostrando {((currentPage - 1) * itemsPerPage) + 1} - {Math.min(currentPage * itemsPerPage, filteredEmployees.length)} de {filteredEmployees.length}
-                                            </span>
-                                            <div className={styles.pageButtons}>
-                                                <Button
-                                                    variant="outline"
-                                                    size="sm"
-                                                    disabled={currentPage === 1}
-                                                    onClick={() => setCurrentPage(p => p - 1)}
-                                                >
-                                                    Anterior
-                                                </Button>
-                                                <span className={styles.pageNum}>Página {currentPage} de {totalPages}</span>
-                                                <Button
-                                                    variant="outline"
-                                                    size="sm"
-                                                    disabled={currentPage >= totalPages}
-                                                    onClick={() => setCurrentPage(p => p + 1)}
-                                                >
-                                                    Siguiente
-                                                </Button>
                                             </div>
                                         </div>
-                                    )}
+                                    ))
+                                )}
+                            </div>
+
+                            {/* Pagination */}
+                            {totalPages > 1 && (
+                                <div className={styles.pagination}>
+                                    <span className={styles.pageInfo}>
+                                        Mostrando {((currentPage - 1) * itemsPerPage) + 1} - {Math.min(currentPage * itemsPerPage, filteredEmployees.length)} de {filteredEmployees.length}
+                                    </span>
+                                    <div className={styles.pageButtons}>
+                                        <Button
+                                            variant="outline"
+                                            size="sm"
+                                            disabled={currentPage === 1}
+                                            onClick={() => setCurrentPage(p => p - 1)}
+                                        >
+                                            Anterior
+                                        </Button>
+                                        <span className={styles.pageNum}>Página {currentPage} de {totalPages}</span>
+                                        <Button
+                                            variant="outline"
+                                            size="sm"
+                                            disabled={currentPage >= totalPages}
+                                            onClick={() => setCurrentPage(p => p + 1)}
+                                        >
+                                            Siguiente
+                                        </Button>
+                                    </div>
                                 </div>
-                            </>
-                        )}
+                            )}
+                        </div>
                     </>
                 )}
-            </div>
-        </AdminLayout>
+            </>
+                )}
+        </div>
+        </AdminLayout >
     );
 }
 

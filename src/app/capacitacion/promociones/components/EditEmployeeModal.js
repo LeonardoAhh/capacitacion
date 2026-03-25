@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Dialog, DialogHeader, DialogTitle, DialogBody, DialogFooter, DialogClose } from '@/components/ui/Dialog/Dialog';
 import { Button } from '@/components/ui/Button/Button';
 import { getSemesterPeriod } from '@/lib/promotionUtils';
+import { Select } from '@/components/ui/Select/Select';
 import styles from '../page.module.css';
 
 export default function EditEmployeeModal({ employee, onClose, onSave }) {
@@ -46,14 +47,15 @@ export default function EditEmployeeModal({ employee, onClose, onSave }) {
                 </div>
                 <div className={styles.formGroup}>
                     <label>Período de Evaluación</label>
-                    <select
+                    <Select
                         value={formData.performancePeriod}
-                        onChange={(e) => setFormData({ ...formData, performancePeriod: e.target.value })}
-                    >
-                        <option value="JUL-DIC 2025">JUL-DIC 2025</option>
-                        <option value="ENE-JUN 2026">ENE-JUN 2026</option>
-                        <option value="JUL-DIC 2026">JUL-DIC 2026</option>
-                    </select>
+                        onChange={(value) => setFormData({ ...formData, performancePeriod: value })}
+                        options={[
+                            { value: 'JUL-DIC 2025', label: 'JUL-DIC 2025' },
+                            { value: 'ENE-JUN 2026', label: 'ENE-JUN 2026' },
+                            { value: 'JUL-DIC 2026', label: 'JUL-DIC 2026' },
+                        ]}
+                    />
                 </div>
                 <div className={styles.formGroup}>
                     <label>Calificación Evaluación Desempeño (%)</label>

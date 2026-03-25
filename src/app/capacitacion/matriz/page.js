@@ -12,7 +12,8 @@ import { collection, getDocs, doc, updateDoc, query, orderBy, where, writeBatch 
 import { seedCapacitacionDataRobust } from '@/lib/seedCapacitacion';
 import styles from './page.module.css';
 import { Dialog, DialogHeader, DialogTitle, DialogBody, DialogFooter, DialogClose } from '@/components/ui/Dialog/Dialog';
-import { Select } from '@/components/ui';
+import { Select } from '@/components/ui/Select/Select';
+
 
 export default function MatrizPage() {
     const { user, loading: authLoading, canWrite } = useAuth();
@@ -275,68 +276,72 @@ export default function MatrizPage() {
         <AdminLayout title="Matriz de Capacitación">
             <main className={styles.main} id="main-content">
                 <div className={styles.container}>
-                    <div className={styles.header}>
-                        <div className={styles.headerLeft}>
-                            <h1 className={styles.pageTitle}>Matriz de Capacitación</h1>
-                        </div>
+                    {/* Toolbar (antes controlsBar) */}
+                    <div className={styles.controlsBar} role="toolbar" aria-label="Filtros y acciones">
+                        <div className={styles.filters}>
+                            {/* Búsqueda */}
+                            <div className={styles.searchBar}>
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
+                                    <circle cx="11" cy="11" r="8" />
+                                    <line x1="21" y1="21" x2="16.65" y2="16.65" />
+                                </svg>
+                                <input
+                                    type="text"
+                                    placeholder="Buscar por puesto..."
+                                    value={searchTerm}
+                                    onChange={(e) => setSearchTerm(e.target.value)}
+                                    aria-label="Buscar por puesto"
+                                />
+                            </div>
 
-                        <div className={styles.headerRight}>
-                            {positions.length === 0 && (
-                                <Button onClick={handleSeed} disabled={seeding}>
-                                    {seeding ? 'Cargando datos...' : 'Inicializar Datos (Seed)'}
-                                </Button>
-                            )}
-                        </div>
-                    </div>
-
-                    <div className={styles.controlsBar}>
-                        <div className={styles.searchBar}>
-                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                <circle cx="11" cy="11" r="8" />
-                                <line x1="21" y1="21" x2="16.65" y2="16.65" />
-                            </svg>
-                            <input
-                                type="text"
-                                placeholder="Buscar por puesto..."
-                                value={searchTerm}
-                                onChange={(e) => setSearchTerm(e.target.value)}
+                            {/* Departamento */}
+                            <Select
+                                value={selectedDepartment}
+                                onChange={(value) => setSelectedDepartment(value)}
+                                options={departments.map(d => ({ value: d, label: d }))}
+                                className={styles.deptFilter}
+                                aria-label="Filtrar por departamento"
                             />
                         </div>
 
-                        <Select
-                            value={selectedDepartment}
-                            onChange={(val) => setSelectedDepartment(val)}
-                            options={departments.map(d => ({ value: d, label: d }))}
-                            className={styles.deptFilter}
-                        />
+                        {/* Acciones y Vista */}
+                        <div className={styles.headerRight}>
+                            <div className={styles.viewToggles}>
+                                <button
+                                    className={`${styles.toggleBtn} ${viewMode === 'grid' ? styles.active : ''}`}
+                                    onClick={() => setViewMode('grid')}
+                                    title="Vista Cuadrícula"
+                                    type="button"
+                                >
+                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                        <rect x="3" y="3" width="7" height="7" />
+                                        <rect x="14" y="3" width="7" height="7" />
+                                        <rect x="14" y="14" width="7" height="7" />
+                                        <rect x="3" y="14" width="7" height="7" />
+                                    </svg>
+                                </button>
+                                <button
+                                    className={`${styles.toggleBtn} ${viewMode === 'table' ? styles.active : ''}`}
+                                    onClick={() => setViewMode('table')}
+                                    title="Vista Tabla"
+                                    type="button"
+                                >
+                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                        <line x1="8" y1="6" x2="21" y2="6" />
+                                        <line x1="8" y1="12" x2="21" y2="12" />
+                                        <line x1="8" y1="18" x2="21" y2="18" />
+                                        <line x1="3" y1="6" x2="3.01" y2="6" />
+                                        <line x1="3" y1="12" x2="3.01" y2="12" />
+                                        <line x1="3" y1="18" x2="3.01" y2="18" />
+                                    </svg>
+                                </button>
+                            </div>
 
-                        <div className={styles.viewToggles}>
-                            <button
-                                className={`${styles.toggleBtn} ${viewMode === 'grid' ? styles.active : ''}`}
-                                onClick={() => setViewMode('grid')}
-                                title="Vista Cuadrícula"
-                            >
-                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                    <rect x="3" y="3" width="7" height="7" />
-                                    <rect x="14" y="3" width="7" height="7" />
-                                    <rect x="14" y="14" width="7" height="7" />
-                                    <rect x="3" y="14" width="7" height="7" />
-                                </svg>
-                            </button>
-                            <button
-                                className={`${styles.toggleBtn} ${viewMode === 'table' ? styles.active : ''}`}
-                                onClick={() => setViewMode('table')}
-                                title="Vista Tabla"
-                            >
-                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                    <line x1="8" y1="6" x2="21" y2="6" />
-                                    <line x1="8" y1="12" x2="21" y2="12" />
-                                    <line x1="8" y1="18" x2="21" y2="18" />
-                                    <line x1="3" y1="6" x2="3.01" y2="6" />
-                                    <line x1="3" y1="12" x2="3.01" y2="12" />
-                                    <line x1="3" y1="18" x2="3.01" y2="18" />
-                                </svg>
-                            </button>
+                            {positions.length === 0 && (
+                                <Button onClick={handleSeed} disabled={seeding} variant="secondary">
+                                    {seeding ? 'Cargando datos...' : 'Seed Data'}
+                                </Button>
+                            )}
                         </div>
                     </div>
 

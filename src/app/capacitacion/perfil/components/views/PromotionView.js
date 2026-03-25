@@ -21,17 +21,19 @@ export default function PromotionView({ employee, promotionRule, promotionInfo, 
     if (!promotionRule) {
         return (
             <motion.div
-                className={styles.emptyState}
+                style={{ display: 'flex', flexDirection: 'column' }}
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
             >
                 <div className={styles.headerRow}>
                     <BackButton onClick={onBack} />
-                    <h2 className={styles.viewTitle}>Promoción</h2>
                 </div>
-                <AlertCircle size={48} style={{ marginBottom: '1rem', color: '#94a3b8' }} />
-                <p style={{ fontSize: '1.125rem', fontWeight: 500, color: '#94a3b8' }}>Este puesto no tiene reglas de promoción configuradas</p>
-                <p style={{ fontSize: '0.875rem', color: '#64748b' }}>Contacta al administrador para definir un plan de carrera</p>
+                
+                <div className={styles.emptyState}>
+                    <AlertCircle size={48} style={{ marginBottom: '16px', color: 'var(--c-muted, #6b7280)' }} />
+                    <p style={{ fontSize: '1.125rem', fontWeight: 600, color: 'var(--c-ink, #111827)', marginBottom: '8px' }}>Este puesto no tiene reglas de promoción configuradas</p>
+                    <p style={{ fontSize: '0.9rem', color: 'var(--c-muted, #6b7280)', margin: 0 }}>Contacta al administrador para definir un plan de carrera</p>
+                </div>
             </motion.div>
         );
     }
@@ -46,14 +48,13 @@ export default function PromotionView({ employee, promotionRule, promotionInfo, 
         >
             <div className={styles.headerRow}>
                 <BackButton onClick={onBack} />
-                <h2 className={styles.viewTitle}>Plan de Promoción</h2>
             </div>
 
             {/* Path Visualization */}
             <motion.div variants={itemVariants} className={styles.promotionPath}>
                 <div className={styles.positionBadge}>{employee.position}</div>
-                <ArrowRight className="text-blue-500" size={24} />
-                <div className={`${styles.positionBadge} ring-2 ring-blue-500 ring-offset-2 dark:ring-offset-slate-900`}>
+                <ArrowRight className={styles.pathArrow} size={24} />
+                <div className={`${styles.positionBadge} ${styles.positionBadgeTarget}`}>
                     {promotionRule.promotionTo}
                 </div>
             </motion.div>

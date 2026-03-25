@@ -14,31 +14,24 @@
 }
 
 .rulesModalBody::-webkit-scrollbar-thumb {
-    background: rgba(255, 255, 255, 0.1);
+    background: var(--border-color);
     border-radius: 10px;
 }
 
 .ruleForm {
-    background: rgba(30,30,35,0.4);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    border: 1px solid rgba(255,255,255,0.06);
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
     padding: var(--spacing-lg);
-    border-radius: 16px;
+    border-radius: var(--radius-lg, 12px);
     margin-bottom: var(--spacing-xl);
-    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-}
-
-[data-theme="light"] .ruleForm {
-    background: rgba(255,255,255,0.5);
-    border-color: rgba(0,0,0,0.05);
 }
 
 .ruleForm h4 {
     margin: 0 0 var(--spacing-md);
     font-size: 1.1rem;
     color: var(--text-primary);
-    font-weight: 800;
+    font-weight: 700;
+    font-family: var(--font-serif);
 }
 
 .ruleFormGrid {
@@ -51,25 +44,20 @@
     margin-bottom: 0;
 }
 
-/* Glass Inputs Specific to Modal */
+/* Glass Inputs Specific to Modal -> Now Standard Inputs */
 .glassInput {
-    background: rgba(0, 0, 0, 0.2);
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: var(--c-surface, #ffffff);
+    border: 1px solid var(--border-color);
     border-radius: 8px;
     padding: 10px 14px;
     color: var(--text-primary);
     width: 100%;
-    transition: all 0.2s;
-}
-
-[data-theme="light"] .glassInput {
-    background: rgba(255, 255, 255, 0.7);
-    border-color: var(--border-color);
+    transition: all var(--transition-fast, 0.2s);
 }
 
 .glassInput:focus {
     outline: none;
-    border-color: #f59e0b; /* Amber */
+    border-color: var(--color-primary, #f59e0b);
     box-shadow: 0 0 0 2px rgba(245, 158, 11, 0.15);
 }
 
@@ -84,7 +72,8 @@
 .rulesList h4 {
     font-size: 1.1rem;
     color: var(--text-primary);
-    font-weight: 800;
+    font-weight: 700;
+    font-family: var(--font-serif);
     margin: 0;
 }
 
@@ -101,23 +90,18 @@
     flex: 1;
     min-width: 200px;
     max-width: 350px;
-    background: rgba(0, 0, 0, 0.2);
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: var(--c-surface, #ffffff);
+    border: 1px solid var(--border-color);
     border-radius: 20px;
     padding: 8px 16px;
     color: var(--text-primary);
-    font-size: 0.9rem;
-    transition: all 0.2s;
-}
-
-[data-theme="light"] .ruleSearchInput {
-    background: rgba(255, 255, 255, 0.7);
-    border-color: var(--border-color);
+    font-size: 0.95rem;
+    transition: all var(--transition-fast, 0.2s);
 }
 
 .ruleSearchInput:focus {
     outline: none;
-    border-color: #f59e0b;
+    border-color: var(--color-primary, #f59e0b);
     box-shadow: 0 0 0 2px rgba(245, 158, 11, 0.15);
 }
 
@@ -125,39 +109,28 @@
 .rulesTable {
     max-height: 380px;
     overflow-y: auto;
-    border: 1px solid rgba(255,255,255,0.06);
-    border-radius: 16px;
-    background: rgba(20, 20, 25, 0.3);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-lg, 12px);
+    background: var(--c-surface, #ffffff);
 }
-
-[data-theme="light"] .rulesTable {
-    background: rgba(255, 255, 255, 0.3);
-    border-color: rgba(0,0,0,0.05);
-}
-
 
 .rulesTable::-webkit-scrollbar {
     width: 6px;
 }
 
 .rulesTable::-webkit-scrollbar-thumb {
-    background: rgba(255, 255, 255, 0.1);
+    background: var(--border-color);
     border-radius: 10px;
 }
-
 
 .ruleRow {
     display: flex;
     justify-content: space-between;
     align-items: center;
     padding: var(--spacing-md) var(--spacing-lg);
-    border-bottom: 1px solid rgba(255,255,255,0.06);
+    border-bottom: 1px solid var(--border-color);
     gap: var(--spacing-md);
-    transition: background 0.2s;
-}
-
-[data-theme="light"] .ruleRow {
-    border-bottom: 1px solid rgba(0,0,0,0.05);
+    transition: background var(--transition-fast, 0.2s);
 }
 
 .ruleRow:last-child {
@@ -165,11 +138,7 @@
 }
 
 .ruleRow:hover {
-    background: rgba(255, 255, 255, 0.03);
-}
-
-[data-theme="light"] .ruleRow:hover {
-    background: rgba(0, 0, 0, 0.02);
+    background: var(--bg-secondary);
 }
 
 .ruleInfo {
@@ -182,7 +151,7 @@
 .ruleInfo strong {
     font-size: 0.95rem;
     color: var(--text-primary);
-    font-weight: 800;
+    font-weight: 700;
 }
 
 .ruleInfo span {
@@ -191,8 +160,9 @@
 }
 
 .ruleInfo small {
-    font-size: 0.75rem;
+    font-size: 0.8rem;
     color: var(--text-tertiary);
+    font-family: var(--font-mono);
 }
 
 .ruleActions {
@@ -201,22 +171,16 @@
 }
 
 .actionIconOrange {
-    filter: grayscale(1) invert(0.5) sepia(1) hue-rotate(350deg) saturate(3);
-    opacity: 0.8;
-}
-
-.actionIconOrange:hover {
-    opacity: 1;
+    color: var(--c-warning, #f59e0b);
 }
 
 .actionIconGray {
-    opacity: 0.5;
+    color: var(--text-tertiary);
 }
 
 .actionIconGray:hover {
-    opacity: 0.9;
+    color: var(--c-danger, #ef4444);
 }
-
 
 .moreRules {
     text-align: center;
@@ -225,16 +189,18 @@
     font-size: 0.85rem;
 }
 
-/* Amber Theme Buttons */
+/* Amber Theme Buttons -> Clean Primary Buttons */
 .amberBtn {
-    background: linear-gradient(135deg, #f59e0b, #d97706);
+    background: var(--color-primary, #f59e0b);
     color: white !important;
-    border: none !important;
-    box-shadow: 0 4px 10px rgba(245, 158, 11, 0.3) !important;
-    font-weight: 700 !important;
+    border: 1px solid transparent !important;
+    font-weight: 600 !important;
+    padding: 8px 16px;
+    border-radius: 8px;
+    transition: all 0.2s;
 }
 
 .amberBtn:hover {
-    box-shadow: 0 6px 14px rgba(245, 158, 11, 0.4) !important;
-    transform: translateY(-2px);
+    filter: brightness(0.95);
+    transform: translateY(-1px);
 }
