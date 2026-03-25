@@ -620,6 +620,7 @@
     white-space: normal;
     display: -webkit-box;
     -webkit-line-clamp: 2;
+    line-clamp: 2;
     -webkit-box-orient: vertical;
     line-height: 1.2;
 }
@@ -907,6 +908,8 @@
 
 /* ================================================================
    QUICK DRAWER — estilos internos
+   Nota: el Drawer usa createPortal → renderiza fuera de .page,
+   por eso todos los valores de color son hardcodeados.
    ================================================================ */
 
 /* Header del drawer */
@@ -915,7 +918,7 @@
     align-items: flex-start;
     gap: 12px;
     padding: 20px 20px 16px;
-    border-bottom: 1.5px solid var(--c-line);
+    border-bottom: 1.5px solid #e5e7eb;
 }
 
 .qdAvatar {
@@ -930,8 +933,8 @@
     font-family: var(--font-serif, 'Montserrat'), sans-serif;
     flex-shrink: 0;
     user-select: none;
-    background: var(--c-primary-dim);
-    color: var(--c-primary);
+    background: rgba(0, 60, 204, 0.08);
+    color: #003ccc;
 }
 
 .qdHeaderInfo {
@@ -941,7 +944,7 @@
 
 .qdPosition {
     font-size: 0.78rem;
-    color: var(--c-muted);
+    color: #6b7280;
     font-family: var(--font-body), sans-serif;
     margin: 2px 0 0;
 }
@@ -949,16 +952,16 @@
 .qdEmployeeId {
     font-size: 0.70rem;
     font-family: var(--font-mono, 'Roboto Mono'), monospace;
-    color: var(--c-muted);
+    color: #6b7280;
     margin: 1px 0 0;
 }
 
 /* Tabs */
 .qdTabs {
     display: flex;
-    border-bottom: 1.5px solid var(--c-line);
+    border-bottom: 1.5px solid #e5e7eb;
     padding: 0 16px;
-    background: var(--c-bg);
+    background: #fafaf8;
 }
 
 .qdTab {
@@ -967,21 +970,21 @@
     background: none;
     border: none;
     border-bottom: 2.5px solid transparent;
-    color: var(--c-muted);
+    color: #6b7280;
     font-size: 0.80rem;
     font-weight: 600;
     font-family: var(--font-body), sans-serif;
     cursor: pointer;
-    transition: color var(--t), border-color var(--t);
+    transition: color 0.2s, border-color 0.2s;
     text-transform: capitalize;
     margin-bottom: -1.5px;
 }
 
-.qdTab:hover { color: var(--c-ink); }
+.qdTab:hover { color: #111827; }
 
 .qdTabActive {
-    color: var(--c-primary);
-    border-bottom-color: var(--c-primary);
+    color: #003ccc;
+    border-bottom-color: #003ccc;
 }
 
 /* Body */
@@ -1001,19 +1004,20 @@
     gap: 10px;
     width: 100%;
     padding: 12px 16px;
-    background: var(--c-success-dim);
-    border: 1.5px solid var(--c-success-mid);
-    border-radius: var(--r-lg);
-    color: var(--c-success);
+    background: rgba(22, 163, 74, 0.10);
+    border: 1.5px solid rgba(22, 163, 74, 0.22);
+    border-radius: 16px;
+    color: #16a34a;
     font-size: 0.84rem;
     font-weight: 600;
     font-family: var(--font-body), sans-serif;
     cursor: pointer;
-    transition: all var(--t);
+    transition: background 0.2s, border-color 0.2s, color 0.2s;
 }
 
 .qdWhatsappBtn:hover:not(:disabled) {
-    background: var(--c-success);
+    background: #16a34a;
+    border-color: #16a34a;
     color: #fff;
 }
 
@@ -1027,8 +1031,8 @@
     display: flex;
     flex-direction: column;
     gap: 0;
-    border: 1.5px solid var(--c-line);
-    border-radius: var(--r-lg);
+    border: 1.5px solid #e5e7eb;
+    border-radius: 16px;
     overflow: hidden;
 }
 
@@ -1038,7 +1042,7 @@
     justify-content: space-between;
     gap: 12px;
     padding: 9px 14px;
-    border-bottom: 1px solid var(--c-line);
+    border-bottom: 1px solid #e5e7eb;
 }
 
 .qdInfoItem:last-child { border-bottom: none; }
@@ -1048,14 +1052,14 @@
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.05em;
-    color: var(--c-muted);
+    color: #6b7280;
     font-family: var(--font-body), sans-serif;
     flex-shrink: 0;
 }
 
 .qdInfoValue {
     font-size: 0.82rem;
-    color: var(--c-ink);
+    color: #111827;
     font-family: var(--font-body), sans-serif;
     text-align: right;
     display: inline-flex;
@@ -1068,14 +1072,14 @@
     font-size: 0.78rem;
 }
 
-.qdInfoDanger { color: var(--c-danger); font-weight: 600; }
-.qdInfoWarning { color: var(--c-amber); font-weight: 600; }
+.qdInfoDanger  { color: #ef4444; font-weight: 600; }
+.qdInfoWarning { color: #f59e0b; font-weight: 600; }
 
 /* Progress section */
 .qdProgressSection {
-    background: var(--c-bg);
-    border: 1.5px solid var(--c-line);
-    border-radius: var(--r-lg);
+    background: #fafaf8;
+    border: 1.5px solid #e5e7eb;
+    border-radius: 16px;
     padding: 16px;
     display: flex;
     flex-direction: column;
@@ -1091,7 +1095,7 @@
 .qdProgressLabel {
     font-size: 0.78rem;
     font-weight: 700;
-    color: var(--c-ink);
+    color: #111827;
     font-family: var(--font-body), sans-serif;
 }
 
@@ -1099,31 +1103,31 @@
     font-size: 1.2rem;
     font-weight: 800;
     font-family: var(--font-serif, 'Montserrat'), sans-serif;
-    color: var(--c-primary);
+    color: #003ccc;
     letter-spacing: -0.03em;
 }
 
 .qdProgressBarContainer {
     height: 8px;
-    background: var(--c-line);
-    border-radius: var(--r-full);
+    background: #e5e7eb;
+    border-radius: 9999px;
     overflow: hidden;
 }
 
 .qdProgressFill {
     height: 100%;
-    background: var(--c-primary);
-    border-radius: var(--r-full);
-    transition: width 0.4s var(--ease);
+    background: #003ccc;
+    border-radius: 9999px;
+    transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .qdProgressFill.qdProgressComplete {
-    background: var(--c-success);
+    background: #16a34a;
 }
 
 .qdProgressDetail {
     font-size: 0.78rem;
-    color: var(--c-muted);
+    color: #6b7280;
     font-family: var(--font-body), sans-serif;
     margin: 0;
 }
@@ -1135,21 +1139,21 @@
     justify-content: space-between;
     width: 100%;
     padding: 12px 16px;
-    background: var(--c-surface);
-    border: 1.5px solid var(--c-line-strong);
-    border-radius: var(--r-lg);
-    color: var(--c-ink);
+    background: #ffffff;
+    border: 1.5px solid #d1d5db;
+    border-radius: 16px;
+    color: #111827;
     font-size: 0.84rem;
     font-weight: 600;
     font-family: var(--font-body), sans-serif;
     cursor: pointer;
-    transition: all var(--t);
+    transition: background 0.2s, border-color 0.2s, color 0.2s;
 }
 
 .qdActivityBtn:hover {
-    background: var(--c-primary-dim);
-    border-color: var(--c-primary-mid);
-    color: var(--c-primary);
+    background: rgba(0, 60, 204, 0.08);
+    border-color: rgba(0, 60, 204, 0.18);
+    color: #003ccc;
 }
 
 /* Reopen section */
@@ -1162,14 +1166,14 @@
 .qdReopenLabel {
     font-size: 0.88rem;
     font-weight: 700;
-    color: var(--c-ink);
+    color: #111827;
     font-family: var(--font-body), sans-serif;
     margin: 0;
 }
 
 .qdReopenSub {
     font-size: 0.78rem;
-    color: var(--c-muted);
+    color: #6b7280;
     font-family: var(--font-body), sans-serif;
     margin: 0;
     line-height: 1.4;
@@ -1185,21 +1189,21 @@
     flex: 1;
     min-width: 60px;
     padding: 10px 14px;
-    background: var(--c-primary-dim);
-    border: 1.5px solid var(--c-primary-mid);
-    border-radius: var(--r-md);
-    color: var(--c-primary);
+    background: rgba(0, 60, 204, 0.08);
+    border: 1.5px solid rgba(0, 60, 204, 0.18);
+    border-radius: 12px;
+    color: #003ccc;
     font-size: 0.88rem;
     font-weight: 700;
     font-family: var(--font-body), sans-serif;
     cursor: pointer;
-    transition: all var(--t);
+    transition: background 0.2s, border-color 0.2s, color 0.2s;
 }
 
 .qdReopenBtn:hover {
-    background: var(--c-primary);
+    background: #003ccc;
     color: #fff;
-    border-color: var(--c-primary);
+    border-color: #003ccc;
 }
 
 /* ================================================================
