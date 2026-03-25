@@ -1,32 +1,13 @@
 /* ================================================================
-   ADMIN LAYOUT
+   ADMIN LAYOUT — ME3 Editorial White
    ================================================================ */
 
 .layoutPage {
     min-height: 100dvh;
-    background: var(--bg-primary);
+    background: #f9fafb;
     position: relative;
     display: flex;
     flex-direction: column;
-
-    /* Sidebar tokens inject */
-    --sb-bg: transparent;
-    --sb-border: rgba(245, 158, 11, 0.08);
-    --sb-text: var(--text-primary);
-    --sb-text-muted: var(--text-secondary);
-    --sb-hover-bg: rgba(245, 158, 11, 0.06);
-    --sb-hover-text: var(--text-primary);
-    --sb-active-bg: var(--color-primary);
-    --sb-active-text: #fff;
-    --sb-overlay-bg: rgba(0, 0, 0, 0.4);
-    --sb-shadow: rgba(0, 0, 0, 0.12);
-
-}
-
-[data-theme="dark"] .layoutPage {
-    --sb-bg: transparent;
-    --sb-border: rgba(245, 158, 11, 0.08);
-    --sb-hover-bg: rgba(245, 158, 11, 0.10);
 }
 
 @media (min-width: 768px) {
@@ -35,66 +16,54 @@
     }
 }
 
+/* ── Contenedor principal ── */
 .scrollContent {
     flex: 1;
-    position: relative;
-    z-index: 10;
+    min-width: 0;
     min-height: 100vh;
-    padding: 0 clamp(1rem, 4vw, 2rem) 8rem; /* Quitamos padding top para manejarlo en el header */
-    min-width: 0; /* Crucial para evitar que contenido ancho force el ancho flex */
+    display: flex;
+    flex-direction: column;
     overflow-x: hidden;
 }
 
-@media (max-width: 767px) {
-    .scrollContent {
-        padding-top: 1.5rem; /* Separación del nuevo header estilo shadcn */
-    }
-}
-
+/* ── Loading state ── */
 .loading {
     display: flex;
     align-items: center;
     justify-content: center;
     min-height: 100dvh;
-    color: var(--text-secondary);
-    animation: shimmer 1.8s ease infinite;
+    color: #6b7280;
+    font-family: var(--font-body, 'Roboto'), sans-serif;
+    font-size: 0.88rem;
+    animation: pulse 1.8s ease infinite;
 }
 
-@keyframes shimmer {
-    0% {
-        opacity: 0.4;
-    }
-
-    50% {
-        opacity: 1;
-    }
-
-    100% {
-        opacity: 0.4;
-    }
+@keyframes pulse {
+    0%, 100% { opacity: 0.4; }
+    50%       { opacity: 1; }
 }
 
 /* ================================================================
-   HEADER DESKTOP — Barra de contexto (visible solo en ≥768px)
+   HEADER DESKTOP (≥ 768px)
    ================================================================ */
-
 .desktopHeader {
-    display: none; /* oculto en móvil — CandidateMobileHeader toma el control */
+    display: none;
 }
 
 @media (min-width: 768px) {
     .desktopHeader {
-        height: 64px; /* Igual que .brand en MainSidebar */
         display: flex;
         align-items: center;
-        gap: 1rem;
+        height: 52px;
+        padding: 0 clamp(1rem, 3vw, 2rem);
+        gap: 12px;
         flex-shrink: 0;
-        margin-bottom: 1.5rem;
-        border-bottom: 1px solid var(--border-color);
-        margin-left: calc(-1 * clamp(1rem, 4vw, 2rem));
-        margin-right: calc(-1 * clamp(1rem, 4vw, 2rem));
-        padding-left: clamp(1rem, 4vw, 2rem);
-        padding-right: clamp(1rem, 4vw, 2rem);
+        background: #ffffff;
+        border-bottom: 1.5px solid #e5e7eb;
+        box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
+        position: sticky;
+        top: 0;
+        z-index: 50;
     }
 }
 
@@ -102,63 +71,71 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 30px;
-    height: 30px;
+    width: 32px;
+    height: 32px;
     background: transparent;
     border: none;
-    border-radius: var(--radius-sm);
-    color: var(--text-tertiary);
+    border-radius: 8px;
+    color: #6b7280;
     cursor: pointer;
     flex-shrink: 0;
-    transition: color 0.15s, background 0.15s;
+    transition: background 0.15s, color 0.15s;
     padding: 0;
 }
 
 .sidebarToggle:hover {
-    color: var(--text-primary);
-    background: var(--bg-tertiary);
+    background: rgba(0, 60, 204, 0.07);
+    color: #003ccc;
 }
 
 .sidebarToggle:focus-visible {
-    outline: 2px solid var(--color-primary);
+    outline: 2px solid #003ccc;
     outline-offset: 2px;
 }
 
 .headerDivider {
-    width: 1px;
-    height: 16px;
-    background: var(--border-color);
+    width: 1.5px;
+    height: 18px;
+    background: #e5e7eb;
     flex-shrink: 0;
 }
 
 .pageTitle {
-    font-size: 0.875rem; /* Ajustado al diseño de referencia */
+    font-size: 0.72rem;
     font-weight: 700;
-    letter-spacing: 0.04em;
-    color: var(--text-secondary);
-    font-family: var(--font-body);
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+    color: #6b7280;
+    font-family: var(--font-body, 'Roboto'), sans-serif;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    margin-top: 1px; /* Alineación óptica */
+}
+
+/* ── Content area padding ── */
+.pageContent {
+    padding: clamp(1rem, 3vw, 2rem);
+    padding-bottom: 4rem;
+    flex: 1;
+}
+
+@media (max-width: 767px) {
+    .pageContent {
+        padding: 0.75rem 1rem 4rem;
+    }
 }
 
 /* ================================================================
-   IMPRESIÓN — Ocultar sidebar, header móvil y limpiar layout
+   PRINT
    ================================================================ */
 @media print {
-    .layoutPage {
-        display: block;
-    }
+    .layoutPage { display: block; }
 
-    .scrollContent {
+    .scrollContent > :not(.desktopHeader) {
         padding: 0;
-        min-height: unset;
     }
 
-    .desktopHeader {
-        display: none;
-    }
+    .desktopHeader { display: none !important; }
 
     .layoutPage :global(nav),
     .layoutPage :global(aside),

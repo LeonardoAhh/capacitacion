@@ -1,33 +1,76 @@
-/* Mobile Header - Candidatos */
+/* ================================================================
+   MOBILE HEADER — ME3 Editorial White
+   Visible solo en < 768px, cohesivo con el desktop header
+   ================================================================ */
+
 .header {
     display: none;
 }
 
-/* Ocultar al imprimir */
-@media print {
+@media (max-width: 767px) {
     .header {
-        display: none !important;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        height: 52px;
+        padding: 0 16px;
+        background: #ffffff;
+        border-bottom: 1.5px solid #e5e7eb;
+        box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
+        position: sticky;
+        top: 0;
+        left: 0;
+        right: 0;
+        z-index: 50;
+        flex-shrink: 0;
     }
 }
 
-/* Solo revelar en mobile */
-@media (max-width: 767px) {
-    .header {
-        display: flex !important;
-        position: sticky !important;
-        top: 0 !important;
-        left: 0 !important;
-        right: 0 !important;
-        z-index: 40 !important;
-        align-items: center !important;
-        justify-content: flex-start !important;
-        width: 100% !important;
-        height: 56px !important;
-        margin: 0 !important;
-        padding: 0 16px !important;
-        background: #ffffff !important;
-        border-bottom: 1px solid #e5e7eb !important;
-        border-radius: 0 !important;
-        box-shadow: none !important;
-    }
+.menuBtn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    background: transparent;
+    border: none;
+    border-radius: 8px;
+    color: #6b7280;
+    cursor: pointer;
+    padding: 0;
+    flex-shrink: 0;
+    transition: background 0.15s, color 0.15s;
+}
+
+.menuBtn:hover {
+    background: rgba(0, 60, 204, 0.07);
+    color: #003ccc;
+}
+
+.menuBtn:focus-visible {
+    outline: 2px solid #003ccc;
+    outline-offset: 2px;
+}
+
+.divider {
+    width: 1.5px;
+    height: 18px;
+    background: #e5e7eb;
+    flex-shrink: 0;
+}
+
+.title {
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+    color: #6b7280;
+    font-family: var(--font-body, 'Roboto'), sans-serif;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+@media print {
+    .header { display: none !important; }
 }

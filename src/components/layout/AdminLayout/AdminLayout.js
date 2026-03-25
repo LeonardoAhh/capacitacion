@@ -76,7 +76,9 @@ export default function AdminLayout({ children, title = 'Viñoplastic RH' }) {
                     <span className={styles.pageTitle}>{title.toUpperCase()}</span>
                 </header>
 
-                {children}
+                <div className={styles.pageContent}>
+                    {children}
+                </div>
             </div>
         </div>
     );

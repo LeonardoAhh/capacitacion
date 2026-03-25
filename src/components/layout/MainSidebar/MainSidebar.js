@@ -117,6 +117,7 @@ export default function MainSidebar({ user, handleLogout, isOpen, onClose, isCol
                 {/* ── Brand ── */}
                 <div className={styles.brand}>
                     <div className={styles.brandLogo}>
+                        <span className={styles.brandAccent} aria-hidden="true" />
                         <span className={styles.brandName}>VIÑOPLASTIC</span>
                     </div>
                     <button className={styles.closeBtn} onClick={onClose} aria-label="Cerrar menú" type="button">
