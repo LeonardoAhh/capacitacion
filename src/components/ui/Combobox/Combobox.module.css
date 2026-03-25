@@ -30,8 +30,8 @@
     align-items: center;
     justify-content: space-between;
     width: 100%;
-    padding: var(--spacing-sm) var(--spacing-md);
-    min-height: 42px;
+    height: 42px;
+    padding: 0 var(--spacing-md);
     background-color: var(--bg-primary);
     border: 2px solid var(--border-color);
     border-radius: var(--radius-md);

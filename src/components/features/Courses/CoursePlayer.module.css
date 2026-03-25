@@ -1,7 +1,8 @@
-/* ==========================================
-   COURSE PLAYER — PREMIUM PRESENTATION UI
-   CSS Puro • Multi-tema • PWA • Accesible
-   ========================================== */
+/* ================================================================
+   COURSE PLAYER — CoursePlayer.module.css
+   Material Expressive 3 · Cohesivo con /contratos
+   CSS Puro • Light Mode • PWA • Accesible
+   ================================================================ */
 
 /* ── Overlay ── */
 .overlay {
@@ -13,7 +14,6 @@
     overflow: hidden;
     background: var(--course-overlay-bg);
     color: var(--course-slide-text);
-    transition: background var(--course-transition-slow);
 }
 
 .inlineMode {
@@ -25,34 +25,38 @@
     border-radius: inherit;
 }
 
-/* Header y nav más compactos en el preview del editor */
-.inlineMode .header {
-    padding: 8px 14px;
-}
+.inlineMode .header { padding: 7px 14px; }
+.inlineMode .nav    { padding: 7px 14px; }
 
-.inlineMode .nav {
-    padding: 8px 14px;
-}
-
-/* ── Header ── */
+/* ================================================================
+   HEADER
+   ================================================================ */
 .header {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: var(--course-spacing-sm) var(--course-spacing-md);
-    padding-top: max(var(--course-spacing-sm), env(safe-area-inset-top));
+    padding: 10px var(--course-spacing-md);
+    padding-top: max(10px, env(safe-area-inset-top));
     background: var(--course-header-bg);
-    border-bottom: 1px solid var(--course-header-border);
+    border-bottom: 1.5px solid var(--course-header-border);
     z-index: var(--z-course-header);
     flex-shrink: 0;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.06), 0 2px 8px rgba(0,0,0,0.03);
+}
+
+.headerLeft {
+    display: flex;
+    align-items: center;
+    gap: 8px;
 }
 
 .exitBtn {
-    display: flex;
+    display: inline-flex;
     align-items: center;
-    gap: var(--course-spacing-xs);
+    gap: 6px;
+    padding: 7px 14px;
     border-radius: var(--course-radius-md);
-    border: 1px solid var(--course-btn-border);
+    border: 1.5px solid var(--course-btn-border);
     background: var(--course-btn-bg);
     color: var(--course-btn-text);
     font-size: var(--course-font-sm);
@@ -61,16 +65,41 @@
     cursor: pointer;
     transition: all var(--course-transition-fast);
     white-space: nowrap;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.06);
 }
 
 .exitBtn:hover {
     background: var(--course-btn-hover-bg);
-    border-color: var(--course-accent);
+    border-color: var(--course-accent-mid, rgba(0,60,204,0.18));
+    color: var(--course-accent);
 }
 
 .exitBtn:focus-visible {
     outline: 2px solid var(--course-accent);
     outline-offset: 2px;
+}
+
+/* ── Botón icónico (TOC, fullscreen) ── */
+.iconBtn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 34px;
+    height: 34px;
+    border-radius: var(--course-radius-sm);
+    border: 1.5px solid var(--course-btn-border);
+    background: var(--course-btn-bg);
+    color: var(--course-btn-text);
+    cursor: pointer;
+    transition: all var(--course-transition-fast);
+    flex-shrink: 0;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+}
+
+.iconBtn:hover {
+    background: var(--course-btn-hover-bg);
+    border-color: var(--course-accent-mid, rgba(0,60,204,0.18));
+    color: var(--course-accent);
 }
 
 .headerTitle {
@@ -83,6 +112,7 @@
     white-space: nowrap;
     max-width: 40%;
     text-align: center;
+    letter-spacing: -0.01em;
 }
 
 .headerRight {
@@ -94,10 +124,14 @@
 .counter {
     font-size: var(--course-font-sm);
     font-family: var(--font-mono), monospace;
-    font-weight: 600;
+    font-weight: 700;
     color: var(--course-slide-text-muted);
     font-variant-numeric: tabular-nums;
     white-space: nowrap;
+    background: rgba(0,60,204,0.06);
+    padding: 3px 8px;
+    border-radius: var(--course-radius-full);
+    border: 1.5px solid rgba(0,60,204,0.12);
 }
 
 /* ── Badge de tipo de slide ── */
@@ -105,19 +139,88 @@
     display: inline-flex;
     align-items: center;
     gap: 4px;
-    padding: 2px 8px;
-    border-radius: 20px;
-    font-size: 0.68rem;
+    padding: 3px 10px;
+    border-radius: var(--course-radius-full);
+    font-size: 0.65rem;
     font-weight: 700;
+    font-family: var(--font-body), sans-serif;
     white-space: nowrap;
-    background: color-mix(in srgb, var(--course-accent) 12%, transparent);
+    background: var(--course-accent-dim, rgba(0,60,204,0.08));
     color: var(--course-accent);
-    border: 1px solid color-mix(in srgb, var(--course-accent) 25%, transparent);
+    border: 1.5px solid var(--course-accent-mid, rgba(0,60,204,0.18));
     text-transform: uppercase;
-    letter-spacing: 0.03em;
-    transition: background var(--course-transition-fast), color var(--course-transition-fast);
+    letter-spacing: 0.06em;
 }
 
+/* ── Tiempo de Lectura ── */
+.readingTime {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 0.72rem;
+    font-weight: 600;
+    color: var(--course-slide-text-muted);
+    white-space: nowrap;
+    font-family: var(--font-body), sans-serif;
+}
+
+/* ================================================================
+   BARRA DE PROGRESO
+   ================================================================ */
+/* Segmentada (≤12 slides) */
+.segmentedBar {
+    display: flex;
+    gap: 3px;
+    padding: 6px 16px;
+    background: var(--course-header-bg);
+    border-bottom: 1.5px solid var(--course-header-border);
+    flex-shrink: 0;
+    flex-wrap: nowrap;
+    overflow: hidden;
+}
+
+.segment {
+    flex: 1;
+    height: 4px;
+    border-radius: 2px;
+    border: none;
+    padding: 0;
+    background: var(--course-progress-bg);
+    cursor: pointer;
+    transition: background var(--course-transition-base), transform var(--course-transition-fast);
+    min-width: 8px;
+}
+
+.segment:hover {
+    transform: scaleY(1.8);
+    background: rgba(0, 60, 204, 0.35);
+}
+
+.segmentVisited {
+    background: rgba(0, 60, 204, 0.35);
+}
+
+.segmentActive {
+    background: var(--course-progress-fill) !important;
+}
+
+/* Lineal (>12 slides) */
+.linearBar {
+    height: 3px;
+    width: 100%;
+    background: var(--course-progress-bg);
+    flex-shrink: 0;
+    overflow: hidden;
+}
+
+.linearBarFill {
+    height: 100%;
+    background: var(--course-progress-fill);
+    border-radius: 0 2px 2px 0;
+    transition: width var(--course-duration-slow) var(--course-ease-in-out);
+}
+
+/* (Mantenida para compat — ya no se usa si segmentedBar toma el relevo) */
 .progressTrack {
     width: 80px;
     height: 4px;
@@ -133,7 +236,9 @@
     transition: width var(--course-duration-slow) var(--course-ease-in-out);
 }
 
-/* ── Content ── */
+/* ================================================================
+   CONTENT
+   ================================================================ */
 .content {
     flex: 1;
     overflow-y: auto;
@@ -141,8 +246,13 @@
     position: relative;
     display: flex;
     flex-direction: column;
-    /* transition: opacity var(--course-transition-fast); */
     -webkit-overflow-scrolling: touch;
+    background: var(--course-content-bg);
+}
+
+.content:not(.contentSplit) > * {
+    margin: auto;
+    width: 100%;
 }
 
 .contentSplit {
@@ -177,7 +287,7 @@
     width: 50%;
     height: 100%;
     position: relative;
-    border-left: 1px solid var(--course-border);
+    border-left: 1.5px solid var(--course-header-border);
     flex-shrink: 0;
 }
 
@@ -200,35 +310,48 @@
     padding: var(--course-spacing-md);
     background: var(--course-content-bg);
     scroll-behavior: smooth;
+    /* animación de transición */
+    animation-fill-mode: both;
+    animation-duration: 0.28s;
+    animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* El hijo directo usa margin:auto para centrarse cuando hay espacio,
-   pero se alinea al inicio cuando el contenido excede la altura. */
-.content:not(.contentSplit)>* {
-    margin: auto;
-    width: 100%;
+.slideEnterForward  { animation-name: slideInRight; }
+.slideEnterBackward { animation-name: slideInLeft; }
+
+@keyframes slideInRight {
+    from { opacity: 0; transform: translateX(32px); }
+    to   { opacity: 1; transform: translateX(0); }
 }
 
-/* ── Navigation ── */
+@keyframes slideInLeft {
+    from { opacity: 0; transform: translateX(-32px); }
+    to   { opacity: 1; transform: translateX(0); }
+}
+
+/* ================================================================
+   NAVIGATION
+   ================================================================ */
 .nav {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: var(--course-spacing-sm) var(--course-spacing-md);
-    padding-bottom: max(var(--course-spacing-sm), env(safe-area-inset-bottom));
+    padding: 10px var(--course-spacing-md);
+    padding-bottom: max(10px, env(safe-area-inset-bottom));
     background: var(--course-nav-bg);
-    border-top: 1px solid var(--course-nav-border);
+    border-top: 1.5px solid var(--course-nav-border);
     flex-shrink: 0;
     gap: var(--course-spacing-sm);
+    box-shadow: 0 -1px 4px rgba(0,0,0,0.04);
 }
 
 .navBtn {
-    display: flex;
+    display: inline-flex;
     align-items: center;
-    gap: var(--course-spacing-xs);
-    padding: var(--course-spacing-sm) var(--course-spacing-md);
+    gap: 6px;
+    padding: 8px 18px;
     border-radius: var(--course-radius-md);
-    border: 1px solid var(--course-btn-border);
+    border: 1.5px solid var(--course-btn-border);
     background: var(--course-btn-bg);
     color: var(--course-btn-text);
     font-weight: 600;
@@ -237,16 +360,17 @@
     cursor: pointer;
     transition: all var(--course-transition-fast);
     white-space: nowrap;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.06);
 }
 
 .navBtn:hover:not(:disabled) {
     background: var(--course-btn-hover-bg);
-    border-color: var(--course-accent);
+    border-color: var(--course-accent-mid, rgba(0,60,204,0.18));
+    color: var(--course-accent);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
 }
 
-.navBtn:active:not(:disabled) {
-    transform: scale(0.97);
-}
+.navBtn:active:not(:disabled) { transform: scale(0.97); }
 
 .navBtn:disabled {
     opacity: 0.35;
@@ -262,15 +386,19 @@
     background: var(--course-btn-primary-bg);
     border-color: var(--course-btn-primary-bg);
     color: var(--course-btn-primary-text);
+    box-shadow: 0 2px 12px rgba(0,60,204,0.22);
 }
 
 .navBtnPrimary:hover:not(:disabled) {
-    filter: brightness(1.1);
+    filter: brightness(1.08);
     background: var(--course-btn-primary-bg);
     border-color: var(--course-btn-primary-bg);
+    color: var(--course-btn-primary-text);
+    box-shadow: 0 4px 20px rgba(0,60,204,0.28);
+    transform: translateY(-1px);
 }
 
-/* ── Dots Navigation ── */
+/* ── Dots ── */
 .dots {
     display: flex;
     align-items: center;
@@ -300,9 +428,7 @@
     outline-offset: 2px;
 }
 
-.dotVisited {
-    background: var(--course-dot-visited);
-}
+.dotVisited { background: var(--course-dot-visited); }
 
 .dotActive {
     width: 24px;
@@ -310,60 +436,31 @@
     background: var(--course-dot-active);
 }
 
-/* ── Barra segmentada de progreso (≤12 slides) ── */
-.segmentedBar {
-    display: flex;
-    gap: 3px;
-    padding: 0 var(--course-spacing-md);
-    height: 6px;
-    flex-shrink: 0;
-    background: var(--course-content-bg, var(--bg-primary));
+/* ================================================================
+   VARIOS
+   ================================================================ */
+
+/* Banner Sin Conexión */
+.offlineBanner {
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    z-index: 300;
+    background: rgba(239, 68, 68, 0.92);
+    color: #fff;
+    font-size: 0.75rem;
+    font-weight: 700;
+    font-family: var(--font-body), sans-serif;
+    text-align: center;
+    padding: 7px 16px;
+    animation: slideDown 0.25s ease;
 }
 
-.segment {
-    flex: 1;
-    height: 100%;
-    border-radius: 3px;
-    border: none;
-    padding: 0;
-    background: var(--course-progress-bg);
-    cursor: pointer;
-    min-width: 10px;
-    transition: background var(--course-transition-base), transform var(--course-transition-fast);
+@keyframes slideDown {
+    from { transform: translateY(-100%); }
+    to   { transform: translateY(0); }
 }
 
-.segment:hover {
-    background: var(--course-dot-visited);
-    transform: scaleY(1.5);
-}
-
-.segmentVisited {
-    background: var(--course-dot-visited);
-}
-
-.segmentActive {
-    background: var(--course-progress-fill);
-}
-
-/* ── Barra de progreso lineal (>12 slides) ── */
-.linearBar {
-    height: 4px;
-    width: 100%;
-    background: var(--course-progress-bg);
-    flex-shrink: 0;
-    overflow: hidden;
-}
-
-.linearBarFill {
-    height: 100%;
-    background: var(--course-progress-fill);
-    border-radius: 0 2px 2px 0;
-    transition: width var(--course-duration-slow) var(--course-ease-in-out);
-}
-
-
-
-/* ── Empty State ── */
+/* Empty State */
 .emptyMsg {
     display: flex;
     align-items: center;
@@ -371,247 +468,64 @@
     height: 100%;
     color: var(--course-slide-text-muted);
     font-size: var(--course-font-base);
+    font-family: var(--font-body), sans-serif;
 }
 
-/* ==========================================
-   NUEVAS CLASES — MEJORAS PREMIUM VISOR
-   ========================================== */
+/* Fullscreen */
+.fullscreen { border-radius: 0 !important; }
 
-/* ── Banner Sin Conexión ── */
-.offlineBanner {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    z-index: 300;
-    background: rgba(239, 68, 68, 0.9);
-    backdrop-filter: blur(4px);
-    color: #fff;
-    font-size: 0.75rem;
-    font-weight: 600;
-    text-align: center;
-    padding: 7px 16px;
-    animation: slideDown 0.3s ease;
-}
-
-@keyframes slideDown {
-    from {
-        transform: translateY(-100%);
-    }
-
-    to {
-        transform: translateY(0);
-    }
-}
-
-/* ── Header izquierda ── */
-.headerLeft {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-}
-
-/* ── Botón icónico (TOC, fullscreen) ── */
-.iconBtn {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 32px;
-    height: 32px;
-    border-radius: 8px;
-    border: 1px solid var(--course-btn-border);
-    background: var(--course-btn-bg);
-    color: var(--course-btn-text);
-    cursor: pointer;
-    transition: all var(--course-transition-fast);
-    flex-shrink: 0;
-}
-
-.iconBtn:hover {
-    background: var(--course-btn-hover-bg);
-    border-color: var(--course-accent);
-    color: var(--course-accent);
-}
-
-/* ── Tiempo de Lectura ── */
-.readingTime {
-    display: flex;
-    align-items: center;
-    gap: 4px;
-    font-size: 0.72rem;
-    font-weight: 600;
-    color: var(--course-slide-text-muted);
-    white-space: nowrap;
-}
-
-/* ── Barra de Progreso Segmentada ── */
-.segmentedBar {
-    display: flex;
-    gap: 3px;
-    padding: 6px 16px;
-    background: var(--course-header-bg);
-    border-bottom: 1px solid var(--course-header-border);
-    flex-shrink: 0;
-    flex-wrap: nowrap;
-    overflow: hidden;
-}
-
-.segment {
-    flex: 1;
-    height: 4px;
-    border-radius: 2px;
-    border: none;
-    background: var(--course-progress-bg);
-    cursor: pointer;
-    transition: background 0.3s ease, transform 0.15s ease;
-    padding: 0;
-    min-width: 8px;
-}
-
-.segment:hover {
-    transform: scaleY(1.5);
-    background: var(--course-dot-visited);
-}
-
-.segmentVisited {
-    background: rgba(var(--course-accent-rgb, 232, 116, 42), 0.45);
-}
-
-.segmentActive {
-    background: var(--course-accent, #e8742a) !important;
-}
-
-/* ── Slide Wrapper con animación de transición ── */
-.slideWrapper {
-    animation-fill-mode: both;
-    animation-duration: 0.3s;
-    animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.slideEnterForward {
-    animation-name: slideInRight;
-}
-
-.slideEnterBackward {
-    animation-name: slideInLeft;
-}
-
-@keyframes slideInRight {
-    from {
-        opacity: 0;
-        transform: translateX(40px);
-    }
-
-    to {
-        opacity: 1;
-        transform: translateX(0);
-    }
-}
-
-@keyframes slideInLeft {
-    from {
-        opacity: 0;
-        transform: translateX(-40px);
-    }
-
-    to {
-        opacity: 1;
-        transform: translateX(0);
-    }
-}
-
-/* ── Fullscreen ── */
-.fullscreen {
-    border-radius: 0 !important;
-}
-
-@media (prefers-reduced-motion: reduce) {
-
-    .slideWrapper,
-    .offlineBanner {
-        animation: none;
-        transition: none;
-    }
-}
-
-/* ==========================================
+/* ================================================================
    RESPONSIVE — TABLET
-   ========================================== */
+   ================================================================ */
 @media (max-width: 1024px) {
-    .headerTitle {
-        font-size: var(--course-font-sm);
-        max-width: 35%;
-    }
-
-    .progressTrack {
-        width: 60px;
-    }
+    .headerTitle { max-width: 35%; }
+    .progressTrack { width: 60px; }
 }
 
-/* ==========================================
+/* ================================================================
    RESPONSIVE — MOBILE
-   ========================================== */
+   ================================================================ */
 @media (max-width: 767px) {
     .header {
-        padding: var(--course-spacing-xs) var(--course-spacing-sm);
-        padding-top: max(var(--course-spacing-xs), env(safe-area-inset-top));
+        padding: 8px 12px;
+        padding-top: max(8px, env(safe-area-inset-top));
     }
 
     .exitBtn {
-        padding: var(--course-spacing-xs) var(--course-spacing-sm);
+        padding: 6px 12px;
         font-size: var(--course-font-xs);
     }
 
-    .headerTitle {
-        font-size: var(--course-font-xs);
-        max-width: 30%;
-    }
+    /* Ocultar en móvil: título, tiempo de lectura y badge de tipo */
+    .headerTitle { display: none; }
+    .readingTime  { display: none; }
+    .slideBadge   { display: none; }
 
-    .progressTrack {
-        width: 50px;
-    }
-
-    .content {
-        padding: var(--course-spacing-xs);
-    }
-
-    .content>* {
-        margin: auto;
-    }
+    .progressTrack { width: 50px; }
 
     .nav {
-        padding: var(--course-spacing-xs) var(--course-spacing-sm);
-        padding-bottom: max(var(--course-spacing-xs), env(safe-area-inset-bottom));
+        padding: 8px 12px;
+        padding-bottom: max(8px, env(safe-area-inset-bottom));
     }
 
     .navBtn {
-        padding: var(--course-spacing-xs) var(--course-spacing-sm);
+        padding: 7px 14px;
         font-size: var(--course-font-xs);
     }
 
-    .dots {
-        gap: 4px;
-    }
+    .dots { gap: 4px; }
 
-    .dot {
-        width: 6px;
-        height: 6px;
-    }
+    .dot { width: 6px; height: 6px; }
 
-    .dotActive {
-        width: 18px;
-    }
+    .dotActive { width: 18px; }
 
-    /* Romper Split Layout en móvil */
-    .contentSplit {
-        flex-direction: column !important;
-    }
+    .contentSplit { flex-direction: column !important; }
 
     .mediaSplit {
         width: 100% !important;
         height: 40vh !important;
-        border-right: none !important;
-        border-bottom: 1px solid var(--course-border);
+        border-left: none !important;
+        border-bottom: 1.5px solid var(--course-header-border);
     }
 
     .slideWrapperSplit {
@@ -620,60 +534,29 @@
     }
 }
 
-/* ==========================================
+/* ================================================================
    RESPONSIVE — SMALL PHONES
-   ========================================== */
+   ================================================================ */
 @media (max-width: 379px) {
-    .exitBtn span {
-        display: none;
-    }
-
-    .headerTitle {
-        max-width: 40%;
-    }
-
-    .navBtn span {
-        display: none;
-    }
-
-    .navBtn {
-        padding: var(--course-spacing-xs);
-    }
+    .exitBtn span { display: none; }
+    .headerTitle  { max-width: 40%; }
+    .navBtn span  { display: none; }
+    .navBtn       { padding: 7px 10px; }
 }
 
-/* ==========================================
-   ACCESSIBILITY — REDUCED MOTION
-   ========================================== */
+/* ================================================================
+   ACCESSIBILITY
+   ================================================================ */
 @media (prefers-reduced-motion: reduce) {
+    .slideWrapper,
+    .offlineBanner { animation: none; transition: none; }
 
-    .overlay,
-    .exitBtn,
-    .navBtn,
-    .dot,
-    .progressFill {
-        transition: none;
-    }
-
-    .navBtn:active:not(:disabled) {
-        transform: none;
-    }
-
-    .dot:hover {
-        transform: none;
-    }
+    .overlay, .exitBtn, .navBtn, .dot, .progressFill { transition: none; }
+    .navBtn:active:not(:disabled) { transform: none; }
+    .dot:hover { transform: none; }
 }
 
-/* ==========================================
-   ACCESSIBILITY — HIGH CONTRAST
-   ========================================== */
 @media (prefers-contrast: high) {
-
-    .exitBtn,
-    .navBtn {
-        border-width: 2px;
-    }
-
-    .progressTrack {
-        border: 1px solid currentColor;
-    }
+    .exitBtn, .navBtn { border-width: 2px; }
+    .progressTrack    { border: 1px solid currentColor; }
 }

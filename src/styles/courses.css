@@ -1,6 +1,7 @@
 /* ==========================================
    COURSES — UNIFIED DESIGN SYSTEM
-   CSS Puro • Multi-tema • PWA Ready
+   Alineado con /contratos (Material Expressive 3)
+   CSS Puro • Light Mode • PWA Ready
    ========================================== */
 
 /* ── Z-Index Scale ── */
@@ -12,89 +13,96 @@
     --z-course-content: 1;
 }
 
-/* ── Course Color Tokens ── */
+/* ── Course Color Tokens (Contratos Design System) ── */
 :root {
-    --course-accent: var(--color-primary);
-    --course-accent-hover: color-mix(in srgb, var(--color-primary) 85%, white);
-    --course-label-color: var(--course-accent);
-    /* Por defecto igual al acento */
+    --course-accent:        #003ccc;
+    --course-accent-rgb:    0, 60, 204;
+    --course-accent-dim:    rgba(0, 60, 204, 0.08);
+    --course-accent-mid:    rgba(0, 60, 204, 0.18);
+    --course-accent-hover:  #0030aa;
+    --course-label-color:   #003ccc;
 
-    --course-header-bg: var(--bg-secondary);
-    --course-header-border: var(--border-color);
-    --course-header-text: var(--text-primary);
+    --course-header-bg:     #ffffff;
+    --course-header-border: color-mix(in srgb, #111827 12%, transparent);
+    --course-header-text:   #111827;
 
-    --course-nav-bg: var(--bg-secondary);
-    --course-nav-border: var(--border-color);
+    --course-nav-bg:        #ffffff;
+    --course-nav-border:    color-mix(in srgb, #111827 12%, transparent);
 
-    --course-slide-bg: var(--bg-primary);
-    --course-slide-text: var(--text-primary);
-    --course-slide-text-secondary: var(--text-secondary);
-    --course-slide-text-muted: var(--text-tertiary);
+    --course-slide-bg:            #ffffff;
+    --course-slide-text:          #111827;
+    --course-slide-text-secondary:#6b7280;
+    --course-slide-text-muted:    #9ca3af;
 
-    --course-overlay-bg: var(--bg-primary);
-    --course-content-bg: var(--bg-secondary);
+    --course-overlay-bg:    #fafaf8;
+    --course-content-bg:    #fafaf8;
 
-    --course-card-bg: var(--card-background);
-    --course-card-border: var(--card-border);
-    --course-card-hover-border: var(--color-primary);
+    --course-card-bg:       #ffffff;
+    --course-card-border:   color-mix(in srgb, #111827 12%, transparent);
+    --course-card-hover-border: rgba(0, 60, 204, 0.30);
 
-    --course-btn-bg: var(--bg-tertiary);
-    --course-btn-border: var(--border-color);
-    --course-btn-text: var(--text-primary);
-    --course-btn-hover-bg: var(--bg-secondary);
+    --course-btn-bg:        #ffffff;
+    --course-btn-border:    color-mix(in srgb, #111827 14%, transparent);
+    --course-btn-text:      #111827;
+    --course-btn-hover-bg:  rgba(0, 60, 204, 0.06);
 
-    --course-btn-primary-bg: var(--color-primary);
+    --course-btn-primary-bg:   #003ccc;
     --course-btn-primary-text: #ffffff;
 
-    --course-success: var(--color-success);
-    --course-danger: var(--color-danger);
-    --course-warning: var(--color-warning);
+    --course-success:  #16a34a;
+    --course-danger:   #ef4444;
+    --course-warning:  #f59e0b;
+    --course-info:     #0ea5e9;
 
-    --course-dot-bg: var(--border-color);
-    --course-dot-active: var(--color-primary);
-    --course-dot-visited: var(--text-tertiary);
+    --course-dot-bg:       color-mix(in srgb, #111827 14%, transparent);
+    --course-dot-active:   #003ccc;
+    --course-dot-visited:  rgba(0, 60, 204, 0.45);
 
-    --course-progress-bg: var(--border-color);
-    --course-progress-fill: var(--color-primary);
+    --course-progress-bg:   color-mix(in srgb, #111827 10%, transparent);
+    --course-progress-fill: #003ccc;
+
+    /* Shadows (Contratos) */
+    --course-sh-card:  0 1px 4px rgba(0,0,0,0.06), 0 2px 12px rgba(0,0,0,0.04);
+    --course-sh-lift:  0 4px 20px rgba(0,0,0,0.10), 0 1px 6px rgba(0,0,0,0.06);
+    --course-sh-float: 0 8px 32px rgba(0,0,0,0.14), 0 1px 8px rgba(0,0,0,0.06);
 }
 
-/* Dark Theme Overrides (Liquid Glass) */
-[data-theme="dark"] {
-    /* Nav & Headers Base (Navy Semi-translúcido) */
-    --course-header-bg: rgba(6, 6, 18, 0.65);
-    --course-nav-bg: rgba(6, 6, 18, 0.65);
-
-    /* Overall Background con GlassMorphism */
-    --course-slide-bg: transparent;
-    --course-overlay-bg: rgba(10, 15, 46, 0.92);
-    /* Base Marina Translúcida */
-    --course-content-bg: transparent;
-
-    /* Componentes interactivos */
-    --course-btn-bg: rgba(77, 128, 255, 0.08);
-    /* Suave azul de fondo */
-    --course-btn-hover-bg: rgba(77, 128, 255, 0.15);
-    --course-btn-border: rgba(77, 128, 255, 0.25);
-    /* Bordes sutiles azules */
-
-    /* Textos acentuados pequeños */
-    --course-label-color: var(--color-accent);
-    /* Consume fluidamente el Azul Brillante corporativo del globals.css según el tema */
+/* ── Border Radius (Contratos) ── */
+:root {
+    --course-radius-sm:   8px;
+    --course-radius-md:   12px;
+    --course-radius-lg:   16px;
+    --course-radius-xl:   20px;
+    --course-radius-full: 9999px;
 }
 
-/* ── Efecto Glass global para contenedores superpuestos del Player ── */
-[data-theme="dark"] .overlay,
-[data-theme="dark"] .header,
-[data-theme="dark"] .nav {
-    backdrop-filter: blur(24px);
-    -webkit-backdrop-filter: blur(24px);
+/* ── Typography Scale ── */
+:root {
+    --course-font-xs:   0.75rem;
+    --course-font-sm:   0.875rem;
+    --course-font-base: 1rem;
+    --course-font-lg:   1.125rem;
+    --course-font-xl:   1.25rem;
+    --course-font-2xl:  1.5rem;
+    --course-font-3xl:  2rem;
+    --course-font-4xl:  2.5rem;
+}
+
+/* ── Spacing Tokens ── */
+:root {
+    --course-spacing-xs:  0.25rem;
+    --course-spacing-sm:  0.5rem;
+    --course-spacing-md:  1rem;
+    --course-spacing-lg:  1.5rem;
+    --course-spacing-xl:  2rem;
+    --course-spacing-2xl: 3rem;
 }
 
 /* ── Animation Tokens ── */
 :root {
-    --course-ease-spring: cubic-bezier(0.25, 0.1, 0.25, 1);
-    --course-ease-out: cubic-bezier(0.16, 1, 0.3, 1);
-    --course-ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
+    --course-ease-spring:  cubic-bezier(0.25, 0.1, 0.25, 1);
+    --course-ease-out:     cubic-bezier(0.16, 1, 0.3, 1);
+    --course-ease-in-out:  cubic-bezier(0.4, 0, 0.2, 1);
 
     --course-duration-fast: 150ms;
     --course-duration-base: 250ms;
@@ -105,138 +113,54 @@
     --course-transition-slow: var(--course-duration-slow) var(--course-ease-out);
 }
 
-/* ── Spacing Tokens for Courses ── */
-:root {
-    --course-spacing-xs: 0.25rem;
-    --course-spacing-sm: 0.5rem;
-    --course-spacing-md: 1rem;
-    --course-spacing-lg: 1.5rem;
-    --course-spacing-xl: 2rem;
-    --course-spacing-2xl: 3rem;
-}
-
-/* ── Border Radius for Courses ── */
-:root {
-    --course-radius-sm: 6px;
-    --course-radius-md: 10px;
-    --course-radius-lg: 14px;
-    --course-radius-xl: 20px;
-    --course-radius-full: 9999px;
-}
-
-/* ── Typography Scale for Courses ── */
-:root {
-    --course-font-xs: 0.75rem;
-    --course-font-sm: 0.875rem;
-    --course-font-base: 1rem;
-    --course-font-lg: 1.125rem;
-    --course-font-xl: 1.25rem;
-    --course-font-2xl: 1.5rem;
-    --course-font-3xl: 2rem;
-    --course-font-4xl: 2.5rem;
-}
-
 /* ── Shared Course Animations ── */
 @keyframes courseFadeIn {
-    from {
-        opacity: 0;
-        transform: translateY(16px);
-    }
-
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
+    from { opacity: 0; transform: translateY(16px); }
+    to   { opacity: 1; transform: translateY(0); }
 }
 
 @keyframes courseSlideIn {
-    from {
-        opacity: 0;
-        transform: translateX(-20px);
-    }
-
-    to {
-        opacity: 1;
-        transform: translateX(0);
-    }
+    from { opacity: 0; transform: translateX(-20px); }
+    to   { opacity: 1; transform: translateX(0); }
 }
 
 @keyframes courseScaleIn {
-    from {
-        opacity: 0;
-        transform: scale(0.95);
-    }
-
-    to {
-        opacity: 1;
-        transform: scale(1);
-    }
+    from { opacity: 0; transform: scale(0.95); }
+    to   { opacity: 1; transform: scale(1); }
 }
 
 @keyframes coursePulse {
-
-    0%,
-    100% {
-        box-shadow: 0 0 0 0 rgba(var(--bg-primary-rgb), 0.4);
-    }
-
-    50% {
-        box-shadow: 0 0 0 8px rgba(var(--bg-primary-rgb), 0);
-    }
+    0%,100% { box-shadow: 0 0 0 0 rgba(0,60,204,0.2); }
+    50%      { box-shadow: 0 0 0 8px rgba(0,60,204,0); }
 }
 
-/* Reduced Motion */
+/* ── Reduced Motion ── */
 @media (prefers-reduced-motion: reduce) {
     :root {
         --course-duration-fast: 0ms;
         --course-duration-base: 0ms;
         --course-duration-slow: 0ms;
     }
-
-    @keyframes courseFadeIn {
-
-        from,
-        to {
-            opacity: 1;
-            transform: none;
-        }
-    }
-
-    @keyframes courseSlideIn {
-
-        from,
-        to {
-            opacity: 1;
-            transform: none;
-        }
-    }
-
-    @keyframes courseScaleIn {
-
-        from,
-        to {
-            opacity: 1;
-            transform: none;
-        }
-    }
+    @keyframes courseFadeIn  { from,to { opacity:1; transform:none; } }
+    @keyframes courseSlideIn { from,to { opacity:1; transform:none; } }
+    @keyframes courseScaleIn { from,to { opacity:1; transform:none; } }
 }
 
-/* ── Focus States for Accessibility ── */
+/* ── Focus States ── */
 .course-focus-visible:focus-visible {
     outline: 2px solid var(--course-accent);
     outline-offset: 2px;
 }
-
 .course-focus-visible:focus:not(:focus-visible) {
     outline: none;
 }
 
-/* ── High Contrast Mode ── */
+/* ── High Contrast ── */
 @media (prefers-contrast: high) {
     :root {
-        --course-btn-border: currentColor;
-        --course-card-border: currentColor;
+        --course-btn-border:    currentColor;
+        --course-card-border:   currentColor;
         --course-header-border: currentColor;
-        --course-nav-border: currentColor;
+        --course-nav-border:    currentColor;
     }
 }
