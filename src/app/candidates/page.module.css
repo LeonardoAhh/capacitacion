@@ -1,1269 +1,1280 @@
-/* =============================================
-   PÁGINA: MONITOREO DE CANDIDATOS
-   Sistema: Editorial White
-   ============================================= */
+/* ================================================================
+   /candidates — page.module.css
+   Material Expressive 3 • Editorial White
+   Cohesivo con /employees, /contratos
+   ================================================================ */
 
-/* ─── Contenedor principal (heredado de AdminLayout) ─── */
+/* ── Tokens locales ──────────────────────────────────────────────── */
 .page {
-    min-height: 100vh;
-    background: var(--bg-primary);
+    --c-surface: #ffffff;
+    --c-bg: #fafaf8;
+    --c-ink: var(--text-primary, #111827);
+    --c-muted: var(--text-secondary, #6b7280);
+    --c-line: var(--border-color, #e5e7eb);
+    --c-line-strong: color-mix(in srgb, var(--text-primary, #111827) 14%, transparent);
+
+    --c-primary: #003ccc;
+    --c-primary-dim: rgba(0, 60, 204, 0.08);
+    --c-primary-mid: rgba(0, 60, 204, 0.18);
+
+    --c-amber: #f59e0b;
+    --c-amber-dim: rgba(245, 158, 11, 0.10);
+    --c-amber-mid: rgba(245, 158, 11, 0.22);
+
+    --c-success: #16a34a;
+    --c-success-dim: rgba(22, 163, 74, 0.10);
+    --c-success-mid: rgba(22, 163, 74, 0.22);
+
+    --c-danger: #ef4444;
+    --c-danger-dim: rgba(239, 68, 68, 0.09);
+    --c-danger-mid: rgba(239, 68, 68, 0.22);
+
+    --r-xl: 20px;
+    --r-lg: 16px;
+    --r-md: 12px;
+    --r-sm: 8px;
+    --r-full: 9999px;
+
+    --sh-card: 0 1px 4px rgba(0, 0, 0, 0.06), 0 2px 12px rgba(0, 0, 0, 0.04);
+    --sh-lift: 0 4px 20px rgba(0, 0, 0, 0.10), 0 1px 6px rgba(0, 0, 0, 0.06);
+    --sh-float: 0 8px 32px rgba(0, 0, 0, 0.14), 0 1px 8px rgba(0, 0, 0, 0.06);
+
+    --ease: cubic-bezier(0.4, 0, 0.2, 1);
+    --t: 0.20s;
+
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    padding-bottom: 60px;
+    width: 100%;
 }
 
-/* =============================================
-   STATS ROW — Panel horizontal unificado
-   ============================================= */
+/* ── Dark mode ── */
+[data-theme="dark"] .page,
+.page[data-theme="dark"] {
+    --c-surface: rgba(12, 15, 40, 0.72);
+    --c-line: rgba(77, 128, 255, 0.10);
+    --c-primary: #4d80ff;
+    --c-primary-dim: rgba(77, 128, 255, 0.10);
+}
 
-.statsRow {
+/* ================================================================
+   KPI / STATS BAR
+   ================================================================ */
+.statsGrid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+}
+
+.statCard {
+    background: var(--c-surface);
+    border: 1.5px solid var(--c-line);
+    border-radius: var(--r-xl);
+    padding: 18px 20px;
     display: flex;
     align-items: center;
-    background: var(--bg-secondary);
-    border: 1px solid var(--border-color);
-    border-radius: var(--radius-xl);
-    padding: 0 1.5rem;
-    margin-bottom: 1.25rem;
+    gap: 14px;
+    box-shadow: var(--sh-card);
+    transition: box-shadow var(--t), transform var(--t);
+    position: relative;
     overflow: hidden;
 }
 
-.statBlock {
-    display: flex;
-    align-items: center;
-    gap: 0.875rem;
-    flex: 1;
-    padding: 1rem 0;
+.statCard::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 4px;
+    border-radius: var(--r-xl) 0 0 var(--r-xl);
 }
 
-.statDivider {
-    width: 1px;
-    height: 36px;
-    background: var(--border-color);
-    flex-shrink: 0;
-    margin: 0 1.5rem;
+.statCardPrimary::before { background: var(--c-primary); }
+.statCardAmber::before   { background: var(--c-amber); }
+.statCardDanger::before  { background: var(--c-danger); }
+.statCardSuccess::before { background: var(--c-success); }
+
+.statCard:hover {
+    box-shadow: var(--sh-lift);
+    transform: translateY(-2px);
 }
 
-.statIcon {
-    width: 36px;
-    height: 36px;
-    border-radius: var(--radius-md);
+.statIconWrap {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
     flex-shrink: 0;
 }
 
-.blue {
-    background: rgba(59, 130, 246, 0.08);
-    color: var(--color-primary);
-}
+.statIconWrapPrimary { background: var(--c-primary-dim); color: var(--c-primary); }
+.statIconWrapAmber   { background: var(--c-amber-dim);   color: var(--c-amber); }
+.statIconWrapDanger  { background: var(--c-danger-dim);  color: var(--c-danger); }
+.statIconWrapSuccess { background: var(--c-success-dim); color: var(--c-success); }
 
-.green {
-    background: rgba(34, 197, 94, 0.1);
-    color: var(--color-success);
-}
-
-.orange {
-    background: rgba(245, 158, 11, 0.1);
-    color: var(--color-warning);
-}
-
-.red {
-    background: rgba(239, 68, 68, 0.08);
-    color: var(--color-danger);
-}
-
-.statContent {
-    display: flex;
-    flex-direction: column;
-    gap: 0.125rem;
-    min-width: 0;
-}
+.statInfo { min-width: 0; }
 
 .statValue {
-    font-family: var(--font-serif);
-    font-size: 1.5rem;
-    font-weight: 700;
-    margin: 0;
+    font-size: 1.8rem;
+    font-weight: 800;
     line-height: 1;
-    color: var(--text-primary);
-    letter-spacing: -0.02em;
+    font-family: var(--font-serif, 'Montserrat'), sans-serif;
+    letter-spacing: -0.03em;
+    color: var(--c-ink);
 }
 
 .statLabel {
-    font-size: 0.75rem;
-    color: var(--text-tertiary);
+    font-size: 0.73rem;
+    color: var(--c-muted);
+    font-family: var(--font-body), sans-serif;
     font-weight: 500;
-    margin: 0;
-    white-space: nowrap;
+    margin-top: 3px;
+    line-height: 1.3;
 }
 
-/* =============================================
-   BARRA DE CONTROLES — Búsqueda + Filtros
-   ============================================= */
-
-.controlsBar {
+/* ================================================================
+   TOOLBAR
+   ================================================================ */
+.toolbar {
     display: flex;
-    flex-direction: column;
-    gap: 0.75rem;
-    margin-bottom: 0.875rem;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
 }
 
-/* ─── Buscador ─── */
-.searchContainer {
-    position: relative;
-    width: 100%;
+.searchBox {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex: 1;
+    min-width: 200px;
+    background: var(--c-surface);
+    border: 1.5px solid var(--c-line-strong);
+    border-radius: var(--r-full);
+    padding: 8px 14px;
+    box-shadow: var(--sh-card);
+    transition: border-color var(--t), box-shadow var(--t);
+}
+
+.searchBox:focus-within {
+    border-color: var(--c-primary-mid);
+    box-shadow: 0 0 0 3px var(--c-primary-dim);
 }
 
 .searchIcon {
-    position: absolute;
-    left: 1rem;
-    top: 50%;
-    transform: translateY(-50%);
-    color: var(--text-tertiary);
-    pointer-events: none;
+    color: var(--c-muted);
+    flex-shrink: 0;
 }
 
 .searchInput {
-    width: 100%;
-    padding: 0.6875rem 2.5rem 0.6875rem 2.625rem;
-    border-radius: var(--radius-lg);
-    border: 1px solid var(--border-color);
-    background: var(--bg-secondary);
-    font-size: 0.875rem;
-    font-family: var(--font-body);
+    flex: 1;
+    border: none;
+    background: transparent;
+    color: var(--c-ink);
+    font-size: 0.88rem;
+    font-family: var(--font-body), sans-serif;
     outline: none;
-    transition: border-color 0.18s ease, box-shadow 0.18s ease;
-    color: var(--text-primary);
-}
-
-.searchInput:focus {
-    border-color: var(--color-primary);
-    box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.1);
-    background: var(--bg-primary);
 }
 
 .searchInput::placeholder {
-    color: var(--text-tertiary);
+    color: var(--c-muted);
 }
 
-.clearSearch {
-    position: absolute;
-    right: 0.75rem;
-    top: 50%;
-    transform: translateY(-50%);
-    background: transparent;
-    border: none;
-    color: var(--text-tertiary);
+.filterSelect {
+    padding: 8px 12px;
+    border: 1.5px solid var(--c-line-strong);
+    border-radius: var(--r-full);
+    background: var(--c-surface);
+    color: var(--c-ink);
+    font-size: 0.84rem;
+    font-family: var(--font-body), sans-serif;
+    outline: none;
     cursor: pointer;
-    padding: 0.25rem;
-    border-radius: var(--radius-sm);
-    transition: color 0.15s;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.clearSearch:hover {
-    color: var(--color-danger);
-}
-
-/* ─── Tabs de filtro ─── */
-.filterTabs {
-    display: flex;
-    align-items: center;
-    gap: 0.375rem;
-    overflow-x: auto;
-    scrollbar-width: none;
-    padding-bottom: 2px; /* evita que se corte el box-shadow del tab activo */
-}
-
-.filterTabs::-webkit-scrollbar {
-    display: none;
-}
-
-.filterTab {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.375rem;
-    padding: 0.375rem 0.875rem;
-    border-radius: var(--radius-full);
-    border: 1px solid var(--border-color);
-    background: transparent;
-    color: var(--text-secondary);
-    font-size: 0.8125rem;
-    font-weight: 500;
-    font-family: var(--font-body);
-    cursor: pointer;
+    box-shadow: var(--sh-card);
+    transition: border-color var(--t);
     white-space: nowrap;
-    flex-shrink: 0;
-    transition: background 0.15s, color 0.15s, border-color 0.15s;
 }
 
-.filterTab:hover {
-    background: var(--bg-secondary);
-    color: var(--text-primary);
-    border-color: var(--text-tertiary);
+.filterSelect:focus {
+    border-color: var(--c-primary-mid);
 }
 
-.filterTabActive {
-    background: var(--color-primary);
-    border-color: var(--color-primary);
-    color: #fff;
-    font-weight: 600;
+.toolbarActions {
+    display: flex;
+    gap: 8px;
+    margin-left: auto;
+    flex-wrap: wrap;
 }
 
-.filterTabActive:hover {
-    background: var(--color-primary);
-    color: #fff;
-}
-
-.filterTabCount {
+.btnOutline {
     display: inline-flex;
     align-items: center;
-    justify-content: center;
-    min-width: 18px;
-    height: 18px;
-    padding: 0 4px;
-    border-radius: 99px;
-    font-size: 0.6875rem;
-    font-weight: 700;
-    background: rgba(255, 255, 255, 0.25);
-    color: inherit;
+    gap: 6px;
+    padding: 8px 16px;
+    background: var(--c-surface);
+    border: 1.5px solid var(--c-line-strong);
+    border-radius: var(--r-md);
+    color: var(--c-ink);
+    font-size: 0.82rem;
+    font-weight: 500;
+    font-family: var(--font-body), sans-serif;
+    cursor: pointer;
+    transition: all var(--t);
+    white-space: nowrap;
+    box-shadow: var(--sh-card);
 }
 
-.filterTabActive .filterTabCount {
-    background: rgba(255, 255, 255, 0.3);
+.btnOutline:hover:not(:disabled) {
+    background: var(--c-primary-dim);
+    border-color: var(--c-primary-mid);
+    color: var(--c-primary);
 }
 
-/* ─── Info de resultados ─── */
+.btnOutline:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+}
+
+/* ── Contador de resultados ── */
 .resultsInfo {
-    font-size: 0.75rem;
-    color: var(--text-tertiary);
-    margin-bottom: 0.5rem;
-    padding-left: 0.125rem;
+    font-size: 0.78rem;
+    color: var(--c-muted);
+    font-family: var(--font-body), sans-serif;
+    margin-top: -8px;
 }
 
-/* =============================================
-   LISTA DE CANDIDATOS — Layout tipo tabla
-   ============================================= */
-
-.candidateList {
-    background: var(--bg-secondary);
-    border: 1px solid var(--border-color);
-    border-radius: var(--radius-xl);
+/* ================================================================
+   TABLA (desktop ≥ 900px)
+   ================================================================ */
+.tableContainer {
+    background: var(--c-surface);
+    border: 1.5px solid var(--c-line);
+    border-radius: var(--r-xl);
+    box-shadow: var(--sh-card);
     overflow: hidden;
 }
 
-/* ─── Encabezado de columnas (solo desktop) ─── */
-.listHeader {
-    display: grid;
-    grid-template-columns: 44px 1fr 1fr minmax(120px, 160px) 88px 88px 20px;
-    gap: 0 1rem;
-    align-items: center;
-    padding: 0.625rem 1rem;
-    background: var(--bg-primary);
-    border-bottom: 1px solid var(--border-color);
+.tableScroll {
+    overflow-x: auto;
 }
 
-.colHeaderName,
-.colHeaderPosition,
-.colHeaderProgress,
-.colHeaderStatus,
-.colHeaderDeadline {
-    font-size: 0.6875rem;
-    font-weight: 600;
+.table {
+    width: 100%;
+    min-width: 900px;
+    border-collapse: collapse;
+    font-family: var(--font-body), sans-serif;
+    font-size: 0.82rem;
+}
+
+.table thead tr {
+    background: var(--c-bg);
+    border-bottom: 1.5px solid var(--c-line);
+}
+
+.table th {
+    padding: 12px 14px;
+    font-size: 0.68rem;
+    font-weight: 700;
     text-transform: uppercase;
-    letter-spacing: 0.06em;
-    color: var(--text-tertiary);
+    letter-spacing: 0.07em;
+    color: var(--c-muted);
+    text-align: left;
     white-space: nowrap;
 }
 
-/* ─── Fila de candidato ─── */
-.candidateRow {
-    display: grid;
-    grid-template-columns: 44px 1fr 1fr minmax(120px, 160px) 88px 88px 20px;
-    gap: 0 1rem;
-    align-items: center;
-    width: 100%;
-    padding: 0.875rem 1rem 0.875rem 1rem;
-    background: transparent;
-    border: none;
-    border-bottom: 1px solid var(--border-color);
-    cursor: pointer;
-    text-align: left;
-    transition: background 0.14s ease;
+.table th:first-child { padding-left: 20px; }
+.table th:last-child  { padding-right: 20px; text-align: right; }
+
+.tableRow {
+    border-bottom: 1px solid var(--c-line);
+    transition: background var(--t);
 }
 
-.candidateRow:last-child {
-    border-bottom: none;
+.tableRow:last-child { border-bottom: none; }
+
+.tableRow:hover { background: var(--c-primary-dim); }
+
+.table td {
+    padding: 12px 14px;
+    color: var(--c-ink);
+    vertical-align: middle;
 }
 
-.candidateRow:hover {
-    background: rgba(245, 158, 11, 0.04);
-}
+.table td:first-child { padding-left: 20px; }
+.table td:last-child  { padding-right: 20px; }
 
-.candidateRow:focus-visible {
-    outline: 2px solid var(--color-primary);
-    outline-offset: -2px;
-}
-
-/* ─── Avatar de iniciales ─── */
-.rowAvatar {
+/* ── Avatar (con variantes de estatus) ── */
+.avatarCell {
     width: 36px;
     height: 36px;
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 0.75rem;
-    font-weight: 700;
-    font-family: var(--font-serif);
-    flex-shrink: 0;
+    font-size: 0.72rem;
+    font-weight: 800;
+    font-family: var(--font-serif, 'Montserrat'), sans-serif;
     letter-spacing: 0.02em;
+    flex-shrink: 0;
+    user-select: none;
+    background: var(--c-primary-dim);
+    color: var(--c-primary);
 }
 
-.avatar_completed {
-    background: rgba(34, 197, 94, 0.12);
-    color: var(--color-success);
+.avatar_completed  { background: var(--c-success-dim); color: var(--c-success); }
+.avatar_inProgress { background: var(--c-amber-dim);   color: #92400e; }
+.avatar_inactive   { background: var(--c-danger-dim);  color: var(--c-danger); }
+.avatar_notStarted { background: var(--c-primary-dim); color: var(--c-primary); }
+
+/* ── Celda candidato ── */
+.empCell { min-width: 180px; }
+
+.empName {
+    font-weight: 700;
+    color: var(--c-ink);
+    font-size: 0.90rem;
+    line-height: 1.2;
 }
 
-.avatar_inProgress {
-    background: rgba(59, 130, 246, 0.1);
-    color: var(--color-primary);
+.empId {
+    font-size: 0.70rem;
+    color: var(--c-muted);
+    font-family: var(--font-mono, 'Roboto Mono'), monospace;
+    margin-top: 2px;
 }
 
-.avatar_inactive {
-    background: rgba(239, 68, 68, 0.1);
-    color: var(--color-danger);
-}
+/* ── Celda puesto ── */
+.posCell { max-width: 180px; }
 
-.avatar_notStarted {
-    background: var(--bg-tertiary);
-    color: var(--text-tertiary);
-}
-
-/* ─── Identidad: nombre + ID ─── */
-.rowIdentity {
-    display: flex;
-    flex-direction: column;
-    gap: 0.125rem;
-    min-width: 0;
-}
-
-.rowName {
-    font-size: 0.875rem;
-    font-weight: 600;
-    color: var(--text-primary);
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    font-family: var(--font-body);
-}
-
-.rowId {
-    font-size: 0.725rem;
-    color: var(--text-tertiary);
+.posName {
+    font-size: 0.80rem;
+    color: var(--c-ink);
     font-weight: 500;
 }
 
-/* ─── Puesto ─── */
-.rowPosition {
-    font-size: 0.8125rem;
-    color: var(--text-secondary);
-    white-space: nowrap;
+.posDept {
+    font-size: 0.70rem;
+    color: var(--c-muted);
+    margin-top: 2px;
+}
+
+/* ── Celda progreso ── */
+.progressCell {
+    min-width: 120px;
+}
+
+.progressBar {
+    height: 6px;
+    background: var(--c-line);
+    border-radius: var(--r-full);
     overflow: hidden;
-    text-overflow: ellipsis;
+    margin-bottom: 4px;
 }
 
-/* ─── Barra de progreso ─── */
-.rowProgress {
-    display: flex;
-    align-items: center;
-    gap: 0.625rem;
-    min-width: 0;
-}
-
-.rowProgressTrack {
-    flex: 1;
-    height: 5px;
-    background: var(--bg-tertiary);
-    border-radius: 99px;
-    overflow: hidden;
-}
-
-.rowProgressFill {
+.progressFill {
     height: 100%;
-    background: var(--color-primary);
-    border-radius: 99px;
-    transition: width 0.35s ease;
+    background: var(--c-primary);
+    border-radius: var(--r-full);
+    transition: width 0.4s var(--ease);
 }
 
-.rowProgressComplete {
-    background: var(--color-success);
+.progressFill.progressComplete {
+    background: var(--c-success);
 }
 
-.rowProgressText {
-    font-size: 0.725rem;
-    color: var(--text-tertiary);
-    white-space: nowrap;
-    flex-shrink: 0;
-    min-width: 28px;
-    text-align: right;
+.progressText {
+    font-size: 0.68rem;
+    color: var(--c-muted);
+    font-family: var(--font-mono, 'Roboto Mono'), monospace;
 }
 
-/* ─── Badge de estado ─── */
-.rowStatus {
-    display: inline-block;
-    padding: 0.25rem 0.5rem;
-    border-radius: var(--radius-full);
-    font-size: 0.6875rem;
-    font-weight: 600;
-    white-space: nowrap;
-    text-align: center;
-}
-
-.status_completed {
-    background: rgba(34, 197, 94, 0.1);
-    color: var(--color-success);
-}
-
-.status_inProgress {
-    background: rgba(59, 130, 246, 0.1);
-    color: var(--color-primary);
-}
-
-.status_inactive {
-    background: rgba(239, 68, 68, 0.1);
-    color: var(--color-danger);
-}
-
-.status_notStarted {
-    background: var(--bg-tertiary);
-    color: var(--text-tertiary);
-}
-
-/* ─── Chip de deadline ─── */
-.rowDeadline {
+/* ── Status badge ── */
+.statusBadge {
     display: inline-flex;
     align-items: center;
-    gap: 0.3rem;
-    padding: 0.25rem 0.5rem;
-    border-radius: var(--radius-full);
-    font-size: 0.6875rem;
-    font-weight: 600;
+    padding: 4px 10px;
+    border-radius: var(--r-full);
+    font-size: 0.72rem;
+    font-weight: 700;
+    font-family: var(--font-body), sans-serif;
     white-space: nowrap;
+    border: 1.5px solid transparent;
 }
 
-.deadlineExpired {
-    background: rgba(239, 68, 68, 0.1);
-    color: var(--color-danger);
+.statusCompleted {
+    background: var(--c-success-dim);
+    color: var(--c-success);
+    border-color: var(--c-success-mid);
 }
 
-.deadlineUrgent {
-    background: rgba(245, 158, 11, 0.12);
-    color: var(--color-warning);
+.statusInProgress {
+    background: var(--c-amber-dim);
+    color: #92400e;
+    border-color: var(--c-amber-mid);
+}
+
+.statusInactive {
+    background: var(--c-danger-dim);
+    color: var(--c-danger);
+    border-color: var(--c-danger-mid);
+}
+
+.statusNotStarted {
+    background: var(--c-primary-dim);
+    color: var(--c-primary);
+    border-color: var(--c-primary-mid);
+}
+
+/* ── Deadline chip ── */
+.deadlineChip {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 3px 9px;
+    border-radius: var(--r-full);
+    font-size: 0.70rem;
+    font-weight: 700;
+    font-family: var(--font-body), sans-serif;
+    white-space: nowrap;
+    border: 1.5px solid transparent;
 }
 
 .deadlineOk {
-    background: rgba(34, 197, 94, 0.1);
-    color: var(--color-success);
+    background: var(--c-success-dim);
+    color: var(--c-success);
+    border-color: var(--c-success-mid);
 }
 
-.rowDeadlinePlaceholder {
-    display: inline-block;
-    width: 60px;
+.deadlineUrgent {
+    background: var(--c-amber-dim);
+    color: #92400e;
+    border-color: var(--c-amber-mid);
 }
 
-/* ─── Flecha de fila ─── */
-.rowArrow {
-    color: var(--text-tertiary);
-    transition: color 0.14s, transform 0.14s;
-    flex-shrink: 0;
+.deadlineExpired {
+    background: var(--c-danger-dim);
+    color: var(--c-danger);
+    border-color: var(--c-danger-mid);
 }
 
-.candidateRow:hover .rowArrow {
-    color: var(--color-primary);
-    transform: translateX(2px);
+/* ── Celda acciones ── */
+.actionsCell {
+    display: flex;
+    gap: 6px;
+    justify-content: flex-end;
+    align-items: center;
 }
 
-/* ─── Empty state ─── */
+.iconBtn {
+    width: 30px;
+    height: 30px;
+    border-radius: var(--r-sm);
+    background: transparent;
+    border: 1.5px solid transparent;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all var(--t);
+}
+
+.iconBtnGreen {
+    border-color: var(--c-success);
+    color: var(--c-success);
+}
+
+.iconBtnBlue {
+    border-color: var(--c-primary);
+    color: var(--c-primary);
+}
+
+.iconBtn:hover:not(:disabled) {
+    filter: brightness(0.88);
+    transform: scale(1.1);
+}
+
+.iconBtn:disabled {
+    opacity: 0.35;
+    cursor: not-allowed;
+    transform: none;
+}
+
+/* ================================================================
+   EMPTY / LOADING STATES
+   ================================================================ */
 .emptyState {
-    text-align: center;
-    padding: 3rem 1rem;
-    color: var(--text-secondary);
-    font-size: 0.9375rem;
-}
-
-/* =============================================
-   LOADING & ERROR
-   ============================================= */
-
-.loadingContainer {
     display: flex;
     flex-direction: column;
     align-items: center;
+    gap: 12px;
+    padding: 52px 24px;
+    color: var(--c-muted);
+    font-family: var(--font-body), sans-serif;
+    text-align: center;
+}
+
+.emptyIcon { opacity: 0.35; }
+
+.emptyTitle {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--c-ink);
+    margin: 0;
+}
+
+.emptyDesc {
+    font-size: 0.84rem;
+    color: var(--c-muted);
+    margin: 0;
+    max-width: 320px;
+    line-height: 1.5;
+}
+
+.loadingRow {
+    display: flex;
+    align-items: center;
     justify-content: center;
-    min-height: 400px;
-    gap: 1rem;
+    gap: 10px;
+    padding: 40px;
+    color: var(--c-muted);
+    font-size: 0.88rem;
+    font-family: var(--font-body), sans-serif;
 }
 
 .spinner {
-    width: 36px;
-    height: 36px;
-    border: 2.5px solid var(--bg-tertiary);
-    border-top-color: var(--color-primary);
+    width: 20px;
+    height: 20px;
+    border: 2.5px solid var(--c-line-strong);
+    border-top-color: var(--c-primary);
     border-radius: 50%;
-    animation: spin 0.9s linear infinite;
+    animation: spin 0.8s linear infinite;
 }
 
 @keyframes spin {
     to { transform: rotate(360deg); }
 }
 
-.loadingContainer p {
-    font-size: 0.9375rem;
-    color: var(--text-secondary);
-}
-
-.errorContainer {
+/* ================================================================
+   CARDS — MOBILE (≤ 899px)
+   ================================================================ */
+.cardList {
     display: flex;
     flex-direction: column;
+    gap: 12px;
+}
+
+.candidateCard {
+    background: var(--c-surface);
+    border: 1.5px solid var(--c-line);
+    border-radius: var(--r-xl);
+    box-shadow: var(--sh-card);
+    overflow: hidden;
+    transition: border-color var(--t), box-shadow var(--t);
+    cursor: pointer;
+}
+
+.candidateCard:hover {
+    border-color: var(--c-line-strong);
+    box-shadow: var(--sh-lift);
+}
+
+.cardTop {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    padding: 16px 16px 12px;
+    gap: 10px;
+}
+
+.avatarCellLg {
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    display: flex;
     align-items: center;
     justify-content: center;
-    min-height: 400px;
-    gap: 1rem;
-    text-align: center;
-    padding: 1.5rem;
+    font-size: 1rem;
+    font-weight: 800;
+    font-family: var(--font-serif, 'Montserrat'), sans-serif;
+    flex-shrink: 0;
+    user-select: none;
+    background: var(--c-primary-dim);
+    color: var(--c-primary);
 }
 
-.errorIcon {
-    color: var(--color-danger);
+.cardEmployeeInfo {
+    flex: 1;
+    min-width: 0;
 }
 
-.errorContainer h2 {
-    font-size: 1.25rem;
-    font-weight: 700;
-    color: var(--text-primary);
+.cardName {
+    font-size: 0.80rem;
+    font-weight: 800;
+    color: var(--c-ink);
+    font-family: var(--font-serif, 'Montserrat'), sans-serif;
+    overflow: hidden;
+    white-space: normal;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    line-height: 1.2;
+}
+
+.cardIdPos {
+    font-size: 0.60rem;
+    color: var(--c-muted);
+    margin-top: 2px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-wrap: wrap;
+}
+
+.cardIdDot {
+    width: 3px;
+    height: 3px;
+    border-radius: 50%;
+    background: var(--c-primary);
+    display: inline-block;
+}
+
+.cardDivider {
+    height: 1px;
+    background: var(--c-line);
+    margin: 0 16px;
+}
+
+.cardBottom {
+    padding: 12px 16px 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+/* ── Card progress bar ── */
+.progressBarCard {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.progressBarCardTrack {
+    flex: 1;
+    height: 6px;
+    background: var(--c-line);
+    border-radius: var(--r-full);
+    overflow: hidden;
+}
+
+/* ── Card status + deadline row ── */
+.cardStatusRow {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+/* ================================================================
+   MODAL — WhatsApp
+   ================================================================ */
+.modalOverlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.45);
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
+    animation: fadeIn 0.18s var(--ease);
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+}
+
+.modal {
+    background: var(--c-surface);
+    border-radius: var(--r-xl);
+    box-shadow: var(--sh-float);
+    width: 100%;
+    max-width: 520px;
+    max-height: 90vh;
+    animation: slideUp 0.22s var(--ease);
+    display: flex;
+    flex-direction: column;
+}
+
+@keyframes slideUp {
+    from { transform: translateY(24px); opacity: 0; }
+    to   { transform: translateY(0);    opacity: 1; }
+}
+
+.modalHeader {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 24px 16px;
+    border-bottom: 1.5px solid var(--c-line);
+    flex-shrink: 0;
+}
+
+.modalTitle {
+    font-size: 1.0rem;
+    font-weight: 800;
+    color: var(--c-ink);
+    font-family: var(--font-serif, 'Montserrat'), sans-serif;
+    margin: 0;
+    letter-spacing: -0.02em;
+    display: flex;
+    align-items: center;
+}
+
+.modalCloseBtn {
+    width: 32px;
+    height: 32px;
+    border-radius: var(--r-sm);
+    background: transparent;
+    border: 1.5px solid var(--c-line-strong);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color: var(--c-muted);
+    transition: all var(--t);
+    flex-shrink: 0;
+}
+
+.modalCloseBtn:hover {
+    background: var(--c-danger-dim);
+    border-color: var(--c-danger-mid);
+    color: var(--c-danger);
+}
+
+.modalBody {
+    padding: 20px 24px 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    overflow-y: auto;
+    flex: 1;
+}
+
+.modalFooter {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    padding: 16px 24px;
+    border-top: 1.5px solid var(--c-line);
+    flex-shrink: 0;
+}
+
+/* ── WhatsApp recipient line ── */
+.waRecipient {
+    font-size: 0.84rem;
+    color: var(--c-ink);
+    font-family: var(--font-body), sans-serif;
     margin: 0;
 }
 
-.errorContainer p {
-    font-size: 0.9375rem;
-    color: var(--text-secondary);
-    max-width: 400px;
+.waId {
+    font-family: var(--font-mono, 'Roboto Mono'), monospace;
+    font-size: 0.78rem;
+    color: var(--c-muted);
 }
 
-.retryButton {
-    padding: 0.625rem 1.5rem;
-    background: var(--color-primary);
-    color: #fff;
-    border: none;
-    border-radius: var(--radius-md);
-    font-size: 0.875rem;
-    font-weight: 600;
-    font-family: var(--font-body);
+/* ── Template grid ── */
+.waTemplateGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+    gap: 8px;
+}
+
+.waTemplateBtn {
+    padding: 8px 12px;
+    border-radius: var(--r-md);
+    background: var(--c-bg);
+    border: 1.5px solid var(--c-line-strong);
+    color: var(--c-ink);
+    font-size: 0.80rem;
+    font-weight: 500;
+    font-family: var(--font-body), sans-serif;
     cursor: pointer;
-    transition: filter 0.15s;
+    transition: all var(--t);
+    text-align: left;
 }
 
-.retryButton:hover {
+.waTemplateBtn:hover {
+    background: var(--c-primary-dim);
+    border-color: var(--c-primary-mid);
+    color: var(--c-primary);
+}
+
+.waTemplateBtnActive {
+    background: var(--c-primary);
+    border-color: var(--c-primary);
+    color: #fff;
+}
+
+.waTemplateBtnActive:hover {
+    background: var(--c-primary);
+    color: #fff;
     filter: brightness(1.1);
 }
 
-/* =============================================
-   QUICK DRAWER — Sidebar deslizable
-   ============================================= */
+/* ── Preview ── */
+.waPreview {
+    background: var(--c-bg);
+    border: 1.5px solid var(--c-line);
+    border-radius: var(--r-lg);
+    padding: 14px;
+}
 
+.waPreviewLabel {
+    font-size: 0.68rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    color: var(--c-muted);
+    font-family: var(--font-body), sans-serif;
+    margin: 0 0 8px;
+}
+
+.waPreviewText {
+    font-size: 0.82rem;
+    font-family: var(--font-body), sans-serif;
+    color: var(--c-ink);
+    white-space: pre-wrap;
+    word-break: break-word;
+    margin: 0;
+    line-height: 1.6;
+}
+
+/* ── Buttons ── */
+.btnCancel {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 9px 18px;
+    background: transparent;
+    color: var(--c-muted);
+    border: 1.5px solid var(--c-line-strong);
+    border-radius: var(--r-md);
+    font-size: 0.84rem;
+    font-weight: 500;
+    font-family: var(--font-body), sans-serif;
+    cursor: pointer;
+    transition: all var(--t);
+}
+
+.btnCancel:hover {
+    background: var(--c-bg);
+    color: var(--c-ink);
+}
+
+.btnSave {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 9px 22px;
+    background: var(--c-success);
+    color: #fff;
+    border: none;
+    border-radius: var(--r-md);
+    font-size: 0.84rem;
+    font-weight: 700;
+    font-family: var(--font-body), sans-serif;
+    cursor: pointer;
+    transition: filter var(--t), transform var(--t);
+    box-shadow: 0 2px 10px rgba(22, 163, 74, 0.22);
+}
+
+.btnSave:hover:not(:disabled) {
+    filter: brightness(1.1);
+    transform: translateY(-1px);
+}
+
+.btnSave:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+    transform: none;
+}
+
+/* ================================================================
+   QUICK DRAWER — estilos internos
+   ================================================================ */
+
+/* Header del drawer */
 .qdHeader {
     display: flex;
     align-items: flex-start;
-    gap: 1rem;
-    position: relative;
+    gap: 12px;
+    padding: 20px 20px 16px;
+    border-bottom: 1.5px solid var(--c-line);
 }
 
-.qdPhotoWrapper {
-    position: relative;
-    flex-shrink: 0;
-}
-
-.qdPhotoFallback {
-    width: 56px;
-    height: 56px;
+.qdAvatar {
+    width: 48px;
+    height: 48px;
     border-radius: 50%;
-    background: var(--bg-tertiary);
     display: flex;
     align-items: center;
     justify-content: center;
-    font-family: var(--font-serif);
-    font-size: 1.125rem;
-    font-weight: 700;
-    color: var(--text-secondary);
-    border: 2px solid var(--border-color);
+    font-size: 1.05rem;
+    font-weight: 800;
+    font-family: var(--font-serif, 'Montserrat'), sans-serif;
     flex-shrink: 0;
+    user-select: none;
+    background: var(--c-primary-dim);
+    color: var(--c-primary);
 }
 
 .qdHeaderInfo {
     flex: 1;
     min-width: 0;
-    display: flex;
-    flex-direction: column;
-    gap: 0.25rem;
 }
 
 .qdPosition {
-    font-size: 0.875rem;
-    color: var(--text-secondary);
-    margin: 0;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+    font-size: 0.78rem;
+    color: var(--c-muted);
+    font-family: var(--font-body), sans-serif;
+    margin: 2px 0 0;
 }
 
 .qdEmployeeId {
-    font-size: 0.75rem;
-    color: var(--text-tertiary);
-    font-weight: 600;
-    margin: 0;
+    font-size: 0.70rem;
+    font-family: var(--font-mono, 'Roboto Mono'), monospace;
+    color: var(--c-muted);
+    margin: 1px 0 0;
 }
 
-/* Pestañas del QuickDrawer */
+/* Tabs */
 .qdTabs {
     display: flex;
-    background: var(--bg-secondary);
-    padding: 0.3rem;
-    border-radius: 99px;
-    margin: 0 1.5rem 0.5rem;
-    border: 1px solid var(--border-color);
+    border-bottom: 1.5px solid var(--c-line);
+    padding: 0 16px;
+    background: var(--c-bg);
 }
 
 .qdTab {
     flex: 1;
-    padding: 0.5rem 0.25rem;
-    border-radius: 99px;
+    padding: 10px 8px;
+    background: none;
     border: none;
-    background: transparent;
-    font-size: 0.8125rem;
-    font-weight: 700;
-    font-family: var(--font-serif);
-    color: var(--text-tertiary);
+    border-bottom: 2.5px solid transparent;
+    color: var(--c-muted);
+    font-size: 0.80rem;
+    font-weight: 600;
+    font-family: var(--font-body), sans-serif;
     cursor: pointer;
-    transition: all 0.22s ease;
-    white-space: nowrap;
+    transition: color var(--t), border-color var(--t);
+    text-transform: capitalize;
+    margin-bottom: -1.5px;
 }
+
+.qdTab:hover { color: var(--c-ink); }
 
 .qdTabActive {
-    background: var(--bg-primary);
-    color: var(--color-primary);
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+    color: var(--c-primary);
+    border-bottom-color: var(--c-primary);
 }
 
-/* Body del QuickDrawer */
+/* Body */
 .qdBody {
-    padding: 1rem 1.5rem 1.5rem;
+    padding: 16px;
     display: flex;
     flex-direction: column;
-    gap: 1rem;
+    gap: 14px;
     overflow-y: auto;
     flex: 1;
-    scrollbar-width: thin;
-    scrollbar-color: transparent transparent;
 }
 
-.qdBody:hover {
-    scrollbar-color: rgba(128, 128, 128, 0.3) transparent;
-}
-
-.qdBody::-webkit-scrollbar {
-    width: 4px;
-}
-
-.qdBody::-webkit-scrollbar-track {
-    background: transparent;
-}
-
-.qdBody::-webkit-scrollbar-thumb {
-    background: transparent;
-    border-radius: 4px;
-}
-
-.qdBody:hover::-webkit-scrollbar-thumb {
-    background: rgba(128, 128, 128, 0.3);
-}
-
-/* Botón WhatsApp */
+/* WhatsApp button */
 .qdWhatsappBtn {
     display: flex;
     align-items: center;
-    gap: 0.625rem;
+    gap: 10px;
     width: 100%;
-    padding: 0.75rem 1rem;
-    background: #25d366;
-    color: #fff;
-    border: none;
-    border-radius: var(--radius-lg);
-    font-size: 0.9375rem;
+    padding: 12px 16px;
+    background: var(--c-success-dim);
+    border: 1.5px solid var(--c-success-mid);
+    border-radius: var(--r-lg);
+    color: var(--c-success);
+    font-size: 0.84rem;
     font-weight: 600;
-    font-family: var(--font-body);
+    font-family: var(--font-body), sans-serif;
     cursor: pointer;
-    transition: background 0.2s, transform 0.15s;
+    transition: all var(--t);
 }
 
 .qdWhatsappBtn:hover:not(:disabled) {
-    background: #1ebe5d;
-    transform: translateY(-1px);
+    background: var(--c-success);
+    color: #fff;
 }
 
 .qdWhatsappBtn:disabled {
-    background: var(--bg-tertiary);
-    color: var(--text-tertiary);
+    opacity: 0.45;
     cursor: not-allowed;
-    transform: none;
 }
 
-/* Info grid 2 columnas */
+/* Info grid */
 .qdInfoGrid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 0.75rem;
-    background: var(--bg-primary);
-    border: 1px solid var(--border-color);
-    border-radius: var(--radius-lg);
-    padding: 0.875rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    border: 1.5px solid var(--c-line);
+    border-radius: var(--r-lg);
+    overflow: hidden;
 }
 
 .qdInfoItem {
     display: flex;
-    flex-direction: column;
-    gap: 0.25rem;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 9px 14px;
+    border-bottom: 1px solid var(--c-line);
 }
+
+.qdInfoItem:last-child { border-bottom: none; }
 
 .qdInfoLabel {
-    font-size: 0.6875rem;
-    font-weight: 600;
+    font-size: 0.72rem;
+    font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.05em;
-    color: var(--text-tertiary);
-}
-
-.qdInfoValue {
-    font-size: 0.875rem;
-    color: var(--text-primary);
-    font-weight: 500;
-    display: flex;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: 0.25rem;
-}
-
-.qdInfoMeta {
-    font-size: 0.75rem;
-    color: var(--text-tertiary);
-}
-
-.inactiveIcon {
-    color: var(--color-danger);
+    color: var(--c-muted);
+    font-family: var(--font-body), sans-serif;
     flex-shrink: 0;
 }
 
-/* Sección de progreso */
+.qdInfoValue {
+    font-size: 0.82rem;
+    color: var(--c-ink);
+    font-family: var(--font-body), sans-serif;
+    text-align: right;
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+}
+
+.qdInfoMono {
+    font-family: var(--font-mono, 'Roboto Mono'), monospace;
+    font-size: 0.78rem;
+}
+
+.qdInfoDanger { color: var(--c-danger); font-weight: 600; }
+.qdInfoWarning { color: var(--c-amber); font-weight: 600; }
+
+/* Progress section */
 .qdProgressSection {
+    background: var(--c-bg);
+    border: 1.5px solid var(--c-line);
+    border-radius: var(--r-lg);
+    padding: 16px;
     display: flex;
     flex-direction: column;
-    gap: 0.5rem;
-    background: var(--bg-primary);
-    border: 1px solid var(--border-color);
-    border-radius: var(--radius-lg);
-    padding: 0.875rem;
+    gap: 10px;
 }
 
 .qdProgressHeader {
     display: flex;
-    justify-content: space-between;
     align-items: center;
+    justify-content: space-between;
 }
 
 .qdProgressLabel {
-    font-size: 0.8125rem;
-    font-weight: 600;
-    color: var(--text-secondary);
+    font-size: 0.78rem;
+    font-weight: 700;
+    color: var(--c-ink);
+    font-family: var(--font-body), sans-serif;
 }
 
 .qdProgressPct {
-    font-size: 1rem;
-    font-weight: 700;
-    color: var(--color-primary);
+    font-size: 1.2rem;
+    font-weight: 800;
+    font-family: var(--font-serif, 'Montserrat'), sans-serif;
+    color: var(--c-primary);
+    letter-spacing: -0.03em;
 }
 
 .qdProgressBarContainer {
-    width: 100%;
-    height: 7px;
-    background: var(--bg-tertiary);
-    border-radius: 99px;
+    height: 8px;
+    background: var(--c-line);
+    border-radius: var(--r-full);
     overflow: hidden;
 }
 
 .qdProgressFill {
     height: 100%;
-    background: var(--color-primary);
-    border-radius: 99px;
-    transition: width 0.5s ease;
+    background: var(--c-primary);
+    border-radius: var(--r-full);
+    transition: width 0.4s var(--ease);
 }
 
-.qdProgressComplete {
-    background: var(--color-success);
+.qdProgressFill.qdProgressComplete {
+    background: var(--c-success);
 }
 
 .qdProgressDetail {
-    font-size: 0.8rem;
-    color: var(--text-tertiary);
+    font-size: 0.78rem;
+    color: var(--c-muted);
+    font-family: var(--font-body), sans-serif;
     margin: 0;
 }
 
-/* Botón actividad detallada */
+/* Activity button */
 .qdActivityBtn {
     display: flex;
     align-items: center;
     justify-content: space-between;
     width: 100%;
-    padding: 0.875rem 1rem;
-    background: var(--bg-primary);
-    color: var(--text-primary);
-    border: 1px solid var(--border-color);
-    border-radius: var(--radius-lg);
-    font-size: 0.9375rem;
+    padding: 12px 16px;
+    background: var(--c-surface);
+    border: 1.5px solid var(--c-line-strong);
+    border-radius: var(--r-lg);
+    color: var(--c-ink);
+    font-size: 0.84rem;
     font-weight: 600;
-    font-family: var(--font-body);
+    font-family: var(--font-body), sans-serif;
     cursor: pointer;
-    transition: background 0.18s, border-color 0.18s;
+    transition: all var(--t);
 }
 
 .qdActivityBtn:hover {
-    background: var(--bg-secondary);
-    border-color: var(--color-primary);
+    background: var(--c-primary-dim);
+    border-color: var(--c-primary-mid);
+    color: var(--c-primary);
 }
 
-/* ─── Reabrir Plazo ─── */
+/* Reopen section */
 .qdReopenSection {
-    margin-top: 0.75rem;
-    padding: 1rem;
-    background: var(--bg-secondary);
-    border: 1px dashed var(--border-color);
-    border-radius: var(--radius-lg);
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
 }
 
 .qdReopenLabel {
-    font-size: 0.75rem;
-    font-weight: 600;
-    color: var(--text-secondary);
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    margin: 0 0 0.5rem 0;
+    font-size: 0.88rem;
+    font-weight: 700;
+    color: var(--c-ink);
+    font-family: var(--font-body), sans-serif;
+    margin: 0;
+}
+
+.qdReopenSub {
+    font-size: 0.78rem;
+    color: var(--c-muted);
+    font-family: var(--font-body), sans-serif;
+    margin: 0;
+    line-height: 1.4;
 }
 
 .qdReopenBtns {
     display: flex;
-    gap: 0.5rem;
+    gap: 10px;
+    flex-wrap: wrap;
 }
 
 .qdReopenBtn {
     flex: 1;
-    padding: 0.5rem 0;
-    border-radius: var(--radius-md);
-    border: 1px solid var(--border-color);
-    background: var(--bg-primary);
-    color: var(--text-primary);
-    font-size: 0.8125rem;
-    font-weight: 600;
-    font-family: var(--font-body);
+    min-width: 60px;
+    padding: 10px 14px;
+    background: var(--c-primary-dim);
+    border: 1.5px solid var(--c-primary-mid);
+    border-radius: var(--r-md);
+    color: var(--c-primary);
+    font-size: 0.88rem;
+    font-weight: 700;
+    font-family: var(--font-body), sans-serif;
     cursor: pointer;
-    transition: background 0.15s, border-color 0.15s, color 0.15s;
+    transition: all var(--t);
 }
 
 .qdReopenBtn:hover {
-    background: var(--color-primary);
-    border-color: var(--color-primary);
+    background: var(--c-primary);
     color: #fff;
+    border-color: var(--c-primary);
 }
 
-/* =============================================
-   WHATSAPP MODAL
-   ============================================= */
-
-.modalOverlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: rgba(0, 0, 0, 0.5);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 1000;
-    padding: 1rem;
-    backdrop-filter: blur(4px);
+/* ================================================================
+   RESPONSIVE
+   ================================================================ */
+@media (max-width: 1200px) {
+    .statsGrid {
+        grid-template-columns: repeat(2, 1fr);
+    }
 }
 
-.modalContent {
-    background: var(--bg-secondary);
-    border: 1px solid var(--border-color);
-    border-radius: var(--radius-xl);
-    max-width: 480px;
-    width: 100%;
-    max-height: 80vh;
-    overflow-y: auto;
-    box-shadow: var(--shadow-lg);
-    overscroll-behavior: contain;
-    scrollbar-width: thin;
-    scrollbar-color: transparent transparent;
+@media (max-width: 899px) {
+    .tableView {
+        display: none !important;
+    }
+
+    .cardsView {
+        display: flex !important;
+    }
+
+    .toolbarActions {
+        margin-left: 0;
+    }
 }
 
-.modalContent:hover {
-    scrollbar-color: rgba(128, 128, 128, 0.3) transparent;
-}
+@media (min-width: 900px) {
+    .cardsView {
+        display: none !important;
+    }
 
-.modalContent::-webkit-scrollbar { width: 4px; }
-.modalContent::-webkit-scrollbar-track { background: transparent; }
-.modalContent::-webkit-scrollbar-thumb { background: transparent; border-radius: 4px; }
-.modalContent:hover::-webkit-scrollbar-thumb { background: rgba(128, 128, 128, 0.3); }
+    .tableView {
+        display: block;
+    }
+}
 
 @media (max-width: 600px) {
-    .modalOverlay {
-        align-items: flex-end;
-        padding: 0;
-    }
-
-    .modalContent {
-        max-width: 100%;
-        border-radius: 20px 20px 0 0;
-        max-height: 80vh;
-        border-bottom: none;
-        display: flex;
-        flex-direction: column;
-    }
-}
-
-.modalHeader {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 1.25rem;
-    border-bottom: 1px solid var(--border-color);
-}
-
-.modalHeader h3 {
-    display: flex;
-    align-items: center;
-    margin: 0;
-    font-size: 1.0625rem;
-    font-weight: 700;
-    font-family: var(--font-serif);
-    color: var(--text-primary);
-    gap: 0.5rem;
-}
-
-.modalCloseBtn {
-    background: var(--bg-tertiary);
-    border: none;
-    width: 30px;
-    height: 30px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    font-size: 1.125rem;
-    color: var(--text-secondary);
-    transition: background 0.15s, color 0.15s;
-    line-height: 1;
-}
-
-.modalCloseBtn:hover {
-    background: var(--color-danger);
-    color: #fff;
-}
-
-.modalBody {
-    padding: 1.25rem;
-}
-
-.modalSubtitle {
-    margin: 0 0 1rem 0;
-    font-size: 0.9375rem;
-    color: var(--text-secondary);
-    text-align: center;
-}
-
-.modalSubtitle strong {
-    color: var(--text-primary);
-}
-
-/* Templates de WhatsApp */
-.whatsappTemplatesNav {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 0.5rem;
-    padding-bottom: 0.5rem;
-    margin-bottom: 1rem;
-}
-
-.whatsappTemplatesNav::-webkit-scrollbar {
-    display: none;
-}
-
-.whatsappTab {
-    flex: 0 0 auto;
-    padding: 0.5rem 1rem;
-    border-radius: 99px;
-    border: 1px solid var(--border-color);
-    background: var(--bg-primary);
-    color: var(--text-secondary);
-    font-size: 0.8125rem;
-    font-weight: 600;
-    font-family: var(--font-body);
-    cursor: pointer;
-    transition: all 0.18s ease;
-}
-
-.whatsappTabActive {
-    background: var(--color-primary);
-    border-color: var(--color-primary);
-    color: #fff;
-}
-
-.whatsappChatPreview {
-    background: #e5ddd5;
-    border-radius: var(--radius-lg);
-    padding: 1rem;
-    display: flex;
-    flex-direction: column;
-    min-height: 160px;
-    max-height: 42vh;
-    margin-bottom: 1rem;
-    position: relative;
-    overflow-y: auto;
-    scrollbar-width: thin;
-}
-
-.whatsappBubble {
-    background: #fff;
-    border-radius: 0 8px 8px 8px;
-    padding: 0.5rem 0.75rem;
-    color: #111b21;
-    font-size: 0.875rem;
-    line-height: 1.5;
-    position: relative;
-    box-shadow: 0 1px 0.5px rgba(11, 20, 26, 0.13);
-    margin-right: auto;
-    max-width: 90%;
-}
-
-.whatsappBubble::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: -8px;
-    width: 0;
-    height: 0;
-    border-top: 0px solid transparent;
-    border-right: 8px solid #fff;
-    border-bottom: 8px solid transparent;
-}
-
-.whatsappBubbleTime {
-    display: flex;
-    align-items: center;
-    justify-content: flex-end;
-    gap: 4px;
-    font-size: 0.6875rem;
-    color: #667781;
-    margin-top: 4px;
-}
-
-.whatsappReadTick {
-    color: #53bdeb;
-}
-
-.modalFooterActions {
-    display: flex;
-    justify-content: center;
-    padding-top: 0.5rem;
-    padding-bottom: 2rem; /* Separación del botón con el borde inferior del dispositivo */
-}
-
-.whatsappSendBtn {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-    background: #25d366;
-    color: #fff;
-    border: none;
-    padding: 0.875rem 1.75rem;
-    border-radius: 99px;
-    font-size: 0.9375rem;
-    font-weight: 700;
-    font-family: var(--font-body);
-    cursor: pointer;
-    transition: background 0.18s, transform 0.15s, box-shadow 0.18s;
-    box-shadow: 0 4px 12px rgba(37, 211, 102, 0.25);
-}
-
-.whatsappSendBtn:hover {
-    background: #1ebe5d;
-    transform: translateY(-2px);
-    box-shadow: 0 6px 16px rgba(37, 211, 102, 0.35);
-}
-
-/* =============================================
-   RESPONSIVE
-   ============================================= */
-
-/* Tablet grande */
-@media (max-width: 1100px) {
-    .listHeader {
-        grid-template-columns: 40px 1fr 1fr minmax(110px, 140px) 80px 18px;
-    }
-
-    .candidateRow {
-        grid-template-columns: 40px 1fr 1fr minmax(110px, 140px) 80px 18px;
-    }
-
-    /* Ocultar columna de deadline en tablet */
-    .colHeaderDeadline,
-    .rowDeadline,
-    .rowDeadlinePlaceholder {
+    .statsGrid {
         display: none;
     }
-}
 
-/* Tablet pequeña / Móvil */
-@media (max-width: 768px) {
-    /* Stats: 2 columnas */
-    .statsRow {
-        display: grid;
+    .toolbar {
+        gap: 8px;
+    }
+
+    .searchBox {
+        min-width: 0;
+    }
+
+    .modal {
+        max-height: 95vh;
+    }
+
+    .modalBody {
+        padding: 16px;
+    }
+
+    .modalFooter {
+        padding: 12px 16px;
+    }
+
+    .waTemplateGrid {
         grid-template-columns: 1fr 1fr;
-        padding: 0;
-        gap: 0;
-    }
-
-    .statBlock {
-        padding: 1rem;
-        position: relative;
-    }
-
-    /* Separadores de la cuadrícula 2x2 */
-    .statBlock:nth-child(1),
-    .statBlock:nth-child(3) {
-        border-right: 1px solid var(--border-color);
-    }
-
-    .statBlock:nth-child(1),
-    .statBlock:nth-child(2) {
-        border-bottom: 1px solid var(--border-color);
-    }
-
-    .statDivider {
-        display: none;
-    }
-
-    /* Filtros en móvil: grid 2 columnas para que todos sean visibles sin scroll */
-    .filterTabs {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        flex-wrap: unset;
-        overflow-x: unset;
-        gap: 0.375rem;
-    }
-
-    .filterTab {
-        justify-content: center;
-        text-align: center;
-    }
-
-    /* Lista: columnas simplificadas */
-    .listHeader {
-        display: none;
-    }
-
-    .candidateRow {
-        grid-template-columns: 40px 1fr auto 18px;
-        grid-template-rows: auto auto;
-        padding: 0.875rem 0.875rem;
-        gap: 0.25rem 0.75rem;
-    }
-
-    .rowAvatar {
-        grid-row: 1 / 3;
-        width: 40px;
-        height: 40px;
-    }
-
-    .rowIdentity {
-        grid-column: 2;
-        grid-row: 1;
-    }
-
-    .rowPosition {
-        grid-column: 2;
-        grid-row: 2;
-        font-size: 0.75rem;
-        color: var(--text-tertiary);
-    }
-
-    .rowProgress {
-        display: none;
-    }
-
-    .rowStatus {
-        grid-column: 3;
-        grid-row: 1;
-        align-self: center;
-    }
-
-    .rowArrow {
-        grid-column: 4;
-        grid-row: 1 / 3;
-        align-self: center;
     }
 }
 
-/* Mobile pequeño */
-@media (max-width: 420px) {
-    .statsRow {
-        border-radius: var(--radius-lg);
-    }
-
-    .statValue {
-        font-size: 1.25rem;
-    }
-
-    .statLabel {
-        font-size: 0.6875rem;
-    }
-
-    .qdInfoGrid {
+@media (max-width: 400px) {
+    .statsGrid {
         grid-template-columns: 1fr;
     }
 
-    .qdPhotoFallback {
-        width: 48px;
-        height: 48px;
-        font-size: 1rem;
+    .statCard {
+        gap: 10px;
     }
-}
 
-/* Reduced Motion */
-@media (prefers-reduced-motion: reduce) {
-    .candidateRow,
-    .filterTab,
-    .rowProgressFill,
-    .rowArrow,
-    .qdWhatsappBtn,
-    .qdActivityBtn,
-    .qdReopenBtn,
-    .whatsappSendBtn,
-    .retryButton,
-    .spinner {
-        transition: none;
-        animation: none;
+    .waTemplateGrid {
+        grid-template-columns: 1fr;
     }
 }

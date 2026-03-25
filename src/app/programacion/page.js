@@ -1,59 +1,52 @@
 'use client';
 
-import { useState, useEffect, useMemo, useCallback, useRef } from 'react';
+import { useState, useEffect, useMemo, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { db } from '@/lib/firebase';
 import { collection, getDocs, addDoc, query, where, Timestamp } from 'firebase/firestore';
 import AdminLayout from '@/components/layout/AdminLayout/AdminLayout';
-import { Users, BookOpen, CheckCircle, ChevronLeft, Edit2, FileText, LayoutGrid, Activity, Search, ChevronRight, RefreshCw, ArrowLeft, UserPlus } from 'lucide-react';
-import Link from 'next/link';
-
-import { motion, AnimatePresence, useMotionValue, useTransform, animate } from 'framer-motion';
+import { useToast } from '@/components/ui/Toast/Toast';
+import {
+    Users, BookOpen, CheckCircle, LayoutGrid, Activity,
+    Search, RefreshCw, UserPlus, Edit2, FileText, ArrowLeft, ChevronRight,
+} from 'lucide-react';
 import EditEmployeeModal from '@/components/features/Training/EditEmployeeModal';
 import EmployeeAssignmentsModal from '@/components/features/Training/EmployeeAssignmentsModal';
-import EmployeeSearchBar from '@/components/ui/EmployeeSearchBar/EmployeeSearchBar';
 import MonitoringTable from '@/components/features/Training/MonitoringTable';
 import useIsMobile from '@/hooks/useIsMobile';
 import styles from './page.module.css';
-import { Select } from '@/components/ui';
-
-// â”€â”€â”€ Animation variants â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-
-const FADE_UP = {
-    hidden: { opacity: 0, y: 16, filter: 'blur(4px)' },
-    visible: (i = 0) => ({
-        opacity: 1, y: 0, filter: 'blur(0px)',
-        transition: { duration: 0.4, delay: i * 0.07, ease: [0.22, 1, 0.36, 1] },
-    }),
-};
-
-const LIST_ITEM = {
-    hidden: { opacity: 0, x: -8 },
-    visible: (i = 0) => ({
-        opacity: 1, x: 0,
-        transition: { duration: 0.28, delay: i * 0.04, ease: [0.22, 1, 0.36, 1] },
-    }),
-};
-
-const TAB_CONTENT = {
-    hidden: { opacity: 0, y: 10, filter: 'blur(3px)' },
-    visible: {
-        opacity: 1, y: 0, filter: 'blur(0px)',
-        transition: { duration: 0.3, ease: [0.22, 1, 0.36, 1] }
-    },
-    exit: {
-        opacity: 0, y: -6, filter: 'blur(3px)',
-        transition: { duration: 0.18, ease: 'easeIn' }
-    },
-};
 
 const STEP_LABELS = ['Empleados', 'Curso', 'Confirmar'];
 
-// â”€â”€â”€ ProgramacionPage â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ── StatsBar ──────────────────────────────────────────────────────────────────
+function StatsBar({ totalEmployees, todayCount, selectedCount, totalCourses }) {
+    const items = [
+        { value: totalEmployees, label: 'Total Empleados', color: 'Primary', icon: <Users size={20} /> },
+        { value: todayCount,     label: 'Asignados Hoy',   color: 'Success', icon: <CheckCircle size={20} /> },
+        { value: selectedCount,  label: 'Seleccionados',   color: 'Amber',   icon: <CheckCircle size={20} /> },
+        { value: totalCourses,   label: 'Cursos',          color: 'Muted',   icon: <BookOpen size={20} /> },
+    ];
+    return (
+        <div className={styles.statsGrid} role="region" aria-label="Indicadores">
+            {items.map(({ value, label, color, icon }) => (
+                <div key={label} className={`${styles.statCard} ${styles[`statCard${color}`]}`}>
+                    <div className={`${styles.statIconWrap} ${styles[`statIconWrap${color}`]}`}>{icon}</div>
+                    <div className={styles.statInfo}>
+                        <div className={styles.statValue}>{value}</div>
+                        <div className={styles.statLabel}>{label}</div>
+                    </div>
+                </div>
+            ))}
+        </div>
+    );
+}
 
+// ── Main page ─────────────────────────────────────────────────────────────────
 export default function ProgramacionPage() {
     const router = useRouter();
     const { isMobile } = useIsMobile();
+    const { toast } = useToast();
+
     const [employees, setEmployees] = useState([]);
     const [courses, setCourses] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -62,164 +55,126 @@ export default function ProgramacionPage() {
     const [selectedEmployees, setSelectedEmployees] = useState([]);
     const [selectedCourse, setSelectedCourse] = useState('');
     const [assigning, setAssigning] = useState(false);
-    const [toast, setToast] = useState(null);
     const [activeTab, setActiveTab] = useState('assignment');
     const [todayCount, setTodayCount] = useState(0);
     const [editingEmployee, setEditingEmployee] = useState(null);
     const [historyEmployee, setHistoryEmployee] = useState(null);
 
-    // Mobile-only state
+    // Mobile stepper
     const [mobileStep, setMobileStep] = useState(0);
     const [mobileSearch, setMobileSearch] = useState('');
-    const [refreshing, setRefreshing] = useState(false);
-    const pullStartY = useRef(0);
-    const isPulling = useRef(false);
-    const pullDistance = useMotionValue(0);
-    const pullOpacity = useTransform(pullDistance, [0, 60], [0, 1]);
-    const pullRotation = useTransform(pullDistance, [0, 60], [0, 360]);
 
-    // â”€â”€ Handlers (preserved) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-
+    // ── Data ──────────────────────────────────────────────────────────────────
     const handleUpdateEmployee = (updatedEmp) => {
         setEmployees(prev => prev.map(e => e.id === updatedEmp.id ? updatedEmp : e));
-        showToast('Empleado actualizado', 'success');
+        toast.success('Empleado actualizado');
     };
 
     const handleDeleteEmployee = (deletedId) => {
         setEmployees(prev => prev.filter(e => e.id !== deletedId));
         setSelectedEmployees(prev => prev.filter(id => id !== deletedId));
-        showToast('Empleado eliminado', 'success');
+        toast.success('Empleado eliminado');
     };
 
     useEffect(() => {
         fetchData();
         fetchStats();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     const fetchStats = async () => {
         try {
             const today = new Date();
             today.setHours(0, 0, 0, 0);
-            const todayTimestamp = Timestamp.fromDate(today);
-            const q = query(collection(db, 'programacion'), where('assignedAt', '>=', todayTimestamp));
-            const snapshot = await getDocs(q);
-            setTodayCount(snapshot.size);
-        } catch (error) {
-            console.error("Error fetching stats:", error);
+            const snap = await getDocs(
+                query(collection(db, 'programacion'), where('assignedAt', '>=', Timestamp.fromDate(today)))
+            );
+            setTodayCount(snap.size);
+        } catch (e) {
+            console.error('Error fetching stats:', e);
         }
     };
 
     const fetchData = async (silent = false) => {
         if (!silent) setLoading(true);
         try {
-            // Empleados
-            const empSnapshot = await getDocs(collection(db, 'employees_programacion'));
-            const empList = empSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-            setEmployees(empList);
+            const empSnap = await getDocs(collection(db, 'employees_programacion'));
+            setEmployees(empSnap.docs.map(d => ({ id: d.id, ...d.data() })));
 
-            // Cursos — consultamos ambas fuentes en paralelo
-            // Nota: no usamos orderBy en Firestore para evitar requerir índice compuesto;
-            // el ordenamiento se hace en el cliente.
             const [cursosSnap, legacySnap] = await Promise.all([
                 getDocs(query(collection(db, 'cursos'), where('published', '==', true))),
                 getDocs(collection(db, 'cursos_induccion')),
             ]);
 
-            // Cursos interactivos (excluyendo tipo link), ordenados por título
             const mainCourses = cursosSnap.docs
-                .map(doc => ({ id: doc.id, ...doc.data() }))
+                .map(d => ({ id: d.id, ...d.data() }))
                 .filter(c => !c.tipo || c.tipo !== 'link')
-                .map(c => ({
-                    id: c.id,
-                    title: c.title || c.nombre || 'Sin título',
-                    duration: c.duration || c.duracion || '',
-                }))
+                .map(c => ({ id: c.id, title: c.title || c.nombre || 'Sin título', duration: c.duration || c.duracion || '' }))
                 .sort((a, b) => a.title.localeCompare(b.title, 'es'));
 
-            // Cursos legados (cursos_induccion)
             const legacyCourses = legacySnap.docs
-                .map(doc => ({ id: doc.id, ...doc.data() }))
-                .map(c => ({
-                    id: c.id,
-                    title: c.title || c.nombre || 'Sin título',
-                    duration: c.duration || c.duracion || '',
-                }));
+                .map(d => ({ id: d.id, ...d.data() }))
+                .map(c => ({ id: c.id, title: c.title || c.nombre || 'Sin título', duration: c.duration || c.duracion || '' }));
 
-            // Fusión: main tiene preferencia; se evitan duplicados por título
             const seenTitles = new Set(mainCourses.map(c => c.title.toLowerCase()));
-            const uniqueLegacy = legacyCourses.filter(c => !seenTitles.has(c.title.toLowerCase()));
-            const allCourses = [...mainCourses, ...uniqueLegacy];
+            const allCourses = [...mainCourses, ...legacyCourses.filter(c => !seenTitles.has(c.title.toLowerCase()))];
 
-            if (allCourses.length === 0) {
-                setCourses([
-                    { id: 'mock1', title: 'Seguridad Industrial Básica', duration: '1h' },
-                    { id: 'mock2', title: 'Código de Ética', duration: '30m' },
-                    { id: 'mock3', title: '5S en Oficina', duration: '45m' },
-                ]);
-            } else {
-                setCourses(allCourses);
-            }
-            setLoading(false);
-        } catch (error) {
-            console.error('Error fetching data:', error);
-            setLoading(false);
+            setCourses(allCourses.length > 0 ? allCourses : [
+                { id: 'mock1', title: 'Seguridad Industrial Básica', duration: '1h' },
+                { id: 'mock2', title: 'Código de Ética', duration: '30m' },
+                { id: 'mock3', title: '5S en Oficina', duration: '45m' },
+            ]);
+        } catch (e) {
+            console.error('Error fetching data:', e);
+        } finally {
+            if (!silent) setLoading(false);
         }
     };
 
     const handleAssign = async () => {
-        if (selectedEmployees.length === 0 || !selectedCourse) {
-            showToast('Selecciona empleados y un curso', 'error');
+        if (!selectedEmployees.length || !selectedCourse) {
+            toast.error('Selecciona empleados y un curso');
             return;
         }
         setAssigning(true);
         try {
-            const programacionRef = collection(db, 'programacion');
-            const promises = selectedEmployees.map(empId =>
-                addDoc(programacionRef, {
+            await Promise.all(selectedEmployees.map(empId =>
+                addDoc(collection(db, 'programacion'), {
                     employeeId: empId,
                     courseId: selectedCourse,
                     assignedAt: Timestamp.now(),
                     status: 'pending',
                 })
-            );
-            await Promise.all(promises);
-            showToast(`Curso asignado a ${selectedEmployees.length} empleados correctamente`, 'success');
+            ));
+            toast.success(`Curso asignado a ${selectedEmployees.length} empleado${selectedEmployees.length !== 1 ? 's' : ''}`);
             setSelectedEmployees([]);
             setSelectedCourse('');
-            setAssigning(false);
-            fetchStats();
-            // Reset mobile stepper on success
             if (isMobile) setMobileStep(0);
-        } catch (error) {
-            console.error("Error signing:", error);
-            showToast('Error al asignar curso', 'error');
+            fetchStats();
+        } catch (e) {
+            console.error(e);
+            toast.error('Error al asignar curso');
+        } finally {
             setAssigning(false);
         }
     };
 
-    const toggleEmployeeSelection = (id) => {
-        setSelectedEmployees(prev =>
-            prev.includes(id) ? prev.filter(empId => empId !== id) : [...prev, id]
-        );
-    };
+    const toggleEmployee = useCallback((id) => {
+        setSelectedEmployees(prev => prev.includes(id) ? prev.filter(x => x !== id) : [...prev, id]);
+    }, []);
 
-    const showToast = (message, type) => {
-        setToast({ message, type });
-        setTimeout(() => setToast(null), 3000);
-    };
-
-    // â”€â”€ Filtered employees (uses mobileSearch on mobile, searchTerm on desktop) â”€â”€
-    const activeSearchTerm = isMobile ? mobileSearch : searchTerm;
+    // ── Derived ───────────────────────────────────────────────────────────────
+    const activeSearch = isMobile ? mobileSearch : searchTerm;
 
     const filteredEmployees = useMemo(() =>
         employees.filter(emp => {
-            const matchesSearch =
-                emp.name?.toLowerCase().includes(activeSearchTerm.toLowerCase()) ||
-                emp.employeeId?.toLowerCase().includes(activeSearchTerm.toLowerCase());
-            const matchesArea = selectedArea === 'all' || emp.area === selectedArea;
-            return matchesSearch && matchesArea;
+            const matchSearch = !activeSearch
+                || emp.name?.toLowerCase().includes(activeSearch.toLowerCase())
+                || emp.employeeId?.toLowerCase().includes(activeSearch.toLowerCase());
+            const matchArea = selectedArea === 'all' || emp.area === selectedArea;
+            return matchSearch && matchArea;
         }),
-        [employees, activeSearchTerm, selectedArea]
+        [employees, activeSearch, selectedArea]
     );
 
     const areas = useMemo(() =>
@@ -229,727 +184,412 @@ export default function ProgramacionPage() {
 
     const canAssign = !assigning && selectedEmployees.length > 0 && !!selectedCourse;
 
-    const selectedCourseName = useMemo(() => {
-        const course = courses.find(c => c.id === selectedCourse);
-        return course ? (course.title || course.nombre) : '';
-    }, [courses, selectedCourse]);
+    const selectedCourseName = useMemo(() =>
+        courses.find(c => c.id === selectedCourse)?.title ?? '',
+        [courses, selectedCourse]
+    );
 
-    // â”€â”€ Pull-to-refresh handlers â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-    const handleTouchStart = useCallback((e) => {
-        const scrollTop = e.currentTarget?.scrollTop ?? 0;
-        if (scrollTop <= 0) {
-            pullStartY.current = e.touches[0].clientY;
-            isPulling.current = true;
-        }
-    }, []);
+    const canGoNext = mobileStep === 0
+        ? selectedEmployees.length > 0
+        : mobileStep === 1
+            ? !!selectedCourse
+            : false;
 
-    const handleTouchMove = useCallback((e) => {
-        if (!isPulling.current) return;
-        const diff = e.touches[0].clientY - pullStartY.current;
-        if (diff > 0) {
-            pullDistance.set(Math.min(diff * 0.5, 80));
-        }
-    }, [pullDistance]);
-
-    const handleTouchEnd = useCallback(async () => {
-        if (!isPulling.current) return;
-        isPulling.current = false;
-        const currentPull = pullDistance.get();
-
-        if (currentPull > 50) {
-            setRefreshing(true);
-            await fetchData(true);
-            setRefreshing(false);
-            showToast('Lista actualizada', 'success');
-        }
-
-        animate(pullDistance, 0, { duration: 0.3 });
-    }, [pullDistance]);
-
-    // â”€â”€ Mobile step navigation â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-    const canGoNext = useCallback(() => {
-        if (mobileStep === 0) return selectedEmployees.length > 0;
-        if (mobileStep === 1) return !!selectedCourse;
-        return false;
-    }, [mobileStep, selectedEmployees, selectedCourse]);
-
-    const goNext = useCallback(() => {
-        if (canGoNext() && mobileStep < 2) setMobileStep(prev => prev + 1);
-    }, [canGoNext, mobileStep]);
-
-    const goPrev = useCallback(() => {
-        if (mobileStep > 0) setMobileStep(prev => prev - 1);
-    }, [mobileStep]);
-
-    // â”€â”€ Swipe handler â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-    const handleDragEnd = useCallback((e, info) => {
-        const threshold = 50;
-        if (info.offset.x < -threshold && canGoNext()) {
-            goNext();
-        } else if (info.offset.x > threshold && mobileStep > 0) {
-            goPrev();
-        }
-    }, [canGoNext, goNext, goPrev, mobileStep]);
-
-    // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-    // â”€â”€ MOBILE STEPPER RENDER â”€â”€
-    // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-
-    const renderMobileView = () => (
-        <div className={styles.mobileContainer}>
-            {/* Tab bar (same as desktop) */}
-            <div className={styles.mobileTabBar}>
-                {[
-                    { key: 'assignment', label: 'Asignación', Icon: LayoutGrid },
-                    { key: 'monitoring', label: 'Monitoreo', Icon: Activity },
-                ].map(({ key, label, Icon }) => (
+    // ── Render helpers ────────────────────────────────────────────────────────
+    const renderEmployeeList = () => {
+        if (loading) return (
+            <div className={styles.loadingRow}>
+                <span className={styles.spinner} aria-hidden="true" /> Cargando empleados…
+            </div>
+        );
+        if (!filteredEmployees.length) return (
+            <div className={styles.emptyState}>
+                <Users size={32} aria-hidden="true" />
+                <span>Sin resultados</span>
+            </div>
+        );
+        return filteredEmployees.map(emp => (
+            <div
+                key={emp.id}
+                className={`${styles.empRow} ${selectedEmployees.includes(emp.id) ? styles.empRowSelected : ''}`}
+                onClick={() => toggleEmployee(emp.id)}
+                role="checkbox"
+                aria-checked={selectedEmployees.includes(emp.id)}
+                tabIndex={0}
+                onKeyDown={e => e.key === ' ' && toggleEmployee(emp.id)}
+            >
+                <div className={`${styles.checkbox} ${selectedEmployees.includes(emp.id) ? styles.checkboxActive : ''}`}>
+                    {selectedEmployees.includes(emp.id) && <CheckCircle size={14} />}
+                </div>
+                <div className={styles.empInfo}>
+                    <span className={styles.empName}>{emp.name || 'Sin Nombre'}</span>
+                    {emp.employeeId && <span className={styles.empId}>#{emp.employeeId}</span>}
+                </div>
+                <div className={styles.empRole}>{emp.position || emp.puesto || '—'}</div>
+                <div className={styles.itemActions} onClick={e => e.stopPropagation()}>
                     <button
-                        key={key}
-                        className={`${styles.mobileTab} ${activeTab === key ? styles.mobileTabActive : ''}`}
-                        onClick={() => { setActiveTab(key); setMobileStep(0); }}
+                        className={`${styles.iconBtn} ${styles.iconBtnAmber}`}
+                        onClick={() => setHistoryEmployee(emp)}
+                        title="Ver Asignaciones"
                         type="button"
                     >
-                        <Icon size={16} aria-hidden="true" />
-                        <span>{label}</span>
+                        <FileText size={13} />
                     </button>
-                ))}
-            </div>
-
-            {activeTab === 'monitoring' ? (
-                <div className={styles.mobileMonitoring}>
-                    <MonitoringTable />
+                    <button
+                        className={`${styles.iconBtn} ${styles.iconBtnBlue}`}
+                        onClick={() => setEditingEmployee(emp)}
+                        title="Editar"
+                        type="button"
+                    >
+                        <Edit2 size={13} />
+                    </button>
                 </div>
-            ) : (
-                <>
-                    {/* Stepper indicator */}
-                    <div className={styles.stepperHeader}>
-                        {STEP_LABELS.map((label, i) => (
-                            <div
-                                key={i}
-                                className={`${styles.stepDot} ${i === mobileStep ? styles.stepDotActive : ''} ${i < mobileStep ? styles.stepDotDone : ''}`}
-                            >
-                                <div className={styles.stepDotCircle}>
-                                    {i < mobileStep ? <CheckCircle size={14} /> : <span>{i + 1}</span>}
-                                </div>
-                                <span className={styles.stepDotLabel}>{label}</span>
-                            </div>
-                        ))}
-                        <div className={styles.stepperLine}>
-                            <motion.div
-                                className={styles.stepperLineProgress}
-                                animate={{ width: `${(mobileStep / 2) * 100}%` }}
-                                transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
+            </div>
+        ));
+    };
+
+    const renderCourseList = () => (
+        <div className={styles.courseList} role="radiogroup" aria-label="Cursos disponibles">
+            {courses.map(course => (
+                <div
+                    key={course.id}
+                    className={`${styles.courseItem} ${selectedCourse === course.id ? styles.courseItemSelected : ''}`}
+                    onClick={() => setSelectedCourse(course.id)}
+                    role="radio"
+                    aria-checked={selectedCourse === course.id}
+                    tabIndex={0}
+                    onKeyDown={e => e.key === ' ' && setSelectedCourse(course.id)}
+                >
+                    <div className={`${styles.courseIcon} ${selectedCourse === course.id ? styles.courseIconActive : ''}`}>
+                        <BookOpen size={20} aria-hidden="true" />
+                    </div>
+                    <div className={styles.courseInfo}>
+                        <span className={styles.courseName}>{course.title}</span>
+                        <span className={styles.courseDuration}>{course.duration || 'Sin duración'}</span>
+                    </div>
+                    {selectedCourse === course.id && (
+                        <CheckCircle size={18} className={styles.courseCheck} aria-hidden="true" />
+                    )}
+                </div>
+            ))}
+        </div>
+    );
+
+    // ── Desktop assignment ────────────────────────────────────────────────────
+    const renderDesktopAssignment = () => (
+        <div className={styles.assignGrid}>
+            {/* Left: Employees */}
+            <div className={styles.panel}>
+                <div className={styles.panelHeader}>
+                    <h2 className={styles.panelTitle}>
+                        <Users size={16} aria-hidden="true" /> Empleados
+                    </h2>
+                    <div className={styles.panelToolbar}>
+                        <div className={styles.searchBox}>
+                            <Search size={15} className={styles.searchIcon} aria-hidden="true" />
+                            <input
+                                type="search"
+                                className={styles.searchInput}
+                                placeholder="Buscar empleado…"
+                                value={searchTerm}
+                                onChange={e => setSearchTerm(e.target.value)}
+                                aria-label="Buscar empleado"
                             />
                         </div>
-                    </div>
-
-                    {/* Swipe container */}
-                    <div className={styles.stepSwipeContainer}>
-                        <AnimatePresence mode="wait">
-                            <motion.div
-                                key={mobileStep}
-                                className={styles.mobileStep}
-                                initial={{ opacity: 0, x: 60 }}
-                                animate={{ opacity: 1, x: 0 }}
-                                exit={{ opacity: 0, x: -60 }}
-                                transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
-                                drag="x"
-                                dragConstraints={{ left: 0, right: 0 }}
-                                dragElastic={0.15}
-                                onDragEnd={handleDragEnd}
-                            >
-                                {mobileStep === 0 && renderMobileStep0()}
-                                {mobileStep === 1 && renderMobileStep1()}
-                                {mobileStep === 2 && renderMobileStep2()}
-                            </motion.div>
-                        </AnimatePresence>
-                    </div>
-
-                    {/* Bottom action bar */}
-                    <motion.div
-                        className={styles.bottomBar}
-                        initial={{ y: 80 }}
-                        animate={{ y: 0 }}
-                        transition={{ delay: 0.2, duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
-                    >
-                        {mobileStep > 0 && (
-                            <button className={styles.bottomBarBack} onClick={goPrev} type="button">
-                                <ArrowLeft size={18} />
-                            </button>
-                        )}
-                        <div className={styles.bottomBarInfo}>
-                            {mobileStep === 0 && (
-                                <span>
-                                    {selectedEmployees.length > 0
-                                        ? `${selectedEmployees.length} empleado${selectedEmployees.length !== 1 ? 's' : ''} seleccionado${selectedEmployees.length !== 1 ? 's' : ''}`
-                                        : 'Selecciona empleados'
-                                    }
-                                </span>
-                            )}
-                            {mobileStep === 1 && (
-                                <span>
-                                    {selectedCourse
-                                        ? selectedCourseName
-                                        : 'Selecciona un curso'
-                                    }
-                                </span>
-                            )}
-                            {mobileStep === 2 && (
-                                <span>{selectedEmployees.length} empleado{selectedEmployees.length !== 1 ? 's' : ''} × 1 curso</span>
-                            )}
-                        </div>
-
-                        {mobileStep < 2 ? (
-                            <button
-                                className={`${styles.bottomBarBtn} ${!canGoNext() ? styles.bottomBarBtnDisabled : ''}`}
-                                onClick={goNext}
-                                disabled={!canGoNext()}
-                                type="button"
-                            >
-                                <span>Siguiente</span>
-                                <ChevronRight size={18} />
-                            </button>
-                        ) : (
-                            <button
-                                className={`${styles.bottomBarBtn} ${styles.bottomBarBtnConfirm} ${!canAssign ? styles.bottomBarBtnDisabled : ''}`}
-                                onClick={handleAssign}
-                                disabled={!canAssign}
-                                type="button"
-                            >
-                                {assigning ? 'Asignando...' : 'Confirmar'}
-                            </button>
-                        )}
-                    </motion.div>
-                </>
-            )}
-        </div>
-    );
-
-    // â”€â”€ Step 0: Seleccionar Empleados â”€â”€â”€â”€â”€â”€â”€â”€â”€
-    const renderMobileStep0 = () => (
-        <div
-            className={styles.mobileStepContent}
-            onTouchStart={handleTouchStart}
-            onTouchMove={handleTouchMove}
-            onTouchEnd={handleTouchEnd}
-        >
-            {/* Pull-to-refresh indicator */}
-            <motion.div className={styles.pullIndicator} style={{ opacity: pullOpacity }}>
-                <motion.div style={{ rotate: pullRotation }}>
-                    <RefreshCw size={20} className={refreshing ? styles.pullSpinning : ''} />
-                </motion.div>
-                <span>{refreshing ? 'Actualizando...' : 'Suelta para actualizar'}</span>
-            </motion.div>
-
-            <h3 className={styles.mobileStepTitle}>
-                <Users size={18} />
-                Seleccionar Empleados
-            </h3>
-
-            {/* Inline search */}
-            <div className={styles.inlineSearch}>
-                <Search size={16} className={styles.inlineSearchIcon} />
-                <input
-                    type="text"
-                    placeholder="Buscar empleado..."
-                    value={mobileSearch}
-                    onChange={(e) => setMobileSearch(e.target.value)}
-                    className={styles.inlineSearchInput}
-                />
-            </div>
-
-            {/* Botón crear empleado */}
-            <button
-                className={styles.mobileAddBtn}
-                onClick={() => router.push('/training/registro')}
-                type="button"
-            >
-                <UserPlus size={16} />
-                <span>Crear Empleado</span>
-            </button>
-
-            {/* Area filter */}
-            <Select
-                value={selectedArea}
-                onChange={(val) => setSelectedArea(val)}
-                options={[{ value: 'all', label: 'Todas las Áreas' }, ...areas.filter(a => a !== 'all').map(area => ({ value: area, label: area }))]}
-            />
-
-            {/* Employee list */}
-            <div className={styles.mobileEmployeeList}>
-                {loading ? (
-                    <div className={styles.loading}>
-                        <span className={styles.loadingDot} />
-                        <span className={styles.loadingDot} />
-                        <span className={styles.loadingDot} />
-                    </div>
-                ) : filteredEmployees.length === 0 ? (
-                    <div className={styles.emptyState}>
-                        <Users size={28} opacity={0.3} />
-                        <span>Sin resultados</span>
-                    </div>
-                ) : (
-                    filteredEmployees.map((emp, i) => (
-                        <motion.div
-                            key={emp.id}
-                            className={`${styles.mobileEmpItem} ${selectedEmployees.includes(emp.id) ? styles.mobileEmpSelected : ''}`}
-                            onClick={() => toggleEmployeeSelection(emp.id)}
-                            initial={{ opacity: 0, y: 8 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{ delay: i * 0.02 }}
+                        <select
+                            className={styles.filterSelect}
+                            value={selectedArea}
+                            onChange={e => setSelectedArea(e.target.value)}
+                            aria-label="Filtrar por área"
                         >
-                            <div className={styles.mobileEmpCheck}>
-                                {selectedEmployees.includes(emp.id) && <CheckCircle size={16} />}
-                            </div>
-                            <div className={styles.mobileEmpInfo}>
-                                <span className={styles.mobileEmpName}>{emp.name || 'Sin Nombre'}</span>
-                                <span className={styles.mobileEmpRole}>{emp.position || emp.puesto || '—'}</span>
-                            </div>
-                            <div className={styles.mobileEmpActions} onClick={e => e.stopPropagation()}>
-                                <button
-                                    className={styles.mobileActionBtn}
-                                    onClick={() => setHistoryEmployee(emp)}
-                                    title="Ver Asignaciones"
-                                    type="button"
-                                >
-                                    <FileText size={14} />
-                                </button>
-                                <button
-                                    className={styles.mobileActionBtn}
-                                    onClick={() => setEditingEmployee(emp)}
-                                    title="Editar"
-                                    type="button"
-                                >
-                                    <Edit2 size={14} />
-                                </button>
-                            </div>
-                        </motion.div>
-                    ))
+                            <option value="all">Todas las áreas</option>
+                            {areas.filter(a => a !== 'all').map(a => (
+                                <option key={a} value={a}>{a}</option>
+                            ))}
+                        </select>
+                        <button
+                            className={styles.btnOutline}
+                            onClick={() => router.push('/training/registro')}
+                            type="button"
+                            title="Nuevo empleado"
+                        >
+                            <UserPlus size={14} /> Nuevo
+                        </button>
+                    </div>
+                </div>
+
+                <div className={styles.empListWrap}>
+                    <div className={styles.listHeader} aria-hidden="true">
+                        <span />
+                        <span>Empleado</span>
+                        <span>Puesto</span>
+                        <span />
+                    </div>
+                    {renderEmployeeList()}
+                </div>
+
+                {selectedEmployees.length > 0 && (
+                    <div className={styles.selectionBadge}>
+                        <CheckCircle size={14} aria-hidden="true" />
+                        {selectedEmployees.length} empleado{selectedEmployees.length !== 1 ? 's' : ''} seleccionado{selectedEmployees.length !== 1 ? 's' : ''}
+                    </div>
                 )}
             </div>
-        </div>
-    );
 
-    // â”€â”€ Step 1: Seleccionar Curso â”€â”€â”€â”€â”€â”€â”€â”€â”€
-    const renderMobileStep1 = () => (
-        <div className={styles.mobileStepContent}>
-            <h3 className={styles.mobileStepTitle}>
-                <BookOpen size={18} />
-                Seleccionar Curso
-            </h3>
+            {/* Right: Courses */}
+            <div className={styles.panel}>
+                <div className={styles.panelHeader}>
+                    <h2 className={styles.panelTitle}>
+                        <BookOpen size={16} aria-hidden="true" /> Seleccionar Curso
+                    </h2>
+                </div>
 
-            <div className={styles.mobileCourseList}>
-                {courses.map((course, i) => (
-                    <motion.div
-                        key={course.id}
-                        className={`${styles.mobileCourseItem} ${selectedCourse === course.id ? styles.mobileCourseSelected : ''}`}
-                        onClick={() => setSelectedCourse(course.id)}
-                        initial={{ opacity: 0, y: 8 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: i * 0.03 }}
+                {renderCourseList()}
+
+                <div className={styles.panelFooter}>
+                    <button
+                        className={`${styles.btnAssign} ${!canAssign ? styles.btnAssignDisabled : ''}`}
+                        onClick={handleAssign}
+                        disabled={!canAssign}
+                        type="button"
                     >
-                        <div className={`${styles.mobileCourseIcon} ${selectedCourse === course.id ? styles.mobileCourseIconActive : ''}`}>
-                            <BookOpen size={20} />
-                        </div>
-                        <div className={styles.mobileCourseInfo}>
-                            <span className={styles.mobileCourseName}>{course.title || course.nombre}</span>
-                            <span className={styles.mobileCourseDuration}>{course.duration || 'Sin duración'}</span>
-                        </div>
-                        {selectedCourse === course.id && (
-                            <motion.div
-                                initial={{ scale: 0 }}
-                                animate={{ scale: 1 }}
-                                transition={{ type: 'spring', stiffness: 400, damping: 20 }}
-                            >
-                                <CheckCircle size={20} className={styles.mobileCourseCheck} />
-                            </motion.div>
-                        )}
-                    </motion.div>
-                ))}
+                        {assigning
+                            ? <><span className={styles.spinner} aria-hidden="true" /> Asignando…</>
+                            : 'Asignar Curso Seleccionado'
+                        }
+                    </button>
+                </div>
             </div>
         </div>
     );
 
-    // â”€â”€ Step 2: Confirmar â”€â”€â”€â”€â”€â”€â”€â”€â”€
-    const renderMobileStep2 = () => {
-        const selectedEmpNames = employees
+    // ── Mobile stepper ────────────────────────────────────────────────────────
+    const renderMobileAssignment = () => {
+        const confirmedNames = employees
             .filter(e => selectedEmployees.includes(e.id))
             .map(e => e.name || 'Sin Nombre');
 
         return (
-            <div className={styles.mobileStepContent}>
-                <h3 className={styles.mobileStepTitle}>
-                    <CheckCircle size={18} />
-                    Confirmar Asignación
-                </h3>
-
-                <div className={styles.confirmCard}>
-                    <div className={styles.confirmSection}>
-                        <span className={styles.confirmLabel}>Curso</span>
-                        <span className={styles.confirmValue}>{selectedCourseName}</span>
-                    </div>
-
-                    <div className={styles.confirmDivider} />
-
-                    <div className={styles.confirmSection}>
-                        <span className={styles.confirmLabel}>
-                            Empleados ({selectedEmpNames.length})
-                        </span>
-                        <ul className={styles.confirmList}>
-                            {selectedEmpNames.map((name, i) => (
-                                <li key={i} className={styles.confirmListItem}>
-                                    <CheckCircle size={12} />
-                                    {name}
-                                </li>
-                            ))}
-                        </ul>
-                    </div>
-
-                    <div className={styles.confirmDivider} />
-
-                    <div className={styles.confirmSection}>
-                        <span className={styles.confirmLabel}>Fecha</span>
-                        <span className={styles.confirmValue}>
-                            {new Date().toLocaleDateString('es-MX', { year: 'numeric', month: 'long', day: 'numeric' })}
-                        </span>
-                    </div>
+            <>
+                {/* Step indicators */}
+                <div className={styles.stepHead} aria-label="Pasos">
+                    {STEP_LABELS.map((label, i) => (
+                        <div
+                            key={i}
+                            className={`${styles.stepDot} ${i === mobileStep ? styles.stepDotActive : ''} ${i < mobileStep ? styles.stepDotDone : ''}`}
+                        >
+                            <div className={styles.stepDotCircle}>
+                                {i < mobileStep ? <CheckCircle size={13} aria-hidden="true" /> : <span>{i + 1}</span>}
+                            </div>
+                            <span className={styles.stepDotLabel}>{label}</span>
+                        </div>
+                    ))}
                 </div>
 
-                {/* Stats */}
-                <div className={styles.confirmStats}>
-                    <div className={styles.confirmStatItem}>
-                        <span className={styles.confirmStatNumber}>{todayCount}</span>
-                        <span className={styles.confirmStatLabel}>Asignados hoy</span>
-                    </div>
+                {/* Step content */}
+                <div className={styles.stepBody}>
+                    {mobileStep === 0 && (
+                        <>
+                            <h3 className={styles.mobileStepTitle}>
+                                <Users size={16} aria-hidden="true" /> Seleccionar Empleados
+                            </h3>
+                            <div className={styles.searchBox}>
+                                <Search size={15} className={styles.searchIcon} aria-hidden="true" />
+                                <input
+                                    type="search"
+                                    className={styles.searchInput}
+                                    placeholder="Buscar empleado…"
+                                    value={mobileSearch}
+                                    onChange={e => setMobileSearch(e.target.value)}
+                                    aria-label="Buscar empleado"
+                                />
+                            </div>
+                            <div className={styles.mobileFilters}>
+                                <select
+                                    className={styles.filterSelect}
+                                    style={{ flex: 1 }}
+                                    value={selectedArea}
+                                    onChange={e => setSelectedArea(e.target.value)}
+                                    aria-label="Filtrar por área"
+                                >
+                                    <option value="all">Todas las áreas</option>
+                                    {areas.filter(a => a !== 'all').map(a => (
+                                        <option key={a} value={a}>{a}</option>
+                                    ))}
+                                </select>
+                                <button
+                                    className={styles.btnOutline}
+                                    onClick={() => router.push('/training/registro')}
+                                    type="button"
+                                    title="Nuevo empleado"
+                                >
+                                    <UserPlus size={14} />
+                                </button>
+                            </div>
+                            <div className={styles.empListWrap}>
+                                {renderEmployeeList()}
+                            </div>
+                        </>
+                    )}
+
+                    {mobileStep === 1 && (
+                        <>
+                            <h3 className={styles.mobileStepTitle}>
+                                <BookOpen size={16} aria-hidden="true" /> Seleccionar Curso
+                            </h3>
+                            {renderCourseList()}
+                        </>
+                    )}
+
+                    {mobileStep === 2 && (
+                        <>
+                            <h3 className={styles.mobileStepTitle}>
+                                <CheckCircle size={16} aria-hidden="true" /> Confirmar Asignación
+                            </h3>
+                            <div className={styles.confirmCard}>
+                                <div className={styles.confirmSection}>
+                                    <span className={styles.confirmLabel}>Curso</span>
+                                    <span className={styles.confirmValue}>{selectedCourseName}</span>
+                                </div>
+                                <div className={styles.confirmDivider} />
+                                <div className={styles.confirmSection}>
+                                    <span className={styles.confirmLabel}>Empleados ({confirmedNames.length})</span>
+                                    <ul className={styles.confirmList}>
+                                        {confirmedNames.map((name, i) => (
+                                            <li key={i} className={styles.confirmListItem}>
+                                                <CheckCircle size={12} aria-hidden="true" />
+                                                {name}
+                                            </li>
+                                        ))}
+                                    </ul>
+                                </div>
+                                <div className={styles.confirmDivider} />
+                                <div className={styles.confirmSection}>
+                                    <span className={styles.confirmLabel}>Fecha</span>
+                                    <span className={styles.confirmValue}>
+                                        {new Date().toLocaleDateString('es-MX', { year: 'numeric', month: 'long', day: 'numeric' })}
+                                    </span>
+                                </div>
+                            </div>
+                            <div className={styles.confirmStats}>
+                                <div className={styles.confirmStatItem}>
+                                    <span className={styles.confirmStatNumber}>{todayCount}</span>
+                                    <span className={styles.confirmStatLabel}>Asignados hoy</span>
+                                </div>
+                            </div>
+                        </>
+                    )}
                 </div>
-            </div>
+
+                {/* Bottom action bar */}
+                <div className={styles.bottomBar}>
+                    {mobileStep > 0 && (
+                        <button
+                            className={styles.bottomBarBack}
+                            onClick={() => setMobileStep(p => p - 1)}
+                            type="button"
+                            aria-label="Paso anterior"
+                        >
+                            <ArrowLeft size={18} />
+                        </button>
+                    )}
+                    <div className={styles.bottomBarInfo}>
+                        {mobileStep === 0 && (
+                            selectedEmployees.length > 0
+                                ? `${selectedEmployees.length} empleado${selectedEmployees.length !== 1 ? 's' : ''} seleccionado${selectedEmployees.length !== 1 ? 's' : ''}`
+                                : 'Selecciona empleados'
+                        )}
+                        {mobileStep === 1 && (selectedCourse ? selectedCourseName : 'Selecciona un curso')}
+                        {mobileStep === 2 && `${selectedEmployees.length} empleado${selectedEmployees.length !== 1 ? 's' : ''} × 1 curso`}
+                    </div>
+                    {mobileStep < 2 ? (
+                        <button
+                            className={`${styles.bottomBarBtn} ${!canGoNext ? styles.bottomBarBtnDisabled : ''}`}
+                            onClick={() => canGoNext && setMobileStep(p => p + 1)}
+                            disabled={!canGoNext}
+                            type="button"
+                        >
+                            Siguiente <ChevronRight size={16} aria-hidden="true" />
+                        </button>
+                    ) : (
+                        <button
+                            className={`${styles.bottomBarBtn} ${styles.bottomBarBtnConfirm} ${!canAssign ? styles.bottomBarBtnDisabled : ''}`}
+                            onClick={handleAssign}
+                            disabled={!canAssign}
+                            type="button"
+                        >
+                            {assigning ? 'Asignando…' : 'Confirmar'}
+                        </button>
+                    )}
+                </div>
+            </>
         );
     };
 
-    // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-    // â”€â”€ DESKTOP LAYOUT RENDER (preserved) â”€â”€
-    // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-
-    const renderDesktopView = () => (
-        <>
-            {/* Search / controls */}
-            <motion.div
-                className={styles.controls}
-                variants={FADE_UP}
-                custom={0}
-                initial="hidden"
-                animate="visible"
-            >
-                <EmployeeSearchBar
-                    searchTerm={searchTerm}
-                    onSearchChange={setSearchTerm}
-                    onAddEmployee={() => router.push('/training/registro')}
-                    canWrite={true}
-                />
-            </motion.div>
-
-            {/* â”€â”€ Tabs â”€â”€ */}
-            <motion.div
-                className={styles.tabBar}
-                variants={FADE_UP}
-                custom={1}
-                initial="hidden"
-                animate="visible"
-            >
-                {[
-                    { key: 'assignment', label: 'Asignación', Icon: LayoutGrid },
-                    { key: 'monitoring', label: 'Monitoreo', Icon: Activity },
-                ].map(({ key, label, Icon }) => (
-                    <button
-                        key={key}
-                        className={`${styles.tab} ${activeTab === key ? styles.tabActive : ''}`}
-                        onClick={() => setActiveTab(key)}
-                        type="button"
-                    >
-                        <Icon size={16} aria-hidden="true" />
-                        <span>{label}</span>
-                        {activeTab === key && (
-                            <motion.div
-                                className={styles.tabIndicator}
-                                layoutId="tabIndicator"
-                                transition={{ type: 'spring', stiffness: 400, damping: 30 }}
-                            />
-                        )}
-                    </button>
-                ))}
-            </motion.div>
-
-            {/* â”€â”€ Tab content â”€â”€ */}
-            <AnimatePresence mode="wait">
-                {activeTab === 'assignment' ? (
-                    <motion.div
-                        key="assignment"
-                        className={styles.grid}
-                        variants={TAB_CONTENT}
-                        initial="hidden"
-                        animate="visible"
-                        exit="exit"
-                    >
-                        {/* â”€â”€ Left: Employee selection â”€â”€ */}
-                        <motion.div className={styles.column} variants={FADE_UP} custom={2}>
-                            <div className={styles.card}>
-                                <h2 className={styles.cardTitle}>
-                                    <Users size={18} aria-hidden="true" />
-                                    Seleccionar Empleados
-                                </h2>
-
-                                {/* Area filter */}
-                                <div className={styles.filters}>
-                                    <Select
-                                        value={selectedArea}
-                                        onChange={(val) => setSelectedArea(val)}
-                                        options={[{ value: 'all', label: 'Todas las Áreas' }, ...areas.filter(a => a !== 'all').map(area => ({ value: area, label: area }))]}
-                                    />
-                                </div>
-
-                                {/* Employee list */}
-                                <div className={styles.employeeList} role="list">
-                                    <div className={styles.listHeader} aria-hidden="true">
-                                        <span />
-                                        <span>Empleado</span>
-                                        <span>Puesto</span>
-                                        <span>Acciones</span>
-                                    </div>
-
-                                    {loading ? (
-                                        <div className={styles.loading}>
-                                            <span className={styles.loadingDot} />
-                                            <span className={styles.loadingDot} />
-                                            <span className={styles.loadingDot} />
-                                        </div>
-                                    ) : filteredEmployees.length === 0 ? (
-                                        <div className={styles.emptyState}>
-                                            <Users size={28} opacity={0.3} />
-                                            <span>Sin resultados</span>
-                                        </div>
-                                    ) : (
-                                        filteredEmployees.map((emp, i) => (
-                                            <motion.div
-                                                key={emp.id}
-                                                role="listitem"
-                                                className={`${styles.employeeItem} ${selectedEmployees.includes(emp.id) ? styles.selected : ''}`}
-                                                onClick={() => toggleEmployeeSelection(emp.id)}
-                                                variants={LIST_ITEM}
-                                                custom={i}
-                                                initial="hidden"
-                                                animate="visible"
-                                                whileTap={{ scale: 0.99 }}
-                                            >
-                                                <div className={styles.checkbox} aria-hidden="true">
-                                                    {selectedEmployees.includes(emp.id) && (
-                                                        <CheckCircle size={14} />
-                                                    )}
-                                                </div>
-                                                <div>
-                                                    <div className={styles.empName}>{emp.name || 'Sin Nombre'}</div>
-                                                    <div className={styles.empId}>{emp.employeeId}</div>
-                                                </div>
-                                                <div className={styles.empRole}>
-                                                    {emp.position || emp.puesto || '—'}
-                                                </div>
-                                                <div className={styles.itemActions} onClick={e => e.stopPropagation()}>
-                                                    <button
-                                                        className={styles.actionBtn}
-                                                        onClick={() => setHistoryEmployee(emp)}
-                                                        title="Ver Asignaciones"
-                                                        type="button"
-                                                    >
-                                                        <FileText size={15} aria-hidden="true" />
-                                                    </button>
-                                                    <button
-                                                        className={styles.actionBtn}
-                                                        onClick={() => setEditingEmployee(emp)}
-                                                        title="Editar Empleado"
-                                                        type="button"
-                                                    >
-                                                        <Edit2 size={15} aria-hidden="true" />
-                                                    </button>
-                                                </div>
-                                            </motion.div>
-                                        ))
-                                    )}
-                                </div>
-
-                                {/* Selection count badge */}
-                                <AnimatePresence>
-                                    {selectedEmployees.length > 0 && (
-                                        <motion.div
-                                            className={styles.selectionCount}
-                                            initial={{ opacity: 0, y: 6 }}
-                                            animate={{ opacity: 1, y: 0 }}
-                                            exit={{ opacity: 0, y: 6 }}
-                                            transition={{ duration: 0.2 }}
-                                        >
-                                            <CheckCircle size={14} aria-hidden="true" />
-                                            {selectedEmployees.length} empleado{selectedEmployees.length !== 1 ? 's' : ''} seleccionado{selectedEmployees.length !== 1 ? 's' : ''}
-                                        </motion.div>
-                                    )}
-                                </AnimatePresence>
-                            </div>
-                        </motion.div>
-
-                        {/* â”€â”€ Right: Course selection + stats â”€â”€ */}
-                        <motion.div className={styles.column} variants={FADE_UP} custom={3}>
-                            <div className={styles.card}>
-                                <h2 className={styles.cardTitle}>
-                                    <BookOpen size={18} aria-hidden="true" />
-                                    Seleccionar Curso
-                                </h2>
-
-                                <div className={styles.courseList} role="list">
-                                    {courses.map((course, i) => (
-                                        <motion.div
-                                            key={course.id}
-                                            role="listitem"
-                                            className={`${styles.courseItem} ${selectedCourse === course.id ? styles.selectedCourse : ''}`}
-                                            onClick={() => setSelectedCourse(course.id)}
-                                            variants={LIST_ITEM}
-                                            custom={i}
-                                            initial="hidden"
-                                            animate="visible"
-                                            whileTap={{ scale: 0.98 }}
-                                        >
-                                            <div className={`${styles.courseIcon} ${selectedCourse === course.id ? styles.courseIconActive : ''}`}>
-                                                <BookOpen size={22} aria-hidden="true" />
-                                            </div>
-                                            <div className={styles.courseInfo}>
-                                                <div className={styles.courseName}>
-                                                    {course.title || course.nombre}
-                                                </div>
-                                                <div className={styles.courseDuration}>
-                                                    {course.duration || 'Sin duración'}
-                                                </div>
-                                            </div>
-                                            {selectedCourse === course.id && (
-                                                <motion.div
-                                                    className={styles.courseCheck}
-                                                    initial={{ scale: 0 }}
-                                                    animate={{ scale: 1 }}
-                                                    transition={{ type: 'spring', stiffness: 400, damping: 20 }}
-                                                >
-                                                    <CheckCircle size={18} />
-                                                </motion.div>
-                                            )}
-                                        </motion.div>
-                                    ))}
-                                </div>
-
-                                <div className={styles.actions}>
-                                    <motion.button
-                                        className={`${styles.assignBtn} ${!canAssign ? styles.assignBtnDisabled : ''}`}
-                                        disabled={!canAssign}
-                                        onClick={handleAssign}
-                                        type="button"
-                                        whileHover={canAssign ? { y: -2 } : {}}
-                                        whileTap={canAssign ? { scale: 0.98 } : {}}
-                                    >
-                                        {assigning ? (
-                                            <>
-                                                <span className={styles.spinnerDot} />
-                                                Asignando...
-                                            </>
-                                        ) : (
-                                            'Asignar Curso Seleccionado'
-                                        )}
-                                    </motion.button>
-                                </div>
-                            </div>
-
-                            {/* Stats card */}
-                            <motion.div
-                                className={`${styles.card} ${styles.statsCard}`}
-                                variants={FADE_UP}
-                                custom={4}
-                                initial="hidden"
-                                animate="visible"
-                            >
-                                <h3 className={styles.statsTitle}>
-                                    <Activity size={16} aria-hidden="true" />
-                                    Resumen de Asignaciones
-                                </h3>
-                                <div className={styles.statRow}>
-                                    <span className={styles.statLabel}>Asignados hoy</span>
-                                    <motion.strong
-                                        className={styles.statValue}
-                                        key={todayCount}
-                                        initial={{ scale: 0.8, opacity: 0 }}
-                                        animate={{ scale: 1, opacity: 1 }}
-                                        transition={{ type: 'spring', stiffness: 400, damping: 20 }}
-                                    >
-                                        {todayCount}
-                                    </motion.strong>
-                                </div>
-                            </motion.div>
-                        </motion.div>
-                    </motion.div>
-                ) : (
-                    <motion.div
-                        key="monitoring"
-                        variants={TAB_CONTENT}
-                        initial="hidden"
-                        animate="visible"
-                        exit="exit"
-                    >
-                        <MonitoringTable />
-                    </motion.div>
-                )}
-            </AnimatePresence>
-        </>
-    );
-
-    // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    // ── Main render ───────────────────────────────────────────────────────────
     return (
         <AdminLayout title="Programación">
-            <div className={styles.container}>
+            <main className={styles.page} id="main-content">
 
+                <StatsBar
+                    totalEmployees={employees.length}
+                    todayCount={todayCount}
+                    selectedCount={selectedEmployees.length}
+                    totalCourses={courses.length}
+                />
 
-                <main className={styles.main}>
-                    {isMobile ? renderMobileView() : renderDesktopView()}
-                </main>
-
-                {/* â”€â”€ Toast â”€â”€ */}
-                <AnimatePresence>
-                    {toast && (
-                        <motion.div
-                            key={toast.message}
-                            className={`${styles.toast} ${styles[toast.type]}`}
-                            initial={{ opacity: 0, y: 20, scale: 0.95 }}
-                            animate={{ opacity: 1, y: 0, scale: 1 }}
-                            exit={{ opacity: 0, y: 16, scale: 0.96 }}
-                            transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
-                            role="status"
-                            aria-live="polite"
+                {/* Tab bar */}
+                <div className={styles.tabBar} role="tablist">
+                    {[
+                        { key: 'assignment', label: 'Asignación', Icon: LayoutGrid },
+                        { key: 'monitoring', label: 'Monitoreo',  Icon: Activity },
+                    ].map(({ key, label, Icon }) => (
+                        <button
+                            key={key}
+                            role="tab"
+                            aria-selected={activeTab === key}
+                            className={`${styles.tab} ${activeTab === key ? styles.tabActive : ''}`}
+                            onClick={() => { setActiveTab(key); setMobileStep(0); }}
+                            type="button"
                         >
-                            {toast.type === 'success'
-                                ? <CheckCircle size={16} aria-hidden="true" />
-                                : <span aria-hidden="true">!</span>
-                            }
-                            {toast.message}
-                        </motion.div>
-                    )}
-                </AnimatePresence>
+                            <Icon size={16} aria-hidden="true" />
+                            {label}
+                        </button>
+                    ))}
+                    <div className={styles.tabSpacer} />
+                    <button
+                        className={styles.btnOutline}
+                        onClick={() => fetchData()}
+                        disabled={loading}
+                        type="button"
+                        title="Actualizar datos"
+                    >
+                        <RefreshCw size={14} /> Actualizar
+                    </button>
+                </div>
 
-                {/* â”€â”€ Modals (unchanged) â”€â”€ */}
-                {editingEmployee && (
-                    <EditEmployeeModal
-                        employee={editingEmployee}
-                        onClose={() => setEditingEmployee(null)}
-                        onUpdate={handleUpdateEmployee}
-                        onDelete={handleDeleteEmployee}
-                    />
-                )}
-                {historyEmployee && (
-                    <EmployeeAssignmentsModal
-                        employee={historyEmployee}
-                        onClose={() => setHistoryEmployee(null)}
-                    />
-                )}
-            </div>
+                {/* Tab content */}
+                {activeTab === 'assignment'
+                    ? isMobile ? renderMobileAssignment() : renderDesktopAssignment()
+                    : <MonitoringTable />
+                }
+
+            </main>
+
+            {editingEmployee && (
+                <EditEmployeeModal
+                    employee={editingEmployee}
+                    onClose={() => setEditingEmployee(null)}
+                    onUpdate={handleUpdateEmployee}
+                    onDelete={handleDeleteEmployee}
+                />
+            )}
+            {historyEmployee && (
+                <EmployeeAssignmentsModal
+                    employee={historyEmployee}
+                    onClose={() => setHistoryEmployee(null)}
+                />
+            )}
         </AdminLayout>
     );
 }
