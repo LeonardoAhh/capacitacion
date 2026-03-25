@@ -1,6 +1,6 @@
-/* =====================================================
-   ContactInfo — iOS Liquid Glass
-   ===================================================== */
+﻿/* ================================================================
+   ContactInfo — Editorial White
+   ================================================================ */
 
 .contactSection {
     display: flex;
@@ -9,15 +9,15 @@
 }
 
 .sectionHeader {
-    font-size: 1rem;
+    font-size: 0.72rem;
     font-weight: 700;
-    color: var(--text-primary);
-    margin: 0 0 0.875rem 0;
-    letter-spacing: -0.01em;
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+    color: var(--text-secondary, #6b7280);
+    margin: 0 0 0.75rem 0;
 }
 
-/* ─── Grid ─────────────────────────────────────────── */
-
+/* ── Grid ────────────────────────────────────────────────────── */
 .contactGrid {
     display: grid;
     gap: 0.75rem;
@@ -30,23 +30,15 @@
     }
 }
 
-/* ─── Card glass ────────────────────────────────────── */
-
+/* ── Cards ───────────────────────────────────────────────────── */
 .contactCard,
 .phonesCard {
     position: relative;
-    border-radius: 18px;
+    border-radius: 20px;
     padding: 1rem;
-    overflow: hidden;
-
-    background: rgba(255, 255, 255, 0.65);
-    backdrop-filter: blur(40px) saturate(180%);
-    -webkit-backdrop-filter: blur(40px) saturate(180%);
-    border: 1px solid rgba(0, 0, 0, 0.06);
-    box-shadow:
-        0 6px 24px rgba(0, 0, 0, 0.07),
-        0 2px 6px rgba(0, 0, 0, 0.03),
-        inset 0 1px 0 rgba(255, 255, 255, 0.90);
+    background: #ffffff;
+    border: 1.5px solid #e5e7eb;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.06), 0 2px 12px rgba(0,0,0,0.04);
 }
 
 .phonesCard {
@@ -55,16 +47,12 @@
 
 [data-theme="dark"] .contactCard,
 [data-theme="dark"] .phonesCard {
-    background: rgba(44, 44, 46, 0.80);
+    background: #1e2235;
     border-color: rgba(255, 255, 255, 0.08);
-    box-shadow:
-        0 6px 24px rgba(0, 0, 0, 0.45),
-        0 2px 6px rgba(0, 0, 0, 0.25),
-        inset 0 1px 0 rgba(255, 255, 255, 0.06);
+    box-shadow: 0 1px 4px rgba(0,0,0,0.30), 0 2px 12px rgba(0,0,0,0.20);
 }
 
-/* ─── Contenido ─────────────────────────────────────── */
-
+/* ── Contenido ───────────────────────────────────────────────── */
 .contactHeader {
     display: flex;
     justify-content: space-between;
@@ -73,17 +61,17 @@
 }
 
 .contactTitle {
-    font-size: 0.9375rem;
+    font-size: 0.9rem;
     font-weight: 600;
-    color: var(--text-primary);
+    color: var(--text-primary, #111827);
 }
 
 .contactLabel {
     font-size: 0.6875rem;
-    font-weight: 600;
-    color: var(--text-tertiary);
+    font-weight: 700;
+    color: var(--text-secondary, #6b7280);
     text-transform: uppercase;
-    letter-spacing: 0.05em;
+    letter-spacing: 0.06em;
     margin-bottom: 0.25rem;
     margin-top: 0.625rem;
 }
@@ -94,7 +82,7 @@
 
 .contactText {
     font-size: 0.8125rem;
-    color: var(--text-secondary);
+    color: var(--text-secondary, #6b7280);
     margin-bottom: 0.25rem;
     display: flex;
     align-items: center;
@@ -102,12 +90,11 @@
 }
 
 .contactText svg {
-    color: var(--color-primary);
+    color: #003ccc;
     flex-shrink: 0;
 }
 
-/* ─── Teléfonos grid ────────────────────────────────── */
-
+/* ── Teléfonos grid ──────────────────────────────────────────── */
 .phonesGrid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);

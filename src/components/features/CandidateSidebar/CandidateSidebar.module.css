@@ -1,104 +1,102 @@
-/* ================================================================
-   CANDIDATE SIDEBAR — Module CSS
-   Todos los colores via tokens CSS (var(--...))
-   Sin valores hardcodeados de color
+﻿/* ================================================================
+   CANDIDATE SIDEBAR — Editorial White
+   Cohesivo con MainSidebar / admin pages — acento naranja
+   Tokens --sb-* inyectados desde .page en page.module.css
    ================================================================ */
 
-/* ----------------------------------------------------------------
-   PC / DESKTOP  (base styles)
-   ---------------------------------------------------------------- */
+/* ── Desktop (base) ───────────────────────────────────────────── */
 .sidebar {
-    grid-row: 1 / -1;
+    width: 240px;
+    min-width: 240px;
     position: sticky;
     top: 0;
     height: 100vh;
     display: flex;
     flex-direction: column;
-    background: var(--sb-bg);
+    background: var(--sb-bg, #ffffff);
+    border-right: 1.5px solid var(--sb-border, #e5e7eb);
     overflow: hidden;
     z-index: 50;
-    border-right: 1px solid var(--sb-border);
+    flex-shrink: 0;
     transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-    /* Safe area para notch/isla dinámica en desktop con pantallas raras */
     padding-left: env(safe-area-inset-left, 0px);
 }
 
-/* ----------------------------------------------------------------
-   TOP — Brand + Close button
-   ---------------------------------------------------------------- */
+/* ── Top — Brand + botón cierre ────────────────────────────────── */
 .sidebarTop {
-    padding: 28px 18px 22px;
-    border-bottom: 1px solid var(--sb-border);
+    height: 56px;
+    padding: 0 14px 0 18px;
     display: flex;
-    justify-content: space-between;
     align-items: center;
+    justify-content: space-between;
+    border-bottom: 1.5px solid var(--sb-border, #e5e7eb);
     flex-shrink: 0;
 }
 
 .sidebarBrand {
     display: flex;
     align-items: center;
-    gap: 9px;
-    text-decoration: none;
-    padding: 6px 8px;
-    border-radius: var(--r-md);
-    transition: background-color var(--t);
+    gap: 10px;
+    overflow: hidden;
+    min-width: 0;
 }
 
-.sidebarBrand:hover {
-    background-color: var(--sb-hover-bg);
-}
-
+/* Barra vertical naranja — reemplaza el dot antiguo */
 .sidebarBrandDot {
-    width: 9px;
-    height: 9px;
-    border-radius: 50%;
-    background: var(--c-brand, var(--c-orange));
+    width: 7px;
+    height: 20px;
+    min-width: 7px;
+    border-radius: 3px;
+    background: var(--c-brand, #003ccc);
     flex-shrink: 0;
-    box-shadow: 0 0 10px color-mix(in srgb, var(--c-brand, var(--c-orange)) 50%, transparent);
 }
 
 .sidebarBrandName {
-    font-size: 1.25rem;
-    font-weight: 600;
-    color: var(--sb-text);
-    letter-spacing: 0.02em;
+    font-family: var(--font-serif, 'Montserrat'), sans-serif;
+    font-size: 0.82rem;
+    font-weight: 800;
+    letter-spacing: 0.10em;
+    color: var(--sb-text, #111827);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    text-transform: uppercase;
 }
 
-/* Oculto en desktop, visible en móvil vía media query */
+/* Oculto en desktop, visible en móvil */
 .closeBtn {
     display: none;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
     background: transparent;
     border: none;
-    color: var(--sb-text-muted);
-    cursor: pointer;
-    padding: 6px;
     border-radius: 6px;
+    color: var(--sb-text-muted, #6b7280);
+    cursor: pointer;
     line-height: 0;
-    transition:
-        background 0.15s var(--ease),
-        color 0.15s var(--ease);
+    flex-shrink: 0;
+    transition: background 0.15s, color 0.15s;
 }
 
 .closeBtn:hover {
     background: var(--sb-hover-bg);
-    color: var(--sb-hover-text);
+    color: var(--sb-hover-text, #111827);
 }
 
 .closeBtn:focus-visible {
-    outline: 2px solid var(--c-brand);
+    outline: 2px solid var(--c-brand, #003ccc);
     outline-offset: 2px;
 }
 
-/* ----------------------------------------------------------------
-   NAV — items + badges
-   ---------------------------------------------------------------- */
+/* ── Nav ──────────────────────────────────────────────────────── */
 .sidebarNav {
     flex: 1;
     display: flex;
     flex-direction: column;
     gap: 2px;
-    padding: 18px 10px;
+    padding: 14px 10px;
     overflow-y: auto;
     scrollbar-width: none;
 }
@@ -109,15 +107,14 @@
 
 .sidebarLabel {
     display: block;
-    font-size: 0.60rem;
+    font-size: 0.625rem;
     font-weight: 700;
-    color: var(--sb-text-muted);
+    color: var(--sb-text-muted, #6b7280);
     text-transform: uppercase;
-    letter-spacing: 0.14em;
+    letter-spacing: 0.12em;
     padding: 0 8px;
-    margin-bottom: 6px;
+    margin-bottom: 4px;
     opacity: 0.55;
-    /* No es interactivo */
     pointer-events: none;
     user-select: none;
 }
@@ -128,20 +125,17 @@
     justify-content: space-between;
     gap: 8px;
     padding: 8px 10px;
-    border-radius: var(--r-md);
+    border-radius: 10px;
     background: transparent;
     border: none;
-    color: var(--sb-text-muted);
+    color: var(--sb-text-muted, #6b7280);
     font-size: 0.825rem;
     font-weight: 500;
     cursor: pointer;
     text-align: left;
     width: 100%;
     letter-spacing: -0.005em;
-    /* Transición completa: bg + color en un solo shorthand */
-    transition:
-        background 0.15s var(--ease),
-        color 0.15s var(--ease);
+    transition: background 0.15s, color 0.15s;
 }
 
 .sidebarItemLeft {
@@ -157,42 +151,39 @@
     align-items: center;
     justify-content: center;
     flex-shrink: 0;
-    opacity: 0.6;
-    transition: opacity 0.15s var(--ease);
+    opacity: 0.65;
+    transition: opacity 0.15s;
 }
 
 .sidebarItem:hover {
     background: var(--sb-hover-bg);
-    color: var(--sb-hover-text);
+    color: var(--sb-hover-text, #111827);
 }
 
 .sidebarItem:hover .sidebarItemIcon {
-    opacity: 0.85;
+    opacity: 0.90;
 }
 
-/* ESTADO ACTIVO */
 .sidebarItem.active {
-    background: var(--sb-active-bg);
-    color: var(--sb-active-text);
+    background: var(--sb-active-bg, #003ccc);
+    color: var(--sb-active-text, #ffffff);
     font-weight: 600;
 }
 
 .sidebarItem.active .sidebarItemIcon {
     opacity: 1;
-    color: var(--sb-active-icon);
+    color: var(--sb-active-icon, #ffffff);
 }
 
 .sidebarItem:focus-visible {
-    outline: 2px solid var(--c-brand);
+    outline: 2px solid var(--c-brand, #003ccc);
     outline-offset: -2px;
 }
 
-/* ----------------------------------------------------------------
-   USER PROFILE — Bottom section
-   ---------------------------------------------------------------- */
+/* ── Perfil — sección inferior ─────────────────────────────────── */
 .sidebarProfile {
-    padding: 16px 14px;
-    border-top: 1px solid var(--sb-border);
+    padding: 14px;
+    border-top: 1.5px solid var(--sb-border, #e5e7eb);
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -200,7 +191,6 @@
     flex-shrink: 0;
 }
 
-/* Contenedor invisible para Avatar y Nombre (Layout puro) */
 .sidebarAvatarBtn {
     display: flex;
     align-items: center;
@@ -216,15 +206,15 @@
 .sidebarAvatar {
     width: 32px;
     height: 32px;
-    border-radius: var(--r-round);
-    background: var(--sb-hover-bg);
+    border-radius: 50%;
+    background: var(--sb-hover-bg, rgba(245,158,11,0.07));
     display: flex;
     align-items: center;
     justify-content: center;
     flex-shrink: 0;
     overflow: hidden;
     position: relative;
-    border: 1px solid var(--sb-border);
+    border: 1.5px solid var(--sb-border, #e5e7eb);
 }
 
 .sidebarAvatarImage {
@@ -232,10 +222,8 @@
     height: 100%;
     object-fit: cover;
     z-index: 2;
-    /* Sobre el fallback */
 }
 
-/* Fallback de iniciales (cuando la imagen falla, revelado vía z-index o fail) */
 .sidebarAvatarFallback {
     position: absolute;
     inset: 0;
@@ -244,7 +232,7 @@
     justify-content: center;
     font-size: 0.8rem;
     font-weight: 600;
-    color: var(--sb-text-muted);
+    color: var(--sb-text-muted, #6b7280);
     z-index: 1;
 }
 
@@ -257,13 +245,12 @@
 .sidebarUserName {
     font-size: 0.825rem;
     font-weight: 600;
-    color: var(--sb-text);
+    color: var(--sb-text, #111827);
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
 }
 
-/* Botones de acción del perfil (Logout / Settings) */
 .sidebarProfileActions {
     display: flex;
     align-items: center;
@@ -275,73 +262,61 @@
     border: none;
     padding: 6px;
     border-radius: 6px;
-    color: var(--sb-text-muted);
+    color: var(--sb-text-muted, #6b7280);
     cursor: pointer;
     line-height: 0;
     display: flex;
     align-items: center;
     justify-content: center;
-    transition:
-        background 0.15s var(--ease),
-        color 0.15s var(--ease);
+    transition: background 0.15s, color 0.15s;
 }
 
 .sidebarIconBtn:hover {
     background: var(--sb-hover-bg);
-    color: var(--sb-hover-text);
+    color: var(--sb-hover-text, #111827);
 }
 
-/* Logout específico — usa el token rojo genérico opcional */
 .sidebarLogoutBtn:hover {
-    background: color-mix(in srgb, var(--c-red) 15%, transparent);
-    color: var(--c-red);
+    background: rgba(239, 68, 68, 0.10);
+    color: #ef4444;
 }
 
-/* ----------------------------------------------------------------
-   RESPONSIVO — Tablets (< 1024px)
-   ---------------------------------------------------------------- */
+/* ── Responsive — < 1024px ─────────────────────────────────────── */
 @media (max-width: 1024px) {
     .sidebar {
-        width: 260px;
         position: fixed;
         top: 0;
         left: 0;
         height: 100%;
         height: 100dvh;
         z-index: 999;
-        /* Fondo sólido oscuro/claro forzado para evitar mix de transparencias */
-        background: var(--c-surface, #ffffff);
-        border-right: 1px solid var(--sb-border);
         border-top-right-radius: 20px;
         border-bottom-right-radius: 20px;
-        /* Fuera de pantalla por defecto */
         transform: translateX(-100%);
         box-shadow: none;
-        transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s ease;
+        transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+                    box-shadow 0.3s ease;
     }
 
-    /* Clase inyectada vía JS para abrir el Drawer */
     .sidebar.open {
         transform: translateX(0);
-        box-shadow: 4px 0 24px var(--sh-color-strong);
+        box-shadow: 4px 0 24px var(--sh-color-strong, rgba(0,0,0,0.16));
     }
 
     .closeBtn {
-        display: block;
-        /* Revelar cruz de cierre */
+        display: flex;
     }
 
-    /* Fondo semitransparente detrás del drawer */
     .overlay {
         position: fixed;
         inset: 0;
-        background: var(--sb-overlay-bg);
+        background: var(--sb-overlay-bg, rgba(0,0,0,0.45));
         backdrop-filter: blur(4px);
         -webkit-backdrop-filter: blur(4px);
         z-index: 998;
         opacity: 0;
         pointer-events: none;
-        transition: opacity 0.3s var(--ease);
+        transition: opacity 0.3s;
     }
 
     .overlay.overlayVisible {

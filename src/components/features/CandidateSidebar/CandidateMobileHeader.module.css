@@ -1,13 +1,13 @@
-/* ================================================================
-   MOBILE HEADER — ME3 Editorial White
-   Visible solo en < 768px, cohesivo con el desktop header
+﻿/* ================================================================
+   MOBILE HEADER — Candidatos
+   Cohesivo con AdminLayout desktop header
    ================================================================ */
 
 .header {
     display: none;
 }
 
-@media (max-width: 767px) {
+@media (max-width: 1024px) {
     .header {
         display: flex;
         align-items: center;
@@ -43,7 +43,7 @@
 }
 
 .menuBtn:hover {
-    background: rgba(0, 60, 204, 0.07);
+    background: rgba(0, 60, 204, 0.08);
     color: #003ccc;
 }
 

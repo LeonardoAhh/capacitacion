@@ -5,7 +5,7 @@ import AdminLayout from '@/components/layout/AdminLayout/AdminLayout';
 import styles from './page.module.css';
 import {
     Search, Plus, Upload, Edit2, Trash2, X, Save,
-    Users, UserCheck, UserMinus, Star, Download,
+    Users, UserCheck, UserMinus, Star, Download, Key,
 } from 'lucide-react';
 import { useEmployees } from '@/hooks/useEmployees';
 import { useToast } from '@/components/ui/Toast/Toast';
@@ -431,6 +431,20 @@ export default function EmployeesPage() {
         }
     }, [showConfirm, deleteEmployee, toast]);
 
+    const handleGenerateCode = useCallback(async (emp) => {
+        const code = Math.floor(100000 + Math.random() * 900000).toString();
+        try {
+            await updateEmployee(emp.id, {
+                accessCode: code,
+                accessCodeGeneratedAt: Date.now(),
+                accessCodeUses: 0,
+            });
+            toast.success(`Código generado: ${code}`);
+        } catch {
+            toast.error('No se pudo generar el código.');
+        }
+    }, [updateEmployee, toast]);
+
     const handleImportFile = useCallback(async (e) => {
         const file = e.target.files?.[0];
         if (!file) return;
@@ -635,6 +649,15 @@ export default function EmployeesPage() {
                                                         aria-label={`Editar ${emp.name}`}
                                                     >
                                                         <Edit2 size={13} />
+                                                    </button>
+                                                    <button
+                                                        className={`${styles.iconBtn} ${styles.iconBtnBlue}`}
+                                                        onClick={() => handleGenerateCode(emp)}
+                                                        title={emp.accessCode ? `Código: ${emp.accessCode} (Regenerar)` : 'Generar código de acceso'}
+                                                        type="button"
+                                                        aria-label={`Generar código de acceso para ${emp.name}`}
+                                                    >
+                                                        <Key size={13} />
                                                     </button>
                                                     <button
                                                         className={`${styles.iconBtn} ${styles.iconBtnRed}`}

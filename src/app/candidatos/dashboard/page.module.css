@@ -1,106 +1,139 @@
+﻿/* ================================================================
+   /candidatos/dashboard — page.module.css
+   Editorial White — cohesivo con /employees y admin pages
+   ================================================================ */
+
 .page {
+    /* ── Tokens locales ── */
+    --c-surface: #ffffff;
+    --c-bg:      #f9fafb;
+    --c-ink:     var(--text-primary,  #111827);
+    --c-muted:   var(--text-secondary, #6b7280);
+    --c-line:    #e5e7eb;
+
+    --c-primary:     #003ccc;
+    --c-primary-dim: rgba(0, 60, 204, 0.10);
+    --c-primary-mid: rgba(0, 60, 204, 0.22);
+    --c-brand:       #003ccc;
+
+    --c-success:     #16a34a;
+    --c-success-dim: rgba(22, 163, 74, 0.10);
+    --c-danger:      #ef4444;
+    --c-danger-dim:  rgba(239, 68, 68, 0.09);
+    --c-blue:        #3b82f6;
+    --c-blue-dim:    rgba(59, 130, 246, 0.10);
+
+    --r-xl:   20px;
+    --r-lg:   16px;
+    --r-md:   12px;
+    --r-sm:   8px;
+    --r-full: 9999px;
+
+    --sh-card: 0 1px 4px rgba(0,0,0,0.06), 0 2px 12px rgba(0,0,0,0.04);
+    --sh-lift: 0 4px 20px rgba(0,0,0,0.10), 0 1px 6px rgba(0,0,0,0.06);
+    --ease:    cubic-bezier(0.4, 0, 0.2, 1);
+    --t:       0.20s;
+
+    /* ── Sidebar tokens (consumidos por CandidateSidebar) ── */
+    --sb-bg:           #ffffff;
+    --sb-border:       #e5e7eb;
+    --sb-text:         #111827;
+    --sb-text-muted:   #6b7280;
+    --sb-hover-bg:     rgba(0, 60, 204, 0.07);
+    --sb-hover-text:   #111827;
+    --sb-active-bg:    #003ccc;
+    --sb-active-text:  #ffffff;
+    --sb-active-icon:  #ffffff;
+    --sb-badge-bg:     rgba(0, 60, 204, 0.08);
+    --sb-badge-text:   #6b7280;
+    --sb-overlay-bg:   rgba(0, 0, 0, 0.45);
+    --sb-shadow:       rgba(0, 0, 0, 0.10);
+    --sh-color-strong: rgba(0, 0, 0, 0.16);
+    /* usada en CandidateSidebar dark */
+    --c-red: #ef4444;
+
     position: relative;
     min-height: 100vh;
     isolation: isolate;
     display: flex;
-    /* Sidebar layout = Row */
     flex-direction: row;
-
-    /* Sidebar tokens inyectados para el CandidateSidebar */
-    --c-orange: #f59e0b;
-    /* Naranja Institucional */
-    --sb-bg: transparent;
-    --sb-border: rgba(245, 158, 11, 0.08);
-    /* 0.08 alpha de #f59e0b */
-    --sb-text: var(--text-primary);
-    --sb-text-muted: var(--text-secondary);
-    --sb-hover-bg: rgba(245, 158, 11, 0.06);
-    --sb-hover-text: var(--text-primary);
-    --sb-active-bg: var(--c-orange);
-    --sb-active-text: #fff;
-    --sb-badge-bg: rgba(245, 158, 11, 0.07);
-    --sb-badge-text: var(--text-secondary);
-    --sb-overlay-bg: rgba(0, 0, 0, 0.4);
-    --sb-shadow: rgba(0, 0, 0, 0.12);
-
-    /* Light: mesh cálido crema/ámbar/lavanda */
-    background:
-        radial-gradient(ellipse 80% 60% at 10% 0%, rgba(253, 230, 138, 0.35) 0%, transparent 60%),
-        radial-gradient(ellipse 70% 50% at 90% 10%, rgba(221, 214, 254, 0.25) 0%, transparent 55%),
-        radial-gradient(ellipse 60% 40% at 50% 90%, rgba(186, 230, 253, 0.20) 0%, transparent 60%),
-        linear-gradient(155deg, #fafaf8 0%, #fef9ef 40%, #f5f3ff 70%, #f0f9ff 100%);
+    background: var(--c-bg);
 }
 
+/* ── Dark mode ── */
 [data-theme="dark"] .page {
-    /* Token overrides para dark mode */
-    --sb-bg: transparent;
-    --sb-border: rgba(245, 158, 11, 0.08);
-    --sb-hover-bg: rgba(245, 158, 11, 0.10);
-    --sb-badge-bg: rgba(245, 158, 11, 0.10);
-    --sb-badge-text: rgba(253, 230, 138, 0.70);
+    --c-surface: #1e2235;
+    --c-bg:      #13151e;
+    --c-line:    rgba(255, 255, 255, 0.08);
 
-    /* Dark: azul profundo / violeta oscuro (del design system de referencia) */
-    background:
-        radial-gradient(ellipse 80% 60% at 10% 0%, rgba(245, 158, 11, 0.08) 0%, transparent 55%),
-        radial-gradient(ellipse 70% 50% at 90% 10%, rgba(139, 92, 246, 0.07) 0%, transparent 55%),
-        radial-gradient(ellipse 60% 40% at 50% 90%, rgba(14, 165, 233, 0.06) 0%, transparent 60%),
-        linear-gradient(155deg, #111110 0%, #1a1614 35%, #16131f 65%, #0f1520 100%);
+    --c-primary-dim: rgba(0, 60, 204, 0.12);
+    --c-primary-mid: rgba(0, 60, 204, 0.20);
+    --c-blue-dim:   rgba(59, 130, 246, 0.12);
+
+    --sb-bg:          #1a1c28;
+    --sb-border:      rgba(255, 255, 255, 0.08);
+    --sb-text:        #f9fafb;
+    --sb-text-muted:  #9ca3af;
+    --sb-hover-bg:    rgba(0, 60, 204, 0.10);
+    --sb-hover-text:  #f9fafb;
 }
 
+/* ── Área de contenido principal ── */
 .scrollContent {
     flex: 1;
-    /* Toma todo el espacio sobrante después del sidebar */
+    min-width: 0;
     position: relative;
     z-index: 10;
     min-height: 100vh;
-    padding: 2rem 2rem 8rem;
-    width: 100%;
-    /* max-width removido para usar 100% de la pantalla */
+    padding: 1.5rem 1rem 6rem;
     display: flex;
     flex-direction: column;
-    gap: 1.5rem;
+    gap: 1.25rem;
 }
 
+/* ── Grid de columnas info ── */
 .infoColumns {
     display: flex;
     flex-direction: column;
-    gap: 1.5rem;
+    gap: 1.25rem;
 }
 
+/* ── Footer ── */
 .footer {
-    padding: 2rem 0;
+    padding: 1.75rem 0 0.5rem;
     text-align: center;
-    color: var(--text-tertiary);
+    color: var(--text-tertiary, #9ca3af);
     font-size: 0.75rem;
     display: flex;
     flex-direction: column;
     align-items: center;
     gap: 0.25rem;
     margin-top: 0.5rem;
+    border-top: 1.5px solid var(--c-line);
 }
 
+/* ── Responsive ── */
 @media (min-width: 768px) {
     .scrollContent {
-        padding: 5rem 2rem 3rem;
+        padding: 2rem 2rem 4rem;
     }
 }
 
 @media (min-width: 1024px) {
     .scrollContent {
-        padding: 4rem 4rem 4rem;
-        /* Padding más amplio y balanceado para PC */
+        padding: 2rem 2.5rem 4rem;
     }
 
     .infoColumns {
         display: grid;
         grid-template-columns: repeat(3, 1fr);
-        gap: 1.5rem;
+        gap: 1.25rem;
         align-items: start;
     }
 }
 
 @media (prefers-reduced-motion: reduce) {
-    .page {
+    .page * {
         transition-duration: 0.01ms !important;
         animation-duration: 0.01ms !important;
     }

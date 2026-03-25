@@ -532,6 +532,11 @@
     color: var(--c-amber);
 }
 
+.iconBtnBlue {
+    border-color: var(--c-primary);
+    color: var(--c-primary);
+}
+
 .iconBtnRed {
     border-color: var(--c-danger);
     color: var(--c-danger);

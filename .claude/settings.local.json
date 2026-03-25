@@ -17,7 +17,8 @@
       "Bash(npm run:*)",
       "Bash(cd:*)",
       "Bash(find 'C:\\\\Users\\\\Capacitacion - QRO\\\\Desktop\\\\Capacitación\\\\VTX/src/components' -type f \\\\\\(-name Button.js -o -name Dialog* -o -name AdminLayout* -o -name Toast* \\\\\\))",
-      "Bash(find 'C:\\\\Users\\\\Capacitacion - QRO\\\\Desktop\\\\Capacitación\\\\VTX/src/hooks' -type f -name *)"
+      "Bash(find 'C:\\\\Users\\\\Capacitacion - QRO\\\\Desktop\\\\Capacitación\\\\VTX/src/hooks' -type f -name *)",
+      "Bash(powershell -Command \":*)"
     ]
   }
 }
