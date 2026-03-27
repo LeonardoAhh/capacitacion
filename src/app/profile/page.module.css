@@ -615,20 +615,57 @@
     background: var(--c-surface);
     border: 1.5px solid var(--c-line);
     border-radius: var(--r-xl);
-    padding: 20px;
+    padding: 22px;
     box-shadow: var(--sh-card);
 }
 
 .adminFormTitle {
-    font-size: 0.95rem;
+    font-size: 0.96rem;
     font-weight: 700;
     color: var(--c-ink);
-    margin: 0 0 14px;
+    margin: 0 0 16px;
 }
 
 .permissionsTableWrapper {
     overflow-x: auto;
     margin-top: 12px;
+    border: 1px solid var(--c-line);
+    border-radius: var(--r-md);
+    background: var(--c-bg);
+}
+
+.adminTable {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.82rem;
+    font-family: var(--font-body), sans-serif;
+}
+
+.adminTable th,
+.adminTable td {
+    padding: 10px 12px;
+    border-bottom: 1px solid var(--c-line);
+    text-align: left;
+    vertical-align: middle;
+}
+
+.adminTable th {
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--c-muted);
+    background: var(--c-surface);
+    border-bottom: 1.5px solid var(--c-line);
+}
+
+.adminTable tbody tr:hover {
+    background: var(--c-primary-dim);
+}
+
+.adminTable td:last-child,
+.adminTable th:last-child {
+    text-align: right;
 }
 
 .permissionCell {
@@ -644,6 +681,7 @@
 
 .adminListsGrid {
     display: grid;
+    grid-template-columns: 1fr 1fr;
     gap: 18px;
 }
 
@@ -651,8 +689,9 @@
     background: var(--c-surface);
     border: 1.5px solid var(--c-line);
     border-radius: var(--r-xl);
-    padding: 18px;
+    padding: 20px;
     box-shadow: var(--sh-card);
+    min-height: 220px;
 }
 
 .adminListTitle {
@@ -674,8 +713,18 @@
     gap: 12px;
     padding: 14px 16px;
     border-radius: var(--r-md);
-    background: var(--c-bg);
+    background: var(--c-surface);
     border: 1px solid var(--c-line);
+}
+
+.roleCard:hover {
+    background: var(--c-bg);
+}
+
+.adminFormColumns {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 18px;
 }
 
 .roleName {

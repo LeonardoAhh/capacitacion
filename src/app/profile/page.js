@@ -257,7 +257,7 @@ function AdminSection() {
     const [rolesLoading, setRolesLoading] = useState(true);
     const [editingUserId, setEditingUserId] = useState(null);
     const [editingRoleId, setEditingRoleId] = useState(null);
-    const [userForm, setUserForm] = useState({ email: '', name: '', rol: 'demo', avatarSeed: '' });
+    const [userForm, setUserForm] = useState({ email: '', name: '', rol: 'admin', avatarSeed: '' });
     const [roleForm, setRoleForm] = useState({ name: '', permissions: {} });
 
     const PERMISSION_PAGES = [
@@ -310,7 +310,7 @@ function AdminSection() {
 
     const resetUserForm = () => {
         setEditingUserId(null);
-        setUserForm({ email: '', name: '', rol: 'demo', avatarSeed: '' });
+        setUserForm({ email: '', name: '', rol: 'admin', avatarSeed: '' });
     };
 
     const resetRoleForm = () => {
@@ -378,7 +378,7 @@ function AdminSection() {
         setUserForm({
             email: userData.email || '',
             name: userData.name || '',
-            rol: userData.rol || 'demo',
+            rol: userData.rol || 'admin',
             avatarSeed: userData.avatarSeed || '',
         });
     };
@@ -457,7 +457,7 @@ function AdminSection() {
 
     const canSaveUser = userForm.email.trim() !== '' && userForm.name.trim() !== '';
     const canSaveRole = roleForm.name.trim() !== '';
-    const userRolesOptions = ['demo', 'instructor', 'admin', 'super_admin', ...rolesList.map(r => r.name)].filter((value, index, self) => self.indexOf(value) === index);
+    const userRolesOptions = ['instructor', 'admin', 'super_admin', ...rolesList.map(r => r.name)].filter((value, index, self) => self.indexOf(value) === index);
 
     const renderPermissionRow = (pageKey, pageLabel) => {
         const permissions = roleForm.permissions[pageKey] || { view: false, create: false, edit: false, delete: false };
