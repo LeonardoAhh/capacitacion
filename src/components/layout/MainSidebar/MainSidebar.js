@@ -66,6 +66,53 @@ const INSTRUCTOR_SECTIONS = [
     },
 ];
 
+// ── Partículas por animación ──────────────────────────────────────────────────
+const ANIM_PARTICLES = {
+    lightning: ['⚡', '⭐', '💫', '✨', '⚡', '⭐'],
+    hearts:    ['❤️', '💕', '🌸', '💖', '❤️', '💕'],
+    books:     ['📚', '✏️', '🎓', '⭐', '📚', '✏️'],
+    clouds:    ['☁️', '🌤️', '🌈', '☁️', '🌤️', '🌈'],
+    default:   ['✨', '🌟', '💫', '✨', '🌟', '💫'],
+};
+
+// Fallback por rol (para usuarios sin campo sidebarAnimation)
+const ROLE_TO_ANIM = {
+    super_admin: 'hearts',
+    admin:       'lightning',
+    instructor:  'books',
+};
+
+const PARTICLE_CONFIG = [
+    { left:  8, delay: 0.0, duration: 3.2 },
+    { left: 20, delay: 0.9, duration: 2.8 },
+    { left: 35, delay: 1.7, duration: 3.6 },
+    { left: 52, delay: 0.4, duration: 3.0 },
+    { left: 68, delay: 1.3, duration: 2.6 },
+    { left: 83, delay: 2.1, duration: 3.4 },
+];
+
+function SidebarParticles({ user }) {
+    const animKey = user?.sidebarAnimation || ROLE_TO_ANIM[user?.rol] || 'default';
+    const emojis = ANIM_PARTICLES[animKey] || ANIM_PARTICLES.default;
+    return (
+        <span className={styles.particlesLayer} aria-hidden="true">
+            {PARTICLE_CONFIG.map((p, i) => (
+                <span
+                    key={i}
+                    className={styles.particle}
+                    style={{
+                        left: `${p.left}%`,
+                        animationDelay: `${p.delay}s`,
+                        animationDuration: `${p.duration}s`,
+                    }}
+                >
+                    {emojis[i % emojis.length]}
+                </span>
+            ))}
+        </span>
+    );
+}
+
 function getInitials(name = '') {
     const words = name.trim().split(' ');
     if (words.length >= 2) return (words[0][0] + words[1][0]).toUpperCase();
@@ -97,8 +144,9 @@ export default function MainSidebar({ user, handleLogout, isOpen, onClose, isCol
 
     const firstName = (user?.nombre || user?.nickname || user?.name || 'Admin').split(' ')[0];
     const avatarSeed = user?.avatarSeed || user?.email || 'admin';
+    const avatarStyle = user?.avatarStyle || 'lorelei';
     const avatarSrc = user?.photoURL || user?.avatar ||
-        `https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(avatarSeed)}`;
+        `https://api.dicebear.com/7.x/${avatarStyle}/svg?seed=${encodeURIComponent(avatarSeed)}&backgroundColor=b6e3f4,c0aede,d1d4f9`;
     const puesto = user?.puesto || getRoleLabel(user?.rol);
     const departamento = user?.departamento;
 
@@ -193,6 +241,8 @@ export default function MainSidebar({ user, handleLogout, isOpen, onClose, isCol
 
                 {/* ── Footer / Profile ── */}
                 <div className={styles.footer}>
+                    <SidebarParticles user={user} />
+                    <div className={styles.pillWrapper}>
                     <Link
                         href="/profile"
                         className={styles.profileCard}
@@ -226,6 +276,7 @@ export default function MainSidebar({ user, handleLogout, isOpen, onClose, isCol
                     >
                         <LogOut size={15} />
                     </button>
+                    </div>
                 </div>
             </aside>
         </>

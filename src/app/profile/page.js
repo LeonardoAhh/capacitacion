@@ -1,14 +1,49 @@
 'use client';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { useRouter } from 'next/navigation';
 
 import styles from './page.module.css';
-import { createAvatar } from '@dicebear/core';
-import { lorelei } from '@dicebear/collection';
 import {
-    Eye, EyeOff, RefreshCw, Calendar, User2, User, Shield, BookOpen
+    Eye, EyeOff, RefreshCw, Palette, Calendar, User2, User, Shield, BookOpen, KeyRound,
+    MoreHorizontal
 } from 'lucide-react';
+
+// Todos los estilos de DiceBear disponibles
+const AVATAR_STYLES = [
+    { value: 'lorelei',             label: 'Lorelei' },
+    { value: 'lorelei-neutral',     label: 'Lorelei N.' },
+    { value: 'avataaars',           label: 'Avataaars' },
+    { value: 'avataaars-neutral',   label: 'Avataaars N.' },
+    { value: 'bottts',              label: 'Bottts' },
+    { value: 'bottts-neutral',      label: 'Bottts N.' },
+    { value: 'fun-emoji',           label: 'Fun Emoji' },
+    { value: 'micah',               label: 'Micah' },
+    { value: 'personas',            label: 'Personas' },
+    { value: 'pixel-art',           label: 'Pixel Art' },
+    { value: 'pixel-art-neutral',   label: 'Pixel Art N.' },
+    { value: 'open-peeps',          label: 'Open Peeps' },
+    { value: 'notionists',          label: 'Notionists' },
+    { value: 'notionists-neutral',  label: 'Notionists N.' },
+    { value: 'big-smile',           label: 'Big Smile' },
+    { value: 'big-ears',            label: 'Big Ears' },
+    { value: 'big-ears-neutral',    label: 'Big Ears N.' },
+    { value: 'adventurer',          label: 'Adventurer' },
+    { value: 'adventurer-neutral',  label: 'Adventurer N.' },
+    { value: 'croodles',            label: 'Croodles' },
+    { value: 'croodles-neutral',    label: 'Croodles N.' },
+    { value: 'dylan',               label: 'Dylan' },
+    { value: 'thumbs',              label: 'Thumbs' },
+    { value: 'miniavs',             label: 'Miniavs' },
+    { value: 'identicon',           label: 'Identicon' },
+    { value: 'rings',               label: 'Rings' },
+    { value: 'shapes',              label: 'Shapes' },
+];
+
+function dicebearUrl(style, seed, size = 80) {
+    return `https://api.dicebear.com/7.x/${style}/svg?seed=${encodeURIComponent(seed || 'placeholder')}&backgroundColor=b6e3f4,c0aede,d1d4f9&size=${size}`;
+}
 import { useToast } from '@/components/ui/Toast/Toast';
 import { Badge } from '@/components/ui/Badge/Badge';
 import { Skeleton } from '@/components/ui/Skeleton/Skeleton';
@@ -25,15 +60,60 @@ const ROLE_BADGE_VARIANT = {
 const ADMIN_ROLES   = ['admin', 'superadmin', 'super_admin', 'ADMIN', 'SUPER_ADMIN'];
 const AUDITOR_ROLES = ['super_admin', 'SUPER_ADMIN'];
 
+const BANNER_PARTICLES = {
+    lightning: ['⚡','⭐','💫','✨','⚡','⭐','💫','✨'],
+    hearts:    ['❤️','💕','🌸','💖','❤️','💕','🌸','💖'],
+    books:     ['📚','✏️','🎓','⭐','📚','✏️','🎓','⭐'],
+    clouds:    ['☁️','🌤️','🌈','☁️','🌤️','🌈','☁️','🌤️'],
+    default:   ['✨','🌟','💫','⭐','✨','🌟','💫','⭐'],
+};
+
+const BANNER_CONFIG = [
+    { left:  4, top: 15, delay: 0.0, duration: 4.0 },
+    { left: 14, top: 60, delay: 1.2, duration: 3.4 },
+    { left: 26, top: 30, delay: 0.5, duration: 4.8 },
+    { left: 40, top: 70, delay: 2.1, duration: 3.8 },
+    { left: 55, top: 20, delay: 0.8, duration: 4.2 },
+    { left: 68, top: 55, delay: 1.7, duration: 3.6 },
+    { left: 80, top: 35, delay: 0.3, duration: 4.5 },
+    { left: 92, top: 65, delay: 1.4, duration: 3.2 },
+];
+
+function BannerParticles({ animKey }) {
+    const emojis = BANNER_PARTICLES[animKey] || BANNER_PARTICLES.default;
+    return (
+        <span className={styles.bannerParticlesLayer} aria-hidden="true">
+            {BANNER_CONFIG.map((p, i) => (
+                <span
+                    key={i}
+                    className={styles.bannerParticle}
+                    style={{
+                        left: `${p.left}%`,
+                        top: `${p.top}%`,
+                        animationDelay: `${p.delay}s`,
+                        animationDuration: `${p.duration}s`,
+                    }}
+                >
+                    {emojis[i % emojis.length]}
+                </span>
+            ))}
+        </span>
+    );
+}
+
 // ── Componente principal ──────────────────────────────────────────────────────
 
 export default function ProfilePage() {
     const { user, loading, updateUserProfile } = useAuth();
     const router = useRouter();
 
-    const [avatarSeed, setAvatarSeed]   = useState('');
-    const [isRevealed, setIsRevealed]   = useState(false);
-    const [activeTab,  setActiveTab]    = useState('perfil');
+    const [avatarSeed,        setAvatarSeed]        = useState('');
+    const [avatarStyle,       setAvatarStyle]       = useState('lorelei');
+    const [showStylePicker,   setShowStylePicker]   = useState(false);
+    const [pickerCoords,      setPickerCoords]      = useState({ top: 0, left: 0 });
+    const [isRevealed,        setIsRevealed]        = useState(false);
+    const [activeTab,         setActiveTab]         = useState('perfil');
+    const styleBtnRef = useRef(null);
 
     // Redirect instructores
     useEffect(() => {
@@ -41,6 +121,7 @@ export default function ProfilePage() {
         const rol = user.rol?.toLowerCase();
         if (rol === 'instructor') { router.push('/induccion'); return; }
         setAvatarSeed(user.avatarSeed || user.email);
+        setAvatarStyle(user.avatarStyle || 'lorelei');
     }, [user, router]);
 
     // Redirect si no autenticado
@@ -48,19 +129,26 @@ export default function ProfilePage() {
         if (!loading && !user) router.push('/login');
     }, [user, loading, router]);
 
-    const avatarSvg = useMemo(() =>
-        createAvatar(lorelei, {
-            seed: avatarSeed || 'placeholder',
-            size: 120,
-            backgroundColor: ['b6e3f4', 'c0aede', 'd1d4f9'],
-        }).toString(),
-    [avatarSeed]);
+    const avatarUrl = dicebearUrl(avatarStyle, avatarSeed, 120);
 
     const handleRandomizeAvatar = async () => {
         const newSeed = Math.random().toString(36).substring(7);
         setAvatarSeed(newSeed);
         if (user?.uid) await updateUserProfile(user.uid, { avatarSeed: newSeed });
     };
+
+    const handleChangeStyle = async (style) => {
+        setAvatarStyle(style);
+        setShowStylePicker(false);
+        if (user?.uid) await updateUserProfile(user.uid, { avatarStyle: style });
+    };
+
+    const openStylePicker = () => {
+        const rect = styleBtnRef.current?.getBoundingClientRect();
+        if (rect) setPickerCoords({ top: rect.bottom + 8, left: rect.left });
+        setShowStylePicker(v => !v);
+    };
+
 
     // ── Loading skeleton ──────────────────────────────────────────────────────
     if (loading || !user) {
@@ -91,31 +179,102 @@ export default function ProfilePage() {
     const isAuditor = AUDITOR_ROLES.includes(user?.rol);
 
     const detailRows = [
-        { icon: <Calendar size={16} />, label: 'Fecha Ingreso', value: user?.fechaIngreso  || 'No definida'  },
-        { icon: <User2     size={16} />, label: 'Género',        value: user?.genero        || 'No definido' },
+        { icon: <Calendar size={18} />, label: 'Fecha de Ingreso', value: user?.fechaIngreso   || '—' },
+        { icon: <User2    size={18} />, label: 'Género',            value: user?.genero         || '—' },
+        { icon: <Shield   size={18} />, label: 'Rol',               value: user?.rol            || '—' },
+        { icon: <User     size={18} />, label: 'Departamento',      value: user?.departamento   || '—' },
+        { icon: <BookOpen size={18} />, label: 'Puesto',            value: user?.puesto         || '—' },
     ];
 
     // ── Tabs declarativas ─────────────────────────────────────────────────────
     const profileTabs = [
         {
-            value: 'perfil', label: 'Mi Perfil', icon: <User size={15} />,
+            value: 'perfil', label: 'Profile',
             content: (
-                <div className={styles.detailsCard}>
-                    <h3 className={styles.detailsTitle}>Detalles del Perfil</h3>
-                    <div className={styles.detailsContent}>
-                        {detailRows.map(({ icon, label, value }) => (
-                            <div key={label} className={styles.detailRow}>
-                                <span className={styles.detailIcon}>{icon}</span>
-                                <span className={styles.detailLabel}>{label}</span>
-                                <span className={styles.detailValue}>{value}</span>
+                <>
+                    {/* Hero Card dentro del tab */}
+                    <div className={styles.heroCard}>
+                        <div className={styles.heroBanner} aria-hidden="true">
+                            <BannerParticles animKey={user?.sidebarAnimation || (user?.rol === 'super_admin' ? 'lightning' : user?.rol === 'admin' ? 'hearts' : user?.rol === 'instructor' ? 'books' : 'default')} />
+                        </div>
+                        <div className={styles.heroBody}>
+                            <div className={styles.avatarWrapper}>
+                                <div
+                                    className={styles.avatar}
+                                    role="img"
+                                    aria-label={`Avatar de ${user.name || user.displayName || 'Usuario'}`}
+                                >
+                                    <img src={avatarUrl} alt="" width={96} height={96} />
+                                </div>
+                                <button
+                                    onClick={handleRandomizeAvatar}
+                                    className={styles.changeAvatarBtn}
+                                    aria-label="Cambiar avatar aleatorio"
+                                    title="Cambiar Avatar"
+                                >
+                                    <RefreshCw size={14} />
+                                </button>
+                                <button
+                                    ref={styleBtnRef}
+                                    onClick={openStylePicker}
+                                    className={`${styles.changeAvatarBtn} ${styles.changeStyleBtn}`}
+                                    aria-label="Cambiar estilo de avatar"
+                                    title="Cambiar Estilo"
+                                >
+                                    <Palette size={14} />
+                                </button>
+                                <div className={styles.statusIndicator} role="status" aria-label="Estado: Activo" title="Activo" />
+                            </div>
+                            <div className={styles.heroContent}>
+                                {(user.puesto || user.departamento) && (
+                                    <p className={styles.heroMeta}>
+                                        {user.puesto && <span>{user.puesto}</span>}
+                                        {user.puesto && user.departamento && <span className={styles.heroMetaDot} />}
+                                        {user.departamento && <span>{user.departamento}</span>}
+                                    </p>
+                                )}
+                                <h1 className={styles.heroName}>
+                                    {user.name || user.displayName || 'Usuario'}
+                                </h1>
+                                <div
+                                    className={styles.emailPill}
+                                    onClick={() => setIsRevealed(v => !v)}
+                                    role="button"
+                                    tabIndex={0}
+                                    aria-pressed={isRevealed}
+                                    title={isRevealed ? 'Click para ocultar email' : 'Click para revelar email'}
+                                    onKeyDown={(e) => e.key === 'Enter' && setIsRevealed(v => !v)}
+                                >
+                                    <span className={styles.revealIcon} aria-hidden="true">
+                                        {isRevealed ? <Eye size={14} /> : <EyeOff size={14} />}
+                                    </span>
+                                    <span className={`${styles.emailText} ${isRevealed ? styles.noBlur : styles.blur}`}>
+                                        {user.email || 'correo@ejemplo.com'}
+                                    </span>
+                                </div>
+                                <div className={styles.badgeContainer}>
+                                    <Badge variant={roleBadgeVariant} size="md" dot>
+                                        {user.rol || 'Empleado'}
+                                    </Badge>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Tiles de detalle */}
+                    <div className={styles.profileDetailsGrid}>
+                        {detailRows.map(({ label, value }) => (
+                            <div key={label} className={styles.profileDetailTile}>
+                                <span className={styles.profileDetailTileLabel}>{label}</span>
+                                <span className={styles.profileDetailTileValue}>{value}</span>
                             </div>
                         ))}
                     </div>
-                </div>
+                </>
             ),
         },
         ...(isAdmin ? [{
-            value: 'administracion', label: 'Administración', icon: <Shield size={15} />,
+            value: 'administracion', label: 'Settings',
             content: (
                 <div className={styles.tabSection}>
                     <AdminSection />
@@ -124,7 +283,7 @@ export default function ProfilePage() {
             ),
         }] : []),
         ...(isAuditor ? [{
-            value: 'auditoria', label: 'Auditoría', icon: <BookOpen size={15} />,
+            value: 'auditoria', label: 'Audit',
             content: (
                 <div className={styles.tabSection}>
                     <InduccionAuditSection />
@@ -140,71 +299,6 @@ export default function ProfilePage() {
         <AdminLayout title="Perfil de Usuario">
             <main className={styles.container} id="main-content">
 
-                {/* ── Hero Card ── */}
-                <div className={styles.heroCard}>
-                    <div className={styles.heroBanner} aria-hidden="true" />
-
-                    <div className={styles.heroBody}>
-                        {/* Avatar */}
-                        <div className={styles.avatarWrapper}>
-                            <div
-                                className={styles.avatar}
-                                dangerouslySetInnerHTML={{ __html: avatarSvg }}
-                                role="img"
-                                aria-label={`Avatar de ${user.name || user.displayName || 'Usuario'}`}
-                            />
-                            <button
-                                onClick={handleRandomizeAvatar}
-                                className={styles.changeAvatarBtn}
-                                aria-label="Cambiar avatar aleatorio"
-                                title="Cambiar Avatar"
-                            >
-                                <RefreshCw size={14} />
-                            </button>
-                            <div className={styles.statusIndicator} role="status" aria-label="Estado: Activo" title="Activo" />
-                        </div>
-
-                        {/* Contenido textual */}
-                        <div className={styles.heroContent}>
-                            {(user.puesto || user.departamento) && (
-                                <p className={styles.heroMeta}>
-                                    {user.puesto && <span>{user.puesto}</span>}
-                                    {user.puesto && user.departamento && <span className={styles.heroMetaDot} />}
-                                    {user.departamento && <span>{user.departamento}</span>}
-                                </p>
-                            )}
-
-                            <h1 className={styles.heroName}>
-                                {user.name || user.displayName || 'Usuario'}
-                            </h1>
-
-                            {/* Email pill con blur/reveal */}
-                            <div
-                                className={styles.emailPill}
-                                onClick={() => setIsRevealed(v => !v)}
-                                role="button"
-                                tabIndex={0}
-                                aria-pressed={isRevealed}
-                                title={isRevealed ? 'Click para ocultar email' : 'Click para revelar email'}
-                                onKeyDown={(e) => e.key === 'Enter' && setIsRevealed(v => !v)}
-                            >
-                                <span className={styles.revealIcon} aria-hidden="true">
-                                    {isRevealed ? <Eye size={14} /> : <EyeOff size={14} />}
-                                </span>
-                                <span className={`${styles.emailText} ${isRevealed ? styles.noBlur : styles.blur}`}>
-                                    {user.email || 'correo@ejemplo.com'}
-                                </span>
-                            </div>
-
-                            <div className={styles.badgeContainer}>
-                                <Badge variant={roleBadgeVariant} size="md" dot>
-                                    {user.rol || 'Empleado'}
-                                </Badge>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
                 {/* ── Tab Navigation ── */}
                 <nav className={styles.tabNav} role="tablist" aria-label="Secciones del perfil">
                     {profileTabs.map(tab => (
@@ -216,7 +310,6 @@ export default function ProfilePage() {
                             className={`${styles.tabBtn} ${activeTab === tab.value ? styles.tabBtnActive : ''}`}
                             onClick={() => setActiveTab(tab.value)}
                         >
-                            {tab.icon}
                             {tab.label}
                         </button>
                     ))}
@@ -232,6 +325,37 @@ export default function ProfilePage() {
                 </div>
 
             </main>
+
+            {/* ── Style Picker Portal ── */}
+            {showStylePicker && createPortal(
+                <>
+                    <div
+                        style={{ position: 'fixed', inset: 0, zIndex: 9998 }}
+                        onClick={() => setShowStylePicker(false)}
+                    />
+                <div
+                    className={styles.stylePickerPortal}
+                    style={{ top: pickerCoords.top, left: pickerCoords.left }}
+                    onClick={e => e.stopPropagation()}
+                >
+                    <p className={styles.stylePickerTitle}>Elige un estilo</p>
+                    <div className={styles.stylePickerGrid}>
+                        {AVATAR_STYLES.map(s => (
+                            <button
+                                key={s.value}
+                                className={`${styles.stylePickerItem} ${avatarStyle === s.value ? styles.stylePickerItemActive : ''}`}
+                                onClick={() => handleChangeStyle(s.value)}
+                                title={s.label}
+                            >
+                                <img src={dicebearUrl(s.value, avatarSeed, 48)} alt={s.label} width={48} height={48} />
+                                <span>{s.label}</span>
+                            </button>
+                        ))}
+                    </div>
+                </div>
+                </>,
+                document.body
+            )}
         </AdminLayout>
     );
 }
@@ -240,8 +364,102 @@ export default function ProfilePage() {
 // SUB-COMPONENTES (lógica de negocio intacta, solo estilos actualizados)
 // ══════════════════════════════════════════════════════════════════════════════
 import { doc, getDoc, setDoc, onSnapshot, collection, query, orderBy, limit, where, getDocs } from 'firebase/firestore';
+import { getAuth, createUserWithEmailAndPassword } from 'firebase/auth';
+import { initializeApp, deleteApp, getApps } from 'firebase/app';
 import { db } from '@/lib/firebase';
 import { AlertTriangle, Trash2, UploadCloud, FileEdit, ChevronDown, ChevronUp } from 'lucide-react';
+
+// Opciones de animación para el sidebar
+const ANIMATION_OPTIONS = [
+    { value: 'lightning', label: '⚡ Rayos y estrellas' },
+    { value: 'hearts',    label: '❤️ Corazones' },
+    { value: 'books',     label: '📚 Libros' },
+    { value: 'clouds',    label: '☁️ Nubes' },
+    { value: 'default',   label: '✨ Destellos' },
+];
+
+// Crea un usuario en Firebase Auth sin afectar la sesión actual del admin
+async function createAuthUserSecondary(email, password) {
+    const appName = `secondary-${Date.now()}`;
+    const config = {
+        apiKey:     process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
+        authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
+        projectId:  process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
+    };
+    const secondaryApp = initializeApp(config, appName);
+    try {
+        const secondaryAuth = getAuth(secondaryApp);
+        const cred = await createUserWithEmailAndPassword(secondaryAuth, email, password);
+        return cred.user.uid;
+    } finally {
+        await deleteApp(secondaryApp);
+    }
+}
+
+// ── ROW MENU (botón "..." con popover via portal) ─────────────────────────────
+function RowMenu({ onEdit, onDelete, editLabel = 'Editar', deleteLabel = 'Eliminar' }) {
+    const [open, setOpen] = useState(false);
+    const [coords, setCoords] = useState({ top: 0, left: 0 });
+    const triggerRef = useRef(null);
+    const popoverRef = useRef(null);
+
+    const openMenu = () => {
+        const rect = triggerRef.current.getBoundingClientRect();
+        setCoords({ top: rect.bottom + 4, left: rect.right });
+        setOpen(true);
+    };
+
+    useEffect(() => {
+        if (!open) return;
+        const close = (e) => {
+            if (popoverRef.current && !popoverRef.current.contains(e.target) &&
+                triggerRef.current && !triggerRef.current.contains(e.target)) {
+                setOpen(false);
+            }
+        };
+        const esc = (e) => { if (e.key === 'Escape') setOpen(false); };
+        document.addEventListener('mousedown', close);
+        document.addEventListener('keydown', esc);
+        return () => { document.removeEventListener('mousedown', close); document.removeEventListener('keydown', esc); };
+    }, [open]);
+
+    const popover = open && createPortal(
+        <div
+            ref={popoverRef}
+            role="menu"
+            className={styles.rowMenuPopover}
+            style={{ top: coords.top, left: coords.left - 144 }}
+        >
+            <button type="button" role="menuitem" className={styles.rowMenuItem}
+                onClick={() => { onEdit(); setOpen(false); }}>
+                <Pencil size={13} />{editLabel}
+            </button>
+            <button type="button" role="menuitem"
+                className={`${styles.rowMenuItem} ${styles.rowMenuItemDanger}`}
+                onClick={() => { onDelete(); setOpen(false); }}>
+                <Trash2 size={13} />{deleteLabel}
+            </button>
+        </div>,
+        document.body
+    );
+
+    return (
+        <>
+            <button
+                ref={triggerRef}
+                type="button"
+                className={styles.rowMenuTrigger}
+                onClick={openMenu}
+                aria-label="Más opciones"
+                aria-expanded={open}
+                aria-haspopup="menu"
+            >
+                <MoreHorizontal size={15} />
+            </button>
+            {popover}
+        </>
+    );
+}
 
 // ── ADMIN SECTION ─────────────────────────────────────────────────────────────
 function AdminSection() {
@@ -257,7 +475,7 @@ function AdminSection() {
     const [rolesLoading, setRolesLoading] = useState(true);
     const [editingUserId, setEditingUserId] = useState(null);
     const [editingRoleId, setEditingRoleId] = useState(null);
-    const [userForm, setUserForm] = useState({ email: '', name: '', rol: 'admin', avatarSeed: '' });
+    const [userForm, setUserForm] = useState({ email: '', name: '', rol: 'admin', avatarSeed: '', sidebarAnimation: 'default', password: '' });
     const [roleForm, setRoleForm] = useState({ name: '', permissions: {} });
 
     const PERMISSION_PAGES = [
@@ -310,7 +528,7 @@ function AdminSection() {
 
     const resetUserForm = () => {
         setEditingUserId(null);
-        setUserForm({ email: '', name: '', rol: 'admin', avatarSeed: '' });
+        setUserForm({ email: '', name: '', rol: 'admin', avatarSeed: '', sidebarAnimation: 'default', password: '' });
     };
 
     const resetRoleForm = () => {
@@ -340,23 +558,45 @@ function AdminSection() {
             toast.warning('Nombre y correo son obligatorios.');
             return;
         }
+        if (!editingUserId && !userForm.password) {
+            toast.warning('La contraseña es obligatoria al crear un usuario.');
+            return;
+        }
+        if (!editingUserId && userForm.password.length < 6) {
+            toast.warning('La contraseña debe tener al menos 6 caracteres.');
+            return;
+        }
 
-        const targetId = editingUserId || doc(collection(db, 'users')).id;
-        const payload = {
-            email: userForm.email.trim().toLowerCase(),
-            name: userForm.name.trim(),
-            rol: userForm.rol,
-            avatarSeed: userForm.avatarSeed || userForm.email || 'user',
-            updatedAt: new Date().toISOString(),
-        };
+        let targetId = editingUserId;
 
         try {
+            // Crear cuenta en Firebase Auth solo al crear (no al editar)
+            if (!editingUserId) {
+                targetId = await createAuthUserSecondary(
+                    userForm.email.trim().toLowerCase(),
+                    userForm.password
+                );
+            }
+
+            const payload = {
+                email: userForm.email.trim().toLowerCase(),
+                name: userForm.name.trim(),
+                rol: userForm.rol,
+                avatarSeed: userForm.avatarSeed || userForm.email || 'user',
+                sidebarAnimation: userForm.sidebarAnimation || 'default',
+                updatedAt: new Date().toISOString(),
+            };
+
             await setDoc(doc(db, 'users', targetId), payload, { merge: true });
             toast.success(`Usuario ${editingUserId ? 'actualizado' : 'creado'} correctamente.`);
             resetUserForm();
         } catch (error) {
             console.error('Error saving user:', error);
-            toast.error('No se pudo guardar el usuario.');
+            if (error.code === 'auth/email-already-in-use') {
+                toast.error('Ya existe una cuenta con ese correo.');
+            } else {
+                toast.error('No se pudo guardar el usuario.');
+            }
         }
     };
 
@@ -380,6 +620,8 @@ function AdminSection() {
             name: userData.name || '',
             rol: userData.rol || 'admin',
             avatarSeed: userData.avatarSeed || '',
+            sidebarAnimation: userData.sidebarAnimation || 'default',
+            password: '',
         });
     };
 
@@ -563,108 +805,137 @@ function AdminSection() {
                         <div className={styles.adminFormColumns}>
                             <section className={styles.adminFormCard}>
                                 <h4 className={styles.adminFormTitle}>Crear / editar usuario</h4>
-                                <div className={styles.fieldGroup}>
-                                    <label className={styles.fieldLabel}>Correo electrónico</label>
-                                    <input
-                                        className={styles.fieldInput}
-                                        type="email"
-                                        value={userForm.email}
-                                        onChange={(e) => handleUserFormChange('email', e.target.value)}
-                                        placeholder="usuario@correo.com"
-                                    />
-                                </div>
-                                <div className={styles.fieldGroup}>
-                                    <label className={styles.fieldLabel}>Nombre completo</label>
-                                    <input
-                                        className={styles.fieldInput}
-                                        value={userForm.name}
-                                        onChange={(e) => handleUserFormChange('name', e.target.value)}
-                                        placeholder="Nombre del usuario"
-                                    />
-                                </div>
-                                <div className={styles.fieldGroup}>
-                                    <label className={styles.fieldLabel}>Rol asignado</label>
-                                    <select
-                                        className={styles.fieldInput}
-                                        value={userForm.rol}
-                                        onChange={(e) => handleUserFormChange('rol', e.target.value)}
-                                    >
-                                        {userRolesOptions.map(roleOption => (
-                                            <option key={roleOption} value={roleOption}>{roleOption}</option>
-                                        ))}
-                                    </select>
-                                </div>
-                                <div className={styles.fieldGroup}>
-                                    <label className={styles.fieldLabel}>Semilla de avatar</label>
-                                    <input
-                                        className={styles.fieldInput}
-                                        value={userForm.avatarSeed}
-                                        onChange={(e) => handleUserFormChange('avatarSeed', e.target.value)}
-                                        placeholder="Opcional: valores para avatar aleatorio"
-                                    />
-                                </div>
-                                <div className={styles.actionBtnRow}>
-                                    <button
-                                        type="button"
-                                        className={styles.btnPrimary}
-                                        onClick={handleSaveUser}
-                                        disabled={!canSaveUser}
-                                    >
-                                        {editingUserId ? 'Actualizar usuario' : 'Crear usuario'}
-                                    </button>
-                                    <button
-                                        type="button"
-                                        className={styles.btnSecondary}
-                                        onClick={resetUserForm}
-                                    >
-                                        Limpiar
-                                    </button>
+                                <div className={styles.adminFormBody}>
+                                    <div className={styles.fieldGroup}>
+                                        <label className={styles.fieldLabel}>Correo electrónico</label>
+                                        <input
+                                            className={styles.fieldInput}
+                                            type="email"
+                                            value={userForm.email}
+                                            onChange={(e) => handleUserFormChange('email', e.target.value)}
+                                            placeholder="usuario@correo.com"
+                                        />
+                                    </div>
+                                    <div className={styles.fieldGroup}>
+                                        <label className={styles.fieldLabel}>Nombre completo</label>
+                                        <input
+                                            className={styles.fieldInput}
+                                            value={userForm.name}
+                                            onChange={(e) => handleUserFormChange('name', e.target.value)}
+                                            placeholder="Nombre del usuario"
+                                        />
+                                    </div>
+                                    <div className={styles.fieldGroup}>
+                                        <label className={styles.fieldLabel}>Rol asignado</label>
+                                        <select
+                                            className={styles.fieldInput}
+                                            value={userForm.rol}
+                                            onChange={(e) => handleUserFormChange('rol', e.target.value)}
+                                        >
+                                            {userRolesOptions.map(roleOption => (
+                                                <option key={roleOption} value={roleOption}>{roleOption}</option>
+                                            ))}
+                                        </select>
+                                    </div>
+                                    <div className={styles.fieldGroup}>
+                                        <label className={styles.fieldLabel}>Semilla de avatar</label>
+                                        <input
+                                            className={styles.fieldInput}
+                                            value={userForm.avatarSeed}
+                                            onChange={(e) => handleUserFormChange('avatarSeed', e.target.value)}
+                                            placeholder="Opcional: valores para avatar aleatorio"
+                                        />
+                                    </div>
+                                    <div className={styles.fieldGroup}>
+                                        <label className={styles.fieldLabel}>Animación sidebar</label>
+                                        <select
+                                            className={styles.fieldInput}
+                                            value={userForm.sidebarAnimation}
+                                            onChange={(e) => handleUserFormChange('sidebarAnimation', e.target.value)}
+                                        >
+                                            {ANIMATION_OPTIONS.map(opt => (
+                                                <option key={opt.value} value={opt.value}>{opt.label}</option>
+                                            ))}
+                                        </select>
+                                    </div>
+                                    {!editingUserId && (
+                                        <div className={styles.fieldGroup}>
+                                            <label className={styles.fieldLabel}>Contraseña temporal</label>
+                                            <input
+                                                className={styles.fieldInput}
+                                                type="password"
+                                                value={userForm.password}
+                                                onChange={(e) => handleUserFormChange('password', e.target.value)}
+                                                placeholder="Mín. 6 caracteres"
+                                                autoComplete="new-password"
+                                            />
+                                        </div>
+                                    )}
+                                    <div className={styles.actionBtnRow}>
+                                        <button
+                                            type="button"
+                                            className={styles.btnPrimary}
+                                            onClick={handleSaveUser}
+                                            disabled={!canSaveUser}
+                                        >
+                                            {editingUserId ? 'Actualizar usuario' : 'Crear usuario'}
+                                        </button>
+                                        <button
+                                            type="button"
+                                            className={styles.btnSecondary}
+                                            onClick={resetUserForm}
+                                        >
+                                            Limpiar
+                                        </button>
+                                    </div>
                                 </div>
                             </section>
 
                             <section className={styles.adminFormCard}>
                                 <h4 className={styles.adminFormTitle}>Crear / editar rol</h4>
-                                <div className={styles.fieldGroup}>
-                                    <label className={styles.fieldLabel}>Nombre del rol</label>
-                                    <input
-                                        className={styles.fieldInput}
-                                        value={roleForm.name}
-                                        onChange={(e) => setRoleForm(prev => ({ ...prev, name: e.target.value }))}
-                                        placeholder="Ej. manager, auditor"
-                                    />
-                                </div>
-                                <div className={styles.permissionsTableWrapper}>
-                                    <table className={styles.adminTable}>
-                                        <thead>
-                                            <tr>
-                                                <th>Página</th>
-                                                <th>Ver</th>
-                                                <th>Crear</th>
-                                                <th>Editar</th>
-                                                <th>Borrar</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            {PERMISSION_PAGES.map(page => renderPermissionRow(page.key, page.label))}
-                                        </tbody>
-                                    </table>
-                                </div>
-                                <div className={styles.actionBtnRow}>
-                                    <button
-                                        type="button"
-                                        className={styles.btnPrimary}
-                                        onClick={handleSaveRole}
-                                        disabled={!canSaveRole}
-                                    >
-                                        {editingRoleId ? 'Actualizar rol' : 'Crear rol'}
-                                    </button>
-                                    <button
-                                        type="button"
-                                        className={styles.btnSecondary}
-                                        onClick={resetRoleForm}
-                                    >
-                                        Limpiar
-                                    </button>
+                                <div className={styles.adminFormBody}>
+                                    <div className={styles.fieldGroup}>
+                                        <label className={styles.fieldLabel}>Nombre del rol</label>
+                                        <input
+                                            className={styles.fieldInput}
+                                            value={roleForm.name}
+                                            onChange={(e) => setRoleForm(prev => ({ ...prev, name: e.target.value }))}
+                                            placeholder="Ej. manager, auditor"
+                                        />
+                                    </div>
+                                    <div className={styles.permissionsTableWrapper}>
+                                        <table className={styles.adminTable}>
+                                            <thead>
+                                                <tr>
+                                                    <th>Página</th>
+                                                    <th>Ver</th>
+                                                    <th>Crear</th>
+                                                    <th>Editar</th>
+                                                    <th>Borrar</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {PERMISSION_PAGES.map(page => renderPermissionRow(page.key, page.label))}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    <div className={styles.actionBtnRow}>
+                                        <button
+                                            type="button"
+                                            className={styles.btnPrimary}
+                                            onClick={handleSaveRole}
+                                            disabled={!canSaveRole}
+                                        >
+                                            {editingRoleId ? 'Actualizar rol' : 'Crear rol'}
+                                        </button>
+                                        <button
+                                            type="button"
+                                            className={styles.btnSecondary}
+                                            onClick={resetRoleForm}
+                                        >
+                                            Limpiar
+                                        </button>
+                                    </div>
                                 </div>
                             </section>
                         </div>
@@ -679,7 +950,7 @@ function AdminSection() {
                                                 <th>Nombre</th>
                                                 <th>Correo</th>
                                                 <th>Rol</th>
-                                                <th>Acciones</th>
+                                                <th className={styles.rowMenuCell}></th>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -692,9 +963,11 @@ function AdminSection() {
                                                     <td>{userItem.name || 'Sin nombre'}</td>
                                                     <td>{userItem.email || 'Sin correo'}</td>
                                                     <td>{userItem.rol || 'Sin rol'}</td>
-                                                    <td className={styles.tableActions}>
-                                                        <button type="button" className={styles.btnSecondary} onClick={() => handleEditUser(userItem)}>Editar</button>
-                                                        <button type="button" className={styles.btnDanger} onClick={() => handleDeleteUser(userItem.id)}>Eliminar</button>
+                                                    <td className={styles.rowMenuCell}>
+                                                        <RowMenu
+                                                            onEdit={() => handleEditUser(userItem)}
+                                                            onDelete={() => handleDeleteUser(userItem.id)}
+                                                        />
                                                     </td>
                                                 </tr>
                                             ))}
@@ -705,24 +978,35 @@ function AdminSection() {
 
                             <section className={styles.adminListCard}>
                                 <h5 className={styles.adminListTitle}>Roles existentes</h5>
-                                <div className={styles.roleCardsWrap}>
-                                    {rolesLoading ? (
-                                        <p>Cargando roles...</p>
-                                    ) : rolesList.length === 0 ? (
-                                        <p>No hay roles definidos.</p>
-                                    ) : rolesList.map(roleItem => (
-                                        <article key={roleItem.id} className={styles.roleCard}>
-                                            <div>
-                                                <p className={styles.roleName}>{roleItem.name}</p>
-                                                <p className={styles.roleMeta}>Permisos configurados</p>
-                                            </div>
-                                            <div className={styles.tableActions}>
-                                                <button type="button" className={styles.btnSecondary} onClick={() => handleEditRole(roleItem)}>Editar</button>
-                                                <button type="button" className={styles.btnDanger} onClick={() => handleDeleteRole(roleItem.id)}>Eliminar</button>
-                                            </div>
-                                        </article>
-                                    ))}
-                                </div>
+                                {rolesLoading ? (
+                                    <div className={styles.adminListBody}>
+                                        <p className={styles.sectionDesc}>Cargando roles...</p>
+                                    </div>
+                                ) : rolesList.length === 0 ? (
+                                    <div className={styles.emptyState}>
+                                        <div className={styles.emptyStateIcon}>
+                                            <KeyRound size={18} />
+                                        </div>
+                                        <p className={styles.emptyStateText}>No hay roles personalizados.<br/>Crea uno usando el formulario.</p>
+                                    </div>
+                                ) : (
+                                    <div className={styles.adminListBody}>
+                                        <div className={styles.roleCardsWrap}>
+                                            {rolesList.map(roleItem => (
+                                                <article key={roleItem.id} className={styles.roleCard}>
+                                                    <div>
+                                                        <p className={styles.roleName}>{roleItem.name}</p>
+                                                        <p className={styles.roleMeta}>Permisos configurados</p>
+                                                    </div>
+                                                    <RowMenu
+                                                        onEdit={() => handleEditRole(roleItem)}
+                                                        onDelete={() => handleDeleteRole(roleItem.id)}
+                                                    />
+                                                </article>
+                                            ))}
+                                        </div>
+                                    </div>
+                                )}
                             </section>
                         </div>
                     </div>
@@ -762,6 +1046,9 @@ function AdminMuralSection() {
         employeeId: '', firstName: '', currentPosition: '',
         promotionTo: '', score: '', requiredScore: '', recommendations: [],
     });
+
+    const [wizardOpen, setWizardOpen] = useState(false);
+    const [wizardStep, setWizardStep] = useState(1);
 
     const filteredMuralList = useMemo(() => {
         const query = muralSearch.trim().toLowerCase();
@@ -822,6 +1109,14 @@ function AdminMuralSection() {
 
         return () => unsubMural();
     }, []);
+
+    // Búsqueda automática con debounce al escribir el No. Empleado
+    useEffect(() => {
+        const id = manualData.employeeId?.trim();
+        if (!id || id.length < 2) return;
+        const timer = setTimeout(() => { fetchEmployeeData(); }, 600);
+        return () => clearTimeout(timer);
+    }, [manualData.employeeId]);
 
     // Autocompletado por ID de empleado
     const fetchEmployeeData = async () => {
@@ -940,8 +1235,7 @@ function AdminMuralSection() {
         }
     };
 
-    const handleManualSubmit = async (e) => {
-        e.preventDefault();
+    const handleManualSubmit = async () => {
         try {
             const scoreNum    = Number(manualData.score);
             const reqScoreNum = Number(manualData.requiredScore);
@@ -960,7 +1254,7 @@ function AdminMuralSection() {
             });
             toast.success('¡Examen guardado exitosamente en el Mural!');
             setManualData({ employeeId: '', firstName: '', currentPosition: '', promotionTo: '', score: '', requiredScore: '', recommendations: [] });
-            setShowManualForm(false);
+            setWizardOpen(false);
         } catch (error) {
             console.error(error);
             toast.error('Error al guardar examen manual.');
@@ -1074,6 +1368,14 @@ function AdminMuralSection() {
 
     if (loadingConfig) return null;
 
+    const WIZARD_STEPS = ['Buscar', 'Datos', 'Evaluación'];
+    const wizardStep1Valid = manualData.employeeId.trim() !== '';
+    const wizardStep2Valid = !!(manualData.firstName.trim() && manualData.currentPosition.trim() && manualData.promotionTo.trim());
+    const wizardStep3Valid = manualData.score !== '' && manualData.requiredScore !== '';
+    const wizardScoreNum   = Number(manualData.score);
+    const wizardReqNum     = Number(manualData.requiredScore);
+    const wizardPassed     = wizardStep3Valid && !isNaN(wizardScoreNum) && !isNaN(wizardReqNum) && wizardScoreNum >= wizardReqNum;
+
     return (
         <div className={styles.accordionPanel}>
             {/* Header */}
@@ -1089,6 +1391,28 @@ function AdminMuralSection() {
                     <span className={styles.accordionIcon}><Presentation size={18} /></span>
                     Gestión del Mural de Reconocimiento
                 </h3>
+                <div className={styles.accordionHeaderActions} onClick={e => e.stopPropagation()}>
+                    <button
+                        onClick={saveMessages}
+                        className={styles.accordionActionBtn}
+                        title="Guardar mensajes"
+                        aria-label="Guardar mensajes"
+                    >
+                        <Save size={15} />
+                    </button>
+                    <button
+                        onClick={() => {
+                            setManualData({ employeeId: '', firstName: '', currentPosition: '', promotionTo: '', score: '', requiredScore: '', recommendations: [] });
+                            setWizardStep(1);
+                            setWizardOpen(true);
+                        }}
+                        className={`${styles.accordionActionBtn} ${styles.accordionActionBtnPrimary}`}
+                        title="Captura manual"
+                        aria-label="Captura manual"
+                    >
+                        <FileEdit size={15} />
+                    </button>
+                </div>
                 <ChevronDown size={20} className={`${styles.accordionChevron} ${isOpen ? styles.accordionChevronOpen : ''}`} />
             </div>
 
@@ -1098,126 +1422,39 @@ function AdminMuralSection() {
                         Configura los mensajes que verán los usuarios al buscar su calificación y mantén sincronizada la base pública del Mural para proteger la privacidad del empleado.
                     </p>
 
-                    {/* Mensajes del mural */}
-                    <div className={styles.fieldGroup}>
-                        <label className={styles.fieldLabel}>Mensaje para APROBADOS</label>
-                        <textarea
-                            className={styles.fieldTextarea}
-                            style={{ minHeight: 60 }}
-                            value={messages.successMessage}
-                            onChange={(e) => setMessages(m => ({ ...m, successMessage: e.target.value }))}
-                            placeholder="Usa [Nombre] para incluir el nombre del empleado..."
-                        />
+                    {/* Mensajes: dos tarjetas */}
+                    <div className={styles.muralMessagesGrid}>
+                        <div className={`${styles.muralMsgCard} ${styles.muralMsgCardSuccess}`}>
+                            <div className={styles.muralMsgCardHeader}>
+                                <Check size={13} />
+                                <span>Mensaje para Aprobados</span>
+                            </div>
+                            <div className={styles.muralMsgCardBody}>
+                                <textarea
+                                    className={styles.fieldTextarea}
+                                    style={{ minHeight: 80 }}
+                                    value={messages.successMessage}
+                                    onChange={(e) => setMessages(m => ({ ...m, successMessage: e.target.value }))}
+                                    placeholder="Usa [Nombre] para personalizar el saludo..."
+                                />
+                            </div>
+                        </div>
+                        <div className={`${styles.muralMsgCard} ${styles.muralMsgCardFail}`}>
+                            <div className={styles.muralMsgCardHeader}>
+                                <RefreshCcw size={13} />
+                                <span>Mensaje para Reprobados</span>
+                            </div>
+                            <div className={styles.muralMsgCardBody}>
+                                <textarea
+                                    className={styles.fieldTextarea}
+                                    style={{ minHeight: 80 }}
+                                    value={messages.motivationalMessage}
+                                    onChange={(e) => setMessages(m => ({ ...m, motivationalMessage: e.target.value }))}
+                                    placeholder="Usa [Nombre] para personalizar el saludo..."
+                                />
+                            </div>
+                        </div>
                     </div>
-
-                    <div className={styles.fieldGroup}>
-                        <label className={styles.fieldLabel}>Mensaje para REPROBADOS (Motivacional)</label>
-                        <textarea
-                            className={styles.fieldTextarea}
-                            style={{ minHeight: 60 }}
-                            value={messages.motivationalMessage}
-                            onChange={(e) => setMessages(m => ({ ...m, motivationalMessage: e.target.value }))}
-                            placeholder="Usa [Nombre] para incluir el nombre del empleado..."
-                        />
-                    </div>
-
-                    {/* Botones de acción */}
-                    <div className={styles.actionBtnRow}>
-                        <button onClick={saveMessages} className={styles.btnSecondary}>
-                            <Save size={15} /> Guardar Mensajes
-                        </button>
-                        <button onClick={handleSyncMural} disabled={syncing} className={styles.btnPrimary}>
-                            <RefreshCcw size={15} style={{ animation: syncing ? 'spin 1s linear infinite' : 'none' }} />
-                            {syncing ? 'Sincronizando…' : 'Auto-Sincronizar'}
-                        </button>
-                        <button onClick={() => setShowManualForm(v => !v)} className={styles.btnSuccess}>
-                            <FileEdit size={15} /> Captura Manual
-                        </button>
-                    </div>
-
-                    {/* Formulario manual */}
-                    {showManualForm && (
-                        <form onSubmit={handleManualSubmit} className={styles.manualForm}>
-                            <h4 className={styles.manualFormTitle}>
-                                <BookOpen size={16} /> Registro Manual en Mural Público
-                            </h4>
-
-                            <div className={styles.fieldGroup}>
-                                <label className={styles.fieldLabel}>No. Empleado *</label>
-                                <div className={styles.idSearchRow}>
-                                    <input
-                                        required type="text"
-                                        className={styles.fieldInput}
-                                        value={manualData.employeeId}
-                                        onChange={e => setManualData({ ...manualData, employeeId: e.target.value })}
-                                        placeholder="Ej. 2950"
-                                    />
-                                    <button
-                                        type="button"
-                                        onClick={fetchEmployeeData}
-                                        disabled={!manualData.employeeId || searchingM}
-                                        className={styles.idSearchBtn}
-                                        title="Auto-rellenar"
-                                    >
-                                        {searchingM ? '…' : '🔍'}
-                                    </button>
-                                </div>
-                            </div>
-
-                            <div className={styles.fieldGroup}>
-                                <label className={styles.fieldLabel}>Primer Nombre (Público) *</label>
-                                <input required type="text" className={styles.fieldInput} value={manualData.firstName} onChange={e => setManualData({ ...manualData, firstName: e.target.value })} />
-                            </div>
-
-                            <div className={styles.fieldGroup}>
-                                <label className={styles.fieldLabel}>Puesto Actual *</label>
-                                <input required type="text" className={styles.fieldInput} value={manualData.currentPosition} onChange={e => setManualData({ ...manualData, currentPosition: e.target.value })} />
-                            </div>
-
-                            <div className={styles.fieldGroup}>
-                                <label className={styles.fieldLabel}>Puesto Objetivo *</label>
-                                <input required type="text" className={styles.fieldInput} value={manualData.promotionTo} onChange={e => setManualData({ ...manualData, promotionTo: e.target.value })} />
-                            </div>
-
-                            <div className={styles.fieldGroup}>
-                                <label className={styles.fieldLabel}>Calificación alcanzada (%) *</label>
-                                <input required type="number" min="0" max="100" className={styles.fieldInput} value={manualData.score} onChange={e => setManualData({ ...manualData, score: e.target.value })} placeholder="Ej. 100" />
-                            </div>
-
-                            <div className={styles.fieldGroup}>
-                                <label className={styles.fieldLabel}>Calificación requerida (%) *</label>
-                                <input required type="number" min="0" max="100" className={styles.fieldInput} value={manualData.requiredScore} onChange={e => setManualData({ ...manualData, requiredScore: e.target.value })} placeholder="Ej. 85" />
-                            </div>
-
-                            <div className={`${styles.fieldGroup} ${styles.manualFormSpan2}`}>
-                                <label className={styles.fieldLabel}>Recomendaciones / Feedback</label>
-                                <div className={styles.tagsGrid}>
-                                    {availableThemes.map(theme => {
-                                        const isSel = (manualData.recommendations || []).includes(theme);
-                                        return (
-                                            <span
-                                                key={theme}
-                                                className={`${styles.tagChip} ${isSel ? styles.tagChipActive : ''}`}
-                                                onClick={() => toggleRec(manualData.recommendations || [], setManualData, theme)}
-                                            >
-                                                {theme}
-                                            </span>
-                                        );
-                                    })}
-                                    {availableThemes.length === 0 && <span style={{ fontSize: '0.75rem', color: 'var(--text-tertiary)' }}>No hay temas disponibles.</span>}
-                                </div>
-                            </div>
-
-                            <div className={styles.manualFormActions}>
-                                <button type="button" onClick={() => setShowManualForm(false)} className={styles.btnDanger}>
-                                    Cancelar
-                                </button>
-                                <button type="submit" className={styles.btnAmber}>
-                                    Guardar y Publicar
-                                </button>
-                            </div>
-                        </form>
-                    )}
 
                     {/* Tabla de registros */}
                     <div className={styles.tableWrapper}>
@@ -1252,7 +1489,7 @@ function AdminMuralSection() {
                                         <th>Destino</th>
                                         <th>Estado</th>
                                         <th>Feedback</th>
-                                        <th style={{ textAlign: 'right' }}>Acciones</th>
+                                        <th className={styles.rowMenuCell}></th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -1296,7 +1533,7 @@ function AdminMuralSection() {
 
                                         return (
                                             <tr key={item.id}>
-                                                <td style={{ color: 'var(--text-secondary)' }}>{item.employeeId}</td>
+                                                <td style={{ color: 'var(--text-secondary)', fontSize: '0.78rem' }}>{item.employeeId}</td>
                                                 <td style={{ fontWeight: 600 }}>{item.firstName}</td>
                                                 <td style={{ color: 'var(--text-secondary)' }}>{item.currentPosition}</td>
                                                 <td style={{ color: 'var(--text-secondary)' }}>{item.promotionTo}</td>
@@ -1317,12 +1554,11 @@ function AdminMuralSection() {
                                                         }
                                                     </div>
                                                 </td>
-                                                <td>
-                                                    <div className={styles.tableActions}>
-                                                        <button onClick={() => handleGenerateQR(item)} className={`${styles.tableIconBtn} ${styles.tableIconBtnBlue}`} title="Descargar QR"><Download size={13} /></button>
-                                                        <button onClick={() => handleEditClick(item)} className={`${styles.tableIconBtn} ${styles.tableIconBtnAmber}`} title="Editar"><Pencil size={13} /></button>
-                                                        <button onClick={() => handleDeleteMural(item.id)} className={`${styles.tableIconBtn} ${styles.tableIconBtnRed}`} title="Eliminar"><Trash2 size={13} /></button>
-                                                    </div>
+                                                <td className={styles.rowMenuCell}>
+                                                    <RowMenu
+                                                        onEdit={() => handleEditClick(item)}
+                                                        onDelete={() => handleDeleteMural(item.id)}
+                                                    />
                                                 </td>
                                             </tr>
                                         );
@@ -1336,6 +1572,199 @@ function AdminMuralSection() {
                             </table>
                         </div>
                     </div>
+
+                    {/* ── Wizard: Captura Manual ── */}
+                    {wizardOpen && createPortal(
+                        <div
+                            className={styles.wizardOverlay}
+                            onMouseDown={(e) => { if (e.target === e.currentTarget) setWizardOpen(false); }}
+                        >
+                            <div className={styles.wizardModal} role="dialog" aria-modal="true" aria-label="Captura Manual">
+                                {/* Header */}
+                                <div className={styles.wizardHeader}>
+                                    <div>
+                                        <p className={styles.wizardSub}>Mural de Reconocimiento</p>
+                                        <h2 className={styles.wizardTitle}>Captura Manual</h2>
+                                    </div>
+                                    <button
+                                        className={styles.wizardClose}
+                                        onClick={() => setWizardOpen(false)}
+                                        aria-label="Cerrar"
+                                    >
+                                        <CancelIcon size={16} />
+                                    </button>
+                                </div>
+
+                                {/* Steps bar */}
+                                <div className={styles.wizardStepsBar}>
+                                    {WIZARD_STEPS.map((label, i) => (
+                                        <div key={label} className={styles.wizardStepEntry}>
+                                            <div className={`${styles.wizardStepItem} ${wizardStep > i + 1 ? styles.wizardStepDone : wizardStep === i + 1 ? styles.wizardStepActive : styles.wizardStepPending}`}>
+                                                <div className={styles.wizardStepBubble}>
+                                                    {wizardStep > i + 1 ? <Check size={11} /> : i + 1}
+                                                </div>
+                                                <span className={styles.wizardStepLabel}>{label}</span>
+                                            </div>
+                                            {i < WIZARD_STEPS.length - 1 && (
+                                                <div className={`${styles.wizardStepLine} ${wizardStep > i + 1 ? styles.wizardStepLineDone : ''}`} />
+                                            )}
+                                        </div>
+                                    ))}
+                                </div>
+
+                                {/* Body */}
+                                <div className={styles.wizardBody}>
+                                    {wizardStep === 1 && (
+                                        <div className={styles.wizardStepContent}>
+                                            <p className={styles.wizardStepDesc}>
+                                                Ingresa el número de empleado. Usa el botón de búsqueda para auto-rellenar sus datos desde los registros de capacitación.
+                                            </p>
+                                            <div className={styles.fieldGroup}>
+                                                <label className={styles.fieldLabel}>No. Empleado *</label>
+                                                <div className={styles.idSearchRow}>
+                                                    <input
+                                                        type="text"
+                                                        className={styles.fieldInput}
+                                                        value={manualData.employeeId}
+                                                        onChange={e => setManualData({ ...manualData, employeeId: e.target.value })}
+                                                        placeholder="Ej. 2950"
+                                                        autoFocus
+                                                    />
+                                                    {searchingM && (
+                                                        <span className={styles.idSearchSpinner} aria-label="Buscando…">
+                                                            <RefreshCcw size={14} style={{ animation: 'spin 0.8s linear infinite' }} />
+                                                        </span>
+                                                    )}
+                                                </div>
+                                            </div>
+                                            {(manualData.firstName || manualData.currentPosition) && (
+                                                <div className={styles.wizardFoundCard}>
+                                                    {[
+                                                        { label: 'Nombre', value: manualData.firstName },
+                                                        { label: 'Puesto', value: manualData.currentPosition },
+                                                        { label: 'Destino', value: manualData.promotionTo },
+                                                    ].filter(r => r.value).map(r => (
+                                                        <div key={r.label} className={styles.wizardFoundRow}>
+                                                            <span className={styles.wizardFoundLabel}>{r.label}</span>
+                                                            <span className={styles.wizardFoundValue}>{r.value}</span>
+                                                        </div>
+                                                    ))}
+                                                </div>
+                                            )}
+                                        </div>
+                                    )}
+
+                                    {wizardStep === 2 && (
+                                        <div className={styles.wizardStepContent}>
+                                            <p className={styles.wizardStepDesc}>
+                                                Verifica y ajusta los datos del empleado que serán visibles en el Mural público.
+                                            </p>
+                                            <div className={styles.fieldGroup}>
+                                                <label className={styles.fieldLabel}>Primer Nombre (Público) *</label>
+                                                <input type="text" className={styles.fieldInput}
+                                                    value={manualData.firstName}
+                                                    onChange={e => setManualData({ ...manualData, firstName: e.target.value })}
+                                                    placeholder="Nombre visible en el Mural" />
+                                            </div>
+                                            <div className={styles.fieldGroup}>
+                                                <label className={styles.fieldLabel}>Puesto Actual</label>
+                                                <input type="text" className={`${styles.fieldInput} ${styles.fieldInputReadonly}`}
+                                                    value={manualData.currentPosition}
+                                                    readOnly tabIndex={-1} />
+                                            </div>
+                                            <div className={styles.fieldGroup}>
+                                                <label className={styles.fieldLabel}>Puesto Objetivo</label>
+                                                <input type="text" className={`${styles.fieldInput} ${styles.fieldInputReadonly}`}
+                                                    value={manualData.promotionTo}
+                                                    readOnly tabIndex={-1} />
+                                            </div>
+                                        </div>
+                                    )}
+
+                                    {wizardStep === 3 && (
+                                        <div className={styles.wizardStepContent}>
+                                            <p className={styles.wizardStepDesc}>
+                                                Registra la calificación del examen. El resultado se calculará automáticamente al comparar con el mínimo requerido.
+                                            </p>
+                                            <div className={styles.wizardScoreRow}>
+                                                <div className={styles.fieldGroup}>
+                                                    <label className={styles.fieldLabel}>Calificación obtenida (%) *</label>
+                                                    <input type="number" min="0" max="100" className={styles.fieldInput}
+                                                        value={manualData.score}
+                                                        onChange={e => setManualData({ ...manualData, score: e.target.value })}
+                                                        placeholder="0 – 100" />
+                                                </div>
+                                                <div className={styles.fieldGroup}>
+                                                    <label className={styles.fieldLabel}>Calificación requerida (%)</label>
+                                                    <input type="number" className={`${styles.fieldInput} ${styles.fieldInputReadonly}`}
+                                                        value={manualData.requiredScore}
+                                                        readOnly tabIndex={-1} />
+                                                </div>
+                                            </div>
+
+                                            {wizardStep3Valid && (
+                                                <div className={`${styles.wizardResultPreview} ${wizardPassed ? styles.wizardResultPassed : styles.wizardResultFailed}`}>
+                                                    <span className={styles.wizardResultBadge}>
+                                                        {wizardPassed ? '✓  APROBADO' : '✗  REPROBADO'}
+                                                    </span>
+                                                    <span className={styles.wizardResultScore}>
+                                                        {manualData.firstName} — {manualData.score}% obtenido, {manualData.requiredScore}% requerido
+                                                    </span>
+                                                </div>
+                                            )}
+
+                                            <div className={styles.fieldGroup} style={{ marginTop: 16 }}>
+                                                <label className={styles.fieldLabel}>Recomendaciones de refuerzo</label>
+                                                <div className={styles.tagsGrid}>
+                                                    {availableThemes.map(theme => {
+                                                        const isSel = (manualData.recommendations || []).includes(theme);
+                                                        return (
+                                                            <span key={theme}
+                                                                className={`${styles.tagChip} ${isSel ? styles.tagChipActive : ''}`}
+                                                                onClick={() => toggleRec(manualData.recommendations || [], setManualData, theme)}>
+                                                                {theme}
+                                                            </span>
+                                                        );
+                                                    })}
+                                                    {availableThemes.length === 0 && (
+                                                        <span style={{ fontSize: '0.75rem', color: 'var(--text-tertiary)' }}>No hay temas disponibles.</span>
+                                                    )}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    )}
+                                </div>
+
+                                {/* Footer */}
+                                <div className={styles.wizardFooter}>
+                                    <button type="button" className={styles.btnSecondary}
+                                        onClick={() => wizardStep === 1 ? setWizardOpen(false) : setWizardStep(s => s - 1)}>
+                                        {wizardStep === 1 ? 'Cancelar' : '← Anterior'}
+                                    </button>
+                                    <div className={styles.wizardFooterRight}>
+                                        <span className={styles.wizardStepCounter}>Paso {wizardStep} de {WIZARD_STEPS.length}</span>
+                                        {wizardStep < WIZARD_STEPS.length ? (
+                                            <button type="button" className={styles.btnPrimary}
+                                                disabled={
+                                                    (wizardStep === 1 && !wizardStep1Valid) ||
+                                                    (wizardStep === 2 && !wizardStep2Valid)
+                                                }
+                                                onClick={() => setWizardStep(s => s + 1)}>
+                                                Siguiente →
+                                            </button>
+                                        ) : (
+                                            <button type="button" className={styles.btnAmber}
+                                                disabled={!wizardStep3Valid}
+                                                onClick={handleManualSubmit}>
+                                                <Save size={14} /> Guardar y Publicar
+                                            </button>
+                                        )}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>,
+                        document.body
+                    )}
                 </div>
             )}
         </div>
