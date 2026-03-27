@@ -5,6 +5,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useRouter } from 'next/navigation';
 
 import styles from './page.module.css';
+import NextImage from 'next/image';
 import {
     Eye, EyeOff, RefreshCw, Palette, Calendar, User2, User, Shield, BookOpen, KeyRound,
     MoreHorizontal
@@ -204,7 +205,7 @@ export default function ProfilePage() {
                                     role="img"
                                     aria-label={`Avatar de ${user.name || user.displayName || 'Usuario'}`}
                                 >
-                                    <img src={avatarUrl} alt="" width={96} height={96} />
+                                    <NextImage src={avatarUrl} alt="" width={96} height={96} unoptimized />
                                 </div>
                                 <button
                                     onClick={handleRandomizeAvatar}
@@ -347,7 +348,7 @@ export default function ProfilePage() {
                                 onClick={() => handleChangeStyle(s.value)}
                                 title={s.label}
                             >
-                                <img src={dicebearUrl(s.value, avatarSeed, 48)} alt={s.label} width={48} height={48} />
+                                <NextImage src={dicebearUrl(s.value, avatarSeed, 48)} alt={s.label} width={48} height={48} unoptimized />
                                 <span>{s.label}</span>
                             </button>
                         ))}
@@ -462,6 +463,23 @@ function RowMenu({ onEdit, onDelete, editLabel = 'Editar', deleteLabel = 'Elimin
 }
 
 // ── ADMIN SECTION ─────────────────────────────────────────────────────────────
+const PERMISSION_PAGES = [
+    { key: 'dashboard',    label: 'Dashboard' },
+    { key: 'employees',    label: 'Empleados' },
+    { key: 'capacitacion', label: 'Capacitación' },
+    { key: 'profile',      label: 'Perfil' },
+    { key: 'induccion',    label: 'Inducción' },
+    { key: 'programacion', label: 'Programación' },
+    { key: 'training',     label: 'Training' },
+    { key: 'mural',        label: 'Mural' },
+];
+
+const DEFAULT_PERMISSIONS = () =>
+    PERMISSION_PAGES.reduce((acc, page) => {
+        acc[page.key] = { view: false, create: false, edit: false, delete: false };
+        return acc;
+    }, {});
+
 function AdminSection() {
     const { toast } = useToast();
     const [isMaintenance, setIsMaintenance] = useState(false);
@@ -478,23 +496,6 @@ function AdminSection() {
     const [userForm, setUserForm] = useState({ email: '', name: '', rol: 'admin', avatarSeed: '', sidebarAnimation: 'default', password: '' });
     const [roleForm, setRoleForm] = useState({ name: '', permissions: {} });
 
-    const PERMISSION_PAGES = [
-        { key: 'dashboard', label: 'Dashboard' },
-        { key: 'employees', label: 'Empleados' },
-        { key: 'capacitacion', label: 'Capacitación' },
-        { key: 'profile', label: 'Perfil' },
-        { key: 'induccion', label: 'Inducción' },
-        { key: 'programacion', label: 'Programación' },
-        { key: 'training', label: 'Training' },
-        { key: 'mural', label: 'Mural' },
-    ];
-
-    const DEFAULT_PERMISSIONS = () => {
-        return PERMISSION_PAGES.reduce((acc, page) => {
-            acc[page.key] = { view: false, create: false, edit: false, delete: false };
-            return acc;
-        }, {});
-    };
 
     useEffect(() => {
         const configRef = doc(db, 'app_config', 'general');
@@ -1110,14 +1111,6 @@ function AdminMuralSection() {
         return () => unsubMural();
     }, []);
 
-    // Búsqueda automática con debounce al escribir el No. Empleado
-    useEffect(() => {
-        const id = manualData.employeeId?.trim();
-        if (!id || id.length < 2) return;
-        const timer = setTimeout(() => { fetchEmployeeData(); }, 600);
-        return () => clearTimeout(timer);
-    }, [manualData.employeeId]);
-
     // Autocompletado por ID de empleado
     const fetchEmployeeData = async () => {
         const eid = manualData.employeeId?.trim();
@@ -1169,6 +1162,15 @@ function AdminMuralSection() {
             setSearchingM(false);
         }
     };
+
+    // Búsqueda automática con debounce al escribir el No. Empleado
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    useEffect(() => {
+        const id = manualData.employeeId?.trim();
+        if (!id || id.length < 2) return;
+        const timer = setTimeout(() => { fetchEmployeeData(); }, 600);
+        return () => clearTimeout(timer);
+    }, [manualData.employeeId]);
 
     const saveMessages = async () => {
         try {
