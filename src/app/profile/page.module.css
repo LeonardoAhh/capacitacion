@@ -598,6 +598,105 @@
     line-height: 1.4;
 }
 
+.adminManagementSection {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    margin-top: 18px;
+}
+
+.adminFormColumns {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 18px;
+}
+
+.adminFormCard {
+    background: var(--c-surface);
+    border: 1.5px solid var(--c-line);
+    border-radius: var(--r-xl);
+    padding: 20px;
+    box-shadow: var(--sh-card);
+}
+
+.adminFormTitle {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: var(--c-ink);
+    margin: 0 0 14px;
+}
+
+.permissionsTableWrapper {
+    overflow-x: auto;
+    margin-top: 12px;
+}
+
+.permissionCell {
+    text-align: center;
+}
+
+.checkboxLabel {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+}
+
+.adminListsGrid {
+    display: grid;
+    gap: 18px;
+}
+
+.adminListCard {
+    background: var(--c-surface);
+    border: 1.5px solid var(--c-line);
+    border-radius: var(--r-xl);
+    padding: 18px;
+    box-shadow: var(--sh-card);
+}
+
+.adminListTitle {
+    font-size: 0.88rem;
+    font-weight: 700;
+    margin: 0 0 12px;
+    color: var(--c-ink);
+}
+
+.roleCardsWrap {
+    display: grid;
+    gap: 12px;
+}
+
+.roleCard {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 16px;
+    border-radius: var(--r-md);
+    background: var(--c-bg);
+    border: 1px solid var(--c-line);
+}
+
+.roleName {
+    font-size: 0.9rem;
+    font-weight: 700;
+    margin: 0 0 4px;
+}
+
+.roleMeta {
+    font-size: 0.78rem;
+    margin: 0;
+    color: var(--c-muted);
+}
+
+.tableActions {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+}
+
 /* ── Botones de acción (Guardar, Sincronizar, etc.) ── */
 .actionBtnRow {
     display: flex;
@@ -850,6 +949,33 @@
     margin: 0 0 12px;
 }
 
+.tableHeaderTop {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 10px;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.tableSearchRow {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.tableSearchInput {
+    min-width: 240px;
+    max-width: 360px;
+}
+
+.searchBadge {
+    font-size: 0.80rem;
+    color: var(--c-muted);
+    white-space: nowrap;
+}
+
 .tableScroll {
     overflow-x: auto;
     border-radius: var(--r-lg);
@@ -1097,6 +1223,9 @@
 
     .actionBtnRow { justify-content: stretch; }
     .actionBtnRow > * { flex: 1; justify-content: center; }
+
+    .adminFormColumns { grid-template-columns: 1fr; }
+    .adminListsGrid { grid-template-columns: 1fr; }
 
     .accordionHeader { padding: 14px 16px; }
     .accordionBody { padding: 16px; }

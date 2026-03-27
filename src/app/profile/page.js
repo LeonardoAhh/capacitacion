@@ -251,16 +251,180 @@ function AdminSection() {
     const [loading, setLoading]             = useState(true);
     const [isOpen, setIsOpen]               = useState(false);
 
+    const [usersList, setUsersList] = useState([]);
+    const [rolesList, setRolesList] = useState([]);
+    const [usersLoading, setUsersLoading] = useState(true);
+    const [rolesLoading, setRolesLoading] = useState(true);
+    const [editingUserId, setEditingUserId] = useState(null);
+    const [editingRoleId, setEditingRoleId] = useState(null);
+    const [userForm, setUserForm] = useState({ email: '', name: '', rol: 'demo', avatarSeed: '' });
+    const [roleForm, setRoleForm] = useState({ name: '', permissions: {} });
+
+    const PERMISSION_PAGES = [
+        { key: 'dashboard', label: 'Dashboard' },
+        { key: 'employees', label: 'Empleados' },
+        { key: 'capacitacion', label: 'Capacitación' },
+        { key: 'profile', label: 'Perfil' },
+        { key: 'induccion', label: 'Inducción' },
+        { key: 'programacion', label: 'Programación' },
+        { key: 'training', label: 'Training' },
+        { key: 'mural', label: 'Mural' },
+    ];
+
+    const DEFAULT_PERMISSIONS = () => {
+        return PERMISSION_PAGES.reduce((acc, page) => {
+            acc[page.key] = { view: false, create: false, edit: false, delete: false };
+            return acc;
+        }, {});
+    };
+
     useEffect(() => {
         const configRef = doc(db, 'app_config', 'general');
-        const unsubscribe = onSnapshot(configRef, (docSnap) => {
+        const unsubscribeConfig = onSnapshot(configRef, (docSnap) => {
             if (docSnap.exists()) {
                 setIsMaintenance(docSnap.data().maintenanceMode || false);
             }
             setLoading(false);
         });
-        return () => unsubscribe();
+
+        const usersRef = collection(db, 'users');
+        const unsubscribeUsers = onSnapshot(usersRef, (snap) => {
+            const data = snap.docs.map(d => ({ id: d.id, ...d.data() })).sort((a, b) => (a.name || '').localeCompare(b.name || ''));
+            setUsersList(data);
+            setUsersLoading(false);
+        });
+
+        const rolesRef = collection(db, 'roles');
+        const unsubscribeRoles = onSnapshot(rolesRef, (snap) => {
+            const data = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+            setRolesList(data);
+            setRolesLoading(false);
+        });
+
+        return () => {
+            unsubscribeConfig();
+            unsubscribeUsers();
+            unsubscribeRoles();
+        };
     }, []);
+
+    const resetUserForm = () => {
+        setEditingUserId(null);
+        setUserForm({ email: '', name: '', rol: 'demo', avatarSeed: '' });
+    };
+
+    const resetRoleForm = () => {
+        setEditingRoleId(null);
+        setRoleForm({ name: '', permissions: DEFAULT_PERMISSIONS() });
+    };
+
+    const handleUserFormChange = (field, value) => {
+        setUserForm(prev => ({ ...prev, [field]: value }));
+    };
+
+    const handleRoleFormChange = (pageKey, action) => {
+        setRoleForm(prev => ({
+            ...prev,
+            permissions: {
+                ...prev.permissions,
+                [pageKey]: {
+                    ...prev.permissions[pageKey],
+                    [action]: !prev.permissions[pageKey][action],
+                },
+            },
+        }));
+    };
+
+    const handleSaveUser = async () => {
+        if (!userForm.email || !userForm.name) {
+            toast.warning('Nombre y correo son obligatorios.');
+            return;
+        }
+
+        const targetId = editingUserId || doc(collection(db, 'users')).id;
+        const payload = {
+            email: userForm.email.trim().toLowerCase(),
+            name: userForm.name.trim(),
+            rol: userForm.rol,
+            avatarSeed: userForm.avatarSeed || userForm.email || 'user',
+            updatedAt: new Date().toISOString(),
+        };
+
+        try {
+            await setDoc(doc(db, 'users', targetId), payload, { merge: true });
+            toast.success(`Usuario ${editingUserId ? 'actualizado' : 'creado'} correctamente.`);
+            resetUserForm();
+        } catch (error) {
+            console.error('Error saving user:', error);
+            toast.error('No se pudo guardar el usuario.');
+        }
+    };
+
+    const handleDeleteUser = async (id) => {
+        if (id === null) return;
+        if (!confirm('¿Seguro que quieres eliminar este registro de usuario?')) return;
+        try {
+            await deleteDoc(doc(db, 'users', id));
+            toast.success('Usuario eliminado correctamente.');
+            if (editingUserId === id) resetUserForm();
+        } catch (error) {
+            console.error('Error deleting user:', error);
+            toast.error('No se pudo eliminar el usuario.');
+        }
+    };
+
+    const handleEditUser = (userData) => {
+        setEditingUserId(userData.id);
+        setUserForm({
+            email: userData.email || '',
+            name: userData.name || '',
+            rol: userData.rol || 'demo',
+            avatarSeed: userData.avatarSeed || '',
+        });
+    };
+
+    const handleSaveRole = async () => {
+        if (!roleForm.name.trim()) {
+            toast.warning('Nombre de rol es obligatorio.');
+            return;
+        }
+
+        const targetId = editingRoleId || doc(collection(db, 'roles')).id;
+        const payload = {
+            name: roleForm.name.trim(),
+            permissions: roleForm.permissions,
+            updatedAt: new Date().toISOString(),
+        };
+
+        try {
+            await setDoc(doc(db, 'roles', targetId), payload, { merge: true });
+            toast.success(`Rol ${editingRoleId ? 'actualizado' : 'creado'} correctamente.`);
+            resetRoleForm();
+        } catch (error) {
+            console.error('Error saving role:', error);
+            toast.error('No se pudo guardar el rol.');
+        }
+    };
+
+    const handleEditRole = (roleData) => {
+        setEditingRoleId(roleData.id);
+        setRoleForm({
+            name: roleData.name || '',
+            permissions: roleData.permissions || DEFAULT_PERMISSIONS(),
+        });
+    };
+
+    const handleDeleteRole = async (id) => {
+        if (!confirm('¿Seguro que quieres eliminar este rol?')) return;
+        try {
+            await deleteDoc(doc(db, 'roles', id));
+            toast.success('Rol eliminado correctamente.');
+            if (editingRoleId === id) resetRoleForm();
+        } catch (error) {
+            console.error('Error deleting role:', error);
+            toast.error('No se pudo eliminar el rol.');
+        }
+    };
 
     const toggleMaintenance = async () => {
         const newState = !isMaintenance;
@@ -283,6 +447,36 @@ function AdminSection() {
             setIsMaintenance(!newState);
             toast.error('Error al actualizar el modo mantenimiento');
         }
+    };
+
+    useEffect(() => {
+        if (!roleForm.permissions || Object.keys(roleForm.permissions).length === 0) {
+            setRoleForm(prev => ({ ...prev, permissions: DEFAULT_PERMISSIONS() }));
+        }
+    }, [roleForm.permissions]);
+
+    const canSaveUser = userForm.email.trim() !== '' && userForm.name.trim() !== '';
+    const canSaveRole = roleForm.name.trim() !== '';
+    const userRolesOptions = ['demo', 'instructor', 'admin', 'super_admin', ...rolesList.map(r => r.name)].filter((value, index, self) => self.indexOf(value) === index);
+
+    const renderPermissionRow = (pageKey, pageLabel) => {
+        const permissions = roleForm.permissions[pageKey] || { view: false, create: false, edit: false, delete: false };
+        return (
+            <tr key={pageKey}>
+                <td>{pageLabel}</td>
+                {['view', 'create', 'edit', 'delete'].map(action => (
+                    <td key={action} className={styles.permissionCell}>
+                        <label className={styles.checkboxLabel}>
+                            <input
+                                type="checkbox"
+                                checked={permissions[action]}
+                                onChange={() => handleRoleFormChange(pageKey, action)}
+                            />
+                        </label>
+                    </td>
+                ))}
+            </tr>
+        );
     };
 
     if (loading) return null;
@@ -364,6 +558,174 @@ function AdminSection() {
                             <span>Tú sigues teniendo acceso total por ser Administrador.</span>
                         </div>
                     )}
+
+                    <div className={styles.adminManagementSection}>
+                        <div className={styles.adminFormColumns}>
+                            <section className={styles.adminFormCard}>
+                                <h4 className={styles.adminFormTitle}>Crear / editar usuario</h4>
+                                <div className={styles.fieldGroup}>
+                                    <label className={styles.fieldLabel}>Correo electrónico</label>
+                                    <input
+                                        className={styles.fieldInput}
+                                        type="email"
+                                        value={userForm.email}
+                                        onChange={(e) => handleUserFormChange('email', e.target.value)}
+                                        placeholder="usuario@correo.com"
+                                    />
+                                </div>
+                                <div className={styles.fieldGroup}>
+                                    <label className={styles.fieldLabel}>Nombre completo</label>
+                                    <input
+                                        className={styles.fieldInput}
+                                        value={userForm.name}
+                                        onChange={(e) => handleUserFormChange('name', e.target.value)}
+                                        placeholder="Nombre del usuario"
+                                    />
+                                </div>
+                                <div className={styles.fieldGroup}>
+                                    <label className={styles.fieldLabel}>Rol asignado</label>
+                                    <select
+                                        className={styles.fieldInput}
+                                        value={userForm.rol}
+                                        onChange={(e) => handleUserFormChange('rol', e.target.value)}
+                                    >
+                                        {userRolesOptions.map(roleOption => (
+                                            <option key={roleOption} value={roleOption}>{roleOption}</option>
+                                        ))}
+                                    </select>
+                                </div>
+                                <div className={styles.fieldGroup}>
+                                    <label className={styles.fieldLabel}>Semilla de avatar</label>
+                                    <input
+                                        className={styles.fieldInput}
+                                        value={userForm.avatarSeed}
+                                        onChange={(e) => handleUserFormChange('avatarSeed', e.target.value)}
+                                        placeholder="Opcional: valores para avatar aleatorio"
+                                    />
+                                </div>
+                                <div className={styles.actionBtnRow}>
+                                    <button
+                                        type="button"
+                                        className={styles.btnPrimary}
+                                        onClick={handleSaveUser}
+                                        disabled={!canSaveUser}
+                                    >
+                                        {editingUserId ? 'Actualizar usuario' : 'Crear usuario'}
+                                    </button>
+                                    <button
+                                        type="button"
+                                        className={styles.btnSecondary}
+                                        onClick={resetUserForm}
+                                    >
+                                        Limpiar
+                                    </button>
+                                </div>
+                            </section>
+
+                            <section className={styles.adminFormCard}>
+                                <h4 className={styles.adminFormTitle}>Crear / editar rol</h4>
+                                <div className={styles.fieldGroup}>
+                                    <label className={styles.fieldLabel}>Nombre del rol</label>
+                                    <input
+                                        className={styles.fieldInput}
+                                        value={roleForm.name}
+                                        onChange={(e) => setRoleForm(prev => ({ ...prev, name: e.target.value }))}
+                                        placeholder="Ej. manager, auditor"
+                                    />
+                                </div>
+                                <div className={styles.permissionsTableWrapper}>
+                                    <table className={styles.adminTable}>
+                                        <thead>
+                                            <tr>
+                                                <th>Página</th>
+                                                <th>Ver</th>
+                                                <th>Crear</th>
+                                                <th>Editar</th>
+                                                <th>Borrar</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {PERMISSION_PAGES.map(page => renderPermissionRow(page.key, page.label))}
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <div className={styles.actionBtnRow}>
+                                    <button
+                                        type="button"
+                                        className={styles.btnPrimary}
+                                        onClick={handleSaveRole}
+                                        disabled={!canSaveRole}
+                                    >
+                                        {editingRoleId ? 'Actualizar rol' : 'Crear rol'}
+                                    </button>
+                                    <button
+                                        type="button"
+                                        className={styles.btnSecondary}
+                                        onClick={resetRoleForm}
+                                    >
+                                        Limpiar
+                                    </button>
+                                </div>
+                            </section>
+                        </div>
+
+                        <div className={styles.adminListsGrid}>
+                            <section className={styles.adminListCard}>
+                                <h5 className={styles.adminListTitle}>Usuarios existentes</h5>
+                                <div className={styles.tableScroll}>
+                                    <table className={styles.adminTable}>
+                                        <thead>
+                                            <tr>
+                                                <th>Nombre</th>
+                                                <th>Correo</th>
+                                                <th>Rol</th>
+                                                <th>Acciones</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {usersLoading ? (
+                                                <tr><td colSpan="4">Cargando usuarios...</td></tr>
+                                            ) : usersList.length === 0 ? (
+                                                <tr><td colSpan="4">No hay usuarios registrados.</td></tr>
+                                            ) : usersList.map(userItem => (
+                                                <tr key={userItem.id}>
+                                                    <td>{userItem.name || 'Sin nombre'}</td>
+                                                    <td>{userItem.email || 'Sin correo'}</td>
+                                                    <td>{userItem.rol || 'Sin rol'}</td>
+                                                    <td className={styles.tableActions}>
+                                                        <button type="button" className={styles.btnSecondary} onClick={() => handleEditUser(userItem)}>Editar</button>
+                                                        <button type="button" className={styles.btnDanger} onClick={() => handleDeleteUser(userItem.id)}>Eliminar</button>
+                                                    </td>
+                                                </tr>
+                                            ))}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </section>
+
+                            <section className={styles.adminListCard}>
+                                <h5 className={styles.adminListTitle}>Roles existentes</h5>
+                                <div className={styles.roleCardsWrap}>
+                                    {rolesLoading ? (
+                                        <p>Cargando roles...</p>
+                                    ) : rolesList.length === 0 ? (
+                                        <p>No hay roles definidos.</p>
+                                    ) : rolesList.map(roleItem => (
+                                        <article key={roleItem.id} className={styles.roleCard}>
+                                            <div>
+                                                <p className={styles.roleName}>{roleItem.name}</p>
+                                                <p className={styles.roleMeta}>Permisos configurados</p>
+                                            </div>
+                                            <div className={styles.tableActions}>
+                                                <button type="button" className={styles.btnSecondary} onClick={() => handleEditRole(roleItem)}>Editar</button>
+                                                <button type="button" className={styles.btnDanger} onClick={() => handleDeleteRole(roleItem.id)}>Eliminar</button>
+                                            </div>
+                                        </article>
+                                    ))}
+                                </div>
+                            </section>
+                        </div>
+                    </div>
                 </div>
             )}
         </div>
@@ -393,12 +755,25 @@ function AdminMuralSection() {
     const [editData,        setEditData]        = useState({});
     const [isOpen,          setIsOpen]          = useState(false);
     const [searchingM,      setSearchingM]      = useState(false);
+    const [muralSearch,     setMuralSearch]     = useState('');
     const [availableThemes, setAvailableThemes] = useState([]);
 
     const [manualData, setManualData] = useState({
         employeeId: '', firstName: '', currentPosition: '',
         promotionTo: '', score: '', requiredScore: '', recommendations: [],
     });
+
+    const filteredMuralList = useMemo(() => {
+        const query = muralSearch.trim().toLowerCase();
+        if (!query) return muralList;
+        return muralList.filter(item => {
+            const idText = String(item.employeeId || '');
+            return idText.includes(query)
+                || String(item.firstName || '').toLowerCase().includes(query)
+                || String(item.currentPosition || '').toLowerCase().includes(query)
+                || String(item.promotionTo || '').toLowerCase().includes(query);
+        });
+    }, [muralList, muralSearch]);
 
     const [messages, setMessages] = useState({
         successMessage: '', motivationalMessage: '',
@@ -423,7 +798,14 @@ function AdminMuralSection() {
         // Listener de mural_exams
         const unsubMural = onSnapshot(collection(db, 'mural_exams'), (snap) => {
             const arr = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-            arr.sort((a, b) => (b.date || '').localeCompare(a.date || ''));
+            arr.sort((a, b) => {
+                const aId = Number(a.employeeId);
+                const bId = Number(b.employeeId);
+                if (!Number.isNaN(aId) && !Number.isNaN(bId)) return aId - bId;
+                if (!Number.isNaN(aId)) return -1;
+                if (!Number.isNaN(bId)) return 1;
+                return String(a.employeeId || '').localeCompare(String(b.employeeId || ''));
+            });
             setMuralList(arr);
         });
 
@@ -839,10 +1221,26 @@ function AdminMuralSection() {
 
                     {/* Tabla de registros */}
                     <div className={styles.tableWrapper}>
-                        <h4 className={styles.tableTitle}>
-                            <Presentation size={16} />
-                            Registros Públicos Actuales ({muralList.length})
-                        </h4>
+                        <div className={styles.tableHeaderTop}>
+                            <h4 className={styles.tableTitle}>
+                                <Presentation size={16} />
+                                Registros Públicos Actuales ({filteredMuralList.length})
+                            </h4>
+                            <div className={styles.tableSearchRow}>
+                                <input
+                                    type="search"
+                                    className={`${styles.fieldInput} ${styles.tableSearchInput}`}
+                                    value={muralSearch}
+                                    onChange={e => setMuralSearch(e.target.value)}
+                                    placeholder="Buscar por ID, nombre o puesto..."
+                                />
+                                {muralSearch.trim() && (
+                                    <span className={styles.searchBadge}>
+                                        Mostrando {filteredMuralList.length} de {muralList.length}
+                                    </span>
+                                )}
+                            </div>
+                        </div>
 
                         <div className={styles.tableScroll}>
                             <table className={styles.muralTable}>
@@ -858,7 +1256,7 @@ function AdminMuralSection() {
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {muralList.map(item => {
+                                    {filteredMuralList.map(item => {
                                         const isEditing = editingMuralId === item.id;
                                         if (isEditing) return (
                                             <tr key={item.id}>
@@ -929,7 +1327,7 @@ function AdminMuralSection() {
                                             </tr>
                                         );
                                     })}
-                                    {muralList.length === 0 && (
+                                    {filteredMuralList.length === 0 && (
                                         <tr className={styles.tableEmptyRow}>
                                             <td colSpan="7">No hay resultados en el mural.</td>
                                         </tr>

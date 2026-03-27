@@ -202,12 +202,17 @@ service cloud.firestore {
 
     // ===== MURAL DE RECONOCIMIENTO =====
     match /mural_exams/{employeeId} {
-      // Público puede visualizar solo si conoce el ID puntual 
-      allow get: if true; 
-      // Por seguridad: Nadie puede leer/exportar la lista de todos (evita scrapeo de datos)
-      allow list: if false; 
-      // Solo administradores pueden re-sincronizar esto
+      // Público puede visualizar solo si conoce el ID puntual
+      allow get: if true;
+      // Administradores pueden listar los registros en el panel de administración
+      allow list: if hasAnyRole(['super_admin', 'admin', 'rh']);
+      // Solo administradores pueden crear, editar o eliminar registros públicos
       allow write: if hasAnyRole(['super_admin', 'admin', 'rh']);
+    }
+
+    match /roles/{roleId} {
+      allow read: if hasAnyRole(['super_admin', 'admin', 'rh']);
+      allow create, update, delete: if hasAnyRole(['super_admin', 'rh']);
     }
     
     // ===== GRUPOS Y CERTIFICACIONES (Auditores, Brigadas, etc.) =====
