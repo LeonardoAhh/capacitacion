@@ -6,7 +6,7 @@ import {
     collection, getDocs, addDoc, updateDoc, deleteDoc,
     doc, query, orderBy, serverTimestamp,
 } from 'firebase/firestore';
-import { Search, Plus, Edit2, Trash2, ArrowLeft, Download, X } from 'lucide-react';
+import { Search, Plus, Edit2, Trash2, ArrowLeft, Download, Printer, X } from 'lucide-react';
 import { Button } from '@/components/ui/Button/Button';
 import * as XLSX from 'xlsx';
 import { useToast } from '@/components/ui/Toast/Toast';
@@ -220,6 +220,86 @@ export default function GestionarPreguntasPage() {
         }
     };
 
+    const handlePrintQuestions = () => {
+        const visibleQuestions = filteredQuestions;
+        const filterSummary = `Departamento: ${selectedDept} · Tema: ${selectedTheme} · Buscar: ${searchTerm || 'N/A'}`;
+        const content = visibleQuestions.map((q, index) => {
+            const themeLabel = q.theme || 'General';
+            const answerOptions = ['a', 'b', 'c']
+                .map(letter => {
+                    const text = q.options?.[letter];
+                    if (!text) return '';
+                    const isCorrect = q.correctAnswer?.toLowerCase() === letter;
+                    return `<div class="option ${isCorrect ? 'correct' : ''}"><strong>${letter.toUpperCase()}.</strong> ${text}${isCorrect ? ' ✓' : ''}</div>`;
+                })
+                .filter(Boolean)
+                .join('');
+
+            return `
+                <section class="question-card">
+                    <div class="question-header">
+                        <div><span class="badge">#${index + 1}</span> <strong>${q.department || 'Producción'}</strong></div>
+                        <div class="meta">${themeLabel}</div>
+                    </div>
+                    <p class="question-text">${q.question || ''}</p>
+                    <div class="options">${answerOptions}</div>
+                </section>
+            `;
+        }).join('');
+
+        const html = `<!DOCTYPE html>
+            <html lang="es">
+            <head>
+                <meta charset="UTF-8" />
+                <title>Imprimir preguntas</title>
+                <style>
+                    @page { size: letter portrait; margin: 12mm; }
+                    *, *::before, *::after { box-sizing: border-box; }
+                    html, body { width: 100%; min-height: 100%; }
+                    body { font-family: Arial, sans-serif; margin: 0; padding: 12px; color: #111; background: #f7fafc; font-size: 12px; }
+                    h1 { margin: 0 0 8px; font-size: 20px; }
+                    .header { margin-bottom: 14px; }
+                    .subtitle { margin: 4px 0 0; color: #475569; font-size: 12px; }
+                    .filter-summary { margin-top: 4px; color: #64748b; font-size: 11px; }
+                    .question-card { background: #fff; border: 1px solid #e2e8f0; border-radius: 10px; padding: 14px; margin-bottom: 14px; }
+                    .question-header { display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin-bottom: 10px; font-size: 12px; color: #475569; }
+                    .badge { display: inline-flex; align-items: center; justify-content: center; padding: 3px 8px; background: #e2e8f0; border-radius: 999px; font-size: 11px; }
+                    .question-text { margin: 0 0 10px; font-size: 14px; line-height: 1.4; }
+                    .options { display: grid; gap: 6px; }
+                    .option { padding: 8px 10px; border-radius: 8px; background: #f8fafc; border: 1px solid #e2e8f0; font-size: 13px; }
+                    .option.correct { border-color: #22c55e; background: #ecfdf5; }
+                    .option strong { margin-right: 6px; }
+                    @media print {
+                        body { background: #fff; padding: 0; }
+                        .question-card { break-inside: avoid; page-break-inside: avoid; margin-bottom: 12px; }
+                        h1 { font-size: 18px; }
+                        .subtitle, .filter-summary, .question-header { color: #334155; }
+                    }
+                </style>
+            </head>
+            <body>
+                <div class="header">
+                    <h1>Preguntas filtradas</h1>
+                    <p class="subtitle">Se imprimirán las preguntas visibles según los filtros activos.</p>
+                    <p class="filter-summary">${filterSummary}</p>
+                </div>
+                ${visibleQuestions.length > 0 ? content : '<p>No hay preguntas visibles con el filtro actual.</p>'}
+            </body>
+            </html>`;
+
+        const printWindow = window.open('', '_blank', 'width=900,height=700');
+        if (!printWindow) {
+            toast.error('Error', 'No se pudo abrir la ventana de impresión.');
+            return;
+        }
+        printWindow.document.write(html);
+        printWindow.document.close();
+        printWindow.focus();
+        printWindow.onload = () => {
+            printWindow.print();
+        };
+    };
+
     // ─── Render ──────────────────────────────────────────────────────────────
 
     const questionCount = filteredQuestions.length;
@@ -274,6 +354,14 @@ export default function GestionarPreguntasPage() {
                             </div>
 
                             <div className={styles.headerActions}>
+                                <Button
+                                    variant="outline"
+                                    onClick={handlePrintQuestions}
+                                    title={`Imprimir ${questionCount} pregunta${questionCount !== 1 ? 's' : ''} visibles`}
+                                >
+                                    <Printer size={18} style={{ marginRight: 8 }} />
+                                    Imprimir
+                                </Button>
                                 <Button
                                     variant="outline"
                                     onClick={handleDownloadExcel}
