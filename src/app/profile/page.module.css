@@ -40,8 +40,9 @@
     display: flex;
     flex-direction: column;
     gap: 20px;
-    padding-bottom: 60px;
-    max-width: 860px;
+    margin: 0 auto;
+    padding: 0 20px 60px;
+    max-width: 1160px;
     width: 100%;
 }
 
@@ -101,8 +102,9 @@
 .heroBody {
     display: flex;
     align-items: flex-end;
-    gap: 20px;
-    padding: 0 24px 24px;
+    gap: 24px;
+    min-height: 220px;
+    padding: 0 30px 30px;
     position: relative;
 }
 
@@ -200,9 +202,8 @@
     line-height: 1.15;
     font-family: var(--font-serif, 'Montserrat'), sans-serif;
     letter-spacing: -0.02em;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+    white-space: normal;
+    overflow-wrap: break-word;
 }
 
 /* ── Email pill ── */
@@ -341,6 +342,8 @@
 
 .detailsContent {
     padding: 8px 0;
+    display: grid;
+    gap: 12px;
 }
 
 .detailRow {
@@ -1046,6 +1049,25 @@
 /* ================================================================
    RESPONSIVE
    ================================================================ */
+@media (min-width: 900px) {
+    .heroBody {
+        padding: 0 34px 34px;
+        gap: 28px;
+    }
+
+    .detailsContent {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .tabNav {
+        padding: 6px 8px;
+    }
+
+    .actionBtnRow {
+        justify-content: flex-end;
+    }
+}
+
 @media (max-width: 900px) {
     .container { max-width: 100%; }
 }
