@@ -560,3 +560,111 @@
     .exitBtn, .navBtn { border-width: 2px; }
     .progressTrack    { border: 1px solid currentColor; }
 }
+
+/* ── Notas por slide ─────────────────────────────────────────── */
+.notesBtn {
+    position: fixed;
+    bottom: 80px;
+    right: 16px;
+    width: 46px; height: 46px;
+    border-radius: 50%;
+    border: 1.5px solid rgba(255,255,255,0.25);
+    background: rgba(0,0,0,0.55);
+    backdrop-filter: blur(8px);
+    color: white;
+    font-size: 1.2rem;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    z-index: 120;
+    transition: background 0.2s, transform 0.2s;
+    position: relative;
+}
+
+.notesBtn:hover {
+    background: rgba(0, 60, 204, 0.75);
+    transform: scale(1.05);
+}
+
+/* Punto indicador de nota activa */
+.notesDot {
+    position: absolute;
+    top: 6px; right: 6px;
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: #00cc66;
+    border: 1.5px solid white;
+    pointer-events: none;
+}
+
+.notesDrawer {
+    position: fixed;
+    bottom: 80px;
+    right: 70px;
+    width: 280px;
+    background: var(--bg-primary, #ffffff);
+    border: 1.5px solid var(--border-color, rgba(0,0,0,0.1));
+    border-radius: 16px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.18);
+    z-index: 120;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    animation: courseFadeIn 0.2s ease;
+}
+
+.notesHeader {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 14px;
+    background: var(--bg-secondary, #f5f5f3);
+    border-bottom: 1px solid var(--border-color, rgba(0,0,0,0.08));
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: var(--text-primary, #111827);
+    font-family: var(--font-body), sans-serif;
+}
+
+.notesClose {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: var(--text-secondary, #6b7280);
+    font-size: 1.2rem;
+    line-height: 1;
+    padding: 2px 4px;
+    border-radius: 4px;
+}
+
+.notesClose:hover { background: var(--bg-primary, #fff); }
+
+.notesTextarea {
+    padding: 10px 12px;
+    border: none;
+    outline: none;
+    resize: vertical;
+    font-family: var(--font-body), sans-serif;
+    font-size: 0.84rem;
+    color: var(--text-primary, #111827);
+    background: var(--bg-primary, #ffffff);
+    min-height: 120px;
+    line-height: 1.5;
+}
+
+.notesHint {
+    font-size: 0.70rem;
+    color: var(--text-secondary, #9ca3af);
+    text-align: right;
+    padding: 4px 12px 8px;
+    margin: 0;
+    font-family: var(--font-body), sans-serif;
+}
+
+@media (max-width: 600px) {
+    .notesDrawer {
+        right: 8px;
+        bottom: 130px;
+        width: calc(100vw - 16px);
+    }
+    .notesBtn { bottom: 130px; right: 8px; }
+}

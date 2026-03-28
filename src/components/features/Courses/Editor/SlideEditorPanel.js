@@ -16,6 +16,10 @@ import ComparisonSlideEditor from './SlideEditors/ComparisonSlideEditor';
 import DynamicSlideEditor from './SlideEditors/DynamicSlideEditor';
 import StepsSlideEditor from './SlideEditors/StepsSlideEditor';
 import QuizSlideEditor from './SlideEditors/QuizSlideEditor';
+import VideoSlideEditor from './SlideEditors/VideoSlideEditor';
+import FlashcardSlideEditor from './SlideEditors/FlashcardSlideEditor';
+import FillBlankSlideEditor from './SlideEditors/FillBlankSlideEditor';
+import ChecklistSlideEditor from './SlideEditors/ChecklistSlideEditor';
 
 const DEBOUNCE_MS = 800;
 
@@ -44,6 +48,14 @@ function SlideFieldRouter({ type, formData, handleChange, handleBatchChange, set
             return <SimpleBodySlideEditor {...props} />;
         case 'benefits':
             return <BenefitsSlideEditor {...props} />;
+        case 'video':
+            return <VideoSlideEditor {...props} />;
+        case 'flashcard':
+            return <FlashcardSlideEditor {...props} />;
+        case 'fill_blank':
+            return <FillBlankSlideEditor {...props} />;
+        case 'checklist':
+            return <ChecklistSlideEditor {...props} />;
         default:
             return (
                 <p className={styles.noEditor}>

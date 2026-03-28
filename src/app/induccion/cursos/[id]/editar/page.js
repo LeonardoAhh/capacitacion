@@ -6,6 +6,7 @@ import {
     IconArrowLeft, IconX, IconMenu,
     IconTarget, IconFileText, IconGraduationCap,
     IconCheckSquare, IconGrid, IconColumns, IconBookOpen, IconList,
+    IconPlay, IconCopy, IconEdit,
 } from '@/lib/icons';
 import {
     getCourseWithSlides, updateSlide, addSlide, deleteSlide,
@@ -31,6 +32,11 @@ const SLIDE_TYPES = [
     { type: 'steps',      label: 'Paso a Paso',   icon: IconList,         iconColor: 'var(--teal-500, #14b8a6)',        desc: 'Secuencia numerada de pasos' },
     { type: 'quiz',       label: 'Quiz',          icon: IconBookOpen,     iconColor: 'var(--color-danger)',             desc: 'Pregunta con opciones' },
     { type: 'definition', label: 'Definición',    icon: IconBookOpen,     iconColor: 'var(--blue-500)',                 desc: 'Término y definición' },
+    // Nuevos tipos
+    { type: 'video',      label: 'Video',         icon: IconPlay,         iconColor: 'var(--color-danger)',             desc: 'YouTube o video MP4' },
+    { type: 'flashcard',  label: 'Tarjetas',      icon: IconCopy,         iconColor: '#8b5cf6',                         desc: 'Mazo de tarjetas con flip' },
+    { type: 'fill_blank', label: 'Completa',      icon: IconEdit,         iconColor: '#0ea5e9',                         desc: 'Rellena el espacio en blanco' },
+    { type: 'checklist',  label: 'Checklist',     icon: IconCheckSquare,  iconColor: '#16a34a',                         desc: 'Lista de verificación' },
 ];
 
 // ── Reducer ──────────────────────────────────────────────────────────────────

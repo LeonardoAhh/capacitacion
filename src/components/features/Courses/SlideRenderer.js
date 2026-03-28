@@ -8,6 +8,10 @@ import BenefitsSlide from './slides/BenefitsSlide';
 import ComparisonSlide from './slides/ComparisonSlide';
 import QuizSlide from './slides/QuizSlide';
 import StepsSlide from './slides/StepsSlide';
+import VideoSlide from './slides/VideoSlide';
+import FlashcardSlide from './slides/FlashcardSlide';
+import FillBlankSlide from './slides/FillBlankSlide';
+import ChecklistSlide from './slides/ChecklistSlide';
 
 const SLIDE_COMPONENTS = {
     title: TitleSlide,
@@ -19,13 +23,17 @@ const SLIDE_COMPONENTS = {
     comparison: ComparisonSlide,
     quiz: QuizSlide,
     steps: StepsSlide,
+    video: VideoSlide,
+    flashcard: FlashcardSlide,
+    fill_blank: FillBlankSlide,
+    checklist: ChecklistSlide,
     // Mapeos para tipos especiales
     group_quiz: QuizSlide,
     group_dynamic: ContentSlide,
     dynamic: ContentSlide,
 };
 
-const SlideRenderer = memo(({ slide, inline = false, hasBgMedia = false, onQuizSubmit }) => {
+const SlideRenderer = memo(({ slide, inline = false, hasBgMedia = false, onQuizSubmit, onCheckChange }) => {
     if (!slide) return null;
 
     let Component = SLIDE_COMPONENTS[slide.type];
@@ -96,6 +104,7 @@ const SlideRenderer = memo(({ slide, inline = false, hasBgMedia = false, onQuizS
                 inline={inline}
                 hasBgMedia={hasBgMedia}
                 onQuizSubmit={onQuizSubmit}
+                onCheckChange={onCheckChange}
             />
         </div>
     );

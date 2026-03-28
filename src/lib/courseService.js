@@ -11,6 +11,7 @@ import {
     serverTimestamp,
     writeBatch,
     addDoc,
+    increment,
 } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 
@@ -609,6 +610,135 @@ export async function getUserProgress(courseId, userId) {
     } catch (error) {
         console.error('Error leyendo progreso:', error);
         return null;
+    }
+}
+
+// ──────────────────────────────────────────────
+//  NOTAS POR SLIDE (alumno)
+// ──────────────────────────────────────────────
+
+/**
+ * Guarda o actualiza la nota de un slide para un usuario.
+ * Ruta: users/{userId}/notes/{courseId}  →  mapa { [slideId]: string }
+ */
+export async function saveSlideNote(courseId, userId, slideId, text) {
+    if (!courseId || !userId || !slideId) return { success: false, error: 'Parámetros inválidos' };
+    try {
+        const ref = doc(db, 'users', userId, 'notes', courseId);
+        await setDoc(ref, { [slideId]: text, updatedAt: serverTimestamp() }, { merge: true });
+        return { success: true };
+    } catch (error) {
+        console.error('Error guardando nota:', error);
+        return { success: false, error: error.message };
+    }
+}
+
+/**
+ * Lee todas las notas de un curso para un usuario.
+ * @returns {Promise<Record<string, string>>}  mapa { [slideId]: text }
+ */
+export async function getCourseNotes(courseId, userId) {
+    if (!courseId || !userId) return {};
+    try {
+        const ref = doc(db, 'users', userId, 'notes', courseId);
+        const snap = await getDoc(ref);
+        if (!snap.exists()) return {};
+        // eslint-disable-next-line no-unused-vars
+        const { updatedAt, ...notes } = snap.data();
+        return notes;
+    } catch (error) {
+        console.error('Error leyendo notas:', error);
+        return {};
+    }
+}
+
+// ──────────────────────────────────────────────
+//  CALIFICACIÓN DEL CURSO (rating)
+// ──────────────────────────────────────────────
+
+/**
+ * Guarda la calificación (1-5 estrellas) de un usuario para un curso.
+ * Ruta: cursos/{courseId}/ratings/{userId}
+ */
+export async function saveCourseRating(courseId, userId, rating) {
+    if (!courseId || !userId || rating < 1 || rating > 5) return { success: false, error: 'Parámetros inválidos' };
+    try {
+        const ref = doc(db, COURSES_COLLECTION, courseId, 'ratings', userId);
+        await setDoc(ref, { rating, createdAt: serverTimestamp() }, { merge: true });
+        return { success: true };
+    } catch (error) {
+        console.error('Error guardando rating:', error);
+        return { success: false, error: error.message };
+    }
+}
+
+/**
+ * Lee si el usuario ya calificó el curso.
+ * @returns {Promise<number|null>} rating (1-5) o null si no ha calificado
+ */
+export async function getUserCourseRating(courseId, userId) {
+    if (!courseId || !userId) return null;
+    try {
+        const ref = doc(db, COURSES_COLLECTION, courseId, 'ratings', userId);
+        const snap = await getDoc(ref);
+        return snap.exists() ? (snap.data().rating ?? null) : null;
+    } catch {
+        return null;
+    }
+}
+
+// ──────────────────────────────────────────────
+//  ANALYTICS: TIEMPO POR SLIDE
+// ──────────────────────────────────────────────
+
+/**
+ * Acumula el tiempo (ms) que un usuario pasó en un slide.
+ * Ruta: users/{userId}/slideTime/{courseId}  →  { [slideId]: { totalMs, views } }
+ */
+export async function trackSlideTime(courseId, userId, slideId, ms) {
+    if (!courseId || !userId || !slideId || !(ms > 0)) return;
+    try {
+        const ref = doc(db, 'users', userId, 'slideTime', courseId);
+        await setDoc(ref, {
+            [`${slideId}.totalMs`]: increment(ms),
+            [`${slideId}.views`]:   increment(1),
+            updatedAt: serverTimestamp(),
+        }, { merge: true });
+    } catch (error) {
+        console.error('Error registrando tiempo de slide:', error);
+    }
+}
+
+/**
+ * Lee las estadísticas de tiempo por slide de todos los usuarios para un curso.
+ * Agrega totalMs y views de todos los usuarios. Solo para uso en vistas admin.
+ * @returns {Promise<Record<string, {totalMs: number, views: number}>>}
+ */
+export async function getCourseSlideStats(courseId) {
+    if (!courseId) return {};
+    try {
+        const usersSnap = await getDocs(collection(db, 'users'));
+        const aggregated = {};
+
+        await Promise.all(usersSnap.docs.map(async (userDoc) => {
+            try {
+                const ref = doc(db, 'users', userDoc.id, 'slideTime', courseId);
+                const snap = await getDoc(ref);
+                if (!snap.exists()) return;
+                const data = snap.data();
+                Object.entries(data).forEach(([key, val]) => {
+                    if (key === 'updatedAt' || typeof val !== 'object') return;
+                    if (!aggregated[key]) aggregated[key] = { totalMs: 0, views: 0 };
+                    aggregated[key].totalMs += val.totalMs || 0;
+                    aggregated[key].views   += val.views   || 0;
+                });
+            } catch { /* skip usuarios sin datos */ }
+        }));
+
+        return aggregated;
+    } catch (error) {
+        console.error('Error leyendo stats de slides:', error);
+        return {};
     }
 }
 

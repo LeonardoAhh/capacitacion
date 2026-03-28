@@ -1,0 +1,349 @@
+/* =========================================================
+   FUNCIONES GUIDE — sección dentro de /induccion
+   Usa tokens globales: --color-primary, --bg-*, --text-*, etc.
+   ========================================================= */
+
+/* ── Wrapper ── */
+.wrap {
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-xl, 20px);
+    overflow: hidden;
+    background: var(--bg-primary);
+    margin-bottom: 24px;
+    box-shadow: var(--shadow-sm, 0 1px 4px rgba(0,0,0,0.06));
+}
+
+/* ── Header / trigger del acordeón ── */
+.header {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 16px 20px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    text-align: left;
+    transition: background 0.18s;
+}
+
+.header:hover {
+    background: var(--bg-secondary, rgba(0,0,0,0.025));
+}
+
+.headerOpen {
+    border-bottom: 1px solid var(--border-color);
+}
+
+.headerLeft {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    min-width: 0;
+}
+
+.headerIcon {
+    font-size: 1.2rem;
+    flex-shrink: 0;
+}
+
+.headerTitle {
+    font-family: var(--font-serif);
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    white-space: nowrap;
+}
+
+.headerSub {
+    font-size: 0.75rem;
+    color: var(--text-tertiary, var(--text-secondary));
+    font-weight: 400;
+}
+
+.chevron {
+    flex-shrink: 0;
+    color: var(--text-tertiary, #9ca3af);
+    transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.chevronOpen {
+    transform: rotate(180deg);
+}
+
+/* ── Cuerpo expandible ── */
+.body {
+    display: grid;
+    grid-template-rows: 0fr;
+    transition: grid-template-rows 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    overflow: hidden;
+}
+
+.bodyOpen {
+    grid-template-rows: 1fr;
+}
+
+/* El hijo directo DEBE tener overflow: hidden para que funcione el grid trick */
+.body > * {
+    overflow: hidden;
+}
+
+/* ── Padding interno del cuerpo ── */
+.bodyInner {
+    padding: 0 20px 20px;
+}
+
+/* ── Tabs de sección ── */
+.tabs {
+    display: flex;
+    gap: 4px;
+    padding: 16px 20px 0;
+    border-bottom: 1px solid var(--border-color);
+    overflow-x: auto;
+    scrollbar-width: none;
+}
+
+.tabs::-webkit-scrollbar { display: none; }
+
+.tab {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 14px;
+    border: none;
+    background: none;
+    cursor: pointer;
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+    border-bottom: 2px solid transparent;
+    white-space: nowrap;
+    transition: color 0.15s, border-color 0.15s;
+    margin-bottom: -1px;
+}
+
+.tab:hover {
+    color: var(--text-primary);
+}
+
+.tabActive {
+    color: var(--color-primary);
+    border-bottom-color: var(--color-primary);
+}
+
+.tabCount {
+    font-size: 0.7rem;
+    font-weight: 700;
+    background: var(--bg-secondary, rgba(0,0,0,0.06));
+    color: var(--text-tertiary, var(--text-secondary));
+    border-radius: 20px;
+    padding: 1px 7px;
+    line-height: 1.6;
+}
+
+.tabActive .tabCount {
+    background: color-mix(in srgb, var(--color-primary) 12%, transparent);
+    color: var(--color-primary);
+}
+
+/* ── Contenido de sección ── */
+.sectionContent {
+    padding: 16px 20px 20px;
+}
+
+.sectionNote {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    margin: 0 0 16px;
+    line-height: 1.5;
+}
+
+.sectionNote strong {
+    color: var(--text-primary);
+}
+
+/* ── Grupo (Existentes / Nuevos) ── */
+.groupTitle {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    color: var(--text-tertiary, #9ca3af);
+    margin: 0 0 12px;
+}
+
+.groupDot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+
+.groupDot[data-variant="existing"] {
+    background: var(--text-tertiary, #9ca3af);
+}
+
+.groupDot[data-variant="new"] {
+    background: var(--color-primary);
+}
+
+/* ── Grid de slide cards ── */
+.grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 10px;
+}
+
+/* ── Slide card ── */
+.slideCard {
+    background: var(--bg-secondary, rgba(0,0,0,0.025));
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md, 14px);
+    padding: 14px 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+.slideCard:hover {
+    border-color: color-mix(in srgb, var(--color-primary) 40%, transparent);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+}
+
+.slideCardNew {
+    border-color: color-mix(in srgb, var(--color-primary) 25%, transparent);
+    background: color-mix(in srgb, var(--color-primary) 4%, var(--bg-primary));
+}
+
+.slideCardTop {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 6px;
+}
+
+.slideEmoji {
+    font-size: 1.4rem;
+    line-height: 1;
+}
+
+.newBadge {
+    font-size: 0.62rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--color-primary);
+    background: color-mix(in srgb, var(--color-primary) 12%, transparent);
+    border-radius: 20px;
+    padding: 2px 7px;
+    white-space: nowrap;
+}
+
+.slideLabel {
+    font-size: 0.82rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    line-height: 1.2;
+}
+
+.slideDesc {
+    font-size: 0.73rem;
+    color: var(--text-secondary);
+    line-height: 1.45;
+    margin: 0;
+}
+
+/* ── Feature list ── */
+.featureList {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.featureRow {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 10px 12px;
+    border-radius: var(--radius-md, 10px);
+    transition: background 0.15s;
+}
+
+.featureRow:hover {
+    background: var(--bg-secondary, rgba(0,0,0,0.025));
+}
+
+.featureEmoji {
+    font-size: 1.2rem;
+    line-height: 1.4;
+    flex-shrink: 0;
+    width: 24px;
+    text-align: center;
+}
+
+.featureText {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+}
+
+.featureLabel {
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--text-primary);
+}
+
+.featureDesc {
+    font-size: 0.77rem;
+    color: var(--text-secondary);
+    line-height: 1.5;
+}
+
+/* ── Responsive ── */
+@media (max-width: 600px) {
+    .header {
+        padding: 14px 16px;
+    }
+
+    .headerSub {
+        display: none;
+    }
+
+    .tabs {
+        padding: 12px 16px 0;
+    }
+
+    .sectionContent {
+        padding: 14px 16px 16px;
+    }
+
+    .grid {
+        grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+        gap: 8px;
+    }
+
+    .slideCard {
+        padding: 12px 10px;
+    }
+
+    .featureRow {
+        padding: 9px 8px;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .body,
+    .chevron,
+    .header,
+    .slideCard,
+    .featureRow {
+        transition: none;
+    }
+}

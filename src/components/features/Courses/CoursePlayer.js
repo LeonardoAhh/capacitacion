@@ -7,7 +7,12 @@ import { AiOutlineClockCircle } from 'react-icons/ai';
 import SlideRenderer from './SlideRenderer';
 import CompletionScreen from './CompletionScreen';
 import TableOfContents from './TableOfContents';
-import { saveUserProgress, getUserProgress } from '@/lib/courseService';
+import {
+    saveUserProgress, getUserProgress,
+    saveSlideNote, getCourseNotes,
+    trackSlideTime,
+    saveCourseRating, getUserCourseRating,
+} from '@/lib/courseService';
 import styles from './CoursePlayer.module.css';
 
 // ── Constantes ───────────────────────────────────────────────────────────────
@@ -31,6 +36,10 @@ const SLIDE_BADGES = {
     comparison: { emoji: '⚖️', label: 'Comparación' },
     definition: { emoji: '📖', label: 'Definición' },
     content: { emoji: '📄', label: 'Contenido' },
+    video: { emoji: '▶️', label: 'Video' },
+    flashcard: { emoji: '🃏', label: 'Tarjetas' },
+    fill_blank: { emoji: '✏️', label: 'Completa la Frase' },
+    checklist: { emoji: '☑️', label: 'Checklist' },
 };
 
 // ── Utilidades ──────────────────────────────────────────────────────────────
@@ -93,9 +102,19 @@ export default function CoursePlayer({ course, slides, onClose, inline = false, 
     const [elapsedSecs, setElapsedSecs] = useState(0);
     const [progressLoaded, setProgressLoaded] = useState(false);
 
+    // Notas por slide
+    const [notes, setNotes] = useState({});
+    const [showNotes, setShowNotes] = useState(false);
+    const [noteText, setNoteText] = useState('');
+    const noteTimerRef = useRef(null);
+
+    // Checklist gate
+    const [checklistDone, setChecklistDone] = useState(false);
+
     const containerRef = useRef(null);
     const touchStartXRef = useRef(null);
     const saveTimerRef = useRef(null);
+    const slideStartRef = useRef(Date.now()); // Para tracking de tiempo por slide
 
     // Refs estables para el keyboard handler (evita recrear el listener en cada render)
     const isLastRef = useRef(false);
@@ -140,9 +159,25 @@ export default function CoursePlayer({ course, slides, onClose, inline = false, 
             });
     }, [course?.id, userId, inline, total]);
 
+    // ── Cargar notas al montar ───────────────────────────────────────────────
+    useEffect(() => {
+        if (inline || !userId || !course?.id) return;
+        getCourseNotes(course.id, userId).then(setNotes).catch(() => {});
+    }, [course?.id, userId, inline]);
+
+    // ── Sync texto de nota cuando cambia el slide actual ────────────────────
+    useEffect(() => {
+        setNoteText(notes[currentSlide?.id] ?? '');
+        setChecklistDone(false); // resetear gate al cambiar de slide
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [current]);
+
     // ── Cleanup del saveTimer al desmontar ───────────────────────────────────
     useEffect(() => {
-        return () => clearTimeout(saveTimerRef.current);
+        return () => {
+            clearTimeout(saveTimerRef.current);
+            clearTimeout(noteTimerRef.current);
+        };
     }, []);
 
     // ── Guardar progreso con debounce (solo modo no-inline) ──────────────────
@@ -153,6 +188,17 @@ export default function CoursePlayer({ course, slides, onClose, inline = false, 
             saveUserProgress(course.id, userId, index, score);
         }, 600);
     }, [course?.id, userId, inline]);
+
+    // ── Guardar nota del slide actual con debounce ────────────────────────────
+    const handleNoteChange = useCallback((text) => {
+        setNoteText(text);
+        setNotes(prev => ({ ...prev, [currentSlide?.id]: text }));
+        if (inline || !userId || !course?.id || !currentSlide?.id) return;
+        clearTimeout(noteTimerRef.current);
+        noteTimerRef.current = setTimeout(() => {
+            saveSlideNote(course.id, userId, currentSlide.id, text);
+        }, 1000);
+    }, [currentSlide?.id, course?.id, userId, inline]);
 
     // ── Cronómetro (solo modo no-inline) ─────────────────────────────────────
     useEffect(() => {
@@ -175,14 +221,20 @@ export default function CoursePlayer({ course, slides, onClose, inline = false, 
         };
     }, [inline]);
 
-    // ── Cambio de slide con animación y persistencia ──────────────────────────
+    // ── Cambio de slide con animación, persistencia y tracking de tiempo ─────
     const goTo = useCallback((index, dir = 'forward') => {
         if (index < 0 || index >= total) return;
+        // Registrar tiempo en el slide actual antes de cambiar
+        if (!inline && userId && course?.id && currentSlide?.id) {
+            const ms = Date.now() - slideStartRef.current;
+            if (ms > 500) trackSlideTime(course.id, userId, currentSlide.id, ms);
+        }
+        slideStartRef.current = Date.now();
         setDirection(dir);
         setSlideKey(k => k + 1);
         setCurrent(index);
         persistProgress(index);
-    }, [total, persistProgress]);
+    }, [total, persistProgress, inline, userId, course?.id, currentSlide?.id]);
 
     const goNext = useCallback(() => {
         if (!isLast) goTo(current + 1, 'forward');
@@ -460,6 +512,7 @@ export default function CoursePlayer({ course, slides, onClose, inline = false, 
                         inline={inline}
                         hasBgMedia={!!(bgMedia && bgMedia.layout !== 'split')}
                         onQuizSubmit={(score) => setQuizScore(score)}
+                        onCheckChange={(done) => setChecklistDone(done)}
                     />
                 </div>
 
@@ -511,16 +564,25 @@ export default function CoursePlayer({ course, slides, onClose, inline = false, 
                     </div>
                 )}
 
-                <button
-                    className={`${styles.navBtn} ${styles.navBtnPrimary}`}
-                    onClick={isLast ? handleFinish : goNext}
-                    aria-controls="course-slide-content"
-                    aria-label={current === total - 1 ? 'Finalizar curso' : 'Ir al siguiente slide'}
-                    title={current === total - 1 ? 'Finalizar' : 'Siguiente (Flecha Derecha ó Espacio)'}
-                >
-                    <span>{current === total - 1 ? 'Finalizar' : 'Siguiente'}</span>
-                    <IconArrowRight size={20} aria-hidden />
-                </button>
+                {(() => {
+                    const isChecklistGated = currentSlide?.type === 'checklist'
+                        && currentSlide?.data?.requireAll
+                        && !checklistDone;
+                    return (
+                        <button
+                            className={`${styles.navBtn} ${styles.navBtnPrimary}`}
+                            onClick={isLast ? handleFinish : goNext}
+                            disabled={isChecklistGated}
+                            aria-disabled={isChecklistGated}
+                            aria-controls="course-slide-content"
+                            aria-label={current === total - 1 ? 'Finalizar curso' : 'Ir al siguiente slide'}
+                            title={isChecklistGated ? 'Completa todos los ítems para continuar' : (current === total - 1 ? 'Finalizar' : 'Siguiente (Flecha Derecha ó Espacio)')}
+                        >
+                            <span>{current === total - 1 ? 'Finalizar' : 'Siguiente'}</span>
+                            <IconArrowRight size={20} aria-hidden />
+                        </button>
+                    );
+                })()}
             </nav>
 
             {/* ── Tabla de Contenidos (Drawer) ── */}
@@ -534,6 +596,48 @@ export default function CoursePlayer({ course, slides, onClose, inline = false, 
                 />
             )}
 
+            {/* ── Notas del alumno (solo modo no-inline) ── */}
+            {!inline && (
+                <>
+                    {/* Botón flotante */}
+                    <button
+                        className={styles.notesBtn}
+                        onClick={() => setShowNotes(v => !v)}
+                        aria-label={showNotes ? 'Cerrar notas' : 'Abrir notas'}
+                        aria-expanded={showNotes}
+                        title="Mis notas de este slide"
+                    >
+                        📝
+                        {notes[currentSlide?.id] && !showNotes && (
+                            <span className={styles.notesDot} aria-hidden="true" />
+                        )}
+                    </button>
+
+                    {/* Drawer de notas */}
+                    {showNotes && (
+                        <div className={styles.notesDrawer} role="region" aria-label="Notas del slide">
+                            <div className={styles.notesHeader}>
+                                <span>📝 Mis notas</span>
+                                <button
+                                    onClick={() => setShowNotes(false)}
+                                    className={styles.notesClose}
+                                    aria-label="Cerrar notas"
+                                >×</button>
+                            </div>
+                            <textarea
+                                className={styles.notesTextarea}
+                                value={noteText}
+                                onChange={e => handleNoteChange(e.target.value)}
+                                placeholder="Escribe tus apuntes para este slide..."
+                                aria-label="Notas de este slide"
+                                rows={8}
+                            />
+                            <p className={styles.notesHint}>Se guarda automáticamente</p>
+                        </div>
+                    )}
+                </>
+            )}
+
             {/* ── Pantalla de Finalización ── */}
             {showCompletion && (
                 <CompletionScreen
@@ -542,6 +646,11 @@ export default function CoursePlayer({ course, slides, onClose, inline = false, 
                     elapsedSecs={elapsedSecs}
                     onRestart={handleRestart}
                     onClose={onClose}
+                    onRate={async (rating) => {
+                        if (!userId || !course?.id) return;
+                        await saveCourseRating(course.id, userId, rating);
+                    }}
+                    userId={userId}
                 />
             )}
         </div>

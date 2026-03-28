@@ -3,7 +3,8 @@
 import { useState, useEffect } from 'react';
 import {
     IconBookOpen, IconCheck, IconTarget, IconUsers, IconLayout,
-    IconFileText, IconBars, IconCheckSquare, IconZap, IconList
+    IconFileText, IconBars, IconCheckSquare, IconZap, IconList,
+    IconPlay, IconCopy,
 } from '@/lib/icons';
 import styles from './CourseWizardModal.module.css';
 import { Select } from '@/components/ui/Select/Select';
@@ -193,7 +194,10 @@ export default function CourseWizardModal({ onComplete, onCancel }) {
                                 { id: 'content', icon: IconFileText, label: 'Lectura', desc: 'Bloque de texto e imágenes descriptivo.' },
                                 { id: 'benefits', icon: IconBars, label: 'Viñetas', desc: 'Lista estructurada de conceptos rápidos.' },
                                 { id: 'steps', icon: IconList, label: 'Paso a Paso', desc: 'Secuencia numerada de pasos del proceso.' },
-                                { id: 'quiz', icon: IconCheckSquare, label: 'Quiz', desc: 'Añade una pregunta de opción múltiple.' }
+                                { id: 'quiz',       icon: IconCheckSquare, label: 'Quiz',          desc: 'Añade una pregunta de opción múltiple.' },
+                                { id: 'video',      icon: IconPlay,        label: 'Video',         desc: 'Incorpora un video de YouTube o MP4.' },
+                                { id: 'flashcard',  icon: IconCopy,        label: 'Tarjetas',      desc: 'Mazo de tarjetas con flip para memorizar.' },
+                                { id: 'checklist',  icon: IconCheckSquare, label: 'Checklist',     desc: 'Lista de verificación interactiva.' },
                             ].map(tpl => (
                                 <div
                                     key={tpl.id}

@@ -292,3 +292,48 @@
         opacity: 1;
     }
 }
+
+/* ── Rating de estrellas ──────────────────────────────────────── */
+.ratingSection {
+    margin-top: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+}
+
+.ratingLabel {
+    font-size: 0.88rem;
+    color: var(--text-secondary, #6b7280);
+    font-family: var(--font-body), sans-serif;
+    margin: 0;
+}
+
+.stars {
+    display: flex;
+    gap: 6px;
+}
+
+.star {
+    font-size: 1.8rem;
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: var(--border-color, #d1d5db);
+    transition: color 0.15s, transform 0.15s;
+    padding: 0 2px;
+    line-height: 1;
+}
+
+.starActive {
+    color: #f59e0b;
+    transform: scale(1.15);
+}
+
+.ratingThanks {
+    margin: 16px 0 0;
+    font-size: 0.88rem;
+    color: #f59e0b;
+    font-family: var(--font-body), sans-serif;
+    font-weight: 600;
+}

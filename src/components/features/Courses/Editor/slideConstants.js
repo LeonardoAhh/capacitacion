@@ -18,6 +18,11 @@ export const SLIDE_TYPE_LABELS = {
     group_quiz:    'Quiz',
     dynamic:       'Dinámica',
     group_dynamic: 'Dinámica',
+    // Nuevos tipos
+    video:         'Video',
+    flashcard:     'Tarjetas',
+    fill_blank:    'Completa la Frase',
+    checklist:     'Checklist',
 };
 
 // ── Helper para IDs estables en listas ───────────────────────────────────────
@@ -77,6 +82,33 @@ const SLIDE_DEFAULT_DATA_FACTORIES = {
         duration: '15 min',
         scenario: '',
         debrief: '',
+    }),
+    // Nuevos tipos
+    video:      () => ({
+        heading: '',
+        videoUrl: '',
+        caption: '',
+        autoplay: false,
+    }),
+    flashcard:  () => ({
+        heading: 'Tarjetas de Vocabulario',
+        cards: [
+            { id: makeId(), front: 'Término 1', back: 'Definición del término 1' },
+            { id: makeId(), front: 'Término 2', back: 'Definición del término 2' },
+        ],
+    }),
+    fill_blank: () => ({
+        sentence: 'Completa la siguiente frase: el proceso inicia con ___',
+        answers: [],
+        explanation: '',
+    }),
+    checklist:  () => ({
+        heading: 'Lista de Verificación',
+        items: [
+            { id: makeId(), text: 'Primer requisito o tarea' },
+            { id: makeId(), text: 'Segundo requisito o tarea' },
+        ],
+        requireAll: false,
     }),
 };
 
