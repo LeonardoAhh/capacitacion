@@ -1,5 +1,5 @@
 'use client';
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { useRouter } from 'next/navigation';
@@ -1112,7 +1112,7 @@ function AdminMuralSection() {
     }, []);
 
     // Autocompletado por ID de empleado
-    const fetchEmployeeData = async () => {
+    const fetchEmployeeData = useCallback(async () => {
         const eid = manualData.employeeId?.trim();
         if (!eid) return;
         setSearchingM(true);
@@ -1164,13 +1164,12 @@ function AdminMuralSection() {
     };
 
     // Búsqueda automática con debounce al escribir el No. Empleado
-    // eslint-disable-next-line react-hooks/exhaustive-deps
     useEffect(() => {
         const id = manualData.employeeId?.trim();
         if (!id || id.length < 2) return;
         const timer = setTimeout(() => { fetchEmployeeData(); }, 600);
         return () => clearTimeout(timer);
-    }, [manualData.employeeId]);
+    }, [manualData.employeeId, fetchEmployeeData]);
 
     const saveMessages = async () => {
         try {
