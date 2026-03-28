@@ -32,7 +32,8 @@
       "Bash(export PATH=\"/c/Users/Capacitacion - QRO/Desktop/Capacitación/VTX/NODE JS:$PATH\" cd \"/c/Users/Capacitacion - QRO/Desktop/Capacitación/VTX\" npm run build)",
       "Bash(find 'c:\\\\Users\\\\Capacitacion - QRO\\\\Desktop\\\\Capacitación\\\\VTX\\\\src\\\\app\\\\capacitacion' -type f -name *.js)",
       "Bash(find 'c:\\\\Users\\\\Capacitacion - QRO\\\\Desktop\\\\Capacitación\\\\VTX\\\\src' -name *ertificate* -o -name *ertificado*)",
-      "Bash(xargs grep:*)"
+      "Bash(xargs grep:*)",
+      "Bash(grep -E \"\\\\.js$\")"
     ]
   }
 }

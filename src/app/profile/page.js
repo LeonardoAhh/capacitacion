@@ -1161,7 +1161,7 @@ function AdminMuralSection() {
         } finally {
             setSearchingM(false);
         }
-    };
+    }, [manualData.employeeId]);
 
     // Búsqueda automática con debounce al escribir el No. Empleado
     useEffect(() => {
