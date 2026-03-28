@@ -1161,7 +1161,7 @@ function AdminMuralSection() {
         } finally {
             setSearchingM(false);
         }
-    }, [manualData.employeeId]);
+    }, [manualData.employeeId, toast]);
 
     // Búsqueda automática con debounce al escribir el No. Empleado
     useEffect(() => {
@@ -1169,7 +1169,7 @@ function AdminMuralSection() {
         if (!id || id.length < 2) return;
         const timer = setTimeout(() => { fetchEmployeeData(); }, 600);
         return () => clearTimeout(timer);
-    }, [manualData.employeeId, fetchEmployeeData]);
+    }, [fetchEmployeeData]);
 
     const saveMessages = async () => {
         try {
