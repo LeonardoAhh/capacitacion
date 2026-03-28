@@ -457,7 +457,7 @@ export async function duplicateSlide(courseId, slide, allSlides) {
         // Creamos el nuevo slide (copia profunda de la data)
         const newSlideData = {
             type: slide.type,
-            data: JSON.parse(JSON.stringify(slide.data || {})),
+            data: structuredClone(slide.data ?? {}),
             order: insertAt,
             createdAt: serverTimestamp(),
             updatedAt: serverTimestamp(),
@@ -497,7 +497,7 @@ export async function duplicateSlide(courseId, slide, allSlides) {
 export async function updateSlide(courseId, slideId, slideData) {
     try {
         const slideRef = doc(db, COURSES_COLLECTION, courseId, SLIDES_SUBCOLLECTION, slideId);
-        await updateDoc(slideRef, slideData);
+        await updateDoc(slideRef, { ...slideData, updatedAt: serverTimestamp() });
         return { success: true };
     } catch (error) {
         console.error('Error actualizando slide:', error);

@@ -18,7 +18,18 @@
       "Bash(cd:*)",
       "Bash(find 'C:\\\\Users\\\\Capacitacion - QRO\\\\Desktop\\\\Capacitación\\\\VTX/src/components' -type f \\\\\\(-name Button.js -o -name Dialog* -o -name AdminLayout* -o -name Toast* \\\\\\))",
       "Bash(find 'C:\\\\Users\\\\Capacitacion - QRO\\\\Desktop\\\\Capacitación\\\\VTX/src/hooks' -type f -name *)",
-      "Bash(powershell -Command \":*)"
+      "Bash(powershell -Command \":*)",
+      "Bash(find '/c/Users/Capacitacion - QRO/Desktop/Capacitación/VTX/src/components' -type f \\\\\\(-name *slide* -o -name *editor* \\\\\\) -iname *.js -o -iname *.tsx)",
+      "Bash(/c/Program Files/nodejs/npm.cmd run build)",
+      "Bash(cmd /c \"cd \"\"C:\\\\Users\\\\Capacitacion - QRO\\\\Desktop\\\\Capacitación\\\\VTX\"\" && npm run build 2>&1\")",
+      "Bash(cmd.exe /c \"cd /d \"\"C:\\\\Users\\\\Capacitacion - QRO\\\\Desktop\\\\Capacitación\\\\VTX\"\" && npm run build\")",
+      "Bash(cmd.exe /c \"cd /d \"\"C:\\\\Users\\\\Capacitacion - QRO\\\\Desktop\\\\Capacitacion\\\\VTX\"\" && npx next build\")",
+      "Read(//c/Program Files/**)",
+      "Bash(find /c -name node.exe)",
+      "Bash(\"/c/Users/Capacitacion - QRO/Desktop/Capacitación/VTX/NODE JS/node.exe\" --version)",
+      "Bash(export PATH=\"/c/Users/Capacitacion - QRO/Desktop/Capacitación/VTX/NODE JS:$PATH\")",
+      "Bash(npm --version)",
+      "Bash(export PATH=\"/c/Users/Capacitacion - QRO/Desktop/Capacitación/VTX/NODE JS:$PATH\" cd \"/c/Users/Capacitacion - QRO/Desktop/Capacitación/VTX\" npm run build)"
     ]
   }
 }

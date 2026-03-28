@@ -1,7 +1,8 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { doc, updateDoc } from 'firebase/firestore';
-import { db } from '@/lib/firebase';
+import { signOut } from 'firebase/auth';
+import { auth, db } from '@/lib/firebase';
 import { fetchFreshProfile, fetchEmployeeCourses, fetchTrainingRecord } from '@/lib/trainingDataService';
 import { destroySession } from '@/lib/sessionApi';
 
@@ -167,6 +168,11 @@ export function useTrainingData() {
         if (typeof window !== 'undefined') {
             await destroySession();
             sessionStorage.removeItem('training_session');
+            try {
+                await signOut(auth);
+            } catch (error) {
+                console.error('Error signing out Firebase auth:', error);
+            }
             router.push('/training/login');
         }
     }, [router]);

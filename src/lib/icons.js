@@ -126,6 +126,13 @@ import {
     AiOutlineFullscreenExit,
     AiOutlineExport,
     AiOutlineEllipsis,
+
+    // Editor de slides
+    AiOutlineHolder,
+    AiOutlineCopy,
+    AiOutlineUnorderedList,
+    AiOutlineFontSize,
+    AiOutlineDiff,
 } from 'react-icons/ai';
 
 // ─────────────────────────────────────────────
@@ -261,6 +268,13 @@ export const IconGraduationCap = AiOutlineTrophy;      // alias educativo
 export const IconExpand = AiOutlineFullscreen;
 export const IconCompress = AiOutlineFullscreenExit;
 export const IconMoreHorizontal = AiOutlineEllipsis;
+
+// Editor de slides — íconos de UI
+export const IconHolder = AiOutlineHolder;           // grip de arrastre (⠿)
+export const IconCopy = AiOutlineCopy;               // duplicar
+export const IconListBullets = AiOutlineUnorderedList; // lista con viñetas
+export const IconFontSize = AiOutlineFontSize;       // ícono de tipo "Portada"
+export const IconDiff = AiOutlineDiff;               // ícono de tipo "Comparación"
 
 // Específicos de tipos de slides
 export const IconSlideTitle = AiOutlineLayout;

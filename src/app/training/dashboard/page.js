@@ -96,10 +96,11 @@ export default function TrainingDashboard() {
     };
 
     const handleCourseClick = useCallback(async (course) => {
-        // Si es curso interactivo, abrir el CoursePlayer directamente
-        if (course.nativeCourseId || course.tipo === 'native') {
+        const isInteractiveCourse = course.nativeCourseId || course.tipo === 'native' || course.slideCount > 0;
+        if (isInteractiveCourse) {
             markAsViewed(course);
-            const result = await getCourseWithSlides(course.nativeCourseId);
+            const courseId = course.nativeCourseId || course.id;
+            const result = await getCourseWithSlides(courseId);
             if (result.success) {
                 setPlayerData(result.data);
             }
@@ -456,11 +457,11 @@ export default function TrainingDashboard() {
 
                             <div className={styles.courseActions}>
                                 {/* Curso interactivo nativo */}
-                                {(selectedCourse.nativeCourseId || selectedCourse.tipo === 'native') ? (
+                                {(selectedCourse.nativeCourseId || selectedCourse.tipo === 'native' || selectedCourse.slideCount > 0) ? (
                                     <button
                                         className={styles.actionBtnPrimary}
                                         style={{ border: 'none', cursor: 'pointer' }}
-                                        onClick={() => handlePlayNativeFromModal(selectedCourse.nativeCourseId)}
+                                        onClick={() => handlePlayNativeFromModal(selectedCourse.nativeCourseId || selectedCourse.id)}
                                     >
                                         <Zap size={16} />
                                         Abrir Curso Interactivo

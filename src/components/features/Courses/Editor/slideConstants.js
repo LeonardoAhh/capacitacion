@@ -1,0 +1,91 @@
+/**
+ * slideConstants.js
+ * Punto único de verdad para metadatos y datos por defecto de cada tipo de slide.
+ * Importar desde aquí en page.js, SlideEditorPanel, SlideList, etc.
+ */
+
+// ── Etiquetas legibles por tipo ───────────────────────────────────────────────
+export const SLIDE_TYPE_LABELS = {
+    title:         'Portada',
+    content:       'Contenido',
+    objective:     'Objetivo',
+    definition:    'Definición',
+    benefits:      'Beneficios',
+    icon_grid:     'Íconos',
+    comparison:    'Comparación',
+    steps:         'Paso a Paso',
+    quiz:          'Quiz',
+    group_quiz:    'Quiz',
+    dynamic:       'Dinámica',
+    group_dynamic: 'Dinámica',
+};
+
+// ── Helper para IDs estables en listas ───────────────────────────────────────
+function makeId() {
+    return typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function'
+        ? crypto.randomUUID()
+        : Math.random().toString(36).slice(2, 11);
+}
+
+/**
+ * Fábricas de datos por defecto para cada tipo de slide.
+ * Cada entrada es una función que devuelve un objeto fresco (evita referencias compartidas).
+ * IDs estables incluidos en arrays de ítems para uso como React keys.
+ */
+const SLIDE_DEFAULT_DATA_FACTORIES = {
+    title:      () => ({ title: 'Nuevo Slide', subtitle: '' }),
+    content:    () => ({ heading: 'Nuevo Slide', body: '<p>Contenido inicial...</p>' }),
+    objective:  () => ({ heading: 'Objetivo del Curso', body: '<p>Al finalizar, el usuario será capaz de...</p>' }),
+    definition: () => ({ heading: 'Concepto Clave', body: '<p>Define el término o concepto aquí...</p>' }),
+    benefits:   () => ({
+        heading: 'Beneficios',
+        items: [
+            { id: makeId(), text: 'Beneficio 1' },
+            { id: makeId(), text: 'Beneficio 2' },
+        ],
+    }),
+    icon_grid:  () => ({
+        heading: 'Puntos Clave',
+        items: [
+            { id: makeId(), icon: 'IconStar', label: 'Punto 1', description: '' },
+        ],
+    }),
+    // Formato correcto: left/right con title e items[] (igual que ComparisonSlideEditor)
+    comparison: () => ({
+        heading: 'Comparativa',
+        left:  { title: 'Antes',   items: ['Item A'] },
+        right: { title: 'Después', items: ['Item B'] },
+    }),
+    steps:      () => ({
+        heading: 'Cómo hacerlo',
+        steps: [
+            { id: makeId(), title: 'Paso 1', desc: 'Describe el primer paso aquí...', image: '' },
+            { id: makeId(), title: 'Paso 2', desc: 'Describe el segundo paso aquí...', image: '' },
+        ],
+    }),
+    quiz:       () => ({
+        heading: 'Evaluación Final',
+        questions: [
+            { id: makeId(), q: 'Escribe tu pregunta aquí...', options: ['Opción 1', 'Opción 2', 'Opción 3'], correct: 0, explanation: '' },
+        ],
+        passingScore: 70,
+    }),
+    dynamic:    () => ({
+        heading: 'Actividad Grupal',
+        instructions: '',
+        type: 'Roleplay',
+        duration: '15 min',
+        scenario: '',
+        debrief: '',
+    }),
+};
+
+/**
+ * Devuelve una copia profunda fresca de los datos por defecto para el tipo dado.
+ * @param {string} type - Tipo de slide (ej. 'quiz', 'content')
+ * @returns {Object} datos por defecto listos para usar
+ */
+export function getDefaultSlideData(type) {
+    const factory = SLIDE_DEFAULT_DATA_FACTORIES[type];
+    return factory ? factory() : { heading: 'Nuevo Slide', body: '' };
+}

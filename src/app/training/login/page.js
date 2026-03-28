@@ -2,8 +2,9 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
-import { db } from '@/lib/firebase';
+import { auth, db } from '@/lib/firebase';
 import { collection, query, where, getDocs } from 'firebase/firestore';
+import { signInAnonymously } from 'firebase/auth';
 import UnifiedLogin from '@/components/auth/UnifiedLogin';
 import { createSession } from '@/lib/sessionApi';
 
@@ -57,6 +58,7 @@ export default function TrainingLoginPage() {
             };
 
             sessionStorage.setItem('training_session', JSON.stringify(sessionData));
+            await signInAnonymously(auth);
             await createSession('training');
 
             setLoading(false);

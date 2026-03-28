@@ -1,66 +1,123 @@
-import { useState, useEffect, useRef, useCallback } from 'react';
-import { IconTrash2, IconArrowLeft, IconCheckCircle2, Loader2, IconPlus } from '@/lib/icons';
-import MediaUploader from './MediaUploader';
-import RichTextEditor from './RichTextEditor';
-import styles from '@/app/induccion/cursos/[id]/editar/editor.module.css';
+'use client';
 
-// Importar submódulos de edición (SRP)
+import { useState, useEffect, useRef, useCallback } from 'react';
+import { IconTrash2, IconArrowLeft, IconCheckCircle2, Loader2 } from '@/lib/icons';
+import MediaUploader from './MediaUploader';
+import styles from '@/app/induccion/cursos/[id]/editar/editor.module.css';
+import { SLIDE_TYPE_LABELS } from './slideConstants';
+
+// Editores por tipo
 import TitleSlideEditor from './SlideEditors/TitleSlideEditor';
 import ContentSlideEditor from './SlideEditors/ContentSlideEditor';
+import SimpleBodySlideEditor from './SlideEditors/SimpleBodySlideEditor';
+import BenefitsSlideEditor from './SlideEditors/BenefitsSlideEditor';
 import IconGridSlideEditor from './SlideEditors/IconGridSlideEditor';
 import ComparisonSlideEditor from './SlideEditors/ComparisonSlideEditor';
 import DynamicSlideEditor from './SlideEditors/DynamicSlideEditor';
 import StepsSlideEditor from './SlideEditors/StepsSlideEditor';
 import QuizSlideEditor from './SlideEditors/QuizSlideEditor';
 
-const BODY_MAX_CHARS = 600;
+const DEBOUNCE_MS = 800;
 
-export default function SlideEditorPanel({ slide, onSave, onDelete, onFormChange }) {
-    const [formData, setFormData] = useState(() =>
-        JSON.parse(JSON.stringify(slide?.data || {}))
-    );
-    const [savingState, setSavingState] = useState('idle');
+// ── Despacho de editor por tipo ───────────────────────────────────────────────
+function SlideFieldRouter({ type, formData, handleChange, handleBatchChange, setFormData, styles: s }) {
+    const props = { formData, handleChange, setFormData, styles: s };
+    switch (type) {
+        case 'title':
+            return <TitleSlideEditor {...props} />;
+        case 'content':
+            return <ContentSlideEditor {...props} handleBatchChange={handleBatchChange} />;
+        case 'icon_grid':
+            return <IconGridSlideEditor {...props} />;
+        case 'comparison':
+            return <ComparisonSlideEditor {...props} />;
+        case 'steps':
+            return <StepsSlideEditor {...props} />;
+        case 'group_dynamic':
+        case 'dynamic':
+            return <DynamicSlideEditor {...props} />;
+        case 'group_quiz':
+        case 'quiz':
+            return <QuizSlideEditor {...props} />;
+        case 'objective':
+        case 'definition':
+            return <SimpleBodySlideEditor {...props} />;
+        case 'benefits':
+            return <BenefitsSlideEditor {...props} />;
+        default:
+            return (
+                <p className={styles.noEditor}>
+                    Editor no disponible para tipo: <strong>{type}</strong>
+                </p>
+            );
+    }
+}
+
+// ── Panel principal ───────────────────────────────────────────────────────────
+export default function SlideEditorPanel({ slide, onSave, onDelete, onFormChange, isSaving }) {
+    // structuredClone para copia profunda segura (sin perder undefined/Date)
+    const [formData, setFormData] = useState(() => structuredClone(slide?.data ?? {}));
+    const [savingState, setSavingState] = useState('idle'); // 'idle'|'saving'|'saved'|'error'
     const timerRef = useRef(null);
+    const isMountedRef = useRef(true);
 
-    // Auto-save con debounce
+    useEffect(() => {
+        isMountedRef.current = true;
+        return () => {
+            isMountedRef.current = false;
+            if (timerRef.current) clearTimeout(timerRef.current);
+        };
+    }, []);
+
+    // ── Auto-save con debounce ───────────────────────────────────────────────
     useEffect(() => {
         if (!slide || Object.keys(formData).length === 0) return;
 
-        const originalDataStr = JSON.stringify(slide.data || {});
-        const currentDataStr = JSON.stringify(formData);
+        const originalStr = JSON.stringify(slide.data ?? {});
+        const currentStr  = JSON.stringify(formData);
+        if (originalStr === currentStr) return;
 
-        if (originalDataStr !== currentDataStr) {
-            setSavingState('saving');
-            if (timerRef.current) clearTimeout(timerRef.current);
+        setSavingState('saving');
+        if (timerRef.current) clearTimeout(timerRef.current);
 
-            timerRef.current = setTimeout(async () => {
-                try {
-                    await onSave(slide.id, formData);
-                    setSavingState('saved');
-                    setTimeout(() => {
+        timerRef.current = setTimeout(async () => {
+            try {
+                await onSave(slide.id, formData);
+                if (!isMountedRef.current) return;
+                setSavingState('saved');
+                setTimeout(() => {
+                    if (isMountedRef.current) {
                         setSavingState(curr => curr === 'saved' ? 'idle' : curr);
-                    }, 2000);
-                } catch (error) {
-                    console.error('Auto-save failed', error);
-                    setSavingState('error');
-                }
-            }, 800);
-        }
+                    }
+                }, 2000);
+            } catch {
+                if (isMountedRef.current) setSavingState('error');
+            }
+        }, DEBOUNCE_MS);
 
         return () => {
             if (timerRef.current) clearTimeout(timerRef.current);
         };
     }, [formData, slide, onSave]);
 
+    // ── Sync de preview en vivo ──────────────────────────────────────────────
+    // useEffect (no queueMicrotask en setState) — seguro con React concurrent mode
+    useEffect(() => {
+        if (onFormChange) onFormChange(formData);
+        // onFormChange es una ref estable (useCallback en page.js) — exclusión deliberada
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [formData]);
+
+    // ── Handlers de campo ───────────────────────────────────────────────────
+    /** Actualiza un solo campo en formData */
     const handleChange = useCallback((field, value) => {
-        setFormData(prev => {
-            const next = { ...prev, [field]: value };
-            if (onFormChange) {
-                queueMicrotask(() => onFormChange(next));
-            }
-            return next;
-        });
-    }, [onFormChange]);
+        setFormData(prev => ({ ...prev, [field]: value }));
+    }, []);
+
+    /** Actualiza múltiples campos en una sola operación (para ContentSlideEditor) */
+    const handleBatchChange = useCallback((updates) => {
+        setFormData(prev => ({ ...prev, ...updates }));
+    }, []);
 
     if (!slide) {
         return (
@@ -71,170 +128,58 @@ export default function SlideEditorPanel({ slide, onSave, onDelete, onFormChange
         );
     }
 
-    // ── Despacho de render por tipo ───────────────────────────────────────────
-    const renderFields = () => {
-        const props = { formData, handleChange, setFormData, styles };
-
-        switch (slide.type) {
-            case 'title': return <TitleSlideEditor {...props} />;
-            case 'content': return <ContentSlideEditor {...props} />;
-            case 'icon_grid': return <IconGridSlideEditor {...props} />;
-            case 'comparison': return <ComparisonSlideEditor {...props} />;
-            case 'steps': return <StepsSlideEditor {...props} />;
-            case 'group_dynamic':
-            case 'dynamic':
-                return <DynamicSlideEditor {...props} />;
-            case 'group_quiz':
-            case 'quiz':
-                return <QuizSlideEditor {...props} />;
-
-            case 'objective':
-            case 'definition':
-                return (
-                    <>
-                        <div className={styles.formGroup}>
-                            <label className={styles.label}>Encabezado</label>
-                            <input
-                                className={styles.input}
-                                value={formData.heading || ''}
-                                onChange={e => handleChange('heading', e.target.value)}
-                                maxLength={120}
-                            />
-                        </div>
-                        <div className={styles.formGroup}>
-                            <label className={styles.label}>Cuerpo de texto</label>
-                            <RichTextEditor
-                                value={formData.body || ''}
-                                onChange={(html) => handleChange('body', html)}
-                                placeholder="Escribe el objetivo o definición del curso..."
-                                maxLength={BODY_MAX_CHARS}
-                                minRows={4}
-                            />
-                        </div>
-                    </>
-                );
-            case 'benefits':
-                return (
-                    <>
-                        <div className={styles.formGroup}>
-                            <label className={styles.label}>Encabezado</label>
-                            <input
-                                className={styles.input}
-                                value={formData.heading || ''}
-                                onChange={e => handleChange('heading', e.target.value)}
-                                maxLength={100}
-                            />
-                        </div>
-                        <div className={styles.formGroup}>
-                            <label className={styles.label}>Beneficios</label>
-                            <div className={styles.itemsList}>
-                                {formData.items?.map((item, idx) => (
-                                    <div key={idx} className={styles.itemRow}>
-                                        <input
-                                            className={styles.input}
-                                            value={item.text || item}
-                                            maxLength={200}
-                                            onChange={e => {
-                                                const newItems = [...formData.items];
-                                                newItems[idx] = typeof item === 'object'
-                                                    ? { ...item, text: e.target.value }
-                                                    : e.target.value;
-                                                handleChange('items', newItems);
-                                            }}
-                                        />
-                                        <button
-                                            className={styles.removeBtn}
-                                            onClick={() => {
-                                                const newItems = formData.items.filter((_, i) => i !== idx);
-                                                handleChange('items', newItems);
-                                            }}
-                                        >
-                                            <IconTrash2 size={16} />
-                                        </button>
-                                    </div>
-                                ))}
-                                <button
-                                    className={styles.addItemBtn}
-                                    onClick={() => handleChange('items', [...(formData.items || []), { text: 'Nuevo beneficio' }])}
-                                >
-                                    <IconPlus size={14} /> Agregar Beneficio
-                                </button>
-                            </div>
-                        </div>
-                    </>
-                );
-            default:
-                return <p style={{ color: 'var(--text-secondary)', fontSize: '0.85rem' }}>Editor no disponible para tipo: {slide.type}</p>;
-        }
-    };
-
-    const SLIDE_TYPE_LABELS = {
-        title: 'Portada', objective: 'Objetivo', definition: 'Definición',
-        content: 'Contenido', benefits: 'Beneficios', icon_grid: 'Íconos',
-        comparison: 'Comparación', quiz: 'Quiz', group_quiz: 'Quiz',
-        dynamic: 'Dinámica', group_dynamic: 'Dinámica',
-        steps: 'Paso a Paso',
-    };
+    const isDisabled = savingState === 'saving' || isSaving;
 
     return (
         <div className={styles.formContainer}>
-            {/* Cabecera del panel con estado de guardado */}
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
-                <h2 className={styles.formTitle}>
+            {/* Cabecera del panel */}
+            <div className={styles.panelHeader}>
+                <h2 className={styles.panelTitle}>
                     Slide {slide.order} — {SLIDE_TYPE_LABELS[slide.type] || slide.type}
                 </h2>
-                <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
+                <div className={styles.panelHeaderActions}>
                     <div className={`${styles.saveBadge} ${styles[savingState] || styles.idle}`}>
                         {savingState === 'saving' && <><Loader2 size={14} className={styles.spin} /> Guardando...</>}
-                        {savingState === 'saved' && <><IconCheckCircle2 size={14} /> Guardado</>}
-                        {savingState === 'error' && <>Error al guardar</>}
-                        {savingState === 'idle' && <span>Auto-guardado activo</span>}
+                        {savingState === 'saved'  && <><IconCheckCircle2 size={14} /> Guardado</>}
+                        {savingState === 'error'  && <>Error al guardar</>}
+                        {savingState === 'idle'   && <span>Auto-guardado activo</span>}
                     </div>
                     <button
-                        className={styles.secondaryBtn}
-                        style={{
-                            padding: '8px 12px', borderRadius: 8,
-                            border: '1px solid var(--border-color)',
-                            background: 'transparent', cursor: 'pointer',
-                            color: 'var(--color-danger)', display: 'flex', alignItems: 'center', gap: 6,
-                        }}
+                        className={styles.deleteBtn}
                         onClick={() => onDelete(slide.id)}
-                        disabled={savingState === 'saving'}
+                        disabled={isDisabled}
                         title="Eliminar este slide"
+                        aria-label="Eliminar slide"
                     >
                         <IconTrash2 size={16} />
                     </button>
                 </div>
             </div>
 
-            {renderFields()}
+            {/* Editor específico por tipo */}
+            <SlideFieldRouter
+                type={slide.type}
+                formData={formData}
+                handleChange={handleChange}
+                handleBatchChange={handleBatchChange}
+                setFormData={setFormData}
+                styles={styles}
+            />
 
-            {/* Multimedia Global del Slide */}
-            <div style={{ borderTop: '1px solid var(--border-color)', paddingTop: 20, marginTop: 20 }}>
+            {/* Multimedia global del slide */}
+            <div className={styles.mediaSection}>
                 {formData.bgMedia?.url && (
-                    <div className={styles.formGroup} style={{ marginBottom: 15 }}>
+                    <div className={styles.formGroup}>
                         <label className={styles.label}>Layout del Multimedia</label>
-                        <div style={{ display: 'flex', gap: 10 }}>
+                        <div className={styles.mediaLayoutBtnGroup}>
                             <button
-                                style={{
-                                    flex: 1, padding: '8px', borderRadius: 'var(--course-radius-md, 8px)', cursor: 'pointer',
-                                    border: formData.bgMedia.layout !== 'split' ? 'none' : '1px solid var(--border-color)',
-                                    background: formData.bgMedia.layout !== 'split' ? 'var(--course-accent)' : 'transparent',
-                                    color: formData.bgMedia.layout !== 'split' ? '#fff' : 'var(--text-primary)',
-                                    fontWeight: 600, fontSize: '0.82rem',
-                                }}
+                                className={`${styles.mediaLayoutBtn} ${formData.bgMedia.layout !== 'split' ? styles.mediaLayoutBtnActive : ''}`}
                                 onClick={() => handleChange('bgMedia', { ...formData.bgMedia, layout: 'full' })}
                             >
                                 Fondo Completo
                             </button>
                             <button
-                                style={{
-                                    flex: 1, padding: '8px', borderRadius: 'var(--course-radius-md, 8px)', cursor: 'pointer',
-                                    border: formData.bgMedia.layout === 'split' ? 'none' : '1px solid var(--border-color)',
-                                    background: formData.bgMedia.layout === 'split' ? 'var(--course-accent)' : 'transparent',
-                                    color: formData.bgMedia.layout === 'split' ? '#fff' : 'var(--text-primary)',
-                                    fontWeight: 600, fontSize: '0.82rem',
-                                }}
+                                className={`${styles.mediaLayoutBtn} ${formData.bgMedia.layout === 'split' ? styles.mediaLayoutBtnActive : ''}`}
                                 onClick={() => handleChange('bgMedia', { ...formData.bgMedia, layout: 'split' })}
                             >
                                 Mitad Pantalla
@@ -242,12 +187,14 @@ export default function SlideEditorPanel({ slide, onSave, onDelete, onFormChange
                         </div>
                     </div>
                 )}
-
                 <MediaUploader
-                    currentMedia={formData.bgMedia || null}
-                    onMediaChange={(mediaObj) => {
-                        if (!mediaObj) handleChange('bgMedia', null);
-                        else handleChange('bgMedia', { ...mediaObj, layout: formData.bgMedia?.layout || 'full' });
+                    currentMedia={formData.bgMedia ?? null}
+                    onMediaChange={mediaObj => {
+                        if (!mediaObj) {
+                            handleChange('bgMedia', null);
+                        } else {
+                            handleChange('bgMedia', { ...mediaObj, layout: formData.bgMedia?.layout ?? 'full' });
+                        }
                     }}
                     label="Fondo / Apoyo Multimedia (Opcional)"
                 />
