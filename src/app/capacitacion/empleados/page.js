@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useMemo, useCallback } from 'react';
+import { useState, useEffect, useMemo, useCallback, useRef } from 'react';
 import AdminLayout from '@/components/layout/AdminLayout/AdminLayout';
 import { useAuth } from '@/contexts/AuthContext';
 import { useRouter } from 'next/navigation';
@@ -9,8 +9,8 @@ import { useToast } from '@/components/ui/Toast/Toast';
 import { db } from '@/lib/firebase';
 import { uploadFile } from '@/lib/upload';
 import {
-    collection, getDocs, query, orderBy, doc,
-    updateDoc, setDoc, getDoc, deleteDoc, where, limit, writeBatch
+    collection, getDocs, query, doc,
+    updateDoc, setDoc, getDoc, deleteDoc, writeBatch
 } from 'firebase/firestore';
 import {
     Users, CheckCircle, AlertTriangle, UserPlus,
@@ -57,6 +57,11 @@ function normalizePhotoUrl(url) {
     } catch { /* no válido, devolver tal cual */ }
     return url;
 }
+
+const sortByEmpId = arr =>
+    [...arr].sort((a, b) =>
+        (parseInt(b.employeeId || b.id) || 0) - (parseInt(a.employeeId || a.id) || 0)
+    );
 
 function getComplianceClass(score) {
     if (score >= 80) return styles.complianceHigh;
@@ -374,6 +379,9 @@ export default function EmpleadosCapacitacionPage() {
     const [editingEmp, setEditingEmp] = useState(null);
     const [isCreatingNew, setIsCreatingNew] = useState(false);
 
+    // Caché de positions (válida 5 min) para evitar lecturas repetidas a Firestore
+    const positionsCacheRef = useRef(null);
+
     // Catálogos dinámicos
     const departments = useMemo(() =>
         [...new Set(employees.map(e => e.department).filter(Boolean))].sort()
@@ -395,9 +403,8 @@ export default function EmpleadosCapacitacionPage() {
     const loadEmployees = async () => {
         setLoading(true);
         try {
-            const q = query(collection(db, 'training_records'), orderBy('name'));
-            const snapshot = await getDocs(q);
-            setEmployees(snapshot.docs.map(d => ({ id: d.id, ...d.data() })));
+            const snapshot = await getDocs(collection(db, 'training_records'));
+            setEmployees(sortByEmpId(snapshot.docs.map(d => ({ id: d.id, ...d.data() }))));
         } catch (error) {
             console.error('Error loading employees:', error);
             toast.error('No se pudieron cargar los empleados.');
@@ -495,22 +502,27 @@ export default function EmpleadosCapacitacionPage() {
             let matrixData = { requiredCount: 0, completedCount: 0, compliancePercentage: 0, requiredCourses: [] };
             try {
                 const posName = payload.position;
-                const posColl = collection(db, 'positions');
                 let matrixDoc = null;
 
-                let snap = await getDocs(query(posColl, where('name', '==', posName), limit(1)));
-                if (!snap.empty) {
-                    matrixDoc = snap.docs[0].data();
-                } else {
-                    const allPosSnap = await getDocs(query(posColl));
-                    const targetNorm = posName.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toUpperCase().trim();
-                    const found = allPosSnap.docs.find(d => {
-                        const dName = d.data().name.toUpperCase().trim();
-                        const dNorm = dName.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
-                        return dName === posName || dNorm === targetNorm;
-                    });
-                    if (found) matrixDoc = found.data();
-                }
+                // Una sola lectura a Firestore; resultado en caché por 5 min
+                const getPositionsDocs = async () => {
+                    if (positionsCacheRef.current && Date.now() - positionsCacheRef.current.ts < 300_000) {
+                        return positionsCacheRef.current.docs;
+                    }
+                    const snap = await getDocs(collection(db, 'positions'));
+                    const docs = snap.docs.map(d => ({ id: d.id, data: d.data() }));
+                    positionsCacheRef.current = { docs, ts: Date.now() };
+                    return docs;
+                };
+
+                const posDocs = await getPositionsDocs();
+                const targetNorm = posName.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toUpperCase().trim();
+                const found = posDocs.find(({ data: d }) => {
+                    const dName = (d.name || '').toUpperCase().trim();
+                    const dNorm = dName.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+                    return dName === posName.toUpperCase().trim() || dNorm === targetNorm;
+                });
+                if (found) matrixDoc = found.data;
 
                 if (matrixDoc) {
                     const requiredCourses = matrixDoc.requiredCourses || [];
@@ -538,8 +550,7 @@ export default function EmpleadosCapacitacionPage() {
                     return;
                 }
                 await setDoc(ref, { ...payload, employeeId: empId, history: [], matrix: matrixData });
-                setEmployees(prev => [...prev, { id: empId, ...payload, history: [], matrix: matrixData }]
-                    .sort((a, b) => a.name.localeCompare(b.name)));
+                setEmployees(prev => sortByEmpId([...prev, { id: empId, ...payload, history: [], matrix: matrixData }]));
                 toast.success('Empleado registrado correctamente.');
             } else {
                 await updateDoc(ref, { ...payload, matrix: matrixData });
@@ -652,7 +663,7 @@ export default function EmpleadosCapacitacionPage() {
                 </div>
 
                 {/* ── VISTA DESKTOP — Tabla ── */}
-                <div className={`${styles.tableContainer} ${styles.tableView}`}>
+                <div className={`${styles.tableContainer} ${styles.tableView}`} aria-live="polite" aria-atomic="false">
                     {loading ? (
                         <div className={styles.loadingRow} role="status">
                             <span className={styles.spinner} aria-hidden="true" />
@@ -673,13 +684,13 @@ export default function EmpleadosCapacitacionPage() {
                             <table className={styles.table} aria-label="Lista de empleados">
                                 <thead>
                                     <tr>
-                                        <th style={{ width: 52 }}></th>
-                                        <th>Empleado</th>
-                                        <th>Puesto / Dpto.</th>
-                                        <th>Área / Turno</th>
-                                        <th>F. Ingreso</th>
-                                        <th style={{ textAlign: 'center' }}>Cumplimiento</th>
-                                        <th>Acciones</th>
+                                        <th scope="col" style={{ width: 52 }}><span className="sr-only">Avatar</span></th>
+                                        <th scope="col">Empleado</th>
+                                        <th scope="col">Puesto / Dpto.</th>
+                                        <th scope="col">Área / Turno</th>
+                                        <th scope="col">F. Ingreso</th>
+                                        <th scope="col" style={{ textAlign: 'center' }}>Cumplimiento</th>
+                                        <th scope="col">Acciones</th>
                                     </tr>
                                 </thead>
                                 <tbody>
