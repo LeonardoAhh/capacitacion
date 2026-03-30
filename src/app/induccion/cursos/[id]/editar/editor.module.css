@@ -205,6 +205,12 @@
     box-shadow: 0 2px 12px rgba(0,60,204,0.22);
 }
 
+.iconBtn {
+    padding: 7px;
+    gap: 0;
+    justify-content: center;
+}
+
 .quizPanel {
     margin: 0 20px 16px;
     padding: 18px 20px;
@@ -614,6 +620,15 @@
     container-type: inline-size;
     container-name: slidePreview;
     border: none;
+    /* Needed so child CoursePlayer height:100% resolves correctly */
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+.previewWrapper > * {
+    flex: 1;
+    min-height: 0;
 }
 
 /* Overlay que bloquea la interacción con el preview */

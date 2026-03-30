@@ -521,22 +521,24 @@ export default function EditorPage({ params }) {
                 </div>
                 <div className={styles.headerActions}>
                     <button
-                        className={`${styles.actionBtn} ${styles.primaryBtn}`}
+                        className={`${styles.actionBtn} ${styles.primaryBtn} ${styles.iconBtn}`}
                         type="button"
                         onClick={handleImportClick}
                         disabled={saving || quizImporting}
+                        aria-label={quizImporting ? 'Importando quiz...' : 'Importar quiz'}
+                        title={quizImporting ? 'Importando quiz...' : 'Importar quiz'}
                     >
-                        <IconUploadCloud size={16} />
-                        {quizImporting ? 'Importando quiz...' : 'Importar quiz'}
+                        <IconUploadCloud size={18} />
                     </button>
                     <button
-                        className={styles.actionBtn}
+                        className={`${styles.actionBtn} ${styles.iconBtn}`}
                         type="button"
                         onClick={handleGenerateQuizQr}
                         disabled={qrGenerating}
+                        aria-label={qrGenerating ? 'Generando QR...' : 'Generar QR público'}
+                        title={qrGenerating ? 'Generando QR...' : 'Generar QR público'}
                     >
-                        <IconLink size={16} />
-                        {qrGenerating ? 'Generando QR...' : 'Generar QR público'}
+                        <IconLink size={18} />
                     </button>
                     <span className={styles.shortcutsHint} title="Alt+↑/↓ · Alt+D duplicar · Alt+N nuevo · Alt+Supr eliminar">
                         Alt+↑↓ · Alt+D · Alt+N
