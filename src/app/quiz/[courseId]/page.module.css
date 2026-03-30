@@ -1,0 +1,545 @@
+/* ─── Shell ─────────────────────────────────── */
+.shell {
+    min-height: 100vh;
+    background: #f1f5f9;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 0 16px 40px;
+}
+
+/* ─── Header ─────────────────────────────────── */
+.header {
+    width: 100%;
+    max-width: 640px;
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    padding: 24px 0 8px;
+    gap: 12px;
+}
+
+.headerCourse {
+    margin: 0;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #64748b;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 60%;
+}
+
+.headerCount {
+    margin: 0;
+    font-size: 0.85rem;
+    color: #94a3b8;
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+/* ─── Progress bar ───────────────────────────── */
+.progressTrack {
+    width: 100%;
+    max-width: 640px;
+    height: 4px;
+    background: #e2e8f0;
+    border-radius: 9999px;
+    overflow: hidden;
+    margin-bottom: 20px;
+}
+
+.progressFill {
+    height: 100%;
+    background: #003ccc;
+    border-radius: 9999px;
+    transition: width 0.4s ease;
+}
+
+/* ─── Question Card ──────────────────────────── */
+.questionCard {
+    width: 100%;
+    max-width: 640px;
+    background: #ffffff;
+    border-radius: 24px;
+    padding: 32px 28px 24px;
+    box-shadow: 0 4px 24px rgba(15, 23, 42, 0.08);
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.stepLabel {
+    margin: 0;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: #94a3b8;
+}
+
+.questionText {
+    margin: 0;
+    font-size: 1.2rem;
+    font-weight: 700;
+    line-height: 1.4;
+    color: #0f172a;
+    font-family: var(--font-serif, sans-serif);
+}
+
+/* ─── Options ────────────────────────────────── */
+.optionsList {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.option {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 16px;
+    border-radius: 14px;
+    border: 2px solid #e2e8f0;
+    background: #f8fafc;
+    cursor: pointer;
+    text-align: left;
+    transition: border-color 0.15s, background 0.15s;
+    font-size: 0.95rem;
+    color: #0f172a;
+}
+
+.option:hover:not(:disabled) {
+    border-color: #93c5fd;
+    background: #eff6ff;
+}
+
+.option:disabled {
+    cursor: default;
+}
+
+.optionLetter {
+    flex-shrink: 0;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: #e2e8f0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.78rem;
+    font-weight: 700;
+    color: #475569;
+}
+
+.optionText {
+    flex: 1;
+    line-height: 1.4;
+}
+
+.optionCheck,
+.optionX {
+    flex-shrink: 0;
+    font-size: 1rem;
+    font-weight: 700;
+}
+
+/* States */
+.optionSelected {
+    border-color: #003ccc;
+    background: #eff6ff;
+}
+
+.optionSelected .optionLetter {
+    background: #003ccc;
+    color: #ffffff;
+}
+
+.optionCorrect {
+    border-color: #16a34a;
+    background: #f0fdf4;
+}
+
+.optionCorrect .optionLetter {
+    background: #16a34a;
+    color: #ffffff;
+}
+
+.optionCheck {
+    color: #16a34a;
+}
+
+.optionWrong {
+    border-color: #dc2626;
+    background: #fef2f2;
+}
+
+.optionWrong .optionLetter {
+    background: #dc2626;
+    color: #ffffff;
+}
+
+.optionX {
+    color: #dc2626;
+}
+
+/* ─── Feedback ───────────────────────────────── */
+.feedback {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 14px 16px;
+    border-radius: 12px;
+    animation: fadeUp 0.25s ease both;
+}
+
+.feedbackCorrect {
+    background: #f0fdf4;
+    border: 1px solid #bbf7d0;
+}
+
+.feedbackWrong {
+    background: #fef9ec;
+    border: 1px solid #fde68a;
+}
+
+.feedbackIcon {
+    flex-shrink: 0;
+    font-size: 1rem;
+    margin-top: 1px;
+}
+
+.feedbackText {
+    margin: 0;
+    font-size: 0.9rem;
+    line-height: 1.5;
+    color: #374151;
+}
+
+/* ─── Actions ────────────────────────────────── */
+.actions {
+    display: flex;
+    justify-content: flex-end;
+}
+
+.btnPrimary {
+    padding: 12px 24px;
+    border-radius: 9999px;
+    border: none;
+    background: #003ccc;
+    color: #ffffff;
+    font-size: 0.95rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background 0.15s, opacity 0.15s;
+}
+
+.btnPrimary:hover:not(:disabled) {
+    background: #0031a8;
+}
+
+.btnPrimary:disabled {
+    opacity: 0.4;
+    cursor: default;
+}
+
+.btnSecondary {
+    padding: 12px 24px;
+    border-radius: 9999px;
+    border: 2px solid #cbd5e1;
+    background: #ffffff;
+    color: #374151;
+    font-size: 0.95rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: border-color 0.15s;
+}
+
+.btnSecondary:hover {
+    border-color: #94a3b8;
+}
+
+/* ─── Loading ────────────────────────────────── */
+.loadingWrap {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    padding: 80px 20px;
+    color: #64748b;
+    font-size: 0.95rem;
+}
+
+.spinner {
+    display: block;
+    width: 36px;
+    height: 36px;
+    border: 3px solid #e2e8f0;
+    border-top-color: #003ccc;
+    border-radius: 50%;
+    animation: spin 0.75s linear infinite;
+}
+
+/* ─── Error ──────────────────────────────────── */
+.errorCard {
+    width: 100%;
+    max-width: 480px;
+    margin-top: 60px;
+    background: #ffffff;
+    border-radius: 20px;
+    padding: 40px 32px;
+    box-shadow: 0 4px 24px rgba(15, 23, 42, 0.08);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+    text-align: center;
+}
+
+.errorEmoji {
+    font-size: 2.5rem;
+}
+
+.errorMsg {
+    margin: 0;
+    font-size: 1rem;
+    color: #374151;
+    line-height: 1.5;
+}
+
+/* ─── Results ────────────────────────────────── */
+.resultsCard {
+    width: 100%;
+    max-width: 640px;
+    background: #ffffff;
+    border-radius: 24px;
+    padding: 36px 28px 28px;
+    margin-top: 20px;
+    box-shadow: 0 4px 24px rgba(15, 23, 42, 0.08);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+}
+
+.resultsBadge {
+    font-size: 3rem;
+    line-height: 1;
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 4px;
+}
+
+.badgePassed {
+    background: #f0fdf4;
+}
+
+.badgeFailed {
+    background: #fef9ec;
+}
+
+.resultsTitle {
+    margin: 0;
+    font-size: 1.6rem;
+    font-weight: 800;
+    color: #0f172a;
+    font-family: var(--font-serif, sans-serif);
+    text-align: center;
+}
+
+.resultsSubtitle {
+    margin: 0;
+    font-size: 0.9rem;
+    color: #64748b;
+    text-align: center;
+}
+
+.scoreRing {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    padding: 16px 0 8px;
+}
+
+.scorePct {
+    font-size: 3rem;
+    font-weight: 800;
+    line-height: 1;
+    font-family: var(--font-serif, sans-serif);
+}
+
+.scorePass {
+    color: #16a34a;
+}
+
+.scoreFail {
+    color: #dc2626;
+}
+
+.scoreDetail {
+    font-size: 0.85rem;
+    color: #64748b;
+}
+
+.scoreBar {
+    width: 100%;
+    height: 8px;
+    background: #e2e8f0;
+    border-radius: 9999px;
+    overflow: hidden;
+}
+
+.scoreBarFill {
+    height: 100%;
+    border-radius: 9999px;
+    transition: width 0.6s ease;
+}
+
+.fillPass {
+    background: #16a34a;
+}
+
+.fillFail {
+    background: #dc2626;
+}
+
+.resultNote {
+    margin: 0;
+    font-size: 0.8rem;
+    font-weight: 600;
+    padding: 4px 14px;
+    border-radius: 9999px;
+}
+
+.notePass {
+    background: #f0fdf4;
+    color: #15803d;
+}
+
+.noteFail {
+    background: #fef2f2;
+    color: #b91c1c;
+}
+
+/* ─── Summary ────────────────────────────────── */
+.summary {
+    width: 100%;
+    list-style: none;
+    margin: 8px 0 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.summaryRow {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 10px 12px;
+    border-radius: 10px;
+    font-size: 0.88rem;
+}
+
+.rowCorrect {
+    background: #f0fdf4;
+}
+
+.rowWrong {
+    background: #fef2f2;
+}
+
+.summaryIcon {
+    flex-shrink: 0;
+    font-weight: 700;
+    font-size: 0.9rem;
+    margin-top: 1px;
+}
+
+.rowCorrect .summaryIcon {
+    color: #16a34a;
+}
+
+.rowWrong .summaryIcon {
+    color: #dc2626;
+}
+
+.summaryQ {
+    color: #374151;
+    line-height: 1.4;
+}
+
+/* ─── Results actions ────────────────────────── */
+.resultsActions {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    padding-top: 8px;
+    flex-wrap: wrap;
+}
+
+/* ─── Animations ─────────────────────────────── */
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+@keyframes fadeUp {
+    from { opacity: 0; transform: translateY(8px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ─── Responsive ─────────────────────────────── */
+@media (max-width: 680px) {
+    .questionCard,
+    .resultsCard {
+        padding: 24px 18px 20px;
+        border-radius: 20px;
+    }
+
+    .questionText {
+        font-size: 1.05rem;
+    }
+
+    .scorePct {
+        font-size: 2.4rem;
+    }
+
+    .resultsTitle {
+        font-size: 1.3rem;
+    }
+
+    .resultsActions {
+        flex-direction: column;
+    }
+
+    .btnPrimary,
+    .btnSecondary {
+        width: 100%;
+        text-align: center;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .progressFill,
+    .scoreBarFill,
+    .feedback {
+        transition: none;
+        animation: none;
+    }
+
+    .spinner {
+        animation: none;
+        border-top-color: #003ccc;
+    }
+}

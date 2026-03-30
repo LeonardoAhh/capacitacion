@@ -6,7 +6,7 @@ import { csrfMiddleware } from '@/lib/csrf';
 // ─── Configuración de rutas ────────────────────────────────────────────────────
 
 /** Rutas públicas — accesibles sin cookie de sesión */
-const PUBLIC_ROUTES = ['/', '/login', '/candidatos', '/training/login', '/organigrama'];
+const PUBLIC_ROUTES = ['/', '/login', '/candidatos', '/training/login', '/organigrama', '/quiz'];
 
 /** Rutas que requieren sesión tipo 'admin' */
 const ADMIN_ROUTES = [];

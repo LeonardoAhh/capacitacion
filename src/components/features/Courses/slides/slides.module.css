@@ -814,6 +814,83 @@
     to   { opacity: 1; transform: translateY(0); }
 }
 
+/* ── Quiz Wizard (step-by-step) ── */
+.quizWizardTrack {
+    width: 100%;
+    max-width: 800px;
+    height: 5px;
+    background: var(--c-line-strong);
+    border-radius: 9999px;
+    overflow: hidden;
+}
+
+.quizWizardFill {
+    height: 100%;
+    background: var(--c-primary);
+    border-radius: 9999px;
+    transition: width 0.4s ease;
+}
+
+.quizStepLabel {
+    margin: 0 0 4px;
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--c-dim);
+}
+
+.quizWizardActions {
+    display: flex;
+    justify-content: flex-end;
+    width: 100%;
+    max-width: 800px;
+}
+
+/* ── Quiz Summary (results screen) ── */
+.quizSummary {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    max-width: 800px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.quizSummaryRow {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 10px 14px;
+    border-radius: var(--r-md);
+    font-size: var(--course-font-sm);
+}
+
+.quizSummaryCorrect {
+    background: var(--c-success-dim);
+}
+
+.quizSummaryWrong {
+    background: var(--c-danger-dim);
+}
+
+.quizSummaryIcon {
+    flex-shrink: 0;
+    font-weight: 700;
+    font-size: 0.9rem;
+    margin-top: 1px;
+}
+
+.quizSummaryCorrect .quizSummaryIcon { color: var(--c-success); }
+.quizSummaryWrong   .quizSummaryIcon { color: var(--c-danger); }
+
+.quizSummaryText {
+    color: var(--c-ink);
+    line-height: 1.4;
+}
+
 /* ================================================================
    COMPARISON SLIDE
    ================================================================ */
@@ -1191,6 +1268,45 @@
 /* ================================================================
    ACCESSIBILITY
    ================================================================ */
+@media (max-width: 767px) {
+    .quizSlide {
+        gap: 1rem;
+    }
+
+    .quizSlide h2 {
+        font-size: clamp(1.4rem, 6vw, 1.9rem);
+    }
+
+    .questionCard {
+        padding: 14px 16px;
+        max-width: 100%;
+        margin-inline: auto;
+    }
+
+    .optionsGrid {
+        gap: 10px;
+    }
+
+    .optionBtn {
+        gap: 10px;
+        padding: 10px 14px;
+        font-size: 0.92rem;
+    }
+
+    .optionLetter {
+        min-width: 18px;
+    }
+
+    .quizSubmitBtn {
+        width: 100%;
+        padding: 12px 16px;
+    }
+
+    .quizResult {
+        padding: 24px;
+    }
+}
+
 @media (prefers-reduced-motion: reduce) {
     .slide { animation: none; }
 

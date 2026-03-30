@@ -205,6 +205,73 @@
     box-shadow: 0 2px 12px rgba(0,60,204,0.22);
 }
 
+.quizPanel {
+    margin: 0 20px 16px;
+    padding: 18px 20px;
+    border-radius: var(--r-xl);
+    background: rgba(0, 60, 204, 0.05);
+    border: 1.5px solid rgba(0, 60, 204, 0.16);
+    display: flex;
+    flex-wrap: wrap;
+    gap: 18px;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.quizPanelInfo {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    min-width: 0;
+    flex: 1;
+}
+
+.quizPanelTitle {
+    margin: 0;
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--c-ink);
+}
+
+.quizPanelDescription {
+    margin: 0;
+    font-size: 0.88rem;
+    color: var(--c-muted);
+    max-width: 760px;
+}
+
+.quizPanelRow {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    align-items: center;
+}
+
+.quizPanelLink {
+    color: #0f172a;
+    font-family: var(--font-mono), monospace;
+    word-break: break-all;
+    text-decoration: underline;
+}
+
+.qrImage {
+    width: 120px;
+    height: 120px;
+    object-fit: contain;
+    border-radius: 18px;
+    border: 1.5px solid var(--c-line);
+    background: #ffffff;
+}
+
+.qrError {
+    color: var(--c-danger);
+    font-size: 0.84rem;
+}
+
+.hiddenFileInput {
+    display: none;
+}
+
 .primaryBtn:hover {
     filter: brightness(1.1);
     transform: translateY(-1px);

@@ -2,11 +2,12 @@
 
 import { useReducer, useEffect, useCallback, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import QRCode from 'qrcode';
 import {
     IconArrowLeft, IconX, IconMenu,
     IconTarget, IconFileText, IconGraduationCap,
     IconCheckSquare, IconGrid, IconColumns, IconBookOpen, IconList,
-    IconPlay, IconCopy, IconEdit,
+    IconPlay, IconCopy, IconEdit, IconLink, IconUploadCloud,
 } from '@/lib/icons';
 import {
     getCourseWithSlides, updateSlide, addSlide, deleteSlide,
@@ -144,6 +145,12 @@ export default function EditorPage({ params }) {
 
     const [state, dispatch] = useReducer(editorReducer, initialState);
     const [sidebarOpen, setSidebarOpen] = useState(false);
+    const [quizImporting, setQuizImporting] = useState(false);
+    const [publicQuizUrl, setPublicQuizUrl] = useState('');
+    const [qrDataUrl, setQrDataUrl] = useState('');
+    const [qrGenerating, setQrGenerating] = useState(false);
+    const [qrError, setQrError] = useState('');
+    const fileInputRef = useRef(null);
 
     // Ref para acceder al estado actual sin añadirlo como dependencia en callbacks
     const stateRef = useRef(state);
@@ -185,7 +192,141 @@ export default function EditorPage({ params }) {
             toast.error('Error', 'No se pudo guardar el slide');
         }
     }, [courseId, toast]);
+    const extractQuizSlidesFromJSON = useCallback((payload) => {
+        if (!payload || typeof payload !== 'object') return null;
 
+        if (Array.isArray(payload.slides)) {
+            const slides = payload.slides
+                .filter(item => item && typeof item === 'object' && ['quiz', 'group_quiz'].includes(item.type))
+                .map(item => ({
+                    type: item.type,
+                    data: item.data || item.quiz || item,
+                }));
+
+            if (slides.length > 0) return slides;
+        }
+
+        if (payload.type === 'quiz' || payload.type === 'group_quiz') {
+            return [{ type: payload.type, data: payload.data || payload.quiz || payload }];
+        }
+
+        if (payload.quiz && typeof payload.quiz === 'object') {
+            return [{ type: 'quiz', data: payload.quiz }];
+        }
+
+        if (Array.isArray(payload.questions)) {
+            return [{ type: 'quiz', data: payload }];
+        }
+
+        return null;
+    }, []);
+
+    const handleImportQuizJson = useCallback(async (file) => {
+        if (!file) return;
+        setQuizImporting(true);
+        setQrError('');
+
+        try {
+            const text = await file.text();
+            const parsed = JSON.parse(text);
+            const slidesToAdd = extractQuizSlidesFromJSON(parsed);
+
+            if (!slidesToAdd || slidesToAdd.length === 0) {
+                throw new Error('JSON inválido o no contiene un quiz compatible.');
+            }
+
+            let nextOrder = stateRef.current.slides.length + 1;
+            for (const slide of slidesToAdd) {
+                const result = await addSlide(courseId, {
+                    type: slide.type,
+                    data: slide.data,
+                    order: nextOrder,
+                });
+
+                if (!result.success) {
+                    throw new Error(result.error || 'No se pudo agregar el slide de quiz.');
+                }
+
+                dispatch({
+                    type: 'SLIDE_ADDED',
+                    slide: {
+                        id: result.id,
+                        type: slide.type,
+                        data: slide.data,
+                        order: result.order,
+                    },
+                });
+                nextOrder += 1;
+            }
+
+            syncCourseMetadata(stateRef.current.slides.length + slidesToAdd.length);
+            toast.success('Quiz importado', `Se agregaron ${slidesToAdd.length} slide(s) de quiz al curso.`);
+        } catch (error) {
+            console.error('[Editor] Importar quiz:', error);
+            toast.error('Error', error?.message || 'No se pudo importar el quiz');
+        } finally {
+            setQuizImporting(false);
+            if (fileInputRef.current) {
+                fileInputRef.current.value = '';
+            }
+        }
+    }, [courseId, extractQuizSlidesFromJSON, syncCourseMetadata, toast]);
+
+    const handleImportClick = useCallback(() => {
+        fileInputRef.current?.click();
+    }, []);
+
+    const handleFileInputChange = useCallback(async (event) => {
+        const file = event.target.files?.[0];
+        if (file) await handleImportQuizJson(file);
+    }, [handleImportQuizJson]);
+
+    const handleCopyQuizLink = useCallback(async () => {
+        if (!publicQuizUrl) return;
+        try {
+            await navigator.clipboard.writeText(publicQuizUrl);
+            toast.success('Copiado', 'Enlace del quiz copiado al portapapeles');
+        } catch (error) {
+            console.error('[Editor] Copiar enlace quiz:', error);
+            toast.error('Error', 'No se pudo copiar el enlace');
+        }
+    }, [publicQuizUrl, toast]);
+
+    const handleGenerateQuizQr = useCallback(async () => {
+        setQrError('');
+        setQrDataUrl('');
+        setQrGenerating(true);
+
+        try {
+            const quizSlides = stateRef.current.slides.filter((slide) =>
+                ['quiz', 'group_quiz'].includes(slide.type)
+            );
+
+            if (quizSlides.length === 0) {
+                setQrError('Este curso no tiene slides de quiz. Importa un quiz antes de generar el QR.');
+                return;
+            }
+
+            const url = `${window.location.origin}/quiz/${courseId}`;
+            setPublicQuizUrl(url);
+
+            const qr = await QRCode.toDataURL(url, {
+                errorCorrectionLevel: 'H',
+                margin: 1,
+                color: {
+                    dark: '#0f172a',
+                    light: '#ffffff',
+                },
+            });
+
+            setQrDataUrl(qr);
+        } catch (error) {
+            console.error('[Editor] Generar QR del quiz:', error);
+            setQrError('No se pudo generar el código QR. Intenta de nuevo.');
+        } finally {
+            setQrGenerating(false);
+        }
+    }, [courseId]);
     // ── Eliminar slide ───────────────────────────────────────────────────────
     const handleDeleteSlide = useCallback(async (slideId) => {
         const confirmed = await showConfirm(
@@ -379,11 +520,81 @@ export default function EditorPage({ params }) {
                     </div>
                 </div>
                 <div className={styles.headerActions}>
+                    <button
+                        className={`${styles.actionBtn} ${styles.primaryBtn}`}
+                        type="button"
+                        onClick={handleImportClick}
+                        disabled={saving || quizImporting}
+                    >
+                        <IconUploadCloud size={16} />
+                        {quizImporting ? 'Importando quiz...' : 'Importar quiz'}
+                    </button>
+                    <button
+                        className={styles.actionBtn}
+                        type="button"
+                        onClick={handleGenerateQuizQr}
+                        disabled={qrGenerating}
+                    >
+                        <IconLink size={16} />
+                        {qrGenerating ? 'Generando QR...' : 'Generar QR público'}
+                    </button>
                     <span className={styles.shortcutsHint} title="Alt+↑/↓ · Alt+D duplicar · Alt+N nuevo · Alt+Supr eliminar">
                         Alt+↑↓ · Alt+D · Alt+N
                     </span>
                 </div>
             </header>
+
+            <input
+                ref={fileInputRef}
+                type="file"
+                accept=".json,application/json"
+                className={styles.hiddenFileInput}
+                onChange={handleFileInputChange}
+                aria-hidden="true"
+                tabIndex={-1}
+            />
+
+            {(publicQuizUrl || qrError) && (
+                <div className={styles.quizPanel}>
+                    <div className={styles.quizPanelInfo}>
+                        <p className={styles.quizPanelTitle}>Quiz público</p>
+                        <p className={styles.quizPanelDescription}>
+                            Comparte este QR para que tus empleados respondan sin iniciar sesión.
+                        </p>
+                        {publicQuizUrl && (
+                            <>
+                                <div className={styles.quizPanelRow}>
+                                    <a
+                                        href={publicQuizUrl}
+                                        target="_blank"
+                                        rel="noreferrer"
+                                        className={styles.quizPanelLink}
+                                    >
+                                        {publicQuizUrl}
+                                    </a>
+                                    <button
+                                        className={`${styles.actionBtn} ${styles.primaryBtn}`}
+                                        type="button"
+                                        onClick={handleCopyQuizLink}
+                                    >
+                                        Copiar enlace
+                                    </button>
+                                </div>
+                                {qrDataUrl && (
+                                    <img
+                                        src={qrDataUrl}
+                                        alt="QR público para el quiz"
+                                        className={styles.qrImage}
+                                    />
+                                )}
+                            </>
+                        )}
+                        {qrError && (
+                            <p className={styles.qrError}>{qrError}</p>
+                        )}
+                    </div>
+                </div>
+            )}
 
             {/* ── Workspace ── */}
             <div className={styles.workspace}>

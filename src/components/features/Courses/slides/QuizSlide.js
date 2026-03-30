@@ -1,164 +1,94 @@
 'use client';
-import React from 'react';
-
-import { useState, useCallback, useMemo } from 'react';
+import React, { useState, useCallback, useEffect, useMemo } from 'react';
 import confetti from 'canvas-confetti';
 import styles from './slides.module.css';
 
 /**
- * QuizSlide — Evaluación con feedback animado
- * @param {Object}   props
- * @param {Object}   props.data           - Datos del quiz (heading, questions, passingScore)
- * @param {Function} [props.onQuizSubmit] - Callback con el score (0-100) al enviar
+ * QuizSlide — Step wizard: una pregunta a la vez con feedback inmediato.
+ * @param {Object}   props.data           - { heading, questions[], passingScore }
+ * @param {Function} [props.onQuizSubmit] - Callback con score (0–100) al terminar
+ * @param {boolean}  [props.hasBgMedia]   - Aplica clase de contraste sobre fondo
  */
 const QuizSlide = React.memo(function QuizSlide({ data, onQuizSubmit, hasBgMedia }) {
-    const [answers, setAnswers] = useState({});
-    const [submitted, setSubmitted] = useState(false);
-    const [shakeIdx, setShakeIdx] = useState(null); // {qi, oi} para shake animation
-
-    const questions = useMemo(() => data.questions || [], [data.questions]);
+    const questions    = useMemo(() => data.questions || [], [data.questions]);
     const passingScore = data.passingScore || 70;
+    const letters      = ['A', 'B', 'C', 'D', 'E', 'F'];
 
-    const handleSelect = (qi, oi) => {
-        if (submitted) return;
-        setAnswers((prev) => ({ ...prev, [qi]: oi }));
-    };
+    // Wizard state
+    const [step,     setStep]     = useState(0);
+    const [selected, setSelected] = useState(null);
+    const [revealed, setRevealed] = useState(false);
+    const [answers,  setAnswers]  = useState([]);   // [{selected, isCorrect}]
+    const [finished, setFinished] = useState(false);
 
-    const handleSubmit = useCallback(() => {
-        if (Object.keys(answers).length < questions.length) return;
-        setSubmitted(true);
+    const q      = questions[step] || {};
+    const isLast = step === questions.length - 1;
+    const progress = Math.round(((step + (revealed ? 1 : 0)) / questions.length) * 100);
 
-        // Calcular score
-        let correct = 0;
-        questions.forEach((q, i) => { if (answers[i] === q.correct) correct++; });
-        const score = Math.round((correct / questions.length) * 100);
+    const handleSelect = useCallback((oi) => {
+        if (!revealed) setSelected(oi);
+    }, [revealed]);
 
-        // Shake en respuestas incorrectas
-        questions.forEach((q, qi) => {
-            if (answers[qi] !== undefined && answers[qi] !== q.correct) {
-                setTimeout(() => setShakeIdx({ qi, oi: answers[qi] }), 200);
-                setTimeout(() => setShakeIdx(null), 800);
-            }
-        });
+    const handleConfirm = useCallback(() => {
+        if (selected === null || revealed) return;
+        setRevealed(true);
+        setAnswers(prev => [...prev, { selected, isCorrect: selected === q.correct }]);
+    }, [selected, revealed, q.correct]);
 
-        // Gamification: Confetti si aprueba
-        if (score >= passingScore) {
-            confetti({
-                particleCount: 120,
-                spread: 70,
-                origin: { y: 0.6 },
-                colors: ['#003ccc', '#00cc66', '#ffcc00']
-            });
+    const handleNext = useCallback(() => {
+        if (isLast) {
+            setFinished(true);
+        } else {
+            setStep(s => s + 1);
+            setSelected(null);
+            setRevealed(false);
         }
+    }, [isLast]);
 
-        // Notificar al padre (CoursePlayer) con el score
-        if (onQuizSubmit) onQuizSubmit(score);
-    }, [answers, questions, onQuizSubmit, passingScore]);
-
-    const score = useMemo(() => {
-        if (!submitted) return 0;
-        let correct = 0;
-        questions.forEach((q, i) => { if (answers[i] === q.correct) correct++; });
+    // ── Resultados ────────────────────────────────────────────────
+    const score  = useMemo(() => {
+        if (!finished) return 0;
+        const correct = answers.filter(a => a.isCorrect).length;
         return Math.round((correct / questions.length) * 100);
-    }, [submitted, answers, questions]);
+    }, [finished, answers, questions.length]);
 
     const passed = score >= passingScore;
-    const allAnswered = Object.keys(answers).length === questions.length;
-    const letters = ['A', 'B', 'C', 'D', 'E', 'F'];
 
-    return (
-        <article
-            className={`${styles.slide} ${styles.quizSlide} ${hasBgMedia ? styles.slideOverBg : ''}`}
-            role="region"
-            aria-label="Evaluación final"
-        >
-            <span className={styles.slideLabel}>Evaluación Final</span>
-            <h2>{data.heading}</h2>
+    // Notificar al CoursePlayer una sola vez cuando se termine
+    useEffect(() => {
+        if (!finished) return;
+        if (onQuizSubmit) onQuizSubmit(score);
+        if (passed) {
+            confetti({ particleCount: 120, spread: 70, origin: { y: 0.6 }, colors: ['#003ccc', '#00cc66', '#ffcc00'] });
+        }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [finished]);
 
-            {questions.map((q, qi) => (
-                <div
-                    key={qi}
-                    className={styles.questionCard}
-                    role="group"
-                    aria-labelledby={`question-${qi}`}
-                >
-                    <p className={styles.questionText} id={`question-${qi}`}>
-                        {qi + 1}. {q.q}
-                    </p>
+    if (finished) {
+        return (
+            <article
+                className={`${styles.slide} ${styles.quizSlide} ${hasBgMedia ? styles.slideOverBg : ''}`}
+                role="region"
+                aria-label="Resultado de evaluación"
+            >
+                <span className={styles.slideLabel}>Evaluación Final</span>
+                <h2>{data.heading}</h2>
 
-                    <div
-                        className={styles.optionsGrid}
-                        role="radiogroup"
-                        aria-label={`Pregunta ${qi + 1}`}
-                    >
-                        {q.options.map((option, oi) => {
-                            const isSelected = answers[qi] === oi;
-                            const isCorrect = q.correct === oi;
-                            const isShaking = submitted && shakeIdx?.qi === qi && shakeIdx?.oi === oi;
+                {/* Resumen de preguntas */}
+                <ul className={styles.quizSummary} role="list">
+                    {questions.map((qItem, i) => (
+                        <li
+                            key={i}
+                            className={`${styles.quizSummaryRow} ${answers[i]?.isCorrect ? styles.quizSummaryCorrect : styles.quizSummaryWrong}`}
+                        >
+                            <span className={styles.quizSummaryIcon} aria-hidden="true">
+                                {answers[i]?.isCorrect ? '✓' : '✗'}
+                            </span>
+                            <span className={styles.quizSummaryText}>{i + 1}. {qItem.q}</span>
+                        </li>
+                    ))}
+                </ul>
 
-                            // Clases del botón de opción
-                            let cls = styles.optionBtn;
-                            if (submitted && isSelected) {
-                                cls += ` ${styles.optionSelected}`;
-                                cls += isCorrect ? ` ${styles.optionCorrect}` : ` ${styles.optionIncorrect}`;
-                            } else if (submitted && isCorrect) {
-                                cls += ` ${styles.optionSelected} ${styles.optionCorrect}`;
-                            } else if (isSelected) {
-                                cls += ` ${styles.optionSelected}`;
-                            }
-                            if (isShaking) cls += ` ${styles.optionShake}`;
-
-                            // Ícono de feedback post-submit
-                            const feedbackEmoji = submitted
-                                ? isCorrect ? ' ✅'
-                                    : isSelected ? ' ❌'
-                                        : ''
-                                : '';
-
-                            return (
-                                <button
-                                    key={oi}
-                                    className={cls}
-                                    onClick={() => handleSelect(qi, oi)}
-                                    disabled={submitted}
-                                    role="radio"
-                                    aria-checked={isSelected}
-                                    aria-label={`${letters[oi]}. ${option}`}
-                                >
-                                    <span className={styles.optionLetter} aria-hidden="true">{letters[oi]}.</span>
-                                    <span>{option}{feedbackEmoji}</span>
-                                </button>
-                            );
-                        })}
-                    </div>
-
-                    {/* Explicación de la respuesta correcta */}
-                    {submitted && q.explanation && (
-                        <div className={styles.explanation} role="note">
-                            <span className={styles.explanationIcon} aria-hidden="true">💡</span>
-                            <p>{q.explanation}</p>
-                        </div>
-                    )}
-                </div>
-            ))}
-
-            {/* Botón de envío */}
-            {!submitted && (
-                <button
-                    className={styles.quizSubmitBtn}
-                    onClick={handleSubmit}
-                    disabled={!allAnswered}
-                    aria-disabled={!allAnswered}
-                >
-                    {allAnswered
-                        ? 'Enviar Respuestas'
-                        : `Responde todas (${Object.keys(answers).length}/${questions.length})`
-                    }
-                </button>
-            )}
-
-            {/* Resultado */}
-            {submitted && (
                 <div
                     className={`${styles.quizResult} ${passed ? styles.quizResultPassed : styles.quizResultFailed}`}
                     role="alert"
@@ -172,7 +102,101 @@ const QuizSlide = React.memo(function QuizSlide({ data, onQuizSubmit, hasBgMedia
                         }
                     </span>
                 </div>
-            )}
+            </article>
+        );
+    }
+
+    // ── Pregunta activa ───────────────────────────────────────────
+    return (
+        <article
+            className={`${styles.slide} ${styles.quizSlide} ${hasBgMedia ? styles.slideOverBg : ''}`}
+            role="region"
+            aria-label="Evaluación Final"
+        >
+            <span className={styles.slideLabel}>Evaluación Final</span>
+            <h2>{data.heading}</h2>
+
+            {/* Barra de progreso */}
+            <div className={styles.quizWizardTrack} role="progressbar" aria-valuenow={step + 1} aria-valuemin={1} aria-valuemax={questions.length}>
+                <div className={styles.quizWizardFill} style={{ width: `${progress}%` }} />
+            </div>
+
+            {/* Tarjeta de pregunta */}
+            <div
+                className={styles.questionCard}
+                role="group"
+                aria-labelledby="quiz-question"
+            >
+                <p className={styles.quizStepLabel} aria-live="polite">
+                    Pregunta {step + 1} de {questions.length}
+                </p>
+
+                <p className={styles.questionText} id="quiz-question">
+                    {q.q}
+                </p>
+
+                <div className={styles.optionsGrid} role="radiogroup" aria-label={`Pregunta ${step + 1}`}>
+                    {(q.options || []).map((option, oi) => {
+                        const isCorrect  = revealed && oi === q.correct;
+                        const isWrong    = revealed && oi === selected && oi !== q.correct;
+                        const isSelected = !revealed && oi === selected;
+
+                        let cls = styles.optionBtn;
+                        if (isCorrect)  cls += ` ${styles.optionSelected} ${styles.optionCorrect}`;
+                        else if (isWrong)    cls += ` ${styles.optionSelected} ${styles.optionIncorrect}`;
+                        else if (isSelected) cls += ` ${styles.optionSelected}`;
+
+                        return (
+                            <button
+                                key={oi}
+                                type="button"
+                                className={cls}
+                                onClick={() => handleSelect(oi)}
+                                disabled={revealed}
+                                role="radio"
+                                aria-checked={selected === oi}
+                                aria-label={`${letters[oi]}. ${option}`}
+                            >
+                                <span className={styles.optionLetter} aria-hidden="true">{letters[oi]}.</span>
+                                <span>{option}</span>
+                                {isCorrect && <span aria-hidden="true"> ✅</span>}
+                                {isWrong   && <span aria-hidden="true"> ❌</span>}
+                            </button>
+                        );
+                    })}
+                </div>
+
+                {/* Explicación */}
+                {revealed && q.explanation && (
+                    <div className={styles.explanation} role="note">
+                        <span className={styles.explanationIcon} aria-hidden="true">💡</span>
+                        <p>{q.explanation}</p>
+                    </div>
+                )}
+            </div>
+
+            {/* Acciones */}
+            <div className={styles.quizWizardActions}>
+                {!revealed ? (
+                    <button
+                        type="button"
+                        className={styles.quizSubmitBtn}
+                        onClick={handleConfirm}
+                        disabled={selected === null}
+                        aria-disabled={selected === null}
+                    >
+                        Confirmar respuesta
+                    </button>
+                ) : (
+                    <button
+                        type="button"
+                        className={styles.quizSubmitBtn}
+                        onClick={handleNext}
+                    >
+                        {isLast ? 'Ver resultados →' : 'Siguiente pregunta →'}
+                    </button>
+                )}
+            </div>
         </article>
     );
 });
