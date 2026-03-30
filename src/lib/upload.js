@@ -1,4 +1,5 @@
-import { auth } from '@/lib/firebase';
+import { auth, storage } from '@/lib/firebase';
+import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 
 /**
  * Sube un archivo a la API con autenticación
@@ -107,4 +108,27 @@ export async function uploadProfileImage(file, employeeId) {
  */
 export async function uploadDocument(file, employeeId, docType) {
     return uploadFile(file, { employeeId, docType });
+}
+
+/**
+ * Sube un asset de curso (imagen o video) directamente a Firebase Storage.
+ * Evita el proxy de Drive y no requiere token OAuth.
+ * @param {File} file
+ * @returns {Promise<{success: boolean, data?: {viewLink: string}, error?: string}>}
+ */
+export async function uploadCourseAsset(file) {
+    try {
+        if (!auth.currentUser) {
+            return { success: false, error: 'Usuario no autenticado' };
+        }
+        const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, '_');
+        const path = `course_assets/${Date.now()}_${safeName}`;
+        const storageRef = ref(storage, path);
+        const snapshot = await uploadBytes(storageRef, file);
+        const downloadURL = await getDownloadURL(snapshot.ref);
+        return { success: true, data: { viewLink: downloadURL } };
+    } catch (error) {
+        console.error('Error en uploadCourseAsset:', error);
+        return { success: false, error: error.message || 'Error al subir a Firebase Storage' };
+    }
 }

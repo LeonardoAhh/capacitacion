@@ -1,6 +1,6 @@
 import React, { useRef, useState } from 'react';
 import { Upload, X, Image as ImageIcon, Video, Loader2 } from 'lucide-react';
-import { uploadFile } from '@/lib/upload';
+import { uploadCourseAsset } from '@/lib/upload';
 import styles from '@/app/induccion/cursos/[id]/editar/editor.module.css';
 
 export default function MediaUploader({ currentMedia, onMediaChange, label = "Fondo Multimedia (Opcional)" }) {
@@ -30,9 +30,9 @@ export default function MediaUploader({ currentMedia, onMediaChange, label = "Fo
         setUploading(true);
 
         try {
-            const result = await uploadFile(file, { docType: 'course_assets' });
+            const result = await uploadCourseAsset(file);
             if (result.success) {
-                const url = result.data.viewLink || result.data.downloadLink || '';
+                const url = result.data.viewLink || '';
                 onMediaChange({ url, type: isVideo ? 'video' : 'image' });
             } else {
                 setError(result.error || 'Error al subir archivo');

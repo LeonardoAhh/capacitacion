@@ -1,6 +1,6 @@
 import React, { useRef, useState } from 'react';
 import { Upload, X, Image as ImageIcon, Loader2 } from 'lucide-react';
-import { uploadFile } from '@/lib/upload';
+import { uploadCourseAsset } from '@/lib/upload';
 import styles from '@/app/induccion/cursos/[id]/editar/editor.module.css';
 
 export default function ImageUploader({ currentImage, onImageChange, label = "Imagen" }) {
@@ -28,8 +28,7 @@ export default function ImageUploader({ currentImage, onImageChange, label = "Im
         setUploading(true);
 
         try {
-            // Usamos docType='course_assets' para organizar en Drive/Storage
-            const result = await uploadFile(file, { docType: 'course_assets' });
+            const result = await uploadCourseAsset(file);
 
             if (result.success) {
                 // viewLink ya es la URL de thumbnail directa de Drive (embebible en <img>)
