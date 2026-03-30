@@ -7,7 +7,7 @@ import {
     IconArrowLeft, IconX, IconMenu,
     IconTarget, IconFileText, IconGraduationCap,
     IconCheckSquare, IconGrid, IconColumns, IconBookOpen, IconList,
-    IconPlay, IconCopy, IconEdit, IconLink, IconUploadCloud,
+    IconPlay, IconCopy, IconEdit, IconLink, IconUploadCloud, IconEye,
 } from '@/lib/icons';
 import {
     getCourseWithSlides, updateSlide, addSlide, deleteSlide,
@@ -150,6 +150,10 @@ export default function EditorPage({ params }) {
     const [qrDataUrl, setQrDataUrl] = useState('');
     const [qrGenerating, setQrGenerating] = useState(false);
     const [qrError, setQrError] = useState('');
+    const [publicCourseUrl, setPublicCourseUrl] = useState('');
+    const [courseQrDataUrl, setCourseQrDataUrl] = useState('');
+    const [courseQrGenerating, setCourseQrGenerating] = useState(false);
+    const [courseQrError, setCourseQrError] = useState('');
     const fileInputRef = useRef(null);
 
     // Ref para acceder al estado actual sin añadirlo como dependencia en callbacks
@@ -327,6 +331,44 @@ export default function EditorPage({ params }) {
             setQrGenerating(false);
         }
     }, [courseId]);
+    const handleCopyCourseLink = useCallback(async () => {
+        if (!publicCourseUrl) return;
+        try {
+            await navigator.clipboard.writeText(publicCourseUrl);
+            toast.success('Copiado', 'Enlace del curso copiado al portapapeles');
+        } catch (error) {
+            console.error('[Editor] Copiar enlace curso:', error);
+            toast.error('Error', 'No se pudo copiar el enlace');
+        }
+    }, [publicCourseUrl, toast]);
+
+    const handleGenerateCourseQr = useCallback(async () => {
+        setCourseQrError('');
+        setCourseQrDataUrl('');
+        setCourseQrGenerating(true);
+
+        try {
+            const url = `${window.location.origin}/presentacion/${courseId}`;
+            setPublicCourseUrl(url);
+
+            const qr = await QRCode.toDataURL(url, {
+                errorCorrectionLevel: 'H',
+                margin: 1,
+                color: {
+                    dark: '#0f172a',
+                    light: '#ffffff',
+                },
+            });
+
+            setCourseQrDataUrl(qr);
+        } catch (error) {
+            console.error('[Editor] Generar QR del curso:', error);
+            setCourseQrError('No se pudo generar el código QR. Intenta de nuevo.');
+        } finally {
+            setCourseQrGenerating(false);
+        }
+    }, [courseId]);
+
     // ── Eliminar slide ───────────────────────────────────────────────────────
     const handleDeleteSlide = useCallback(async (slideId) => {
         const confirmed = await showConfirm(
@@ -535,10 +577,20 @@ export default function EditorPage({ params }) {
                         type="button"
                         onClick={handleGenerateQuizQr}
                         disabled={qrGenerating}
-                        aria-label={qrGenerating ? 'Generando QR...' : 'Generar QR público'}
-                        title={qrGenerating ? 'Generando QR...' : 'Generar QR público'}
+                        aria-label={qrGenerating ? 'Generando QR...' : 'Generar QR del quiz'}
+                        title={qrGenerating ? 'Generando QR...' : 'Generar QR del quiz'}
                     >
                         <IconLink size={18} />
+                    </button>
+                    <button
+                        className={`${styles.actionBtn} ${styles.iconBtn}`}
+                        type="button"
+                        onClick={handleGenerateCourseQr}
+                        disabled={courseQrGenerating}
+                        aria-label={courseQrGenerating ? 'Generando QR...' : 'Generar QR del curso completo'}
+                        title={courseQrGenerating ? 'Generando QR...' : 'Generar QR del curso completo'}
+                    >
+                        <IconEye size={18} />
                     </button>
                     <span className={styles.shortcutsHint} title="Alt+↑/↓ · Alt+D duplicar · Alt+N nuevo · Alt+Supr eliminar">
                         Alt+↑↓ · Alt+D · Alt+N
@@ -593,6 +645,48 @@ export default function EditorPage({ params }) {
                         )}
                         {qrError && (
                             <p className={styles.qrError}>{qrError}</p>
+                        )}
+                    </div>
+                </div>
+            )}
+
+            {(publicCourseUrl || courseQrError) && (
+                <div className={styles.quizPanel}>
+                    <div className={styles.quizPanelInfo}>
+                        <p className={styles.quizPanelTitle}>Curso completo — vista pública</p>
+                        <p className={styles.quizPanelDescription}>
+                            Comparte este QR para que cualquiera pueda ver el curso sin iniciar sesión.
+                        </p>
+                        {publicCourseUrl && (
+                            <>
+                                <div className={styles.quizPanelRow}>
+                                    <a
+                                        href={publicCourseUrl}
+                                        target="_blank"
+                                        rel="noreferrer"
+                                        className={styles.quizPanelLink}
+                                    >
+                                        {publicCourseUrl}
+                                    </a>
+                                    <button
+                                        className={`${styles.actionBtn} ${styles.primaryBtn}`}
+                                        type="button"
+                                        onClick={handleCopyCourseLink}
+                                    >
+                                        Copiar enlace
+                                    </button>
+                                </div>
+                                {courseQrDataUrl && (
+                                    <img
+                                        src={courseQrDataUrl}
+                                        alt="QR público para ver el curso completo"
+                                        className={styles.qrImage}
+                                    />
+                                )}
+                            </>
+                        )}
+                        {courseQrError && (
+                            <p className={styles.qrError}>{courseQrError}</p>
                         )}
                     </div>
                 </div>
