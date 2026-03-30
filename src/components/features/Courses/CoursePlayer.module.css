@@ -304,6 +304,13 @@
     flex-direction: column;
 }
 
+/* El slide hijo debe llenar todo el alto del wrapper para que
+   su propio justify-content:center funcione correctamente */
+.slideWrapperSplit > * {
+    flex: 1;
+    min-height: 0;
+}
+
 .slideWrapperWithMedia {
     position: relative;
     z-index: 1;
