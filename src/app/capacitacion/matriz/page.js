@@ -8,7 +8,7 @@ import { useToast } from '@/components/ui/Toast/Toast';
 import { useAuth } from '@/contexts/AuthContext';
 import { useRouter } from 'next/navigation';
 import { db } from '@/lib/firebase';
-import { collection, getDocs, doc, updateDoc, query, orderBy, where, writeBatch } from 'firebase/firestore';
+import { collection, getDocs, doc, setDoc, updateDoc, query, orderBy, where, writeBatch } from 'firebase/firestore';
 import { seedCapacitacionDataRobust } from '@/lib/seedCapacitacion';
 import styles from './page.module.css';
 import { Dialog, DialogHeader, DialogTitle, DialogBody, DialogFooter, DialogClose } from '@/components/ui/Dialog/Dialog';
@@ -123,6 +123,11 @@ export default function MatrizPage() {
     const [showBulkModal, setShowBulkModal] = useState(false);
     const [bulkCourseSearch, setBulkCourseSearch] = useState('');
 
+    // New Position State
+    const [showNewModal, setShowNewModal] = useState(false);
+    const [newPosForm, setNewPosForm] = useState({ name: '', department: '' });
+    const [savingNew, setSavingNew] = useState(false);
+
     // Copy Matrix State
     const [showCopyModal, setShowCopyModal] = useState(false);
     const [sourcePositionId, setSourcePositionId] = useState('');
@@ -163,6 +168,33 @@ export default function MatrizPage() {
             console.error("Error fetching employees:", error);
         } finally {
             setLoadingEmployees(false);
+        }
+    };
+
+    const handleCreatePosition = async () => {
+        const name = newPosForm.name.trim().toUpperCase();
+        const department = newPosForm.department.trim().toUpperCase();
+        if (!name) { toast.error('Error', 'El nombre del puesto es obligatorio.'); return; }
+        const already = positions.some(p => p.name.toUpperCase() === name);
+        if (already) { toast.error('Error', `El puesto "${name}" ya existe.`); return; }
+        setSavingNew(true);
+        try {
+            const safeId = name.toLowerCase().replace(/[^a-z0-9]/g, '_');
+            const docRef = doc(db, 'positions', safeId);
+            await setDoc(docRef, { name, department, requiredCourses: [] });
+            const newPos = { id: safeId, name, department, requiredCourses: [] };
+            setPositions(prev => [...prev, newPos].sort((a, b) => a.name.localeCompare(b.name, 'es')));
+            if (department && !departments.includes(department)) {
+                setDepartments(prev => [...prev.filter(d => d !== 'Todos'), department].sort().concat(['Todos']).reverse());
+            }
+            toast.success('Creado', `Puesto "${name}" creado correctamente.`);
+            setShowNewModal(false);
+            setNewPosForm({ name: '', department: '' });
+        } catch (err) {
+            console.error(err);
+            toast.error('Error', 'No se pudo crear el puesto.');
+        } finally {
+            setSavingNew(false);
         }
     };
 
@@ -337,6 +369,11 @@ export default function MatrizPage() {
                                 </button>
                             </div>
 
+                            {canWrite() && (
+                                <Button onClick={() => { setNewPosForm({ name: '', department: '' }); setShowNewModal(true); }} variant="primary">
+                                    + Nuevo Puesto
+                                </Button>
+                            )}
                             {positions.length === 0 && (
                                 <Button onClick={handleSeed} disabled={seeding} variant="secondary">
                                     {seeding ? 'Cargando datos...' : 'Seed Data'}
@@ -710,6 +747,56 @@ export default function MatrizPage() {
                     <Button variant="secondary" onClick={() => setShowCopyModal(false)}>Cancelar</Button>
                     <Button variant="primary" onClick={handleCopyMatrix} disabled={!sourcePositionId}>
                         Copiar Cursos
+                    </Button>
+                </DialogFooter>
+            </Dialog>
+
+            {/* ── Modal: Nuevo Puesto ── */}
+            <Dialog open={showNewModal} onClose={() => setShowNewModal(false)}>
+                <DialogHeader>
+                    <DialogTitle>Nuevo Puesto</DialogTitle>
+                    <DialogClose onClick={() => setShowNewModal(false)} />
+                </DialogHeader>
+                <DialogBody>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                        <div>
+                            <label style={{ display: 'block', fontSize: '0.78rem', fontWeight: 700, color: 'var(--text-secondary)', marginBottom: '6px', textTransform: 'uppercase', letterSpacing: '0.06em' }}>
+                                Nombre del puesto *
+                            </label>
+                            <input
+                                type="text"
+                                value={newPosForm.name}
+                                onChange={e => setNewPosForm(prev => ({ ...prev, name: e.target.value }))}
+                                placeholder="Ej. OPERADOR DE MÁQUINA A"
+                                onKeyDown={e => e.key === 'Enter' && handleCreatePosition()}
+                                style={{ width: '100%', padding: '10px 12px', border: '1.5px solid var(--border-color)', borderRadius: '10px', fontSize: '0.88rem', background: 'var(--bg-primary)', color: 'var(--text-primary)', outline: 'none', boxSizing: 'border-box' }}
+                                autoFocus
+                            />
+                        </div>
+                        <div>
+                            <label style={{ display: 'block', fontSize: '0.78rem', fontWeight: 700, color: 'var(--text-secondary)', marginBottom: '6px', textTransform: 'uppercase', letterSpacing: '0.06em' }}>
+                                Departamento
+                            </label>
+                            <Select
+                                value={newPosForm.department}
+                                onChange={value => setNewPosForm(prev => ({ ...prev, department: value }))}
+                                options={[
+                                    { value: '', label: '-- Sin departamento --' },
+                                    ...departments.filter(d => d !== 'Todos').map(d => ({ value: d, label: d })),
+                                ]}
+                                placeholder="-- Sin departamento --"
+                                searchable
+                            />
+                        </div>
+                        <p style={{ fontSize: '0.75rem', color: 'var(--text-tertiary, var(--text-secondary))', margin: 0 }}>
+                            El puesto se creará sin cursos requeridos. Puedes asignarlos después desde la tarjeta.
+                        </p>
+                    </div>
+                </DialogBody>
+                <DialogFooter>
+                    <Button variant="secondary" onClick={() => setShowNewModal(false)}>Cancelar</Button>
+                    <Button variant="primary" onClick={handleCreatePosition} disabled={savingNew || !newPosForm.name.trim()}>
+                        {savingNew ? 'Creando...' : 'Crear Puesto'}
                     </Button>
                 </DialogFooter>
             </Dialog>

@@ -379,16 +379,15 @@ export default function EmpleadosCapacitacionPage() {
     const [editingEmp, setEditingEmp] = useState(null);
     const [isCreatingNew, setIsCreatingNew] = useState(false);
 
-    // Caché de positions (válida 5 min) para evitar lecturas repetidas a Firestore
+    // Caché de positions (válida 5 min) para evitar lecturas repetidas a Firestore en handleSave
     const positionsCacheRef = useRef(null);
 
-    // Catálogos dinámicos
+    // Catálogo de puestos desde la colección positions
+    const [positionsCatalog, setPositionsCatalog] = useState([]);
+
+    // Catálogos dinámicos de departamentos (desde empleados existentes)
     const departments = useMemo(() =>
         [...new Set(employees.map(e => e.department).filter(Boolean))].sort()
-        , [employees]);
-
-    const positions = useMemo(() =>
-        [...new Set(employees.map(e => e.position).filter(Boolean))].sort()
         , [employees]);
 
     // Auth guard
@@ -398,7 +397,14 @@ export default function EmpleadosCapacitacionPage() {
     }, [user, authLoading, router]);
 
     // Carga inicial
-    useEffect(() => { loadEmployees(); }, []); // eslint-disable-line react-hooks/exhaustive-deps
+    useEffect(() => {
+        loadEmployees();
+        getDocs(collection(db, 'positions'))
+            .then(snap => setPositionsCatalog(
+                snap.docs.map(d => d.data().name).filter(Boolean).sort()
+            ))
+            .catch(() => {});
+    }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
     const loadEmployees = async () => {
         setLoading(true);
@@ -646,7 +652,7 @@ export default function EmpleadosCapacitacionPage() {
                         <Select
                             value={posFilter}
                             onChange={value => setPosFilter(value)}
-                            options={[{ value: '', label: 'PUESTO' }, ...positions.map(p => ({ value: p, label: p }))]}
+                            options={[{ value: '', label: 'PUESTO' }, ...positionsCatalog.map(p => ({ value: p, label: p }))]}
                             className={styles.filterSelect}
                             aria-label="Filtrar por puesto"
                         />
@@ -861,7 +867,7 @@ export default function EmpleadosCapacitacionPage() {
                         isCreating={isCreatingNew}
                         onClose={closeModal}
                         onSave={handleSave}
-                        positions={positions}
+                        positions={positionsCatalog}
                         departments={departments}
                     />
                 )}
