@@ -366,9 +366,9 @@ export default function ProfilePage() {
 // ══════════════════════════════════════════════════════════════════════════════
 import { doc, getDoc, setDoc, onSnapshot, collection, query, orderBy, limit, where, getDocs } from 'firebase/firestore';
 import { getAuth, createUserWithEmailAndPassword } from 'firebase/auth';
-import { initializeApp, deleteApp, getApps } from 'firebase/app';
+import { initializeApp, deleteApp } from 'firebase/app';
 import { db } from '@/lib/firebase';
-import { AlertTriangle, Trash2, UploadCloud, FileEdit, ChevronDown, ChevronUp } from 'lucide-react';
+import { AlertTriangle, Trash2, UploadCloud, FileEdit, ChevronDown } from 'lucide-react';
 
 // Opciones de animación para el sidebar
 const ANIMATION_OPTIONS = [
@@ -1018,9 +1018,8 @@ function AdminSection() {
 }
 
 // ── ADMIN MURAL SECTION ───────────────────────────────────────────────────────
-import { Presentation, Save, RefreshCcw, Download, Pencil, Check, X as CancelIcon } from 'lucide-react';
+import { Presentation, Save, RefreshCcw, Pencil, Check, X as CancelIcon } from 'lucide-react';
 import { deleteDoc } from 'firebase/firestore';
-import QRCode from 'qrcode';
 
 const extractFirstName = (fullName) => {
     if (!fullName) return '';
@@ -1032,9 +1031,7 @@ const extractFirstName = (fullName) => {
 
 function AdminMuralSection() {
     const { toast } = useToast();
-    const [syncing,         setSyncing]         = useState(false);
     const [loadingConfig,   setLoadingConfig]   = useState(true);
-    const [showManualForm,  setShowManualForm]  = useState(false);
     const [muralList,       setMuralList]       = useState([]);
     const [editingMuralId,  setEditingMuralId]  = useState(null);
     const [editData,        setEditData]        = useState({});
@@ -1169,7 +1166,7 @@ function AdminMuralSection() {
         if (!id || id.length < 2) return;
         const timer = setTimeout(() => { fetchEmployeeData(); }, 600);
         return () => clearTimeout(timer);
-    }, [fetchEmployeeData]);
+    }, [fetchEmployeeData, manualData.employeeId]);
 
     const saveMessages = async () => {
         try {
@@ -1177,62 +1174,6 @@ function AdminMuralSection() {
             toast.success('Mensajes actualizados correctamente');
         } catch {
             toast.error('No se pudieron guardar los mensajes');
-        }
-    };
-
-    const handleSyncMural = async () => {
-        if (!confirm('Esto extraerá las calificaciones más recientes de todos los empleados y las hará públicas en el Mural. ¿Proceder?')) return;
-        setSyncing(true);
-        try {
-            const rulesSnapshot = await getDocs(collection(db, 'promotion_rules'));
-            const rulesMap = {};
-            rulesSnapshot.docs.forEach(d => {
-                const data = d.data();
-                if (data.currentPosition) rulesMap[data.currentPosition.toLowerCase().trim()] = data;
-            });
-
-            const empSnapshot = await getDocs(collection(db, 'employees'));
-            let syncedCount = 0;
-
-            for (const docSnap of empSnapshot.docs) {
-                const emp = docSnap.data();
-                const examAttempts = emp.promotionData?.examAttempts || [];
-                if (examAttempts.length > 0 && emp.employeeId) {
-                    const lastExam    = examAttempts[examAttempts.length - 1];
-                    const empPos      = emp.puesto?.toLowerCase().trim() || '';
-                    const appliedRule = rulesMap[empPos];
-                    let isApproved    = lastExam.passed || false;
-                    let requiredScore = 80;
-                    let promotionDest = 'Siguiente Nivel';
-
-                    if (appliedRule) {
-                        requiredScore = appliedRule.examMinScore || 80;
-                        promotionDest = appliedRule.promotionTo  || 'Siguiente Nivel';
-                        isApproved    = lastExam.score >= requiredScore;
-                    }
-
-                    await setDoc(doc(db, 'mural_exams', emp.employeeId.toString()), {
-                        employeeId:      emp.employeeId,
-                        firstName:       extractFirstName(emp.name) || 'Colaborador',
-                        fullName:        emp.name || '',
-                        currentPosition: emp.puesto || 'Sin Puesto',
-                        promotionTo:     promotionDest,
-                        passed:          isApproved,
-                        score:           lastExam.score || 0,
-                        requiredScore,
-                        date:            lastExam.date || new Date().toISOString().split('T')[0],
-                        active:          true,
-                        timestamp:       new Date(),
-                    });
-                    syncedCount++;
-                }
-            }
-            toast.success(`Sincronización Completa. ${syncedCount} empleados actualizados en el Mural.`);
-        } catch (error) {
-            console.error(error);
-            toast.error('Error durante la sincronización.');
-        } finally {
-            setSyncing(false);
         }
     };
 
@@ -1290,71 +1231,6 @@ function AdminMuralSection() {
             toast.success('Registro eliminado.');
         } catch {
             toast.error('No se pudo eliminar.');
-        }
-    };
-
-    const handleGenerateQR = async (emp) => {
-        try {
-            const { jsPDF } = await import('jspdf');
-            const targetUrl = 'https://vertxk.xyz/mural';
-            const qrDataUrl = await QRCode.toDataURL(targetUrl, { width: 600, margin: 0, color: { dark: '#1e1e1e', light: '#FFFFFF' } });
-            const pdf = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'letter' });
-            const W = pdf.internal.pageSize.getWidth();
-            const H = pdf.internal.pageSize.getHeight();
-            const CX = W / 2;
-            const C  = { black: [30,30,30], orange: [204,73,22], gray: [110,110,110], lightGray: [210,210,210], white: [255,255,255] };
-            pdf.setDrawColor(...C.black); pdf.setLineWidth(0.5); pdf.rect(12, 12, W - 24, H - 24);
-            const badgeW = 58, badgeH = 8, badgeX = CX - badgeW / 2, badgeY = 23;
-            pdf.setLineWidth(0.25); pdf.roundedRect(badgeX, badgeY, badgeW, badgeH, 4, 4, 'S');
-            pdf.setFont('helvetica', 'bold'); pdf.setFontSize(6.5); pdf.setTextColor(...C.black);
-            pdf.text('A V I S O   I M P O R T A N T E', CX, badgeY + 5.2, { align: 'center' });
-            pdf.setFont('times', 'bold'); pdf.setFontSize(34); pdf.setTextColor(...C.black);
-            pdf.text('¿Realizaste la', CX, 50, { align: 'center' });
-            pdf.text('evaluación de', CX, 63, { align: 'center' });
-            pdf.setFont('times', 'bolditalic'); pdf.setTextColor(...C.orange);
-            pdf.text('conocimientos?', CX, 77, { align: 'center' });
-            pdf.setDrawColor(...C.black); pdf.setLineWidth(1.2); pdf.line(CX - 10, 84, CX + 10, 84);
-            pdf.setFont('helvetica', 'normal'); pdf.setFontSize(9); pdf.setTextColor(...C.gray);
-            pdf.text('L O S   R E S U L T A D O S   E S T Á N   L I S T O S', CX, 94, { align: 'center' });
-            const QR_SIZE=90, QR_PAD=5, QR_IMG_X=CX-QR_SIZE/2, QR_IMG_Y=105;
-            const FRAME_X=QR_IMG_X-QR_PAD, FRAME_Y=QR_IMG_Y-QR_PAD, FRAME_W=QR_SIZE+QR_PAD*2, FRAME_H=QR_SIZE+QR_PAD*2;
-            pdf.setDrawColor(...C.black); pdf.setLineWidth(0.3); pdf.roundedRect(FRAME_X, FRAME_Y, FRAME_W, FRAME_H, 1.5, 1.5, 'S');
-            pdf.addImage(qrDataUrl, 'PNG', QR_IMG_X, QR_IMG_Y, QR_SIZE, QR_SIZE);
-            const ARM=7, OX=FRAME_X-1, OY=FRAME_Y-1, OW=FRAME_W+2, OH=FRAME_H+2;
-            pdf.setDrawColor(...C.orange); pdf.setLineWidth(1.8);
-            pdf.line(OX, OY, OX+ARM, OY); pdf.line(OX, OY, OX, OY+ARM);
-            pdf.line(OX+OW, OY, OX+OW-ARM, OY); pdf.line(OX+OW, OY, OX+OW, OY+ARM);
-            pdf.line(OX, OY+OH, OX+ARM, OY+OH); pdf.line(OX, OY+OH, OX, OY+OH-ARM);
-            pdf.line(OX+OW, OY+OH, OX+OW-ARM, OY+OH); pdf.line(OX+OW, OY+OH, OX+OW, OY+OH-ARM);
-            const URL_Y=FRAME_Y+FRAME_H+12;
-            pdf.setFont('helvetica', 'bold'); pdf.setFontSize(13);
-            const wBlack=pdf.getTextWidth('vertxk.xyz'), wOrange=pdf.getTextWidth('/mural');
-            const urlStartX=CX-(wBlack+wOrange)/2;
-            pdf.setTextColor(...C.black); pdf.text('vertxk.xyz', urlStartX, URL_Y);
-            pdf.setTextColor(...C.orange); pdf.text('/mural', urlStartX+wBlack, URL_Y);
-            pdf.setFont('helvetica', 'italic'); pdf.setFontSize(7.5); pdf.setTextColor(...C.gray);
-            pdf.text('Si no puedes escanear, ingresa la dirección en tu navegador', CX, URL_Y+6, { align: 'center' });
-            pdf.setDrawColor(...C.lightGray); pdf.setLineWidth(0.25); pdf.line(22, URL_Y+13, W-22, URL_Y+13);
-            const SCAN_Y=URL_Y+21;
-            pdf.setFont('helvetica','bold'); pdf.setFontSize(10); pdf.setTextColor(...C.black);
-            pdf.text('E S C A N E A   E L   C Ó D I G O   Q R', CX, SCAN_Y, { align: 'center' });
-            pdf.setFont('helvetica','italic'); pdf.setFontSize(8.5); pdf.setTextColor(...C.gray);
-            pdf.text('Usa la cámara de tu celular para acceder', CX, SCAN_Y+6, { align: 'center' });
-            const STEP_Y=SCAN_Y+18;
-            const steps=[{num:'1',l1:'Escanea el',l2:'código QR'},{num:'2',l1:'Ingresa tu no.',l2:'de empleado'},{num:'3',l1:'Consulta tus',l2:'resultados'}];
-            [CX-60, CX, CX+60].forEach((sx, i) => {
-                pdf.setFillColor(...C.black); pdf.circle(sx, STEP_Y, 4, 'F');
-                pdf.setTextColor(...C.white); pdf.setFont('helvetica','bold'); pdf.setFontSize(8);
-                pdf.text(steps[i].num, sx, STEP_Y+1.2, { align: 'center' });
-                pdf.setTextColor(...C.black); pdf.setFont('helvetica','normal'); pdf.setFontSize(8);
-                pdf.text(steps[i].l1, sx, STEP_Y+9,  { align: 'center' });
-                pdf.text(steps[i].l2, sx, STEP_Y+14, { align: 'center' });
-            });
-            pdf.save(`QR_Poster_${(emp.fullName || String(emp.employeeId)).replace(/[^a-zA-Z0-9]/g, '_')}.pdf`);
-            toast.success('PDF generado exitosamente');
-        } catch (error) {
-            console.error(error);
-            toast.error('Error al generar el PDF');
         }
     };
 
