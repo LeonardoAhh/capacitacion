@@ -304,9 +304,18 @@
     flex-direction: column;
 }
 
-/* El slide hijo debe llenar todo el alto del wrapper para que
-   su propio justify-content:center funcione correctamente */
+/* El SlideRenderer añade un <div> intermedio — hay que pasar la altura
+   a través de él hasta el <article class="slide"> */
 .slideWrapperSplit > * {
+    flex: 1;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+/* El <article class="slide"> dentro del div de SlideRenderer también
+   debe estirarse para que su justify-content:center funcione */
+.slideWrapperSplit > * > * {
     flex: 1;
     min-height: 0;
 }
