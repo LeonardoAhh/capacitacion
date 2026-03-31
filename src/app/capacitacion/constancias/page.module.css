@@ -320,6 +320,454 @@
     }
 }
 
+/* ─── Tabs ─── */
+.tabBar {
+    display: flex;
+    border-bottom: 2px solid var(--border-color);
+}
+
+.tab {
+    font-family: var(--font-body);
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+    background: none;
+    border: none;
+    padding: 0.6rem 1.25rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    border-bottom: 2px solid transparent;
+    margin-bottom: -2px;
+    transition: color 0.15s, border-color 0.15s;
+}
+
+.tab:hover {
+    color: var(--text-primary);
+}
+
+.tabActive {
+    color: var(--color-primary);
+    border-bottom-color: var(--color-primary);
+}
+
+.tabActiveLoto {
+    color: #dc2626;
+    border-bottom-color: #dc2626;
+}
+
+/* ─── LOTO Section ─── */
+.lotoSection {
+    display: grid;
+    grid-template-columns: 280px 1fr;
+    gap: 2rem;
+    align-items: start;
+}
+
+.lotoForm {
+    background: var(--bg-surface, var(--bg-primary));
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-lg, 12px);
+    padding: 1.75rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+}
+
+.formField {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+}
+
+/* ─── Photo upload ─── */
+.photoUploadArea {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.photoThumb {
+    width: 80px;
+    height: 80px;
+    border-radius: 6px;
+    object-fit: cover;
+    border: 2px solid #dc2626;
+}
+
+.photoUploadBtn {
+    font-family: var(--font-body);
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: #dc2626;
+    background: #fef2f2;
+    border: 1.5px dashed #fca5a5;
+    border-radius: var(--radius-md, 8px);
+    padding: 0.5rem 0.75rem;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    transition: background 0.15s, border-color 0.15s;
+    width: fit-content;
+}
+
+.photoUploadBtn:hover {
+    background: #fee2e2;
+    border-color: #f87171;
+}
+
+.photoUploadBtnDisabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    pointer-events: none;
+}
+
+.photoHint {
+    font-family: var(--font-body);
+    font-size: 0.72rem;
+    color: var(--text-secondary);
+    margin: 0;
+}
+
+.lotoPrintBtn {
+    font-family: var(--font-body);
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: #fff;
+    background: #dc2626;
+    border: none;
+    border-radius: var(--radius-md, 8px);
+    padding: 0.6rem 1rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.4rem;
+    transition: background 0.15s;
+}
+
+.lotoPrintBtn:hover {
+    background: #b91c1c;
+}
+
+.lotoPrintBtn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.lotoNormNote {
+    background: #fef2f2;
+    border: 1px solid #fecaca;
+    border-radius: var(--radius-md, 8px);
+    padding: 0.875rem 1rem;
+}
+
+.lotoNormNoteTitle {
+    font-family: var(--font-body);
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: #991b1b;
+    margin: 0 0 0.4rem;
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+}
+
+.lotoNormNoteText {
+    font-family: var(--font-body);
+    font-size: 0.72rem;
+    color: #b91c1c;
+    line-height: 1.5;
+    margin: 0;
+}
+
+/* ─── LOTO Preview ─── */
+.lotoPreviewArea {
+    background: var(--bg-secondary, #e5e7eb);
+    border-radius: var(--radius-lg, 12px);
+    padding: 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.lotoCardsRow {
+    display: flex;
+    gap: 1.5rem;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+/* ─── LOTO Card shell ─── */
+.lotoCard {
+    width: 300px;
+    height: 550px;
+    background: #fff;
+    border: 1.5px solid #d1d5db;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    position: relative;
+    flex-shrink: 0;
+}
+
+.lotoHazardStripe {
+    height: 16px;
+    flex-shrink: 0;
+    border-bottom: 1px solid #d1d5db;
+}
+
+.lotoHolePunch {
+    position: absolute;
+    top: 24px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    border: 4px solid #d1d5db;
+    background: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1;
+}
+
+.lotoHolePunchInner {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: #e5e7eb;
+    border: 1px solid #9ca3af;
+}
+
+.lotoDangerBadge {
+    margin: 48px 14px 0;
+    background: #dc2626;
+    color: #fff;
+    text-align: center;
+    padding: 0.5rem 0.4rem;
+    border-radius: 10px 10px 0 0;
+    border: 3px solid #b91c1c;
+}
+
+.lotoDangerTitle {
+    font-family: var(--font-serif);
+    font-size: 1.75rem;
+    font-weight: 900;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    margin: 0;
+}
+
+.lotoBlockedBadge {
+    margin: 0 14px 14px;
+    background: #111;
+    color: #fff;
+    text-align: center;
+    padding: 0.4rem 0.5rem;
+    border-radius: 0 0 10px 10px;
+}
+
+.lotoBlockedTitle {
+    font-family: var(--font-serif);
+    font-size: 1rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin: 0;
+}
+
+.lotoNoOperate {
+    font-family: var(--font-body);
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: #f87171;
+    margin: 0;
+}
+
+.lotoCardBody {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 0 20px;
+}
+
+.lotoPhotoBox {
+    width: 120px;
+    height: 120px;
+    border-radius: 8px;
+    border: 4px solid #dc2626;
+    overflow: hidden;
+    background: #f3f4f6;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.lotoDataArea {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.lotoDataRow {
+    border-bottom: 2px solid #d1d5db;
+    padding-bottom: 4px;
+}
+
+.lotoDataRowSplit {
+    display: flex;
+    justify-content: space-between;
+    gap: 8px;
+    border-bottom: 2px solid #d1d5db;
+    padding-bottom: 4px;
+}
+
+.lotoDataLabel {
+    font-family: var(--font-body);
+    font-size: 0.62rem;
+    font-weight: 700;
+    color: #6b7280;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin: 0;
+}
+
+.lotoDataValue {
+    font-family: var(--font-serif);
+    font-size: 1rem;
+    font-weight: 700;
+    color: #111;
+    margin: 1px 0 0;
+    line-height: 1.2;
+}
+
+.lotoDataValueSm {
+    font-size: 0.72rem;
+    line-height: 1.3;
+}
+
+.lotoCardFooter {
+    margin-top: auto;
+    padding: 10px 14px;
+    background: #fef2f2;
+    border-top: 2px solid #fecaca;
+}
+
+.lotoCardFooterText {
+    font-family: var(--font-body);
+    font-size: 0.6rem;
+    color: #991b1b;
+    line-height: 1.4;
+    text-align: justify;
+    margin: 0;
+}
+
+/* ─── LOTO Back ─── */
+.lotoBackDangerBadge {
+    margin: 48px 14px 20px;
+    background: #dc2626;
+    color: #fff;
+    text-align: center;
+    padding: 0.5rem 0.4rem;
+    border-radius: 10px;
+    border: 3px solid #b91c1c;
+}
+
+.lotoBackBody {
+    flex: 1;
+    padding: 0 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.lotoFieldLabel {
+    font-family: var(--font-body);
+    font-size: 0.62rem;
+    font-weight: 700;
+    color: #6b7280;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin: 0 0 3px;
+}
+
+.lotoFieldLine {
+    border-bottom: 2px solid #111;
+    height: 22px;
+}
+
+.lotoCheckGrid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6px;
+}
+
+.lotoCheckItem {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-family: var(--font-body);
+    font-size: 0.72rem;
+    color: #1f2937;
+}
+
+.lotoCheckBox {
+    width: 14px;
+    height: 14px;
+    border: 2px solid #111;
+    flex-shrink: 0;
+}
+
+.lotoDateRow {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+}
+
+.lotoSignatureArea {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.lotoSignatureLine {
+    border-bottom: 2px solid #111;
+    height: 56px;
+    width: 100%;
+    margin-top: auto;
+    margin-bottom: 6px;
+}
+
+.lotoStpsNote {
+    text-align: center;
+    padding-bottom: 6px;
+    font-family: var(--font-body);
+    font-size: 0.6rem;
+    color: #9ca3af;
+}
+
+/* ─── Responsive LOTO ─── */
+@media (max-width: 900px) {
+    .lotoSection {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 640px) {
+    .lotoCardsRow {
+        flex-direction: column;
+        align-items: center;
+    }
+}
+
 /* ─── Print (ventana separada — ver handlePrint en page.js) ─── */
 @media print {
     .accentBar {

@@ -36,7 +36,12 @@
       "Bash(grep -E \"\\\\.js$\")",
       "Bash(export PATH=\"$PATH:/c/Users/Capacitacion - QRO/Desktop/Capacitación/VTX/NODE JS\")",
       "Bash(\"NODE JS/npx\" next build)",
-      "Bash(/mnt/c/Program Files/nodejs/npm.cmd run lint)"
+      "Bash(/mnt/c/Program Files/nodejs/npm.cmd run lint)",
+      "Bash(find '/c/Users/Capacitacion - QRO/Desktop/Capacitación/VTX/src/app' -path *capacitacion* -name layout.*)",
+      "Bash(export PATH=\"$PATH:/c/Program Files/nodejs\")",
+      "Bash(node_modules/.bin/next lint:*)",
+      "Read(//c//**)",
+      "Read(//c/Users/**)"
     ]
   }
 }
