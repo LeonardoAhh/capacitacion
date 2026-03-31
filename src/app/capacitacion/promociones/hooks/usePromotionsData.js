@@ -1,6 +1,6 @@
 import { useState, useCallback, useEffect } from 'react';
 import { db } from '@/lib/firebase';
-import { collection, getDocs, query, orderBy, doc, updateDoc, setDoc, deleteDoc } from 'firebase/firestore';
+import { collection, getDocs, query, orderBy, doc, updateDoc, setDoc, deleteDoc, writeBatch } from 'firebase/firestore';
 import { getSemesterPeriod, normalizePromotionRule } from '@/lib/promotionUtils';
 import { seedHistoryData } from '@/lib/seedHistorial';
 
@@ -167,25 +167,34 @@ export function usePromotionsData(user, showConfirm, toast) {
             let updated = 0;
             let notFound = 0;
 
+            // O(1) lookup map instead of O(n) find per iteration
+            const empById = new Map(employees.map(e => [e.employeeId, e]));
+            let batch = writeBatch(db);
+            let opCount = 0;
+
             for (const empId in examsByEmployee) {
-                const employee = employees.find(e => e.employeeId === empId);
-
-                if (employee && employee.id) {
-                    const empRef = doc(db, 'training_records', employee.id);
-                    const existingPromoData = employee.promotionData || {};
-
-                    await updateDoc(empRef, {
+                const employee = empById.get(empId);
+                if (employee?.id) {
+                    batch.update(doc(db, 'training_records', employee.id), {
                         promotionData: {
-                            ...existingPromoData,
+                            ...(employee.promotionData || {}),
                             examAttempts: examsByEmployee[empId]
                         }
                     });
+                    opCount++;
                     updated++;
+                    // Firestore batch limit: 500 ops
+                    if (opCount === 500) {
+                        await batch.commit();
+                        batch = writeBatch(db);
+                        opCount = 0;
+                    }
                 } else {
                     console.log(`Employee not found for exams: ${empId}`);
                     notFound++;
                 }
             }
+            if (opCount > 0) await batch.commit();
 
             const totalExams = examDataArray.length;
             toast.success('Exámenes Importados', `Se actualizaron ${updated} empleados con ${totalExams} exámenes. ${notFound > 0 ? `${notFound} no encontrados.` : ''}`);
@@ -210,19 +219,26 @@ export function usePromotionsData(user, showConfirm, toast) {
             let updated = 0;
             let notFound = 0;
 
-            for (const data of shiftDataArray) {
-                const employee = employees.find(e => e.employeeId === data.employeeId);
+            const empById = new Map(employees.map(e => [e.employeeId, e]));
+            let batch = writeBatch(db);
+            let opCount = 0;
 
-                if (employee && employee.id) {
-                    const empRef = doc(db, 'training_records', employee.id);
-                    await updateDoc(empRef, {
-                        shift: data.turno
-                    });
+            for (const data of shiftDataArray) {
+                const employee = empById.get(data.employeeId);
+                if (employee?.id) {
+                    batch.update(doc(db, 'training_records', employee.id), { shift: data.turno });
+                    opCount++;
                     updated++;
+                    if (opCount === 500) {
+                        await batch.commit();
+                        batch = writeBatch(db);
+                        opCount = 0;
+                    }
                 } else {
                     notFound++;
                 }
             }
+            if (opCount > 0) await batch.commit();
 
             toast.success('Turnos Importados', `Se actualizaron ${updated} empleados. ${notFound > 0 ? `${notFound} no encontrados.` : ''}`);
             await loadData();

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import { Download, SlidersHorizontal } from 'lucide-react';
 import AdminLayout from '@/components/layout/AdminLayout/AdminLayout';
 import { Button } from '@/components/ui/Button/Button';
@@ -31,6 +31,15 @@ import PromoteModal from './components/PromoteModal';
 
 import { usePromotionsData } from './hooks/usePromotionsData';
 
+function useDebounce(value, delay = 300) {
+    const [debounced, setDebounced] = useState(value);
+    useEffect(() => {
+        const id = setTimeout(() => setDebounced(value), delay);
+        return () => clearTimeout(id);
+    }, [value, delay]);
+    return debounced;
+}
+
 export default function PromocionesPage() {
     const { user, loading: authLoading, canWrite } = useAuth();
     const router = useRouter();
@@ -54,8 +63,6 @@ export default function PromocionesPage() {
         handlePromoteEmployee
     } = usePromotionsData(user, showConfirm, toast);
 
-    const [filteredEmployees, setFilteredEmployees] = useState([]);
-
     // Filters
     const [searchTerm, setSearchTerm] = useState('');
     const [statusFilter, setStatusFilter] = useState('all'); // all, eligible, blocked, nearEligible
@@ -64,7 +71,7 @@ export default function PromocionesPage() {
 
     // View mode and sorting
     const [viewMode, setViewMode] = useState('cards'); // cards, table
-    const [sortBy, setSortBy] = useState('name'); // name, department, criteria, startDate
+    const [sortBy, setSortBy] = useState('employeeId'); // employeeId, name, department, criteria, startDate
     const [sortOrder, setSortOrder] = useState('asc'); // asc, desc
 
     // Pagination
@@ -81,18 +88,35 @@ export default function PromocionesPage() {
     const [promoteModal, setPromoteModal] = useState(null); // { employee, newPosition }
 
 
-    const filterEmployees = useCallback(() => {
-        let result = employees.filter(emp => {
-            // Only include employees that have a matching promotion rule
-            const rule = promotionRules.find(r =>
-                r.currentPosition === emp.position?.toUpperCase()?.trim()
-            );
-            return rule !== undefined;
-        });
+    const debouncedSearch = useDebounce(searchTerm);
 
-        // Search filter
-        if (searchTerm) {
-            const term = searchTerm.toLowerCase();
+    // Reset page whenever filters change
+    useEffect(() => {
+        setCurrentPage(1);
+    }, [debouncedSearch, statusFilter, deptFilter, shiftFilter, sortBy, sortOrder]);
+
+    // Build O(1) position → rule lookup once per rules change
+    const rulesMap = useMemo(() => {
+        const map = new Map();
+        for (const rule of promotionRules) {
+            map.set(rule.currentPosition, rule);
+        }
+        return map;
+    }, [promotionRules]);
+
+    // Single-pass filter + sort — criteria computed once per employee
+    const filteredEmployees = useMemo(() => {
+        // 1. Keep only employees with a rule; compute _rule and _criteria once
+        let result = [];
+        for (const emp of employees) {
+            const rule = rulesMap.get(emp.position?.toUpperCase().trim());
+            if (!rule) continue;
+            result.push({ ...emp, _rule: rule, _criteria: checkPromotionCriteria(emp, rule) });
+        }
+
+        // 2. Search
+        if (debouncedSearch) {
+            const term = debouncedSearch.toLowerCase();
             result = result.filter(e =>
                 e.name?.toLowerCase().includes(term) ||
                 e.employeeId?.toLowerCase().includes(term) ||
@@ -100,81 +124,39 @@ export default function PromocionesPage() {
             );
         }
 
-        // Department filter
-        if (deptFilter !== 'Todos') {
-            result = result.filter(e => e.department === deptFilter);
-        }
+        // 3. Department
+        if (deptFilter !== 'Todos') result = result.filter(e => e.department === deptFilter);
 
-        // Shift filter
-        if (shiftFilter !== 'Todos') {
-            result = result.filter(e => e.shift === shiftFilter);
-        }
+        // 4. Shift
+        if (shiftFilter !== 'Todos') result = result.filter(e => e.shift === shiftFilter);
 
-        // Status filter
+        // 5. Status (criteria already computed)
         if (statusFilter !== 'all') {
             result = result.filter(emp => {
-                const rule = promotionRules.find(r =>
-                    r.currentPosition === emp.position?.toUpperCase()?.trim()
-                );
-                if (!rule) return false;
-
-                const criteria = checkPromotionCriteria(emp, rule);
-
-                if (statusFilter === 'eligible') return criteria.overall.eligible;
-                if (statusFilter === 'blocked') return !criteria.overall.eligible;
+                const c = emp._criteria;
+                if (statusFilter === 'eligible')     return c.overall.eligible;
+                if (statusFilter === 'blocked')      return !c.overall.eligible;
                 if (statusFilter === 'scheduledExam') return emp.promotionData?.scheduledExam;
-                if (statusFilter === 'nearEligible') {
-                    // Near eligible: 3 out of 4 criteria met
-                    return !criteria.overall.eligible && criteria.overall.metCount >= 3;
-                }
-
+                if (statusFilter === 'nearEligible') return !c.overall.eligible && c.overall.metCount >= 3;
                 return true;
             });
         }
 
-        // Sorting
-        result = result.map(emp => {
-            const rule = promotionRules.find(r =>
-                r.currentPosition === emp.position?.toUpperCase()?.trim()
-            );
-            const criteria = rule ? checkPromotionCriteria(emp, rule) : null;
-            return { ...emp, _criteria: criteria, _rule: rule };
-        });
-
+        // 6. Sort
         result.sort((a, b) => {
-            let comparison = 0;
-
+            let cmp = 0;
             switch (sortBy) {
-                case 'name':
-                    comparison = (a.name || '').localeCompare(b.name || '');
-                    break;
-                case 'department':
-                    comparison = (a.department || '').localeCompare(b.department || '');
-                    break;
-                case 'criteria':
-                    const aCount = a._criteria?.overall?.metCount || 0;
-                    const bCount = b._criteria?.overall?.metCount || 0;
-                    comparison = bCount - aCount; // Higher first by default
-                    break;
-                case 'startDate':
-                    const aDate = new Date(a.promotionData?.positionStartDate || '9999-12-31');
-                    const bDate = new Date(b.promotionData?.positionStartDate || '9999-12-31');
-                    comparison = aDate - bDate;
-                    break;
-                default:
-                    comparison = 0;
+                case 'employeeId': cmp = (parseInt(a.employeeId) || 0) - (parseInt(b.employeeId) || 0); break;
+                case 'name':       cmp = (a.name || '').localeCompare(b.name || ''); break;
+                case 'department': cmp = (a.department || '').localeCompare(b.department || ''); break;
+                case 'criteria':   cmp = (b._criteria?.overall?.metCount || 0) - (a._criteria?.overall?.metCount || 0); break;
+                case 'startDate':  cmp = new Date(a.promotionData?.positionStartDate || '9999-12-31') - new Date(b.promotionData?.positionStartDate || '9999-12-31'); break;
             }
-
-            return sortOrder === 'desc' ? -comparison : comparison;
+            return sortOrder === 'desc' ? -cmp : cmp;
         });
 
-        setFilteredEmployees(result);
-        setCurrentPage(1); // Reset to first page when filters change
-    }, [searchTerm, statusFilter, deptFilter, shiftFilter, employees, promotionRules, sortBy, sortOrder]);
-
-    useEffect(() => {
-        filterEmployees();
-    }, [filterEmployees]);
+        return result;
+    }, [employees, rulesMap, debouncedSearch, statusFilter, deptFilter, shiftFilter, sortBy, sortOrder]);
 
     const toggleExpand = (emp) => {
         setSelectedEmployeeForDetails(emp);
@@ -320,14 +302,6 @@ export default function PromocionesPage() {
         try {
             const XLSX = await import('xlsx');
 
-            // Prepare all employees with promotion rules (unfiltered)
-            const allEmployeesWithRules = employees.filter(emp => {
-                const rule = promotionRules.find(r =>
-                    r.currentPosition === emp.position?.toUpperCase()?.trim()
-                );
-                return rule !== undefined;
-            });
-
             // Build rows
             const headers = [
                 'ID Empleado',
@@ -345,13 +319,11 @@ export default function PromocionesPage() {
                 'Citado para Examen'
             ];
 
-            const rows = allEmployeesWithRules.map(emp => {
-                const rule = promotionRules.find(r =>
-                    r.currentPosition === emp.position?.toUpperCase()?.trim()
-                );
+            const rows = employees.reduce((acc, emp) => {
+                const rule = rulesMap.get(emp.position?.toUpperCase().trim());
+                if (!rule) return acc;
                 const criteria = checkPromotionCriteria(emp, rule);
-
-                return [
+                acc.push([
                     emp.employeeId || '',
                     emp.name || '',
                     emp.position || '',
@@ -365,8 +337,9 @@ export default function PromocionesPage() {
                     `${criteria.overall.metCount}/4`,
                     criteria.overall.eligible ? 'APTO' : 'NO APTO',
                     emp.promotionData?.scheduledExam ? 'Sí' : 'No'
-                ];
-            });
+                ]);
+                return acc;
+            }, []);
 
             const ws = XLSX.utils.aoa_to_sheet([headers, ...rows]);
 
@@ -475,11 +448,8 @@ export default function PromocionesPage() {
                                             {filteredEmployees
                                                 .slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)
                                                 .map(emp => {
-                                                    const rule = emp._rule || promotionRules.find(r =>
-                                                        r.currentPosition === emp.position?.toUpperCase()?.trim()
-                                                    );
+                                                    const { _rule: rule, _criteria: criteria } = emp;
                                                     if (!rule) return null;
-                                                    const criteria = emp._criteria || checkPromotionCriteria(emp, rule);
                                                     const progressPercent = (criteria.overall.metCount / 4) * 100;
 
                                                     return (
@@ -549,12 +519,8 @@ export default function PromocionesPage() {
                                     {filteredEmployees
                                         .slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)
                                         .map(emp => {
-                                            const rule = emp._rule || promotionRules.find(r =>
-                                                r.currentPosition === emp.position?.toUpperCase()?.trim()
-                                            );
+                                            const { _rule: rule, _criteria: criteria } = emp;
                                             if (!rule) return null;
-
-                                            const criteria = emp._criteria || checkPromotionCriteria(emp, rule);
 
                                             return (
                                                     <EmployeeCard
@@ -605,8 +571,8 @@ export default function PromocionesPage() {
             {selectedEmployeeForDetails && (
                 <EmployeeDetailModal
                     emp={selectedEmployeeForDetails}
-                    rule={selectedEmployeeForDetails._rule || promotionRules.find(r => r.currentPosition === selectedEmployeeForDetails.position?.toUpperCase()?.trim())}
-                    criteria={selectedEmployeeForDetails._criteria || checkPromotionCriteria(selectedEmployeeForDetails, selectedEmployeeForDetails._rule || promotionRules.find(r => r.currentPosition === selectedEmployeeForDetails.position?.toUpperCase()?.trim()))}
+                    rule={selectedEmployeeForDetails._rule}
+                    criteria={selectedEmployeeForDetails._criteria}
                     onClose={() => setSelectedEmployeeForDetails(null)}
                     canWrite={canWrite()}
                     onEditEmployee={handleEditEmployee}

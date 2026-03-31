@@ -37,7 +37,7 @@ export default function FiltersBar({
                         className={styles.searchInput}
                     />
                 </div>
-                <div className={styles.filterGroup}>
+                <div className={styles.filterGroup} style={{ minWidth: '180px' }}>
                     <label>DEPARTAMENTO</label>
                     <Select
                         value={deptFilter}
@@ -48,7 +48,7 @@ export default function FiltersBar({
                         ]}
                     />
                 </div>
-                <div className={styles.filterGroup}>
+                <div className={styles.filterGroup} style={{ minWidth: '190px' }}>
                     <label>ESTADO</label>
                     <Select
                         value={statusFilter}
@@ -62,7 +62,7 @@ export default function FiltersBar({
                         ]}
                     />
                 </div>
-                <div className={styles.filterGroup}>
+                <div className={styles.filterGroup} style={{ minWidth: '110px' }}>
                     <label>TURNO</label>
                     <Select
                         value={shiftFilter}
@@ -77,13 +77,14 @@ export default function FiltersBar({
                         ]}
                     />
                 </div>
-                <div className={styles.filterGroup}>
+                <div className={styles.filterGroup} style={{ minWidth: '175px' }}>
                     <label>ORDENAR POR</label>
                     <div style={{ display: 'flex', gap: '8px' }}>
                         <Select
                             value={sortBy}
                             onChange={(value) => setSortBy(value)}
                             options={[
+                                { value: 'employeeId', label: 'NO. EMPLEADO' },
                                 { value: 'name', label: 'NOMBRE' },
                                 { value: 'department', label: 'DEPARTAMENTO' },
                                 { value: 'criteria', label: '% CRITERIOS' },
