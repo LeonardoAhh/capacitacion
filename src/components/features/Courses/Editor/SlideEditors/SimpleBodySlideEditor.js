@@ -1,7 +1,7 @@
 import React from 'react';
 import RichTextEditor from '../RichTextEditor';
 
-const BODY_MAX_CHARS = 600;
+const BODY_MAX_CHARS = 2000;
 
 /**
  * Editor compartido para tipos 'objective' y 'definition'.

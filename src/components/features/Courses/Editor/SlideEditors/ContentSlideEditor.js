@@ -6,7 +6,7 @@ import ImageUploader from '../ImageUploader';
 import RichTextEditor from '../RichTextEditor';
 import { Select } from '@/components/ui/Select/Select';
 
-const BODY_MAX_CHARS = 600;
+const BODY_MAX_CHARS = 2000;
 
 export default function ContentSlideEditor({ formData, handleChange, handleBatchChange, styles }) {
     const images = formData.images
