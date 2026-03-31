@@ -8,7 +8,7 @@ import {
     IconArrowLeft, IconX, IconMenu,
     IconTarget, IconFileText, IconGraduationCap,
     IconCheckSquare, IconGrid, IconColumns, IconBookOpen, IconList,
-    IconPlay, IconCopy, IconEdit, IconLink, IconUploadCloud, IconEye,
+    IconPlay, IconCopy, IconEdit, IconLink, IconUploadCloud, IconEye, IconActivity,
 } from '@/lib/icons';
 import {
     getCourseWithSlides, updateSlide, addSlide, deleteSlide,
@@ -23,22 +23,32 @@ import CoursePlayer from '@/components/features/Courses/CoursePlayer';
 import { SLIDE_TYPE_LABELS, getDefaultSlideData } from '@/components/features/Courses/Editor/slideConstants';
 import styles from './editor.module.css';
 
-// ── Tipos de slide para el modal ─────────────────────────────────────────────
-const SLIDE_TYPES = [
-    { type: 'title',      label: 'Portada',      icon: IconTarget,       iconColor: 'var(--purple-500)',               desc: 'Título principal del curso' },
-    { type: 'content',    label: 'Contenido',     icon: IconFileText,     iconColor: 'var(--cyan-500)',                 desc: 'Texto e imagen' },
-    { type: 'objective',  label: 'Objetivo',      icon: IconGraduationCap,iconColor: 'var(--amber-500)',               desc: 'Objetivo de aprendizaje' },
-    { type: 'benefits',   label: 'Beneficios',    icon: IconCheckSquare,  iconColor: 'var(--green-500)',                desc: 'Lista de beneficios' },
-    { type: 'icon_grid',  label: 'Íconos',        icon: IconGrid,         iconColor: 'var(--color-accent)',             desc: 'Cuadrícula de íconos' },
-    { type: 'comparison', label: 'Comparación',   icon: IconColumns,      iconColor: 'var(--color-warning)',            desc: 'Dos columnas comparativas' },
-    { type: 'steps',      label: 'Paso a Paso',   icon: IconList,         iconColor: 'var(--teal-500, #14b8a6)',        desc: 'Secuencia numerada de pasos' },
-    { type: 'quiz',       label: 'Quiz',          icon: IconBookOpen,     iconColor: 'var(--color-danger)',             desc: 'Pregunta con opciones' },
-    { type: 'definition', label: 'Definición',    icon: IconBookOpen,     iconColor: 'var(--blue-500)',                 desc: 'Término y definición' },
-    // Nuevos tipos
-    { type: 'video',      label: 'Video',         icon: IconPlay,         iconColor: 'var(--color-danger)',             desc: 'YouTube o video MP4' },
-    { type: 'flashcard',  label: 'Tarjetas',      icon: IconCopy,         iconColor: '#8b5cf6',                         desc: 'Mazo de tarjetas con flip' },
-    { type: 'fill_blank', label: 'Completa',      icon: IconEdit,         iconColor: '#0ea5e9',                         desc: 'Rellena el espacio en blanco' },
-    { type: 'checklist',  label: 'Checklist',     icon: IconCheckSquare,  iconColor: '#16a34a',                         desc: 'Lista de verificación' },
+// ── Tipos de slide para el modal (agrupados por sección) ─────────────────────
+const SLIDE_SECTIONS = [
+    {
+        label: 'General',
+        types: [
+            { type: 'title',      label: 'Portada',      icon: IconTarget,        iconColor: 'var(--purple-500)',        desc: 'Título principal del curso' },
+            { type: 'content',    label: 'Contenido',     icon: IconFileText,      iconColor: 'var(--cyan-500)',          desc: 'Texto e imagen' },
+            { type: 'objective',  label: 'Objetivo',      icon: IconGraduationCap, iconColor: 'var(--amber-500)',         desc: 'Objetivo de aprendizaje' },
+            { type: 'benefits',   label: 'Beneficios',    icon: IconCheckSquare,   iconColor: 'var(--green-500)',         desc: 'Lista de beneficios' },
+            { type: 'icon_grid',  label: 'Íconos',        icon: IconGrid,          iconColor: 'var(--color-accent)',      desc: 'Cuadrícula de íconos' },
+            { type: 'comparison', label: 'Comparación',   icon: IconColumns,       iconColor: 'var(--color-warning)',     desc: 'Dos columnas comparativas' },
+            { type: 'steps',      label: 'Paso a Paso',   icon: IconList,          iconColor: 'var(--teal-500, #14b8a6)',desc: 'Secuencia numerada de pasos' },
+            { type: 'quiz',       label: 'Quiz',          icon: IconBookOpen,      iconColor: 'var(--color-danger)',      desc: 'Pregunta con opciones' },
+            { type: 'definition', label: 'Definición',    icon: IconBookOpen,      iconColor: 'var(--blue-500)',          desc: 'Término y definición' },
+            { type: 'video',      label: 'Video',         icon: IconPlay,          iconColor: 'var(--color-danger)',      desc: 'YouTube o video MP4' },
+            { type: 'flashcard',  label: 'Tarjetas',      icon: IconCopy,          iconColor: '#8b5cf6',                  desc: 'Mazo de tarjetas con flip' },
+            { type: 'fill_blank', label: 'Completa',      icon: IconEdit,          iconColor: '#0ea5e9',                  desc: 'Rellena el espacio en blanco' },
+            { type: 'checklist',  label: 'Checklist',     icon: IconCheckSquare,   iconColor: '#16a34a',                  desc: 'Lista de verificación' },
+        ],
+    },
+    {
+        label: 'Simuladores',
+        types: [
+            { type: 'thermal_sim', label: 'Simulador Térmico LOTO', icon: IconActivity, iconColor: '#f97316', desc: 'Disipación térmica interactiva NOM-004' },
+        ],
+    },
 ];
 
 // ── Reducer ──────────────────────────────────────────────────────────────────
@@ -782,22 +792,29 @@ export default function EditorPage({ params }) {
                             </button>
                         </div>
 
-                        <div className={styles.slideTypesGrid}>
-                            {SLIDE_TYPES.map(({ type, label, icon: IconAsset, iconColor, desc }) => (
-                                <button
-                                    key={type}
-                                    onClick={() => handleConfirmSlideType(type)}
-                                    className={styles.slideTypeCard}
-                                    disabled={saving}
-                                >
-                                    <div className={styles.slideTypeIcon} style={{ color: iconColor }}>
-                                        <IconAsset />
+                        <div className={styles.slideModalBody}>
+                            {SLIDE_SECTIONS.map(section => (
+                                <div key={section.label} className={styles.slideSection}>
+                                    <p className={styles.slideSectionLabel}>{section.label}</p>
+                                    <div className={styles.slideTypesGrid}>
+                                        {section.types.map(({ type, label, icon: IconAsset, iconColor, desc }) => (
+                                            <button
+                                                key={type}
+                                                onClick={() => handleConfirmSlideType(type)}
+                                                className={styles.slideTypeCard}
+                                                disabled={saving}
+                                            >
+                                                <div className={styles.slideTypeIcon} style={{ color: iconColor }}>
+                                                    <IconAsset />
+                                                </div>
+                                                <div className={styles.slideTypeInfo}>
+                                                    <h3 className={styles.slideTypeName}>{label}</h3>
+                                                    <p className={styles.slideTypeDesc}>{desc}</p>
+                                                </div>
+                                            </button>
+                                        ))}
                                     </div>
-                                    <div className={styles.slideTypeInfo}>
-                                        <h3 className={styles.slideTypeName}>{label}</h3>
-                                        <p className={styles.slideTypeDesc}>{desc}</p>
-                                    </div>
-                                </button>
+                                </div>
                             ))}
                         </div>
                     </div>

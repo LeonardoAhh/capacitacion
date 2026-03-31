@@ -19,6 +19,7 @@ export const SLIDE_TYPE_LABELS = {
     dynamic:       'Dinámica',
     group_dynamic: 'Dinámica',
     // Nuevos tipos
+    thermal_sim:   'Simulador Térmico',
     video:         'Video',
     flashcard:     'Tarjetas',
     fill_blank:    'Completa la Frase',
@@ -84,6 +85,11 @@ const SLIDE_DEFAULT_DATA_FACTORIES = {
         debrief: '',
     }),
     // Nuevos tipos
+    thermal_sim: () => ({
+        heading: 'Seguridad LOTO: Disipación Térmica',
+        subtitle: 'Componente a temperatura segura para mantenimiento.',
+        safeTemp: 50,
+    }),
     video:      () => ({
         heading: '',
         videoUrl: '',

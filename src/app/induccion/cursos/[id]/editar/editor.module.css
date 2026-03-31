@@ -1140,6 +1140,30 @@
     color: var(--c-primary);
 }
 
+/* ── Modal Body + Sections ── */
+.slideModalBody {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.slideSection {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.slideSectionLabel {
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--c-muted);
+    padding-bottom: 4px;
+    border-bottom: 1px solid var(--c-line);
+    margin: 0;
+}
+
 /* ── Slide Type Grid ── */
 .slideTypesGrid {
     display: grid;

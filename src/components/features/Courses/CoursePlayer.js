@@ -40,6 +40,7 @@ const SLIDE_BADGES = {
     flashcard: { emoji: '🃏', label: 'Tarjetas' },
     fill_blank: { emoji: '✏️', label: 'Completa la Frase' },
     checklist: { emoji: '☑️', label: 'Checklist' },
+    thermal_sim: { emoji: '🌡️', label: 'Simulador LOTO' },
 };
 
 // ── Utilidades ──────────────────────────────────────────────────────────────

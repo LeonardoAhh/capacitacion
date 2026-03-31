@@ -39,6 +39,7 @@ const NAV_SECTIONS = [
             { id: 'categorias', label: 'Control Categorías', href: '/capacitacion/promociones', icon: Briefcase },
             { id: 'examenes', label: 'Exámenes', href: '/capacitacion/examen', icon: FileText, exact: true },
             { id: 'gestionarExamen', label: 'Gestionar Preguntas', href: '/capacitacion/examen/gestionar', icon: Settings },
+            { id: 'constancias', label: 'Constancias', href: '/capacitacion/constancias', icon: Award },
             { id: 'calendario', label: 'Calendario', href: '/capacitacion/calendario', icon: Calendar },
         ],
     },

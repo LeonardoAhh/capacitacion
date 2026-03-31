@@ -1,0 +1,340 @@
+/* ─── Layout ─── */
+.page {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    padding: 1.5rem 2rem 3rem;
+    max-width: 1100px;
+    margin: 0 auto;
+    width: 100%;
+}
+
+/* ─── Search / Config Panel ─── */
+.searchPanel {
+    background: var(--bg-surface, var(--bg-primary));
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-lg, 12px);
+    padding: 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+}
+
+.panelTitle {
+    font-family: var(--font-serif);
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin: 0;
+}
+
+.panelDesc {
+    font-family: var(--font-body);
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+    margin: 0;
+}
+
+/* ─── Search Row ─── */
+.searchRow {
+    display: flex;
+    gap: 0.75rem;
+    align-items: center;
+}
+
+.input {
+    font-family: var(--font-body);
+    font-size: 0.9rem;
+    color: var(--text-primary);
+    background: var(--bg-input, var(--bg-secondary));
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md, 8px);
+    padding: 0.55rem 0.85rem;
+    width: 100%;
+    outline: none;
+    transition: border-color 0.15s;
+}
+
+.input:focus {
+    border-color: var(--color-primary);
+}
+
+/* ─── Employee Card ─── */
+.employeeCard {
+    background: var(--bg-secondary, #f9f9f9);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md, 8px);
+    padding: 1.25rem 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.empInfo {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.empName {
+    font-family: var(--font-serif);
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: var(--text-primary);
+}
+
+.empMeta {
+    font-family: var(--font-body);
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+}
+
+.label {
+    display: block;
+    font-family: var(--font-body);
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    margin-bottom: 0.4rem;
+}
+
+.courseSelector,
+.folioRow {
+    display: flex;
+    flex-direction: column;
+}
+
+.noCoursesMsg {
+    font-family: var(--font-body);
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    margin: 0;
+}
+
+/* ─── Actions ─── */
+.actions {
+    display: flex;
+    justify-content: flex-end;
+}
+
+/* ─── Preview Section ─── */
+.previewSection {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.previewWrapper {
+    background: var(--bg-secondary, #f0f0f0);
+    border-radius: var(--radius-lg, 12px);
+    padding: 2rem;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+}
+
+/* ─── Certificate ─── */
+.certificate {
+    background: #ffffff;
+    width: 100%;
+    max-width: 720px;
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-lg, 12px);
+    overflow: hidden;
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
+    display: flex;
+    flex-direction: column;
+    position: relative;
+}
+
+.accentBar {
+    height: 6px;
+    background: var(--color-primary);
+}
+
+.accentBarBottom {
+    height: 3px;
+    background: var(--color-primary);
+    opacity: 0.35;
+    margin-top: auto;
+}
+
+/* ─── Cert Header ─── */
+.certHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.5rem 2rem 1rem;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.certLogo {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+}
+
+.certCompany {
+    font-family: var(--font-serif);
+    font-size: 1rem;
+    font-weight: 800;
+    color: var(--text-primary);
+    letter-spacing: 0.06em;
+}
+
+.certMeta {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 0.2rem;
+}
+
+.certFolio {
+    font-family: var(--font-body);
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+}
+
+.certDate {
+    font-family: var(--font-body);
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+}
+
+/* ─── Cert Body ─── */
+.certBody {
+    padding: 2rem 2.5rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.85rem;
+    text-align: center;
+}
+
+.certIntro {
+    font-family: var(--font-serif);
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.18em;
+    color: var(--color-primary);
+    text-transform: uppercase;
+    margin: 0;
+}
+
+.certText {
+    font-family: var(--font-body);
+    font-size: 0.9rem;
+    color: var(--text-primary);
+    line-height: 1.6;
+    margin: 0;
+}
+
+.certEmployeeName {
+    font-family: var(--font-serif);
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin: 0.25rem 0;
+    letter-spacing: -0.02em;
+}
+
+.certCourseName {
+    font-family: var(--font-serif);
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--color-primary);
+    margin: 0.25rem 0;
+    padding: 0.5rem 1.5rem;
+    border-top: 1px solid var(--border-color);
+    border-bottom: 1px solid var(--border-color);
+    width: 100%;
+}
+
+/* ─── Signatures ─── */
+.certSignatures {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+    padding: 1.5rem 2.5rem 2rem;
+    border-top: 1px solid var(--border-color);
+    margin-top: 4rem;
+}
+
+.sigBlock {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.3rem;
+}
+
+.sigLine {
+    width: 100%;
+    height: 1px;
+    background: var(--text-primary);
+    margin-bottom: 0.4rem;
+}
+
+.sigLabel {
+    font-family: var(--font-body);
+    font-size: 0.7rem;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    margin: 0;
+    text-align: center;
+}
+
+.sigName {
+    font-family: var(--font-body);
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin: 0;
+    text-align: center;
+}
+
+/* ─── Responsive ─── */
+@media (max-width: 640px) {
+    .page {
+        padding: 1rem 1rem 2rem;
+    }
+
+    .searchRow {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .certEmployeeName {
+        font-size: 1.25rem;
+    }
+
+    .certSignatures {
+        grid-template-columns: 1fr;
+        gap: 1.25rem;
+    }
+
+    .previewWrapper {
+        padding: 1rem;
+    }
+}
+
+/* ─── Print (ventana separada — ver handlePrint en page.js) ─── */
+@media print {
+    .accentBar {
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+    }
+
+    .accentBarBottom {
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+    }
+
+    .certIntro,
+    .certCourseName {
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+    }
+}

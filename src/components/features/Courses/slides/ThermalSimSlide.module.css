@@ -1,0 +1,304 @@
+/* ── ThermalSimSlide — Simulador LOTO Térmico ── */
+
+.slide {
+    /* Tokens locales */
+    --c-primary-sim:  #3b82f6;
+    --c-safe-line:    #4ade80;
+    --c-amber-line:   #fbbf24;
+    --c-danger-local: #f87171;
+    --c-surface-sim:  #1e2432;
+    --c-panel-sim:    #151924;
+    --c-text-dim:     rgba(255, 255, 255, 0.45);
+    --c-success:      #4ade80;
+    --c-amber:        #fbbf24;
+    --c-danger:       #f87171;
+
+    width: 100%;
+    max-width: 1100px;
+    /* Llenar el espacio disponible del player (header ~50px + footer ~70px + progress ~8px) */
+    min-height: calc(100dvh - 145px);
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    padding: 1.5rem 2rem 1.75rem;
+    background: var(--c-surface-sim);
+    color: #f1f5f9;
+    font-family: var(--font-body), 'Roboto', sans-serif;
+    border-radius: 16px;
+    overflow-y: auto;
+    animation: courseFadeIn var(--course-duration-slow, 0.4s) var(--course-ease-out, ease-out);
+}
+
+/* ── Header ── */
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+.headerLeft {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+}
+
+.heading {
+    font-family: var(--font-serif), 'Montserrat', sans-serif;
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: #f8fafc;
+    margin: 0;
+}
+
+.subtitle {
+    font-size: 0.8rem;
+    color: var(--c-text-dim);
+    margin: 0;
+}
+
+/* ── Stats ── */
+.stats {
+    display: flex;
+    gap: 1.5rem;
+    flex-wrap: wrap;
+}
+
+.statItem {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 0.1rem;
+}
+
+.statLabel {
+    font-size: 0.65rem;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    color: var(--c-text-dim);
+    text-transform: uppercase;
+}
+
+.statValue {
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: #f1f5f9;
+}
+
+.statusSafe  { color: var(--c-success) !important; }
+.statusWait  { color: var(--c-amber)   !important; }
+
+/* ── Main Panel ── */
+.panel {
+    background: var(--c-panel-sim);
+    border-radius: 12px;
+    padding: 1.25rem 1.25rem 0.75rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    flex: 1;
+}
+
+/* ── Status Badge ── */
+.statusBadge {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: 0.6rem;
+    flex-wrap: wrap;
+}
+
+.statusIcon {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid currentColor;
+    padding: 7px;
+    transition: color 0.3s, border-color 0.3s;
+}
+
+.iconSafe {
+    color: var(--c-success);
+}
+
+.iconWait {
+    color: var(--c-amber);
+}
+
+.statusText {
+    font-family: var(--font-serif), 'Montserrat', sans-serif;
+    font-size: 0.8rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+}
+
+.statusHint {
+    font-size: 0.68rem;
+    color: var(--c-text-dim);
+    text-align: left;
+    max-width: 280px;
+}
+
+/* ── Chart ── */
+.chartWrap {
+    width: 100%;
+    flex: 1;
+    min-height: 260px;
+}
+
+/* Recharts text override */
+.chartWrap text {
+    fill: rgba(255, 255, 255, 0.45) !important;
+    font-family: var(--font-body), 'Roboto', sans-serif !important;
+    font-size: 11px !important;
+}
+
+/* ── Tooltip ── */
+.tooltip {
+    background: #0f172a;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 8px;
+    padding: 0.5rem 0.75rem;
+}
+
+.tooltipTime {
+    font-size: 0.7rem;
+    color: var(--c-text-dim);
+    margin: 0 0 0.15rem;
+}
+
+.tooltipTemp {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: var(--c-primary-sim);
+    margin: 0;
+}
+
+/* ── Controls ── */
+.controls {
+    display: flex;
+    gap: 1.5rem;
+    align-items: center;
+    flex-wrap: wrap;
+    padding: 0.5rem 0;
+}
+
+.controlGroup {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.controlLabel {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.55);
+    white-space: nowrap;
+    letter-spacing: 0.02em;
+}
+
+/* ── Slider ── */
+.sliderRow {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+}
+
+.slider {
+    -webkit-appearance: none;
+    appearance: none;
+    height: 4px;
+    width: 140px;
+    background: rgba(255, 255, 255, 0.15);
+    border-radius: 99px;
+    outline: none;
+    cursor: pointer;
+}
+
+.slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: var(--c-primary-sim);
+    cursor: pointer;
+    border: 2px solid #fff;
+    transition: transform 0.15s;
+}
+
+.slider::-webkit-slider-thumb:hover {
+    transform: scale(1.2);
+}
+
+.sliderValue {
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: #f1f5f9;
+    min-width: 2.5rem;
+    text-align: center;
+    background: rgba(255, 255, 255, 0.08);
+    border-radius: 6px;
+    padding: 0.15rem 0.4rem;
+}
+
+/* ── Select ── */
+.select {
+    background: rgba(255, 255, 255, 0.07);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 8px;
+    color: #f1f5f9;
+    font-family: var(--font-body), 'Roboto', sans-serif;
+    font-size: 0.85rem;
+    padding: 0.35rem 0.75rem;
+    outline: none;
+    cursor: pointer;
+    transition: border-color 0.15s;
+}
+
+.select:focus {
+    border-color: var(--c-primary-sim);
+}
+
+.select option {
+    background: #1e2432;
+    color: #f1f5f9;
+}
+
+/* ── Responsive ── */
+@media (max-width: 640px) {
+    .slide {
+        padding: 1rem;
+    }
+
+    .header {
+        flex-direction: column;
+    }
+
+    .stats {
+        gap: 1rem;
+        justify-content: space-between;
+        width: 100%;
+    }
+
+    .statItem {
+        align-items: flex-start;
+    }
+
+    .slider {
+        width: 100px;
+    }
+
+    .controls {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+    }
+}
