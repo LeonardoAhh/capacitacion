@@ -85,10 +85,10 @@ export const getExamEligibility = (examAttempts = [], temporalityMonths, positio
         ? examAttempts[examAttempts.length - 1]
         : null;
 
-    // If already passed, no need to retake
+    // Already passed — allow registering a new attempt in case they retook the exam
     if (lastAttempt?.passed) {
         return {
-            canTakeExam: false,
+            canTakeExam: true,
             nextDate: null,
             reason: 'Examen aprobado',
             status: 'passed'
