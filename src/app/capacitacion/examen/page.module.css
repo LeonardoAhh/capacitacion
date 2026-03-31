@@ -232,68 +232,94 @@
 /* The actual sheet must remain white for paper simulation */
 .examSheet {
     background: white;
-    width: 210mm;
-    min-height: 297mm;
-    padding: 20mm;
+    width: 216mm;
+    min-height: 279mm;
+    padding: 10mm 20mm 20mm 20mm;
     margin: 0 auto;
     box-shadow: var(--shadow-lg);
-    font-family: 'Times New Roman', Times, serif;
+    font-family: var(--font-body);
     color: black;
 }
 
 .examHeader {
+    border-bottom: 1.5px solid black;
+    padding-bottom: 0.5rem;
+    margin-bottom: 0;
+}
+
+.examHeader .pageTitle {
+    font-size: 1.4rem;
+    font-weight: 800;
+    letter-spacing: 0.01em;
+    color: black;
+    display: block;
+}
+
+.examHeaderRow {
     display: flex;
     justify-content: space-between;
-    align-items: center;
-    border-bottom: 2px solid black;
-    padding-bottom: 1rem;
-    margin-bottom: 1.5rem;
+    align-items: flex-end;
+    border-top: 4px solid black;
+    padding-top: 0.5rem;
+    margin-top: 0.35rem;
 }
 
 .logoArea h2 {
-    margin: 0;
-    font-size: 1.5rem;
-    font-weight: bold;
+    margin: 0 0 0.15rem 0;
+    font-size: 1.4rem;
+    font-weight: 800;
+    font-family: var(--font-serif);
     color: black;
+    letter-spacing: 0.01em;
 }
 
 .logoArea p {
-    color: black;
+    color: #444;
     margin: 0;
+    font-size: 0.8rem;
 }
 
-.examInfo {
-    text-align: right;
+
+.headerSignature {
+    text-align: center;
+    width: 120px;
+    flex-shrink: 0;
     color: black;
 }
 
-.examInfo h1 {
-    margin: 0 0 0.5rem 0;
-    font-size: 1.2rem;
-    color: black;
-}
-
-.examInfo p {
-    margin: 0.2rem 0;
+.headerSignature p {
+    margin: 0.25rem 0 0;
+    font-size: 0.75rem;
     color: black;
 }
 
 .employeeInfoBox {
-    border: 1px solid black;
-    padding: 1rem;
+    border: 1.5px solid black;
     margin-bottom: 1.5rem;
-    background: #f9fafb;
     color: black;
+    overflow: hidden;
 }
 
 .infoRow {
     display: flex;
     justify-content: space-between;
-    margin-bottom: 0.5rem;
+    padding: 0.45rem 0.85rem;
+    border-bottom: 1px solid #ccc;
+    font-size: 0.82rem;
+}
+
+.infoRowLast {
+    border-bottom: none;
+    background: #f3f4f6;
 }
 
 .infoRow span {
     color: black;
+}
+
+.scoreBlank {
+    letter-spacing: 0.1em;
+    color: #555;
 }
 
 .instructions {
@@ -318,7 +344,7 @@
 
 .questionText {
     margin-bottom: 0.5rem;
-    font-size: 1.05rem;
+    font-size: 0.875rem;
     color: black;
 }
 
@@ -331,6 +357,7 @@
     display: flex;
     align-items: center;
     margin-bottom: 0.25rem;
+    font-size: 0.8rem;
 }
 
 .checkbox {
@@ -348,10 +375,11 @@
 }
 
 .signatures {
-    margin-top: 4rem;
+    margin-top: 2rem;
     display: flex;
     justify-content: space-between;
     page-break-inside: avoid;
+    page-break-before: avoid;
     color: black;
     background-color: transparent;
 }
@@ -371,6 +399,13 @@
 .signLine {
     border-top: 1px solid black;
     margin-bottom: 0.5rem;
+}
+
+.examDate {
+    margin-top: 1rem;
+    color: black;
+    font-size: 0.95rem;
+    page-break-before: avoid;
 }
 
 .scoreBox {
@@ -403,15 +438,19 @@
     }
 
     /* El título dentro del examen debe ser de tamaño carta, no el XL del sistema de diseño */
-    .examInfo .pageTitle {
+    .examHeader .pageTitle {
         font-size: 1.2rem !important;
-        font-family: 'Times New Roman', Times, serif !important;
-        font-weight: bold !important;
+        font-family: var(--font-serif) !important;
+        font-weight: 700 !important;
         letter-spacing: 0 !important;
+        text-align: center !important;
+        display: block !important;
+        color: black !important;
     }
 
     @page {
-        margin: 20mm;
+        size: letter;
+        margin: 10mm 20mm 20mm 20mm;
     }
 }
 

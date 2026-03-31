@@ -1,14 +1,11 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import BackButton from '@/components/ui/BackButton/BackButton';
 import { db } from '@/lib/firebase';
-import { collection, getDocs, query, orderBy, where } from 'firebase/firestore';
+import { collection, getDocs, query, orderBy } from 'firebase/firestore';
 import { Button } from '@/components/ui/Button/Button';
 import { Select } from '@/components/ui/Select/Select';
 import { useToast } from '@/components/ui/Toast/Toast';
-import { Card, CardContent } from '@/components/ui/Card/Card';
-import Link from 'next/link';
 import styles from './page.module.css';
 
 import AdminLayout from '@/components/layout/AdminLayout/AdminLayout'; // [NEW]
@@ -307,14 +304,16 @@ export default function ExamenPage() {
                         {/* Printable Exam Sheet */}
                         <div className={styles.examSheet}>
                             <div className={styles.examHeader}>
-                                <div className={styles.logoArea}>
-                                    {/* Placeholder for Logo if exists, or text */}
-                                    <h2>VIÑOPLASTIC</h2>
-                                    <p>Ingeniería en Plásticos</p>
-                                </div>
-                                <div className={styles.examInfo}>
-                                    <h1 className={styles.pageTitle}>EXAMEN DE CONOCIMIENTOS</h1>
-                                    <p><strong>Fecha:</strong> {examData.date}</p>
+                                <h1 className={styles.pageTitle}>EXAMEN DE CONOCIMIENTOS</h1>
+                                <div className={styles.examHeaderRow}>
+                                    <div className={styles.logoArea}>
+                                        <h2>VIÑOPLASTIC</h2>
+                                        <strong><p>Ingeniería en Plásticos</p></strong>
+                                    </div>
+                                    <div className={styles.headerSignature}>
+                                        <div className={styles.signLine}></div>
+                                        <strong><p>Firma del Empleado</p></strong>
+                                    </div>
                                 </div>
                             </div>
 
@@ -326,6 +325,10 @@ export default function ExamenPage() {
                                 <div className={styles.infoRow}>
                                     <span><strong>Departamento:</strong> {examData.employee.department}</span>
                                     <span><strong>Puesto:</strong> {examData.employee.position}</span>
+                                </div>
+                                <div className={`${styles.infoRow} ${styles.infoRowLast}`}>
+                                    <span><strong>Fecha:</strong> {examData.date}</span>
+                                    <span><strong>Calificación:</strong> <span className={styles.scoreBlank}>___________</span></span>
                                 </div>
                             </div>
 
@@ -368,16 +371,6 @@ export default function ExamenPage() {
                         }
                     `}</style>
 
-                            <div className={styles.signatures}>
-                                <div className={styles.signatureBox}>
-                                    <div className={styles.signLine}></div>
-                                    <p>Firma del Empleado</p>
-                                </div>
-                                <div className={styles.signatureBox}>
-                                    <div className={styles.signLine}></div>
-                                    <p>Firma del Evaluador</p>
-                                </div>
-                            </div>
                         </div>
                     </div>
                 </div>
