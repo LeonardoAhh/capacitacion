@@ -2,6 +2,7 @@
 
 import { useReducer, useEffect, useCallback, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import Image from 'next/image';
 import QRCode from 'qrcode';
 import {
     IconArrowLeft, IconX, IconMenu,
@@ -635,10 +636,13 @@ export default function EditorPage({ params }) {
                                     </button>
                                 </div>
                                 {qrDataUrl && (
-                                    <img
+                                    <Image
                                         src={qrDataUrl}
                                         alt="QR público para el quiz"
                                         className={styles.qrImage}
+                                        width={160}
+                                        height={160}
+                                        unoptimized
                                     />
                                 )}
                             </>
@@ -677,10 +681,13 @@ export default function EditorPage({ params }) {
                                     </button>
                                 </div>
                                 {courseQrDataUrl && (
-                                    <img
+                                    <Image
                                         src={courseQrDataUrl}
                                         alt="QR público para ver el curso completo"
                                         className={styles.qrImage}
+                                        width={160}
+                                        height={160}
+                                        unoptimized
                                     />
                                 )}
                             </>
