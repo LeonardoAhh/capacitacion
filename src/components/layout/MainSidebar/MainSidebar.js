@@ -8,7 +8,7 @@ import {
     LogOut, X, ChevronDown,
     Users, CheckSquare, Calendar, BarChart2, BookOpen,
     UserCheck, Briefcase, FileText, FileCheck, Layers,
-    Zap, CalendarRange, LayoutDashboard, Award, GraduationCap, Settings
+    Zap, CalendarRange, LayoutDashboard, Award, GraduationCap, Settings, FileImage
 } from 'lucide-react';
 import styles from './MainSidebar.module.css';
 
@@ -51,6 +51,14 @@ const NAV_SECTIONS = [
             { id: 'induccion', label: 'Material Cursos', href: '/induccion', icon: Zap },
             { id: 'prototipo', label: 'Exámen Digital', href: '/prototipo', icon: Zap },
             { id: 'mural', label: 'Resultados Mural', href: '/mural', icon: Zap },
+        ],
+    },
+    {
+        id: 'salas',
+        label: 'Salas',
+        icon: LayoutDashboard,
+        items: [
+            { id: 'asistencia', label: 'Asistencia', href: '/salas/asistencia', icon: UserCheck },
         ],
     },
 ];
@@ -136,6 +144,7 @@ export default function MainSidebar({ user, handleLogout, isOpen, onClose, isCol
         if (pathname.startsWith('/capacitacion')) return 'capacitacion';
         if (pathname.startsWith('/employees') || pathname.startsWith('/candidates') || pathname.startsWith('/programacion') || pathname.startsWith('/contratos')) return 'ingresos';
         if (pathname.startsWith('/induccion') || pathname.startsWith('/prototipo') || pathname.startsWith('/mural')) return 'recursos';
+        if (pathname.startsWith('/salas')) return 'salas';
         return null;
     };
 
