@@ -5,9 +5,8 @@ import { db } from '@/lib/firebase';
 import { doc, getDoc } from 'firebase/firestore';
 import styles from './page.module.css';
 import { Search, Award, Star, Calendar, CheckCircle2, AlertCircle, RefreshCw, BookOpen } from 'lucide-react';
-import Image from 'next/image';
 
-const CONFETTI_COLORS = ['#fcd34d', '#10b981', '#3b82f6', '#f472b6', '#a855f7'];
+const CONFETTI_COLORS = ['#fbbf24', '#f59e0b', '#10b981', '#34d399', '#d1fae5'];
 
 const Confetti = () => {
     const particles = useMemo(() =>
@@ -148,27 +147,11 @@ export default function MuralPage() {
     const showForm = !result?.found;
 
     return (
-        <main className={styles.main}>
-            <div className={styles.bgDecoration} aria-hidden="true">
-                <div className={`${styles.blob} ${styles.blob1}`} />
-                <div className={`${styles.blob} ${styles.blob2}`} />
-                <div className={`${styles.blob} ${styles.blob3}`} />
-                <div className={styles.noiseOverlay} />
-            </div>
+        <main className={`${styles.main} ${result?.found ? (result.data.passed ? styles.resultSuccess : styles.resultFail) : ''}`}>
 
             <div className={styles.container}>
                 {!result?.found && (
                     <header className={styles.header}>
-                        <div className={styles.headerIconWrapper}>
-                            <Image
-                                src="/logo-vino-plastic.png"
-                                alt="Logo Viñoplastic"
-                                width={72}
-                                height={72}
-                                style={{ objectFit: 'contain' }}
-                                priority
-                            />
-                        </div>
                         <h1 className={styles.pageTitle}>Mural de Resultados</h1>
                     </header>
                 )}
