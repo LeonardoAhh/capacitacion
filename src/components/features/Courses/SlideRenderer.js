@@ -13,6 +13,7 @@ import FlashcardSlide from './slides/FlashcardSlide';
 import FillBlankSlide from './slides/FillBlankSlide';
 import ChecklistSlide from './slides/ChecklistSlide';
 import ThermalSimSlide from './slides/ThermalSimSlide';
+import EnvSimSlide from './slides/EnvSimSlide';
 
 const SLIDE_COMPONENTS = {
     title: TitleSlide,
@@ -29,6 +30,7 @@ const SLIDE_COMPONENTS = {
     fill_blank: FillBlankSlide,
     checklist: ChecklistSlide,
     thermal_sim: ThermalSimSlide,
+    env_sim: EnvSimSlide,
     // Mapeos para tipos especiales
     group_quiz: QuizSlide,
     group_dynamic: ContentSlide,

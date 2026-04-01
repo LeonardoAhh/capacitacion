@@ -41,6 +41,7 @@ const SLIDE_BADGES = {
     fill_blank: { emoji: '✏️', label: 'Completa la Frase' },
     checklist: { emoji: '☑️', label: 'Checklist' },
     thermal_sim: { emoji: '🌡️', label: 'Simulador LOTO' },
+    env_sim:      { emoji: '🌿', label: 'Simulador Ambiental' },
 };
 
 // ── Utilidades ──────────────────────────────────────────────────────────────

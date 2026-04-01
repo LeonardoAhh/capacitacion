@@ -1,0 +1,394 @@
+/* ── EnvSimSlide — Simulador Ambiental Causa-Efecto ── */
+
+.slide {
+    /* Tokens locales */
+    --c-surface:     #1e2432;
+    --c-panel:       #151924;
+    --c-blue:        #3b82f6;
+    --c-blue-dim:    rgba(59, 130, 246, 0.15);
+    --c-blue-border: rgba(59, 130, 246, 0.35);
+    --c-red:         #f87171;
+    --c-red-dim:     rgba(248, 113, 113, 0.15);
+    --c-red-border:  rgba(248, 113, 113, 0.35);
+    --c-green:       #4ade80;
+    --c-amber:       #fbbf24;
+    --c-text-dim:    rgba(255, 255, 255, 0.45);
+    --c-text-mid:    rgba(255, 255, 255, 0.65);
+
+    width: 100%;
+    max-width: 1100px;
+    min-height: calc(100dvh - 145px);
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    padding: 1.5rem 2rem 1.75rem;
+    background: var(--c-surface);
+    color: #f1f5f9;
+    font-family: var(--font-body), 'Roboto', sans-serif;
+    border-radius: 16px;
+    overflow-y: auto;
+    animation: courseFadeIn var(--course-duration-slow, 0.4s) var(--course-ease-out, ease-out);
+}
+
+/* ── Header ── */
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+.headerLeft {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+}
+
+.headerIcon {
+    color: #4ade80;
+    flex-shrink: 0;
+    margin-top: 3px;
+}
+
+.heading {
+    font-family: var(--font-serif), 'Montserrat', sans-serif;
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #f8fafc;
+    margin: 0 0 0.2rem;
+}
+
+.subtitle {
+    font-size: 0.8rem;
+    color: var(--c-text-dim);
+    margin: 0;
+}
+
+/* ── Score pill ── */
+.scorePill {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: rgba(255, 255, 255, 0.07);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 99px;
+    padding: 0.35rem 0.9rem;
+    font-size: 0.78rem;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.scoreProgress { color: var(--c-text-mid); }
+.scoreDivider  { color: var(--c-text-dim); }
+.scorePoints   { color: #4ade80; }
+
+/* ── Instrucciones ── */
+.instructions {
+    font-size: 0.82rem;
+    color: var(--c-text-mid);
+    text-align: center;
+    margin: 0;
+    line-height: 1.5;
+}
+
+.accentBlue { color: var(--c-blue); font-weight: 600; }
+.accentRed  { color: var(--c-red);  font-weight: 600; }
+
+/* ── Grid 3 columnas ── */
+.grid {
+    display: grid;
+    /* Actividad | flecha | Aspecto | flecha | Impacto */
+    grid-template-columns: 1fr 48px 1fr 48px 1fr;
+    gap: 0;
+    flex: 1;
+    min-height: 280px;
+}
+
+/* ── Tarjetas ── */
+.card {
+    background: var(--c-panel);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 12px;
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.cardBlue { border-color: var(--c-blue-border); }
+.cardRed  { border-color: var(--c-red-border);  }
+
+/* ── Badges de tarjeta ── */
+.cardBadge {
+    font-size: 0.65rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    border-radius: 99px;
+    padding: 0.2rem 0.6rem;
+    width: fit-content;
+}
+
+.cardBadgeGray { background: rgba(255,255,255,0.08); color: var(--c-text-mid); }
+.cardBadgeBlue { background: var(--c-blue-dim);       color: var(--c-blue);    }
+.cardBadgeRed  { background: var(--c-red-dim);        color: var(--c-red);     }
+
+/* ── Cuerpo de la tarjeta Actividad ── */
+.cardBody {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    gap: 0.6rem;
+    padding: 0.5rem 0;
+}
+
+.activityIcon { color: rgba(255, 255, 255, 0.55); }
+
+.activityTitle {
+    font-family: var(--font-serif), 'Montserrat', sans-serif;
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: #f1f5f9;
+    margin: 0;
+    line-height: 1.4;
+}
+
+.activityHint {
+    font-size: 0.72rem;
+    color: var(--c-text-dim);
+    margin: 0;
+}
+
+/* ── Flecha conectora ── */
+.arrowWrap {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.arrowIcon { color: rgba(255,255,255,0.15); }
+
+/* ── Lista de opciones ── */
+.optionsList {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.optionBtn {
+    width: 100%;
+    text-align: left;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 8px;
+    padding: 0.55rem 0.75rem;
+    font-size: 0.8rem;
+    color: var(--c-text-mid);
+    font-family: var(--font-body), 'Roboto', sans-serif;
+    cursor: pointer;
+    transition: border-color 0.15s, background 0.15s, color 0.15s;
+    line-height: 1.4;
+}
+
+.optionBtn:hover {
+    background: rgba(255,255,255,0.08);
+    color: #f1f5f9;
+}
+
+/* Seleccionado Aspecto (azul) */
+.optionBtnBlueActive {
+    background: var(--c-blue-dim) !important;
+    border-color: var(--c-blue) !important;
+    color: #f1f5f9 !important;
+    box-shadow: 0 0 0 1px var(--c-blue);
+}
+
+/* Seleccionado Impacto (rojo) */
+.optionBtnRedActive {
+    background: var(--c-red-dim) !important;
+    border-color: var(--c-red) !important;
+    color: #f1f5f9 !important;
+    box-shadow: 0 0 0 1px var(--c-red);
+}
+
+/* ── Feedback ── */
+.feedback {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.6rem;
+    border-radius: 10px;
+    padding: 0.75rem 1rem;
+    border: 1px solid transparent;
+}
+
+/* El color de énfasis (verde/rojo/ámbar) va solo en borde e ícono.
+   El texto siempre blanco para máximo contraste sobre fondo oscuro. */
+.feedback_success {
+    background: rgba(74, 222, 128, 0.1);
+    border-color: rgba(74, 222, 128, 0.3);
+    color: var(--c-green); /* afecta al ícono */
+}
+
+.feedback_error {
+    background: rgba(248, 113, 113, 0.1);
+    border-color: rgba(248, 113, 113, 0.3);
+    color: var(--c-red); /* afecta al ícono */
+}
+
+.feedback_warning {
+    background: rgba(251, 191, 36, 0.1);
+    border-color: rgba(251, 191, 36, 0.3);
+    color: var(--c-amber); /* afecta al ícono */
+}
+
+.feedbackText {
+    font-size: 0.82rem;
+    font-weight: 500;
+    margin: 0;
+    line-height: 1.5;
+    /* Siempre blanco, independientemente del tipo de feedback */
+    color: #f1f5f9;
+}
+
+/* ── Footer (botón verificar) ── */
+.footer {
+    display: flex;
+    justify-content: center;
+    padding-top: 0.5rem;
+    border-top: 1px solid rgba(255,255,255,0.07);
+}
+
+.verifyBtn {
+    background: var(--c-blue);
+    color: #fff;
+    border: none;
+    border-radius: 10px;
+    padding: 0.65rem 2rem;
+    font-size: 0.9rem;
+    font-weight: 700;
+    font-family: var(--font-body), 'Roboto', sans-serif;
+    cursor: pointer;
+    transition: background 0.15s, transform 0.1s, box-shadow 0.15s;
+    box-shadow: 0 2px 8px rgba(59,130,246,0.3);
+}
+
+.verifyBtn:hover {
+    background: #2563eb;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 16px rgba(59,130,246,0.45);
+}
+
+.verifyBtn:active {
+    transform: translateY(0);
+}
+
+.verifyBtnDisabled {
+    background: rgba(255,255,255,0.1) !important;
+    color: var(--c-text-dim) !important;
+    cursor: not-allowed !important;
+    box-shadow: none !important;
+    transform: none !important;
+}
+
+/* ── Pantalla completado ── */
+.completedWrap {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    padding: 2rem;
+    text-align: center;
+}
+
+.completedIcon { color: var(--c-green); }
+
+.completedTitle {
+    font-family: var(--font-serif), 'Montserrat', sans-serif;
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: #f8fafc;
+    margin: 0;
+}
+
+.completedBody {
+    font-size: 0.9rem;
+    color: var(--c-text-mid);
+    max-width: 420px;
+    line-height: 1.6;
+    margin: 0;
+}
+
+.scoreBadge {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.25rem;
+    background: rgba(74, 222, 128, 0.1);
+    border: 1px solid rgba(74, 222, 128, 0.25);
+    border-radius: 12px;
+    padding: 0.75rem 2rem;
+}
+
+.scoreLabel {
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--c-text-dim);
+}
+
+.scoreValue {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: var(--c-green);
+}
+
+.restartBtn {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: var(--c-green);
+    color: #0f172a;
+    border: none;
+    border-radius: 10px;
+    padding: 0.65rem 1.75rem;
+    font-size: 0.9rem;
+    font-weight: 700;
+    font-family: var(--font-body), 'Roboto', sans-serif;
+    cursor: pointer;
+    transition: background 0.15s, transform 0.1s;
+}
+
+.restartBtn:hover {
+    background: #86efac;
+    transform: translateY(-1px);
+}
+
+/* ── Responsivo ── */
+@media (max-width: 768px) {
+    .slide {
+        padding: 1rem;
+    }
+
+    .grid {
+        grid-template-columns: 1fr;
+        grid-template-rows: auto;
+    }
+
+    .arrowWrap {
+        transform: rotate(90deg);
+        height: 32px;
+    }
+
+    .scorePill {
+        font-size: 0.72rem;
+    }
+}

@@ -20,6 +20,7 @@ import VideoSlideEditor from './SlideEditors/VideoSlideEditor';
 import FlashcardSlideEditor from './SlideEditors/FlashcardSlideEditor';
 import FillBlankSlideEditor from './SlideEditors/FillBlankSlideEditor';
 import ChecklistSlideEditor from './SlideEditors/ChecklistSlideEditor';
+import EnvSimSlideEditor from './SlideEditors/EnvSimSlideEditor';
 
 const DEBOUNCE_MS = 800;
 
@@ -56,6 +57,8 @@ function SlideFieldRouter({ type, formData, handleChange, handleBatchChange, set
             return <FillBlankSlideEditor {...props} />;
         case 'checklist':
             return <ChecklistSlideEditor {...props} />;
+        case 'env_sim':
+            return <EnvSimSlideEditor {...props} />;
         default:
             return (
                 <p className={styles.noEditor}>

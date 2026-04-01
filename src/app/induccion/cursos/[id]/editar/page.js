@@ -47,6 +47,7 @@ const SLIDE_SECTIONS = [
         label: 'Simuladores',
         types: [
             { type: 'thermal_sim', label: 'Simulador Térmico LOTO', icon: IconActivity, iconColor: '#f97316', desc: 'Disipación térmica interactiva NOM-004' },
+            { type: 'env_sim',     label: 'Simulador Ambiental',    icon: IconActivity, iconColor: '#16a34a', desc: 'Matriz Causa-Efecto Ambiental ISO 14001' },
         ],
     },
 ];

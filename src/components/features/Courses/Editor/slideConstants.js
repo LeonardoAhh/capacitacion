@@ -20,6 +20,7 @@ export const SLIDE_TYPE_LABELS = {
     group_dynamic: 'Dinámica',
     // Nuevos tipos
     thermal_sim:   'Simulador Térmico',
+    env_sim:        'Simulador Ambiental',
     video:         'Video',
     flashcard:     'Tarjetas',
     fill_blank:    'Completa la Frase',
@@ -89,6 +90,11 @@ const SLIDE_DEFAULT_DATA_FACTORIES = {
         heading: 'Seguridad LOTO: Disipación Térmica',
         subtitle: 'Componente a temperatura segura para mantenimiento.',
         safeTemp: 50,
+    }),
+    env_sim: () => ({
+        heading: 'Simulador: Matriz Causa-Efecto Ambiental',
+        subtitle: 'Identifica el Aspecto e Impacto ambiental de cada actividad de planta.',
+        scenarios: [], // vacío = usa los 4 escenarios por defecto del componente
     }),
     video:      () => ({
         heading: '',
