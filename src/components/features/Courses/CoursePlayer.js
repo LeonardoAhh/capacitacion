@@ -530,8 +530,8 @@ export default function CoursePlayer({ course, slides, onClose, inline = false, 
                 )}
             </main>
 
-            {/* ── Nav ── */}
-            <nav className={styles.nav} aria-label="Navegación de slides">
+            {/* ── Nav (oculto: navegación disponible con teclado y swipe) ── */}
+            <nav className={styles.nav} aria-label="Navegación de slides" aria-hidden="true" style={{ display: 'none' }}>
                 <button
                     className={styles.navBtn}
                     onClick={goPrev}

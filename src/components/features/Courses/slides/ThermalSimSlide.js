@@ -136,58 +136,60 @@ const ThermalSimSlide = React.memo(function ThermalSimSlide({ data }) {
 
                 {/* Chart */}
                 <div className={styles.chartWrap} aria-label="Gráfica de disipación térmica">
-                    <ResponsiveContainer width="100%" height="100%">
-                        <AreaChart data={chartData} margin={{ top: 28, right: 16, left: 0, bottom: 20 }}>
-                            <defs>
-                                <linearGradient id="tempGrad" x1="0" y1="0" x2="0" y2="1">
-                                    <stop offset="5%" stopColor="var(--c-primary-sim)" stopOpacity={0.35} />
-                                    <stop offset="95%" stopColor="var(--c-primary-sim)" stopOpacity={0.03} />
-                                </linearGradient>
-                            </defs>
-                            <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.07)" />
-                            <XAxis
-                                dataKey="t"
-                                label={{ value: 'Tiempo (Minutos) →', position: 'insideBottomRight', offset: -4, fontSize: 11, fill: 'var(--c-text-dim)' }}
-                                tick={{ fontSize: 11, fill: 'var(--c-text-dim)' }}
-                                tickLine={false}
-                                interval={9}
-                            />
-                            <YAxis
-                                label={{ value: '↑ Temperatura (°C)', angle: -90, position: 'insideLeft', offset: 12, fontSize: 11, fill: 'var(--c-text-dim)' }}
-                                tick={{ fontSize: 11, fill: 'var(--c-text-dim)' }}
-                                tickLine={false}
-                                domain={[0, Math.max(opTemp + 20, 120)]}
-                            />
-                            <Tooltip content={<CustomTooltip />} />
-                            <ReferenceLine
-                                y={safeLimit}
-                                stroke="var(--c-safe-line)"
-                                strokeWidth={1.5}
-                                strokeDasharray="6 3"
-                                label={{ value: safeLineLabel, position: 'insideTopLeft', fontSize: 11, fill: 'var(--c-safe-line)' }}
-                            />
-                            {/* Área de tiempo de espera */}
-                            {waitMin > 0 && (
-                                <ReferenceLine
-                                    x={waitMin}
-                                    stroke="var(--c-amber-line)"
-                                    strokeWidth={1.5}
-                                    strokeDasharray="4 4"
-                                    label={{ value: `${waitMin} min`, position: 'top', fontSize: 11, fill: 'var(--c-amber-line)' }}
+                    <div className={styles.chartInner}>
+                        <ResponsiveContainer width="100%" height="100%">
+                            <AreaChart data={chartData} margin={{ top: 28, right: 16, left: 0, bottom: 20 }}>
+                                <defs>
+                                    <linearGradient id="tempGrad" x1="0" y1="0" x2="0" y2="1">
+                                        <stop offset="5%" stopColor="var(--c-primary-sim)" stopOpacity={0.35} />
+                                        <stop offset="95%" stopColor="var(--c-primary-sim)" stopOpacity={0.03} />
+                                    </linearGradient>
+                                </defs>
+                                <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.07)" />
+                                <XAxis
+                                    dataKey="t"
+                                    label={{ value: 'Tiempo (Minutos) →', position: 'insideBottomRight', offset: -4, fontSize: 11, fill: 'var(--c-text-dim)' }}
+                                    tick={{ fontSize: 11, fill: 'var(--c-text-dim)' }}
+                                    tickLine={false}
+                                    interval={9}
                                 />
-                            )}
-                            <Area
-                                type="monotone"
-                                dataKey="temp"
-                                stroke="var(--c-primary-sim)"
-                                strokeWidth={2}
-                                fill="url(#tempGrad)"
-                                dot={false}
-                                activeDot={{ r: 4, fill: 'var(--c-primary-sim)' }}
-                                isAnimationActive={false}
-                            />
-                        </AreaChart>
-                    </ResponsiveContainer>
+                                <YAxis
+                                    label={{ value: '↑ Temperatura (°C)', angle: -90, position: 'insideLeft', offset: 12, fontSize: 11, fill: 'var(--c-text-dim)' }}
+                                    tick={{ fontSize: 11, fill: 'var(--c-text-dim)' }}
+                                    tickLine={false}
+                                    domain={[0, Math.max(opTemp + 20, 120)]}
+                                />
+                                <Tooltip content={<CustomTooltip />} />
+                                <ReferenceLine
+                                    y={safeLimit}
+                                    stroke="var(--c-safe-line)"
+                                    strokeWidth={1.5}
+                                    strokeDasharray="6 3"
+                                    label={{ value: safeLineLabel, position: 'insideTopLeft', fontSize: 11, fill: 'var(--c-safe-line)' }}
+                                />
+                                {/* Área de tiempo de espera */}
+                                {waitMin > 0 && (
+                                    <ReferenceLine
+                                        x={waitMin}
+                                        stroke="var(--c-amber-line)"
+                                        strokeWidth={1.5}
+                                        strokeDasharray="4 4"
+                                        label={{ value: `${waitMin} min`, position: 'top', fontSize: 11, fill: 'var(--c-amber-line)' }}
+                                    />
+                                )}
+                                <Area
+                                    type="monotone"
+                                    dataKey="temp"
+                                    stroke="var(--c-primary-sim)"
+                                    strokeWidth={2}
+                                    fill="url(#tempGrad)"
+                                    dot={false}
+                                    activeDot={{ r: 4, fill: 'var(--c-primary-sim)' }}
+                                    isAnimationActive={false}
+                                />
+                            </AreaChart>
+                        </ResponsiveContainer>
+                    </div>
                 </div>
             </div>
 

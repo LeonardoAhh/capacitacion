@@ -148,9 +148,16 @@
 
 /* ── Chart ── */
 .chartWrap {
-    width: 100%;
+    /* Crece para llenar el espacio disponible del panel */
     flex: 1;
-    min-height: 260px;
+    position: relative;
+    min-height: 220px;
+}
+
+/* Wrapper absoluto: Recharts necesita un padre con px reales, no flex */
+.chartInner {
+    position: absolute;
+    inset: 0;
 }
 
 /* Recharts text override */
