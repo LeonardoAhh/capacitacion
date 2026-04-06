@@ -1,24 +1,14 @@
 'use client';
 
-import { useState, useEffect, useCallback, useMemo } from 'react';
-import { Download, SlidersHorizontal } from 'lucide-react';
+import { useState, useEffect, useMemo } from 'react';
 import AdminLayout from '@/components/layout/AdminLayout/AdminLayout';
 import { Button } from '@/components/ui/Button/Button';
 import { useToast } from '@/components/ui/Toast/Toast';
 import { useAuth } from '@/contexts/AuthContext';
 import { useRouter } from 'next/navigation';
-import { Dialog, DialogHeader, DialogTitle, DialogBody, DialogFooter, DialogClose } from '@/components/ui/Dialog/Dialog';
 import { db } from '@/lib/firebase';
-import { collection, getDocs, query, orderBy, doc, updateDoc, setDoc, deleteDoc } from 'firebase/firestore';
-import {
-    checkPromotionCriteria,
-    getExamEligibility,
-    getSemesterPeriod,
-    calculateMonthsInPosition,
-    formatDate,
-    normalizePromotionRule
-} from '@/lib/promotionUtils';
-import { seedHistoryData } from '@/lib/seedHistorial';
+import { doc, updateDoc } from 'firebase/firestore';
+import { checkPromotionCriteria } from '@/lib/promotionUtils';
 import styles from './page.module.css';
 import { useConfirm } from '@/hooks/useConfirm';
 import EditEmployeeModal from './components/EditEmployeeModal';
@@ -53,13 +43,7 @@ export default function PromocionesPage() {
         promotionRules,
         setPromotionRules,
         departments,
-        reprocessing,
         loadData,
-        reloadRulesFromJSON,
-        handleReprocessCompliance,
-        importPromotionData,
-        importExamData,
-        importShiftData,
         handlePromoteEmployee
     } = usePromotionsData(user, showConfirm, toast);
 
@@ -291,12 +275,6 @@ export default function PromocionesPage() {
         return <span className={`${styles.statusBadge} ${styles.blocked}`}> NO APTO</span>;
     };
 
-    const getCriteriaIcon = (met) => (
-        <span className={met ? styles.criteriaPass : styles.criteriaFail}>
-            {met ? '✓' : '✗'}
-        </span>
-    );
-
     // Export to Excel
     const handleExportExcel = async () => {
         try {
@@ -373,6 +351,12 @@ export default function PromocionesPage() {
         }
     };
 
+    useEffect(() => {
+        if (!authLoading && user && (user.rol === 'demo' || user.email?.includes('demo'))) {
+            router.push('/induccion');
+        }
+    }, [authLoading, user, router]);
+
     if (authLoading || !user) {
         return (
             <AdminLayout title="Módulo">
@@ -384,7 +368,6 @@ export default function PromocionesPage() {
     }
 
     if (user.rol === 'demo' || user.email?.includes('demo')) {
-        router.push('/induccion');
         return null;
     }
 
@@ -433,15 +416,15 @@ export default function PromocionesPage() {
                                     <table className={styles.dataTable}>
                                         <thead>
                                             <tr>
-                                                <th>Empleado</th>
-                                                <th>Puesto Actual</th>
-                                                <th>Departamento</th>
-                                                <th>Progreso</th>
-                                                <th>Desempeño</th>
-                                                <th>Temporalidad</th>
-                                                <th>Matriz</th>
-                                                <th>Examen</th>
-                                                <th>Estado</th>
+                                                <th scope="col">Empleado</th>
+                                                <th scope="col">Puesto Actual</th>
+                                                <th scope="col">Departamento</th>
+                                                <th scope="col">Progreso</th>
+                                                <th scope="col">Desempeño</th>
+                                                <th scope="col">Temporalidad</th>
+                                                <th scope="col">Matriz</th>
+                                                <th scope="col">Examen</th>
+                                                <th scope="col">Estado</th>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -449,7 +432,6 @@ export default function PromocionesPage() {
                                                 .slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)
                                                 .map(emp => {
                                                     const { _rule: rule, _criteria: criteria } = emp;
-                                                    if (!rule) return null;
                                                     const progressPercent = (criteria.overall.metCount / 4) * 100;
 
                                                     return (
@@ -520,7 +502,6 @@ export default function PromocionesPage() {
                                         .slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)
                                         .map(emp => {
                                             const { _rule: rule, _criteria: criteria } = emp;
-                                            if (!rule) return null;
 
                                             return (
                                                     <EmployeeCard
