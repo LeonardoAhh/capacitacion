@@ -11,6 +11,7 @@ import CoursePlayer from '@/components/features/Courses/CoursePlayer';
 import KanbanCoursesView from '@/components/features/Induccion/views/KanbanCoursesView';
 import FuncionesGuide from '@/components/features/Induccion/FuncionesGuide/FuncionesGuide';
 import { useConfirm } from '@/hooks/useConfirm';
+import { Dialog, DialogHeader, DialogTitle, DialogBody, DialogFooter, DialogClose } from '@/components/ui/Dialog/Dialog';
 import {
     importCourseFromJSON,
     getAllCourses,
@@ -26,6 +27,76 @@ import { logInduccionAction } from '@/lib/induccionAudit';
 import styles from './page.module.css';
 
 
+function ImportCourseModal({ courses, onConfirm, onCancel }) {
+    const [items, setItems] = useState(() => courses.map(c => ({ ...c })));
+    const isSingle = items.length === 1;
+
+    const setTitle = (i, val) =>
+        setItems(prev => prev.map((item, idx) => idx === i ? { ...item, titleOverride: val } : item));
+
+    const allValid = items.every(i => i.titleOverride.trim().length > 0);
+
+    const slidesSummary = (item) => {
+        const total = item.slides.length;
+        const dynamics = item.slides.filter(s => s.type === 'group_dynamic' || s.type === 'dynamic').length;
+        const quizzes = item.slides.filter(s => s.type === 'group_quiz' || s.type === 'quiz').length;
+        const parts = [`${total} slide${total !== 1 ? 's' : ''}`];
+        if (dynamics > 0) parts.push(`${dynamics} dinámica${dynamics !== 1 ? 's' : ''}`);
+        if (quizzes > 0) parts.push(`${quizzes} quiz${quizzes !== 1 ? 'zes' : ''}`);
+        if (item.courseData.category) parts.push(item.courseData.category);
+        return parts.join(' · ');
+    };
+
+    return (
+        <Dialog open onOpenChange={open => !open && onCancel()} aria-labelledby="import-modal-title">
+            <DialogHeader>
+                <DialogTitle id="import-modal-title">
+                    {isSingle ? 'Importar Curso' : `Importar ${items.length} Cursos`}
+                </DialogTitle>
+                <DialogClose onClose={onCancel} />
+            </DialogHeader>
+            <DialogBody>
+                {items.map((item, i) => (
+                    <div key={i} className={styles.importItem}>
+                        {!isSingle && (
+                            <p className={styles.importItemIndex}>Curso {i + 1}</p>
+                        )}
+                        <div className={styles.importField}>
+                            <label htmlFor={`import-title-${i}`}>Nombre del curso</label>
+                            <input
+                                id={`import-title-${i}`}
+                                type="text"
+                                value={item.titleOverride}
+                                onChange={e => setTitle(i, e.target.value)}
+                                onKeyDown={e => { if (e.key === 'Enter' && allValid) onConfirm(items); }}
+                                placeholder="Ej. Seguridad e Higiene Industrial"
+                                autoFocus={i === 0}
+                                className={styles.importInput}
+                            />
+                        </div>
+                        <p className={styles.importPreviewText}>
+                            {slidesSummary(item)}
+                        </p>
+                    </div>
+                ))}
+            </DialogBody>
+            <DialogFooter>
+                <button className={styles.importCancelBtn} onClick={onCancel} type="button">
+                    Cancelar
+                </button>
+                <button
+                    className={styles.importConfirmBtn}
+                    onClick={() => onConfirm(items)}
+                    disabled={!allValid}
+                    type="button"
+                >
+                    Importar
+                </button>
+            </DialogFooter>
+        </Dialog>
+    );
+}
+
 function InduccionContent() {
     const { user, loading: authLoading } = useAuth();
     const router = useRouter();
@@ -36,6 +107,7 @@ function InduccionContent() {
     const [nativeCourses, setNativeCourses] = useState([]);
     const [nativeLoading, setNativeLoading] = useState(true);
     const [importing, setImporting] = useState(false);
+    const [importModal, setImportModal] = useState(null); // null | Array<{courseData, slides, titleOverride}>
     const [creatingCourse, setCreatingCourse] = useState(false);
     const [showNewCourseModal, setShowNewCourseModal] = useState(false);
     const [updatingNative, setUpdatingNative] = useState(false);
@@ -70,42 +142,56 @@ function InduccionContent() {
         else toast.error('Error', 'No se pudo cargar el curso interactivo.');
     }, [toast]);
 
-    const handleImport = useCallback(async () => {
-        const f = fileInputRef.current?.files?.[0];
-        if (!f) { toast.error('Error', 'Selecciona un archivo JSON.'); return; }
-        setImporting(true);
+    // Paso 1: leer archivo y mostrar modal con vista previa
+    const handleImport = useCallback(async (e) => {
+        const f = e?.target?.files?.[0] ?? fileInputRef.current?.files?.[0];
+        if (!f) return;
         try {
             const text = await f.text();
             const jsonData = JSON.parse(text);
-            const coursesToImport = jsonData.courses || [jsonData];
-            let successCount = 0;
-            let errorMsg = '';
-            for (const courseItem of coursesToImport) {
-                const courseData = { ...courseItem };
-                delete courseData.slides;
-                const slidesData = courseItem.slides || [];
-                const filteredSlides = slidesData.filter(slide => {
-                    if ((slide.type === 'group_dynamic' || slide.type === 'dynamic') && !includeDynamics) return false;
-                    if ((slide.type === 'group_quiz' || slide.type === 'quiz') && !includeQuizzes) return false;
-                    return true;
-                });
-                const reorderedSlides = filteredSlides.map((slide, i) => ({ ...slide, order: i + 1 }));
-                const result = await importCourseFromJSON({ course: courseData, slides: reorderedSlides }, user?.uid || 'admin');
-                if (result.success) successCount++;
-                else errorMsg = result.error;
-            }
-            if (successCount > 0) {
-                toast.success('Éxito', `${successCount} curso(s) importado(s).`);
-                if (fileInputRef.current) fileInputRef.current.value = '';
-                await loadCourses();
-            } else {
-                toast.error('Error', errorMsg || 'No se pudieron importar los cursos.');
-            }
+            const rawCourses = jsonData.courses || [jsonData];
+            const parsed = rawCourses.map(item => {
+                const { slides: rawSlides, ...courseData } = item;
+                return {
+                    courseData,
+                    slides: rawSlides || [],
+                    titleOverride: item.title || '',
+                };
+            });
+            setImportModal(parsed);
         } catch (err) {
-            toast.error('Error', `Error al parsear JSON: ${err.message}`);
+            toast.error('Error', `JSON inválido: ${err.message}`);
+            if (fileInputRef.current) fileInputRef.current.value = '';
+        }
+    }, [toast]);
+
+    // Paso 2: importar con los datos confirmados por el usuario
+    const handleConfirmImport = useCallback(async (coursesWithOverrides) => {
+        setImportModal(null);
+        setImporting(true);
+        let successCount = 0;
+        let errorMsg = '';
+        for (const { courseData, slides, titleOverride } of coursesWithOverrides) {
+            const filteredSlides = slides.filter(slide => {
+                if ((slide.type === 'group_dynamic' || slide.type === 'dynamic') && !includeDynamics) return false;
+                if ((slide.type === 'group_quiz' || slide.type === 'quiz') && !includeQuizzes) return false;
+                return true;
+            });
+            const reorderedSlides = filteredSlides.map((slide, i) => ({ ...slide, order: i + 1 }));
+            const finalCourse = { ...courseData, title: titleOverride.trim() || courseData.title || 'Sin título' };
+            const result = await importCourseFromJSON({ course: finalCourse, slides: reorderedSlides }, user?.uid || 'admin');
+            if (result.success) successCount++;
+            else errorMsg = result.error;
+        }
+        if (successCount > 0) {
+            toast.success('Éxito', `${successCount} curso(s) importado(s).`);
+            if (fileInputRef.current) fileInputRef.current.value = '';
+            await loadCourses();
+        } else {
+            toast.error('Error', errorMsg || 'No se pudieron importar los cursos.');
         }
         setImporting(false);
-    }, [loadCourses, user?.uid, includeDynamics, includeQuizzes, toast]);
+    }, [includeDynamics, includeQuizzes, loadCourses, user?.uid, toast]);
 
     const handleCreateNewCourse = useCallback(() => {
         setShowNewCourseModal(true);
@@ -277,6 +363,17 @@ function InduccionContent() {
                     <CourseWizardModal
                         onComplete={handleConfirmNewCourse}
                         onCancel={() => setShowNewCourseModal(false)}
+                    />
+                )}
+
+                {importModal && (
+                    <ImportCourseModal
+                        courses={importModal}
+                        onConfirm={handleConfirmImport}
+                        onCancel={() => {
+                            setImportModal(null);
+                            if (fileInputRef.current) fileInputRef.current.value = '';
+                        }}
                     />
                 )}
 

@@ -404,13 +404,17 @@ export default function KanbanCoursesView({
                                 </div>
                                 <div className={styles.menuDivider} />
                                 <label className={styles.menuItem} role="menuitem">
-                                    <input ref={fileInputRef} type="file" accept=".json" style={{ display: 'none' }} onChange={() => {}} />
-                                    <FileText size={13} className={styles.menuItemIcon} /> Cargar JSON
+                                    <input
+                                        ref={fileInputRef}
+                                        type="file"
+                                        accept=".json"
+                                        style={{ display: 'none' }}
+                                        onChange={(e) => { setOptionsOpen(false); handleImport(e); }}
+                                        disabled={importing}
+                                    />
+                                    <FileText size={13} className={styles.menuItemIcon} />
+                                    {importing ? 'Importando…' : 'Cargar JSON'}
                                 </label>
-                                <button className={styles.menuItem} role="menuitem" onClick={() => { setOptionsOpen(false); handleImport(); }} disabled={importing}>
-                                    <Upload size={13} className={styles.menuItemIcon} />
-                                    {importing ? 'Importando…' : 'Importar Archivo JSON'}
-                                </button>
                                 <div className={styles.menuDivider} />
                                 <button className={styles.menuItem} role="menuitem" onClick={() => { setOptionsOpen(false); onSyncAllPuestos(); }} disabled={syncing} style={{ color: 'var(--c-orange)' }}>
                                     <RefreshCw size={13} className={styles.menuItemIcon} />
