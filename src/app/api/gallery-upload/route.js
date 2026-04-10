@@ -105,7 +105,7 @@ export async function POST(request) {
 
         // Nombre del archivo en Drive
         const ext = file.name.split('.').pop();
-        const safeName = `${nombre.trim().replace(/[^a-zA-Z0-9\u00C0-\u024F\s_-]/g, '')}.${ext}`;
+        const safeName = `${nombre.trim().replace(/[^a-zA-Z0-9-\s_-]/g, '')}.${ext}`;
 
         const buffer = Buffer.from(await file.arrayBuffer());
         const result = await uploadFile(buffer, safeName, file.type, galleryFolderId);

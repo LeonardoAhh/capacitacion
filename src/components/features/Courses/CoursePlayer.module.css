@@ -1,10 +1,93 @@
-/* ================================================================
-   COURSE PLAYER — CoursePlayer.module.css
-   Material Expressive 3 · Cohesivo con /contratos
-   CSS Puro • Light Mode • PWA • Accesible
-   ================================================================ */
+/* CoursePlayer.module.css - shadcn/ui - Responsive - PWA - Accesible */
+/* Mobile -> Tablet -> Desktop -> Proyector / TV                       */
 
-/* ── Overlay ── */
+/* ================================================================
+   FONT SCALE — applied to .content to cascade all slide tokens
+   ================================================================ */
+.fsSm {
+    --course-font-xs:   0.62rem;
+    --course-font-sm:   0.72rem;
+    --course-font-base: 0.82rem;
+    --course-font-lg:   0.92rem;
+    --course-font-xl:   1.02rem;
+    --course-font-2xl:  1.23rem;
+    --course-font-3xl:  1.64rem;
+    --course-font-4xl:  2.05rem;
+}
+/* fsMd = default, no override needed */
+.fsLg {
+    --course-font-xs:   0.9rem;
+    --course-font-sm:   1.05rem;
+    --course-font-base: 1.2rem;
+    --course-font-lg:   1.35rem;
+    --course-font-xl:   1.5rem;
+    --course-font-2xl:  1.8rem;
+    --course-font-3xl:  2.4rem;
+    --course-font-4xl:  3rem;
+}
+.fsXl {
+    --course-font-xs:   1.12rem;
+    --course-font-sm:   1.3rem;
+    --course-font-base: 1.5rem;
+    --course-font-lg:   1.69rem;
+    --course-font-xl:   1.87rem;
+    --course-font-2xl:  2.25rem;
+    --course-font-3xl:  3rem;
+    --course-font-4xl:  3.75rem;
+}
+
+/* ================================================================
+   FONT SIZE CONTROL — pill group in header
+   ================================================================ */
+.fontSizeControl {
+    display: inline-flex;
+    align-items: center;
+    border: 1px solid hsl(214.3 31.8% 91.4%);
+    border-radius: 8px;
+    overflow: hidden;
+    flex-shrink: 0;
+}
+
+.fontSizeBtn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    height: 30px;
+    padding: 0 7px;
+    border: none;
+    border-right: 1px solid hsl(214.3 31.8% 91.4%);
+    background: transparent;
+    color: hsl(215.4 16.3% 56.9%);
+    cursor: pointer;
+    transition: background 120ms ease, color 120ms ease;
+    font-family: var(--font-serif, var(--font-body)), sans-serif;
+    font-weight: 700;
+    line-height: 1;
+    user-select: none;
+}
+
+.fontSizeBtn:last-child {
+    border-right: none;
+}
+
+.fontSizeBtn:hover {
+    background: hsl(210 40% 96.1%);
+    color: hsl(222.2 47.4% 11.2%);
+}
+
+.fontSizeBtnActive {
+    background: hsl(222.2 47.4% 11.2%);
+    color: #ffffff;
+}
+
+.fontSizeBtnActive:hover {
+    background: hsl(222.2 47.4% 18%);
+    color: #ffffff;
+}
+
+/* ================================================================
+   SHELL / OVERLAY
+   ================================================================ */
 .overlay {
     position: fixed;
     inset: 0;
@@ -12,8 +95,8 @@
     display: flex;
     flex-direction: column;
     overflow: hidden;
-    background: var(--course-overlay-bg);
-    color: var(--course-slide-text);
+    background: var(--course-overlay-bg, #fafaf8);
+    color: var(--course-slide-text, #111827);
 }
 
 .inlineMode {
@@ -24,12 +107,35 @@
     z-index: 1 !important;
     border-radius: 0 !important;
     overflow: hidden !important;
-    background: var(--course-content-bg);
+    background: var(--course-content-bg, #fafaf8);
     box-shadow: none !important;
 }
 
-.inlineMode .header { padding: 7px 14px; }
-.inlineMode .nav    { padding: 7px 14px; }
+/* ================================================================
+   OFFLINE BANNER
+   ================================================================ */
+.offlineBanner {
+    position: relative;
+    z-index: 300;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 8px 16px;
+    padding-top: max(8px, env(safe-area-inset-top));
+    background: hsl(0 84.2% 60.2%);
+    color: #fff;
+    font-size: var(--course-font-xs, 0.75rem);
+    font-weight: 600;
+    font-family: var(--font-body), sans-serif;
+    flex-shrink: 0;
+    animation: slideDown 0.2s var(--course-ease-out);
+}
+
+@keyframes slideDown {
+    from { opacity: 0; transform: translateY(-100%); }
+    to   { opacity: 1; transform: translateY(0); }
+}
 
 /* ================================================================
    HEADER
@@ -37,83 +143,33 @@
 .header {
     display: flex;
     align-items: center;
-    justify-content: space-between;
-    padding: 10px var(--course-spacing-md);
-    padding-top: max(10px, env(safe-area-inset-top));
-    background: var(--course-header-bg);
-    border-bottom: 1.5px solid var(--course-header-border);
-    z-index: var(--z-course-header);
+    gap: 8px;
+    padding: 0 12px;
+    padding-top: env(safe-area-inset-top);
+    min-height: 52px;
+    background: hsl(0 0% 100%);
+    border-bottom: 1px solid hsl(214.3 31.8% 91.4%);
+    z-index: var(--z-course-header, 10);
     flex-shrink: 0;
-    box-shadow: 0 1px 4px rgba(0,0,0,0.06), 0 2px 8px rgba(0,0,0,0.03);
 }
 
 .headerLeft {
     display: flex;
     align-items: center;
-    gap: 8px;
-}
-
-.exitBtn {
-    display: inline-flex;
-    align-items: center;
     gap: 6px;
-    padding: 7px 14px;
-    border-radius: var(--course-radius-md);
-    border: 1.5px solid var(--course-btn-border);
-    background: var(--course-btn-bg);
-    color: var(--course-btn-text);
-    font-size: var(--course-font-sm);
-    font-family: var(--font-body), sans-serif;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all var(--course-transition-fast);
-    white-space: nowrap;
-    box-shadow: 0 1px 4px rgba(0,0,0,0.06);
-}
-
-.exitBtn:hover {
-    background: var(--course-btn-hover-bg);
-    border-color: var(--course-accent-mid, rgba(0,60,204,0.18));
-    color: var(--course-accent);
-}
-
-.exitBtn:focus-visible {
-    outline: 2px solid var(--course-accent);
-    outline-offset: 2px;
-}
-
-/* ── Botón icónico (TOC, fullscreen) ── */
-.iconBtn {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 34px;
-    height: 34px;
-    border-radius: var(--course-radius-sm);
-    border: 1.5px solid var(--course-btn-border);
-    background: var(--course-btn-bg);
-    color: var(--course-btn-text);
-    cursor: pointer;
-    transition: all var(--course-transition-fast);
     flex-shrink: 0;
-    box-shadow: 0 1px 4px rgba(0,0,0,0.06);
-}
-
-.iconBtn:hover {
-    background: var(--course-btn-hover-bg);
-    border-color: var(--course-accent-mid, rgba(0,60,204,0.18));
-    color: var(--course-accent);
 }
 
 .headerTitle {
-    font-size: var(--course-font-sm);
-    font-family: var(--font-body), sans-serif;
-    font-weight: 700;
-    color: var(--course-header-text);
+    flex: 1;
+    min-width: 0;
+    font-size: var(--course-font-sm, 0.875rem);
+    font-family: var(--font-serif, var(--font-body)), sans-serif;
+    font-weight: 600;
+    color: hsl(222.2 47.4% 11.2%);
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
-    max-width: 40%;
     text-align: center;
     letter-spacing: -0.01em;
 }
@@ -121,152 +177,176 @@
 .headerRight {
     display: flex;
     align-items: center;
-    gap: var(--course-spacing-sm);
+    gap: 6px;
+    flex-shrink: 0;
 }
 
-.counter {
-    font-size: var(--course-font-sm);
-    font-family: var(--font-mono), monospace;
-    font-weight: 700;
-    color: var(--course-slide-text-muted);
-    font-variant-numeric: tabular-nums;
+.exitBtn {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    height: 32px;
+    padding: 0 12px;
+    border-radius: 8px;
+    border: 1px solid hsl(214.3 31.8% 91.4%);
+    background: transparent;
+    color: hsl(215.4 16.3% 46.9%);
+    font-size: var(--course-font-xs, 0.75rem);
+    font-family: var(--font-body), sans-serif;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 150ms ease, color 150ms ease, border-color 150ms ease;
     white-space: nowrap;
-    background: rgba(0,60,204,0.06);
-    padding: 3px 8px;
-    border-radius: var(--course-radius-full);
-    border: 1.5px solid rgba(0,60,204,0.12);
 }
 
-/* ── Badge de tipo de slide ── */
+.exitBtn:hover {
+    background: hsl(210 40% 96.1%);
+    color: hsl(222.2 47.4% 11.2%);
+    border-color: hsl(214.3 31.8% 84%);
+}
+
+.exitBtn:focus-visible {
+    outline: 2px solid var(--course-accent, #003ccc);
+    outline-offset: 2px;
+}
+
+.iconBtn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    border: 1px solid hsl(214.3 31.8% 91.4%);
+    background: transparent;
+    color: hsl(215.4 16.3% 46.9%);
+    cursor: pointer;
+    transition: background 150ms ease, color 150ms ease, border-color 150ms ease;
+    flex-shrink: 0;
+}
+
+.iconBtn:hover {
+    background: hsl(210 40% 96.1%);
+    color: hsl(222.2 47.4% 11.2%);
+    border-color: hsl(214.3 31.8% 84%);
+}
+
+.iconBtn:focus-visible {
+    outline: 2px solid var(--course-accent, #003ccc);
+    outline-offset: 2px;
+}
+
 .slideBadge {
     display: inline-flex;
     align-items: center;
     gap: 4px;
-    padding: 3px 10px;
-    border-radius: var(--course-radius-full);
-    font-size: 0.65rem;
+    height: 22px;
+    padding: 0 8px;
+    border-radius: 9999px;
+    font-size: 0.625rem;
     font-weight: 700;
     font-family: var(--font-body), sans-serif;
     white-space: nowrap;
-    background: var(--course-accent-dim, rgba(0,60,204,0.08));
-    color: var(--course-accent);
-    border: 1.5px solid var(--course-accent-mid, rgba(0,60,204,0.18));
+    background: hsl(214.3 31.8% 96%);
+    color: hsl(215.4 16.3% 36%);
+    border: 1px solid hsl(214.3 31.8% 88%);
     text-transform: uppercase;
-    letter-spacing: 0.06em;
+    letter-spacing: 0.05em;
 }
 
-/* ── Tiempo de Lectura ── */
+.counter {
+    display: inline-flex;
+    align-items: center;
+    height: 22px;
+    padding: 0 8px;
+    border-radius: 9999px;
+    font-size: var(--course-font-xs, 0.75rem);
+    font-family: var(--font-mono), monospace;
+    font-weight: 600;
+    color: hsl(215.4 16.3% 46.9%);
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+    background: hsl(214.3 31.8% 96%);
+    border: 1px solid hsl(214.3 31.8% 88%);
+}
+
 .readingTime {
     display: inline-flex;
     align-items: center;
     gap: 4px;
-    font-size: 0.72rem;
-    font-weight: 600;
-    color: var(--course-slide-text-muted);
+    font-size: var(--course-font-xs, 0.75rem);
+    font-weight: 500;
+    color: hsl(215.4 16.3% 56.9%);
     white-space: nowrap;
     font-family: var(--font-body), sans-serif;
 }
 
 /* ================================================================
-   BARRA DE PROGRESO
+   PROGRESS BAR
    ================================================================ */
-/* Segmentada (≤12 slides) */
 .segmentedBar {
     display: flex;
-    gap: 3px;
-    padding: 6px 16px;
-    background: var(--course-header-bg);
-    border-bottom: 1.5px solid var(--course-header-border);
+    gap: 2px;
+    padding: 0 12px;
+    height: 4px;
+    background: hsl(0 0% 100%);
+    border-bottom: 1px solid hsl(214.3 31.8% 91.4%);
     flex-shrink: 0;
-    flex-wrap: nowrap;
-    overflow: hidden;
 }
 
 .segment {
     flex: 1;
-    height: 4px;
-    border-radius: 2px;
+    height: 100%;
+    border-radius: 0;
     border: none;
     padding: 0;
-    background: var(--course-progress-bg);
+    background: hsl(214.3 31.8% 91.4%);
     cursor: pointer;
-    transition: background var(--course-transition-base), transform var(--course-transition-fast);
-    min-width: 8px;
+    transition: background 200ms ease;
+    min-width: 4px;
 }
 
-.segment:hover {
-    transform: scaleY(1.8);
-    background: rgba(0, 60, 204, 0.35);
-}
+.segment:hover { background: hsl(215.4 16.3% 72%); }
 
-.segmentVisited {
-    background: rgba(0, 60, 204, 0.35);
-}
+.segmentVisited { background: var(--course-accent-mid, rgba(0,60,204,.35)); }
 
-.segmentActive {
-    background: var(--course-progress-fill) !important;
-}
+.segmentActive { background: var(--course-accent, #003ccc) !important; }
 
-/* Lineal (>12 slides) */
 .linearBar {
     height: 3px;
     width: 100%;
-    background: var(--course-progress-bg);
+    background: hsl(214.3 31.8% 91.4%);
     flex-shrink: 0;
     overflow: hidden;
 }
 
 .linearBarFill {
     height: 100%;
-    background: var(--course-progress-fill);
+    background: var(--course-accent, #003ccc);
     border-radius: 0 2px 2px 0;
-    transition: width var(--course-duration-slow) var(--course-ease-in-out);
+    transition: width var(--course-duration-slow, 400ms) var(--course-ease-in-out);
 }
 
-/* (Mantenida para compat — ya no se usa si segmentedBar toma el relevo) */
-.progressTrack {
-    width: 80px;
-    height: 4px;
-    border-radius: 2px;
-    background: var(--course-progress-bg);
-    overflow: hidden;
-}
-
-.progressFill {
-    height: 100%;
-    background: var(--course-progress-fill);
-    border-radius: 2px;
-    transition: width var(--course-duration-slow) var(--course-ease-in-out);
-}
+.progressTrack { display: none; }
+.progressFill  { display: none; }
 
 /* ================================================================
-   CONTENT
+   CONTENT AREA
    ================================================================ */
 .content {
     flex: 1;
     overflow-y: auto;
     overflow-x: hidden;
     position: relative;
+    -webkit-overflow-scrolling: touch;
+    background: var(--course-content-bg, #fafaf8);
     display: flex;
     flex-direction: column;
-    -webkit-overflow-scrolling: touch;
-    background: var(--course-content-bg);
 }
 
-.content:not(.contentSplit) > * {
-    margin: auto;
-    width: 100%;
-}
+.contentSplit { flex-direction: row !important; }
 
-.contentSplit {
-    position: relative;
-    display: flex;
-    flex-direction: row;
-}
-
-.contentWithMedia {
-    position: relative;
-}
+.contentFull { position: relative; }
 
 .mediaFull {
     position: absolute;
@@ -280,9 +360,9 @@
 .mediaOverlay {
     position: absolute;
     inset: 0;
-    background: rgba(0, 0, 0, 0.5);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
+    background: rgba(0, 0, 0, 0.48);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
     z-index: 0;
 }
 
@@ -290,8 +370,9 @@
     width: 50%;
     height: 100%;
     position: relative;
-    border-left: 1.5px solid var(--course-header-border);
+    border-left: 1px solid hsl(214.3 31.8% 91.4%);
     flex-shrink: 0;
+    order: 2;
 }
 
 .slideWrapperSplit {
@@ -302,10 +383,9 @@
     overflow-y: auto;
     display: flex;
     flex-direction: column;
+    order: 1;
 }
 
-/* El SlideRenderer añade un <div> intermedio — hay que pasar la altura
-   a través de él hasta el <article class="slide"> */
 .slideWrapperSplit > * {
     flex: 1;
     min-height: 0;
@@ -313,8 +393,6 @@
     flex-direction: column;
 }
 
-/* El <article class="slide"> dentro del div de SlideRenderer también
-   debe estirarse para que su justify-content:center funcione */
 .slideWrapperSplit > * > * {
     flex: 1;
     min-height: 0;
@@ -323,312 +401,262 @@
 .slideWrapperWithMedia {
     position: relative;
     z-index: 1;
+    flex: 1;
 }
 
 .slideWrapper {
-    padding: var(--course-spacing-md);
-    background: var(--course-content-bg);
-    scroll-behavior: smooth;
-    /* animación de transición */
+    padding: clamp(16px, 3vw, 32px);
+    background: var(--course-content-bg, #fafaf8);
     animation-fill-mode: both;
-    animation-duration: 0.28s;
+    animation-duration: 240ms;
     animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
 }
 
 .slideEnterForward  { animation-name: slideInRight; }
 .slideEnterBackward { animation-name: slideInLeft; }
 
 @keyframes slideInRight {
-    from { opacity: 0; transform: translateX(32px); }
+    from { opacity: 0; transform: translateX(24px); }
     to   { opacity: 1; transform: translateX(0); }
 }
 
 @keyframes slideInLeft {
-    from { opacity: 0; transform: translateX(-32px); }
+    from { opacity: 0; transform: translateX(-24px); }
     to   { opacity: 1; transform: translateX(0); }
 }
 
 /* ================================================================
-   NAVIGATION
+   NAVIGATION BAR
    ================================================================ */
 .nav {
-    display: flex;
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
     align-items: center;
-    justify-content: space-between;
-    padding: 10px var(--course-spacing-md);
-    padding-bottom: max(10px, env(safe-area-inset-bottom));
-    background: var(--course-nav-bg);
-    border-top: 1.5px solid var(--course-nav-border);
+    gap: 8px;
+    padding: 8px 12px;
+    padding-bottom: max(8px, env(safe-area-inset-bottom));
+    background: hsl(0 0% 100%);
+    border-top: 1px solid hsl(214.3 31.8% 91.4%);
     flex-shrink: 0;
-    gap: var(--course-spacing-sm);
-    box-shadow: 0 -1px 4px rgba(0,0,0,0.04);
 }
+
+.nav > *:first-child { justify-self: start; }
+.nav > *:last-child  { justify-self: end; }
 
 .navBtn {
     display: inline-flex;
     align-items: center;
     gap: 6px;
-    padding: 8px 18px;
-    border-radius: var(--course-radius-md);
-    border: 1.5px solid var(--course-btn-border);
-    background: var(--course-btn-bg);
-    color: var(--course-btn-text);
-    font-weight: 600;
+    height: 36px;
+    padding: 0 16px;
+    border-radius: 8px;
+    border: 1px solid hsl(214.3 31.8% 91.4%);
+    background: transparent;
+    color: hsl(222.2 47.4% 11.2%);
+    font-weight: 500;
     font-family: var(--font-body), sans-serif;
-    font-size: var(--course-font-sm);
+    font-size: var(--course-font-sm, 0.875rem);
     cursor: pointer;
-    transition: all var(--course-transition-fast);
+    transition: background 150ms ease, color 150ms ease, border-color 150ms ease,
+                box-shadow 150ms ease, transform 100ms ease;
     white-space: nowrap;
-    box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+    user-select: none;
 }
 
 .navBtn:hover:not(:disabled) {
-    background: var(--course-btn-hover-bg);
-    border-color: var(--course-accent-mid, rgba(0,60,204,0.18));
-    color: var(--course-accent);
-    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    background: hsl(210 40% 96.1%);
+    border-color: hsl(214.3 31.8% 84%);
 }
 
-.navBtn:active:not(:disabled) { transform: scale(0.97); }
+.navBtn:active:not(:disabled) {
+    transform: scale(0.97);
+    background: hsl(210 40% 93%);
+}
 
 .navBtn:disabled {
-    opacity: 0.35;
+    opacity: 0.38;
     cursor: not-allowed;
 }
 
 .navBtn:focus-visible {
-    outline: 2px solid var(--course-accent);
+    outline: 2px solid var(--course-accent, #003ccc);
     outline-offset: 2px;
 }
 
 .navBtnPrimary {
-    background: var(--course-btn-primary-bg);
-    border-color: var(--course-btn-primary-bg);
-    color: var(--course-btn-primary-text);
-    box-shadow: 0 2px 12px rgba(0,60,204,0.22);
+    background: var(--course-accent, #003ccc);
+    border-color: var(--course-accent, #003ccc);
+    color: #ffffff;
+    font-weight: 600;
+    box-shadow: 0 1px 3px rgba(0,60,204,.3), 0 1px 2px rgba(0,60,204,.2);
 }
 
 .navBtnPrimary:hover:not(:disabled) {
-    filter: brightness(1.08);
-    background: var(--course-btn-primary-bg);
-    border-color: var(--course-btn-primary-bg);
-    color: var(--course-btn-primary-text);
-    box-shadow: 0 4px 20px rgba(0,60,204,0.28);
-    transform: translateY(-1px);
+    background: var(--course-accent-hover, #0030aa);
+    border-color: var(--course-accent-hover, #0030aa);
+    color: #ffffff;
+    box-shadow: 0 4px 14px rgba(0,60,204,.35);
 }
 
-/* ── Dots ── */
+/* Centro del nav: indicador para >12 slides */
+.navCenter {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    min-width: 80px;
+    max-width: 200px;
+    width: 100%;
+}
+
+.navProgressBar {
+    width: 100%;
+    height: 3px;
+    border-radius: 9999px;
+    background: hsl(214.3 31.8% 91.4%);
+    overflow: hidden;
+    position: relative;
+}
+
+.navProgressBar::after {
+    content: '';
+    position: absolute;
+    inset-block: 0;
+    left: 0;
+    width: var(--prog, 0%);
+    background: var(--course-accent, #003ccc);
+    border-radius: 9999px;
+    transition: width 300ms var(--course-ease-in-out);
+}
+
+.navCounter {
+    font-size: 0.7rem;
+    font-family: var(--font-mono), monospace;
+    font-variant-numeric: tabular-nums;
+    color: hsl(215.4 16.3% 56.9%);
+    font-weight: 500;
+    white-space: nowrap;
+}
+
 .dots {
     display: flex;
     align-items: center;
-    gap: 6px;
+    gap: 5px;
     flex-wrap: wrap;
     justify-content: center;
+    max-width: 160px;
 }
 
 .dot {
-    width: 8px;
-    height: 8px;
+    width: 6px;
+    height: 6px;
     border-radius: 50%;
     border: none;
     padding: 0;
-    background: var(--course-dot-bg);
+    background: hsl(214.3 31.8% 82%);
     cursor: pointer;
-    transition: all var(--course-transition-base);
+    transition: background 180ms ease, width 180ms ease, border-radius 180ms ease,
+                transform 120ms ease;
+    flex-shrink: 0;
 }
 
 .dot:hover {
-    background: var(--course-dot-visited);
+    background: hsl(215.4 16.3% 62%);
     transform: scale(1.3);
 }
 
 .dot:focus-visible {
-    outline: 2px solid var(--course-accent);
+    outline: 2px solid var(--course-accent, #003ccc);
     outline-offset: 2px;
 }
 
-.dotVisited { background: var(--course-dot-visited); }
+.dotVisited { background: var(--course-accent-mid, rgba(0,60,204,.4)); }
 
 .dotActive {
-    width: 24px;
-    border-radius: 4px;
-    background: var(--course-dot-active);
+    width: 20px;
+    border-radius: 3px;
+    background: var(--course-accent, #003ccc);
 }
 
 /* ================================================================
-   VARIOS
+   MISCELLANEOUS
    ================================================================ */
-
-/* Banner Sin Conexión */
-.offlineBanner {
-    position: absolute;
-    top: 0; left: 0; right: 0;
-    z-index: 300;
-    background: rgba(239, 68, 68, 0.92);
-    color: #fff;
-    font-size: 0.75rem;
-    font-weight: 700;
-    font-family: var(--font-body), sans-serif;
-    text-align: center;
-    padding: 7px 16px;
-    animation: slideDown 0.25s ease;
-}
-
-@keyframes slideDown {
-    from { transform: translateY(-100%); }
-    to   { transform: translateY(0); }
-}
-
-/* Empty State */
 .emptyMsg {
     display: flex;
     align-items: center;
     justify-content: center;
-    height: 100%;
-    color: var(--course-slide-text-muted);
-    font-size: var(--course-font-base);
+    flex: 1;
+    color: hsl(215.4 16.3% 56.9%);
+    font-size: var(--course-font-base, 1rem);
     font-family: var(--font-body), sans-serif;
 }
 
-/* Fullscreen */
 .fullscreen { border-radius: 0 !important; }
 
 /* ================================================================
-   RESPONSIVE — TABLET
+   NOTES POPOVER
    ================================================================ */
-@media (max-width: 1024px) {
-    .headerTitle { max-width: 35%; }
-    .progressTrack { width: 60px; }
-}
-
-/* ================================================================
-   RESPONSIVE — MOBILE
-   ================================================================ */
-@media (max-width: 767px) {
-    .header {
-        padding: 8px 12px;
-        padding-top: max(8px, env(safe-area-inset-top));
-    }
-
-    .exitBtn {
-        padding: 6px 12px;
-        font-size: var(--course-font-xs);
-    }
-
-    /* Ocultar en móvil: título, tiempo de lectura y badge de tipo */
-    .headerTitle { display: none; }
-    .readingTime  { display: none; }
-    .slideBadge   { display: none; }
-
-    .progressTrack { width: 50px; }
-
-    .nav {
-        padding: 8px 12px;
-        padding-bottom: max(8px, env(safe-area-inset-bottom));
-    }
-
-    .navBtn {
-        padding: 7px 14px;
-        font-size: var(--course-font-xs);
-    }
-
-    .dots { gap: 4px; }
-
-    .dot { width: 6px; height: 6px; }
-
-    .dotActive { width: 18px; }
-
-    .contentSplit { flex-direction: column !important; }
-
-    .mediaSplit {
-        width: 100% !important;
-        height: 40vh !important;
-        border-left: none !important;
-        border-bottom: 1.5px solid var(--course-header-border);
-    }
-
-    .slideWrapperSplit {
-        width: 100% !important;
-        flex: 1 1 auto !important;
-    }
-}
-
-/* ================================================================
-   RESPONSIVE — SMALL PHONES
-   ================================================================ */
-@media (max-width: 379px) {
-    .exitBtn span { display: none; }
-    .headerTitle  { max-width: 40%; }
-    .navBtn span  { display: none; }
-    .navBtn       { padding: 7px 10px; }
-}
-
-/* ================================================================
-   ACCESSIBILITY
-   ================================================================ */
-@media (prefers-reduced-motion: reduce) {
-    .slideWrapper,
-    .offlineBanner { animation: none; transition: none; }
-
-    .overlay, .exitBtn, .navBtn, .dot, .progressFill { transition: none; }
-    .navBtn:active:not(:disabled) { transform: none; }
-    .dot:hover { transform: none; }
-}
-
-@media (prefers-contrast: high) {
-    .exitBtn, .navBtn { border-width: 2px; }
-    .progressTrack    { border: 1px solid currentColor; }
-}
-
-/* ── Notas por slide ─────────────────────────────────────────── */
 .notesBtn {
     position: fixed;
-    bottom: 80px;
+    bottom: calc(56px + 12px + env(safe-area-inset-bottom));
     right: 16px;
-    width: 46px; height: 46px;
-    border-radius: 50%;
-    border: 1.5px solid rgba(255,255,255,0.25);
-    background: rgba(0,0,0,0.55);
-    backdrop-filter: blur(8px);
-    color: white;
-    font-size: 1.2rem;
+    width: 40px;
+    height: 40px;
+    border-radius: 9999px;
+    border: 1px solid hsl(214.3 31.8% 88%);
+    background: hsl(0 0% 100%);
+    color: hsl(215.4 16.3% 36.9%);
+    font-size: 1rem;
     cursor: pointer;
-    display: flex; align-items: center; justify-content: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     z-index: 120;
-    transition: background 0.2s, transform 0.2s;
-    position: relative;
+    box-shadow: 0 1px 3px rgba(0,0,0,.1), 0 1px 2px rgba(0,0,0,.06);
+    transition: background 150ms ease, box-shadow 150ms ease, transform 120ms ease;
 }
 
 .notesBtn:hover {
-    background: rgba(0, 60, 204, 0.75);
-    transform: scale(1.05);
+    background: hsl(210 40% 96.1%);
+    box-shadow: 0 4px 12px rgba(0,0,0,.12);
+    transform: translateY(-1px);
 }
 
-/* Punto indicador de nota activa */
 .notesDot {
     position: absolute;
-    top: 6px; right: 6px;
-    width: 8px; height: 8px;
+    top: 5px;
+    right: 5px;
+    width: 7px;
+    height: 7px;
     border-radius: 50%;
-    background: #00cc66;
-    border: 1.5px solid white;
+    background: hsl(142.1 76.2% 36.3%);
+    border: 1.5px solid #fff;
     pointer-events: none;
 }
 
 .notesDrawer {
     position: fixed;
-    bottom: 80px;
-    right: 70px;
-    width: 280px;
-    background: var(--bg-primary, #ffffff);
-    border: 1.5px solid var(--border-color, rgba(0,0,0,0.1));
-    border-radius: 16px;
-    box-shadow: 0 8px 32px rgba(0,0,0,0.18);
-    z-index: 120;
+    bottom: calc(56px + 60px + env(safe-area-inset-bottom));
+    right: 16px;
+    width: 288px;
+    background: hsl(0 0% 100%);
+    border: 1px solid hsl(214.3 31.8% 91.4%);
+    border-radius: 12px;
+    box-shadow: 0 10px 38px rgba(0,0,0,.12), 0 4px 16px rgba(0,0,0,.08);
+    z-index: 121;
     display: flex;
     flex-direction: column;
     overflow: hidden;
-    animation: courseFadeIn 0.2s ease;
+    animation: popoverIn 0.15s var(--course-ease-out);
+}
+
+@keyframes popoverIn {
+    from { opacity: 0; transform: translateY(6px) scale(0.97); }
+    to   { opacity: 1; transform: translateY(0) scale(1); }
 }
 
 .notesHeader {
@@ -636,54 +664,156 @@
     align-items: center;
     justify-content: space-between;
     padding: 10px 14px;
-    background: var(--bg-secondary, #f5f5f3);
-    border-bottom: 1px solid var(--border-color, rgba(0,0,0,0.08));
-    font-size: 0.82rem;
+    border-bottom: 1px solid hsl(214.3 31.8% 91.4%);
+    font-size: var(--course-font-sm, 0.875rem);
     font-weight: 600;
-    color: var(--text-primary, #111827);
+    color: hsl(222.2 47.4% 11.2%);
     font-family: var(--font-body), sans-serif;
 }
 
 .notesClose {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
     background: none;
     border: none;
     cursor: pointer;
-    color: var(--text-secondary, #6b7280);
-    font-size: 1.2rem;
+    color: hsl(215.4 16.3% 56.9%);
+    font-size: 1.1rem;
     line-height: 1;
-    padding: 2px 4px;
-    border-radius: 4px;
+    border-radius: 6px;
+    transition: background 120ms ease, color 120ms ease;
 }
 
-.notesClose:hover { background: var(--bg-primary, #fff); }
+.notesClose:hover {
+    background: hsl(210 40% 96.1%);
+    color: hsl(222.2 47.4% 11.2%);
+}
 
 .notesTextarea {
-    padding: 10px 12px;
+    padding: 10px 14px;
     border: none;
     outline: none;
-    resize: vertical;
+    resize: none;
     font-family: var(--font-body), sans-serif;
-    font-size: 0.84rem;
-    color: var(--text-primary, #111827);
-    background: var(--bg-primary, #ffffff);
+    font-size: var(--course-font-sm, 0.875rem);
+    color: hsl(222.2 47.4% 11.2%);
+    background: hsl(0 0% 100%);
     min-height: 120px;
-    line-height: 1.5;
+    line-height: 1.6;
+    caret-color: var(--course-accent, #003ccc);
 }
 
 .notesHint {
-    font-size: 0.70rem;
-    color: var(--text-secondary, #9ca3af);
+    font-size: 0.7rem;
+    color: hsl(215.4 16.3% 66.9%);
     text-align: right;
-    padding: 4px 12px 8px;
+    padding: 4px 14px 8px;
     margin: 0;
     font-family: var(--font-body), sans-serif;
+    border-top: 1px solid hsl(214.3 31.8% 94%);
 }
 
-@media (max-width: 600px) {
+/* ================================================================
+   RESPONSIVE - TABLET (max-width: 1024px)
+   ================================================================ */
+@media (max-width: 1024px) {
+    .headerTitle { max-width: 38%; }
+    .dots { max-width: 120px; }
+}
+
+/* ================================================================
+   RESPONSIVE - MOBILE (max-width: 767px)
+   ================================================================ */
+@media (max-width: 767px) {
+    .header { padding: 0 10px; min-height: 48px; }
+    .headerTitle  { display: none !important; }
+    .readingTime  { display: none !important; }
+    .slideBadge   { display: none !important; }
+
+    .nav { padding: 6px 10px; gap: 6px; }
+    .navBtn { height: 34px; padding: 0 12px; font-size: var(--course-font-xs, 0.75rem); }
+
+    .dots { max-width: 100px; }
+    .dot  { width: 5px; height: 5px; }
+    .dotActive { width: 16px; }
+
+    .contentSplit { flex-direction: column !important; }
+
+    .mediaSplit {
+        width: 100% !important;
+        height: 38vh !important;
+        border-left: none !important;
+        border-top: 1px solid hsl(214.3 31.8% 91.4%);
+        order: 1;
+    }
+
+    .slideWrapperSplit {
+        width: 100% !important;
+        flex: 1 1 auto !important;
+        order: 2;
+    }
+
     .notesDrawer {
         right: 8px;
-        bottom: 130px;
-        width: calc(100vw - 16px);
+        left: 8px;
+        width: auto;
+        bottom: calc(56px + 56px + env(safe-area-inset-bottom));
     }
-    .notesBtn { bottom: 130px; right: 8px; }
+
+    .notesBtn {
+        bottom: calc(56px + 10px + env(safe-area-inset-bottom));
+        right: 12px;
+    }
+}
+
+/* ================================================================
+   RESPONSIVE - SMALL PHONES (max-width: 380px)
+   ================================================================ */
+@media (max-width: 380px) {
+    .navBtn span  { display: none; }
+    .navBtn       { padding: 0 10px; }
+    .exitBtn span { display: none; }
+    .exitBtn      { padding: 0 8px; }
+}
+
+/* ================================================================
+   RESPONSIVE - PROYECTOR / TV (min-width: 1400px)
+   ================================================================ */
+@media (min-width: 1400px) {
+    .header    { min-height: 60px; padding: 0 24px; }
+    .headerTitle { font-size: var(--course-font-base, 1rem); }
+    .nav    { padding: 12px 24px; }
+    .navBtn { height: 40px; padding: 0 20px; font-size: var(--course-font-base, 1rem); }
+    .dots { max-width: 200px; }
+    .dot  { width: 8px; height: 8px; }
+    .dotActive { width: 24px; }
+    .segmentedBar { height: 5px; }
+    .linearBar    { height: 4px; }
+}
+
+/* ================================================================
+   ACCESSIBILITY
+   ================================================================ */
+@media (prefers-reduced-motion: reduce) {
+    .slideWrapper,
+    .slideEnterForward,
+    .slideEnterBackward,
+    .offlineBanner,
+    .notesDrawer {
+        animation: none !important;
+        transition: none !important;
+    }
+    .navBtn:active:not(:disabled) { transform: none; }
+    .dot:hover                    { transform: none; }
+    .notesBtn:hover               { transform: none; }
+}
+
+@media (prefers-contrast: high) {
+    .exitBtn,
+    .navBtn,
+    .iconBtn { border-width: 2px; }
+    .segmentedBar .segment { border: 1px solid currentColor; }
 }

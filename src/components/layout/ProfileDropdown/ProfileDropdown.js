@@ -57,7 +57,7 @@ export default function ProfileDropdown({
                 await onLogoutProp();
             } else {
                 await signOut();
-                router.push('/login');
+                router.push('/');
             }
         } catch (err) {
             console.error('Error signing out:', err);

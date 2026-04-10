@@ -1,147 +1,144 @@
+/* ================================================================
+   PWAPrompt — shadcn/ui style
+   ================================================================ */
+
+@keyframes slideUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
 .promptContainer {
     position: fixed;
     bottom: 24px;
-    left: 24px;
     right: 24px;
     z-index: 1000;
-    display: flex;
-    justify-content: center;
     pointer-events: none;
-    /* Let clicks pass through outside the card */
+    display: flex;
+    justify-content: flex-end;
 }
 
 .promptCard {
     pointer-events: auto;
-    background: rgba(255, 255, 255, 0.9);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-    border: 1px solid rgba(255, 255, 255, 0.5);
+    width: 340px;
+    background: hsl(0 0% 100%);
+    border: 1px solid hsl(214.3 31.8% 91.4%);
+    border-radius: 12px;
+    box-shadow: 0 4px 6px -1px rgba(0,0,0,0.08), 0 10px 30px -3px rgba(0,0,0,0.10);
     padding: 16px;
-    border-radius: 20px;
-    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
-    max-width: 400px;
-    width: 100%;
-    position: relative;
-    overflow: hidden;
+    animation: slideUp 0.25s cubic-bezier(0.22,1,0.36,1) both;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
 }
 
-[data-theme="dark"] .promptCard {
-    background: rgba(30, 30, 35, 0.9);
-    border-color: rgba(255, 255, 255, 0.1);
-    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+.header {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
 }
 
 .closeBtn {
-    position: absolute;
-    top: 12px;
-    right: 12px;
-    background: transparent;
-    border: none;
-    color: #8e8e93;
-    cursor: pointer;
-    padding: 4px;
-    border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: background 0.2s;
+    width: 28px;
+    height: 28px;
+    flex-shrink: 0;
+    background: transparent;
+    border: 1px solid transparent;
+    border-radius: 6px;
+    color: hsl(215.4 16.3% 56.9%);
+    cursor: pointer;
+    transition: background 0.15s, color 0.15s, border-color 0.15s;
 }
 
 .closeBtn:hover {
-    background: rgba(0, 0, 0, 0.05);
-    color: #1c1c1e;
-}
-
-[data-theme="dark"] .closeBtn:hover {
-    background: rgba(255, 255, 255, 0.1);
-    color: #fff;
-}
-
-.content {
-    display: flex;
-    align-items: flex-start;
-    gap: 16px;
+    background: hsl(210 40% 96.1%);
+    border-color: hsl(214.3 31.8% 91.4%);
+    color: hsl(222.2 47.4% 11.2%);
 }
 
 .iconWrapper {
-    width: 48px;
-    height: 48px;
-    background: rgba(0, 122, 255, 0.1);
-    border-radius: 12px;
+    width: 40px;
+    height: 40px;
+    background: hsl(214.3 31.8% 96%);
+    border: 1px solid hsl(214.3 31.8% 91.4%);
+    border-radius: 8px;
     display: flex;
     align-items: center;
     justify-content: center;
+    color: hsl(221.2 83.2% 53.3%);
     flex-shrink: 0;
-}
-
-[data-theme="dark"] .iconWrapper {
-    background: rgba(10, 132, 255, 0.15);
 }
 
 .textColumn {
     flex: 1;
     display: flex;
     flex-direction: column;
-    gap: 4px;
-    padding-right: 24px;
-    /* Space for close button */
+    gap: 2px;
+    min-width: 0;
 }
 
 .title {
-    font-size: 16px;
-    font-weight: 700;
-    color: #1c1c1e;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: hsl(222.2 47.4% 11.2%);
     margin: 0;
-}
-
-[data-theme="dark"] .title {
-    color: #fff;
+    font-family: var(--font-body), sans-serif;
+    line-height: 1.4;
 }
 
 .description {
-    font-size: 13px;
-    color: #3c3c43;
-    line-height: 1.4;
+    font-size: 0.8rem;
+    color: hsl(215.4 16.3% 46.9%);
+    line-height: 1.5;
     margin: 0;
-}
-
-[data-theme="dark"] .description {
-    color: #ebebf5;
+    font-family: var(--font-body), sans-serif;
 }
 
 .iosInstructions {
-    margin-top: 8px;
     display: flex;
     flex-direction: column;
     gap: 4px;
-    font-size: 12px;
-    color: #007AFF;
-    font-weight: 500;
+    padding: 10px 12px;
+    background: hsl(214.3 31.8% 97%);
+    border: 1px solid hsl(214.3 31.8% 91.4%);
+    border-radius: 8px;
+    font-size: 0.78rem;
+    color: hsl(215.4 16.3% 36%);
+    font-family: var(--font-body), sans-serif;
+    line-height: 1.5;
 }
 
 .installButton {
-    margin-top: 8px;
-    background: #007AFF;
-    color: white;
-    border: none;
+    width: 100%;
     padding: 8px 16px;
-    border-radius: 20px;
-    font-size: 14px;
-    font-weight: 600;
+    background: hsl(222.2 47.4% 11.2%);
+    color: hsl(210 40% 98%);
+    border: none;
+    border-radius: 8px;
+    font-size: 0.875rem;
+    font-weight: 500;
+    font-family: var(--font-body), sans-serif;
     cursor: pointer;
-    transition: background 0.2s;
-    align-self: flex-start;
+    transition: background 0.15s;
 }
 
 .installButton:hover {
-    background: #0062cc;
+    background: hsl(222.2 47.4% 20%);
 }
 
-@media (min-width: 768px) {
+@media (max-width: 480px) {
     .promptContainer {
-        bottom: 32px;
-        right: 32px;
-        left: auto;
-        justify-content: flex-end;
+        bottom: 0;
+        right: 0;
+        left: 0;
+        justify-content: center;
+        padding: 0 0 env(safe-area-inset-bottom);
+    }
+    .promptCard {
+        width: 100%;
+        border-radius: 16px 16px 0 0;
+        box-shadow: 0 -4px 24px rgba(0,0,0,0.12);
     }
 }

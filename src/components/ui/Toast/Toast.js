@@ -31,10 +31,10 @@ function Toast({ id, message, type = 'info', onClose, duration = 3000 }) {
     }, [duration, handleClose]);
 
     const icons = {
-        success: <IconCheckCircle size={20} />,
-        error: <IconAlertCircle size={20} />,
-        warning: <IconAlertTriangle size={20} />,
-        info: <IconInfo size={20} />
+        success: <IconCheckCircle size={16} />,
+        error: <IconAlertCircle size={16} />,
+        warning: <IconAlertTriangle size={16} />,
+        info: <IconInfo size={16} />
     };
 
     // Soporte para { title, body } o string plano
@@ -48,7 +48,7 @@ function Toast({ id, message, type = 'info', onClose, duration = 3000 }) {
             role="alert"
             aria-live={type === 'error' ? 'assertive' : 'polite'}
         >
-            <div className={`${styles.icon} ${styles[type]}`}>
+            <div className={`${styles.icon} ${styles[type]}`} aria-hidden="true">
                 {icons[type]}
             </div>
             <div className={styles.message}>

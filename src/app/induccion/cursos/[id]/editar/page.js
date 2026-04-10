@@ -23,6 +23,15 @@ import CoursePlayer from '@/components/features/Courses/CoursePlayer';
 import { SLIDE_TYPE_LABELS, getDefaultSlideData } from '@/components/features/Courses/Editor/slideConstants';
 import styles from './editor.module.css';
 
+const FS_STEPS = [
+    { key: 'sm', label: 'A', size: '0.75rem', title: 'Letra pequeña' },
+    { key: 'md', label: 'A', size: '0.875rem', title: 'Letra mediana' },
+    { key: 'lg', label: 'A', size: '1rem',    title: 'Letra grande' },
+    { key: 'xl', label: 'A', size: '1.15rem', title: 'Letra extra grande' },
+];
+const FS_STORAGE_KEY = 'course_font_scale';
+const FS_CSS_CLASS = { sm: 'fsSm', md: null, lg: 'fsLg', xl: 'fsXl' };
+
 // ── Tipos de slide para el modal (agrupados por sección) ─────────────────────
 const SLIDE_SECTIONS = [
     {
@@ -167,6 +176,14 @@ export default function EditorPage({ params }) {
     const [courseQrGenerating, setCourseQrGenerating] = useState(false);
     const [courseQrError, setCourseQrError] = useState('');
     const fileInputRef = useRef(null);
+    const [previewFontSize, setPreviewFontSize] = useState(() => {
+        if (typeof window === 'undefined') return 'md';
+        return localStorage.getItem(FS_STORAGE_KEY) || 'md';
+    });
+    const handlePreviewFontSize = useCallback((key) => {
+        setPreviewFontSize(key);
+        try { localStorage.setItem(FS_STORAGE_KEY, key); } catch {}
+    }, []);
 
     // Ref para acceder al estado actual sin añadirlo como dependencia en callbacks
     const stateRef = useRef(state);
@@ -621,105 +638,129 @@ export default function EditorPage({ params }) {
             />
 
             {(publicQuizUrl || qrError) && (
-                <div className={styles.quizPanel}>
-                    <div className={styles.quizPanelInfo}>
-                        <p className={styles.quizPanelTitle}>Quiz público</p>
-                        <p className={styles.quizPanelDescription}>
+                <div className={styles.shareCard} role="region" aria-label="Quiz público">
+                    <div className={styles.shareCardIcon} aria-hidden="true">
+                        <IconActivity size={18} />
+                    </div>
+                    <div className={styles.shareCardBody}>
+                        <div className={styles.shareCardHeader}>
+                            <p className={styles.shareCardTitle}>Quiz público</p>
+                            <span className={styles.shareCardBadge}>Sin sesión</span>
+                            <button
+                                className={styles.shareCardClose}
+                                type="button"
+                                onClick={() => { setPublicQuizUrl(''); setQrError(''); setQrDataUrl(''); }}
+                                aria-label="Cerrar panel de Quiz público"
+                            >
+                                <IconX size={14} />
+                            </button>
+                        </div>
+                        <p className={styles.shareCardDesc}>
                             Comparte este QR para que tus empleados respondan sin iniciar sesión.
                         </p>
                         {publicQuizUrl && (
-                            <>
-                                <div className={styles.quizPanelRow}>
-                                    <a
-                                        href={publicQuizUrl}
-                                        target="_blank"
-                                        rel="noreferrer"
-                                        className={styles.quizPanelLink}
-                                    >
-                                        {publicQuizUrl}
-                                    </a>
-                                    <button
-                                        className={`${styles.actionBtn} ${styles.primaryBtn}`}
-                                        type="button"
-                                        onClick={handleCopyQuizLink}
-                                    >
-                                        Copiar enlace
-                                    </button>
-                                </div>
-                                {qrDataUrl && (
-                                    <Image
-                                        src={qrDataUrl}
-                                        alt="QR público para el quiz"
-                                        className={styles.qrImage}
-                                        width={160}
-                                        height={160}
-                                        unoptimized
-                                    />
-                                )}
-                            </>
+                            <div className={styles.shareCardRow}>
+                                <a
+                                    href={publicQuizUrl}
+                                    target="_blank"
+                                    rel="noreferrer"
+                                    className={styles.shareCardUrl}
+                                >
+                                    {publicQuizUrl}
+                                </a>
+                                <button
+                                    className={styles.shareCardCopyBtn}
+                                    type="button"
+                                    onClick={handleCopyQuizLink}
+                                >
+                                    Copiar enlace
+                                </button>
+                            </div>
+                        )}
+                        {qrDataUrl && (
+                            <Image
+                                src={qrDataUrl}
+                                alt="QR público para el quiz"
+                                className={styles.shareCardQr}
+                                width={112}
+                                height={112}
+                                unoptimized
+                            />
                         )}
                         {qrError && (
-                            <p className={styles.qrError}>{qrError}</p>
+                            <p className={styles.shareCardError}>{qrError}</p>
                         )}
                     </div>
                 </div>
             )}
 
             {(publicCourseUrl || courseQrError) && (
-                <div className={styles.quizPanel}>
-                    <div className={styles.quizPanelInfo}>
-                        <p className={styles.quizPanelTitle}>Curso completo — vista pública</p>
-                        <p className={styles.quizPanelDescription}>
+                <div className={styles.shareCard} role="region" aria-label="Curso completo, vista pública">
+                    <div className={`${styles.shareCardIcon} ${styles.shareCardIconCourse}`} aria-hidden="true">
+                        <IconEye size={18} />
+                    </div>
+                    <div className={styles.shareCardBody}>
+                        <div className={styles.shareCardHeader}>
+                            <p className={styles.shareCardTitle}>Curso completo — vista pública</p>
+                            <span className={styles.shareCardBadge}>Público</span>
+                            <button
+                                className={styles.shareCardClose}
+                                type="button"
+                                onClick={() => { setPublicCourseUrl(''); setCourseQrError(''); setCourseQrDataUrl(''); }}
+                                aria-label="Cerrar panel de Curso completo"
+                            >
+                                <IconX size={14} />
+                            </button>
+                        </div>
+                        <p className={styles.shareCardDesc}>
                             Comparte este QR para que cualquiera pueda ver el curso sin iniciar sesión.
                         </p>
                         {publicCourseUrl && (
-                            <>
-                                <div className={styles.quizPanelRow}>
-                                    <a
-                                        href={publicCourseUrl}
-                                        target="_blank"
-                                        rel="noreferrer"
-                                        className={styles.quizPanelLink}
-                                    >
-                                        {publicCourseUrl}
-                                    </a>
-                                    <button
-                                        className={`${styles.actionBtn} ${styles.primaryBtn}`}
-                                        type="button"
-                                        onClick={handleCopyCourseLink}
-                                    >
-                                        Copiar enlace
-                                    </button>
-                                </div>
-                                {courseQrDataUrl && (
-                                    <Image
-                                        src={courseQrDataUrl}
-                                        alt="QR público para ver el curso completo"
-                                        className={styles.qrImage}
-                                        width={160}
-                                        height={160}
-                                        unoptimized
-                                    />
-                                )}
-                            </>
+                            <div className={styles.shareCardRow}>
+                                <a
+                                    href={publicCourseUrl}
+                                    target="_blank"
+                                    rel="noreferrer"
+                                    className={styles.shareCardUrl}
+                                >
+                                    {publicCourseUrl}
+                                </a>
+                                <button
+                                    className={styles.shareCardCopyBtn}
+                                    type="button"
+                                    onClick={handleCopyCourseLink}
+                                >
+                                    Copiar enlace
+                                </button>
+                            </div>
+                        )}
+                        {courseQrDataUrl && (
+                            <Image
+                                src={courseQrDataUrl}
+                                alt="QR público para ver el curso completo"
+                                className={styles.shareCardQr}
+                                width={112}
+                                height={112}
+                                unoptimized
+                            />
                         )}
                         {courseQrError && (
-                            <p className={styles.qrError}>{courseQrError}</p>
+                            <p className={styles.shareCardError}>{courseQrError}</p>
                         )}
                     </div>
                 </div>
             )}
 
             {/* ── Workspace ── */}
-            <div className={styles.workspace}>
+            <div className={`${styles.workspace} ${sidebarOpen ? '' : styles.workspaceSidebarClosed}`}>
                 {/* Sidebar */}
-                <aside className={`${styles.sidebar} ${sidebarOpen ? styles.sidebarOpen : ''}`}>
+                <aside className={`${styles.sidebar} ${sidebarOpen ? styles.sidebarOpen : styles.sidebarClosed}`}>
                     <div className={styles.sidebarHeader}>
                         <span>Slides ({slides.length})</span>
                         <button
                             className={styles.sidebarCloseBtn}
                             onClick={() => setSidebarOpen(false)}
-                            aria-label="Cerrar"
+                            aria-label="Ocultar panel de slides"
                         >
                             <IconX size={14} />
                         </button>
@@ -735,7 +776,20 @@ export default function EditorPage({ params }) {
                     />
                 </aside>
 
-                {/* Editor + Preview */}
+                {/* Botón para reabrir sidebar cuando está cerrado */}
+                {!sidebarOpen && (
+                    <button
+                        className={styles.sidebarReopenBtn}
+                        onClick={() => setSidebarOpen(true)}
+                        aria-label="Mostrar panel de slides"
+                        title="Mostrar slides"
+                    >
+                        <IconMenu size={15} />
+                        <span className={styles.sidebarReopenCount}>{slides.length} slides</span>
+                    </button>
+                )}
+
+                {/* Editor */}
                 <div className={styles.mainContent}>
                     <div className={styles.mainPanel}>
                         <SlideEditorErrorBoundary onRestoreDefault={handleRestoreSlide}>
@@ -749,52 +803,29 @@ export default function EditorPage({ params }) {
                             />
                         </SlideEditorErrorBoundary>
                     </div>
-                    <div className={styles.previewPanel}>
-                        <span className={styles.previewLabel}>Vista Previa en Vivo</span>
-                        <div className={styles.previewWrapper}>
-                            {/* Overlay transparente para prevenir interacción con el preview */}
-                            <div className={styles.previewOverlay} />
-                            {livePreviewSlide ? (
-                                <CoursePlayer
-                                    course={course}
-                                    slides={[livePreviewSlide]}
-                                    onClose={() => {}}
-                                    inline={true}
-                                />
-                            ) : (
-                                <div className={styles.previewEmpty}>
-                                    <span style={{ fontSize: '2rem' }}>👁</span>
-                                    <span>Selecciona un slide para previsualizar</span>
-                                </div>
-                            )}
-                        </div>
-                    </div>
                 </div>
             </div>
-
-            {/* ── Modal: Elegir tipo de slide ── */}
             {showSlideModal && (
                 <div
                     className={styles.slideModalBackdrop}
-                    onClick={() => dispatch({ type: 'TOGGLE_MODAL', open: false })}
+                    onClick={(e) => { if (e.target === e.currentTarget) dispatch({ type: 'TOGGLE_MODAL', open: false }); }}
                 >
-                    <div className={styles.slideModalBox} onClick={e => e.stopPropagation()}>
+                    <div className={styles.slideModalBox}>
                         <div className={styles.slideModalHeader}>
                             <div>
-                                <h2 className={styles.slideModalTitle}>Nuevo Slide</h2>
-                                <p className={styles.slideModalSubtitle}>Elige el tipo de contenido</p>
+                                <h2 className={styles.slideModalTitle}>Agregar Slide</h2>
+                                <p className={styles.slideModalSubtitle}>Selecciona el tipo de slide</p>
                             </div>
                             <button
                                 className={styles.slideModalCloseBtn}
                                 onClick={() => dispatch({ type: 'TOGGLE_MODAL', open: false })}
-                                aria-label="Cerrar modal"
+                                aria-label="Cerrar"
                             >
                                 <IconX size={16} />
                             </button>
                         </div>
-
                         <div className={styles.slideModalBody}>
-                            {SLIDE_SECTIONS.map(section => (
+                            {SLIDE_SECTIONS.map((section) => (
                                 <div key={section.label} className={styles.slideSection}>
                                     <p className={styles.slideSectionLabel}>{section.label}</p>
                                     <div className={styles.slideTypesGrid}>

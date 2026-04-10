@@ -2,27 +2,21 @@
    ShapeHero — Dual Theme (Light / Dark)
    Colores corporativos VIÑOPLASTIC
    Azul #003ccc · Rojo #d40000
-   Sin colores hardcodeados — todo via tokens
    ========================================= */
-
-@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Geist:wght@300;400;500;600&display=swap');
 
 /* ─── Variables internas del Hero ───────────────────────── */
 
-/* Modo claro */
 .hero {
     --vp-blue: #003ccc;
     --vp-blue-light: #1a55e0;
     --vp-red: #d40000;
 
-    --hero-bg: #f5f7ff;
     --hero-bg-grad: linear-gradient(145deg, #f0f4ff 0%, #ffffff 60%, #fdf0f0 100%);
     --hero-grid-color: rgba(0, 60, 204, 0.055);
     --hero-orb-color: rgba(0, 60, 204, 0.10);
 
     --hero-text-primary: #0a0f2e;
     --hero-text-secondary: rgba(10, 15, 46, 0.55);
-    --hero-text-muted: rgba(10, 15, 46, 0.38);
 
     --hero-portal-color: rgba(0, 60, 204, 0.60);
     --hero-line-color: #d40000;
@@ -30,79 +24,49 @@
     --hero-accent-color: #003ccc;
     --hero-underline: #d40000;
     --hero-location-color: rgba(10, 15, 46, 0.52);
-
     --hero-divider: rgba(0, 60, 204, 0.10);
 
-    /* Pill nav — light */
-    --pill-bg: rgba(255, 255, 255, 0.80);
-    --pill-border: rgba(0, 60, 204, 0.15);
-    --pill-shadow:
-        0 8px 32px rgba(0, 60, 204, 0.08),
-        0 2px 8px rgba(0, 0, 0, 0.04),
-        inset 0 1px 0 rgba(255, 255, 255, 1);
-    --pill-sep: rgba(0, 60, 204, 0.15);
-
-    --item-desc: rgba(0, 60, 204, 0.55);
-    --item-label: #0a0f2e;
-    --item-hover-bg: rgba(0, 60, 204, 0.06);
-    --item-hover-label: #003ccc;
-    --item-active-bg: rgba(212, 0, 0, 0.08);
+    --card-bg: #ffffff;
+    --card-border: rgba(0, 60, 204, 0.10);
+    --card-shadow:
+        0 8px 40px rgba(0, 60, 204, 0.08),
+        0 1px 3px rgba(0, 0, 0, 0.04);
+    --badge-bg: linear-gradient(135deg, #003ccc 0%, #1a55e0 100%);
+    --error-bg: rgba(212, 0, 0, 0.06);
+    --error-border: #d40000;
+    --error-text: #b30000;
+    --success-color: #16a34a;
 
     --footer-color: rgba(10, 15, 46, 0.30);
-
-    /* Fade lateral del visual — coincide con --hero-bg en cada tema */
-    --visual-fade-start: rgba(245, 247, 255, 0.88);
-    --visual-fade-mid: rgba(245, 247, 255, 0.20);
-
-    /* Skip link */
     --skip-bg: var(--vp-blue);
     --skip-color: #ffffff;
 }
 
 /* Modo oscuro */
 [data-theme="dark"] .hero {
-    --hero-bg: #060612;
     --hero-bg-grad: linear-gradient(135deg, #060612 0%, #0a0f2e 45%, #0d0618 100%);
     --hero-grid-color: rgba(80, 110, 255, 0.07);
     --hero-orb-color: rgba(30, 80, 255, 0.13);
 
     --hero-text-primary: #f0f0f8;
     --hero-text-secondary: rgba(200, 210, 255, 0.60);
-    --hero-text-muted: rgba(160, 175, 230, 0.40);
 
     --hero-portal-color: rgba(160, 180, 255, 0.60);
-    --hero-line-color: #d40000;
     --hero-title-color: #ffffff;
     --hero-accent-color: #4d80ff;
-    --hero-underline: #d40000;
     --hero-location-color: rgba(180, 195, 255, 0.55);
-
     --hero-divider: rgba(255, 255, 255, 0.08);
 
-    /* Pill nav — dark */
-    --pill-bg: rgba(255, 255, 255, 0.055);
-    --pill-border: rgba(255, 255, 255, 0.12);
-    --pill-shadow:
-        0 8px 32px rgba(0, 0, 0, 0.40),
-        0 2px 8px rgba(0, 0, 0, 0.25),
-        inset 0 1px 0 rgba(255, 255, 255, 0.08);
-    --pill-sep: rgba(255, 255, 255, 0.12);
-
-    --item-desc: rgba(160, 180, 255, 0.60);
-    --item-label: #f0f0f8;
-    --item-hover-bg: rgba(77, 128, 255, 0.12);
-    --item-hover-label: #7ba8ff;
-    --item-active-bg: rgba(212, 0, 0, 0.12);
+    --card-bg: rgba(10, 15, 46, 0.85);
+    --card-border: rgba(77, 128, 255, 0.15);
+    --card-shadow:
+        0 8px 40px rgba(0, 0, 0, 0.40),
+        0 1px 3px rgba(0, 0, 0, 0.20);
+    --error-bg: rgba(212, 0, 0, 0.10);
+    --error-text: #ff8080;
 
     --footer-color: rgba(120, 135, 190, 0.38);
-
-    /* Fade lateral del visual — dark */
-    --visual-fade-start: rgba(6, 6, 18, 0.88);
-    --visual-fade-mid: rgba(6, 6, 18, 0.20);
-
-    /* Skip link dark */
     --skip-bg: var(--vp-blue-light);
-    --skip-color: #ffffff;
 }
 
 /* ─── Keyframes ─────────────────────────────────────────── */
@@ -120,13 +84,8 @@
 }
 
 @keyframes fadeIn {
-    from {
-        opacity: 0;
-    }
-
-    to {
-        opacity: 1;
-    }
+    from { opacity: 0; }
+    to   { opacity: 1; }
 }
 
 @keyframes lineExpand {
@@ -142,38 +101,17 @@
 }
 
 @keyframes underlineIn {
-    to {
-        transform: scaleX(1);
-    }
-}
-
-@keyframes shimmerSlide {
-    from {
-        left: -65%;
-    }
-
-    to {
-        left: 120%;
-    }
+    to { transform: scaleX(1); }
 }
 
 @keyframes orbFloat {
-
-    0%,
-    100% {
-        transform: translateY(0) scale(1);
-    }
-
-    50% {
-        transform: translateY(-28px) scale(1.04);
-    }
+    0%, 100% { transform: translateY(0) scale(1); }
+    50%       { transform: translateY(-28px) scale(1.04); }
 }
 
 /* ─── Hero shell ────────────────────────────────────────── */
 
 .hero {
-    /* 100vh como fallback para browsers sin soporte dvh,
-       100dvh después como progressive enhancement */
     min-height: 100vh;
     min-height: 100dvh;
     display: flex;
@@ -186,7 +124,6 @@
     overflow: hidden;
     font-family: var(--font-body);
     color: var(--hero-text-primary);
-    /* Solo transicionamos background — color lo hereda correctamente */
     transition: background 0.4s ease;
 }
 
@@ -248,16 +185,6 @@
     outline-offset: 2px;
 }
 
-/* ─── ThemeSelector pill ────────────────────────────────── */
-
-.themePill {
-    position: absolute;
-    bottom: 1.5rem;
-    right: 1.5rem;
-    z-index: 50;
-    animation: fadeIn 0.6s ease 1s both;
-}
-
 /* ─── Main content 2 columnas ───────────────────────────── */
 
 .content {
@@ -265,13 +192,13 @@
     grid-template-columns: 1fr;
     align-items: center;
     width: 100%;
-    max-width: 1200px;
+    max-width: 1100px;
     gap: 2.5rem;
     position: relative;
     z-index: 1;
 }
 
-/* ─── Columna izquierda ─────────────────────────────────── */
+/* ─── Columna izquierda — Marca ─────────────────────────── */
 
 .left {
     display: flex;
@@ -280,8 +207,17 @@
     gap: 0;
 }
 
-/* ─── Brand ─────────────────────────────────────────────── */
+/* Logo */
+.logo {
+    width: 80px;
+    height: 80px;
+    object-fit: contain;
+    margin-bottom: 1.25rem;
+    animation: fadeSlideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
+    animation-delay: 0.15s;
+}
 
+/* Brand block */
 .brand {
     display: flex;
     flex-direction: column;
@@ -296,11 +232,11 @@
     letter-spacing: 0.2em;
     text-transform: uppercase;
     color: var(--hero-portal-color);
-    animation: fadeSlideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
-    animation-delay: 0.25s;
     display: flex;
     align-items: center;
     gap: 0.6rem;
+    animation: fadeSlideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
+    animation-delay: 0.25s;
 }
 
 .portal::before {
@@ -317,13 +253,13 @@
 
 .title {
     font-family: var(--font-serif);
-    font-size: clamp(2.2rem, 7vw, 5.5rem);
-    white-space: nowrap;
+    font-size: clamp(2.2rem, 7vw, 4.5rem);
     font-weight: 900;
     letter-spacing: -0.03em;
     color: var(--hero-title-color);
     line-height: 1;
     margin: 0.3rem 0 0.5rem;
+    white-space: nowrap;
     animation: fadeSlideUp 0.7s cubic-bezier(0.16, 1, 0.3, 1) both;
     animation-delay: 0.38s;
 }
@@ -353,9 +289,6 @@
     font-weight: 400;
     color: var(--hero-location-color);
     letter-spacing: 0.06em;
-    display: flex;
-    align-items: center;
-    gap: 0.35rem;
     animation: fadeSlideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
     animation-delay: 0.52s;
 }
@@ -371,160 +304,104 @@
     animation-delay: 0.62s;
 }
 
-/* ─── Nav — Pill única ──────────────────────────────────── */
+/* ─── Columna derecha — Login card ──────────────────────── */
 
-.nav {
+.right {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.card {
     width: 100%;
-    animation: fadeSlideUp 0.65s cubic-bezier(0.16, 1, 0.3, 1) both;
-    animation-delay: 0.70s;
-    margin-bottom: 2rem;
+    max-width: 400px;
+    padding: 2rem;
+    border-radius: 20px;
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    box-shadow: var(--card-shadow);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
 }
 
-.navPill {
-    display: inline-flex;
-    align-items: stretch;
-    border-radius: 9999px;
-    background: var(--pill-bg);
-    backdrop-filter: blur(28px) saturate(180%);
-    -webkit-backdrop-filter: blur(28px) saturate(180%);
-    border: 1px solid var(--pill-border);
-    box-shadow: var(--pill-shadow);
-    overflow: hidden;
-    position: relative;
-    max-width: 100%;
+.cardHeader {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.35rem;
+    margin-bottom: 1.5rem;
 }
 
-.navGroup {
-    display: contents;
-}
-
-/* Separador vertical */
-.navSep {
-    display: block;
-    width: 1px;
-    background: var(--pill-sep);
+.iconBadge {
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    background: var(--badge-bg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #ffffff;
+    margin-bottom: 0.5rem;
     flex-shrink: 0;
-    align-self: stretch;
-    margin: 0;
 }
 
-/* Item individual */
-.navItem {
+.cardTitle {
+    font-family: var(--font-serif);
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--hero-text-primary);
+    margin: 0;
+    line-height: 1.2;
+}
+
+.cardSubtitle {
+    font-size: 0.875rem;
+    color: var(--hero-text-secondary);
+    margin: 0;
+    line-height: 1.4;
+}
+
+/* ─── Formulario ────────────────────────────────────────── */
+
+.form {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+/* ─── Error box ─────────────────────────────────────────── */
+
+.errorBox {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.7rem 1rem;
+    background: var(--error-bg);
+    border-left: 3px solid var(--error-border);
+    border-radius: 0 8px 8px 0;
+    font-size: 0.8125rem;
+    color: var(--error-text);
+    line-height: 1.4;
+    overflow: hidden;
+}
+
+/* ─── Success state ─────────────────────────────────────── */
+
+.successState {
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: 0.1rem;
-    padding: 0.85rem 1.75rem;
-    text-decoration: none;
-    cursor: pointer;
-    position: relative;
-    overflow: hidden;
-    transition: background 0.20s ease;
-    flex-shrink: 0;
+    gap: 0.75rem;
+    padding: 2.5rem 1rem;
+    text-align: center;
+    color: var(--success-color);
 }
 
-/* Shimmer sweep on hover */
-.navItem::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: -65%;
-    width: 50%;
-    height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.18), transparent);
-    transform: skewX(-15deg);
-    pointer-events: none;
-}
-
-.navItem:hover::before {
-    animation: shimmerSlide 0.5s ease forwards;
-}
-
-.navItem:hover {
-    background: var(--item-hover-bg);
-}
-
-.navItem:focus-visible {
-    outline: 2px solid var(--vp-blue);
-    outline-offset: -2px;
-    border-radius: 4px;
-}
-
-.navItem:active {
-    background: var(--item-active-bg);
-}
-
-/* Etiqueta descriptiva (sector / área) */
-.navItemDesc {
-    font-size: 0.60rem;
-    font-weight: 600;
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
-    color: var(--item-desc);
-    white-space: nowrap;
-    transition: color 0.18s ease;
-    line-height: 1;
-}
-
-.navItem:hover .navItemDesc {
-    color: var(--vp-red);
-}
-
-/* Label principal */
-.navItemLabel {
-    font-family: var(--font-serif);
-    font-size: 1.15rem;
-    font-weight: 700;
-    color: var(--item-label);
-    letter-spacing: -0.01em;
-    white-space: nowrap;
-    line-height: 1.2;
-    transition: color 0.18s ease;
-}
-
-.navItem:hover .navItemLabel {
-    color: var(--item-hover-label);
-}
-
-/* ─── Columna derecha — Visual ──────────────────────────── */
-
-.right {
-    display: none;
-}
-
-.visualWrapper {
-    position: relative;
-    width: 100%;
-    max-width: 380px;
-    margin: 0 auto;
-    border-radius: 28px;
-    overflow: hidden;
-    background: transparent;
-    padding: 2rem;
-}
-
-[data-theme="dark"] .visualWrapper {
-    background: transparent;
-}
-
-.visualImg {
-    width: 100%;
-    height: auto;
-    display: block;
-    border-radius: 12px;
-    object-fit: contain;
-}
-
-/* Fade lateral suave — difumina el borde izquierdo contra el fondo del hero */
-.visualFade {
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(to right,
-            var(--visual-fade-start) 0%,
-            var(--visual-fade-mid) 18%,
-            transparent 38%);
-    pointer-events: none;
+.successState p {
+    font-size: 1rem;
+    font-weight: 500;
+    margin: 0;
 }
 
 /* ─── Footer ────────────────────────────────────────────── */
@@ -550,16 +427,8 @@
 
 @media (min-width: 768px) {
     .content {
-        grid-template-columns: 55% 45%;
-        gap: 2.5rem;
-    }
-
-    .right {
-        display: block;
-    }
-
-    .title {
-        font-size: clamp(2.4rem, 5.5vw, 5.5rem);
+        grid-template-columns: 45% 55%;
+        gap: 3rem;
     }
 }
 
@@ -569,59 +438,32 @@
     }
 
     .content {
-        grid-template-columns: 58% 42%;
         gap: 4rem;
     }
 
     .title {
-        font-size: clamp(3rem, 5vw, 5.5rem);
-        white-space: nowrap;
-    }
-
-    .navItemLabel {
-        font-size: 1.25rem;
-    }
-
-    .navItem {
-        padding: 1rem 2rem;
+        font-size: clamp(2.8rem, 4.5vw, 4.5rem);
     }
 }
 
 @media (max-width: 600px) {
     .hero {
-        padding: 4.5rem 1.25rem 2rem;
+        padding: 3rem 1.25rem 4rem;
     }
 
     .title {
+        font-size: clamp(1.8rem, 8vw, 2.8rem);
         white-space: nowrap;
-        font-size: clamp(1.6rem, 7.5vw, 3rem);
         letter-spacing: -0.04em;
     }
 
-    /* En móvil la pill se apila verticalmente */
-    .navPill {
-        flex-direction: column;
-        border-radius: 20px;
-        width: 100%;
+    .logo {
+        width: 60px;
+        height: 60px;
     }
 
-    .navSep {
-        width: auto;
-        height: 1px;
-        align-self: auto;
-    }
-
-    .navItem {
-        padding: 0.9rem 1.5rem;
-        align-items: flex-start;
-    }
-
-    .navItemDesc {
-        font-size: 0.58rem;
-    }
-
-    .navItemLabel {
-        font-size: 1.05rem;
+    .card {
+        padding: 1.5rem;
     }
 }
 
@@ -631,11 +473,17 @@
     }
 
     .title {
-        font-size: 2.2rem;
+        font-size: 2rem;
         margin: 0.1rem 0 0.3rem;
     }
 
-    .nav {
+    .logo {
+        width: 56px;
+        height: 56px;
+        margin-bottom: 0.75rem;
+    }
+
+    .divider {
         margin-bottom: 1rem;
     }
 
@@ -648,15 +496,13 @@
 /* ─── Reduced Motion ────────────────────────────────────── */
 
 @media (prefers-reduced-motion: reduce) {
-
     .grid,
+    .logo,
     .portal,
     .title,
     .location,
-    .nav,
     .divider,
-    .footer,
-    .themePill {
+    .footer {
         animation: none;
         opacity: 1;
         transform: none;
@@ -677,7 +523,6 @@
     }
 
     .hero,
-    .navItem,
     .skipLink {
         transition: none;
     }
@@ -686,11 +531,11 @@
 /* ─── High Contrast ─────────────────────────────────────── */
 
 @media (prefers-contrast: high) {
-    .navPill {
+    .card {
         border-width: 2px;
     }
 
-    .navItem:focus-visible {
+    .skipLink:focus {
         outline-width: 3px;
     }
 }
@@ -708,18 +553,7 @@
     .grid,
     .glowOrb,
     .footer,
-    .right,
-    .themePill {
+    .right {
         display: none;
-    }
-
-    .navPill {
-        border: 1px solid black;
-        background: transparent;
-    }
-
-    .navItemLabel,
-    .navItemDesc {
-        color: black;
     }
 }

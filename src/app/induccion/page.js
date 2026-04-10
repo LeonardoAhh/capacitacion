@@ -9,7 +9,6 @@ import AdminLayout from '@/components/layout/AdminLayout/AdminLayout';
 import CourseWizardModal from '@/components/features/Courses/CourseWizardModal';
 import CoursePlayer from '@/components/features/Courses/CoursePlayer';
 import KanbanCoursesView from '@/components/features/Induccion/views/KanbanCoursesView';
-import FuncionesGuide from '@/components/features/Induccion/FuncionesGuide/FuncionesGuide';
 import { useConfirm } from '@/hooks/useConfirm';
 import { Dialog, DialogHeader, DialogTitle, DialogBody, DialogFooter, DialogClose } from '@/components/ui/Dialog/Dialog';
 import {
@@ -320,11 +319,10 @@ function InduccionContent() {
     const draftCourses = allCourses.filter(c => !c.published && c.title?.toLowerCase().includes(q));
 
     return (
-        <AdminLayout title="Inducción">
+        <AdminLayout title="Presentaciones Cursos">
             <div className={styles.main}>
                 <div className={styles.container}>
                     <main className={styles.contentArea} id="main-content">
-                        {canEdit && <FuncionesGuide canEdit={canEdit} />}
                         <KanbanCoursesView
                             canEdit={canEdit}
                             nativeCourses={allCourses}

@@ -65,7 +65,7 @@ export default function TrainingLoginPage() {
             setIsSuccess(true);
 
             setTimeout(() => {
-                router.push('/training/dashboard');
+                router.push('/');
             }, 1500);
 
         } catch (err) {

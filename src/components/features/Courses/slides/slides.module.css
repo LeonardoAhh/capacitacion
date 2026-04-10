@@ -38,7 +38,8 @@
     width: 100%;
     max-width: 900px;
     margin: 0 auto;
-    min-height: 0;
+    flex: 1;
+    min-height: fit-content;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -65,8 +66,8 @@
 .slideInline {
     max-width: 100% !important;
     width: 100% !important;
-    min-height: unset !important;
-    height: 100% !important;
+    flex: 1 !important;
+    min-height: 0 !important;
     padding: 1.5rem 2rem !important;
     box-sizing: border-box;
 }
@@ -313,19 +314,37 @@
     background: var(--c-bg);
 }
 
-.slideImageContainer {
+/* Con imagen: layout side-by-side que llena la pantalla */
+.contentSlideWithImage {
+    flex-direction: row !important;
+    align-items: stretch !important;
+    gap: clamp(1.5rem, 3vw, 3rem) !important;
+    max-width: 1100px;
+    padding-left: 4.5rem;
+}
+
+.contentSlideWithImage > div:first-child {
     flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.slideImageContainer {
+    flex: 0 0 42%;
     display: flex;
     justify-content: center;
     align-items: center;
-    width: 100%;
-    height: 100%;
-    min-height: 300px;
+    align-self: stretch;
+    min-height: 0;
 }
 
 .slideImage {
     max-width: 100%;
-    max-height: 500px;
+    max-height: 100%;
+    width: 100%;
+    height: 100%;
     object-fit: contain;
     border-radius: var(--r-lg);
     box-shadow: var(--sh-lift);
@@ -338,6 +357,16 @@
     font-family: var(--font-serif), serif;
     color: var(--c-ink);
     letter-spacing: -0.02em;
+}
+
+/* Bloque de texto dentro del slide con imagen */
+.contentTextBlock {
+    flex: 1;
+    width: 100%;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
 }
 
 .contentBody {
@@ -1139,6 +1168,14 @@
         padding-left: 3.5rem;
     }
 
+    .contentSlideWithImage {
+        gap: 2rem !important;
+    }
+
+    .slideImageContainer {
+        flex: 0 0 38%;
+    }
+
     .accentBar { left: 2rem; }
 }
 
@@ -1169,6 +1206,18 @@
         gap: 1rem;
     }
 
+    .contentSlideWithImage {
+        flex-direction: column !important;
+        align-items: flex-start !important;
+    }
+
+    .contentSlideWithImage .slideImageContainer {
+        flex: 0 0 auto !important;
+        width: 100%;
+        height: clamp(160px, 40vw, 260px);
+        align-self: auto;
+    }
+
     .contentSlide[style*="row"] {
         flex-direction: column !important;
     }
@@ -1185,11 +1234,13 @@
 
     .slideImageContainer {
         width: 100%;
-        min-height: 180px;
+        min-height: 0;
+        height: clamp(160px, 40vw, 260px);
     }
 
     .slideImage {
-        max-height: 220px;
+        max-height: 100%;
+        height: 100%;
         width: 100%;
     }
 

@@ -57,7 +57,13 @@ export function AuthProvider({ children }) {
             const result = await signInWithEmailAndPassword(auth, email, password);
             return { success: true, user: result.user };
         } catch (error) {
-            return { success: false, error: error.message };
+            if (error.code === 'auth/invalid-credential' || error.code === 'auth/wrong-password' || error.code === 'auth/user-not-found') {
+                return { success: false, error: 'Correo o contraseña incorrectos.' };
+            }
+            if (error.code === 'auth/too-many-requests') {
+                return { success: false, error: 'Demasiados intentos fallidos. Intenta más tarde.' };
+            }
+            return { success: false, error: 'Error al iniciar sesión. Intenta de nuevo.' };
         }
     };
 

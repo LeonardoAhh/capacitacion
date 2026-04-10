@@ -49,10 +49,8 @@ export const VALIDATION_CONFIG = {
 };
 
 export const ROUTES = {
-    PUBLIC: ['/', '/login', '/candidatos', '/training/login'],
-    ADMIN: ['/dashboard', '/employees', '/capacitacion', '/reports', '/profile', '/modulos', '/iluo-manager', '/induccion', '/complete-profile'],
-    CANDIDATE: ['/candidatos/dashboard'],
-    TRAINING: ['/training/dashboard'],
+    PUBLIC: ['/', '/login', '/training/login'],
+    ADMIN: ['/dashboard', '/capacitacion', '/reports', '/profile', '/modulos', '/iluo-manager', '/induccion', '/complete-profile'],
 };
 
 export const THEME_CONFIG = {

@@ -1,256 +1,121 @@
-/* Toast.module.css - Variables inline sin :root */
+/* Toast.module.css — shadcn/Sonner style */
 
-/* Toast Container con variables locales */
 .toastContainer {
-    /* Usaremos las variables del layout en lugar de quemar colores: */
-    --toast-success-color: var(--color-success);
-    --toast-error-color: var(--color-danger);
-    --toast-warning-color: var(--color-warning);
-    --toast-info-color: var(--color-primary);
-
-    --toast-border-radius: var(--radius-lg);
-    --toast-shadow: var(--shadow-lg);
-    --toast-backdrop-blur: 24px;
-    --toast-max-width: 420px;
-    --toast-min-width: 320px;
-    --toast-gap: 12px;
-
-    --toast-duration-in: 0.4s;
-    --toast-duration-out: 0.25s;
-    --toast-easing-in: cubic-bezier(0.16, 1, 0.3, 1);
-    --toast-easing-out: cubic-bezier(0.4, 0, 1, 1);
-
-    /* Propiedades del contenedor */
     position: fixed;
-    top: 80px;
+    bottom: 24px;
     right: 24px;
     z-index: 10000;
     display: flex;
-    flex-direction: column;
-    gap: var(--toast-gap);
+    flex-direction: column-reverse;
+    gap: 8px;
     pointer-events: none;
-    max-height: calc(100vh - 100px);
-    overflow: hidden;
+    width: 360px;
 }
 
-/* Dark mode - sincronizado con el sistema de temas */
-[data-theme="dark"] .toastContainer {
-    --toast-shadow: var(--shadow-lg);
-}
-
-.toastContainer> :global(*) {
+.toastContainer > :global(*) {
     pointer-events: auto;
 }
 
-/* Stagger animation para múltiples toasts */
-.toastContainer>.toast:nth-child(1) {
-    animation-delay: 0ms;
-}
-
-.toastContainer>.toast:nth-child(2) {
-    animation-delay: 50ms;
-}
-
-.toastContainer>.toast:nth-child(3) {
-    animation-delay: 100ms;
-}
-
-.toastContainer>.toast:nth-child(4) {
-    animation-delay: 150ms;
-}
-
-.toastContainer>.toast:nth-child(5) {
-    animation-delay: 200ms;
-}
-
-/* Toast Item */
+/* Toast card */
 .toast {
     display: flex;
-    align-items: center;
-    gap: 12px;
-    padding: 16px 20px;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 14px 16px;
     background: var(--card-background);
-    border-radius: var(--toast-border-radius);
-    box-shadow: var(--toast-shadow);
-    backdrop-filter: blur(var(--toast-backdrop-blur));
-    -webkit-backdrop-filter: blur(var(--toast-backdrop-blur));
-    animation: slideIn var(--toast-duration-in) var(--toast-easing-in);
-    max-width: var(--toast-max-width);
-    min-width: var(--toast-min-width);
     border: 1px solid var(--card-border);
-    transition: transform 0.2s var(--toast-easing-in);
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08), 0 1px 3px rgba(0, 0, 0, 0.06);
+    width: 100%;
     position: relative;
-    overflow: hidden;
-}
-
-.toast::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: inherit;
-    opacity: 0.8;
-    z-index: -1;
-    border-radius: inherit;
-}
-
-.toast:hover {
-    transform: translateX(-4px);
+    animation: toastIn 0.35s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
 .toast.closing {
-    animation: slideOut var(--toast-duration-out) var(--toast-easing-out) forwards;
+    animation: toastOut 0.2s ease-in forwards;
 }
 
-/* Keyframes */
-@keyframes slideIn {
+@keyframes toastIn {
     from {
-        transform: translateX(100%) scale(0.95);
+        transform: translateY(12px);
         opacity: 0;
     }
-
     to {
-        transform: translateX(0) scale(1);
+        transform: translateY(0);
         opacity: 1;
     }
 }
 
-@keyframes slideOut {
+@keyframes toastOut {
     from {
-        transform: translateX(0) scale(1);
+        transform: translateY(0);
         opacity: 1;
     }
-
     to {
-        transform: translateX(100%) scale(0.95);
+        transform: translateY(6px);
         opacity: 0;
     }
 }
 
-/* Reduced motion support */
-@media (prefers-reduced-motion: reduce) {
-    .toast {
-        animation: fadeIn 0.2s ease-out;
-    }
-
-    .toast.closing {
-        animation: fadeOut 0.15s ease-in forwards;
-    }
-
-    .toast:hover {
-        transform: none;
-    }
-
-    @keyframes fadeIn {
-        from {
-            opacity: 0;
-        }
-
-        to {
-            opacity: 1;
-        }
-    }
-
-    @keyframes fadeOut {
-        from {
-            opacity: 1;
-        }
-
-        to {
-            opacity: 0;
-        }
-    }
-}
-
-/* Toast Types */
-.toast.success {
-    border-left: 4px solid var(--toast-success-color);
-}
-
-.toast.error {
-    border-left: 4px solid var(--toast-error-color);
-}
-
-.toast.warning {
-    border-left: 4px solid var(--toast-warning-color);
-}
-
-.toast.info {
-    border-left: 4px solid var(--toast-info-color);
-}
-
-/* Toast Elements */
+/* Icon */
 .icon {
     flex-shrink: 0;
     display: flex;
     align-items: center;
+    margin-top: 1px;
 }
 
-.icon.success {
-    color: var(--toast-success-color);
-}
+.icon.success { color: #16a34a; }
+.icon.error   { color: #dc2626; }
+.icon.warning { color: #d97706; }
+.icon.info    { color: #2563eb; }
 
-.icon.error {
-    color: var(--toast-error-color);
-}
-
-.icon.warning {
-    color: var(--toast-warning-color);
-}
-
-.icon.info {
-    color: var(--toast-info-color);
-}
-
+/* Message area */
 .message {
     flex: 1;
-    font-size: 14px;
-    font-weight: 500;
-    line-height: 1.4;
-    word-wrap: break-word;
-    color: var(--text-primary);
     display: flex;
     flex-direction: column;
-    gap: 1px;
+    gap: 2px;
+    min-width: 0;
 }
 
 .messageTitle {
-    font-weight: 700;
     font-size: 13px;
+    font-weight: 600;
     color: var(--text-primary);
+    line-height: 1.45;
     display: block;
 }
 
 .messageBody {
-    font-weight: 400;
     font-size: 13px;
+    font-weight: 400;
     color: var(--text-secondary);
+    line-height: 1.45;
     display: block;
+    word-break: break-word;
 }
 
-
+/* Close button */
 .closeBtn {
     flex-shrink: 0;
-    background: none;
+    background: transparent;
     border: none;
-    color: var(--text-secondary);
     cursor: pointer;
-    padding: 6px;
-    border-radius: 6px;
-    transition: all 0.2s var(--toast-easing-in);
+    padding: 2px;
+    border-radius: 4px;
+    color: var(--text-secondary);
     display: flex;
     align-items: center;
     justify-content: center;
-    opacity: 0.8;
+    opacity: 0.6;
+    transition: opacity 0.15s, background 0.15s;
+    margin-top: 1px;
 }
 
 .closeBtn:hover {
-    background: var(--bg-tertiary);
-    color: var(--text-primary);
     opacity: 1;
-    transform: scale(1.05);
+    background: var(--bg-secondary);
 }
 
 .closeBtn:focus-visible {
@@ -259,74 +124,28 @@
     opacity: 1;
 }
 
-.closeBtn:active {
-    transform: scale(0.95);
-}
-
-/* Responsive Design */
-@media (max-width: 768px) {
+/* Mobile */
+@media (max-width: 600px) {
     .toastContainer {
-        right: 16px;
-        left: 16px;
-        top: 80px;
-    }
-
-    .toast {
-        max-width: none;
-        min-width: auto;
-        padding: 14px 16px;
-    }
-
-    .message {
-        font-size: 13px;
-    }
-}
-
-@media (max-width: 480px) {
-    .toastContainer {
+        bottom: 16px;
         right: 12px;
         left: 12px;
-        top: 80px;
-    }
-
-    .toast {
-        padding: 12px 14px;
-        gap: 10px;
+        width: auto;
     }
 }
 
-/* High contrast mode */
-@media (prefers-contrast: high) {
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
     .toast {
-        border-width: 2px;
-        backdrop-filter: none;
-        -webkit-backdrop-filter: none;
+        animation: none;
     }
-
-    .toast.success {
-        background: var(--color-success);
-        color: white;
-    }
-
-    .toast.error {
-        background: var(--color-danger);
-        color: white;
-    }
-
-    .toast.warning {
-        background: var(--color-warning);
-        color: var(--text-primary);
-    }
-
-    .toast.info {
-        background: var(--color-info);
-        color: white;
+    .toast.closing {
+        animation: none;
+        opacity: 0;
+        transition: opacity 0.15s;
     }
 }
 
-/* Print styles */
 @media print {
-    .toastContainer {
-        display: none;
-    }
+    .toastContainer { display: none; }
 }

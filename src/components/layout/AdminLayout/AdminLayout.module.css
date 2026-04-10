@@ -1,145 +1,204 @@
-/* ================================================================
-   ADMIN LAYOUT — ME3 Editorial White
-   ================================================================ */
+/* ============================================================
+   ADMIN LAYOUT — shadcn/ui inspired
+   ============================================================ */
 
-.layoutPage {
-    min-height: 100dvh;
-    background: #f9fafb;
-    position: relative;
+.root {
     display: flex;
-    flex-direction: column;
+    min-height: 100dvh;
+    background: #fafafa;
 }
 
-@media (min-width: 768px) {
-    .layoutPage {
-        flex-direction: row;
-    }
-}
-
-/* ── Contenedor principal ── */
-.scrollContent {
+/* ── Main area (header + content) ────────────────────────── */
+.main {
     flex: 1;
     min-width: 0;
-    min-height: 100vh;
     display: flex;
     flex-direction: column;
-    overflow-x: hidden;
+    min-height: 100dvh;
 }
 
-/* ── Loading state ── */
-.loading {
+/* ── Loading ──────────────────────────────────────────────── */
+.loadingPage {
     display: flex;
     align-items: center;
     justify-content: center;
     min-height: 100dvh;
-    color: #6b7280;
-    font-family: var(--font-body, 'Roboto'), sans-serif;
-    font-size: 0.88rem;
-    animation: pulse 1.8s ease infinite;
+    background: #fafafa;
 }
 
-@keyframes pulse {
-    0%, 100% { opacity: 0.4; }
-    50%       { opacity: 1; }
+.loadingSpinner {
+    width: 24px;
+    height: 24px;
+    border: 2px solid #e4e4e7;
+    border-top-color: #18181b;
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
 }
 
-/* ================================================================
-   HEADER DESKTOP (≥ 768px)
-   ================================================================ */
-.desktopHeader {
-    display: none;
+@keyframes spin {
+    to { transform: rotate(360deg); }
 }
 
-@media (min-width: 768px) {
-    .desktopHeader {
-        display: flex;
-        align-items: center;
-        height: 52px;
-        padding: 0 clamp(1rem, 3vw, 2rem);
-        gap: 12px;
-        flex-shrink: 0;
-        background: #ffffff;
-        border-bottom: 1.5px solid #e5e7eb;
-        box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
-        position: sticky;
-        top: 0;
-        z-index: 50;
-    }
+/* ── Header ───────────────────────────────────────────────── */
+.header {
+    height: 56px;
+    border-bottom: 1px solid #e4e4e7;
+    background: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 16px;
+    gap: 12px;
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    flex-shrink: 0;
 }
 
-.sidebarToggle {
+.headerLeft {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-width: 0;
+    flex: 1;
+}
+
+.headerRight {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-shrink: 0;
+}
+
+/* Icon button */
+.iconBtn {
     display: flex;
     align-items: center;
     justify-content: center;
     width: 32px;
     height: 32px;
-    background: transparent;
     border: none;
-    border-radius: 8px;
-    color: #6b7280;
+    border-radius: 6px;
+    background: transparent;
+    color: #71717a;
     cursor: pointer;
     flex-shrink: 0;
     transition: background 0.15s, color 0.15s;
-    padding: 0;
 }
 
-.sidebarToggle:hover {
-    background: rgba(0, 60, 204, 0.07);
-    color: #003ccc;
+.iconBtn:hover {
+    background: #f4f4f5;
+    color: #18181b;
 }
 
-.sidebarToggle:focus-visible {
-    outline: 2px solid #003ccc;
+.iconBtn:focus-visible {
+    outline: 2px solid #18181b;
     outline-offset: 2px;
 }
 
 .headerDivider {
-    width: 1.5px;
-    height: 18px;
-    background: #e5e7eb;
+    width: 1px;
+    height: 20px;
+    background: #e4e4e7;
     flex-shrink: 0;
 }
 
-.pageTitle {
-    font-size: 0.72rem;
-    font-weight: 700;
-    letter-spacing: 0.09em;
-    text-transform: uppercase;
-    color: #6b7280;
+/* Breadcrumb */
+.breadcrumb {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    min-width: 0;
+}
+
+.breadcrumbHome {
+    display: flex;
+    align-items: center;
+    color: #71717a;
+    text-decoration: none;
+    transition: color 0.15s;
+    flex-shrink: 0;
+}
+.breadcrumbHome:hover { color: #18181b; }
+
+.breadcrumbSep {
+    color: #d4d4d8;
+    font-size: 0.875rem;
+    flex-shrink: 0;
+}
+
+.breadcrumbCurrent {
+    font-size: 0.8125rem;
+    font-weight: 500;
+    color: #18181b;
     font-family: var(--font-body, 'Roboto'), sans-serif;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
 }
 
-/* ── Content area padding ── */
-.pageContent {
-    padding: clamp(1rem, 3vw, 2rem);
-    padding-bottom: 4rem;
-    flex: 1;
+/* User chip */
+.userChip {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 4px 10px 4px 4px;
+    border-radius: 9999px;
+    border: 1px solid #e4e4e7;
+    background: #fff;
+    text-decoration: none;
+    transition: background 0.15s, border-color 0.15s;
+    cursor: pointer;
 }
+
+.userChip:hover {
+    background: #f4f4f5;
+    border-color: #d4d4d8;
+}
+
+.chipAvatar {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    overflow: hidden;
+    background: #f4f4f5;
+    flex-shrink: 0;
+}
+
+.chipAvatarImg {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.chipName {
+    font-size: 0.8125rem;
+    font-weight: 500;
+    color: #18181b;
+    font-family: var(--font-body, 'Roboto'), sans-serif;
+    white-space: nowrap;
+}
+
+/* Responsive visibility */
+.desktopOnly { display: flex; }
+.mobileOnly  { display: none; }
 
 @media (max-width: 767px) {
-    .pageContent {
-        padding: 0.75rem 1rem 4rem;
-    }
+    .desktopOnly { display: none; }
+    .mobileOnly  { display: flex; }
+    .chipName    { display: none; }
 }
 
-/* ================================================================
-   PRINT
-   ================================================================ */
+/* ── Page content ─────────────────────────────────────────── */
+.content {
+    flex: 1;
+    padding: clamp(1rem, 3vw, 1.5rem);
+    padding-bottom: 3rem;
+}
+
+/* ── Print ────────────────────────────────────────────────── */
 @media print {
-    .layoutPage { display: block; }
-
-    .scrollContent > :not(.desktopHeader) {
-        padding: 0;
-    }
-
-    .desktopHeader { display: none !important; }
-
-    .layoutPage :global(nav),
-    .layoutPage :global(aside),
-    .layoutPage :global(header) {
-        display: none !important;
-    }
+    .header { display: none !important; }
+    .root { display: block; }
 }

@@ -2,7 +2,7 @@ export const normalize = (str) => str?.trim().toUpperCase() || '';
 export const normalizeForMatch = (str) =>
     normalize(str)
         .normalize("NFD")
-        .replace(/[\u0300-\u036f]/g, "") // Remove accents
+        .replace(/[-]/g, "") // Remove accents
         .replace(/\s+/g, ' ') // Normalize spaces
         .trim();
 

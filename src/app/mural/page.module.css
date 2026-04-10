@@ -1,505 +1,445 @@
-/* ================================================================
+﻿/* ================================================================
    /mural — page.module.css
-   Diseño: "Cinematic Dark"
+   Diseño: shadcn/ui — light, clean, cohesive
    Página PÚBLICA — sin sidebar, centrada
    ================================================================ */
 
+/* ── Spinner ── */
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+/* ── Slide-up entry ── */
+@keyframes slideUp {
+    from { opacity: 0; transform: translateY(14px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
 /* ================================================================
-   PÁGINA PRINCIPAL — fondo oscuro con glow dinámico
+   PAGE LAYOUT
    ================================================================ */
-.main {
+.page {
     min-height: 100dvh;
-    background: #07080e;
+    background: hsl(210 40% 98%);
     display: flex;
-    flex-direction: column;
     align-items: center;
     justify-content: center;
-    position: relative;
-    overflow-x: hidden;
-    padding: 2rem 1rem;
+    padding: 32px 16px;
     box-sizing: border-box;
     font-family: var(--font-body, 'Roboto'), sans-serif;
 }
 
-/* Glow de fondo — por defecto azul neutro (formulario) */
-.main::before {
-    content: '';
-    position: fixed;
-    inset: 0;
-    background: radial-gradient(
-        ellipse 80% 65% at 50% 48%,
-        rgba(0, 60, 204, 0.16) 0%,
-        transparent 68%
-    );
-    pointer-events: none;
-    z-index: 0;
-    transition: background 0.7s ease;
-}
-
-/* Glow verde cuando el resultado es aprobado */
-.resultSuccess::before {
-    background: radial-gradient(
-        ellipse 80% 65% at 50% 48%,
-        rgba(22, 163, 74, 0.24) 0%,
-        transparent 68%
-    );
-}
-
-/* Glow azul cuando el resultado es reprobado */
-.resultFail::before {
-    background: radial-gradient(
-        ellipse 80% 65% at 50% 48%,
-        rgba(0, 60, 204, 0.24) 0%,
-        transparent 68%
-    );
-}
-
-/* ================================================================
-   CONTENEDOR CENTRAL
-   ================================================================ */
-.container {
-    position: relative;
-    z-index: 10;
+.wrapper {
     width: 100%;
-    max-width: 520px;
+    max-width: 448px;
     display: flex;
     flex-direction: column;
-    gap: 2rem;
-}
-
-/* ================================================================
-   HEADER — Logo + Título (solo sin resultado)
-   ================================================================ */
-.header {
-    text-align: center;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
     gap: 14px;
 }
 
-.pageTitle {
-    color: #ffffff;
-    font-family: var(--font-serif, 'Montserrat'), sans-serif;
-    font-weight: 800;
-    font-size: clamp(1.6rem, 5vw, 2.2rem);
-    letter-spacing: -0.03em;
-    margin: 0;
-    line-height: 1.1;
-}
-
 /* ================================================================
-   FORMULARIO DE BÚSQUEDA — glassmorphic
+   BRAND
    ================================================================ */
-.searchBox {
-    background: rgba(255, 255, 255, 0.06);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-    border: 1px solid rgba(255, 255, 255, 0.12);
-    border-radius: 16px;
-    padding: 8px;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    transition: border-color 0.2s ease, box-shadow 0.2s ease;
-}
-
-.searchBox:focus-within {
-    border-color: rgba(255, 255, 255, 0.28);
-    box-shadow: 0 0 0 3px rgba(0, 60, 204, 0.28);
-}
-
-.inputWrapper {
-    flex: 1;
+.brand {
     display: flex;
     align-items: center;
     gap: 10px;
-    padding-left: 12px;
-    min-width: 0;
+    padding: 0 2px;
 }
 
-.searchIcon {
-    color: rgba(255, 255, 255, 0.40);
+.brandIcon {
+    width: 32px;
+    height: 32px;
+    background: hsl(222.2 47.4% 11.2%);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: hsl(0 0% 100%);
+    flex-shrink: 0;
+}
+
+.brandName {
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: hsl(215.4 16.3% 46.9%);
+    letter-spacing: 0.02em;
+}
+
+/* ================================================================
+   SEARCH CARD
+   ================================================================ */
+.searchCard {
+    background: hsl(0 0% 100%);
+    border: 1px solid hsl(214.3 31.8% 91.4%);
+    border-radius: 16px;
+    box-shadow:
+        0 1px 2px hsl(222.2 47.4% 11.2% / 0.04),
+        0 4px 16px hsl(222.2 47.4% 11.2% / 0.05);
+    overflow: hidden;
+}
+
+.searchCardHeader {
+    padding: 24px 24px 20px;
+    border-bottom: 1px solid hsl(214.3 31.8% 91.4%);
+}
+
+.pageTitle {
+    font-family: var(--font-serif, 'Montserrat'), sans-serif;
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: hsl(222.2 47.4% 11.2%);
+    margin: 0 0 6px;
+    letter-spacing: -0.01em;
+    line-height: 1.3;
+}
+
+.pageSubtitle {
+    font-size: 0.84rem;
+    color: hsl(215.4 16.3% 46.9%);
+    margin: 0;
+    line-height: 1.55;
+}
+
+/* ── Search form ── */
+.searchForm {
+    padding: 20px 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.inputGroup {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.inputLabel {
+    font-size: 0.75rem;
+    font-weight: 500;
+    color: hsl(215.4 16.3% 36%);
+    letter-spacing: 0.01em;
+}
+
+.inputRow {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.inputIcon {
+    position: absolute;
+    left: 11px;
+    color: hsl(215.4 16.3% 66.9%);
+    pointer-events: none;
     flex-shrink: 0;
 }
 
 .searchInput {
     width: 100%;
-    min-width: 0;
-    font-size: clamp(0.95rem, 3vw, 1.1rem);
-    border: none;
-    background: transparent;
-    color: #ffffff;
-    font-weight: 500;
-    outline: none;
-    letter-spacing: 0.04em;
+    padding: 10px 12px 10px 36px;
+    border: 1px solid hsl(214.3 31.8% 88%);
+    border-radius: 8px;
+    font-size: 0.9375rem;
     font-family: var(--font-body, 'Roboto'), sans-serif;
+    color: hsl(222.2 47.4% 11.2%);
+    background: hsl(0 0% 100%);
+    outline: none;
+    transition: border-color 0.15s, box-shadow 0.15s;
+    box-sizing: border-box;
+    -webkit-appearance: none;
 }
 
 .searchInput::placeholder {
-    color: rgba(255, 255, 255, 0.32);
-    font-weight: 400;
-    letter-spacing: 0;
+    color: hsl(215.4 16.3% 66.9%);
 }
 
+.searchInput:focus {
+    border-color: hsl(222.2 47.4% 44%);
+    box-shadow: 0 0 0 3px hsl(222.2 47.4% 44% / 0.12);
+}
+
+.searchInput:disabled {
+    background: hsl(210 40% 98%);
+    cursor: not-allowed;
+    opacity: 0.7;
+}
+
+/* ── Search button ── */
 .searchBtn {
-    background: #003ccc;
-    color: #fff;
-    font-weight: 700;
-    font-size: 0.92rem;
-    padding: 10px 22px;
-    border-radius: 12px;
-    border: none;
-    cursor: pointer;
-    transition: filter 0.2s ease, transform 0.15s ease, box-shadow 0.2s ease;
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 8px;
-    min-width: 96px;
-    white-space: nowrap;
-    flex-shrink: 0;
+    gap: 7px;
+    width: 100%;
+    padding: 10px 20px;
+    background: hsl(222.2 47.4% 11.2%);
+    color: hsl(210 40% 98%);
+    border: 1px solid transparent;
+    border-radius: 8px;
+    font-size: 0.875rem;
+    font-weight: 500;
     font-family: var(--font-body, 'Roboto'), sans-serif;
-    box-shadow: 0 4px 20px rgba(0, 60, 204, 0.45);
+    cursor: pointer;
+    transition: background 0.15s, opacity 0.15s;
+    -webkit-appearance: none;
 }
 
 .searchBtn:hover:not(:disabled) {
-    filter: brightness(1.15);
-    transform: translateY(-1px);
-    box-shadow: 0 6px 28px rgba(0, 60, 204, 0.55);
+    background: hsl(222.2 47.4% 19%);
 }
 
 .searchBtn:active:not(:disabled) {
-    transform: translateY(0);
+    background: hsl(222.2 47.4% 14%);
 }
 
 .searchBtn:disabled {
-    background: rgba(255, 255, 255, 0.12);
-    color: rgba(255, 255, 255, 0.28);
-    box-shadow: none;
+    opacity: 0.45;
     cursor: not-allowed;
 }
 
-.searchBtn:focus-visible {
-    outline: 2px solid rgba(255, 255, 255, 0.6);
-    outline-offset: 3px;
-}
-
-/* ================================================================
-   ESTADO DE CARGA
-   ================================================================ */
-.loadingState {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 1rem;
-    color: rgba(255, 255, 255, 0.55);
-    padding: 2rem 0;
-    font-size: 0.88rem;
-    font-family: var(--font-body, 'Roboto'), sans-serif;
-}
-
-.spinner {
-    width: 40px;
-    height: 40px;
-    border: 3px solid rgba(255, 255, 255, 0.12);
-    border-top-color: rgba(255, 255, 255, 0.70);
-    border-radius: 50%;
-    animation: spinnerSpin 0.9s linear infinite;
-}
-
-@keyframes spinnerSpin {
-    to { transform: rotate(360deg); }
-}
-
 .spinIcon {
-    animation: spinnerSpin 1.4s linear infinite;
+    animation: spin 0.9s linear infinite;
+    flex-shrink: 0;
 }
 
-/* ================================================================
-   ESTADO DE ERROR / NO ENCONTRADO — glassmorphic rojo
-   ================================================================ */
-.notFound {
-    background: rgba(239, 68, 68, 0.10);
-    border: 1px solid rgba(239, 68, 68, 0.25);
-    border-radius: 16px;
-    padding: 28px 24px;
-    text-align: center;
+/* ── Error box (inside search card) ── */
+.errorBox {
+    margin: 0 24px 20px;
+    padding: 12px 14px;
+    background: hsl(0 85.7% 97.3%);
+    border: 1px solid hsl(0 93.5% 81.8%);
+    border-radius: 8px;
     display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 12px;
-    animation: slideUpFade 0.4s ease forwards;
-}
-
-.notFound p {
-    color: rgba(255, 255, 255, 0.65);
-    font-size: 0.90rem;
-    margin: 0;
-    line-height: 1.5;
-    font-family: var(--font-body, 'Roboto'), sans-serif;
+    align-items: flex-start;
+    gap: 9px;
 }
 
 .errorIcon {
-    color: #f87171;
+    color: hsl(0 72.2% 50.6%);
+    flex-shrink: 0;
+    margin-top: 1px;
 }
 
-.resetBtnMinimal {
-    margin-top: 4px;
-    background: rgba(239, 68, 68, 0.12);
-    color: #f87171;
-    border: 1px solid rgba(239, 68, 68, 0.28);
-    padding: 8px 18px;
-    border-radius: 10px;
-    cursor: pointer;
-    font-size: 0.84rem;
-    font-weight: 600;
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    transition: background 0.2s ease;
+.errorMsg {
+    font-size: 0.82rem;
+    color: hsl(0 72.2% 36%);
+    margin: 0;
+    line-height: 1.55;
     font-family: var(--font-body, 'Roboto'), sans-serif;
-}
-
-.resetBtnMinimal:hover {
-    background: rgba(239, 68, 68, 0.20);
-}
-
-@keyframes slideUpFade {
-    from { opacity: 0; transform: translateY(16px); }
-    to   { opacity: 1; transform: translateY(0); }
 }
 
 /* ================================================================
-   TARJETA DE RESULTADO — flotante blanca
+   RESULT CARD
    ================================================================ */
 .resultCard {
-    width: 100%;
-    background: #ffffff;
-    border-radius: 24px;
+    background: hsl(0 0% 100%);
+    border: 1px solid hsl(214.3 31.8% 91.4%);
+    border-radius: 16px;
     overflow: hidden;
+    animation: slideUp 0.32s cubic-bezier(0.22, 1, 0.36, 1) both;
     position: relative;
-    border: none;
-    animation: slideUpFade 0.55s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
-    opacity: 0;
 }
 
-.cardSuccess {
+.resultCardSuccess {
+    border-color: hsl(142.1 76.2% 36.3% / 0.25);
     box-shadow:
-        0 0 0 1px rgba(22, 163, 74, 0.15),
-        0 20px 60px rgba(22, 163, 74, 0.35),
-        0 4px 20px rgba(0, 0, 0, 0.30);
+        0 0 0 1px hsl(142.1 76.2% 36.3% / 0.12),
+        0 4px 24px hsl(142.1 76.2% 36.3% / 0.12),
+        0 1px 3px hsl(222.2 47.4% 11.2% / 0.04);
 }
 
-.cardMotivational {
+.resultCardFail {
+    border-color: hsl(221.2 83.2% 53.3% / 0.25);
     box-shadow:
-        0 0 0 1px rgba(0, 60, 204, 0.15),
-        0 20px 60px rgba(0, 60, 204, 0.30),
-        0 4px 20px rgba(0, 0, 0, 0.30);
+        0 0 0 1px hsl(221.2 83.2% 53.3% / 0.10),
+        0 4px 24px hsl(221.2 83.2% 53.3% / 0.10),
+        0 1px 3px hsl(222.2 47.4% 11.2% / 0.04);
 }
 
-/* ── Cabecera de la tarjeta ── */
-.cardHeader {
-    padding: 3rem 1.5rem 2rem;
+/* ── Result header ── */
+.resultHeader {
+    padding: 32px 24px 24px;
     display: flex;
     flex-direction: column;
     align-items: center;
     text-align: center;
     position: relative;
-    border-bottom: 1px solid #f3f4f6;
-    gap: 8px;
-    background: #ffffff;
+    border-bottom: 1px solid hsl(214.3 31.8% 91.4%);
 }
 
-/* ── Status badge — píldora sólida ── */
+.resultHeaderSuccess {
+    background: linear-gradient(
+        to bottom,
+        hsl(141 100% 97%),
+        hsl(0 0% 100%) 85%
+    );
+}
+
+.resultHeaderFail {
+    background: linear-gradient(
+        to bottom,
+        hsl(214 100% 97%),
+        hsl(0 0% 100%) 85%
+    );
+}
+
+/* ── Status badge ── */
 .statusBadge {
-    position: absolute;
-    top: 18px;
-    left: 50%;
-    transform: translateX(-50%);
     display: inline-flex;
     align-items: center;
     gap: 5px;
-    padding: 5px 14px;
-    border-radius: 9999px;
-    font-size: 0.72rem;
-    font-weight: 700;
-    letter-spacing: 0.06em;
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 0.05em;
     text-transform: uppercase;
-    white-space: nowrap;
+    padding: 4px 12px;
+    border-radius: 9999px;
+    margin-bottom: 20px;
     font-family: var(--font-body, 'Roboto'), sans-serif;
-    border: none;
 }
 
-.cardSuccess .statusBadge {
-    background: #16a34a;
-    color: #ffffff;
-    box-shadow: 0 2px 10px rgba(22, 163, 74, 0.45);
+.statusBadgeSuccess {
+    background: hsl(142.1 76.2% 36.3% / 0.10);
+    color: hsl(142.1 76.2% 30%);
+    border: 1px solid hsl(142.1 76.2% 36.3% / 0.28);
 }
 
-.cardMotivational .statusBadge {
-    background: #003ccc;
-    color: #ffffff;
-    box-shadow: 0 2px 10px rgba(0, 60, 204, 0.45);
+.statusBadgeFail {
+    background: hsl(221.2 83.2% 53.3% / 0.10);
+    color: hsl(221.2 83.2% 43%);
+    border: 1px solid hsl(221.2 83.2% 53.3% / 0.28);
 }
 
-/* ── Score gigante con gradiente ── */
-.scoreCircle {
+/* ── Score ── */
+.scoreArea {
     display: flex;
     align-items: baseline;
-    justify-content: center;
-    margin: 14px 0 4px;
+    gap: 3px;
+    margin-bottom: 14px;
 }
 
-.scoreValue {
-    font-size: clamp(5rem, 20vw, 9rem);
-    font-weight: 900;
-    line-height: 1;
-    letter-spacing: -4px;
+.scoreNumber {
     font-family: var(--font-serif, 'Montserrat'), sans-serif;
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-}
-
-.cardSuccess .scoreValue {
-    background-image: linear-gradient(135deg, #16a34a 0%, #4ade80 55%, #bbf7d0 100%);
-}
-
-.cardMotivational .scoreValue {
-    background-image: linear-gradient(135deg, #003ccc 0%, #3b82f6 55%, #bfdbfe 100%);
-}
-
-.scoreUnit {
-    font-size: clamp(1.4rem, 5vw, 2.2rem);
-    font-weight: 700;
-    margin-left: 2px;
-    font-family: var(--font-serif, 'Montserrat'), sans-serif;
-    /* Anular gradient del padre */
-    -webkit-text-fill-color: #9ca3af;
-    color: #9ca3af;
-}
-
-/* ── Nombre y puesto ── */
-.employeeName {
-    font-size: clamp(1.2rem, 4vw, 1.65rem);
+    font-size: clamp(4.5rem, 18vw, 6.5rem);
     font-weight: 800;
-    color: #111827;
+    line-height: 1;
+    letter-spacing: -0.04em;
+}
+
+.scoreNumberSuccess {
+    color: hsl(142.1 76.2% 36.3%);
+}
+
+.scoreNumberFail {
+    color: hsl(221.2 83.2% 53.3%);
+}
+
+.scorePercent {
     font-family: var(--font-serif, 'Montserrat'), sans-serif;
-    margin: 4px 0 0;
-    word-break: break-word;
-    line-height: 1.2;
+    font-size: 2rem;
+    font-weight: 700;
+    color: hsl(215.4 16.3% 56.9%);
+    line-height: 1;
+    align-self: flex-end;
+    padding-bottom: 0.5rem;
+}
+
+/* ── Employee info ── */
+.employeeName {
+    font-family: var(--font-serif, 'Montserrat'), sans-serif;
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: hsl(222.2 47.4% 11.2%);
+    margin: 0 0 4px;
+    letter-spacing: -0.01em;
 }
 
 .employeePosition {
-    font-size: 0.88rem;
-    color: #6b7280;
-    font-weight: 500;
+    font-size: 0.8rem;
+    color: hsl(215.4 16.3% 56.9%);
     margin: 0;
     font-family: var(--font-body, 'Roboto'), sans-serif;
 }
 
-/* ── Cuerpo de la tarjeta ── */
-.cardBody {
-    padding: 24px 24px 20px;
+/* ── Result body ── */
+.resultBody {
+    padding: 20px 24px;
     display: flex;
     flex-direction: column;
-    gap: 18px;
-    background: #ffffff;
+    gap: 12px;
 }
 
-/* ── Mensaje personalizado ── */
-.messageBox {
-    text-align: center;
-    font-size: 0.96rem;
+.messageText {
+    font-size: 0.875rem;
     line-height: 1.65;
-    color: #4b5563;
-    font-family: var(--font-body, 'Roboto'), sans-serif;
-    padding: 16px 20px;
-    background: #f9fafb;
-    border-radius: 12px;
-    border: 1px solid #f3f4f6;
-}
-
-.messageBox p {
+    color: hsl(215.4 16.3% 36%);
     margin: 0;
+    padding: 14px 16px;
+    background: hsl(210 40% 98%);
+    border: 1px solid hsl(214.3 31.8% 91.4%);
+    border-radius: 8px;
+    font-family: var(--font-body, 'Roboto'), sans-serif;
 }
 
-/* ── Métricas ── */
-.metricsGrid {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 10px;
-}
-
+/* ── Metric item ── */
 .metricItem {
-    background: #f9fafb;
-    border: 1px solid #f3f4f6;
-    border-radius: 12px;
-    padding: 16px 20px;
     display: flex;
     align-items: center;
-    gap: 14px;
-    transition: background 0.18s ease, border-color 0.18s ease;
+    gap: 12px;
+    padding: 12px 14px;
+    background: hsl(0 0% 100%);
+    border: 1px solid hsl(214.3 31.8% 91.4%);
+    border-radius: 8px;
 }
 
-.metricItem > div {
-    flex-grow: 1;
-    min-width: 0;
+.metricIcon {
+    flex-shrink: 0;
 }
 
-.cardSuccess .metricItem:hover {
-    background: rgba(22, 163, 74, 0.05);
-    border-color: rgba(22, 163, 74, 0.18);
-}
-
-.cardMotivational .metricItem:hover {
-    background: rgba(0, 60, 204, 0.04);
-    border-color: rgba(0, 60, 204, 0.16);
-}
-
-.cardSuccess .metricIcon  { color: #16a34a; flex-shrink: 0; }
-.cardMotivational .metricIcon { color: #003ccc; flex-shrink: 0; }
+.metricIconSuccess { color: hsl(142.1 76.2% 36.3%); }
+.metricIconFail    { color: hsl(221.2 83.2% 53.3%); }
 
 .metricLabel {
     font-size: 0.68rem;
+    font-weight: 600;
     text-transform: uppercase;
-    font-weight: 700;
-    color: #9ca3af;
-    margin-bottom: 3px;
-    letter-spacing: 0.06em;
+    letter-spacing: 0.07em;
+    color: hsl(215.4 16.3% 56.9%);
     font-family: var(--font-body, 'Roboto'), sans-serif;
+    margin-bottom: 2px;
 }
 
-.metricValueHighlight {
-    font-size: 0.94rem;
+.metricValue {
+    font-size: 0.9375rem;
     font-weight: 700;
-    word-break: break-word;
-    line-height: 1.4;
     font-family: var(--font-body, 'Roboto'), sans-serif;
+    line-height: 1.2;
 }
 
-.cardSuccess .metricValueHighlight    { color: #16a34a; }
-.cardMotivational .metricValueHighlight { color: #003ccc; }
+.metricValueSuccess { color: hsl(142.1 76.2% 30%); }
+.metricValueFail    { color: hsl(221.2 83.2% 43%); }
 
-/* ── Recomendaciones de estudio ── */
+/* ── Recommendations ── */
 .recommendations {
-    padding: 16px;
-    background: rgba(239, 68, 68, 0.06);
-    border: 1px solid rgba(239, 68, 68, 0.18);
-    border-radius: 12px;
-    text-align: left;
+    border: 1px solid hsl(0 93.5% 81.8%);
+    background: hsl(0 85.7% 97.3%);
+    border-radius: 8px;
+    padding: 14px 16px;
 }
 
 .recommendationsTitle {
-    color: #dc2626;
-    font-size: 0.80rem;
+    font-size: 0.72rem;
+    font-weight: 600;
+    color: hsl(0 72.2% 46%);
+    margin: 0 0 10px;
     display: flex;
     align-items: center;
     gap: 6px;
-    margin: 0 0 10px;
-    font-weight: 700;
     font-family: var(--font-body, 'Roboto'), sans-serif;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
 }
 
 .recommendationTags {
@@ -509,130 +449,127 @@
 }
 
 .recommendationTag {
+    font-size: 0.75rem;
+    font-weight: 500;
     padding: 3px 10px;
-    background: rgba(239, 68, 68, 0.08);
-    color: #dc2626;
+    background: hsl(0 0% 100%);
+    border: 1px solid hsl(0 93.5% 81.8%);
     border-radius: 9999px;
-    font-size: 0.73rem;
-    border: 1px solid rgba(239, 68, 68, 0.20);
-    font-weight: 600;
+    color: hsl(0 72.2% 38%);
     font-family: var(--font-body, 'Roboto'), sans-serif;
 }
 
 .recommendationText {
+    font-size: 0.82rem;
+    color: hsl(0 72.2% 38%);
+    line-height: 1.6;
     margin: 0;
-    font-size: 0.84rem;
-    color: #6b7280;
-    line-height: 1.55;
-    white-space: pre-wrap;
     font-family: var(--font-body, 'Roboto'), sans-serif;
 }
 
-/* ── Footer de la tarjeta ── */
-.cardFooter {
-    background: #f9fafb;
-    padding: 16px 24px;
+/* ── Result footer ── */
+.resultFooter {
+    padding: 14px 24px;
+    background: hsl(210 40% 98%);
+    border-top: 1px solid hsl(214.3 31.8% 91.4%);
     display: flex;
-    justify-content: space-between;
     align-items: center;
-    border-top: 1px solid #f3f4f6;
-    gap: 12px;
+    justify-content: space-between;
+    gap: 10px;
     flex-wrap: wrap;
 }
 
-.dateInfo {
+.dateRow {
     display: flex;
     align-items: center;
-    gap: 6px;
+    gap: 5px;
     font-size: 0.78rem;
-    color: #9ca3af;
+    color: hsl(215.4 16.3% 56.9%);
+    font-family: var(--font-body, 'Roboto'), sans-serif;
+}
+
+/* ── New Search button ── */
+.newSearchBtn {
+    padding: 7px 16px;
+    border-radius: 8px;
+    font-size: 0.8125rem;
     font-weight: 500;
     font-family: var(--font-body, 'Roboto'), sans-serif;
-}
-
-.resetBtnAction {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    padding: 8px 18px;
-    border-radius: 10px;
-    font-weight: 600;
-    font-size: 0.84rem;
     cursor: pointer;
-    transition: background 0.18s ease, color 0.18s ease, transform 0.15s ease, box-shadow 0.18s ease;
-    font-family: var(--font-body, 'Roboto'), sans-serif;
-    border: 1.5px solid transparent;
+    transition: background 0.15s, border-color 0.15s;
+    border: 1px solid transparent;
+    -webkit-appearance: none;
 }
 
-.cardSuccess .resetBtnAction {
-    background: rgba(22, 163, 74, 0.08);
-    color: #16a34a;
-    border-color: rgba(22, 163, 74, 0.22);
+.newSearchBtnSuccess {
+    color: hsl(142.1 76.2% 30%);
+    background: hsl(142.1 76.2% 36.3% / 0.09);
+    border-color: hsl(142.1 76.2% 36.3% / 0.25);
 }
 
-.cardSuccess .resetBtnAction:hover {
-    background: #16a34a;
-    color: #fff;
-    border-color: #16a34a;
-    transform: translateY(-1px);
-    box-shadow: 0 4px 14px rgba(22, 163, 74, 0.35);
+.newSearchBtnSuccess:hover {
+    background: hsl(142.1 76.2% 36.3% / 0.16);
+    border-color: hsl(142.1 76.2% 36.3% / 0.4);
 }
 
-.cardMotivational .resetBtnAction {
-    background: rgba(0, 60, 204, 0.06);
-    color: #003ccc;
-    border-color: rgba(0, 60, 204, 0.20);
+.newSearchBtnFail {
+    color: hsl(221.2 83.2% 43%);
+    background: hsl(221.2 83.2% 53.3% / 0.09);
+    border-color: hsl(221.2 83.2% 53.3% / 0.25);
 }
 
-.cardMotivational .resetBtnAction:hover {
-    background: #003ccc;
-    color: #fff;
-    border-color: #003ccc;
-    transform: translateY(-1px);
-    box-shadow: 0 4px 14px rgba(0, 60, 204, 0.35);
-}
-
-.resetBtnAction:focus-visible {
-    outline: 2px solid currentColor;
-    outline-offset: 2px;
+.newSearchBtnFail:hover {
+    background: hsl(221.2 83.2% 53.3% / 0.16);
+    border-color: hsl(221.2 83.2% 53.3% / 0.4);
 }
 
 /* ================================================================
    RESPONSIVE
    ================================================================ */
-@media (max-width: 600px) {
-    .container  { gap: 1.5rem; }
-    .cardHeader { padding: 2.75rem 1.25rem 1.5rem; }
-    .cardBody   { padding: 18px; gap: 14px; }
-    .cardFooter { padding: 14px 18px; }
-}
-
 @media (max-width: 480px) {
-    .main        { padding: 1.5rem 0.75rem; justify-content: flex-start; padding-top: 2rem; }
-    .searchBox   { padding: 6px; }
-    .inputWrapper { padding-left: 8px; gap: 8px; }
-    .searchBtn   { padding: 9px 14px; min-width: 80px; font-size: 0.84rem; }
-    .cardHeader  { padding: 2.75rem 1rem 1.25rem; }
-    .cardBody    { padding: 16px 14px; }
-    .cardFooter  { flex-direction: column; text-align: center; padding: 14px; }
-    .metricItem  { padding: 12px 14px; }
-    .statusBadge { font-size: 0.68rem; padding: 4px 12px; }
-    .scoreValue  { letter-spacing: -2px; }
+    .page {
+        align-items: flex-start;
+        padding: 20px 12px 32px;
+    }
+
+    .searchCardHeader,
+    .searchForm {
+        padding-left: 20px;
+        padding-right: 20px;
+    }
+
+    .errorBox {
+        margin-left: 20px;
+        margin-right: 20px;
+    }
+
+    .resultHeader {
+        padding: 24px 20px 20px;
+    }
+
+    .resultBody {
+        padding: 16px 20px;
+    }
+
+    .resultFooter {
+        padding: 12px 20px;
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .newSearchBtn {
+        text-align: center;
+        justify-content: center;
+    }
+
+    .scoreNumber {
+        font-size: clamp(4rem, 22vw, 5.5rem);
+    }
 }
 
-@media (max-width: 360px) {
-    .searchBtn  { min-width: 70px; padding: 8px 10px; }
-    .cardHeader { padding: 2.5rem 0.75rem 1rem; }
-    .cardBody, .cardFooter { padding: 12px 10px; }
-}
-
-/* ================================================================
-   REDUCED MOTION
-   ================================================================ */
-@media (prefers-reduced-motion: reduce) {
-    .spinner, .spinIcon { animation: none; }
-    .resultCard, .notFound { animation: none; opacity: 1; transform: none; }
-    .main::before, .resultSuccess::before, .resultFail::before { transition: none; }
-    .searchBtn:hover:not(:disabled) { transform: none; }
-    .resetBtnAction:hover { transform: none; }
+@media (max-height: 600px) {
+    .page {
+        align-items: flex-start;
+        padding-top: 16px;
+    }
 }

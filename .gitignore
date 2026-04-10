@@ -50,3 +50,5 @@ src/data/historial.json
 src/data/instructores.json
 src/data/promociones.json
 src/data/ultimosc.json
+
+.env.migrate

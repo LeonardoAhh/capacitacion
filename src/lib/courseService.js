@@ -121,7 +121,7 @@ export async function createCourseFromWizard(courseData, firstSlideType, userId)
         // Generar ID legible a partir del título
         const slug = (courseData.title || 'nuevo-curso')
             .toLowerCase()
-            .normalize('NFD').replace(/[\u0300-\u036f]/g, '') // quitar acentos
+            .normalize('NFD').replace(/[-]/g, '') // quitar acentos
             .replace(/[^a-z0-9\s-]/g, '')
             .trim()
             .replace(/\s+/g, '-')

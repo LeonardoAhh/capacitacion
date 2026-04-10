@@ -1,26 +1,7 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
-import { IconAlertTriangle, IconAlertCircle, IconInfo, IconTrash } from '@/lib/icons';
 import styles from './ConfirmDialog.module.css';
-
-const VARIANT_CONFIG = {
-    danger: {
-        Icon: IconTrash,
-        iconColor: 'var(--color-danger)',
-        confirmClass: 'danger',
-    },
-    warning: {
-        Icon: IconAlertTriangle,
-        iconColor: 'var(--color-warning)',
-        confirmClass: 'warning',
-    },
-    info: {
-        Icon: IconInfo,
-        iconColor: 'var(--color-info)',
-        confirmClass: 'info',
-    },
-};
 
 export default function ConfirmDialog({
     isOpen,
@@ -38,9 +19,6 @@ export default function ConfirmDialog({
     const [confirmationInput, setConfirmationInput] = useState('');
     const inputRef = useRef(null);
 
-    const config = VARIANT_CONFIG[variant] || VARIANT_CONFIG.danger;
-    const Icon = config.Icon;
-
     const canConfirm = requireConfirmation
         ? confirmationInput === confirmationText
         : true;
@@ -56,16 +34,12 @@ export default function ConfirmDialog({
 
     useEffect(() => {
         const handleKeyDown = (e) => {
-            if (e.key === 'Escape' && isOpen) {
-                onCancel?.();
-            }
+            if (e.key === 'Escape' && isOpen) onCancel?.();
         };
-
         if (isOpen) {
             document.addEventListener('keydown', handleKeyDown);
             document.body.style.overflow = 'hidden';
         }
-
         return () => {
             document.removeEventListener('keydown', handleKeyDown);
             document.body.style.overflow = '';
@@ -84,10 +58,6 @@ export default function ConfirmDialog({
                 aria-describedby="dialog-description"
                 aria-modal="true"
             >
-                <div className={`${styles.iconContainer} ${styles[variant]}`}>
-                    <Icon size={32} style={{ color: config.iconColor }} />
-                </div>
-
                 <h2 id="dialog-title" className={styles.title}>
                     {title}
                 </h2>
@@ -118,14 +88,16 @@ export default function ConfirmDialog({
                         onClick={onCancel}
                         className={styles.cancelBtn}
                         disabled={loading}
+                        type="button"
                     >
                         {cancelText}
                     </button>
                     <button
                         onClick={onConfirm}
-                        className={`${styles.confirmBtn} ${styles[config.confirmClass]}`}
+                        className={`${styles.confirmBtn} ${styles[variant]}`}
                         disabled={!canConfirm || loading}
                         aria-busy={loading}
+                        type="button"
                     >
                         {loading ? (
                             <span className={styles.spinner} aria-hidden="true" />

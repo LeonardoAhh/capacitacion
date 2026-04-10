@@ -1,0 +1,90 @@
+/* DocumentsView  shadcn/ui */
+
+.container { display: flex; flex-direction: column; }
+
+.headerRow {
+    display: flex;
+    align-items: center;
+    margin-bottom: 16px;
+}
+
+/* -- Documents grid ---------------------------------------- */
+.documentsGrid {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.documentCard {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 16px;
+    background: #fff;
+    border: 1px solid #e4e4e7;
+    border-radius: 8px;
+    text-decoration: none;
+    transition: background 0.12s, border-color 0.12s;
+    cursor: pointer;
+}
+
+.documentCard:hover {
+    background: #fafafa;
+    border-color: #d4d4d8;
+}
+
+.documentIcon {
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.documentInfo {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.documentName {
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: #18181b;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.documentDate {
+    font-size: 0.75rem;
+    color: #a1a1aa;
+}
+
+.navChevron { color: #d4d4d8; flex-shrink: 0; }
+
+/* -- Empty ------------------------------------------------- */
+.emptyState {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 60px 24px;
+    text-align: center;
+    background: #fff;
+    border: 1px dashed #d4d4d8;
+    border-radius: 8px;
+    gap: 10px;
+}
+
+.emptyStateIcon { color: #d4d4d8; }
+
+.emptyStateText {
+    font-size: 0.875rem;
+    color: #71717a;
+    margin: 0;
+}

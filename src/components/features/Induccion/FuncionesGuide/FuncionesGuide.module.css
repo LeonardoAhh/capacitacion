@@ -1,40 +1,34 @@
-/* =========================================================
-   FUNCIONES GUIDE — sección dentro de /induccion
-   Usa tokens globales: --color-primary, --bg-*, --text-*, etc.
-   ========================================================= */
+/* ================================================================
+   FuncionesGuide.module.css  shadcn/ui zinc
+   ================================================================ */
 
-/* ── Wrapper ── */
+/* -- Wrapper -- */
 .wrap {
-    border: 1px solid var(--border-color);
-    border-radius: var(--radius-xl, 20px);
+    border: 1px solid #e4e4e7;
+    border-radius: 8px;
     overflow: hidden;
-    background: var(--bg-primary);
-    margin-bottom: 24px;
-    box-shadow: var(--shadow-sm, 0 1px 4px rgba(0,0,0,0.06));
+    background: #fff;
+    margin-bottom: 16px;
 }
 
-/* ── Header / trigger del acordeón ── */
+/* -- Header / acorden -- */
 .header {
     width: 100%;
     display: flex;
     align-items: center;
     justify-content: space-between;
     gap: 12px;
-    padding: 16px 20px;
+    padding: 12px 16px;
     background: none;
     border: none;
     cursor: pointer;
     text-align: left;
-    transition: background 0.18s;
+    transition: background 0.12s;
 }
 
-.header:hover {
-    background: var(--bg-secondary, rgba(0,0,0,0.025));
-}
+.header:hover { background: #fafafa; }
 
-.headerOpen {
-    border-bottom: 1px solid var(--border-color);
-}
+.headerOpen { border-bottom: 1px solid #e4e4e7; }
 
 .headerLeft {
     display: flex;
@@ -44,63 +38,50 @@
     min-width: 0;
 }
 
-.headerIcon {
-    font-size: 1.2rem;
-    flex-shrink: 0;
-}
+.headerIcon { font-size: 1.1rem; flex-shrink: 0; }
 
 .headerTitle {
-    font-family: var(--font-serif);
-    font-size: 0.95rem;
-    font-weight: 700;
-    color: var(--text-primary);
+    font-family: var(--font-body, 'Roboto'), sans-serif;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: #18181b;
     white-space: nowrap;
 }
 
 .headerSub {
     font-size: 0.75rem;
-    color: var(--text-tertiary, var(--text-secondary));
+    color: #a1a1aa;
     font-weight: 400;
 }
 
 .chevron {
     flex-shrink: 0;
-    color: var(--text-tertiary, #9ca3af);
-    transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    color: #a1a1aa;
+    transition: transform 0.2s;
 }
 
-.chevronOpen {
-    transform: rotate(180deg);
-}
+.chevronOpen { transform: rotate(180deg); }
 
-/* ── Cuerpo expandible ── */
+/* -- Cuerpo -- */
 .body {
     display: grid;
     grid-template-rows: 0fr;
-    transition: grid-template-rows 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: grid-template-rows 0.25s cubic-bezier(0.4, 0, 0.2, 1);
     overflow: hidden;
 }
 
-.bodyOpen {
-    grid-template-rows: 1fr;
-}
+.bodyOpen { grid-template-rows: 1fr; }
 
-/* El hijo directo DEBE tener overflow: hidden para que funcione el grid trick */
-.body > * {
-    overflow: hidden;
-}
+.body > * { overflow: hidden; }
 
-/* ── Padding interno del cuerpo ── */
-.bodyInner {
-    padding: 0 20px 20px;
-}
+.bodyInner { padding: 0 16px 16px; }
 
-/* ── Tabs de sección ── */
+/* -- Tabs -- */
 .tabs {
     display: flex;
-    gap: 4px;
-    padding: 16px 20px 0;
-    border-bottom: 1px solid var(--border-color);
+    gap: 0;
+    padding: 12px 16px 0;
+    border-bottom: 1px solid #e4e4e7;
     overflow-x: auto;
     scrollbar-width: none;
 }
@@ -111,114 +92,102 @@
     display: flex;
     align-items: center;
     gap: 6px;
-    padding: 8px 14px;
+    padding: 7px 12px;
     border: none;
     background: none;
     cursor: pointer;
-    font-size: 0.82rem;
-    font-weight: 600;
-    color: var(--text-secondary);
+    font-size: 0.8125rem;
+    font-weight: 500;
+    color: #71717a;
     border-bottom: 2px solid transparent;
     white-space: nowrap;
-    transition: color 0.15s, border-color 0.15s;
+    transition: color 0.12s, border-color 0.12s;
     margin-bottom: -1px;
+    font-family: var(--font-body, 'Roboto'), sans-serif;
 }
 
-.tab:hover {
-    color: var(--text-primary);
-}
+.tab:hover { color: #18181b; }
 
 .tabActive {
-    color: var(--color-primary);
-    border-bottom-color: var(--color-primary);
+    color: #18181b;
+    border-bottom-color: #18181b;
+    font-weight: 600;
 }
 
 .tabCount {
-    font-size: 0.7rem;
-    font-weight: 700;
-    background: var(--bg-secondary, rgba(0,0,0,0.06));
-    color: var(--text-tertiary, var(--text-secondary));
+    font-size: 0.6875rem;
+    font-weight: 600;
+    background: #f4f4f5;
+    color: #a1a1aa;
     border-radius: 20px;
-    padding: 1px 7px;
-    line-height: 1.6;
+    padding: 1px 6px;
 }
 
 .tabActive .tabCount {
-    background: color-mix(in srgb, var(--color-primary) 12%, transparent);
-    color: var(--color-primary);
+    background: #e4e4e7;
+    color: #3f3f46;
 }
 
-/* ── Contenido de sección ── */
-.sectionContent {
-    padding: 16px 20px 20px;
-}
+/* -- Contenido de seccin -- */
+.sectionContent { padding: 14px 0 4px; }
 
 .sectionNote {
-    font-size: 0.8rem;
-    color: var(--text-secondary);
-    margin: 0 0 16px;
+    font-size: 0.8125rem;
+    color: #71717a;
+    margin: 0 0 14px;
     line-height: 1.5;
 }
 
-.sectionNote strong {
-    color: var(--text-primary);
-}
+.sectionNote strong { color: #18181b; }
 
-/* ── Grupo (Existentes / Nuevos) ── */
+/* -- Grupo -- */
 .groupTitle {
     display: flex;
     align-items: center;
     gap: 8px;
-    font-size: 0.75rem;
-    font-weight: 700;
+    font-size: 0.6875rem;
+    font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 0.07em;
-    color: var(--text-tertiary, #9ca3af);
-    margin: 0 0 12px;
+    color: #a1a1aa;
+    margin: 0 0 10px;
 }
 
 .groupDot {
-    width: 8px;
-    height: 8px;
+    width: 7px;
+    height: 7px;
     border-radius: 50%;
     flex-shrink: 0;
+    background: #d4d4d8;
 }
 
-.groupDot[data-variant="existing"] {
-    background: var(--text-tertiary, #9ca3af);
-}
+.groupDot[data-variant="new"] { background: #18181b; }
 
-.groupDot[data-variant="new"] {
-    background: var(--color-primary);
-}
-
-/* ── Grid de slide cards ── */
+/* -- Grid slide cards -- */
 .grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-    gap: 10px;
+    grid-template-columns: repeat(auto-fill, minmax(155px, 1fr));
+    gap: 8px;
+    margin-bottom: 12px;
 }
 
-/* ── Slide card ── */
+/* -- Slide card -- */
 .slideCard {
-    background: var(--bg-secondary, rgba(0,0,0,0.025));
-    border: 1px solid var(--border-color);
-    border-radius: var(--radius-md, 14px);
-    padding: 14px 12px;
+    background: #fafafa;
+    border: 1px solid #e4e4e7;
+    border-radius: 8px;
+    padding: 12px;
     display: flex;
     flex-direction: column;
-    gap: 6px;
-    transition: border-color 0.15s, box-shadow 0.15s;
+    gap: 5px;
+    transition: border-color 0.15s;
 }
 
-.slideCard:hover {
-    border-color: color-mix(in srgb, var(--color-primary) 40%, transparent);
-    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
-}
+.slideCard:hover { border-color: #d4d4d8; }
 
 .slideCardNew {
-    border-color: color-mix(in srgb, var(--color-primary) 25%, transparent);
-    background: color-mix(in srgb, var(--color-primary) 4%, var(--bg-primary));
+    border-color: #d4d4d8;
+    background: #f4f4f5;
 }
 
 .slideCardTop {
@@ -228,62 +197,53 @@
     gap: 6px;
 }
 
-.slideEmoji {
-    font-size: 1.4rem;
-    line-height: 1;
-}
+.slideEmoji { font-size: 1.3rem; line-height: 1; }
 
 .newBadge {
-    font-size: 0.62rem;
+    font-size: 0.625rem;
     font-weight: 700;
     text-transform: uppercase;
-    letter-spacing: 0.06em;
-    color: var(--color-primary);
-    background: color-mix(in srgb, var(--color-primary) 12%, transparent);
+    letter-spacing: 0.05em;
+    color: #3f3f46;
+    background: #e4e4e7;
     border-radius: 20px;
     padding: 2px 7px;
     white-space: nowrap;
 }
 
 .slideLabel {
-    font-size: 0.82rem;
-    font-weight: 700;
-    color: var(--text-primary);
+    font-size: 0.8125rem;
+    font-weight: 600;
+    color: #18181b;
     line-height: 1.2;
 }
 
 .slideDesc {
-    font-size: 0.73rem;
-    color: var(--text-secondary);
-    line-height: 1.45;
+    font-size: 0.75rem;
+    color: #71717a;
+    line-height: 1.4;
     margin: 0;
 }
 
-/* ── Feature list ── */
-.featureList {
-    display: flex;
-    flex-direction: column;
-    gap: 2px;
-}
+/* -- Feature list -- */
+.featureList { display: flex; flex-direction: column; gap: 2px; }
 
 .featureRow {
     display: flex;
     align-items: flex-start;
-    gap: 12px;
-    padding: 10px 12px;
-    border-radius: var(--radius-md, 10px);
-    transition: background 0.15s;
+    gap: 10px;
+    padding: 8px 10px;
+    border-radius: 6px;
+    transition: background 0.12s;
 }
 
-.featureRow:hover {
-    background: var(--bg-secondary, rgba(0,0,0,0.025));
-}
+.featureRow:hover { background: #f4f4f5; }
 
 .featureEmoji {
-    font-size: 1.2rem;
+    font-size: 1.1rem;
     line-height: 1.4;
     flex-shrink: 0;
-    width: 24px;
+    width: 22px;
     text-align: center;
 }
 
@@ -295,55 +255,24 @@
 }
 
 .featureLabel {
-    font-size: 0.85rem;
-    font-weight: 700;
-    color: var(--text-primary);
+    font-size: 0.8125rem;
+    font-weight: 600;
+    color: #18181b;
 }
 
 .featureDesc {
-    font-size: 0.77rem;
-    color: var(--text-secondary);
-    line-height: 1.5;
+    font-size: 0.75rem;
+    color: #71717a;
+    line-height: 1.45;
 }
 
-/* ── Responsive ── */
+/* -- Responsive -- */
 @media (max-width: 600px) {
-    .header {
-        padding: 14px 16px;
-    }
-
-    .headerSub {
-        display: none;
-    }
-
-    .tabs {
-        padding: 12px 16px 0;
-    }
-
-    .sectionContent {
-        padding: 14px 16px 16px;
-    }
-
-    .grid {
-        grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-        gap: 8px;
-    }
-
-    .slideCard {
-        padding: 12px 10px;
-    }
-
-    .featureRow {
-        padding: 9px 8px;
-    }
-}
-
-@media (prefers-reduced-motion: reduce) {
-    .body,
-    .chevron,
-    .header,
-    .slideCard,
-    .featureRow {
-        transition: none;
-    }
+    .header { padding: 10px 14px; }
+    .headerSub { display: none; }
+    .tabs { padding: 10px 14px 0; }
+    .sectionContent { padding: 12px 0 4px; }
+    .grid { grid-template-columns: repeat(auto-fill, minmax(135px, 1fr)); gap: 6px; }
+    .slideCard { padding: 10px; }
+    .featureRow { padding: 7px 8px; }
 }

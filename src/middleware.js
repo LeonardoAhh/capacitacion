@@ -6,37 +6,26 @@ import { csrfMiddleware } from '@/lib/csrf';
 // ─── Configuración de rutas ────────────────────────────────────────────────────
 
 /** Rutas públicas — accesibles sin cookie de sesión */
-const PUBLIC_ROUTES = ['/', '/login', '/candidatos', '/training/login', '/organigrama', '/quiz'];
+const PUBLIC_ROUTES = ['/', '/login', '/training/login', '/organigrama', '/quiz'];
 
 /** Rutas que requieren sesión tipo 'admin' */
 const ADMIN_ROUTES = [];
-
-/** Rutas que requieren sesión tipo 'candidate' */
-const CANDIDATE_ROUTES = ['/candidatos/dashboard'];
-
-/** Rutas que requieren sesión tipo 'training' */
-const TRAINING_ROUTES = ['/training/dashboard'];
 
 // ─── Helpers ───────────────────────────────────────────────────────────────────
 
 function isPublicRoute(pathname) {
     return PUBLIC_ROUTES.some(route =>
         pathname === route || (route !== '/' && pathname.startsWith(route + '/'))
-    ) && !CANDIDATE_ROUTES.some(r => pathname.startsWith(r))
-        && !TRAINING_ROUTES.some(r => pathname.startsWith(r));
+    );
 }
 
 function getRequiredSessionType(pathname) {
-    if (CANDIDATE_ROUTES.some(r => pathname.startsWith(r))) return 'candidate';
-    if (TRAINING_ROUTES.some(r => pathname.startsWith(r))) return 'training';
     if (ADMIN_ROUTES.some(r => pathname.startsWith(r))) return 'admin';
     return null;
 }
 
 function getLoginUrl(sessionType) {
     switch (sessionType) {
-        case 'candidate': return '/candidatos';
-        case 'training': return '/training/login';
         case 'admin':
         default: return '/login';
     }

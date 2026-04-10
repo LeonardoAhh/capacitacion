@@ -41,7 +41,8 @@
       "Bash(export PATH=\"$PATH:/c/Program Files/nodejs\")",
       "Bash(node_modules/.bin/next lint:*)",
       "Read(//c//**)",
-      "Read(//c/Users/**)"
+      "Read(//c/Users/**)",
+      "Bash(where node:*)"
     ]
   }
 }

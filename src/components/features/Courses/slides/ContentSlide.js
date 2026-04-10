@@ -23,13 +23,12 @@ const ContentSlide = React.memo(function ContentSlide({ data, accentColor, hasBg
 
     return (
         <article
-            className={`${styles.slide} ${styles.contentSlide} ${hasBgMedia ? styles.slideOverBg : ''}`}
-            style={{ flexDirection: hasImages ? 'row' : 'column', gap: hasImages ? '3rem' : '1rem', alignItems: 'center' }}
+            className={`${styles.slide} ${styles.contentSlide} ${hasImages ? styles.contentSlideWithImage : ''} ${hasBgMedia ? styles.slideOverBg : ''}`}
             role="region"
             aria-label={heading || 'Contenido del slide'}
         >
             {/* Texto */}
-            <div style={{ flex: 1, width: '100%' }}>
+            <div className={styles.contentTextBlock}>
                 {accentColor && (
                     <div className={styles.accentBar} style={{ backgroundColor: accentColor }} aria-hidden="true" />
                 )}

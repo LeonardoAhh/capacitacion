@@ -76,7 +76,7 @@ export default function AlertsRow({ stats, evaluations }) {
                     description={`${stats.expiringContracts} empleado${stats.expiringContracts > 1 ? 's tienen' : ' tiene'} contrato${stats.expiringContracts > 1 ? 's' : ''} próximos a vencer en los próximos 30 días.`}
                     type="warning"
                     items={mapExpiringItems(stats.expiringEmployees)}
-                    actionLink="/employees"
+                    actionLink="/dashboard"
                     actionText="Ver todos los contratos"
                 >
                     <motion.div

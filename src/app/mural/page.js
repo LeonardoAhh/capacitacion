@@ -6,6 +6,7 @@ import { doc, getDoc } from 'firebase/firestore';
 import styles from './page.module.css';
 import { Search, Award, Star, Calendar, CheckCircle2, AlertCircle, RefreshCw, BookOpen } from 'lucide-react';
 
+
 const CONFETTI_COLORS = ['#fbbf24', '#f59e0b', '#10b981', '#34d399', '#d1fae5'];
 
 const Confetti = () => {
@@ -123,7 +124,7 @@ export default function MuralPage() {
         return (
             <div className={styles.recommendations}>
                 <h4 className={styles.recommendationsTitle}>
-                    <BookOpen size={16} aria-hidden="true" /> Recomendaciones de Estudio
+                    <BookOpen size={15} aria-hidden="true" /> Recomendaciones de Estudio
                 </h4>
                 {isArray ? (
                     <div className={styles.recommendationTags}>
@@ -143,87 +144,101 @@ export default function MuralPage() {
         return msg.replace('[Nombre]', name || '');
     };
 
-    // El formulario se muestra siempre que no haya un resultado exitoso visible
-    const showForm = !result?.found;
-
     return (
-        <main className={`${styles.main} ${result?.found ? (result.data.passed ? styles.resultSuccess : styles.resultFail) : ''}`}>
+        <main className={styles.page}>
+            <div className={styles.wrapper}>
 
-            <div className={styles.container}>
+                {/* Brand header */}
+                <div className={styles.brand}>
+                    <div className={styles.brandIcon}>
+                        <Award size={18} aria-hidden="true" />
+                    </div>
+                    <span className={styles.brandName}>Vertx · Mural de Resultados</span>
+                </div>
+
+                {/* Search card — visible when no result yet */}
                 {!result?.found && (
-                    <header className={styles.header}>
-                        <h1 className={styles.pageTitle}>Mural de Resultados</h1>
-                    </header>
-                )}
-
-                {showForm && (
-                    <form onSubmit={handleSearch} className={styles.searchBox} noValidate>
-                        <div className={styles.inputWrapper}>
-                            <Search className={styles.searchIcon} size={22} aria-hidden="true" />
-                            <input
-                                type="text"
-                                inputMode="numeric"
-                                placeholder="Ingresa tu No. de Empleado"
-                                value={employeeId}
-                                onChange={handleIdChange}
-                                className={styles.searchInput}
-                                autoComplete="off"
-                                autoFocus
-                                maxLength={10}
-                                aria-label="Número de empleado"
-                            />
+                    <div className={styles.searchCard}>
+                        <div className={styles.searchCardHeader}>
+                            <h1 className={styles.pageTitle}>Consulta tu resultado</h1>
+                            <p className={styles.pageSubtitle}>
+                                Ingresa tu número de empleado para ver tu calificación
+                            </p>
                         </div>
-                        <button
-                            type="submit"
-                            className={styles.searchBtn}
-                            disabled={loading || employeeId.length < 2}
-                            aria-label="Consultar resultado"
-                        >
-                            {loading
-                                ? <RefreshCw className={styles.spinIcon} size={18} aria-hidden="true" />
-                                : 'Consultar'
-                            }
-                        </button>
-                    </form>
-                )}
 
-                {loading && (
-                    <div className={styles.loadingState} role="status" aria-live="polite">
-                        <div className={styles.spinner} aria-hidden="true" />
-                        <p>Buscando en los registros...</p>
+                        <form onSubmit={handleSearch} noValidate className={styles.searchForm}>
+                            <div className={styles.inputGroup}>
+                                <label htmlFor="employeeId" className={styles.inputLabel}>
+                                    Número de Empleado
+                                </label>
+                                <div className={styles.inputRow}>
+                                    <Search className={styles.inputIcon} size={15} aria-hidden="true" />
+                                    <input
+                                        id="employeeId"
+                                        type="text"
+                                        inputMode="numeric"
+                                        placeholder="Ej. 12345"
+                                        value={employeeId}
+                                        onChange={handleIdChange}
+                                        className={styles.searchInput}
+                                        autoComplete="off"
+                                        autoFocus
+                                        maxLength={10}
+                                        aria-label="Número de empleado"
+                                        disabled={loading}
+                                    />
+                                </div>
+                            </div>
+
+                            <button
+                                type="submit"
+                                className={styles.searchBtn}
+                                disabled={loading || employeeId.length < 2}
+                            >
+                                {loading ? (
+                                    <><RefreshCw className={styles.spinIcon} size={15} aria-hidden="true" /> Buscando...</>
+                                ) : (
+                                    <><Search size={15} aria-hidden="true" /> Consultar resultado</>
+                                )}
+                            </button>
+                        </form>
+
+                        {errorMsg && (
+                            <div className={styles.errorBox} role="alert">
+                                <AlertCircle size={15} className={styles.errorIcon} aria-hidden="true" />
+                                <p className={styles.errorMsg}>{errorMsg}</p>
+                            </div>
+                        )}
                     </div>
                 )}
 
-                {errorMsg && (
-                    <div className={styles.notFound} role="alert">
-                        <AlertCircle size={30} className={styles.errorIcon} aria-hidden="true" />
-                        <p>{errorMsg}</p>
-                        <button className={styles.resetBtnMinimal} onClick={handleReset}>
-                            <RefreshCw size={15} aria-hidden="true" /> Limpiar búsqueda
-                        </button>
-                    </div>
-                )}
-
+                {/* Result card */}
                 {result?.found && (
                     <div
-                        className={`${styles.resultCard} ${result.data.passed ? styles.cardSuccess : styles.cardMotivational}`}
+                        className={`${styles.resultCard} ${result.data.passed ? styles.resultCardSuccess : styles.resultCardFail}`}
                         role="region"
                         aria-label="Resultado del examen"
                     >
                         {result.data.passed && <Confetti />}
 
-                        <div className={styles.cardHeader}>
-                            <div className={styles.statusBadge}>
+                        {/* Colored header section */}
+                        <div className={`${styles.resultHeader} ${result.data.passed ? styles.resultHeaderSuccess : styles.resultHeaderFail}`}>
+                            <div className={`${styles.statusBadge} ${result.data.passed ? styles.statusBadgeSuccess : styles.statusBadgeFail}`}>
                                 {result.data.passed ? (
-                                    <><CheckCircle2 size={14} aria-hidden="true" /> ¡Examen Aprobado!</>
+                                    <><CheckCircle2 size={12} aria-hidden="true" /> Examen Aprobado</>
                                 ) : (
-                                    <><Star size={14} aria-hidden="true" /> Sigue Preparándote</>
+                                    <><Star size={12} aria-hidden="true" /> Sigue Preparándote</>
                                 )}
                             </div>
 
-                            <div className={styles.scoreCircle} aria-label={`Puntaje: ${result.data.score} por ciento`}>
-                                <span className={styles.scoreValue}>{result.data.score}</span>
-                                <span className={styles.scoreUnit} aria-hidden="true">%</span>
+                            <div
+                                className={styles.scoreArea}
+                                aria-label={`Puntaje: ${result.data.score} por ciento`}
+                            >
+                                <span className={`${styles.scoreNumber} ${result.data.passed ? styles.scoreNumberSuccess : styles.scoreNumberFail}`}>
+                                    {result.data.score}
+                                </span>
+                                <span className={styles.scorePercent} aria-hidden="true">%</span>
                             </div>
 
                             <h2 className={styles.employeeName}>
@@ -234,19 +249,22 @@ export default function MuralPage() {
                             </p>
                         </div>
 
-                        <div className={styles.cardBody}>
-                            <div className={styles.messageBox}>
-                                <p>{getMessage(result.data.passed, result.data.firstName)}</p>
-                            </div>
+                        {/* Body */}
+                        <div className={styles.resultBody}>
+                            <p className={styles.messageText}>
+                                {getMessage(result.data.passed, result.data.firstName)}
+                            </p>
 
-                            <div className={styles.metricsGrid}>
-                                <div className={styles.metricItem}>
-                                    <Award size={20} className={styles.metricIcon} aria-hidden="true" />
-                                    <div>
-                                        <div className={styles.metricLabel}>Aplicaste para</div>
-                                        <div className={styles.metricValueHighlight}>
-                                            {result.data.promotionTo || 'Siguiente Nivel'}
-                                        </div>
+                            <div className={styles.metricItem}>
+                                <Award
+                                    size={18}
+                                    className={`${styles.metricIcon} ${result.data.passed ? styles.metricIconSuccess : styles.metricIconFail}`}
+                                    aria-hidden="true"
+                                />
+                                <div>
+                                    <div className={styles.metricLabel}>Aplicaste para</div>
+                                    <div className={`${styles.metricValue} ${result.data.passed ? styles.metricValueSuccess : styles.metricValueFail}`}>
+                                        {result.data.promotionTo || 'Siguiente Nivel'}
                                     </div>
                                 </div>
                             </div>
@@ -254,13 +272,14 @@ export default function MuralPage() {
                             {!result.data.passed && renderRecommendations(result.data.recommendations)}
                         </div>
 
-                        <div className={styles.cardFooter}>
-                            <div className={styles.dateInfo}>
+                        {/* Footer */}
+                        <div className={styles.resultFooter}>
+                            <div className={styles.dateRow}>
                                 <Calendar size={13} aria-hidden="true" />
-                                Evaluación: {result.data.date || 'Reciente'}
+                                <span>Evaluación: {result.data.date || 'Reciente'}</span>
                             </div>
                             <button
-                                className={styles.resetBtnAction}
+                                className={`${styles.newSearchBtn} ${result.data.passed ? styles.newSearchBtnSuccess : styles.newSearchBtnFail}`}
                                 onClick={handleReset}
                                 aria-label="Realizar nueva consulta"
                             >
@@ -269,6 +288,7 @@ export default function MuralPage() {
                         </div>
                     </div>
                 )}
+
             </div>
         </main>
     );

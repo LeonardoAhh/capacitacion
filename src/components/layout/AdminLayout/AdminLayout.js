@@ -3,82 +3,120 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
+import NextImage from 'next/image';
 import MainSidebar from '@/components/layout/MainSidebar/MainSidebar';
-import CandidateMobileHeader from '@/components/features/CandidateSidebar/CandidateMobileHeader';
 import { destroySession } from '@/lib/sessionApi';
 import styles from './AdminLayout.module.css';
-import { PanelLeft } from 'lucide-react';
+import { Menu, PanelLeft, LayoutDashboard } from 'lucide-react';
 
-export default function AdminLayout({ children, title = 'Viñoplastic RH' }) {
-    const { user, loading } = useAuth();
+function getRoleLabel(rol) {
+    const map = { super_admin: 'Super Admin', rh: 'RRHH', instructor: 'Instructor', demo: 'Demo' };
+    return map[rol] || rol || 'Usuario';
+}
+
+export default function AdminLayout({ children, title = 'Dashboard' }) {
+    const { user, loading, signOut } = useAuth();
     const router = useRouter();
-    const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-    // Estado exclusivo de desktop: colapsa el sidebar lateral
-    const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
+    const [isMobileOpen, setIsMobileOpen] = useState(false);
+    const [isCollapsed, setIsCollapsed] = useState(false);
 
     const handleLogout = async () => {
         try {
+            await signOut();
             await destroySession();
-            router.push('/');
-        } catch (error) {
-            console.error('Error cerrando sesión:', error);
-            router.push('/');
-        }
+        } catch { /* ignorar errores de cierre */ }
+        router.push('/');
     };
 
     useEffect(() => {
-        if (!loading && !user) {
-            router.replace('/login');
-        }
+        if (!loading && !user) router.replace('/login');
     }, [loading, user, router]);
 
     if (loading || !user) {
         return (
-            <div className={styles.layoutPage}>
-                <div className={styles.loading}>Cargando entorno...</div>
+            <div className={styles.loadingPage}>
+                <div className={styles.loadingSpinner} />
             </div>
         );
     }
 
-    return (
-        <div className={styles.layoutPage}>
-            {/* Header móvil — solo visible en <768px */}
-            <CandidateMobileHeader
-                user={user}
-                onOpenSidebar={() => setIsSidebarOpen(true)}
-                title={title}
-            />
+    const firstName = (user?.nombre || user?.nickname || user?.name || 'Admin').split(' ')[0];
+    const avatarSeed = user?.avatarSeed || user?.email || 'admin';
+    const avatarStyle = user?.avatarStyle || 'lorelei';
+    const avatarSrc = user?.photoURL || user?.avatar ||
+        `https://api.dicebear.com/7.x/${avatarStyle}/svg?seed=${encodeURIComponent(avatarSeed)}&backgroundColor=b6e3f4,c0aede,d1d4f9`;
 
-            {/* Sidebar maestro */}
+    return (
+        <div className={styles.root}>
             <MainSidebar
                 user={user}
                 handleLogout={handleLogout}
-                isOpen={isSidebarOpen}
-                onClose={() => setIsSidebarOpen(false)}
-                isCollapsed={isSidebarCollapsed}
+                isOpen={isMobileOpen}
+                onClose={() => setIsMobileOpen(false)}
+                isCollapsed={isCollapsed}
             />
 
-            {/* Contenedor principal scrollable */}
-            <div className={styles.scrollContent}>
+            <div className={styles.main}>
+                {/* Header */}
+                <header className={styles.header}>
+                    <div className={styles.headerLeft}>
+                        {/* Desktop: toggle collapse */}
+                        <button
+                            className={`${styles.iconBtn} ${styles.desktopOnly}`}
+                            onClick={() => setIsCollapsed(p => !p)}
+                            aria-label={isCollapsed ? 'Expandir menú' : 'Colapsar menú'}
+                            type="button"
+                        >
+                            <PanelLeft size={18} />
+                        </button>
+                        {/* Mobile: open drawer */}
+                        <button
+                            className={`${styles.iconBtn} ${styles.mobileOnly}`}
+                            onClick={() => setIsMobileOpen(true)}
+                            aria-label="Abrir menú"
+                            type="button"
+                        >
+                            <Menu size={18} />
+                        </button>
 
-                {/* Header desktop — solo visible en ≥768px */}
-                <header className={styles.desktopHeader} aria-label={`Sección: ${title}`}>
-                    <button
-                        className={styles.sidebarToggle}
-                        onClick={() => setIsSidebarCollapsed(prev => !prev)}
-                        aria-label={isSidebarCollapsed ? 'Mostrar menú lateral' : 'Ocultar menú lateral'}
-                        aria-expanded={!isSidebarCollapsed}
-                        type="button"
-                    >
-                        <PanelLeft size={18} strokeWidth={1.8} />
-                    </button>
-                    <div className={styles.headerDivider} aria-hidden="true" />
-                    <span className={styles.pageTitle}>{title.toUpperCase()}</span>
+                        <div className={styles.headerDivider} />
+
+                        {/* Breadcrumb */}
+                        <nav className={styles.breadcrumb} aria-label="Breadcrumb">
+                            <Link href="/dashboard" className={styles.breadcrumbHome}>
+                                <LayoutDashboard size={14} />
+                            </Link>
+                            {title !== 'Dashboard' && (
+                                <>
+                                    <span className={styles.breadcrumbSep}>/</span>
+                                    <span className={styles.breadcrumbCurrent}>{title}</span>
+                                </>
+                            )}
+                        </nav>
+                    </div>
+
+                    <div className={styles.headerRight}>
+                        <Link href="/profile" className={styles.userChip}>
+                            <div className={styles.chipAvatar}>
+                                <NextImage
+                                    src={avatarSrc}
+                                    alt={firstName}
+                                    width={24}
+                                    height={24}
+                                    className={styles.chipAvatarImg}
+                                    unoptimized
+                                />
+                            </div>
+                            <span className={styles.chipName}>{firstName}</span>
+                        </Link>
+                    </div>
                 </header>
 
-                <div className={styles.pageContent}>
+                {/* Page content */}
+                <main className={styles.content}>
                     {children}
-                </div>
+                </main>
             </div>
         </div>
     );

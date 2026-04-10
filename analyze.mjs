@@ -43,7 +43,7 @@ const userCourses = [
 // Normalization function (same as in app)
 const normalize = (str) => str?.trim().toUpperCase() || '';
 const normalizeForMatch = (str) =>
-    normalize(str).normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/\s+/g, ' ').trim();
+    normalize(str).normalize("NFD").replace(/[-]/g, "").replace(/\s+/g, ' ').trim();
 
 const normalizedUserCourses = userCourses.map(c => normalizeForMatch(c));
 

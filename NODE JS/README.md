@@ -914,7 +914,7 @@ licenses. For a complete list of included licenses, please see the
 [LICENSE](https://github.com/nodejs/node/blob/main/LICENSE) file.
 
 If you are contributing documentation or source changes, please ensure your
-additions comply with the project’s license guidelines.
+additions comply with the project's license guidelines.
 
 [Code of Conduct]: https://github.com/nodejs/admin/blob/HEAD/CODE_OF_CONDUCT.md
 [Contributing to the project]: CONTRIBUTING.md

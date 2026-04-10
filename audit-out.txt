@@ -1,0 +1,4 @@
+Fixed 1 files:
+src\components\features\Courses\slides\ThermalSimSlide.js (double-encoded)
+
+Skipped 267 clean files.

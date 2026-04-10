@@ -51,8 +51,7 @@ import { Skeleton } from '@/components/ui/Skeleton/Skeleton';
 import AdminLayout from '@/components/layout/AdminLayout/AdminLayout';
 import { Select } from '@/components/ui/Select/Select';
 
-// ── Helpers ──────────────────────────────────────────────────────────────────
-
+//Seccuiones del admin
 const ROLE_BADGE_VARIANT = {
     super_admin: 'danger', SUPER_ADMIN: 'danger',
     admin: 'secondary',   ADMIN: 'secondary',
@@ -62,11 +61,11 @@ const ADMIN_ROLES   = ['admin', 'superadmin', 'super_admin', 'ADMIN', 'SUPER_ADM
 const AUDITOR_ROLES = ['super_admin', 'SUPER_ADMIN'];
 
 const BANNER_PARTICLES = {
-    lightning: ['⚡','⭐','💫','✨','⚡','⭐','💫','✨'],
-    hearts:    ['❤️','💕','🌸','💖','❤️','💕','🌸','💖'],
-    books:     ['📚','✏️','🎓','⭐','📚','✏️','🎓','⭐'],
-    clouds:    ['☁️','🌤️','🌈','☁️','🌤️','🌈','☁️','🌤️'],
-    default:   ['✨','🌟','💫','⭐','✨','🌟','💫','⭐'],
+  lightning: ['🔴', '🟠', '🟡', '⚪'], // Colores de energía
+  hearts:    ['⚫', '⚪', '⬛', '⬜'], // Monocromático, elegante
+  books:     ['📐', '📏', '📎', '📌'], // Útiles de oficina/estudio
+  clouds:    ['⚪', '⚫', '🔹', '🔷'], // Formas abstractas para el cielo
+  default:   ['⚫', '⚪', '◼️', '◻️'], // Geometría pura
 };
 
 const BANNER_CONFIG = [
@@ -102,8 +101,7 @@ function BannerParticles({ animKey }) {
     );
 }
 
-// ── Componente principal ──────────────────────────────────────────────────────
-
+// Componente principal de la pagina de perfil
 export default function ProfilePage() {
     const { user, loading, updateUserProfile } = useAuth();
     const router = useRouter();
@@ -113,7 +111,6 @@ export default function ProfilePage() {
     const [showStylePicker,   setShowStylePicker]   = useState(false);
     const [pickerCoords,      setPickerCoords]      = useState({ top: 0, left: 0 });
     const [isRevealed,        setIsRevealed]        = useState(false);
-    const [activeTab,         setActiveTab]         = useState('perfil');
     const styleBtnRef = useRef(null);
 
     // Redirect instructores
@@ -151,7 +148,7 @@ export default function ProfilePage() {
     };
 
 
-    // ── Loading skeleton ──────────────────────────────────────────────────────
+// Skeleton de carga
     if (loading || !user) {
         return (
             <AdminLayout title="Perfil de Usuario">
@@ -174,186 +171,146 @@ export default function ProfilePage() {
         );
     }
 
-    // ── Datos derivados ───────────────────────────────────────────────────────
+// Datos derivados
     const roleBadgeVariant = ROLE_BADGE_VARIANT[user?.rol] ?? 'info';
     const isAdmin   = ADMIN_ROLES.includes(user?.rol);
     const isAuditor = AUDITOR_ROLES.includes(user?.rol);
 
     const detailRows = [
-        { icon: <Calendar size={18} />, label: 'Fecha de Ingreso', value: user?.fechaIngreso   || '—' },
-        { icon: <User2    size={18} />, label: 'Género',            value: user?.genero         || '—' },
-        { icon: <Shield   size={18} />, label: 'Rol',               value: user?.rol            || '—' },
-        { icon: <User     size={18} />, label: 'Departamento',      value: user?.departamento   || '—' },
-        { icon: <BookOpen size={18} />, label: 'Puesto',            value: user?.puesto         || '—' },
+        { icon: <Calendar size={18} />, label: 'Fecha de Ingreso', value: user?.fechaIngreso   || 'gs' },
+        { icon: <User2    size={18} />, label: 'Genero',            value: user?.genero         || '' },
+            { icon: <Shield   size={18} />, label: 'Rol',               value: user?.rol            || '' },
+            { icon: <User     size={18} />, label: 'Departamento',      value: user?.departamento   || '' },
+        { icon: <BookOpen size={18} />, label: 'Puesto',            value: user?.puesto         || '' },
     ];
 
-    // ── Tabs declarativas ─────────────────────────────────────────────────────
-    const profileTabs = [
-        {
-            value: 'perfil', label: 'Profile',
-            content: (
-                <>
-                    {/* Hero Card dentro del tab */}
-                    <div className={styles.heroCard}>
-                        <div className={styles.heroBanner} aria-hidden="true">
-                            <BannerParticles animKey={user?.sidebarAnimation || (user?.rol === 'super_admin' ? 'lightning' : user?.rol === 'admin' ? 'hearts' : user?.rol === 'instructor' ? 'books' : 'default')} />
-                        </div>
-                        <div className={styles.heroBody}>
-                            <div className={styles.avatarWrapper}>
-                                <div
-                                    className={styles.avatar}
-                                    role="img"
-                                    aria-label={`Avatar de ${user.name || user.displayName || 'Usuario'}`}
-                                >
-                                    <NextImage src={avatarUrl} alt="" width={96} height={96} unoptimized />
-                                </div>
-                                <button
-                                    onClick={handleRandomizeAvatar}
-                                    className={styles.changeAvatarBtn}
-                                    aria-label="Cambiar avatar aleatorio"
-                                    title="Cambiar Avatar"
-                                >
-                                    <RefreshCw size={14} />
-                                </button>
-                                <button
-                                    ref={styleBtnRef}
-                                    onClick={openStylePicker}
-                                    className={`${styles.changeAvatarBtn} ${styles.changeStyleBtn}`}
-                                    aria-label="Cambiar estilo de avatar"
-                                    title="Cambiar Estilo"
-                                >
-                                    <Palette size={14} />
-                                </button>
-                                <div className={styles.statusIndicator} role="status" aria-label="Estado: Activo" title="Activo" />
-                            </div>
-                            <div className={styles.heroContent}>
-                                {(user.puesto || user.departamento) && (
-                                    <p className={styles.heroMeta}>
-                                        {user.puesto && <span>{user.puesto}</span>}
-                                        {user.puesto && user.departamento && <span className={styles.heroMetaDot} />}
-                                        {user.departamento && <span>{user.departamento}</span>}
-                                    </p>
-                                )}
-                                <h1 className={styles.heroName}>
-                                    {user.name || user.displayName || 'Usuario'}
-                                </h1>
-                                <div
-                                    className={styles.emailPill}
-                                    onClick={() => setIsRevealed(v => !v)}
-                                    role="button"
-                                    tabIndex={0}
-                                    aria-pressed={isRevealed}
-                                    title={isRevealed ? 'Click para ocultar email' : 'Click para revelar email'}
-                                    onKeyDown={(e) => e.key === 'Enter' && setIsRevealed(v => !v)}
-                                >
-                                    <span className={styles.revealIcon} aria-hidden="true">
-                                        {isRevealed ? <Eye size={14} /> : <EyeOff size={14} />}
-                                    </span>
-                                    <span className={`${styles.emailText} ${isRevealed ? styles.noBlur : styles.blur}`}>
-                                        {user.email || 'correo@ejemplo.com'}
-                                    </span>
-                                </div>
-                                <div className={styles.badgeContainer}>
-                                    <Badge variant={roleBadgeVariant} size="md" dot>
-                                        {user.rol || 'Empleado'}
-                                    </Badge>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+    const animKey = user?.sidebarAnimation || (
+        user?.rol === 'super_admin' ? 'lightning' :
+        user?.rol === 'admin'       ? 'hearts'    :
+        user?.rol === 'instructor'  ? 'books'     : 'default'
+    );
 
-                    {/* Tiles de detalle */}
-                    <div className={styles.profileDetailsGrid}>
-                        {detailRows.map(({ label, value }) => (
-                            <div key={label} className={styles.profileDetailTile}>
-                                <span className={styles.profileDetailTileLabel}>{label}</span>
-                                <span className={styles.profileDetailTileValue}>{value}</span>
-                            </div>
-                        ))}
-                    </div>
-                </>
-            ),
-        },
-        ...(isAdmin ? [{
-            value: 'administracion', label: 'Settings',
-            content: (
-                <div className={styles.tabSection}>
-                    <AdminSection />
-                    <AdminMuralSection />
-                </div>
-            ),
-        }] : []),
-        ...(isAuditor ? [{
-            value: 'auditoria', label: 'Audit',
-            content: (
-                <div className={styles.tabSection}>
-                    <InduccionAuditSection />
-                </div>
-            ),
-        }] : []),
-    ];
-
-    const visibleTab = profileTabs.find(t => t.value === activeTab) ?? profileTabs[0];
-
-    // ── Render ────────────────────────────────────────────────────────────────
     return (
         <AdminLayout title="Perfil de Usuario">
             <main className={styles.container} id="main-content">
+                <div className={isAdmin ? styles.pageLayout : styles.pageLayoutSingle}>
+                    {/* Columna izquierda: perfil */}
+                    <div className={styles.profileCol}>
+                        <div className={styles.heroCard}>
+                            <div className={styles.heroBanner} aria-hidden="true">
+                                <BannerParticles animKey={animKey} />
+                            </div>
+                            <div className={styles.heroBody}>
+                                <div className={styles.avatarWrapper}>
+                                    <div
+                                        className={styles.avatar}
+                                        role="img"
+                                        aria-label={`Avatar de ${user.name || user.displayName || 'Usuario'}`}
+                                    >
+                                        <NextImage src={avatarUrl} alt="" width={96} height={96} unoptimized />
+                                    </div>
+                                    <button
+                                        onClick={handleRandomizeAvatar}
+                                        className={styles.changeAvatarBtn}
+                                        aria-label="Cambiar avatar aleatorio"
+                                        title="Cambiar Avatar"
+                                    >
+                                        <RefreshCw size={14} />
+                                    </button>
+                                    <button
+                                        ref={styleBtnRef}
+                                        onClick={openStylePicker}
+                                        className={`${styles.changeAvatarBtn} ${styles.changeStyleBtn}`}
+                                        aria-label="Cambiar estilo de avatar"
+                                        title="Cambiar Estilo"
+                                    >
+                                        <Palette size={14} />
+                                    </button>
+                                    <div className={styles.statusIndicator} role="status" aria-label="Estado: Activo" title="Activo" />
+                                </div>
+                                <div className={styles.heroContent}>
+                                    {(user.puesto || user.departamento) && (
+                                        <p className={styles.heroMeta}>
+                                            {user.puesto && <span>{user.puesto}</span>}
+                                            {user.puesto && user.departamento && <span className={styles.heroMetaDot} />}
+                                            {user.departamento && <span>{user.departamento}</span>}
+                                        </p>
+                                    )}
+                                    <h1 className={styles.heroName}>
+                                        {user.name || user.displayName || 'Usuario'}
+                                    </h1>
+                                    <div
+                                        className={styles.emailPill}
+                                        onClick={() => setIsRevealed(v => !v)}
+                                        role="button"
+                                        tabIndex={0}
+                                        aria-pressed={isRevealed}
+                                        title={isRevealed ? 'Click para ocultar email' : 'Click para revelar email'}
+                                        onKeyDown={(e) => e.key === 'Enter' && setIsRevealed(v => !v)}
+                                    >
+                                        <span className={styles.revealIcon} aria-hidden="true">
+                                            {isRevealed ? <Eye size={14} /> : <EyeOff size={14} />}
+                                        </span>
+                                        <span className={`${styles.emailText} ${isRevealed ? styles.noBlur : styles.blur}`}>
+                                            {user.email || 'correo@ejemplo.com'}
+                                        </span>
+                                    </div>
+                                    <div className={styles.badgeContainer}>
+                                        <Badge variant={roleBadgeVariant} size="md" dot>
+                                            {user.rol || 'Empleado'}
+                                        </Badge>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
 
-                {/* ── Tab Navigation ── */}
-                <nav className={styles.tabNav} role="tablist" aria-label="Secciones del perfil">
-                    {profileTabs.map(tab => (
-                        <button
-                            key={tab.value}
-                            role="tab"
-                            aria-selected={activeTab === tab.value}
-                            aria-controls={`tabpanel-${tab.value}`}
-                            className={`${styles.tabBtn} ${activeTab === tab.value ? styles.tabBtnActive : ''}`}
-                            onClick={() => setActiveTab(tab.value)}
-                        >
-                            {tab.label}
-                        </button>
-                    ))}
-                </nav>
+                        <div className={styles.profileDetailsGrid}>
+                            {detailRows.map(({ label, value }) => (
+                                <div key={label} className={styles.profileDetailTile}>
+                                    <span className={styles.profileDetailTileLabel}>{label}</span>
+                                    <span className={styles.profileDetailTileValue}>{value}</span>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
 
-                {/* ── Tab Content ── */}
-                <div
-                    id={`tabpanel-${visibleTab.value}`}
-                    role="tabpanel"
-                    className={styles.tabContent}
-                >
-                    {visibleTab.content}
+                    {/* Columna derecha: administracin (solo admins) */}
+                    {isAdmin && (
+                        <div className={styles.adminCol}>
+                            <AdminSection />
+                            <AdminMuralSection />
+                        </div>
+                    )}
                 </div>
-
             </main>
 
-            {/* ── Style Picker Portal ── */}
+            {/* Portal del selector de estilo */}
             {showStylePicker && createPortal(
                 <>
                     <div
                         style={{ position: 'fixed', inset: 0, zIndex: 9998 }}
                         onClick={() => setShowStylePicker(false)}
                     />
-                <div
-                    className={styles.stylePickerPortal}
-                    style={{ top: pickerCoords.top, left: pickerCoords.left }}
-                    onClick={e => e.stopPropagation()}
-                >
-                    <p className={styles.stylePickerTitle}>Elige un estilo</p>
-                    <div className={styles.stylePickerGrid}>
-                        {AVATAR_STYLES.map(s => (
-                            <button
-                                key={s.value}
-                                className={`${styles.stylePickerItem} ${avatarStyle === s.value ? styles.stylePickerItemActive : ''}`}
-                                onClick={() => handleChangeStyle(s.value)}
-                                title={s.label}
-                            >
-                                <NextImage src={dicebearUrl(s.value, avatarSeed, 48)} alt={s.label} width={48} height={48} unoptimized />
-                                <span>{s.label}</span>
-                            </button>
-                        ))}
+                    <div
+                        className={styles.stylePickerPortal}
+                        style={{ top: pickerCoords.top, left: pickerCoords.left }}
+                        onClick={e => e.stopPropagation()}
+                    >
+                        <p className={styles.stylePickerTitle}>Elige un estilo</p>
+                        <div className={styles.stylePickerGrid}>
+                            {AVATAR_STYLES.map(s => (
+                                <button
+                                    key={s.value}
+                                    className={`${styles.stylePickerItem} ${avatarStyle === s.value ? styles.stylePickerItemActive : ''}`}
+                                    onClick={() => handleChangeStyle(s.value)}
+                                    title={s.label}
+                                >
+                                    <NextImage src={dicebearUrl(s.value, avatarSeed, 48)} alt={s.label} width={48} height={48} unoptimized />
+                                    <span>{s.label}</span>
+                                </button>
+                            ))}
+                        </div>
                     </div>
-                </div>
                 </>,
                 document.body
             )}
@@ -361,22 +318,20 @@ export default function ProfilePage() {
     );
 }
 
-// ══════════════════════════════════════════════════════════════════════════════
-// SUB-COMPONENTES (lógica de negocio intacta, solo estilos actualizados)
-// ══════════════════════════════════════════════════════════════════════════════
+// SUB-COMPONENTES (lgica de negocio intacta, solo estilos actualizados)
 import { doc, getDoc, setDoc, onSnapshot, collection, query, orderBy, limit, where, getDocs } from 'firebase/firestore';
 import { getAuth, createUserWithEmailAndPassword } from 'firebase/auth';
 import { initializeApp, deleteApp } from 'firebase/app';
 import { db } from '@/lib/firebase';
 import { AlertTriangle, Trash2, UploadCloud, FileEdit, ChevronDown } from 'lucide-react';
 
-// Opciones de animación para el sidebar
+// Opciones de animacin para el sidebar
 const ANIMATION_OPTIONS = [
-    { value: 'lightning', label: '⚡ Rayos y estrellas' },
+    { value: 'lightning', label: 'a Rayos y estrellas' },
     { value: 'hearts',    label: '❤️ Corazones' },
-    { value: 'books',     label: '📚 Libros' },
-    { value: 'clouds',    label: '☁️ Nubes' },
-    { value: 'default',   label: '✨ Destellos' },
+    { value: 'books',     label: 'xa Libros' },
+    { value: 'clouds',    label: '܁️ Nubes' },
+    { value: 'default',   label: 'S Destellos' },
 ];
 
 // Crea un usuario en Firebase Auth sin afectar la sesión actual del admin
@@ -397,7 +352,7 @@ async function createAuthUserSecondary(email, password) {
     }
 }
 
-// ── ROW MENU (botón "..." con popover via portal) ─────────────────────────────
+// Men de opciones para cada fila de usuario o rol
 function RowMenu({ onEdit, onDelete, editLabel = 'Editar', deleteLabel = 'Eliminar' }) {
     const [open, setOpen] = useState(false);
     const [coords, setCoords] = useState({ top: 0, left: 0 });
@@ -462,15 +417,13 @@ function RowMenu({ onEdit, onDelete, editLabel = 'Editar', deleteLabel = 'Elimin
     );
 }
 
-// ── ADMIN SECTION ─────────────────────────────────────────────────────────────
+// Secciones administrativas (solo para admins)
 const PERMISSION_PAGES = [
     { key: 'dashboard',    label: 'Dashboard' },
     { key: 'employees',    label: 'Empleados' },
-    { key: 'capacitacion', label: 'Capacitación' },
+    { key: 'capacitacion', label: 'Capacitacin' },
     { key: 'profile',      label: 'Perfil' },
-    { key: 'induccion',    label: 'Inducción' },
-    { key: 'programacion', label: 'Programación' },
-    { key: 'training',     label: 'Training' },
+    { key: 'induccion',    label: 'Induccin' },
     { key: 'mural',        label: 'Mural' },
 ];
 
@@ -760,8 +713,8 @@ function AdminSection() {
                                     <p className={styles.maintenanceLabel}>Modo Mantenimiento</p>
                                     <p className={styles.maintenanceSub}>
                                         {isMaintenance
-                                            ? 'La plataforma está bloqueada para usuarios.'
-                                            : 'La plataforma está accesible para todos.'
+                                            ? 'La plataforma esta bloqueada para usuarios.'
+                                            : 'La plataforma esta accesible para todos.'
                                         }
                                     </p>
                                 </div>
@@ -798,7 +751,7 @@ function AdminSection() {
                     {isMaintenance && (
                         <div className={styles.maintenanceWarning}>
                             <AlertTriangle size={14} />
-                            <span>Tú sigues teniendo acceso total por ser Administrador.</span>
+                            <span>T sigues teniendo acceso total por ser Administrador.</span>
                         </div>
                     )}
 
@@ -848,7 +801,7 @@ function AdminSection() {
                                         />
                                     </div>
                                     <div className={styles.fieldGroup}>
-                                        <label className={styles.fieldLabel}>Animación sidebar</label>
+                                        <label className={styles.fieldLabel}>Animacin sidebar</label>
                                         <select
                                             className={styles.fieldInput}
                                             value={userForm.sidebarAnimation}
@@ -861,7 +814,7 @@ function AdminSection() {
                                     </div>
                                     {!editingUserId && (
                                         <div className={styles.fieldGroup}>
-                                            <label className={styles.fieldLabel}>Contraseña temporal</label>
+                                            <label className={styles.fieldLabel}>Contrasea temporal</label>
                                             <input
                                                 className={styles.fieldInput}
                                                 type="password"
@@ -1017,7 +970,7 @@ function AdminSection() {
     );
 }
 
-// ── ADMIN MURAL SECTION ───────────────────────────────────────────────────────
+//  ADMIN MURAL SECTION 
 import { Presentation, Save, RefreshCcw, Pencil, Check, X as CancelIcon } from 'lucide-react';
 import { deleteDoc } from 'firebase/firestore';
 
@@ -1378,7 +1331,7 @@ function AdminMuralSection() {
                                                 <td><input type="text" className={styles.tableEditInput} value={editData.firstName} onChange={e => setEditData({ ...editData, firstName: e.target.value })} /></td>
                                                 <td><input type="text" className={styles.tableEditInput} value={editData.currentPosition} onChange={e => setEditData({ ...editData, currentPosition: e.target.value })} /></td>
                                                 <td><input type="text" className={styles.tableEditInput} value={editData.promotionTo} onChange={e => setEditData({ ...editData, promotionTo: e.target.value })} /></td>
-                                                <td>—</td>
+                                                <td></td>
                                                 <td>
                                                     <div className={styles.tagsGrid} style={{ maxHeight: 120, overflowY: 'auto' }}>
                                                         {availableThemes.map(theme => {
@@ -1426,7 +1379,7 @@ function AdminMuralSection() {
                                                             ? item.recommendations.map((rec, i) => <span key={i} className={styles.recTag}>{rec}</span>)
                                                             : (item.recommendations
                                                                 ? <span className={styles.recTag}>{item.recommendations}</span>
-                                                                : <span style={{ color: 'var(--text-tertiary)', fontSize: '0.76rem' }}>—</span>
+                                                                : <span style={{ color: 'var(--text-tertiary)', fontSize: '0.76rem' }}></span>
                                                             )
                                                         }
                                                     </div>
@@ -1450,7 +1403,7 @@ function AdminMuralSection() {
                         </div>
                     </div>
 
-                    {/* ── Wizard: Captura Manual ── */}
+                    {/*  Wizard: Captura Manual  */}
                     {wizardOpen && createPortal(
                         <div
                             className={styles.wizardOverlay}
@@ -1508,7 +1461,7 @@ function AdminMuralSection() {
                                                         autoFocus
                                                     />
                                                     {searchingM && (
-                                                        <span className={styles.idSearchSpinner} aria-label="Buscando…">
+                                                        <span className={styles.idSearchSpinner} aria-label="Buscando⬦">
                                                             <RefreshCcw size={14} style={{ animation: 'spin 0.8s linear infinite' }} />
                                                         </span>
                                                     )}
@@ -1569,7 +1522,7 @@ function AdminMuralSection() {
                                                     <input type="number" min="0" max="100" className={styles.fieldInput}
                                                         value={manualData.score}
                                                         onChange={e => setManualData({ ...manualData, score: e.target.value })}
-                                                        placeholder="0 – 100" />
+                                                        placeholder="0  100" />
                                                 </div>
                                                 <div className={styles.fieldGroup}>
                                                     <label className={styles.fieldLabel}>Calificación requerida (%)</label>
@@ -1582,10 +1535,10 @@ function AdminMuralSection() {
                                             {wizardStep3Valid && (
                                                 <div className={`${styles.wizardResultPreview} ${wizardPassed ? styles.wizardResultPassed : styles.wizardResultFailed}`}>
                                                     <span className={styles.wizardResultBadge}>
-                                                        {wizardPassed ? '✓  APROBADO' : '✗  REPROBADO'}
+                                                        {wizardPassed ? 'S  APROBADO' : 'S  REPROBADO'}
                                                     </span>
                                                     <span className={styles.wizardResultScore}>
-                                                        {manualData.firstName} — {manualData.score}% obtenido, {manualData.requiredScore}% requerido
+                                                        {manualData.firstName}  {manualData.score}% obtenido, {manualData.requiredScore}% requerido
                                                     </span>
                                                 </div>
                                             )}
@@ -1616,7 +1569,7 @@ function AdminMuralSection() {
                                 <div className={styles.wizardFooter}>
                                     <button type="button" className={styles.btnSecondary}
                                         onClick={() => wizardStep === 1 ? setWizardOpen(false) : setWizardStep(s => s - 1)}>
-                                        {wizardStep === 1 ? 'Cancelar' : '← Anterior'}
+                                        {wizardStep === 1 ? 'Cancelar' : '  Anterior'}
                                     </button>
                                     <div className={styles.wizardFooterRight}>
                                         <span className={styles.wizardStepCounter}>Paso {wizardStep} de {WIZARD_STEPS.length}</span>
@@ -1627,7 +1580,7 @@ function AdminMuralSection() {
                                                     (wizardStep === 2 && !wizardStep2Valid)
                                                 }
                                                 onClick={() => setWizardStep(s => s + 1)}>
-                                                Siguiente →
+                                                Siguiente  
                                             </button>
                                         ) : (
                                             <button type="button" className={styles.btnAmber}
@@ -1641,96 +1594,6 @@ function AdminMuralSection() {
                             </div>
                         </div>,
                         document.body
-                    )}
-                </div>
-            )}
-        </div>
-    );
-}
-
-// ── AUDIT LOG ─────────────────────────────────────────────────────────────────
-const ACTION_META = {
-    create:    { label: 'Creó',     color: '#22c55e', icon: BookOpen    },
-    import:    { label: 'Importó',  color: '#3b82f6', icon: UploadCloud },
-    delete:    { label: 'Eliminó',  color: '#ef4444', icon: Trash2      },
-    publish:   { label: 'Publicó',  color: '#f59e0b', icon: Eye         },
-    unpublish: { label: 'Archivó',  color: '#6b7280', icon: EyeOff      },
-    rename:    { label: 'Renombró', color: '#a855f7', icon: FileEdit    },
-    update:    { label: 'Editó',    color: '#0ea5e9', icon: RefreshCw   },
-};
-
-function InduccionAuditSection() {
-    const [logs,    setLogs]    = useState([]);
-    const [loading, setLoading] = useState(true);
-    const [isOpen,  setIsOpen]  = useState(false);
-
-    useEffect(() => {
-        const q = query(
-            collection(db, 'audit_logs'),
-            where('module', '==', 'induccion'),
-            orderBy('timestamp', 'desc'),
-            limit(30)
-        );
-        const unsub = onSnapshot(q, (snap) => {
-            setLogs(snap.docs.map(d => ({ id: d.id, ...d.data() })));
-            setLoading(false);
-        });
-        return () => unsub();
-    }, []);
-
-    const formatTime = (ts) => {
-        if (!ts) return '—';
-        const date = ts.toDate ? ts.toDate() : new Date(ts);
-        return date.toLocaleString('es-MX', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' });
-    };
-
-    return (
-        <div className={styles.accordionPanel}>
-            <div
-                className={`${styles.accordionHeader} ${isOpen ? styles.accordionHeaderOpen : ''}`}
-                onClick={() => setIsOpen(v => !v)}
-                role="button"
-                aria-expanded={isOpen}
-                tabIndex={0}
-                onKeyDown={(e) => e.key === 'Enter' && setIsOpen(v => !v)}
-            >
-                <h3 className={styles.accordionTitle}>
-                    <span className={styles.accordionIcon}><BookOpen size={18} /></span>
-                    Actividad en Inducción
-                </h3>
-                <ChevronDown size={20} className={`${styles.accordionChevron} ${isOpen ? styles.accordionChevronOpen : ''}`} />
-            </div>
-
-            {isOpen && (
-                <div className={styles.accordionBody}>
-                    {loading ? (
-                        <p className={styles.auditEmpty}>Cargando historial…</p>
-                    ) : logs.length === 0 ? (
-                        <p className={styles.auditEmpty}>No hay actividad registrada aún.</p>
-                    ) : (
-                        <ul className={styles.auditList}>
-                            {logs.map(log => {
-                                const meta = ACTION_META[log.action] || { label: log.action, color: 'var(--text-tertiary)', icon: RefreshCw };
-                                const Icon = meta.icon;
-                                return (
-                                    <li key={log.id} className={styles.auditItem}>
-                                        <span className={styles.auditDot} style={{ color: meta.color }}>
-                                            <Icon size={14} />
-                                        </span>
-                                        <div className={styles.auditBody}>
-                                            <p className={styles.auditMain}>
-                                                <strong className={styles.auditActionLabel} style={{ color: meta.color }}>{meta.label} </strong>
-                                                <strong>{log.userName}</strong>
-                                                {' — '}
-                                                <span className={styles.auditTarget}>{log.target}</span>
-                                            </p>
-                                            {log.detail && <p className={styles.auditDetail}>{log.detail}</p>}
-                                        </div>
-                                        <span className={styles.auditTime}>{formatTime(log.timestamp)}</span>
-                                    </li>
-                                );
-                            })}
-                        </ul>
                     )}
                 </div>
             )}

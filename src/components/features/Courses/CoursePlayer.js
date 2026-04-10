@@ -81,6 +81,43 @@ function SlideBadge({ type }) {
     );
 }
 
+// ── Configuración de tamaños de fuente ───────────────────────────────────────
+
+const FONT_SIZES = [
+    { key: 'sm', label: 'A', size: '0.78rem', title: 'Letra pequeña' },
+    { key: 'md', label: 'A', size: '0.9rem',  title: 'Letra mediana' },
+    { key: 'lg', label: 'A', size: '1.05rem', title: 'Letra grande' },
+    { key: 'xl', label: 'A', size: '1.22rem', title: 'Letra extra grande' },
+];
+
+const FS_STORAGE_KEY = 'course_font_scale';
+
+const FS_CLASS = { sm: 'fsSm', md: null, lg: 'fsLg', xl: 'fsXl' };
+
+function FontSizeControl({ value, onChange }) {
+    return (
+        <div className={styles.fontSizeControl} role="group" aria-label="Tamaño de letra">
+            {FONT_SIZES.map((fs) => (
+                <button
+                    key={fs.key}
+                    className={[
+                        styles.fontSizeBtn,
+                        value === fs.key ? styles.fontSizeBtnActive : '',
+                    ].filter(Boolean).join(' ')}
+                    style={{ fontSize: fs.size }}
+                    onClick={() => onChange(fs.key)}
+                    title={fs.title}
+                    aria-pressed={value === fs.key}
+                    aria-label={fs.title}
+                    type="button"
+                >
+                    {fs.label}
+                </button>
+            ))}
+        </div>
+    );
+}
+
 // ── Componente principal ─────────────────────────────────────────────────────
 
 /**
@@ -92,7 +129,7 @@ function SlideBadge({ type }) {
  * @param {boolean}  [props.inline]  - Si true, renderiza en modo editor (sin fullscreen, sin persistencia)
  * @param {string}   [props.userId]  - UID del usuario para persistencia de progreso
  */
-export default function CoursePlayer({ course, slides, onClose, inline = false, userId = null }) {
+export default function CoursePlayer({ course, slides, onClose, inline = false, userId = null, fontScale = null }) {
     const [current, setCurrent] = useState(0);
     const [direction, setDirection] = useState('forward');       // 'forward' | 'backward'
     const [slideKey, setSlideKey] = useState(0);               // fuerza re-mount para animación
@@ -103,6 +140,18 @@ export default function CoursePlayer({ course, slides, onClose, inline = false, 
     const [quizScore, setQuizScore] = useState(null);            // score del quiz (0-100)
     const [elapsedSecs, setElapsedSecs] = useState(0);
     const [progressLoaded, setProgressLoaded] = useState(false);
+    const [internalFontSize, setInternalFontSize] = useState(() => {
+        if (typeof window === 'undefined') return 'md';
+        return localStorage.getItem(FS_STORAGE_KEY) || 'md';
+    });
+
+    // fontScale prop tiene prioridad (editor); sino usa estado interno (player)
+    const fontSize = fontScale ?? internalFontSize;
+
+    const handleFontSizeChange = useCallback((key) => {
+        setInternalFontSize(key);
+        try { localStorage.setItem(FS_STORAGE_KEY, key); } catch {}
+    }, []);
 
     // Notas por slide
     const [notes, setNotes] = useState({});
@@ -418,12 +467,12 @@ export default function CoursePlayer({ course, slides, onClose, inline = false, 
                         </span>
                     )}
 
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                        {!inline && <SlideBadge type={currentSlide?.type} />}
-                        <span className={styles.counter} aria-label={`Slide ${current + 1} de ${total}`}>
-                            {current + 1} / {total}
-                        </span>
-                    </div>
+                    {!inline && <SlideBadge type={currentSlide?.type} />}
+                    <span className={styles.counter} aria-label={`Slide ${current + 1} de ${total}`}>
+                        {current + 1} / {total}
+                    </span>
+
+                    <FontSizeControl value={fontSize} onChange={handleFontSizeChange} />
 
                     {!inline && (
                         <button
@@ -483,7 +532,11 @@ export default function CoursePlayer({ course, slides, onClose, inline = false, 
             {/* ── Contenido del slide ── */}
             <main
                 id="course-slide-content"
-                className={`${styles.content} ${bgMedia?.layout === 'split' ? styles.contentSplit : (bgMedia ? styles.contentFull : '')}`}
+                className={[
+                    styles.content,
+                    bgMedia?.layout === 'split' ? styles.contentSplit : (bgMedia ? styles.contentFull : ''),
+                    FS_CLASS[fontSize] ? styles[FS_CLASS[fontSize]] : '',
+                ].filter(Boolean).join(' ')}
                 aria-live="polite"
                 aria-atomic="true"
             >
@@ -531,8 +584,8 @@ export default function CoursePlayer({ course, slides, onClose, inline = false, 
                 )}
             </main>
 
-            {/* ── Nav (oculto: navegación disponible con teclado y swipe) ── */}
-            <nav className={styles.nav} aria-label="Navegación de slides" aria-hidden="true" style={{ display: 'none' }}>
+            {/* ── Nav ── */}
+            <nav className={styles.nav} aria-label="Navegación de slides">
                 <button
                     className={styles.navBtn}
                     onClick={goPrev}
@@ -546,7 +599,8 @@ export default function CoursePlayer({ course, slides, onClose, inline = false, 
                     <span>Atrás</span>
                 </button>
 
-                {total <= 12 && (
+                {/* Centro del nav: dots (≤12) o indicador numérico (>12) */}
+                {total <= 12 ? (
                     <div className={styles.dots} role="tablist" aria-label="Slides del curso">
                         {allSlides.map((slide, i) => (
                             <button
@@ -563,6 +617,14 @@ export default function CoursePlayer({ course, slides, onClose, inline = false, 
                                 tabIndex={i === current ? 0 : -1}
                             />
                         ))}
+                    </div>
+                ) : (
+                    <div className={styles.navCenter} aria-hidden="true">
+                        <div
+                            className={styles.navProgressBar}
+                            style={{ '--prog': `${((current + 1) / total) * 100}%` }}
+                        />
+                        <span className={styles.navCounter}>{current + 1} / {total}</span>
                     </div>
                 )}
 

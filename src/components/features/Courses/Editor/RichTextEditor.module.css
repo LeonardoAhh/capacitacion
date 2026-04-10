@@ -1,20 +1,21 @@
 /* ====================================================
-   RICH TEXT EDITOR — Toolbar + área editable
+   RICH TEXT EDITOR — shadcn/ui style toolbar
    ==================================================== */
 
 .wrapper {
     display: flex;
     flex-direction: column;
-    border: 1px solid var(--border-color);
-    border-radius: var(--radius-md, 10px);
-    overflow: hidden;
-    background: var(--bg-primary);
+    border: 1px solid hsl(214.3 31.8% 91.4%);
+    border-radius: 8px;
+    overflow: visible;
+    background: hsl(0 0% 100%);
     transition: border-color 0.15s, box-shadow 0.15s;
+    position: relative;
 }
 
 .wrapper:focus-within {
-    border-color: var(--color-primary);
-    box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-primary) 12%, transparent);
+    border-color: hsl(222.2 47.4% 44%);
+    box-shadow: 0 0 0 3px hsl(222.2 47.4% 44% / 0.15);
 }
 
 /* ── Toolbar ── */
@@ -22,10 +23,18 @@
     display: flex;
     align-items: center;
     gap: 2px;
-    padding: 5px 8px;
-    background: var(--bg-secondary);
-    border-bottom: 1px solid var(--border-color);
+    padding: 4px 6px;
+    background: hsl(210 40% 98%);
+    border-bottom: 1px solid hsl(214.3 31.8% 91.4%);
     flex-shrink: 0;
+    flex-wrap: wrap;
+    border-radius: 8px 8px 0 0;
+}
+
+.toolGroup {
+    display: flex;
+    align-items: center;
+    gap: 1px;
 }
 
 .toolBtn {
@@ -34,43 +43,92 @@
     justify-content: center;
     min-width: 28px;
     height: 26px;
-    padding: 0 6px;
+    padding: 0 5px;
     border: 1px solid transparent;
     border-radius: 5px;
     background: transparent;
     cursor: pointer;
-    color: var(--text-secondary);
-    font-size: 0.8rem;
-    transition: background 0.12s, border-color 0.12s, color 0.12s;
+    color: hsl(215.4 16.3% 36%);
+    font-size: 0.82rem;
     font-family: inherit;
     line-height: 1;
+    transition: background 0.12s, border-color 0.12s, color 0.12s;
+    flex-shrink: 0;
 }
 
 .toolBtn:hover {
-    background: var(--bg-primary);
-    border-color: var(--border-color);
-    color: var(--text-primary);
+    background: hsl(0 0% 100%);
+    border-color: hsl(214.3 31.8% 88%);
+    color: hsl(222.2 47.4% 11.2%);
+    box-shadow: 0 1px 2px rgba(0,0,0,0.06);
 }
 
 .toolBtn:active {
-    background: color-mix(in srgb, var(--color-primary) 12%, transparent);
-    border-color: var(--color-primary);
-    color: var(--color-primary);
-    transform: scale(0.94);
+    background: hsl(222.2 47.4% 11.2% / 0.08);
+    border-color: hsl(222.2 47.4% 44% / 0.30);
+    color: hsl(222.2 47.4% 30%);
+    transform: scale(0.95);
 }
 
-.toolBtnActive {
-    background: color-mix(in srgb, var(--color-primary) 12%, transparent);
-    border-color: color-mix(in srgb, var(--color-primary) 30%, transparent);
-    color: var(--color-primary);
-}
-
-.toolbarDivider {
+.toolDivider {
     width: 1px;
     height: 16px;
-    background: var(--border-color);
-    margin: 0 4px;
+    background: hsl(214.3 31.8% 88%);
+    margin: 0 3px;
     flex-shrink: 0;
+}
+
+/* Color de texto */
+.toolBtnColor {
+    composes: toolBtn;
+    padding: 0 5px;
+}
+
+.colorIcon {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    line-height: 1;
+}
+
+.colorBar {
+    display: block;
+    width: 14px;
+    height: 3px;
+    border-radius: 2px;
+    border: 1px solid hsl(0 0% 0% / 0.12);
+}
+
+/* Popover picker */
+.colorPicker {
+    position: absolute;
+    top: calc(100% + 4px);
+    left: 0;
+    z-index: 200;
+    display: grid;
+    grid-template-columns: repeat(6, 22px);
+    gap: 4px;
+    padding: 8px;
+    background: hsl(0 0% 100%);
+    border: 1px solid hsl(214.3 31.8% 91.4%);
+    border-radius: 8px;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.12), 0 1px 4px rgba(0,0,0,0.06);
+}
+
+.colorSwatch {
+    width: 22px;
+    height: 22px;
+    border-radius: 4px;
+    border: 1.5px solid hsl(0 0% 0% / 0.14);
+    cursor: pointer;
+    transition: transform 0.1s, box-shadow 0.1s;
+    padding: 0;
+}
+
+.colorSwatch:hover {
+    transform: scale(1.18);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.20);
 }
 
 /* ── Área editable ── */
@@ -78,47 +136,36 @@
     padding: 10px 12px;
     font-size: 0.875rem;
     line-height: 1.7;
-    color: var(--text-primary);
+    color: hsl(222.2 47.4% 11.2%);
     outline: none;
     overflow-y: auto;
     word-break: break-word;
     white-space: pre-wrap;
-    /* Estilos del texto formateado */
+    border-radius: 0 0 8px 8px;
+    font-family: var(--font-body), sans-serif;
 }
 
-/* Placeholder cuando está vacío */
 .editor:empty::before {
     content: attr(data-placeholder);
-    color: var(--text-tertiary);
+    color: hsl(215.4 16.3% 66%);
     pointer-events: none;
     font-style: italic;
 }
 
-/* Asegurar que los estilos inline se vean bien */
-.editor strong,
-.editor b {
-    font-weight: 700;
-    color: inherit;
-}
+.editor strong, .editor b { font-weight: 700; color: inherit; }
+.editor em,     .editor i  { font-style: italic; color: inherit; }
+.editor u                  { text-decoration: underline; color: inherit; }
+.editor s                  { text-decoration: line-through; color: inherit; }
 
-.editor em,
-.editor i {
-    font-style: italic;
-    color: inherit;
-}
-
-.editor u {
-    text-decoration: underline;
-    color: inherit;
-}
-
-/* ── Contador de caracteres ── */
+/* ── Contador ── */
 .counter {
     padding: 3px 10px 4px;
-    font-size: 0.7rem;
-    color: var(--text-tertiary);
+    font-size: 0.70rem;
+    color: hsl(215.4 16.3% 56.9%);
     text-align: right;
-    background: var(--bg-secondary);
-    border-top: 1px solid var(--border-color);
+    background: hsl(210 40% 98%);
+    border-top: 1px solid hsl(214.3 31.8% 91.4%);
     flex-shrink: 0;
+    border-radius: 0 0 8px 8px;
+    font-family: var(--font-mono), monospace;
 }

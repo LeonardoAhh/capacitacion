@@ -1,0 +1,184 @@
+/* TrainingView  shadcn/ui */
+
+.viewHeader {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 16px;
+}
+
+.downloadBtn {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    height: 32px;
+    padding: 0 12px;
+    border: 1px solid #e4e4e7;
+    border-radius: 6px;
+    background: #fff;
+    color: #3f3f46;
+    font-size: 0.8125rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 0.12s, border-color 0.12s;
+    font-family: inherit;
+}
+
+.downloadBtn:hover { background: #f4f4f5; border-color: #d4d4d8; }
+
+/* -- Stats row --------------------------------------------- */
+.statsRow {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    margin-bottom: 12px;
+}
+
+.statCard {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 16px 8px;
+    border-radius: 8px;
+    border: 1px solid #e4e4e7;
+    gap: 2px;
+}
+
+.statGreen  { background: #f0fdf4; border-color: #bbf7d0; }
+.statRed    { background: #fef2f2; border-color: #fecaca; }
+.statYellow { background: #fffbeb; border-color: #fde68a; }
+
+.statNumber {
+    font-size: 1.75rem;
+    font-weight: 700;
+    line-height: 1;
+    font-family: var(--font-serif, 'Montserrat'), sans-serif;
+}
+
+.statGreen  .statNumber { color: #16a34a; }
+.statRed    .statNumber { color: #dc2626; }
+.statYellow .statNumber { color: #d97706; }
+
+.statLabel {
+    font-size: 0.6875rem;
+    font-weight: 500;
+    color: #71717a;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+
+/* -- Metric card (compliance bar) ------------------------- */
+.metricCard {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 14px 16px;
+    background: #fff;
+    border: 1px solid #e4e4e7;
+    border-radius: 8px;
+    margin-bottom: 12px;
+}
+
+.metricIcon {
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+    background: #eff6ff;
+    color: #3b82f6;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.metricContent { flex: 1; min-width: 0; }
+
+.metricLabel {
+    font-size: 0.75rem;
+    font-weight: 500;
+    color: #71717a;
+    margin-bottom: 6px;
+    display: block;
+}
+
+.metricBarContainer {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.metricBarTrack {
+    flex: 1;
+    height: 6px;
+    background: #f4f4f5;
+    border-radius: 9999px;
+    overflow: hidden;
+}
+
+.metricBarFill {
+    height: 100%;
+    background: #3b82f6;
+    border-radius: 9999px;
+    transition: width 0.4s ease;
+}
+
+.metricValue {
+    font-size: 0.8125rem;
+    font-weight: 600;
+    color: #18181b;
+    flex-shrink: 0;
+    min-width: 36px;
+    text-align: right;
+}
+
+/* -- Course sections --------------------------------------- */
+.courseSection {
+    background: #fff;
+    border: 1px solid #e4e4e7;
+    border-radius: 8px;
+    overflow: hidden;
+    margin-bottom: 10px;
+}
+
+.sectionTitle {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: #3f3f46;
+    padding: 12px 16px;
+    border-bottom: 1px solid #f4f4f5;
+    margin: 0;
+    background: #fafafa;
+}
+
+.courseList { padding: 4px 0; }
+
+.courseItem {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 9px 16px;
+    font-size: 0.8125rem;
+    border-bottom: 1px solid #f4f4f5;
+    gap: 8px;
+}
+
+.courseItem:last-child { border-bottom: none; }
+
+.courseName {
+    color: #3f3f46;
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.courseScore {
+    font-weight: 600;
+    flex-shrink: 0;
+    font-size: 0.8125rem;
+}
