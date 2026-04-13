@@ -54,14 +54,14 @@
 
 .heading {
     font-family: var(--font-serif), 'Montserrat', sans-serif;
-    font-size: 1.25rem;
+    font-size: clamp(var(--course-font-lg, 1.05rem), 2.3vw, var(--course-font-2xl, 1.6rem));
     font-weight: 700;
     color: #f8fafc;
     margin: 0 0 0.2rem;
 }
 
 .subtitle {
-    font-size: 0.8rem;
+    font-size: var(--course-font-sm, 0.8rem);
     color: var(--c-text-dim);
     margin: 0;
 }
@@ -75,9 +75,10 @@
     border: 1px solid rgba(255, 255, 255, 0.12);
     border-radius: 99px;
     padding: 0.35rem 0.9rem;
-    font-size: 0.78rem;
+    font-size: var(--course-font-xs, 0.78rem);
     font-weight: 600;
-    white-space: nowrap;
+    white-space: normal;
+    line-height: 1.25;
 }
 
 .scoreProgress { color: var(--c-text-mid); }
@@ -86,7 +87,7 @@
 
 /* ── Instrucciones ── */
 .instructions {
-    font-size: 0.82rem;
+    font-size: var(--course-font-sm, 0.82rem);
     color: var(--c-text-mid);
     text-align: center;
     margin: 0;
@@ -122,7 +123,7 @@
 
 /* ── Badges de tarjeta ── */
 .cardBadge {
-    font-size: 0.65rem;
+    font-size: var(--course-font-xs, 0.65rem);
     font-weight: 700;
     letter-spacing: 0.05em;
     text-transform: uppercase;
@@ -151,7 +152,7 @@
 
 .activityTitle {
     font-family: var(--font-serif), 'Montserrat', sans-serif;
-    font-size: 0.95rem;
+    font-size: var(--course-font-base, 0.95rem);
     font-weight: 600;
     color: #f1f5f9;
     margin: 0;
@@ -159,7 +160,7 @@
 }
 
 .activityHint {
-    font-size: 0.72rem;
+    font-size: var(--course-font-xs, 0.72rem);
     color: var(--c-text-dim);
     margin: 0;
 }
@@ -188,12 +189,15 @@
     border: 1px solid rgba(255,255,255,0.1);
     border-radius: 8px;
     padding: 0.55rem 0.75rem;
-    font-size: 0.8rem;
+    font-size: var(--course-font-sm, 0.8rem);
     color: var(--c-text-mid);
     font-family: var(--font-body), 'Roboto', sans-serif;
     cursor: pointer;
     transition: border-color 0.15s, background 0.15s, color 0.15s;
     line-height: 1.4;
+    white-space: normal;
+    overflow-wrap: anywhere;
+    word-break: break-word;
 }
 
 .optionBtn:hover {
@@ -248,7 +252,7 @@
 }
 
 .feedbackText {
-    font-size: 0.82rem;
+    font-size: var(--course-font-sm, 0.82rem);
     font-weight: 500;
     margin: 0;
     line-height: 1.5;
@@ -270,7 +274,7 @@
     border: none;
     border-radius: 10px;
     padding: 0.65rem 2rem;
-    font-size: 0.9rem;
+    font-size: var(--course-font-base, 0.9rem);
     font-weight: 700;
     font-family: var(--font-body), 'Roboto', sans-serif;
     cursor: pointer;
@@ -312,14 +316,14 @@
 
 .completedTitle {
     font-family: var(--font-serif), 'Montserrat', sans-serif;
-    font-size: 1.6rem;
+    font-size: var(--course-font-2xl, 1.6rem);
     font-weight: 700;
     color: #f8fafc;
     margin: 0;
 }
 
 .completedBody {
-    font-size: 0.9rem;
+    font-size: var(--course-font-base, 0.9rem);
     color: var(--c-text-mid);
     max-width: 420px;
     line-height: 1.6;
@@ -338,7 +342,7 @@
 }
 
 .scoreLabel {
-    font-size: 0.7rem;
+    font-size: var(--course-font-xs, 0.7rem);
     font-weight: 600;
     letter-spacing: 0.08em;
     text-transform: uppercase;
@@ -346,7 +350,7 @@
 }
 
 .scoreValue {
-    font-size: 1.8rem;
+    font-size: var(--course-font-2xl, 1.8rem);
     font-weight: 700;
     color: var(--c-green);
 }
@@ -360,7 +364,7 @@
     border: none;
     border-radius: 10px;
     padding: 0.65rem 1.75rem;
-    font-size: 0.9rem;
+    font-size: var(--course-font-base, 0.9rem);
     font-weight: 700;
     font-family: var(--font-body), 'Roboto', sans-serif;
     cursor: pointer;
@@ -389,6 +393,6 @@
     }
 
     .scorePill {
-        font-size: 0.72rem;
+        font-size: var(--course-font-xs, 0.72rem);
     }
 }

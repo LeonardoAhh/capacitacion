@@ -58,6 +58,8 @@ const SLIDE_SECTIONS = [
         types: [
             { type: 'thermal_sim', label: 'Simulador Térmico LOTO', icon: IconActivity, iconColor: '#f97316', desc: 'Disipación térmica interactiva NOM-004' },
             { type: 'env_sim',     label: 'Simulador Ambiental',    icon: IconActivity, iconColor: '#16a34a', desc: 'Matriz Causa-Efecto Ambiental ISO 14001' },
+            { type: 'iceberg_sim', label: 'Simulador Iceberg',      icon: IconActivity, iconColor: 'var(--color-primary)', desc: 'Clasifica causas visibles vs factores humanos' },
+            { type: 'radar_sim',   label: 'Simulador Radar',        icon: IconActivity, iconColor: 'var(--color-warning)', desc: 'Diagnóstico de conocimiento real del equipo' },
         ],
     },
 ];

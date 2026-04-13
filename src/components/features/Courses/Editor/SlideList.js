@@ -42,6 +42,8 @@ const SLIDE_TYPE_ICONS = {
     group_quiz:    <IconCheckSquare size={14} />,
     dynamic:       <IconZap size={14} />,
     group_dynamic: <IconZap size={14} />,
+    iceberg_sim:   <IconZap size={14} />,
+    radar_sim:     <IconZap size={14} />,
 };
 
 const getSlideIcon = (type) => SLIDE_TYPE_ICONS[type] ?? <IconFileText size={14} />;

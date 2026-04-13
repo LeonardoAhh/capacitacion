@@ -20,7 +20,9 @@ export const SLIDE_TYPE_LABELS = {
     group_dynamic: 'Dinámica',
     // Nuevos tipos
     thermal_sim:   'Simulador Térmico',
-    env_sim:        'Simulador Ambiental',
+    env_sim:       'Simulador Ambiental',
+    iceberg_sim:   'Simulador Iceberg',
+    radar_sim:     'Simulador Radar',
     video:         'Video',
     flashcard:     'Tarjetas',
     fill_blank:    'Completa la Frase',
@@ -107,6 +109,31 @@ const SLIDE_DEFAULT_DATA_FACTORIES = {
         heading: 'Simulador: Matriz Causa-Efecto Ambiental',
         subtitle: 'Identifica el Aspecto e Impacto ambiental de cada actividad de planta.',
         scenarios: [], // vacío = usa los 4 escenarios por defecto del componente
+    }),
+    iceberg_sim: () => ({
+        heading: 'Simulador: El Iceberg en la Linea',
+        subtitle: 'Clasifica cada situacion segun corresponda a parte visible o parte sumergida.',
+        cards: [
+            { id: makeId(), text: 'El operador llego tarde tres veces esta semana.', kind: 'visible', hint: 'Indicador observable en piso.' },
+            { id: makeId(), text: 'Tiene problemas de transporte y llega estresado al inicio del turno.', kind: 'submerged', hint: 'Factor humano no visible a simple vista.' },
+            { id: makeId(), text: 'Incremento de rechazos en su celda de trabajo.', kind: 'visible', hint: 'Resultado operativo medible.' },
+            { id: makeId(), text: 'Su principal motivacion es pagar los estudios de su hija.', kind: 'submerged', hint: 'Motivador personal profundo.' },
+        ],
+    }),
+    radar_sim: () => ({
+        heading: 'Simulador: El Radar del Supervisor',
+        subtitle: 'Evalua que tanto conoces a tu equipo y detecta vacios de informacion.',
+        items: [
+            { id: makeId(), level: 1, prompt: 'Nombre completo del colaborador' },
+            { id: makeId(), level: 1, prompt: 'Puesto exacto y antiguedad' },
+            { id: makeId(), level: 1, prompt: 'Turno y area asignada actual' },
+            { id: makeId(), level: 2, prompt: 'Tiempo aproximado de traslado a planta' },
+            { id: makeId(), level: 2, prompt: 'Situacion familiar relevante' },
+            { id: makeId(), level: 2, prompt: 'Pasatiempos o intereses personales' },
+            { id: makeId(), level: 3, prompt: 'Principal motivacion personal' },
+            { id: makeId(), level: 3, prompt: 'Mayor frustracion en piso de trabajo' },
+            { id: makeId(), level: 3, prompt: 'Meta profesional o personal a 5 anos' },
+        ],
     }),
     video:      () => ({
         heading: '',

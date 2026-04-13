@@ -47,14 +47,14 @@
 
 .heading {
     font-family: var(--font-serif), 'Montserrat', sans-serif;
-    font-size: 1.3rem;
+    font-size: clamp(var(--course-font-lg, 1.1rem), 2.3vw, var(--course-font-2xl, 1.7rem));
     font-weight: 700;
     color: #f8fafc;
     margin: 0;
 }
 
 .subtitle {
-    font-size: 0.8rem;
+    font-size: var(--course-font-sm, 0.8rem);
     color: var(--c-text-dim);
     margin: 0;
 }
@@ -74,7 +74,7 @@
 }
 
 .statLabel {
-    font-size: 0.65rem;
+    font-size: var(--course-font-xs, 0.65rem);
     font-weight: 600;
     letter-spacing: 0.06em;
     color: var(--c-text-dim);
@@ -82,7 +82,7 @@
 }
 
 .statValue {
-    font-size: 1.15rem;
+    font-size: var(--course-font-lg, 1.15rem);
     font-weight: 700;
     color: #f1f5f9;
 }
@@ -133,17 +133,18 @@
 
 .statusText {
     font-family: var(--font-serif), 'Montserrat', sans-serif;
-    font-size: 0.8rem;
+    font-size: var(--course-font-sm, 0.8rem);
     font-weight: 700;
     letter-spacing: 0.1em;
     text-transform: uppercase;
 }
 
 .statusHint {
-    font-size: 0.68rem;
+    font-size: var(--course-font-xs, 0.68rem);
     color: var(--c-text-dim);
     text-align: left;
     max-width: 280px;
+    line-height: 1.35;
 }
 
 /* ── Chart ── */
@@ -176,13 +177,13 @@
 }
 
 .tooltipTime {
-    font-size: 0.7rem;
+    font-size: var(--course-font-xs, 0.7rem);
     color: var(--c-text-dim);
     margin: 0 0 0.15rem;
 }
 
 .tooltipTemp {
-    font-size: 0.95rem;
+    font-size: var(--course-font-base, 0.95rem);
     font-weight: 700;
     color: var(--c-primary-sim);
     margin: 0;
@@ -204,10 +205,13 @@
 }
 
 .controlLabel {
-    font-size: 0.75rem;
+    font-size: var(--course-font-xs, 0.75rem);
     font-weight: 600;
     color: rgba(255, 255, 255, 0.55);
-    white-space: nowrap;
+    white-space: normal;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+    line-height: 1.3;
     letter-spacing: 0.02em;
 }
 
@@ -216,6 +220,7 @@
     display: flex;
     align-items: center;
     gap: 0.6rem;
+    flex-wrap: wrap;
 }
 
 .slider {
@@ -246,7 +251,7 @@
 }
 
 .sliderValue {
-    font-size: 0.9rem;
+    font-size: var(--course-font-base, 0.9rem);
     font-weight: 700;
     color: #f1f5f9;
     min-width: 2.5rem;
@@ -263,7 +268,7 @@
     border-radius: 8px;
     color: #f1f5f9;
     font-family: var(--font-body), 'Roboto', sans-serif;
-    font-size: 0.85rem;
+    font-size: var(--course-font-sm, 0.85rem);
     padding: 0.35rem 0.75rem;
     outline: none;
     cursor: pointer;
@@ -301,6 +306,11 @@
 
     .slider {
         width: 100px;
+    }
+
+    .statusBadge {
+        align-items: flex-start;
+        justify-content: flex-start;
     }
 
     .controls {

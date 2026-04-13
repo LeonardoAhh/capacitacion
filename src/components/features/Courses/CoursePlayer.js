@@ -42,6 +42,8 @@ const SLIDE_BADGES = {
     checklist: { emoji: '☑️', label: 'Checklist' },
     thermal_sim: { emoji: '🌡️', label: 'Simulador LOTO' },
     env_sim:      { emoji: '🌿', label: 'Simulador Ambiental' },
+    iceberg_sim:  { emoji: '🧊', label: 'Simulador Iceberg' },
+    radar_sim:    { emoji: '📡', label: 'Simulador Radar' },
 };
 
 // ── Utilidades ──────────────────────────────────────────────────────────────

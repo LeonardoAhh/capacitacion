@@ -15,6 +15,8 @@ import ChecklistSlide from './slides/ChecklistSlide';
 import ThermalSimSlide from './slides/ThermalSimSlide';
 import EnvSimSlide from './slides/EnvSimSlide';
 import DynamicActivitySlide from './slides/DynamicActivitySlide';
+import IcebergLineaSimSlide from './slides/IcebergLineaSimSlide';
+import RadarSupervisorSimSlide from './slides/RadarSupervisorSimSlide';
 
 const SLIDE_COMPONENTS = {
     title: TitleSlide,
@@ -32,6 +34,8 @@ const SLIDE_COMPONENTS = {
     checklist: ChecklistSlide,
     thermal_sim: ThermalSimSlide,
     env_sim: EnvSimSlide,
+    iceberg_sim: IcebergLineaSimSlide,
+    radar_sim: RadarSupervisorSimSlide,
     // Mapeos para tipos especiales
     group_quiz: QuizSlide,
     group_dynamic: DynamicActivitySlide,

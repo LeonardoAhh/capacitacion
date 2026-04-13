@@ -21,6 +21,8 @@ import FlashcardSlideEditor from './SlideEditors/FlashcardSlideEditor';
 import FillBlankSlideEditor from './SlideEditors/FillBlankSlideEditor';
 import ChecklistSlideEditor from './SlideEditors/ChecklistSlideEditor';
 import EnvSimSlideEditor from './SlideEditors/EnvSimSlideEditor';
+import IcebergLineaSimSlideEditor from './SlideEditors/IcebergLineaSimSlideEditor';
+import RadarSupervisorSimSlideEditor from './SlideEditors/RadarSupervisorSimSlideEditor';
 
 const DEBOUNCE_MS = 800;
 
@@ -59,6 +61,10 @@ function SlideFieldRouter({ type, formData, handleChange, handleBatchChange, set
             return <ChecklistSlideEditor {...props} />;
         case 'env_sim':
             return <EnvSimSlideEditor {...props} />;
+        case 'iceberg_sim':
+            return <IcebergLineaSimSlideEditor {...props} />;
+        case 'radar_sim':
+            return <RadarSupervisorSimSlideEditor {...props} />;
         default:
             return (
                 <p className={styles.noEditor}>

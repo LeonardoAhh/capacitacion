@@ -17,6 +17,8 @@ const TYPE_LABELS = {
     group_quiz: { label: 'Quiz', color: '#ef4444' },
     group_dynamic: { label: 'Dinámica', color: '#f59e0b' },
     dynamic: { label: 'Dinámica', color: '#f59e0b' },
+    iceberg_sim: { label: 'Sim Iceberg', color: '#0284c7' },
+    radar_sim: { label: 'Sim Radar', color: '#d97706' },
 };
 
 /**
