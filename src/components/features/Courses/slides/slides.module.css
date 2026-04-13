@@ -871,9 +871,22 @@
 
 .quizWizardActions {
     display: flex;
+    gap: var(--course-spacing-sm);
     justify-content: flex-end;
     width: 100%;
     max-width: 800px;
+}
+
+.quizSecondaryBtn {
+    background: var(--c-surface);
+    color: var(--c-primary);
+    border: 1.5px solid var(--c-primary-mid);
+    box-shadow: var(--sh-card);
+}
+
+.quizSecondaryBtn:hover:not(:disabled) {
+    background: var(--c-primary-dim);
+    box-shadow: var(--sh-lift);
 }
 
 /* ── Quiz Summary (results screen) ── */
@@ -1155,6 +1168,132 @@
 }
 
 /* ================================================================
+   DYNAMIC ACTIVITY SLIDE
+   ================================================================ */
+.dynamicSlide {
+    align-items: flex-start;
+    gap: var(--course-spacing-md);
+    background: var(--c-bg);
+}
+
+.dynamicHeader {
+    display: flex;
+    flex-direction: column;
+    gap: var(--course-spacing-xs);
+    width: 100%;
+}
+
+.dynamicHeader h2 {
+    font-size: clamp(1.45rem, 3.5vw, 2.2rem);
+    font-weight: 800;
+    font-family: var(--font-serif), serif;
+    color: var(--c-ink);
+    margin: 0;
+}
+
+.dynamicMetaRow {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--course-spacing-xs);
+}
+
+.dynamicChip {
+    display: inline-flex;
+    align-items: center;
+    padding: 4px 10px;
+    border-radius: var(--r-full);
+    border: 1.5px solid var(--c-primary-mid);
+    background: var(--c-primary-dim);
+    color: var(--c-primary);
+    font-size: var(--course-font-xs);
+    font-weight: 700;
+}
+
+.dynamicGrid {
+    width: 100%;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--course-spacing-sm);
+}
+
+.dynamicCard {
+    width: 100%;
+    border: 1.5px solid var(--c-line-strong);
+    background: var(--c-surface);
+    border-radius: var(--r-lg);
+    box-shadow: var(--sh-card);
+    padding: var(--course-spacing-md);
+}
+
+.dynamicCard h3 {
+    margin: 0 0 var(--course-spacing-xs);
+    font-size: var(--course-font-sm);
+    font-weight: 700;
+    font-family: var(--font-body), sans-serif;
+    color: var(--c-ink);
+}
+
+.dynamicCard p {
+    margin: 0;
+    font-size: var(--course-font-sm);
+    color: var(--c-muted);
+    line-height: 1.6;
+}
+
+.dynamicList {
+    margin: 0;
+    padding-left: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: var(--course-spacing-xs);
+}
+
+.dynamicList li {
+    color: var(--c-muted);
+    font-size: var(--course-font-sm);
+    line-height: 1.5;
+}
+
+.dynamicList li small {
+    display: block;
+    color: var(--c-dim);
+    margin-top: 2px;
+}
+
+.dynamicCommitmentCard {
+    border-color: var(--c-primary-mid);
+    background: color-mix(in srgb, var(--c-primary-dim) 55%, var(--c-surface));
+}
+
+.dynamicCommitmentInput {
+    width: 100%;
+    margin-top: var(--course-spacing-sm);
+    border: 1.5px solid var(--c-line-strong);
+    border-radius: var(--r-md);
+    padding: 10px 12px;
+    font-family: var(--font-body), sans-serif;
+    font-size: var(--course-font-sm);
+    line-height: 1.5;
+    color: var(--c-ink);
+    background: var(--c-surface);
+    resize: vertical;
+    min-height: 96px;
+}
+
+.dynamicCommitmentInput:focus {
+    outline: none;
+    border-color: var(--c-primary-mid);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--c-primary-mid) 35%, transparent);
+}
+
+.dynamicCommitmentHint {
+    display: block;
+    margin-top: 6px;
+    color: var(--c-dim);
+    font-size: var(--course-font-xs);
+}
+
+/* ================================================================
    RESPONSIVE — TABLET (≤ 1024px)
    ================================================================ */
 @media (max-width: 1024px) {
@@ -1246,6 +1385,10 @@
 
     .comparisonGrid {
         grid-template-columns: 1fr !important;
+    }
+
+    .dynamicGrid {
+        grid-template-columns: 1fr;
     }
 
     .comparisonDivider { display: none; }

@@ -40,6 +40,8 @@ const SLIDE_TYPE_ICONS = {
     comparison:    <IconDiff size={14} />,
     quiz:          <IconCheckSquare size={14} />,
     group_quiz:    <IconCheckSquare size={14} />,
+    dynamic:       <IconZap size={14} />,
+    group_dynamic: <IconZap size={14} />,
 };
 
 const getSlideIcon = (type) => SLIDE_TYPE_ICONS[type] ?? <IconFileText size={14} />;

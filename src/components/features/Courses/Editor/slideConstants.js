@@ -78,12 +78,24 @@ const SLIDE_DEFAULT_DATA_FACTORIES = {
         passingScore: 70,
     }),
     dynamic:    () => ({
-        heading: 'Actividad Grupal',
+        heading: 'Dinámica de Equipo',
         instructions: '',
-        type: 'Roleplay',
+        modality: 'Roleplay',
         duration: '15 min',
+        participants: { min: 3, max: 6 },
         scenario: '',
-        debrief: '',
+        materials: [
+            { id: makeId(), text: 'Tarjetas de apoyo', note: '' },
+        ],
+        steps: [
+            { id: makeId(), text: 'Presentar el objetivo de la dinámica', note: '' },
+            { id: makeId(), text: 'Ejecutar actividad en equipos', note: '' },
+        ],
+        commitmentPrompt: 'Define un compromiso unico y medible para la siguiente semana.',
+        commitmentPlaceholder: 'Ej. Hablar 5 minutos con un operador diferente cada martes para escucharle.',
+        debriefQuestions: [
+            { id: makeId(), text: '¿Qué aprendimos y cómo lo aplicamos en planta?', note: '' },
+        ],
     }),
     // Nuevos tipos
     thermal_sim: () => ({

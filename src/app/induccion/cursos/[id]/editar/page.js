@@ -44,6 +44,7 @@ const SLIDE_SECTIONS = [
             { type: 'icon_grid',  label: 'Íconos',        icon: IconGrid,          iconColor: 'var(--color-accent)',      desc: 'Cuadrícula de íconos' },
             { type: 'comparison', label: 'Comparación',   icon: IconColumns,       iconColor: 'var(--color-warning)',     desc: 'Dos columnas comparativas' },
             { type: 'steps',      label: 'Paso a Paso',   icon: IconList,          iconColor: 'var(--teal-500, #14b8a6)',desc: 'Secuencia numerada de pasos' },
+            { type: 'dynamic',    label: 'Dinámica',      icon: IconActivity,      iconColor: 'var(--color-warning)',     desc: 'Actividad guiada para trabajo colaborativo' },
             { type: 'quiz',       label: 'Quiz',          icon: IconBookOpen,      iconColor: 'var(--color-danger)',      desc: 'Pregunta con opciones' },
             { type: 'definition', label: 'Definición',    icon: IconBookOpen,      iconColor: 'var(--blue-500)',          desc: 'Término y definición' },
             { type: 'video',      label: 'Video',         icon: IconPlay,          iconColor: 'var(--color-danger)',      desc: 'YouTube o video MP4' },

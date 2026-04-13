@@ -157,7 +157,9 @@ export default function CoursePlayer({ course, slides, onClose, inline = false, 
     const [notes, setNotes] = useState({});
     const [showNotes, setShowNotes] = useState(false);
     const [noteText, setNoteText] = useState('');
+    const [commitmentText, setCommitmentText] = useState('');
     const noteTimerRef = useRef(null);
+    const commitmentTimerRef = useRef(null);
 
     // Checklist gate
     const [checklistDone, setChecklistDone] = useState(false);
@@ -183,6 +185,7 @@ export default function CoursePlayer({ course, slides, onClose, inline = false, 
     const isLast = current === total - 1;
     const currentSlide = allSlides[current];
     const bgMedia = currentSlide?.data?.bgMedia || null;
+    const commitmentKey = currentSlide?.id ? `${currentSlide.id}__commitment` : '';
 
     // Tiempo estimado memoizado — solo recalcula si cambian los slides
     const estimatedMins = useMemo(() => estimateReadingTime(allSlides), [allSlides]);
@@ -219,6 +222,7 @@ export default function CoursePlayer({ course, slides, onClose, inline = false, 
     // ── Sync texto de nota cuando cambia el slide actual ────────────────────
     useEffect(() => {
         setNoteText(notes[currentSlide?.id] ?? '');
+        setCommitmentText(commitmentKey ? (notes[commitmentKey] ?? '') : '');
         setChecklistDone(false); // resetear gate al cambiar de slide
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [current]);
@@ -228,6 +232,7 @@ export default function CoursePlayer({ course, slides, onClose, inline = false, 
         return () => {
             clearTimeout(saveTimerRef.current);
             clearTimeout(noteTimerRef.current);
+            clearTimeout(commitmentTimerRef.current);
         };
     }, []);
 
@@ -250,6 +255,18 @@ export default function CoursePlayer({ course, slides, onClose, inline = false, 
             saveSlideNote(course.id, userId, currentSlide.id, text);
         }, 1000);
     }, [currentSlide?.id, course?.id, userId, inline]);
+
+    // ── Guardar compromiso semanal (evidencia de dinámicas) ─────────────────
+    const handleCommitmentChange = useCallback((text) => {
+        setCommitmentText(text);
+        if (!commitmentKey) return;
+        setNotes(prev => ({ ...prev, [commitmentKey]: text }));
+        if (inline || !userId || !course?.id) return;
+        clearTimeout(commitmentTimerRef.current);
+        commitmentTimerRef.current = setTimeout(() => {
+            saveSlideNote(course.id, userId, commitmentKey, text);
+        }, 1000);
+    }, [commitmentKey, course?.id, userId, inline]);
 
     // ── Cronómetro (solo modo no-inline) ─────────────────────────────────────
     useEffect(() => {
@@ -564,10 +581,15 @@ export default function CoursePlayer({ course, slides, onClose, inline = false, 
                 >
                     <SlideRenderer
                         slide={currentSlide}
+                        courseTitle={course?.title || ''}
                         inline={inline}
                         hasBgMedia={!!(bgMedia && bgMedia.layout !== 'split')}
                         onQuizSubmit={(score) => setQuizScore(score)}
                         onCheckChange={(done) => setChecklistDone(done)}
+                        commitmentValue={commitmentText}
+                        onCommitmentChange={currentSlide?.type === 'dynamic' || currentSlide?.type === 'group_dynamic'
+                            ? handleCommitmentChange
+                            : undefined}
                     />
                 </div>
 

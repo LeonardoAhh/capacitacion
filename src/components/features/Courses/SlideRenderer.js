@@ -1,4 +1,4 @@
-import React, { memo, useMemo } from 'react';
+import React, { memo } from 'react';
 import TitleSlide from './slides/TitleSlide';
 import ObjectiveSlide from './slides/ObjectiveSlide';
 import DefinitionSlide from './slides/DefinitionSlide';
@@ -14,6 +14,7 @@ import FillBlankSlide from './slides/FillBlankSlide';
 import ChecklistSlide from './slides/ChecklistSlide';
 import ThermalSimSlide from './slides/ThermalSimSlide';
 import EnvSimSlide from './slides/EnvSimSlide';
+import DynamicActivitySlide from './slides/DynamicActivitySlide';
 
 const SLIDE_COMPONENTS = {
     title: TitleSlide,
@@ -33,11 +34,11 @@ const SLIDE_COMPONENTS = {
     env_sim: EnvSimSlide,
     // Mapeos para tipos especiales
     group_quiz: QuizSlide,
-    group_dynamic: ContentSlide,
-    dynamic: ContentSlide,
+    group_dynamic: DynamicActivitySlide,
+    dynamic: DynamicActivitySlide,
 };
 
-const SlideRenderer = memo(({ slide, inline = false, hasBgMedia = false, onQuizSubmit, onCheckChange }) => {
+const SlideRenderer = memo(({ slide, courseTitle = '', inline = false, hasBgMedia = false, onQuizSubmit, onCheckChange, commitmentValue = '', onCommitmentChange }) => {
     if (!slide) return null;
 
     let Component = SLIDE_COMPONENTS[slide.type];
@@ -63,22 +64,26 @@ const SlideRenderer = memo(({ slide, inline = false, hasBgMedia = false, onQuizS
         };
     }
 
-    // 2. group_dynamic / dynamic -> ContentSlide
+    // 2. group_dynamic / dynamic -> DynamicActivitySlide
     if (slide.type === 'group_dynamic' || slide.type === 'dynamic') {
-        const bullets = [];
-        if (slide.data.type) bullets.push(`Tipo: ${slide.data.type}`);
-        if (slide.data.duration) bullets.push(`Duración: ${slide.data.duration}`);
-        if (slide.data.scenario) bullets.push(`Escenario: ${slide.data.scenario}`);
-        if (slide.data.debrief) bullets.push(`Reflexión: ${slide.data.debrief}`);
-
         slideData = {
             heading: slide.data.heading || 'Dinámica Grupal',
-            tag: 'Actividad',
-            body: slide.data.instructions,
-            bullets: bullets,
-            image: null // O una imagen por defecto si se desea
+            instructions: slide.data.instructions || '',
+            modality: slide.data.modality || slide.data.type || '',
+            duration: slide.data.duration || '',
+            scenario: slide.data.scenario || '',
+            participants: slide.data.participants || { min: 2, max: 8 },
+            materials: slide.data.materials || [],
+            steps: slide.data.steps || [],
+            commitmentPrompt: slide.data.commitmentPrompt || '',
+            commitmentPlaceholder: slide.data.commitmentPlaceholder || '',
+            debriefQuestions: Array.isArray(slide.data.debriefQuestions)
+                ? slide.data.debriefQuestions
+                : slide.data.debrief
+                    ? [{ id: 'legacy-debrief', text: slide.data.debrief }]
+                    : []
         };
-        Component = ContentSlide; // Asegurar que use ContentSlide
+        Component = DynamicActivitySlide;
     }
 
     if (!Component) {
@@ -105,10 +110,13 @@ const SlideRenderer = memo(({ slide, inline = false, hasBgMedia = false, onQuizS
         <div className={hasBgMedia ? "slideWrapperWithBg" : ""}>
             <Component
                 data={slideData}
+                courseTitle={courseTitle}
                 inline={inline}
                 hasBgMedia={hasBgMedia}
                 onQuizSubmit={onQuizSubmit}
                 onCheckChange={onCheckChange}
+                commitmentValue={commitmentValue}
+                onCommitmentChange={onCommitmentChange}
             />
         </div>
     );

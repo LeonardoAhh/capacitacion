@@ -3,16 +3,18 @@ import React, { useState, useCallback, useEffect, useMemo } from 'react';
 import confetti from 'canvas-confetti';
 import styles from './slides.module.css';
 
+const OPTION_LETTERS = ['A', 'B', 'C', 'D', 'E', 'F'];
+
 /**
  * QuizSlide — Step wizard: una pregunta a la vez con feedback inmediato.
  * @param {Object}   props.data           - { heading, questions[], passingScore }
  * @param {Function} [props.onQuizSubmit] - Callback con score (0–100) al terminar
  * @param {boolean}  [props.hasBgMedia]   - Aplica clase de contraste sobre fondo
+ * @param {string}   [props.courseTitle]  - Título del curso para exportación
  */
-const QuizSlide = React.memo(function QuizSlide({ data, onQuizSubmit, hasBgMedia }) {
+const QuizSlide = React.memo(function QuizSlide({ data, onQuizSubmit, hasBgMedia, courseTitle = '' }) {
     const questions    = useMemo(() => data.questions || [], [data.questions]);
     const passingScore = data.passingScore || 70;
-    const letters      = ['A', 'B', 'C', 'D', 'E', 'F'];
 
     // Wizard state
     const [step,     setStep]     = useState(0);
@@ -24,6 +26,99 @@ const QuizSlide = React.memo(function QuizSlide({ data, onQuizSubmit, hasBgMedia
     const q      = questions[step] || {};
     const isLast = step === questions.length - 1;
     const progress = Math.round(((step + (revealed ? 1 : 0)) / questions.length) * 100);
+
+        const handleDownloadExam = useCallback(() => {
+                const titleBase = String(courseTitle || data.heading || 'Evaluacion').trim();
+                const safeTitle = titleBase.toUpperCase();
+                const slug = titleBase
+                    .toLowerCase()
+                    .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+                    .replace(/[^a-z0-9\s-]/g, '')
+                    .trim()
+                    .replace(/\s+/g, '-');
+                const questionBlocks = questions.map((item, index) => {
+                        const options = (item.options || [])
+                            .map((opt, oi) => `<li>${OPTION_LETTERS[oi] || String.fromCharCode(65 + oi)}. ${String(opt || '')}</li>`)
+                                .join('');
+
+                        return `
+                                <div class="q-block">
+                                        <div class="q-title">${index + 1}. ${String(item.q || '')}</div>
+                                        <ul>${options}</ul>
+                                </div>
+                        `;
+                }).join('');
+
+                const html = `<!doctype html>
+<html lang="es">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>${safeTitle}</title>
+    <style>
+        @page { size: A4; margin: 16mm; }
+        body { font-family: Arial, sans-serif; color: #111; font-size: 12px; }
+        .head-wrap { border: 1px solid #222; }
+        .head-title {
+            text-align: center;
+            font-size: 34px;
+            letter-spacing: 0.5px;
+            font-weight: 700;
+            color: #7a7a7a;
+            border-bottom: 1px solid #222;
+            padding: 6px 8px;
+            text-transform: uppercase;
+        }
+        table { width: 100%; border-collapse: collapse; }
+        td { border: 1px solid #222; padding: 6px 8px; }
+        td.label { width: 12%; }
+        td.value { width: 21%; min-height: 26px; }
+        .content { margin-top: 12px; }
+        .meta { margin-bottom: 10px; color: #444; }
+        .q-block { margin-bottom: 12px; page-break-inside: avoid; }
+        .q-title { font-weight: 700; margin-bottom: 6px; }
+        .q-block ul { margin: 0; padding-left: 20px; }
+        .q-block li { margin-bottom: 4px; }
+    </style>
+</head>
+<body>
+    <div class="head-wrap">
+        <div class="head-title">${safeTitle}</div>
+        <table>
+            <tr>
+                <td class="label">Nombre:</td>
+                <td class="value" colspan="2"></td>
+                <td class="label">No. Empleado:</td>
+                <td class="value" colspan="2"></td>
+            </tr>
+            <tr>
+                <td class="label">Turno:</td>
+                <td class="value"></td>
+                <td class="label">Departamento:</td>
+                <td class="value" colspan="2"></td>
+                <td class="label">Fecha:</td>
+                <td class="value"></td>
+            </tr>
+        </table>
+    </div>
+
+    <div class="content">
+        <div class="meta">Evaluacion: ${String(data.heading || 'Cuestionario')}</div>
+        ${questionBlocks}
+    </div>
+</body>
+</html>`;
+
+                const blob = new Blob([html], { type: 'text/html;charset=utf-8' });
+                const url = URL.createObjectURL(blob);
+                const link = document.createElement('a');
+                link.href = url;
+                link.download = `evaluacion-${slug || 'curso'}.html`;
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                URL.revokeObjectURL(url);
+        }, [questions, data.heading, courseTitle]);
 
     const handleSelect = useCallback((oi) => {
         if (!revealed) setSelected(oi);
@@ -102,6 +197,16 @@ const QuizSlide = React.memo(function QuizSlide({ data, onQuizSubmit, hasBgMedia
                         }
                     </span>
                 </div>
+
+                <div className={styles.quizWizardActions}>
+                    <button
+                        type="button"
+                        className={`${styles.quizSubmitBtn} ${styles.quizSecondaryBtn}`}
+                        onClick={handleDownloadExam}
+                    >
+                        Descargar examen
+                    </button>
+                </div>
             </article>
         );
     }
@@ -155,9 +260,9 @@ const QuizSlide = React.memo(function QuizSlide({ data, onQuizSubmit, hasBgMedia
                                 disabled={revealed}
                                 role="radio"
                                 aria-checked={selected === oi}
-                                aria-label={`${letters[oi]}. ${option}`}
+                                aria-label={`${OPTION_LETTERS[oi]}. ${option}`}
                             >
-                                <span className={styles.optionLetter} aria-hidden="true">{letters[oi]}.</span>
+                                <span className={styles.optionLetter} aria-hidden="true">{OPTION_LETTERS[oi]}.</span>
                                 <span>{option}</span>
                                 {isCorrect && <span aria-hidden="true"> ✅</span>}
                                 {isWrong   && <span aria-hidden="true"> ❌</span>}
@@ -177,6 +282,13 @@ const QuizSlide = React.memo(function QuizSlide({ data, onQuizSubmit, hasBgMedia
 
             {/* Acciones */}
             <div className={styles.quizWizardActions}>
+                <button
+                    type="button"
+                    className={`${styles.quizSubmitBtn} ${styles.quizSecondaryBtn}`}
+                    onClick={handleDownloadExam}
+                >
+                    Descargar examen
+                </button>
                 {!revealed ? (
                     <button
                         type="button"
