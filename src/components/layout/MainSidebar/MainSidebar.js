@@ -6,13 +6,12 @@ import { usePathname } from 'next/navigation';
 import NextImage from 'next/image';
 import {
     Users, Zap, FileCheck, UserCheck, LayoutDashboard,
-    LogOut, X, GraduationCap, BookOpen, Trophy,
+    LogOut, X, GraduationCap, Trophy,
 } from 'lucide-react';
 import styles from './MainSidebar.module.css';
 
 const NAV_ITEMS = [
     { id: 'empleados',    label: 'Plantilla Activa',    href: '/plantilla',    icon: Users },
-    { id: 'cumplimiento', label: 'Cumplimiento Capacitación',   href: '/cumplimiento', icon: BookOpen },
     { id: 'perfil',       label: 'Detalle Empleado',  href: '/detalle',       icon: UserCheck },
     { id: 'induccion',    label: 'Presentaciones Cursos', href: '/induccion',                 icon: GraduationCap },
     { id: 'mural',        label: 'Mural Resultados',    href: '/mural',                     icon: Trophy },
@@ -24,14 +23,13 @@ const INSTRUCTOR_ITEMS = [
 ];
 
 function getRoleLabel(rol) {
-    const map = { super_admin: 'Super Admin', rh: 'RRHH', instructor: 'Instructor', demo: 'Demo' };
+    const map = { super_admin: 'Super Admin', admin: 'Admin', instructor: 'Instructor' };
     return map[rol] || rol || 'Usuario';
 }
 
 export default function MainSidebar({ user, handleLogout, isOpen, onClose, isCollapsed }) {
     const pathname = usePathname();
     const isInstructor = user?.rol === 'instructor' || user?.rol === 'Instructor';
-    const isDemo = user?.rol === 'demo' || user?.email?.includes('demo');
 
     const items = isInstructor ? INSTRUCTOR_ITEMS : NAV_ITEMS;
 
@@ -80,19 +78,16 @@ export default function MainSidebar({ user, handleLogout, isOpen, onClose, isCol
                     {items.map(item => {
                         const Icon = item.icon;
                         const active = pathname === item.href || pathname.startsWith(item.href + '/');
-                        const disabled = isDemo && item.href !== '/induccion';
                         return (
                             <Link
                                 key={item.id}
-                                href={disabled ? '#' : item.href}
+                                href={item.href}
                                 className={[
                                     styles.navItem,
                                     active ? styles.active : '',
-                                    disabled ? styles.disabled : '',
                                 ].join(' ')}
-                                onClick={() => !disabled && onClose?.()}
+                                onClick={() => onClose?.()}
                                 title={isCollapsed ? item.label : undefined}
-                                aria-disabled={disabled}
                             >
                                 <span className={styles.navIcon}>
                                     <Icon size={16} />

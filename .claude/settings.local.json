@@ -42,7 +42,12 @@
       "Bash(node_modules/.bin/next lint:*)",
       "Read(//c//**)",
       "Read(//c/Users/**)",
-      "Bash(where node:*)"
+      "Bash(where node:*)",
+      "Bash(grep -l \"export default\" \"/c/Users/Capacitacion - QRO/Desktop/Capacitación/VTX/src/app\"/**/page.js)",
+      "Bash(xargs -I {} sh -c 'echo \"=== {} ===\"; grep -E \"useAuth|router.push.*login|authLoading\" {} || echo \"NO AUTH CHECK FOUND\"')",
+      "Bash(ls -la src/app/capacitacion/)",
+      "Bash(ls -la src/app/salas/)",
+      "Bash(npx next:*)"
     ]
   }
 }

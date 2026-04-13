@@ -11,7 +11,7 @@ import styles from './AdminLayout.module.css';
 import { Menu, PanelLeft, LayoutDashboard } from 'lucide-react';
 
 function getRoleLabel(rol) {
-    const map = { super_admin: 'Super Admin', rh: 'RRHH', instructor: 'Instructor', demo: 'Demo' };
+    const map = { super_admin: 'Super Admin', admin: 'Admin', instructor: 'Instructor' };
     return map[rol] || rol || 'Usuario';
 }
 

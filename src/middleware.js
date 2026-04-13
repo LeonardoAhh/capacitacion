@@ -6,10 +6,12 @@ import { csrfMiddleware } from '@/lib/csrf';
 // ─── Configuración de rutas ────────────────────────────────────────────────────
 
 /** Rutas públicas — accesibles sin cookie de sesión */
-const PUBLIC_ROUTES = ['/', '/login', '/training/login', '/organigrama', '/quiz'];
-
-/** Rutas que requieren sesión tipo 'admin' */
-const ADMIN_ROUTES = [];
+const PUBLIC_ROUTES = [
+    '/', '/login', '/organigrama', '/quiz',
+    '/presentacion', // viewer público de cursos
+    '/mural',        // empleados consultan resultados por ID
+    '/offline',      // PWA fallback
+];
 
 // ─── Helpers ───────────────────────────────────────────────────────────────────
 
@@ -19,9 +21,8 @@ function isPublicRoute(pathname) {
     );
 }
 
-function getRequiredSessionType(pathname) {
-    if (ADMIN_ROUTES.some(r => pathname.startsWith(r))) return 'admin';
-    return null;
+function getRequiredSessionType(_pathname) {
+    return 'admin';
 }
 
 function getLoginUrl(sessionType) {
@@ -70,13 +71,8 @@ export async function middleware(request) {
         return NextResponse.next();
     }
 
-    // 3. Determinar qué tipo de sesión requiere esta ruta
+    // 3. Todas las rutas no públicas requieren sesión válida
     const requiredType = getRequiredSessionType(pathname);
-
-    // Si la ruta no está mapeada (archivos estáticos, etc.), dejar pasar
-    if (!requiredType) {
-        return NextResponse.next();
-    }
 
     // 4. Verificar y validar la cookie de sesión firmada con HMAC
     const sessionCookie = request.cookies.get('__session');

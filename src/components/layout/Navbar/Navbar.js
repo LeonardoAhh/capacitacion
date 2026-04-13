@@ -80,7 +80,10 @@ export default function Navbar() {
         email: user?.email || '',
         avatar: user?.photoURL || user?.avatar ||
             `https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(user?.email || 'default')}`,
-        role: user?.rol === 'super_admin' ? 'Admin' : user?.rol === 'demo' ? 'Demo' : 'Usuario',
+        role: user?.rol === 'super_admin' ? 'Super Admin'
+            : user?.rol === 'admin' ? 'Admin'
+            : user?.rol === 'instructor' ? 'Instructor'
+            : 'Usuario',
     };
 
     /* Cerrar drawer con Escape */

@@ -6,7 +6,6 @@ import {
     signInWithEmailAndPassword,
     signOut as firebaseSignOut,
     createUserWithEmailAndPassword,
-    signInAnonymously
 } from 'firebase/auth';
 import { auth, db } from '@/lib/firebase';
 import { doc, getDoc, updateDoc, collection, query, where, getDocs } from 'firebase/firestore';
@@ -38,11 +37,7 @@ export function AuthProvider({ children }) {
     useEffect(() => {
         const unsubscribe = onAuthStateChanged(auth, async (item) => {
             if (item) {
-                if (item.isAnonymous) {
-                    setUser({ ...item, rol: 'demo' });
-                } else {
-                    await fetchAndSetUser(item.uid, item);
-                }
+                await fetchAndSetUser(item.uid, item);
             } else {
                 setUser(null);
             }
@@ -120,15 +115,6 @@ export function AuthProvider({ children }) {
         }
     };
 
-    const signInAnon = async () => {
-        try {
-            const result = await signInAnonymously(auth);
-            return { success: true, user: result.user };
-        } catch (error) {
-            return { success: false, error: error.message };
-        }
-    };
-
     // Check if user has write permissions (only super_admin can write)
     const canWrite = () => {
         return user?.rol === 'super_admin';
@@ -158,7 +144,6 @@ export function AuthProvider({ children }) {
         signIn,
         signInWithUsername,
         updateUserProfile,
-        signInAnon,
         signUp,
         signOut,
         canWrite
