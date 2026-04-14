@@ -9,7 +9,6 @@ import styles from './DynamicCredits.module.css';
 const CREDITS = [
     { label: 'Entwickelt von', author: 'Leonardo Hernández' },
     { label: 'Para el crecimiento de', author: 'Nuestros Colaboradores' },
-    { label: 'Construyendo el futuro de', author: 'Viñoplastic' },
     { label: 'Impulsando el desarrollo de', author: 'Nuestro Equipo' },
 ];
 
@@ -74,12 +73,8 @@ function DynamicCreditsComponent() {
 
     return (
         <div className={styles.credits} aria-live="polite" aria-atomic="true">
-
-            {/* Texto animado */}
             <div className={styles.pill}>
-                {/* Barra izquierda */}
                 <span className={styles.bar} aria-hidden="true" />
-
                 <AnimatePresence mode="wait">
                     <motion.div
                         key={index}
@@ -95,14 +90,11 @@ function DynamicCreditsComponent() {
                     </motion.div>
                 </AnimatePresence>
             </div>
-
-            {/* Indicadores */}
             <CreditDots
                 total={CREDITS.length}
                 current={index}
                 onSelect={handleSelect}
             />
-
         </div>
     );
 }

@@ -20,20 +20,20 @@
   --red-500: #FF3B30;
 
   /* --- Semantic Colors (Light Theme - Editorial White) --- */
-  --color-primary: var(--blue-500);
-  --color-secondary: #005ce6;
-  --color-accent: #3385ff;
+  --color-primary: #111110;
+  --color-primary-rgb: 17, 17, 16;
+  --color-secondary: #222223;
+  --color-accent: #222223;
 
   --color-success: var(--green-500);
   --color-warning: var(--amber-500);
   --color-danger: var(--red-500);
-  --color-info: var(--blue-500);
+  --color-info: #111110;
 
   /* RGB decompositions — for rgba(var(--color-X-rgb), alpha) usage */
-  --color-primary-rgb: 0, 122, 255;
   --color-danger-rgb: 255, 59, 48;
   --color-success-rgb: 52, 199, 89;
-  --color-info-rgb: 0, 122, 255;
+  --color-info-rgb: 17, 17, 16;
 
   /* Typography scale (rem-based, browser zoom friendly) */
   --text-xs:   0.75rem;    /* 12px */

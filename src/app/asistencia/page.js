@@ -10,6 +10,7 @@ import { db } from '@/lib/firebase';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/components/ui/Toast/Toast';
 import AdminLayout from '@/components/layout/AdminLayout/AdminLayout';
+import { motion, AnimatePresence } from 'framer-motion';
 import {
     Search, X, Download, Users, BookOpen,
     CheckCircle2, AlertCircle, Loader2, ChevronDown,
@@ -411,14 +412,29 @@ export default function AsistenciaPage() {
     // ════════════════════════════════════════════════════════════════════════
     return (
         <AdminLayout title="Registro de Asistencia">
-            <div className={styles.page}>
+            <motion.div
+                className={styles.page}
+                initial={{ opacity: 0, y: 24 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+            >
                 <div className={styles.workspace}>
 
                     {/* ── Panel izquierdo ─────────────────────────────────── */}
-                    <div className={styles.leftPanel}>
+                    <motion.div
+                        className={styles.leftPanel}
+                        initial={{ opacity: 0, scale: 0.97, y: 18 }}
+                        animate={{ opacity: 1, scale: 1, y: 0 }}
+                        transition={{ duration: 0.45, delay: 0.02, ease: [0.22, 1, 0.36, 1] }}
+                    >
 
                         {/* Selector de curso */}
-                        <section className={styles.card}>
+                        <motion.section
+                            className={styles.card}
+                            initial={{ opacity: 0, scale: 0.97, y: 18 }}
+                            animate={{ opacity: 1, scale: 1, y: 0 }}
+                            transition={{ duration: 0.45, delay: 0.05, ease: [0.22, 1, 0.36, 1] }}
+                        >
                             <div className={styles.cardHeader}>
                                 <BookOpen size={16} className={styles.cardIcon} aria-hidden="true" />
                                 <h2 className={styles.cardTitle}>Curso en sesión</h2>
@@ -479,10 +495,15 @@ export default function AsistenciaPage() {
                                     </ul>
                                 )}
                             </div>
-                        </section>
+                        </motion.section>
 
                         {/* Registro de empleados */}
-                        <section className={styles.card}>
+                        <motion.section
+                            className={styles.card}
+                            initial={{ opacity: 0, scale: 0.97, y: 18 }}
+                            animate={{ opacity: 1, scale: 1, y: 0 }}
+                            transition={{ duration: 0.45, delay: 0.1, ease: [0.22, 1, 0.36, 1] }}
+                        >
                             <div className={styles.cardHeader}>
                                 <Search size={16} className={styles.cardIcon} aria-hidden="true" />
                                 <h2 className={styles.cardTitle}>Registrar empleado</h2>
@@ -559,52 +580,101 @@ export default function AsistenciaPage() {
                             )}
 
                             {/* Mensajes de estado */}
-                            {searchStatus === 'not_found' && (
-                                <div className={styles.alertWarn} role="alert">
-                                    <AlertCircle size={15} aria-hidden="true" />
-                                    <span>No se encontró <strong>{searchQuery || 'ese empleado'}</strong> en la base de datos.</span>
-                                </div>
-                            )}
-                            {searchStatus === 'duplicate' && (
-                                <div className={styles.alertWarn} role="alert">
-                                    <AlertCircle size={15} aria-hidden="true" />
-                                    <span>Este empleado ya está registrado en la lista.</span>
-                                </div>
-                            )}
-                            {searchStatus === 'error' && (
-                                <div className={styles.alertWarn} role="alert">
-                                    <AlertCircle size={15} aria-hidden="true" />
-                                    <span>Error al conectar con la base de datos.</span>
-                                </div>
-                            )}
-                            {searchStatus === 'added' && (
-                                <div className={styles.alertSuccess} role="status" aria-live="polite">
-                                    <CheckCircle2 size={15} aria-hidden="true" />
-                                    <span>Empleado agregado correctamente.</span>
-                                </div>
-                            )}
-                        </section>
+                            <AnimatePresence mode="wait">
+                                {searchStatus === 'not_found' && (
+                                    <motion.div
+                                        className={styles.alertWarn}
+                                        role="alert"
+                                        initial={{ opacity: 0, y: -10 }}
+                                        animate={{ opacity: 1, y: 0 }}
+                                        exit={{ opacity: 0, y: -10 }}
+                                        transition={{ duration: 0.3 }}
+                                    >
+                                        <AlertCircle size={15} aria-hidden="true" />
+                                        <span>No se encontró <strong>{searchQuery || 'ese empleado'}</strong> en la base de datos.</span>
+                                    </motion.div>
+                                )}
+                                {searchStatus === 'duplicate' && (
+                                    <motion.div
+                                        className={styles.alertWarn}
+                                        role="alert"
+                                        initial={{ opacity: 0, y: -10 }}
+                                        animate={{ opacity: 1, y: 0 }}
+                                        exit={{ opacity: 0, y: -10 }}
+                                        transition={{ duration: 0.3 }}
+                                    >
+                                        <AlertCircle size={15} aria-hidden="true" />
+                                        <span>Este empleado ya está registrado en la lista.</span>
+                                    </motion.div>
+                                )}
+                                {searchStatus === 'error' && (
+                                    <motion.div
+                                        className={styles.alertWarn}
+                                        role="alert"
+                                        initial={{ opacity: 0, y: -10 }}
+                                        animate={{ opacity: 1, y: 0 }}
+                                        exit={{ opacity: 0, y: -10 }}
+                                        transition={{ duration: 0.3 }}
+                                    >
+                                        <AlertCircle size={15} aria-hidden="true" />
+                                        <span>Error al conectar con la base de datos.</span>
+                                    </motion.div>
+                                )}
+                                {searchStatus === 'added' && (
+                                    <motion.div
+                                        className={styles.alertSuccess}
+                                        role="status"
+                                        aria-live="polite"
+                                        initial={{ opacity: 0, y: -10 }}
+                                        animate={{ opacity: 1, y: 0 }}
+                                        exit={{ opacity: 0, y: -10 }}
+                                        transition={{ duration: 0.3 }}
+                                    >
+                                        <CheckCircle2 size={15} aria-hidden="true" />
+                                        <span>Empleado agregado correctamente.</span>
+                                    </motion.div>
+                                )}
+                            </AnimatePresence>
+                        </motion.section>
 
                         {/* Información de sesión */}
-                        {attendees.length > 0 && (
-                            <div className={styles.sessionInfo}>
-                                <Clock size={13} aria-hidden="true" />
-                                <span>Sesión activa · {sessionDuration}</span>
-                                {savedSessionId && (
-                                    <span className={styles.sessionSavedBadge}>
-                                        <CheckCircle2 size={11} aria-hidden="true" />
-                                        Guardada
-                                    </span>
-                                )}
-                            </div>
-                        )}
-                    </div>
+                        <AnimatePresence>
+                            {attendees.length > 0 && (
+                                <motion.div
+                                    className={styles.sessionInfo}
+                                    initial={{ opacity: 0, y: -10 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    exit={{ opacity: 0, y: -10 }}
+                                    transition={{ duration: 0.3 }}
+                                >
+                                    <Clock size={13} aria-hidden="true" />
+                                    <span>Sesión activa · {sessionDuration}</span>
+                                    {savedSessionId && (
+                                        <span className={styles.sessionSavedBadge}>
+                                            <CheckCircle2 size={11} aria-hidden="true" />
+                                            Guardada
+                                        </span>
+                                    )}
+                                </motion.div>
+                            )}
+                        </AnimatePresence>
+                    </motion.div>
 
                     {/* ── Panel derecho ────────────────────────────────────── */}
-                    <div className={styles.rightPanel}>
+                    <motion.div
+                        className={styles.rightPanel}
+                        initial={{ opacity: 0, scale: 0.97, y: 18 }}
+                        animate={{ opacity: 1, scale: 1, y: 0 }}
+                        transition={{ duration: 0.45, delay: 0.12, ease: [0.22, 1, 0.36, 1] }}
+                    >
 
                         {/* Tabla de asistentes */}
-                        <section className={styles.card}>
+                        <motion.section
+                            className={styles.card}
+                            initial={{ opacity: 0, scale: 0.97, y: 18 }}
+                            animate={{ opacity: 1, scale: 1, y: 0 }}
+                            transition={{ duration: 0.45, delay: 0.15, ease: [0.22, 1, 0.36, 1] }}
+                        >
                             <div className={styles.cardHeader}>
                                 <Users size={16} className={styles.cardIcon} aria-hidden="true" />
                                 <h2 className={styles.cardTitle}>Asistentes registrados</h2>
@@ -692,10 +762,15 @@ export default function AsistenciaPage() {
                                     ))}
                                 </div>
                             )}
-                        </section>
+                        </motion.section>
 
                         {/* Historial de sesiones */}
-                        <div className={styles.historySection}>
+                        <motion.div
+                            className={styles.historySection}
+                            initial={{ opacity: 0, scale: 0.97, y: 18 }}
+                            animate={{ opacity: 1, scale: 1, y: 0 }}
+                            transition={{ duration: 0.45, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
+                        >
                             <button
                                 type="button"
                                 className={styles.historyToggle}
@@ -751,11 +826,11 @@ export default function AsistenciaPage() {
                                     )}
                                 </div>
                             )}
-                        </div>
+                        </motion.div>
 
-                    </div>{/* /rightPanel */}
+                    </motion.div>{/* /rightPanel */}
                 </div>{/* /workspace */}
-            </div>{/* /page */}
+            </motion.div>{/* /page */}
         </AdminLayout>
     );
 }

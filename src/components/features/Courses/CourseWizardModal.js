@@ -103,30 +103,6 @@ export default function CourseWizardModal({ onComplete, onCancel }) {
                                 Diseña experiencias de capacitación dinámicas que involucren a tus colaboradores mediante micro-aprendizaje y evaluaciones prácticas.
                             </p>
                         </div>
-
-                        <div className={styles.featuresList}>
-                            <div className={styles.featureItem}>
-                                <div className={styles.featureIcon}><IconBookOpen size={20} /></div>
-                                <div className={styles.featureText}>
-                                    <strong>Plantillas Inteligentes</strong>
-                                    <p>Organiza contenido con portadas, teoría, listas y resúmenes estructurados.</p>
-                                </div>
-                            </div>
-                            <div className={styles.featureItem}>
-                                <div className={styles.featureIcon}><IconTarget size={20} /></div>
-                                <div className={styles.featureText}>
-                                    <strong>Evaluación Continua</strong>
-                                    <p>Integra Quizzes interactivos para validar el aprendizaje en tiempo real.</p>
-                                </div>
-                            </div>
-                            <div className={styles.featureItem}>
-                                <div className={styles.featureIcon}><IconUsers size={20} /></div>
-                                <div className={styles.featureText}>
-                                    <strong>Dinámicas Grupales</strong>
-                                    <p>Habilita interacciones y debates entre los participantes del curso.</p>
-                                </div>
-                            </div>
-                        </div>
                     </div>
                 );
 
@@ -164,11 +140,10 @@ export default function CourseWizardModal({ onComplete, onCancel }) {
                                 onChange={value => setCategory(value)}
                                 options={[
                                     { value: 'General', label: 'General' },
-                                    { value: 'Seguridad Industrial', label: 'Seguridad Industrial' },
-                                    { value: 'Operaciones', label: 'Operaciones' },
+                                    { value: 'Seguridad e Higiene', label: 'Seguridad e Higiene' },
+                                    { value: 'Producción', label: 'Producción' },
                                     { value: 'Calidad', label: 'Calidad' },
-                                    { value: 'Cultura', label: 'Cultura Organizacional' },
-                                    { value: 'Soft Skills', label: 'Soft Skills' },
+                                    { value: 'Recursos Humanos', label: 'Recursos Humanos' },
                                 ]}
                             />
                         </div>
@@ -188,43 +163,30 @@ export default function CourseWizardModal({ onComplete, onCancel }) {
                         </div>
 
                         <div className={styles.templatesGrid} role="radiogroup" aria-required="true" aria-label="Selección de plantilla">
-                            {[
-                                { id: 'title', icon: IconLayout, label: 'Portada de Título', desc: 'Ideal para iniciar el curso o un módulo.' },
-                                { id: 'objective', icon: IconTarget, label: 'Objetivo', desc: 'Define las metas claras de aprendizaje.' },
-                                { id: 'content', icon: IconFileText, label: 'Lectura', desc: 'Bloque de texto e imágenes descriptivo.' },
-                                { id: 'benefits', icon: IconBars, label: 'Viñetas', desc: 'Lista estructurada de conceptos rápidos.' },
-                                { id: 'steps', icon: IconList, label: 'Paso a Paso', desc: 'Secuencia numerada de pasos del proceso.' },
-                                { id: 'quiz',       icon: IconCheckSquare, label: 'Quiz',          desc: 'Añade una pregunta de opción múltiple.' },
-                                { id: 'video',      icon: IconPlay,        label: 'Video',         desc: 'Incorpora un video de YouTube o MP4.' },
-                                { id: 'flashcard',  icon: IconCopy,        label: 'Tarjetas',      desc: 'Mazo de tarjetas con flip para memorizar.' },
-                                { id: 'checklist',  icon: IconCheckSquare, label: 'Checklist',     desc: 'Lista de verificación interactiva.' },
-                            ].map(tpl => (
-                                <div
-                                    key={tpl.id}
-                                    className={`${styles.templateCard} ${firstSlideType === tpl.id ? styles.selectedTemplate : ''}`}
-                                    onClick={() => setFirstSlideType(tpl.id)}
-                                    role="radio"
-                                    aria-checked={firstSlideType === tpl.id}
-                                    tabIndex={0}
-                                    onKeyDown={e => {
-                                        if (e.key === 'Enter' || e.key === ' ') {
-                                            e.preventDefault();
-                                            setFirstSlideType(tpl.id);
-                                        }
-                                    }}
-                                >
-                                    <div className={styles.templateIconWrapper} aria-hidden="true">
-                                        <tpl.icon size={26} />
-                                    </div>
-                                    <div className={styles.templateInfo}>
-                                        <span className={styles.templateLabel}>{tpl.label}</span>
-                                        <span className={styles.templateDesc}>{tpl.desc}</span>
-                                    </div>
-                                    <div className={styles.radioIndicator}>
-                                        {firstSlideType === tpl.id && <IconCheck size={14} className={styles.checkIcon} />}
-                                    </div>
+                            <div
+                                className={`${styles.templateCard} ${firstSlideType === 'title' ? styles.selectedTemplate : ''}`}
+                                onClick={() => setFirstSlideType('title')}
+                                role="radio"
+                                aria-checked={firstSlideType === 'title'}
+                                tabIndex={0}
+                                onKeyDown={e => {
+                                    if (e.key === 'Enter' || e.key === ' ') {
+                                        e.preventDefault();
+                                        setFirstSlideType('title');
+                                    }
+                                }}
+                            >
+                                <div className={styles.templateIconWrapper} aria-hidden="true">
+                                    <IconLayout size={26} />
                                 </div>
-                            ))}
+                                <div className={styles.templateInfo}>
+                                    <span className={styles.templateLabel}>Portada de Título</span>
+                                    <span className={styles.templateDesc}>Ideal para iniciar el curso o un módulo.</span>
+                                </div>
+                                <div className={styles.radioIndicator}>
+                                    {firstSlideType === 'title' && <IconCheck size={14} className={styles.checkIcon} />}
+                                </div>
+                            </div>
                         </div>
                     </div>
                 );

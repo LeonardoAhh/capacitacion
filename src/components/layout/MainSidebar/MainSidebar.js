@@ -11,8 +11,8 @@ import {
 import styles from './MainSidebar.module.css';
 
 const NAV_ITEMS = [
-    { id: 'empleados',    label: 'Plantilla Activa',    href: '/plantilla',    icon: Users },
-    { id: 'perfil',       label: 'Detalle Empleado',  href: '/detalle',       icon: UserCheck },
+    // { id: 'empleados',    label: 'Plantilla Activa',    href: '/plantilla',    icon: Users },
+    // { id: 'perfil',       label: 'Detalle Empleado',  href: '/detalle',       icon: UserCheck },
     { id: 'induccion',    label: 'Presentaciones Cursos', href: '/induccion',                 icon: GraduationCap },
     { id: 'mural',        label: 'Mural Resultados',    href: '/mural',                     icon: Trophy },
     { id: 'asistencia',   label: 'Registro de Asistencia',         href: '/asistencia',          icon: LayoutDashboard },

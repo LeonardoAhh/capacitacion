@@ -11,9 +11,9 @@
     --c-muted:        var(--text-secondary, #6b7280);
     --c-line:         var(--border-color, #e5e7eb);
     --c-line-strong:  color-mix(in srgb, var(--text-primary, #111827) 14%, transparent);
-    --c-primary:      #003ccc;
-    --c-primary-dim:  rgba(0, 60, 204, 0.08);
-    --c-primary-mid:  rgba(0, 60, 204, 0.18);
+    --c-primary:      #111110;
+    --c-primary-dim:  rgba(17, 17, 16, 0.08);
+    --c-primary-mid:  rgba(17, 17, 16, 0.18);
     --c-danger:       #ef4444;
     --c-danger-dim:   rgba(239, 68, 68, 0.09);
     --c-success:      #16a34a;
@@ -892,7 +892,7 @@
    ================================================================ */
 .formContainer {
     width: 100%;
-    max-width: 780px;
+    max-width: 520px;
     background: var(--c-surface);
     border: 1.5px solid var(--c-line);
     border-radius: var(--r-xl);

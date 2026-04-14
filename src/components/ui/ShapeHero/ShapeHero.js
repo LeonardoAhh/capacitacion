@@ -16,8 +16,8 @@ import styles from './ShapeHero.module.css';
 /* ─── Rate limiting ──────────────────────────────────────── */
 
 const RATE_LIMIT = {
-    MAX_ATTEMPTS: 5,
-    BLOCK_DURATION_S: 30,
+    MAX_ATTEMPTS: 3,
+    BLOCK_DURATION_S: 10,
     STORAGE_KEY: 'login_rate_limit',
 };
 
@@ -112,12 +112,10 @@ export default function ShapeHero() {
 
     /* Redirige si ya está autenticado */
     useEffect(() => {
-        if (!user) return;
-        const dest = (user.rol === 'Instructor' || user.rol === 'instructor')
-            ? '/induccion'
-            : '/plantilla';
-        router.replace(dest);
-    }, [user, router]);
+        // Solo redirige automáticamente si el usuario está autenticado y NO está en estado de éxito
+        if (!user || isSuccess) return;
+        router.replace('/induccion');
+    }, [user, router, isSuccess]);
 
     /* Restaura rate limit del localStorage al montar */
     useEffect(() => {
@@ -169,13 +167,9 @@ export default function ShapeHero() {
     /* Redirige tras login exitoso */
     useEffect(() => {
         if (!isSuccess) return;
-        const redirectTo = searchParams.get('redirect');
-        const dest = (user?.rol === 'Instructor' || user?.rol === 'instructor')
-            ? '/induccion'
-            : (redirectTo || '/plantilla');
-        const timer = setTimeout(() => router.push(dest), 1500);
+        const timer = setTimeout(() => router.push('/induccion'), 5000);
         return () => clearTimeout(timer);
-    }, [isSuccess, user, searchParams, router]);
+    }, [isSuccess, router]);
 
     const checkRateLimit = useCallback(() => {
         if (isBlocked) return false;
@@ -229,10 +223,6 @@ export default function ShapeHero() {
             className={styles.hero}
             aria-label="Portal corporativo ViñoPlastic"
         >
-            <a href="#main-content" className={styles.skipLink}>
-                Saltar al contenido principal
-            </a>
-
             <div className={styles.grid} aria-hidden="true" />
             <div className={styles.glowOrb} aria-hidden="true" />
 
@@ -240,26 +230,17 @@ export default function ShapeHero() {
 
                 {/* ── Columna izquierda — Marca ── */}
                 <div className={styles.left}>
-                    <Image
-                        src="/logo-vino-plastic.png"
-                        alt="ViñoPlastic"
-                        className={styles.logo}
-                        width={96}
-                        height={96}
-                        priority
-                    />
 
                     <div className={styles.brand}>
-                        <span className={styles.portal}>Portal Corporativo</span>
+                        <span className={styles.portal}>Vertx System v1.0</span>
                         <h1 className={styles.title}>
                             VIÑO<span className={styles.titleAccent}>PLASTIC</span>
                         </h1>
-                        <span className={styles.location}>Planta Querétaro</span>
+                        <p><span className={styles.location}>Planta Querétaro</span></p>
                     </div>
 
-                    <div className={styles.divider} aria-hidden="true" />
 
-                    <DynamicCredits />
+                    <div className={styles.divider} aria-hidden="true" />
                 </div>
 
                 {/* ── Columna derecha — Login card ── */}
@@ -275,11 +256,12 @@ export default function ShapeHero() {
                                 <motion.div
                                     key="success"
                                     className={styles.successState}
-                                    variants={SUCCESS_ENTER}
-                                    initial="initial"
-                                    animate="animate"
+                                    initial={{ opacity: 0, scale: 0.85, y: 30 }}
+                                    animate={{ opacity: 1, scale: 1, y: 0 }}
+                                    exit={{ opacity: 0, scale: 0.85, y: -30 }}
+                                    transition={{ type: 'spring', stiffness: 340, damping: 22, duration: 0.7 }}
                                 >
-                                    <CheckCircle2 size={48} strokeWidth={1.5} />
+                                    <CheckCircle2 />
                                     <p>Acceso concedido</p>
                                 </motion.div>
                             ) : (
@@ -290,7 +272,7 @@ export default function ShapeHero() {
                                         </div>
                                         <h2 className={styles.cardTitle}>Bienvenido</h2>
                                         <p className={styles.cardSubtitle}>
-                                            Ingresa tus credenciales para continuar
+                                            Ingresa tus datos para continuar
                                         </p>
                                     </header>
 
@@ -355,6 +337,7 @@ export default function ShapeHero() {
                                             </Button>
                                         </motion.div>
                                     </form>
+                                    <DynamicCredits />
                                 </motion.div>
                             )}
                         </AnimatePresence>
@@ -363,11 +346,6 @@ export default function ShapeHero() {
 
             </div>
 
-            <footer className={styles.footer}>
-                <span className={styles.year}>
-                    © {new Date().getFullYear()} ViñoPlastic System
-                </span>
-            </footer>
         </section>
     );
 }
