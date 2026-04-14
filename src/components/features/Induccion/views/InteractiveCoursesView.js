@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import { getCourseWithSlides } from '@/lib/courseService';
 import Link from 'next/link';
 import { Button } from '@/components/ui/Button/Button';
 import {
@@ -107,6 +108,33 @@ export default function InteractiveCoursesView({
         if (!editingNative) return;
         const ok = await onUpdateNative(editingNative.id, nativeEditForm);
         if (ok) handleNativeEditCancel();
+    };
+
+    const handleDownloadJson = async (course) => {
+        try {
+            const result = await getCourseWithSlides(course.id);
+            if (!result.success) {
+                alert('No se pudo obtener el curso.');
+                return;
+            }
+            const { course: courseData, slides } = result.data;
+            const exportData = { course: courseData, slides: slides || [] };
+            const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            const cleanTitle = (courseData.title || 'curso').toLowerCase().replace(/[^a-z0-9]+/gi, '-').replace(/^-+|-+$/g, '');
+            a.href = url;
+            a.download = `${cleanTitle}.json`;
+            document.body.appendChild(a);
+            a.click();
+            setTimeout(() => {
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+            }, 100);
+        } catch (err) {
+            console.error('Error al exportar el curso:', err);
+            alert('Error al exportar el curso.');
+        }
     };
 
     return (
@@ -298,6 +326,13 @@ export default function InteractiveCoursesView({
                                                         <Settings2 size={14} className={styles.actionMenuIcon} />
                                                         Configurar slides
                                                     </Link>
+                                                    <button className={styles.actionMenuItem} onClick={async () => {
+                                                        setActiveDropdownId(null);
+                                                        await handleDownloadJson(course);
+                                                    }}>
+                                                        <FileText size={14} className={styles.actionMenuIcon} />
+                                                        Descargar JSON
+                                                    </button>
                                                     <div className={styles.actionMenuDivider} />
                                                     <button className={`${styles.actionMenuItem} ${styles.danger}`} onClick={(e) => { setActiveDropdownId(null); handleDeleteNative(e, course.id); }}>
                                                         <Trash2 size={14} className={styles.actionMenuIcon} />
