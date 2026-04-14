@@ -21,6 +21,7 @@ import {
     IconGlobe as Globe,
     IconLock as Lock,
 } from '@/lib/icons';
+import { getCourseWithSlides } from '@/lib/courseService';
 import puestosData from '../../../../../puestos.json';
 import styles from './KanbanCoursesView.module.css';
 
@@ -322,6 +323,33 @@ export default function KanbanCoursesView({
         if (ok) handleEditCancel();
     };
 
+    const handleDownloadJson = async (course) => {
+        try {
+            const result = await getCourseWithSlides(course.id);
+            if (!result.success) {
+                alert('No se pudo obtener el curso.');
+                return;
+            }
+            const { course: courseData, slides } = result.data;
+            const exportData = { course: courseData, slides: slides || [] };
+            const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            const cleanTitle = (courseData.title || 'curso').toLowerCase().replace(/[^a-z0-9]+/gi, '-').replace(/^-+|-+$/g, '');
+            a.href = url;
+            a.download = `${cleanTitle}.json`;
+            document.body.appendChild(a);
+            a.click();
+            setTimeout(() => {
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+            }, 100);
+        } catch (err) {
+            console.error('Error al exportar el curso:', err);
+            alert('Error al exportar el curso.');
+        }
+    };
+
     // ── Props compartidos para CourseCard ─────────────────────────────────────
     const cardSharedProps = {
         canEdit,
@@ -596,6 +624,9 @@ export default function KanbanCoursesView({
                         >
                             <Settings2 size={13} className={styles.menuItemIcon} /> Configurar slides
                         </Link>
+                        <button className={styles.menuItem} role="menuitem" onClick={async () => { closeDropdown(); await handleDownloadJson(activeCourse); }}>
+                            <FileText size={13} className={styles.menuItemIcon} /> Descargar JSON
+                        </button>
                         <div className={styles.menuDivider} />
                         <button className={`${styles.menuItem} ${styles.menuItemDanger}`} role="menuitem" onClick={(e) => { closeDropdown(); handleDeleteNative(e, activeCourse.id); }}>
                             <Trash2 size={13} className={styles.menuItemIcon} /> Eliminar
