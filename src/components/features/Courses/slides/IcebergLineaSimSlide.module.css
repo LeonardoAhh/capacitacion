@@ -28,9 +28,9 @@
 .meta {
     margin-top: 0.55rem;
     display: inline-flex;
-    border: 1px solid var(--border-light, #d1d5db);
+    box-shadow: rgba(0,0,0,0.08) 0px 0px 0px 1px;
     border-radius: 999px;
-    background: #fff;
+    background: var(--bg-primary);
     padding: 0.3rem 0.75rem;
     font-size: var(--course-font-xs, 0.78rem);
     color: var(--text-secondary, #4b5563);
@@ -38,8 +38,8 @@
 
 .card,
 .result {
-    background: #fff;
-    border: 1px solid var(--border-light, #e5e7eb);
+    background: var(--bg-primary);
+    box-shadow: rgba(0,0,0,0.08) 0px 0px 0px 1px;
     border-radius: 12px;
     padding: 1rem;
 }
@@ -51,7 +51,7 @@
     text-transform: uppercase;
     letter-spacing: 0.05em;
     color: var(--color-primary, #003ccc);
-    background: color-mix(in srgb, var(--color-primary, #003ccc) 10%, #fff);
+    background: color-mix(in srgb, var(--color-primary, #003ccc) 10%, var(--bg-primary));
     border: 1px solid color-mix(in srgb, var(--color-primary, #003ccc) 30%, transparent);
     border-radius: 999px;
     padding: 0.2rem 0.58rem;
@@ -77,9 +77,9 @@
 }
 
 .choiceBtn {
-    border: 1px solid var(--border-light, #cbd5e1);
+    box-shadow: rgba(0,0,0,0.08) 0px 0px 0px 1px;
     border-radius: 10px;
-    background: #fff;
+    background: var(--bg-primary);
     color: var(--text-primary, #1f2937);
     font-size: var(--course-font-base, 0.88rem);
     font-weight: 700;
@@ -99,7 +99,7 @@
 .choiceBtnActive {
     border-color: var(--color-primary, #003ccc);
     color: var(--color-primary, #003ccc);
-    background: color-mix(in srgb, var(--color-primary, #003ccc) 10%, #fff);
+    background: color-mix(in srgb, var(--color-primary, #003ccc) 10%, var(--bg-primary));
 }
 
 .primaryBtn,
@@ -121,7 +121,7 @@
 
 .secondaryBtn {
     border: 1px solid color-mix(in srgb, var(--color-primary, #003ccc) 35%, transparent);
-    background: #fff;
+    background: var(--bg-primary);
     color: var(--color-primary, #003ccc);
     display: inline-flex;
     align-items: center;

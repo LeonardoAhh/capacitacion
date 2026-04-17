@@ -1,0 +1,1109 @@
+/* ═══════════════════════════════════════════════════
+   slides-v2.module.css — Vercel / Geist Design System
+   Shadow-as-border · Negative tracking · 3-weight system
+   Light + Dark via project CSS variables
+   ═══════════════════════════════════════════════════ */
+
+/* ── Scoped design tokens ─────────────────────────── */
+.slide {
+  /* Vercel shadow layers */
+  --v-ring: 0 0 0 1px var(--card-border, rgba(0,0,0,0.08));
+  --v-subtle: var(--v-ring), 0 2px 2px rgba(0,0,0,0.04);
+  --v-card: var(--v-ring), 0 2px 2px rgba(0,0,0,0.04), 0 8px 8px -8px rgba(0,0,0,0.04);
+  --v-focus: 0 0 0 2px var(--bg-primary, #fff), 0 0 0 4px hsla(212, 100%, 48%, 1);
+  /* Semantic */
+  --v-success: #34C759;
+  --v-success-bg: rgba(52, 199, 89, 0.08);
+  --v-danger: var(--color-danger, #FF3B30);
+  --v-danger-bg: rgba(255, 59, 48, 0.06);
+}
+
+/* ── Base slide ───────────────────────────────────── */
+.slide {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  min-height: 100%;
+  flex: 1;
+  padding: 3rem 4rem;
+  color: var(--text-primary);
+  font-family: var(--font-body);
+  font-feature-settings: "liga";
+  overflow-y: auto;
+  box-sizing: border-box;
+  background: var(--bg-primary);
+}
+
+.inner {
+  max-width: 960px;
+  width: 100%;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+/* ── Two-column layout ────────────────────────────── */
+.twoCol {
+  flex-direction: row;
+  gap: 3rem;
+  align-items: flex-start;
+}
+.twoCol .inner {
+  flex: 1 1 55%;
+  min-width: 0;
+}
+.mediaCol {
+  flex: 1 1 40%;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  align-self: center;
+}
+.contentImg {
+  width: 100%;
+  border-radius: 12px;
+  object-fit: cover;
+  cursor: zoom-in;
+  box-shadow: var(--v-ring);
+  transition: box-shadow 200ms var(--ease-spring);
+}
+.contentImg:hover {
+  box-shadow: var(--v-card);
+}
+
+/* ═══════════════════════════════════════════════════
+   TYPOGRAPHY — Geist-inspired
+   Negative letter-spacing at display, 3-weight system
+   ═══════════════════════════════════════════════════ */
+
+/* Pill label — Vercel badge style */
+.label {
+  display: inline-block;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: normal;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+  padding: 0 0.625rem;
+  height: 1.5rem;
+  line-height: 1.5rem;
+  border-radius: 9999px;
+  background: var(--bg-secondary);
+  box-shadow: var(--v-ring);
+  width: fit-content;
+}
+
+/* Section heading — 32px, 600, tight tracking */
+.heading {
+  font-family: var(--font-serif);
+  font-size: clamp(1.5rem, 2.5vw, 2rem);
+  font-weight: 600;
+  color: var(--text-primary);
+  line-height: 1.25;
+  letter-spacing: -0.04em;
+  margin: 0;
+}
+
+.subtitle {
+  font-size: 1.25rem;
+  font-weight: 400;
+  color: var(--text-secondary);
+  line-height: 1.8;
+  margin: 0;
+}
+
+.desc {
+  font-size: 1rem;
+  font-weight: 400;
+  color: var(--text-secondary);
+  line-height: 1.56;
+}
+
+.body {
+  font-size: 1rem;
+  font-weight: 400;
+  line-height: 1.7;
+  color: var(--text-primary);
+}
+.body p { margin: 0 0 0.5rem; }
+.body p:last-child { margin-bottom: 0; }
+
+.mutedText {
+  font-size: 0.875rem;
+  color: var(--text-tertiary);
+}
+
+.pre {
+  font-family: var(--font-mono);
+  font-size: 0.8125rem;
+  font-feature-settings: "liga";
+  white-space: pre-wrap;
+  background: var(--bg-secondary);
+  padding: 1rem;
+  border-radius: 8px;
+  box-shadow: var(--v-ring);
+  overflow-x: auto;
+}
+
+/* ═══════════════════════════════════════════════════
+   TITLE SLIDE
+   ═══════════════════════════════════════════════════ */
+.titleSlide {
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  padding: 5rem 2rem;
+}
+.titleContent {
+  max-width: 720px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+.titleH1 {
+  font-family: var(--font-serif);
+  font-size: clamp(2rem, 4vw, 3rem);
+  font-weight: 600;
+  letter-spacing: -0.05em;
+  line-height: 1.0;
+  color: var(--text-primary);
+  margin: 0;
+}
+.tagRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  justify-content: center;
+  margin-top: 0.5rem;
+}
+.tag {
+  font-size: 0.75rem;
+  font-weight: 500;
+  padding: 0 0.625rem;
+  height: 1.375rem;
+  line-height: 1.375rem;
+  border-radius: 9999px;
+  background: var(--bg-secondary);
+  color: var(--text-tertiary);
+  box-shadow: var(--v-ring);
+}
+
+/* ═══════════════════════════════════════════════════
+   BADGES
+   ═══════════════════════════════════════════════════ */
+.badgeRow {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-top: 0.5rem;
+}
+.accentBadge {
+  display: inline-block;
+  font-size: 0.75rem;
+  font-weight: 500;
+  padding: 0 0.625rem;
+  height: 1.5rem;
+  line-height: 1.5rem;
+  border-radius: 9999px;
+  background: var(--text-primary);
+  color: var(--bg-primary);
+}
+
+/* ═══════════════════════════════════════════════════
+   HIGHLIGHTS (definition)
+   ═══════════════════════════════════════════════════ */
+.highlightRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+.highlight {
+  font-size: 0.8125rem;
+  font-weight: 500;
+  padding: 0.25rem 0.625rem;
+  border-radius: 6px;
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+  box-shadow: var(--v-ring);
+}
+
+/* ═══════════════════════════════════════════════════
+   BULLET LIST
+   ═══════════════════════════════════════════════════ */
+.bulletList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+.bulletList li {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  font-size: 1rem;
+  line-height: 1.56;
+  color: var(--text-primary);
+}
+.bulletDot {
+  flex-shrink: 0;
+  width: 5px;
+  height: 5px;
+  margin-top: 0.6rem;
+  border-radius: 50%;
+  background: var(--text-tertiary);
+}
+
+/* ═══════════════════════════════════════════════════
+   SNIPPET / CALLOUT
+   ═══════════════════════════════════════════════════ */
+.snippet {
+  padding: 1rem 1.25rem;
+  background: var(--bg-secondary);
+  border-radius: 8px;
+  box-shadow: var(--v-subtle);
+}
+.snippet strong {
+  display: block;
+  margin-bottom: 0.35rem;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+.snippet p { margin: 0; font-size: 0.9375rem; line-height: 1.56; color: var(--text-secondary); }
+.snippet--warning { box-shadow: var(--v-ring), inset 3px 0 0 var(--color-warning, #f59e0b); }
+.snippet--danger { box-shadow: var(--v-ring), inset 3px 0 0 var(--v-danger); }
+
+/* ═══════════════════════════════════════════════════
+   ICON GRID — Shadow-bordered cards
+   ═══════════════════════════════════════════════════ */
+.iconGrid {
+  display: grid;
+  gap: 1rem;
+  margin-top: 0.5rem;
+}
+.iconGrid[data-count="1"],
+.iconGrid[data-count="2"] { grid-template-columns: repeat(2, 1fr); }
+.iconGrid[data-count="3"] { grid-template-columns: repeat(3, 1fr); }
+.iconGrid[data-count="4"] { grid-template-columns: repeat(2, 1fr); }
+.iconGrid[data-count="5"],
+.iconGrid[data-count="6"] { grid-template-columns: repeat(3, 1fr); }
+.iconCard {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 0.625rem;
+  padding: 1.5rem 1rem;
+  border-radius: 8px;
+  background: var(--card-background, var(--bg-primary));
+  box-shadow: var(--v-card);
+  transition: box-shadow 200ms var(--ease-spring);
+}
+.iconCard:hover {
+  box-shadow: var(--v-ring), 0 4px 8px rgba(0,0,0,0.06), 0 12px 20px -8px rgba(0,0,0,0.06);
+}
+.iconCircle {
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+  font-size: 1.25rem;
+  font-weight: 600;
+  box-shadow: var(--v-ring);
+}
+.iconCircleImg {
+  width: 80px;
+  height: 80px;
+  border-radius: 12px;
+  object-fit: cover;
+  display: block;
+  box-shadow: var(--v-ring);
+}
+.iconLabel {
+  font-family: var(--font-serif);
+  font-size: 0.875rem;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  margin: 0;
+  color: var(--text-primary);
+}
+.iconDesc {
+  font-size: 0.8125rem;
+  color: var(--text-secondary);
+  line-height: 1.4;
+  margin: 0;
+}
+
+/* ═══════════════════════════════════════════════════
+   BENEFITS
+   ═══════════════════════════════════════════════════ */
+.benefitList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+.benefitItem {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  font-size: 1rem;
+  line-height: 1.56;
+}
+.benefitCheck {
+  flex-shrink: 0;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: var(--v-success-bg);
+  color: var(--v-success);
+  margin-top: 2px;
+}
+
+/* ═══════════════════════════════════════════════════
+   COMPARISON — Two columns with shadow divider
+   ═══════════════════════════════════════════════════ */
+.compGrid {
+  display: flex;
+  gap: 2rem;
+  margin-top: 0.5rem;
+}
+.compCol { flex: 1; }
+.compDivider {
+  width: 1px;
+  flex-shrink: 0;
+  box-shadow: 1px 0 0 0 var(--card-border, rgba(0,0,0,0.08));
+}
+.compColTitle {
+  font-family: var(--font-serif);
+  font-size: 1rem;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  margin: 0 0 0.75rem;
+  padding-bottom: 0.5rem;
+  box-shadow: 0 1px 0 0 var(--text-primary);
+}
+.compList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+.compList li {
+  font-size: 0.9375rem;
+  line-height: 1.56;
+  padding-left: 1rem;
+  position: relative;
+  color: var(--text-secondary);
+}
+.compList li::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0.6rem;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: var(--text-tertiary);
+}
+
+/* ═══════════════════════════════════════════════════
+   STEPS — Timeline with shadow-bordered numbers
+   ═══════════════════════════════════════════════════ */
+.stepsList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+}
+.stepItem {
+  display: flex;
+  gap: 1.25rem;
+  min-height: 4rem;
+}
+.stepTrack {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex-shrink: 0;
+  width: 36px;
+}
+.stepNum {
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: var(--text-primary);
+  color: var(--bg-primary);
+  font-weight: 600;
+  font-size: 0.875rem;
+  flex-shrink: 0;
+}
+.stepLine {
+  flex: 1;
+  width: 1px;
+  background: var(--card-border, rgba(0,0,0,0.08));
+  margin: 4px 0;
+}
+.stepBody {
+  flex: 1;
+  padding-bottom: 1.5rem;
+}
+.stepTitle {
+  font-family: var(--font-serif);
+  font-size: 1rem;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  margin: 0 0 0.25rem;
+  color: var(--text-primary);
+}
+.stepDesc {
+  font-size: 0.9375rem;
+  color: var(--text-secondary);
+  line-height: 1.56;
+  margin: 0;
+}
+.stepImg {
+  margin-top: 0.75rem;
+  max-width: 100%;
+  max-height: 200px;
+  border-radius: 12px;
+  object-fit: cover;
+  box-shadow: var(--v-ring);
+}
+
+/* ═══════════════════════════════════════════════════
+   QUIZ — Shadow-bordered options
+   ═══════════════════════════════════════════════════ */
+.quizQuestion {
+  font-size: 1.125rem;
+  font-weight: 500;
+  line-height: 1.5;
+  letter-spacing: -0.02em;
+  margin: 0;
+  color: var(--text-primary);
+}
+.optionList {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+.option {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem 1rem;
+  border: 0;
+  border-radius: 8px;
+  background: var(--card-background, var(--bg-primary));
+  box-shadow: var(--v-ring);
+  font-size: 0.9375rem;
+  cursor: pointer;
+  text-align: left;
+  transition: box-shadow 150ms ease, background 150ms ease;
+  font-family: var(--font-body);
+  color: var(--text-primary);
+}
+.option:hover:not(:disabled) {
+  box-shadow: var(--v-subtle);
+}
+.option:focus-visible {
+  outline: none;
+  box-shadow: var(--v-focus);
+}
+.optionSelected {
+  box-shadow: 0 0 0 1px var(--text-primary), 0 2px 2px rgba(0,0,0,0.04);
+  background: var(--bg-secondary);
+}
+.optionCorrect {
+  box-shadow: 0 0 0 1px var(--v-success), 0 2px 4px rgba(52, 199, 89, 0.12);
+  background: var(--v-success-bg);
+}
+.optionWrong {
+  box-shadow: 0 0 0 1px var(--v-danger), 0 2px 4px rgba(255, 59, 48, 0.12);
+  background: var(--v-danger-bg);
+}
+.optionLetter {
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: var(--bg-secondary);
+  box-shadow: var(--v-ring);
+  font-weight: 600;
+  font-size: 0.8125rem;
+  flex-shrink: 0;
+  color: var(--text-secondary);
+}
+.explanation {
+  font-size: 0.9375rem;
+  line-height: 1.56;
+  color: var(--text-secondary);
+  padding: 0.75rem 1rem;
+  background: var(--bg-secondary);
+  border-radius: 8px;
+  box-shadow: var(--v-ring);
+}
+.quizResult {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 2.5rem 2rem;
+  border-radius: 12px;
+  text-align: center;
+  box-shadow: var(--v-card);
+}
+.quizPassed { background: var(--v-success-bg); }
+.quizFailed { background: var(--v-danger-bg); }
+.quizScore {
+  font-family: var(--font-serif);
+  font-size: 3rem;
+  font-weight: 600;
+  letter-spacing: -0.05em;
+  line-height: 1;
+  color: var(--text-primary);
+}
+
+/* ═══════════════════════════════════════════════════
+   VIDEO — Shadow-bordered container
+   ═══════════════════════════════════════════════════ */
+.videoWrap {
+  position: relative;
+  width: 100%;
+  padding-bottom: 56.25%;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #000;
+  box-shadow: var(--v-ring);
+}
+.videoIframe,
+.videoNative {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+.videoPlaceholder {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  color: var(--text-tertiary);
+  background: var(--bg-secondary);
+}
+.caption {
+  font-size: 0.875rem;
+  color: var(--text-tertiary);
+  text-align: center;
+  margin-top: 0.5rem;
+}
+
+/* ═══════════════════════════════════════════════════
+   FLASHCARD — Shadow-bordered with 3D flip
+   ═══════════════════════════════════════════════════ */
+.flashScene {
+  perspective: 800px;
+  width: 100%;
+  max-width: 480px;
+  height: 260px;
+  cursor: pointer;
+  margin: 0 auto;
+}
+.flashCard {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  transition: transform 0.5s cubic-bezier(.4, 0, .2, 1);
+  transform-style: preserve-3d;
+}
+.flashFlipped { transform: rotateY(180deg); }
+.flashFront,
+.flashBack {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  backface-visibility: hidden;
+  border-radius: 12px;
+  padding: 2rem;
+  text-align: center;
+  font-size: 1.0625rem;
+  line-height: 1.56;
+}
+.flashFront {
+  background: var(--card-background, var(--bg-primary));
+  box-shadow: var(--v-card);
+  color: var(--text-primary);
+}
+.flashBack {
+  background: var(--text-primary);
+  color: var(--bg-primary);
+  transform: rotateY(180deg);
+  box-shadow: var(--v-card);
+}
+.flashNav {
+  display: flex;
+  justify-content: center;
+  gap: 0.75rem;
+  margin-top: 1rem;
+}
+
+/* ═══════════════════════════════════════════════════
+   FILL BLANK
+   ═══════════════════════════════════════════════════ */
+.fillSentence {
+  font-size: 1.125rem;
+  line-height: 2;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.25rem;
+  color: var(--text-primary);
+}
+.fillInput {
+  display: inline-block;
+  width: 12ch;
+  padding: 0.25rem 0.5rem;
+  font-size: 1rem;
+  font-family: var(--font-body);
+  border: 0;
+  border-bottom: 2px solid var(--text-primary);
+  background: transparent;
+  color: var(--text-primary);
+  outline: none;
+  transition: border-color 150ms ease;
+}
+.fillInput:focus {
+  border-bottom-color: hsla(212, 100%, 48%, 1);
+}
+.fillAnswer {
+  display: inline-block;
+  padding: 0.15rem 0.5rem;
+  border-radius: 4px;
+  font-weight: 600;
+}
+.fillCorrect { background: var(--v-success-bg); color: var(--v-success); }
+.fillWrong { background: var(--v-danger-bg); color: var(--v-danger); }
+.fillHint { font-weight: 400; color: var(--v-success); }
+
+/* ═══════════════════════════════════════════════════
+   FEEDBACK BOX
+   ═══════════════════════════════════════════════════ */
+.feedbackBox {
+  padding: 1rem 1.25rem;
+  border-radius: 8px;
+  font-size: 0.9375rem;
+  box-shadow: var(--v-ring);
+}
+.feedbackOk { background: var(--v-success-bg); }
+.feedbackBad { background: var(--v-danger-bg); }
+.feedbackBox p { margin: 0 0 0.5rem; color: var(--text-primary); }
+.feedbackBox p:last-child { margin-bottom: 0; }
+.explanationText {
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+}
+
+/* ═══════════════════════════════════════════════════
+   CHECKLIST — Progress track + shadow checkboxes
+   ═══════════════════════════════════════════════════ */
+.progressTrack {
+  position: relative;
+  height: 4px;
+  background: var(--bg-secondary);
+  border-radius: 2px;
+  overflow: visible;
+  box-shadow: inset var(--v-ring);
+}
+.progressFill {
+  height: 100%;
+  border-radius: 2px;
+  background: var(--text-primary);
+  transition: width 300ms var(--ease-spring);
+}
+.progressLabel {
+  position: absolute;
+  right: 0;
+  top: -1.5rem;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: var(--text-tertiary);
+}
+.checkList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+.checkItem {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem 0;
+  box-shadow: 0 1px 0 0 var(--card-border, rgba(0,0,0,0.06));
+  transition: opacity 200ms ease;
+}
+.checkDone { opacity: 0.5; }
+.checkBox {
+  width: 22px;
+  height: 22px;
+  border: 0;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg-primary);
+  box-shadow: 0 0 0 1.5px var(--card-border, rgba(0,0,0,0.16));
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: background 150ms ease, box-shadow 150ms ease;
+  padding: 0;
+  color: var(--bg-primary);
+}
+.checkBox:focus-visible {
+  outline: none;
+  box-shadow: var(--v-focus);
+}
+.checkBoxDone {
+  background: var(--text-primary);
+  box-shadow: 0 0 0 1.5px var(--text-primary);
+}
+.checkText {
+  font-size: 0.9375rem;
+  color: var(--text-primary);
+}
+.successMsg {
+  color: var(--v-success);
+  font-weight: 500;
+  font-size: 0.9375rem;
+}
+.hintMsg {
+  color: var(--text-tertiary);
+  font-size: 0.8125rem;
+}
+
+/* ═══════════════════════════════════════════════════
+   DYNAMIC ACTIVITY
+   ═══════════════════════════════════════════════════ */
+.metaRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+.chip {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  font-weight: 500;
+  padding: 0 0.625rem;
+  height: 1.375rem;
+  line-height: 1.375rem;
+  border-radius: 9999px;
+  background: var(--bg-secondary);
+  color: var(--text-tertiary);
+  box-shadow: var(--v-ring);
+}
+.dynamicGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+}
+.infoBlock {
+  padding: 1rem;
+  border-radius: 8px;
+  box-shadow: var(--v-subtle);
+  background: var(--card-background, var(--bg-primary));
+}
+.infoBlock h3 {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: normal;
+  color: var(--text-tertiary);
+  margin: 0 0 0.5rem;
+  padding-bottom: 0.375rem;
+  box-shadow: 0 1px 0 0 var(--card-border, rgba(0,0,0,0.06));
+}
+.infoBlock p {
+  font-size: 0.9375rem;
+  line-height: 1.56;
+  margin: 0;
+  color: var(--text-secondary);
+}
+.infoBlock ul,
+.infoBlock ol {
+  padding-left: 1.25rem;
+  margin: 0;
+  font-size: 0.9375rem;
+  line-height: 1.56;
+  color: var(--text-secondary);
+}
+.infoBlock li { margin-bottom: 0.25rem; }
+.infoBlock small { color: var(--text-tertiary); }
+.textarea {
+  width: 100%;
+  padding: 0.75rem;
+  font-family: var(--font-body);
+  font-size: 0.9375rem;
+  border: 0;
+  border-radius: 8px;
+  box-shadow: var(--v-ring);
+  resize: vertical;
+  margin-top: 0.5rem;
+  outline: none;
+  transition: box-shadow 150ms ease;
+  color: var(--text-primary);
+  background: var(--card-background, var(--bg-primary));
+}
+.textarea:focus {
+  box-shadow: var(--v-focus);
+}
+
+/* ═══════════════════════════════════════════════════
+   BUTTONS — Vercel dark primary, shadow-ring ghost
+   ═══════════════════════════════════════════════════ */
+.primaryBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 1rem;
+  height: 2.25rem;
+  font-family: var(--font-body);
+  font-size: 0.875rem;
+  font-weight: 500;
+  border: 0;
+  border-radius: 6px;
+  background: var(--text-primary);
+  color: var(--bg-primary);
+  cursor: pointer;
+  transition: opacity 150ms ease;
+  width: fit-content;
+}
+.primaryBtn:hover:not(:disabled) { opacity: 0.85; }
+.primaryBtn:focus-visible {
+  outline: none;
+  box-shadow: var(--v-focus);
+}
+.primaryBtn:disabled { opacity: 0.4; cursor: default; }
+
+.outlineBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 1rem;
+  height: 2.25rem;
+  font-family: var(--font-body);
+  font-size: 0.875rem;
+  font-weight: 500;
+  border: 0;
+  border-radius: 6px;
+  background: var(--bg-primary);
+  box-shadow: 0 0 0 1px rgb(var(--border-color-rgb), 0.16);
+  color: var(--text-primary);
+  cursor: pointer;
+  transition: box-shadow 150ms ease;
+}
+.outlineBtn:hover:not(:disabled) {
+  box-shadow: 0 0 0 1px var(--text-tertiary);
+}
+.outlineBtn:focus-visible {
+  outline: none;
+  box-shadow: var(--v-focus);
+}
+.outlineBtn:disabled { opacity: 0.4; cursor: default; }
+
+/* ═══════════════════════════════════════════════════
+   LIGHTBOX
+   ═══════════════════════════════════════════════════ */
+.lightbox {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: hsla(0, 0%, 98%, 0.85);
+  backdrop-filter: blur(8px);
+  cursor: zoom-out;
+}
+.lightboxImg {
+  max-width: 90vw;
+  max-height: 90vh;
+  object-fit: contain;
+  border-radius: 12px;
+  box-shadow: var(--v-card);
+  cursor: default;
+}
+.lightboxClose {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  background: var(--bg-primary);
+  border: 0;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-primary);
+  cursor: pointer;
+  box-shadow: var(--v-subtle);
+}
+.lightboxClose:hover {
+  box-shadow: var(--v-card);
+}
+
+/* ═══════════════════════════════════════════════════
+   RESPONSIVE
+   ═══════════════════════════════════════════════════ */
+@media (max-width: 768px) {
+  .slide { padding: 2rem 1.5rem; }
+  .twoCol { flex-direction: column; gap: 1.5rem; }
+  .mediaCol { flex: 1 1 100%; }
+  .compGrid { flex-direction: column; gap: 1.5rem; }
+  .compDivider { width: 100%; height: 0; box-shadow: 0 1px 0 0 var(--card-border, rgba(0,0,0,0.08)); }
+  .dynamicGrid { grid-template-columns: 1fr; }
+  .iconGrid[data-count="3"],
+  .iconGrid[data-count="5"],
+  .iconGrid[data-count="6"] { grid-template-columns: repeat(2, 1fr); }
+  .flashScene { height: 220px; }
+}
+
+@media (max-width: 480px) {
+  .slide { padding: 1.5rem 1rem; }
+  .titleH1 { font-size: 1.75rem; letter-spacing: -0.04em; }
+  .iconGrid[data-count="3"],
+  .iconGrid[data-count="4"],
+  .iconGrid[data-count="5"],
+  .iconGrid[data-count="6"] { grid-template-columns: 1fr; }
+  .flashScene { height: 180px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .flashCard { transition: none; }
+  .iconCard { transition: none; }
+  .progressFill { transition: none; }
+  .option { transition: none; }
+  .checkBox { transition: none; }
+}
+
+/* ═══════════════════════════════════════════════════
+   FONT SIZE SCALE — data.fontSize: sm | md (default) | lg | xl
+   Wraps the slide in .fsSm / .fsLg / .fsXl
+   ═══════════════════════════════════════════════════ */
+
+/* Wrapper must pass height through so .slide min-height: 100% resolves */
+.fsSm,
+.fsLg,
+.fsXl {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  width: 100%;
+  min-height: 0;
+}
+
+/* ── Small (0.8×) ─────────────────────────────────── */
+.fsSm .titleH1   { font-size: clamp(1.5rem, 3vw, 2.25rem); }
+.fsSm .heading    { font-size: clamp(1.15rem, 2vw, 1.5rem); }
+.fsSm .subtitle   { font-size: 1rem; }
+.fsSm .body       { font-size: 0.8125rem; }
+.fsSm .desc       { font-size: 0.8125rem; }
+.fsSm .bulletList li { font-size: 0.8125rem; }
+.fsSm .benefitItem  { font-size: 0.8125rem; }
+.fsSm .compColTitle { font-size: 0.8125rem; }
+.fsSm .compList li  { font-size: 0.8125rem; }
+.fsSm .stepTitle    { font-size: 0.875rem; }
+.fsSm .stepDesc     { font-size: 0.8125rem; }
+.fsSm .quizQuestion { font-size: 0.9375rem; }
+.fsSm .option       { font-size: 0.8125rem; }
+.fsSm .checkText    { font-size: 0.8125rem; }
+.fsSm .iconLabel    { font-size: 0.8125rem; }
+.fsSm .iconDesc     { font-size: 0.75rem; }
+.fsSm .flashFront p,
+.fsSm .flashBack p  { font-size: 0.875rem; }
+.fsSm .fillSentence { font-size: 0.9375rem; }
+.fsSm .infoBlock h3 { font-size: 0.75rem; }
+.fsSm .infoBlock p,
+.fsSm .infoBlock li { font-size: 0.8125rem; }
+.fsSm .chip         { font-size: 0.6875rem; }
+
+/* ── Large (1.2×) ─────────────────────────────────── */
+.fsLg .titleH1   { font-size: clamp(2.5rem, 5vw, 3.75rem); }
+.fsLg .heading    { font-size: clamp(1.875rem, 3.2vw, 2.5rem); }
+.fsLg .subtitle   { font-size: 1.5rem; }
+.fsLg .body       { font-size: 1.2rem; }
+.fsLg .desc       { font-size: 1.2rem; }
+.fsLg .bulletList li { font-size: 1.2rem; }
+.fsLg .benefitItem  { font-size: 1.2rem; }
+.fsLg .compColTitle { font-size: 1.125rem; }
+.fsLg .compList li  { font-size: 1.1rem; }
+.fsLg .stepTitle    { font-size: 1.25rem; }
+.fsLg .stepDesc     { font-size: 1.1rem; }
+.fsLg .quizQuestion { font-size: 1.375rem; }
+.fsLg .option       { font-size: 1.1rem; }
+.fsLg .checkText    { font-size: 1.1rem; }
+.fsLg .iconLabel    { font-size: 1.1rem; }
+.fsLg .iconDesc     { font-size: 1rem; }
+.fsLg .flashFront p,
+.fsLg .flashBack p  { font-size: 1.25rem; }
+.fsLg .fillSentence { font-size: 1.25rem; }
+.fsLg .infoBlock h3 { font-size: 1.1rem; }
+.fsLg .infoBlock p,
+.fsLg .infoBlock li { font-size: 1.1rem; }
+.fsLg .chip         { font-size: 1rem; }
+
+/* ── Extra Large (1.4×) ──────────────────────────── */
+.fsXl .titleH1   { font-size: clamp(3rem, 6vw, 4.25rem); }
+.fsXl .heading    { font-size: clamp(2.25rem, 3.8vw, 3rem); }
+.fsXl .subtitle   { font-size: 1.75rem; }
+.fsXl .body       { font-size: 1.4rem; }
+.fsXl .desc       { font-size: 1.4rem; }
+.fsXl .bulletList li { font-size: 1.4rem; }
+.fsXl .benefitItem  { font-size: 1.4rem; }
+.fsXl .compColTitle { font-size: 1.3rem; }
+.fsXl .compList li  { font-size: 1.3rem; }
+.fsXl .stepTitle    { font-size: 1.5rem; }
+.fsXl .stepDesc     { font-size: 1.3rem; }
+.fsXl .quizQuestion { font-size: 1.625rem; }
+.fsXl .option       { font-size: 1.3rem; }
+.fsXl .checkText    { font-size: 1.3rem; }
+.fsXl .iconLabel    { font-size: 1.3rem; }
+.fsXl .iconDesc     { font-size: 1.15rem; }
+.fsXl .flashFront p,
+.fsXl .flashBack p  { font-size: 1.5rem; }
+.fsXl .fillSentence { font-size: 1.5rem; }
+.fsXl .infoBlock h3 { font-size: 1.3rem; }
+.fsXl .infoBlock p,
+.fsXl .infoBlock li { font-size: 1.3rem; }
+.fsXl .chip         { font-size: 1.15rem; }

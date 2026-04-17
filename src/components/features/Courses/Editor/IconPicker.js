@@ -44,7 +44,7 @@ import styles from './IconPicker.module.css';
  * Agrupados por categoría para facilitar la búsqueda.
  * El campo `name` es el que se guarda en Firestore — DEBE coincidir con ICON_MAP de IconGridSlide.
  */
-const ICON_CATALOG = [
+export const ICON_CATALOG = [
     // ── Personas / Equipo ──
     { name: 'User', label: 'Persona', Icon: AiOutlineUser },
     { name: 'Team', label: 'Equipo', Icon: AiOutlineTeam },
@@ -273,6 +273,3 @@ export default function IconPicker({ value, onChange }) {
         </div>
     );
 }
-
-/** Exportar el catálogo para usarlo externamente (ej. en IconGridSlide) */
-export { ICON_CATALOG };

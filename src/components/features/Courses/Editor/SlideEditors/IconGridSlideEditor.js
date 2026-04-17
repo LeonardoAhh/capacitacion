@@ -107,6 +107,7 @@ export default function IconGridSlideEditor({ formData, handleChange, styles }) 
                                         handleChange('items', newItems);
                                     }}
                                     label="Imagen (reemplaza ícono)"
+                                    compact
                                 />
                             </div>
 

@@ -6,9 +6,9 @@
     --c-safe-line:    #4ade80;
     --c-amber-line:   #fbbf24;
     --c-danger-local: #f87171;
-    --c-surface-sim:  #1e2432;
-    --c-panel-sim:    #151924;
-    --c-text-dim:     rgba(255, 255, 255, 0.45);
+    --c-surface-sim:  var(--bg-secondary);
+    --c-panel-sim:    var(--bg-primary);
+    --c-text-dim:     var(--text-tertiary);
     --c-success:      #4ade80;
     --c-amber:        #fbbf24;
     --c-danger:       #f87171;
@@ -23,7 +23,7 @@
     gap: 1rem;
     padding: 1.5rem 2rem 1.75rem;
     background: var(--c-surface-sim);
-    color: #f1f5f9;
+    color: var(--text-primary);
     font-family: var(--font-body), 'Roboto', sans-serif;
     border-radius: 16px;
     overflow-y: auto;
@@ -49,7 +49,7 @@
     font-family: var(--font-serif), 'Montserrat', sans-serif;
     font-size: clamp(var(--course-font-lg, 1.1rem), 2.3vw, var(--course-font-2xl, 1.7rem));
     font-weight: 700;
-    color: #f8fafc;
+    color: var(--text-primary);
     margin: 0;
 }
 
@@ -84,7 +84,7 @@
 .statValue {
     font-size: var(--course-font-lg, 1.15rem);
     font-weight: 700;
-    color: #f1f5f9;
+    color: var(--text-primary);
 }
 
 .statusSafe  { color: var(--c-success) !important; }
@@ -163,15 +163,15 @@
 
 /* Recharts text override */
 .chartWrap text {
-    fill: rgba(255, 255, 255, 0.45) !important;
+    fill: var(--text-tertiary) !important;
     font-family: var(--font-body), 'Roboto', sans-serif !important;
     font-size: 11px !important;
 }
 
 /* ── Tooltip ── */
 .tooltip {
-    background: #0f172a;
-    border: 1px solid rgba(255, 255, 255, 0.12);
+    background: var(--bg-primary);
+    box-shadow: rgba(0,0,0,0.08) 0px 0px 0px 1px;
     border-radius: 8px;
     padding: 0.5rem 0.75rem;
 }
@@ -207,7 +207,7 @@
 .controlLabel {
     font-size: var(--course-font-xs, 0.75rem);
     font-weight: 600;
-    color: rgba(255, 255, 255, 0.55);
+    color: var(--text-secondary);
     white-space: normal;
     overflow-wrap: anywhere;
     word-break: break-word;
@@ -228,7 +228,7 @@
     appearance: none;
     height: 4px;
     width: 140px;
-    background: rgba(255, 255, 255, 0.15);
+    background: rgba(var(--border-color-rgb), 0.2);
     border-radius: 99px;
     outline: none;
     cursor: pointer;
@@ -253,35 +253,36 @@
 .sliderValue {
     font-size: var(--course-font-base, 0.9rem);
     font-weight: 700;
-    color: #f1f5f9;
+    color: var(--text-primary);
     min-width: 2.5rem;
     text-align: center;
-    background: rgba(255, 255, 255, 0.08);
+    background: var(--bg-secondary);
     border-radius: 6px;
     padding: 0.15rem 0.4rem;
 }
 
 /* ── Select ── */
 .select {
-    background: rgba(255, 255, 255, 0.07);
-    border: 1px solid rgba(255, 255, 255, 0.15);
+    background: var(--bg-secondary);
+    box-shadow: rgba(0,0,0,0.08) 0px 0px 0px 1px;
+    border: none;
     border-radius: 8px;
-    color: #f1f5f9;
+    color: var(--text-primary);
     font-family: var(--font-body), 'Roboto', sans-serif;
     font-size: var(--course-font-sm, 0.85rem);
     padding: 0.35rem 0.75rem;
     outline: none;
     cursor: pointer;
-    transition: border-color 0.15s;
+    transition: box-shadow 0.15s;
 }
 
 .select:focus {
-    border-color: var(--c-primary-sim);
+    box-shadow: rgba(0,0,0,0.08) 0px 0px 0px 1px, 0 0 0 2px var(--c-primary-sim);
 }
 
 .select option {
-    background: #1e2432;
-    color: #f1f5f9;
+    background: var(--bg-secondary);
+    color: var(--text-primary);
 }
 
 /* ── Responsive ── */

@@ -3,7 +3,7 @@ import { Upload, X, Image as ImageIcon, Loader2 } from 'lucide-react';
 import { uploadCourseAsset } from '@/lib/upload';
 import styles from '@/app/induccion/cursos/[id]/editar/editor.module.css';
 
-export default function ImageUploader({ currentImage, onImageChange, label = "Imagen" }) {
+export default function ImageUploader({ currentImage, onImageChange, label = "Imagen", compact = false }) {
     const fileInputRef = useRef(null);
     const [uploading, setUploading] = useState(false);
     const [error, setError] = useState(null);
@@ -55,7 +55,16 @@ export default function ImageUploader({ currentImage, onImageChange, label = "Im
             <label className={styles.label}>{label}</label>
 
             {currentImage ? (
-                <div className={styles.imagePreviewContainer} style={{
+                <div className={styles.imagePreviewContainer} style={compact ? {
+                    position: 'relative',
+                    width: '80px',
+                    height: '80px',
+                    borderRadius: '12px',
+                    overflow: 'hidden',
+                    border: '1px solid var(--border-color)',
+                    background: 'var(--bg-secondary)',
+                    flexShrink: 0,
+                } : {
                     position: 'relative',
                     width: '100%',
                     maxWidth: '300px',
@@ -68,11 +77,29 @@ export default function ImageUploader({ currentImage, onImageChange, label = "Im
                     <img
                         src={currentImage}
                         alt="Preview"
-                        style={{ width: '100%', height: 'auto', display: 'block' }}
+                        style={compact
+                            ? { width: '100%', height: '100%', objectFit: 'cover', display: 'block' }
+                            : { width: '100%', height: 'auto', display: 'block' }
+                        }
                     />
                     <button
                         onClick={handleRemove}
-                        style={{
+                        style={compact ? {
+                            position: 'absolute',
+                            top: '2px',
+                            right: '2px',
+                            background: 'rgba(0,0,0,0.65)',
+                            color: 'white',
+                            border: 'none',
+                            borderRadius: '50%',
+                            width: '20px',
+                            height: '20px',
+                            cursor: 'pointer',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            padding: 0,
+                        } : {
                             position: 'absolute',
                             top: '8px',
                             right: '8px',
@@ -89,7 +116,7 @@ export default function ImageUploader({ currentImage, onImageChange, label = "Im
                         }}
                         title="Eliminar imagen"
                     >
-                        <X size={14} />
+                        <X size={compact ? 10 : 14} />
                     </button>
                 </div>
             ) : (

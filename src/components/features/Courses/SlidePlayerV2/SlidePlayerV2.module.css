@@ -1,0 +1,566 @@
+/* ═══════════════════════════════════════════════════
+   SlidePlayerV2  —  shadcn/ui-inspired design
+   Uses project design tokens + courses.css tokens
+   ═══════════════════════════════════════════════════ */
+
+/* ── Root (fullscreen shell) ─────────────────────── */
+.root {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  font-family: var(--font-body);
+  overflow: hidden;
+}
+
+/* ══════════════════════════════════════════════════
+   HEADER  — shadcn top bar
+   ══════════════════════════════════════════════════ */
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 48px;
+  min-height: 48px;
+  padding: 0 12px;
+  background: var(--bg-primary);
+  border-bottom: 1px solid var(--border-color);
+  gap: 8px;
+  z-index: 10;
+}
+
+.headerLeft {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+  flex: 1;
+}
+
+.headerCenter {
+  flex-shrink: 0;
+}
+
+.headerRight {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 4px;
+  flex: 1;
+}
+
+.titleGroup {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+
+.courseTitle {
+  font-family: var(--font-serif);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin: 0;
+  letter-spacing: -0.01em;
+}
+
+/* shadcn badge */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11px;
+  font-weight: 500;
+  padding: 1px 8px;
+  border-radius: var(--radius-full);
+  border: 1px solid var(--border-color);
+  background: var(--bg-secondary);
+  color: var(--text-secondary);
+  white-space: nowrap;
+  line-height: 1.6;
+}
+
+.slideCounter {
+  font-size: var(--text-sm);
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+  color: var(--text-primary);
+}
+
+.counterSep {
+  color: var(--text-tertiary);
+  margin: 0 2px;
+}
+
+/* ── shadcn ghost icon button ────────────────────── */
+.iconBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border: none;
+  border-radius: var(--radius-md);
+  background: transparent;
+  color: var(--text-primary);
+  cursor: pointer;
+  transition: background 150ms ease, color 150ms ease;
+  flex-shrink: 0;
+}
+.iconBtn:hover {
+  background: var(--bg-secondary);
+}
+.iconBtn:active {
+  background: rgba(0,0,0,0.06);
+}
+
+/* ── Theme toggle ────────────────────────────────── */
+.themeToggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border: 0;
+  border-radius: var(--radius-md, 6px);
+  background: transparent;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: background 150ms ease, color 150ms ease;
+  flex-shrink: 0;
+  box-shadow: 0 0 0 1px var(--card-border, rgba(0,0,0,0.08));
+}
+.themeToggle:hover {
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+}
+.themeToggle:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 2px var(--bg-primary), 0 0 0 4px hsla(212, 100%, 48%, 1);
+}
+
+/* ── Close button (text with border + shadow) ────── */
+.closeBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 32px;
+  padding: 0 14px;
+  font-family: var(--font-body);
+  font-size: var(--text-sm, 0.8125rem);
+  font-weight: 500;
+  color: var(--text-primary);
+  background: var(--bg-primary, #fff);
+  border: 1px solid var(--border-color, #e0e0e8);
+  border-radius: var(--radius-md, 6px);
+  box-shadow: 0 1px 2px rgba(0,0,0,0.06), 0 1px 3px rgba(0,0,0,0.08);
+  cursor: pointer;
+  transition: background 150ms ease, box-shadow 150ms ease, border-color 150ms ease;
+  flex-shrink: 0;
+}
+.closeBtn:hover {
+  background: var(--bg-secondary, #f5f5f5);
+  border-color: var(--text-tertiary, #999);
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1), 0 2px 6px rgba(0,0,0,0.08);
+}
+.closeBtn:active {
+  background: rgba(0,0,0,0.04);
+  box-shadow: 0 0 0 rgba(0,0,0,0);
+}
+
+/* ══════════════════════════════════════════════════
+   PROGRESS BAR
+   ══════════════════════════════════════════════════ */
+.progressTrack {
+  height: 2px;
+  background: var(--bg-secondary);
+  flex-shrink: 0;
+}
+.progressBar {
+  height: 100%;
+  background: var(--color-primary);
+  border-radius: 0 1px 1px 0;
+  transition: width 300ms var(--ease-spring);
+  will-change: width;
+}
+
+/* ══════════════════════════════════════════════════
+   BODY (sidebar + main)
+   ══════════════════════════════════════════════════ */
+.body {
+  display: flex;
+  flex: 1;
+  min-height: 0;
+  position: relative;
+}
+
+/* ── OVERLAY (mobile) ────────────────────────────── */
+.overlay {
+  display: none;
+}
+
+/* ══════════════════════════════════════════════════
+   SIDEBAR  — shadcn command-list style
+   ══════════════════════════════════════════════════ */
+.sidebar {
+  width: 260px;
+  min-width: 260px;
+  display: flex;
+  flex-direction: column;
+  background: var(--bg-primary);
+  border-right: 1px solid var(--border-color);
+  overflow: hidden;
+  transition: transform 300ms var(--ease-spring), opacity 200ms ease;
+  z-index: 20;
+}
+
+.sidebarHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.sidebarTitle {
+  font-size: var(--text-sm);
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.sidebarCloseBtn {
+  display: none !important; /* visible only on mobile via media query */
+}
+
+/* ── SLIDE LIST ──────────────────────────────────── */
+.slideList {
+  flex: 1;
+  overflow-y: auto;
+  padding: 6px;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.slideItem {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  padding: 6px 8px;
+  border: none;
+  border-radius: var(--radius-md);
+  background: transparent;
+  color: var(--text-primary);
+  cursor: pointer;
+  text-align: left;
+  transition: background 120ms ease;
+  position: relative;
+}
+.slideItem:hover {
+  background: var(--bg-secondary);
+}
+
+.slideItemActive {
+  background: var(--bg-secondary);
+}
+.slideItemActive::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 6px;
+  bottom: 6px;
+  width: 3px;
+  border-radius: 0 2px 2px 0;
+  background: var(--color-primary);
+}
+
+.slideItemVisited {
+  opacity: 0.8;
+}
+
+.slideItemNum {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border-radius: var(--radius-full);
+  font-size: 11px;
+  font-weight: 600;
+  flex-shrink: 0;
+  border: 1px solid var(--border-color);
+  background: var(--bg-primary);
+  color: var(--text-secondary);
+}
+.slideItemActive .slideItemNum {
+  background: var(--color-primary);
+  border-color: var(--color-primary);
+  color: #fff;
+}
+
+.slideItemInfo {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  flex: 1;
+}
+.slideItemTitle {
+  font-size: 12.5px;
+  font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-height: 1.3;
+}
+.slideItemMeta {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  font-size: 11px;
+  color: var(--text-tertiary);
+  line-height: 1.3;
+}
+.slideItemBadge {
+  font-size: 10px;
+}
+
+/* ══════════════════════════════════════════════════
+   MAIN CONTENT
+   ══════════════════════════════════════════════════ */
+.main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  background: var(--course-content-bg, var(--bg-secondary));
+}
+
+.slideArea {
+  flex: 1;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding: var(--spacing-lg);
+  overflow-y: auto;
+  scroll-behavior: smooth;
+}
+
+/* Full-bleed mode (title slides) — no padding, fill entire area */
+.slideAreaFullbleed {
+  padding: 0;
+  align-items: stretch;
+}
+
+.slideFullbleed {
+  width: 100%;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+
+/* SlideRendererV2 handles its own layout — no overrides needed */
+
+
+
+.emptyMsg {
+  color: var(--text-tertiary);
+  font-size: var(--text-base);
+}
+
+/* ══════════════════════════════════════════════════
+   BOTTOM NAV BAR
+   ══════════════════════════════════════════════════ */
+.navBar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 12px;
+  border-top: 1px solid var(--border-color);
+  background: var(--bg-primary);
+  gap: 8px;
+}
+
+/* shadcn button base */
+.navBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 34px;
+  padding: 0 14px;
+  border-radius: var(--radius-md);
+  font-size: var(--text-sm);
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 150ms ease, border-color 150ms ease, opacity 150ms ease;
+  user-select: none;
+  white-space: nowrap;
+}
+.navBtn:disabled {
+  opacity: 0.4;
+  cursor: default;
+  pointer-events: none;
+}
+
+/* Outline variant */
+.navBtnOutline {
+  border: 1px solid var(--border-color);
+  background: var(--bg-primary);
+  color: var(--text-primary);
+}
+.navBtnOutline:hover:not(:disabled) {
+  background: var(--bg-secondary);
+  border-color: rgba(0,0,0,0.12);
+}
+
+/* Primary variant */
+.navBtnPrimary {
+  border: 1px solid var(--color-primary);
+  background: var(--color-primary);
+  color: #fff;
+}
+.navBtnPrimary:hover:not(:disabled) {
+  opacity: 0.9;
+}
+
+.navLabel {
+  pointer-events: none;
+}
+
+/* ── Dot navigation ──────────────────────────────── */
+.dotsRow {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  overflow: hidden;
+}
+
+.dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  background: var(--border-color);
+  transition: background 150ms ease, transform 150ms ease;
+  flex-shrink: 0;
+}
+.dot:hover {
+  transform: scale(1.3);
+}
+.dotActive {
+  background: var(--color-primary);
+  transform: scale(1.2);
+}
+.dotVisited {
+  background: rgba(var(--color-primary-rgb), 0.35);
+}
+
+/* ══════════════════════════════════════════════════
+   RESPONSIVE  —  ≤ 768px
+   ══════════════════════════════════════════════════ */
+@media (max-width: 768px) {
+  /* Sidebar → off-canvas drawer */
+  .sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    width: 280px;
+    min-width: 0;
+    transform: translateX(-100%);
+    opacity: 0;
+    box-shadow: none;
+    z-index: 1100;
+    background: var(--bg-primary);
+  }
+  .sidebarOpen {
+    transform: translateX(0);
+    opacity: 1;
+    box-shadow: var(--shadow-lg);
+  }
+  .sidebarCloseBtn {
+    display: flex !important;
+  }
+
+  .overlay {
+    display: block;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.4);
+    z-index: 1099;
+    animation: fadeIn 180ms ease-out;
+  }
+
+  .courseTitle { font-size: 12px; max-width: 150px; }
+  .badge { display: none; }
+  .navLabel { display: none; }
+  .navBtn { padding: 0 10px; }
+  .slideArea { padding: var(--spacing-sm); }
+  .slideFrame { border-radius: var(--radius-md); }
+  .dotsRow { display: none; }
+}
+
+/* ══════════════════════════════════════════════════
+   RESPONSIVE  —  ≤ 480px
+   ══════════════════════════════════════════════════ */
+@media (max-width: 480px) {
+  .header { height: 44px; min-height: 44px; padding: 0 8px; }
+  .sidebar { width: 85vw; }
+  .courseTitle { max-width: 110px; }
+  .slideArea { padding: 6px; }
+}
+
+/* ── Desktop: hide hamburger ─────────────────────── */
+@media (min-width: 769px) {
+  .mobileOnly { display: none; }
+
+  /* Collapsed sidebar on desktop */
+  .sidebarCollapsed {
+    width: 0;
+    min-width: 0;
+    overflow: hidden;
+    border-right: none;
+    opacity: 0;
+  }
+}
+
+/* ── Keyframes ───────────────────────────────────── */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+
+/* ── Screen-reader only ──────────────────────────── */
+.srOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* ── Reduced motion ──────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  .sidebar,
+  .progressBar,
+  .overlay,
+  .slideAnimDown,
+  .slideAnimUp {
+    transition: none;
+    animation: none;
+  }
+}

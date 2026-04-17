@@ -1,11 +1,11 @@
-/* ================================================================
-   KanbanCoursesView.module.css  shadcn/ui zinc
+﻿/* ================================================================
+   KanbanCoursesView.module.css — Vercel / Geist design system
    ================================================================ */
 
 .wrapper {
     display: flex;
     flex-direction: column;
-    gap: 16px;
+    gap: 24px;
     width: 100%;
 }
 
@@ -24,38 +24,42 @@
     display: flex;
     align-items: center;
     flex: 1;
-    min-width: 180px;
-    max-width: 340px;
+    min-width: 200px;
+    max-width: 380px;
 }
 
 .searchIcon {
     position: absolute;
     left: 10px;
-    color: #a1a1aa;
+    color: #808080;
     pointer-events: none;
     flex-shrink: 0;
+    top: 50%;
+    transform: translateY(-50%);
 }
 
 .searchInput {
     width: 100%;
     height: 36px;
     padding: 0 32px 0 34px;
-    border: 1px solid #e4e4e7;
+    background: var(--bg-primary, #ffffff);
+    box-shadow: rgba(0, 0, 0, 0.08) 0px 0px 0px 1px;
+    border: none;
     border-radius: 6px;
-    background: #fff;
-    color: #18181b;
-    font-size: 0.875rem;
+    font-size: 13px;
+    color: var(--text-primary, #171717);
     font-family: var(--font-body, 'Roboto'), sans-serif;
     outline: none;
-    transition: border-color 0.15s, box-shadow 0.15s;
+    transition: box-shadow 0.15s;
 }
 
 .searchInput:focus {
-    border-color: #a1a1aa;
-    box-shadow: 0 0 0 3px rgba(24,24,27,0.06);
+    box-shadow:
+        rgba(0, 0, 0, 0.12) 0px 0px 0px 1px,
+        0 0 0 3px rgba(0, 114, 245, 0.12);
 }
 
-.searchInput::placeholder { color: #a1a1aa; }
+.searchInput::placeholder { color: #808080; }
 
 .searchClear {
     position: absolute;
@@ -63,8 +67,8 @@
     width: 20px;
     height: 20px;
     border-radius: 50%;
-    background: #e4e4e7;
-    color: #71717a;
+    background: #ebebeb;
+    color: #4d4d4d;
     border: none;
     display: flex;
     align-items: center;
@@ -74,9 +78,8 @@
     padding: 0;
 }
 
-.searchClear:hover { background: #d4d4d8; color: #18181b; }
+.searchClear:hover { background: #d4d4d4; }
 
-/* -- Botn opciones -- */
 .menuContainer {
     position: relative;
     display: inline-flex;
@@ -89,61 +92,77 @@
     gap: 6px;
     height: 36px;
     padding: 0 12px;
-    background: #fff;
-    border: 1px solid #e4e4e7;
+    background: var(--bg-primary, #ffffff);
+    box-shadow: rgba(0, 0, 0, 0.08) 0px 0px 0px 1px;
+    border: none;
     border-radius: 6px;
-    font-size: 0.875rem;
+    font-size: 13px;
     font-weight: 500;
     font-family: var(--font-body, 'Roboto'), sans-serif;
-    color: #3f3f46;
+    color: var(--text-primary, #171717);
     cursor: pointer;
-    transition: background 0.12s, border-color 0.12s;
+    transition: background 0.12s, box-shadow 0.12s;
     white-space: nowrap;
 }
 
-.optionsBtn:hover { background: #f4f4f5; }
-.optionsBtnActive { background: #f4f4f5; border-color: #d4d4d8; color: #18181b; }
-.optionsBtn:focus-visible { outline: 2px solid #18181b; outline-offset: 2px; }
+.optionsBtn:hover { background: #f5f5f5; }
+
+.optionsBtnActive {
+    background: #f5f5f5;
+    box-shadow: rgba(0, 0, 0, 0.12) 0px 0px 0px 1px;
+}
+
+.optionsBtn:focus-visible {
+    outline: 2px solid hsla(212, 100%, 48%, 1);
+    outline-offset: 2px;
+}
+
 .chevronUp { transform: rotate(180deg); transition: transform 0.18s; }
 
-/* -- FAB nuevo -- */
 .fab {
     display: inline-flex;
     align-items: center;
     gap: 6px;
     height: 36px;
     padding: 0 14px;
-    background: #18181b;
-    color: #fff;
+    background: #171717;
+    color: #ffffff;
     border: none;
     border-radius: 6px;
-    font-size: 0.875rem;
+    font-size: 13px;
     font-weight: 500;
     font-family: var(--font-body, 'Roboto'), sans-serif;
     cursor: pointer;
-    transition: background 0.12s;
+    transition: background 0.15s;
     white-space: nowrap;
     flex-shrink: 0;
 }
 
-.fab:hover:not(:disabled) { background: #27272a; }
-.fab:disabled { background: #e4e4e7; color: #a1a1aa; cursor: not-allowed; }
-.fab:focus-visible { outline: 2px solid #18181b; outline-offset: 2px; }
-.fabLabel { font-size: 0.875rem; }
+.fab:hover:not(:disabled) { background: #2d2d2d; }
+.fab:disabled { background: #ebebeb; color: #808080; cursor: not-allowed; }
+
+.fab:focus-visible {
+    outline: 2px solid hsla(212, 100%, 48%, 1);
+    outline-offset: 2px;
+}
+
+.fabLabel { font-size: 13px; }
 
 /* ================================================================
-   DROPDOWN MEN (toolbar)
+   DROPDOWN MENÚ
    ================================================================ */
 .menuDropdown {
     position: absolute;
     top: calc(100% + 6px);
     right: 0;
-    min-width: 200px;
+    min-width: 210px;
     max-width: calc(100vw - 24px);
-    background: #fff;
-    border: 1px solid #e4e4e7;
+    background: var(--bg-primary, #ffffff);
+    box-shadow:
+        rgba(0, 0, 0, 0.08) 0px 0px 0px 1px,
+        rgba(0, 0, 0, 0.06) 0px 4px 16px,
+        rgba(0, 0, 0, 0.04) 0px 1px 4px;
     border-radius: 8px;
-    box-shadow: 0 4px 16px rgba(0,0,0,0.10), 0 1px 4px rgba(0,0,0,0.06);
     padding: 6px;
     display: flex;
     flex-direction: column;
@@ -151,21 +170,18 @@
     z-index: 200;
 }
 
-.menuDropdownLeft {
-    right: auto;
-    left: 0;
-    min-width: 230px;
-}
+.menuDropdownLeft { right: auto; left: 0; min-width: 240px; }
 
-/* Dropdown de tarjeta (position:fixed) */
 .fixedDropdown {
     position: fixed;
-    min-width: 200px;
+    min-width: 210px;
     max-width: calc(100vw - 24px);
-    background: #fff;
-    border: 1px solid #e4e4e7;
+    background: var(--bg-primary, #ffffff);
+    box-shadow:
+        rgba(0, 0, 0, 0.08) 0px 0px 0px 1px,
+        rgba(0, 0, 0, 0.08) 0px 8px 24px,
+        rgba(0, 0, 0, 0.04) 0px 2px 6px;
     border-radius: 8px;
-    box-shadow: 0 4px 16px rgba(0,0,0,0.12), 0 1px 4px rgba(0,0,0,0.06);
     padding: 6px;
     display: flex;
     flex-direction: column;
@@ -181,8 +197,8 @@
     border-radius: 5px;
     background: transparent;
     border: none;
-    color: #18181b;
-    font-size: 0.8125rem;
+    color: var(--text-primary, #171717);
+    font-size: 13px;
     font-weight: 400;
     font-family: var(--font-body, 'Roboto'), sans-serif;
     cursor: pointer;
@@ -192,14 +208,13 @@
     transition: background 0.1s;
 }
 
-.menuItem:hover { background: #f4f4f5; }
+.menuItem:hover { background: #f5f5f5; }
 .menuItem:disabled { opacity: 0.45; cursor: not-allowed; }
-.menuItemIcon { color: #71717a; flex-shrink: 0; }
+.menuItemIcon { color: #808080; flex-shrink: 0; }
 .menuItemDanger { color: #ef4444; }
 .menuItemDanger .menuItemIcon { color: #ef4444; }
 .menuItemDanger:hover { background: #fef2f2 !important; }
-
-.menuDivider { height: 1px; background: #f4f4f5; margin: 4px 2px; }
+.menuDivider { height: 1px; background: #ebebeb; margin: 4px 2px; }
 
 .menuSection {
     display: flex;
@@ -209,36 +224,37 @@
 }
 
 .menuSectionLabel {
-    font-size: 0.6875rem;
+    font-size: 10px;
     font-weight: 600;
-    color: #a1a1aa;
+    color: #808080;
     text-transform: uppercase;
-    letter-spacing: 0.06em;
+    letter-spacing: 0.07em;
     margin-bottom: 4px;
     display: block;
+    font-family: var(--font-mono, 'Roboto Mono'), monospace;
 }
 
 .menuCheckLabel {
     display: flex;
     align-items: center;
     gap: 8px;
-    font-size: 0.8125rem;
-    color: #3f3f46;
+    font-size: 13px;
+    color: #4d4d4d;
     cursor: pointer;
     padding: 3px 0;
+    font-family: var(--font-body, 'Roboto'), sans-serif;
 }
 
-.menuCheckLabel:hover { color: #18181b; }
-.menuCheckbox { accent-color: #18181b; width: 14px; height: 14px; cursor: pointer; margin: 0; }
+.menuCheckLabel:hover { color: #171717; }
+.menuCheckbox { accent-color: #171717; width: 14px; height: 14px; cursor: pointer; margin: 0; }
 
-/* -- Toggle men de tarjeta -- */
 .menuToggle {
     width: 28px;
     height: 28px;
     border-radius: 5px;
     background: transparent;
     border: none;
-    color: #a1a1aa;
+    color: #808080;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -248,17 +264,20 @@
 }
 
 .menuToggle:hover,
-.menuToggleActive { background: #f4f4f5; color: #3f3f46; }
+.menuToggleActive { background: #f5f5f5; color: #4d4d4d; }
 
-.menuToggle:focus-visible { outline: 2px solid #18181b; outline-offset: 2px; }
+.menuToggle:focus-visible {
+    outline: 2px solid hsla(212, 100%, 48%, 1);
+    outline-offset: 2px;
+}
 
 /* ================================================================
-   TAB BAR  solo mvil
+   TAB BAR — solo móvil
    ================================================================ */
 .tabBar {
     display: none;
-    background: #fff;
-    border: 1px solid #e4e4e7;
+    background: var(--bg-primary, #ffffff);
+    box-shadow: rgba(0, 0, 0, 0.08) 0px 0px 0px 1px;
     border-radius: 8px;
     padding: 4px;
     gap: 4px;
@@ -272,10 +291,10 @@
     gap: 6px;
     padding: 8px 12px;
     border: none;
-    border-radius: 6px;
+    border-radius: 5px;
     background: transparent;
-    color: #71717a;
-    font-size: 0.8125rem;
+    color: #4d4d4d;
+    font-size: 13px;
     font-weight: 500;
     font-family: var(--font-body, 'Roboto'), sans-serif;
     cursor: pointer;
@@ -283,103 +302,232 @@
     white-space: nowrap;
 }
 
-.tabItemActive {
-    background: #18181b;
-    color: #fff;
-}
+.tabItemActive { background: #171717; color: #ffffff; }
 
 .tabBadge {
-    font-size: 0.6875rem;
+    font-size: 11px;
     font-weight: 600;
-    background: rgba(255,255,255,0.2);
-    padding: 1px 6px;
-    border-radius: 20px;
+    background: rgba(255, 255, 255, 0.2);
+    padding: 1px 7px;
+    border-radius: 9999px;
 }
 
 .tabItem:not(.tabItemActive) .tabBadge {
-    background: #e4e4e7;
-    color: #71717a;
+    background: #ebebeb;
+    color: #4d4d4d;
 }
 
 /* ================================================================
-   TABLERO KANBAN
+   PANEL DE EDICIÓN INLINE
    ================================================================ */
-.kanbanBoard {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 16px;
-    align-items: start;
-}
-
-.kanbanColumnWrapper { min-width: 0; }
-
-.kanbanColumn {
-    background: #fafafa;
-    border: 1px solid #e4e4e7;
+.editPanel {
+    background: var(--bg-primary, #ffffff);
+    box-shadow:
+        rgba(0, 0, 0, 0.08) 0px 0px 0px 1px,
+        rgba(0, 0, 0, 0.04) 0px 2px 8px;
     border-radius: 8px;
-    display: flex;
-    flex-direction: column;
-    overflow: hidden;
+    padding: 20px 24px;
 }
 
-/* -- Header de columna -- */
-.columnHeader {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 12px 16px;
-    border-bottom: 1px solid #e4e4e7;
-    background: #fff;
-}
-
-.columnHeaderLeft {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    color: #18181b;
-}
-
-.columnTitle {
-    font-size: 0.8125rem;
+.editPanelTitle {
+    font-size: 14px;
     font-weight: 600;
+    color: var(--text-primary, #171717);
+    margin: 0 0 16px;
+    font-family: var(--font-body, 'Roboto'), sans-serif;
+    letter-spacing: -0.2px;
+}
+
+.editPanelTitle em { font-style: normal; color: #808080; font-weight: 400; }
+
+.editForm { display: flex; flex-direction: column; gap: 14px; }
+.editField { display: flex; flex-direction: column; gap: 6px; }
+
+.editLabel {
+    font-size: 12px;
+    font-weight: 500;
+    color: #4d4d4d;
     font-family: var(--font-body, 'Roboto'), sans-serif;
 }
 
-.columnBadge {
-    font-size: 0.6875rem;
-    font-weight: 600;
-    padding: 1px 8px;
-    border-radius: 20px;
-    background: #e4e4e7;
-    color: #71717a;
+.editInput {
+    height: 36px;
+    padding: 0 10px;
+    background: var(--bg-primary, #ffffff);
+    box-shadow: rgba(0, 0, 0, 0.08) 0px 0px 0px 1px;
+    border: none;
+    border-radius: 6px;
+    font-size: 13px;
+    color: var(--text-primary, #171717);
+    font-family: var(--font-body, 'Roboto'), sans-serif;
+    outline: none;
+    transition: box-shadow 0.15s;
 }
 
-/* -- Cuerpo de columna -- */
-.columnBody {
+.editInput:focus {
+    box-shadow:
+        rgba(0, 0, 0, 0.12) 0px 0px 0px 1px,
+        0 0 0 3px rgba(0, 114, 245, 0.12);
+}
+
+.radioGroup { display: flex; flex-wrap: wrap; gap: 12px; }
+
+.radioLabel {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    font-size: 13px;
+    color: #4d4d4d;
+    cursor: pointer;
+    font-family: var(--font-body, 'Roboto'), sans-serif;
+}
+
+.radioLabel input { accent-color: #171717; cursor: pointer; }
+
+.puestosGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 4px 12px;
+    max-height: 180px;
+    overflow-y: auto;
+    padding: 10px;
+    background: #fafafa;
+    box-shadow: rgba(0, 0, 0, 0.06) 0px 0px 0px 1px;
+    border-radius: 6px;
+}
+
+.puestoLabel {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    font-size: 12px;
+    color: #4d4d4d;
+    cursor: pointer;
+    padding: 3px 0;
+    font-family: var(--font-body, 'Roboto'), sans-serif;
+}
+
+.editActions { display: flex; gap: 8px; padding-top: 4px; }
+
+.editSaveBtn {
+    height: 36px;
+    padding: 0 16px;
+    background: #171717;
+    color: #ffffff;
+    border: none;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 500;
+    font-family: var(--font-body, 'Roboto'), sans-serif;
+    cursor: pointer;
+    transition: background 0.12s;
+}
+
+.editSaveBtn:hover:not(:disabled) { background: #2d2d2d; }
+.editSaveBtn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+.editCancelBtn {
+    height: 36px;
+    padding: 0 14px;
+    background: var(--bg-primary, #ffffff);
+    box-shadow: rgba(0, 0, 0, 0.08) 0px 0px 0px 1px;
+    border: none;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text-primary, #171717);
+    cursor: pointer;
+    font-family: var(--font-body, 'Roboto'), sans-serif;
+    transition: background 0.12s;
+}
+
+.editCancelBtn:hover { background: #f5f5f5; }
+
+/* ================================================================
+   SECCIONES DE CURSOS
+   ================================================================ */
+.sections { display: flex; flex-direction: column; gap: 32px; }
+
+.section { display: flex; flex-direction: column; gap: 14px; }
+
+.sectionHeader {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid #ebebeb;
+}
+
+.sectionHeaderIcon { color: #808080; flex-shrink: 0; }
+
+.sectionTitle {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-primary, #171717);
+    letter-spacing: -0.2px;
+    margin: 0;
+    font-family: var(--font-body, 'Roboto'), sans-serif;
+}
+
+.sectionBadge {
+    font-size: 11px;
+    font-weight: 600;
+    padding: 2px 8px;
+    border-radius: 9999px;
+    background: #ebebeb;
+    color: #4d4d4d;
+    font-family: var(--font-mono, 'Roboto Mono'), monospace;
+}
+
+.sectionBadgePublished { background: #dcfce7; color: #15803d; }
+
+/* ── Grid de cursos ── */
+.grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+}
+
+/* ── Empty state ── */
+.emptyState {
+    grid-column: 1 / -1;
     display: flex;
     flex-direction: column;
-    gap: 8px;
-    padding: 12px;
-}
-
-.emptyState {
+    align-items: center;
+    justify-content: center;
+    padding: 48px 24px;
     text-align: center;
-    padding: 32px 16px;
-    color: #a1a1aa;
 }
 
-.emptyState p { font-size: 0.8125rem; margin: 0; }
+.emptyStateIcon {
+    width: 40px;
+    height: 40px;
+    border-radius: 8px;
+    background: #f5f5f5;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 12px;
+    color: #808080;
+}
 
-/* -- Skeleton -- */
+.emptyStateText {
+    font-size: 13px;
+    color: #808080;
+    margin: 0;
+    font-family: var(--font-body, 'Roboto'), sans-serif;
+}
+
+/* ── Skeleton ── */
 @keyframes shimmer {
     0% { background-position: -600px 0; }
     100% { background-position: 600px 0; }
 }
 
 .skeletonCard {
-    height: 108px;
+    height: 140px;
     border-radius: 8px;
-    background: linear-gradient(90deg, #f4f4f5 25%, #e4e4e7 50%, #f4f4f5 75%);
+    background: linear-gradient(90deg, #f5f5f5 25%, #ebebeb 50%, #f5f5f5 75%);
     background-size: 1200px 100%;
     animation: shimmer 1.6s infinite linear;
 }
@@ -388,34 +536,40 @@
    CARDS DE CURSO
    ================================================================ */
 .kCard {
-    background: #fff;
-    border: 1px solid #e4e4e7;
+    background: var(--bg-primary, #ffffff);
+    box-shadow:
+        rgba(0, 0, 0, 0.08) 0px 0px 0px 1px,
+        rgba(0, 0, 0, 0.04) 0px 2px 2px,
+        #fafafa 0px 0px 0px 1px;
     border-radius: 8px;
     display: flex;
     flex-direction: column;
-    transition: border-color 0.15s, box-shadow 0.15s;
-    position: relative;
-    cursor: default;
     overflow: hidden;
+    transition: box-shadow 0.2s, transform 0.2s;
+    position: relative;
 }
 
 .kCard:hover {
-    border-color: #d4d4d8;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    box-shadow:
+        rgba(0, 0, 0, 0.12) 0px 0px 0px 1px,
+        rgba(0, 0, 0, 0.07) 0px 6px 16px,
+        #fafafa 0px 0px 0px 1px;
+    transform: translateY(-1px);
 }
 
-/* Barra de color superior */
 .kCardAccent {
-    height: 4px;
+    height: 3px;
     width: 100%;
     flex-shrink: 0;
+    background: #171717;
 }
 
 .kCardBody {
-    padding: 12px 14px;
+    padding: 14px 16px;
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: 10px;
+    flex: 1;
 }
 
 .kCardTop {
@@ -428,11 +582,12 @@
 .kCardTitleArea { flex: 1; min-width: 0; }
 
 .kCardTitle {
-    font-size: 0.875rem;
+    font-size: 14px;
     font-weight: 600;
-    color: #18181b;
+    color: var(--text-primary, #171717);
     margin: 0;
-    line-height: 1.35;
+    line-height: 1.4;
+    letter-spacing: -0.3px;
     font-family: var(--font-body, 'Roboto'), sans-serif;
     display: -webkit-box;
     -webkit-line-clamp: 2;
@@ -442,24 +597,27 @@
 }
 
 .renameInput {
-    font-size: 0.875rem;
+    font-size: 14px;
     font-weight: 500;
-    color: #18181b;
-    background: #fff;
-    border: 1px solid #18181b;
-    border-radius: 5px;
-    padding: 3px 8px;
+    color: var(--text-primary, #171717);
+    background: var(--bg-primary, #ffffff);
+    box-shadow:
+        rgba(0, 0, 0, 0.12) 0px 0px 0px 1px,
+        0 0 0 3px rgba(0, 114, 245, 0.12);
+    border: none;
+    border-radius: 4px;
+    padding: 2px 8px;
     width: 100%;
     outline: none;
-    box-shadow: 0 0 0 3px rgba(24,24,27,0.08);
     font-family: var(--font-body, 'Roboto'), sans-serif;
 }
 
 .kCardPuestos {
-    font-size: 0.6875rem;
-    color: #a1a1aa;
+    font-size: 11px;
+    color: #808080;
     margin: 0;
-    line-height: 1.4;
+    line-height: 1.5;
+    font-family: var(--font-body, 'Roboto'), sans-serif;
     display: -webkit-box;
     -webkit-line-clamp: 2;
     line-clamp: 2;
@@ -467,19 +625,21 @@
     overflow: hidden;
 }
 
-.kCardPuestosWarn { color: #ef4444; font-weight: 500; }
+.kCardPuestosWarn { color: #f59e0b; }
 
 .kCardViewBadge {
     display: inline-flex;
     align-items: center;
     gap: 4px;
-    font-size: 0.6875rem;
+    font-size: 10px;
     font-weight: 500;
     padding: 2px 8px;
-    border-radius: 20px;
-    background: #f4f4f5;
-    color: #71717a;
-    border: 1px solid #e4e4e7;
+    border-radius: 9999px;
+    background: #f0f0f0;
+    color: #4d4d4d;
+    font-family: var(--font-mono, 'Roboto Mono'), monospace;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
     width: fit-content;
 }
 
@@ -489,232 +649,78 @@
     justify-content: space-between;
     gap: 8px;
     padding-top: 8px;
-    border-top: 1px solid #f4f4f5;
-    margin-top: 2px;
+    border-top: 1px solid #f0f0f0;
+    margin-top: auto;
 }
 
-/* -- Status chip -- */
+/* ── Status chip ── */
 .statusChip {
     display: inline-flex;
     align-items: center;
     gap: 5px;
-    font-size: 0.6875rem;
-    font-weight: 600;
-    padding: 3px 10px;
-    border-radius: 20px;
+    height: 22px;
+    padding: 0 10px;
+    border-radius: 9999px;
+    border: none;
+    font-size: 11px;
+    font-weight: 500;
+    font-family: var(--font-body, 'Roboto'), sans-serif;
     cursor: pointer;
-    transition: all 0.15s;
-    border: 1px solid transparent;
+    transition: opacity 0.12s, transform 0.1s;
     white-space: nowrap;
 }
 
-.chipPublished {
-    background: #dcfce7;
-    color: #16a34a;
-    border-color: #bbf7d0;
-}
-
-.chipPublished:hover:not(:disabled) { background: #bbf7d0; }
-
-.chipDraft {
-    background: #f4f4f5;
-    color: #71717a;
-    border-color: #e4e4e7;
-}
-
-.chipDraft:hover:not(:disabled) { background: #e4e4e7; color: #3f3f46; }
-
+.statusChip:hover { opacity: 0.78; transform: scale(0.97); }
 .statusChip:disabled { opacity: 0.5; cursor: not-allowed; }
-.statusChip:focus-visible { outline: 2px solid #18181b; outline-offset: 2px; }
+.statusChip:focus-visible { outline: 2px solid hsla(212, 100%, 48%, 1); outline-offset: 2px; }
 
-/* -- Botn play -- */
+.chipPublished { background: #dcfce7; color: #15803d; }
+.chipDraft { background: #f5f5f5; color: #4d4d4d; }
+
+/* ── Botón reproducir ── */
 .playBtn {
     display: inline-flex;
     align-items: center;
     gap: 5px;
-    font-size: 0.6875rem;
-    font-weight: 600;
-    padding: 3px 10px;
-    border-radius: 20px;
-    background: #f4f4f5;
-    color: #3f3f46;
-    border: 1px solid #e4e4e7;
+    height: 26px;
+    padding: 0 10px;
+    background: var(--bg-primary, #ffffff);
+    box-shadow: rgba(0, 0, 0, 0.08) 0px 0px 0px 1px;
+    border: none;
+    border-radius: 5px;
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--text-primary, #171717);
+    font-family: var(--font-body, 'Roboto'), sans-serif;
     cursor: pointer;
-    transition: all 0.15s;
+    transition: background 0.1s, box-shadow 0.1s;
     white-space: nowrap;
 }
 
-.playBtn:hover:not(:disabled) {
-    background: #18181b;
-    color: #fff;
-    border-color: #18181b;
+.playBtn:hover {
+    background: #f5f5f5;
+    box-shadow: rgba(0, 0, 0, 0.12) 0px 0px 0px 1px;
 }
-
-.playBtn:focus-visible { outline: 2px solid #18181b; outline-offset: 2px; }
-
-/* ================================================================
-   PANEL EDICIN INLINE
-   ================================================================ */
-.editPanel {
-    background: #fff;
-    border: 1px solid #e4e4e7;
-    border-radius: 8px;
-    padding: 18px 20px;
-    box-shadow: 0 1px 4px rgba(0,0,0,0.04);
-}
-
-.editPanelTitle {
-    font-size: 0.875rem;
-    font-weight: 600;
-    color: #18181b;
-    margin: 0 0 14px;
-}
-
-.editPanelTitle em { font-style: italic; color: #71717a; }
-
-.editForm { display: flex; flex-direction: column; gap: 14px; }
-
-.editField { display: flex; flex-direction: column; gap: 5px; }
-
-.editLabel {
-    font-size: 0.75rem;
-    font-weight: 600;
-    color: #71717a;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-}
-
-.editInput {
-    height: 36px;
-    padding: 0 10px;
-    border: 1px solid #e4e4e7;
-    border-radius: 6px;
-    background: #fff;
-    color: #18181b;
-    font-size: 0.875rem;
-    font-family: var(--font-body, 'Roboto'), sans-serif;
-    outline: none;
-    transition: border-color 0.15s, box-shadow 0.15s;
-}
-
-.editInput:focus {
-    border-color: #a1a1aa;
-    box-shadow: 0 0 0 3px rgba(24,24,27,0.06);
-}
-
-.radioGroup { display: flex; gap: 16px; flex-wrap: wrap; }
-
-.radioLabel {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    font-size: 0.875rem;
-    color: #3f3f46;
-    cursor: pointer;
-}
-
-.puestosGrid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-    gap: 5px 10px;
-    max-height: 180px;
-    overflow-y: auto;
-    padding: 10px;
-    background: #f4f4f5;
-    border-radius: 6px;
-    border: 1px solid #e4e4e7;
-}
-
-.puestoLabel {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    font-size: 0.8125rem;
-    color: #3f3f46;
-    cursor: pointer;
-}
-
-.puestoLabel:hover { color: #18181b; }
-
-.editActions { display: flex; gap: 8px; flex-wrap: wrap; padding-top: 4px; }
-
-.editSaveBtn {
-    height: 36px;
-    padding: 0 16px;
-    background: #18181b;
-    color: #fff;
-    border: none;
-    border-radius: 6px;
-    font-size: 0.875rem;
-    font-weight: 500;
-    font-family: var(--font-body, 'Roboto'), sans-serif;
-    cursor: pointer;
-    transition: background 0.12s;
-}
-
-.editSaveBtn:hover:not(:disabled) { background: #27272a; }
-.editSaveBtn:disabled { background: #e4e4e7; color: #a1a1aa; cursor: not-allowed; }
-
-.editCancelBtn {
-    height: 36px;
-    padding: 0 14px;
-    background: #fff;
-    color: #71717a;
-    border: 1px solid #e4e4e7;
-    border-radius: 6px;
-    font-size: 0.875rem;
-    font-weight: 500;
-    font-family: var(--font-body, 'Roboto'), sans-serif;
-    cursor: pointer;
-    transition: background 0.12s, border-color 0.12s;
-}
-
-.editCancelBtn:hover { background: #f4f4f5; border-color: #d4d4d8; }
 
 /* ================================================================
    RESPONSIVE
    ================================================================ */
-@media (max-width: 1024px) {
-    .kanbanBoard { gap: 12px; }
-    .searchWrapper { max-width: 260px; }
+@media (max-width: 1100px) {
+    .grid { grid-template-columns: repeat(2, 1fr); }
 }
 
-@media (max-width: 767px) {
-    .toolbar { gap: 6px; }
-
-    .searchWrapper {
-        max-width: 100%;
-        order: -1;
-        flex: 1 1 100%;
-    }
-
+@media (max-width: 640px) {
+    .grid { grid-template-columns: 1fr; }
+    .tabBar { display: flex; }
+    .searchWrapper { max-width: 100%; min-width: 0; flex: 1 1 160px; }
     .fabLabel { display: none; }
-
-    .fab {
-        width: 36px;
-        height: 36px;
-        padding: 0;
-        border-radius: 50%;
-        justify-content: center;
-    }
-
-    .tabBar { display: flex !important; }
-
-    .kanbanBoard { grid-template-columns: 1fr; gap: 0; }
-
-    .hiddenOnMobile { display: none !important; }
-
-    .columnBody { max-height: unset; overflow-y: visible; }
-
-    .editPanel { padding: 14px; }
-
+    .fab { width: 36px; padding: 0; justify-content: center; }
+    .hiddenOnMobile { display: none; }
+    .sections { gap: 20px; }
+    .editPanel { padding: 14px 16px; }
     .puestosGrid { grid-template-columns: 1fr 1fr; }
-
-    .menuDropdown,
-    .menuDropdownLeft { left: auto; right: 0; }
 }
 
-@media (max-width: 420px) {
-    .kCardFooter { flex-direction: column; align-items: flex-start; }
+@media (max-width: 400px) {
     .puestosGrid { grid-template-columns: 1fr; }
 }

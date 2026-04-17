@@ -71,14 +71,25 @@ function StatusChip({ published, onClick }) {
             onClick={onClick}
             title={published ? 'Clic para pasar a Borrador' : 'Clic para Publicar'}
         >
-            {published ? <Globe size={11} strokeWidth={2.2} /> : <Lock size={11} strokeWidth={2.2} />}
+            {published ? <Globe size={10} strokeWidth={2.5} /> : <Lock size={10} strokeWidth={2.5} />}
             {published ? 'Publicado' : 'Borrador'}
         </button>
     );
 }
 
+// ── Empty state ────────────────────────────────────────────────────────────────
+function EmptyState({ message }) {
+    return (
+        <div className={styles.emptyState}>
+            <div className={styles.emptyStateIcon}>
+                <FileText size={18} />
+            </div>
+            <p className={styles.emptyStateText}>{message}</p>
+        </div>
+    );
+}
+
 // ── Tarjeta de curso ───────────────────────────────────────────────────────────
-// openDropdown(id, rect) y closeDropdown() se pasan desde el padre
 function CourseCard({
     course,
     index,
@@ -93,11 +104,10 @@ function CourseCard({
     handlePlayNative,
     handleDeleteNative,
     onOpenEditNative,
-    activeDropdown,   // { id, x, y } | null
+    activeDropdown,
     openDropdown,
     closeDropdown,
 }) {
-    const accent = getAccent(index);
     const isRenaming = renamingId === course.id;
     const isOpen = activeDropdown?.id === course.id;
     const btnRef = useRef(null);
@@ -117,10 +127,10 @@ function CourseCard({
             animate="visible"
             exit="exit"
             layout
-            transition={{ delay: index * 0.035 }}
+            transition={{ delay: index * 0.03 }}
         >
             {/* Barra de color superior */}
-            <div className={styles.kCardAccent} style={{ background: accent }} />
+            <div className={styles.kCardAccent} />
 
             {/* Cuerpo */}
             <div className={styles.kCardBody}>
@@ -143,7 +153,6 @@ function CourseCard({
                         )}
                     </div>
 
-                    {/* Botón ⋯ — el menú se renderiza en el padre con position:fixed */}
                     <button
                         ref={btnRef}
                         type="button"
@@ -153,23 +162,9 @@ function CourseCard({
                         aria-haspopup="true"
                         aria-expanded={isOpen}
                     >
-                        <MoreHorizontal size={16} />
+                        <MoreHorizontal size={15} />
                     </button>
                 </div>
-
-                {/* Puestos */}
-                <p className={`${styles.kCardPuestos} ${!course.puestosAplicables?.length ? styles.kCardPuestosWarn : ''}`}>
-                    {course.puestosAplicables?.length
-                        ? course.puestosAplicables.join(', ')
-                        : '⚠ Sin puestos asignados'}
-                </p>
-
-                {/* Badge vista URL */}
-                {course.candidateView === 'url' && course.contenidoUrl && (
-                    <span className={styles.kCardViewBadge}>
-                        <ExternalLink size={10} /> URL / PDF
-                    </span>
-                )}
 
                 {/* Acciones inferiores */}
                 <div className={styles.kCardFooter}>
@@ -183,39 +178,12 @@ function CourseCard({
                         onClick={() => handlePlayNative(course.id)}
                         title="Reproducir curso"
                     >
-                        <Play size={13} strokeWidth={2.2} />
+                        <Play size={11} strokeWidth={2.5} />
                         Vista previa
                     </button>
                 </div>
             </div>
         </motion.div>
-    );
-}
-
-// ── Columna Kanban ─────────────────────────────────────────────────────────────
-function KanbanColumn({ title, icon, count, loading, searchQuery, accentColor, children }) {
-    return (
-        <section className={styles.kanbanColumn}>
-            <header className={styles.columnHeader} style={{ '--col-accent': accentColor }}>
-                <div className={styles.columnHeaderLeft}>
-                    {icon}
-                    <span className={styles.columnTitle}>{title}</span>
-                    <span className={styles.columnBadge}>{count}</span>
-                </div>
-            </header>
-
-            <div className={styles.columnBody}>
-                {loading ? (
-                    Array(3).fill(0).map((_, i) => <SkeletonCard key={i} />)
-                ) : count === 0 ? (
-                    <div className={styles.emptyState}>
-                        <p>{searchQuery ? 'Sin resultados.' : `No hay cursos ${title.toLowerCase()}.`}</p>
-                    </div>
-                ) : (
-                    <>{children}</>
-                )}
-            </div>
-        </section>
     );
 }
 
@@ -375,7 +343,7 @@ export default function KanbanCoursesView({
             <div className={styles.toolbar}>
                 {/* Búsqueda */}
                 <div className={styles.searchWrapper}>
-                    <Search size={15} className={styles.searchIcon} aria-hidden="true" />
+                    <Search size={14} className={styles.searchIcon} aria-hidden="true" />
                     <input
                         type="search"
                         placeholder="Buscar cursos…"
@@ -391,13 +359,13 @@ export default function KanbanCoursesView({
                             onClick={() => setSearchQuery('')}
                             aria-label="Limpiar búsqueda"
                         >
-                            <X size={13} />
+                            <X size={12} />
                         </button>
                     )}
                 </div>
 
                 {/* Opciones (import, sync) */}
-                <div className={styles.menuContainer} style={{ flexShrink: 0 }}>
+                <div className={styles.menuContainer}>
                     <button
                         type="button"
                         className={`${styles.optionsBtn} ${optionsOpen ? styles.optionsBtnActive : ''}`}
@@ -405,7 +373,7 @@ export default function KanbanCoursesView({
                         aria-haspopup="true"
                         aria-expanded={optionsOpen}
                     >
-                        Opciones <ChevronDown size={14} className={optionsOpen ? styles.chevronUp : ''} />
+                        Opciones <ChevronDown size={13} className={optionsOpen ? styles.chevronUp : ''} />
                     </button>
 
                     <AnimatePresence>
@@ -420,7 +388,7 @@ export default function KanbanCoursesView({
                                 role="menu"
                             >
                                 <div className={styles.menuSection}>
-                                    <span className={styles.menuSectionLabel}>Al importar JSON incluir:</span>
+                                    <span className={styles.menuSectionLabel}>Al importar JSON incluir</span>
                                     <label className={styles.menuCheckLabel}>
                                         <input type="checkbox" checked={includeDynamics} onChange={(e) => setIncludeDynamics(e.target.checked)} className={styles.menuCheckbox} />
                                         Dinámicas Grupales
@@ -444,7 +412,7 @@ export default function KanbanCoursesView({
                                     {importing ? 'Importando…' : 'Cargar JSON'}
                                 </label>
                                 <div className={styles.menuDivider} />
-                                <button className={styles.menuItem} role="menuitem" onClick={() => { setOptionsOpen(false); onSyncAllPuestos(); }} disabled={syncing} style={{ color: 'var(--c-orange)' }}>
+                                <button className={styles.menuItem} role="menuitem" onClick={() => { setOptionsOpen(false); onSyncAllPuestos(); }} disabled={syncing}>
                                     <RefreshCw size={13} className={styles.menuItemIcon} />
                                     {syncing ? 'Sincronizando…' : 'Sincronizar Puestos'}
                                 </button>
@@ -453,7 +421,7 @@ export default function KanbanCoursesView({
                     </AnimatePresence>
                 </div>
 
-                {/* FAB — Nuevo Curso */}
+                {/* Nuevo Curso */}
                 <button
                     type="button"
                     className={styles.fab}
@@ -461,7 +429,7 @@ export default function KanbanCoursesView({
                     disabled={creatingCourse}
                     aria-label="Crear nuevo curso"
                 >
-                    <Plus size={16} strokeWidth={2.5} />
+                    <Plus size={15} strokeWidth={2.5} />
                     <span className={styles.fabLabel}>{creatingCourse ? 'Creando…' : 'Nuevo'}</span>
                 </button>
             </div>
@@ -541,7 +509,7 @@ export default function KanbanCoursesView({
                     className={`${styles.tabItem} ${activeTab === 'published' ? styles.tabItemActive : ''}`}
                     onClick={() => setActiveTab('published')}
                 >
-                    <Globe size={14} /> Publicados
+                    <Globe size={13} /> Publicados
                     <span className={styles.tabBadge}>{publishedCourses.length}</span>
                 </button>
                 <button
@@ -550,48 +518,54 @@ export default function KanbanCoursesView({
                     className={`${styles.tabItem} ${activeTab === 'draft' ? styles.tabItemActive : ''}`}
                     onClick={() => setActiveTab('draft')}
                 >
-                    <Lock size={14} /> Borradores
+                    <Lock size={13} /> Borradores
                     <span className={styles.tabBadge}>{draftCourses.length}</span>
                 </button>
             </div>
 
-            {/* ── Tablero Kanban ────────────────────────────────────────────── */}
-            <div className={styles.kanbanBoard}>
-                <div className={`${styles.kanbanColumnWrapper} ${activeTab === 'draft' ? styles.hiddenOnMobile : ''}`}>
-                    <KanbanColumn
-                        title="Publicados"
-                        icon={<Globe size={15} strokeWidth={2} />}
-                        count={publishedCourses.length}
-                        loading={nativeLoading}
-                        searchQuery={searchQuery}
-                        accentColor="#22c55e"
-                    >
-                        {publishedCourses.map((course, i) => (
-                            <CourseCard key={course.id} course={course} index={i} {...cardSharedProps} />
-                        ))}
-                    </KanbanColumn>
-                </div>
+            {/* ── Secciones de cursos ───────────────────────────────────────── */}
+            <div className={styles.sections}>
 
-                <div className={`${styles.kanbanColumnWrapper} ${activeTab === 'published' ? styles.hiddenOnMobile : ''}`}>
-                    <KanbanColumn
-                        title="Borradores"
-                        icon={<Lock size={15} strokeWidth={2} />}
-                        count={draftCourses.length}
-                        loading={nativeLoading}
-                        searchQuery={searchQuery}
-                        accentColor="#94a3b8"
-                    >
-                        {draftCourses.map((course, i) => (
-                            <CourseCard key={course.id} course={course} index={i} {...cardSharedProps} />
-                        ))}
-                    </KanbanColumn>
-                </div>
+                {/* Publicados */}
+                <section className={`${styles.section} ${activeTab === 'draft' ? styles.hiddenOnMobile : ''}`}>
+                    <div className={styles.sectionHeader}>
+                        <Globe size={14} className={styles.sectionHeaderIcon} strokeWidth={2} />
+                        <h2 className={styles.sectionTitle}>Publicados</h2>
+                        <span className={`${styles.sectionBadge} ${styles.sectionBadgePublished}`}>{publishedCourses.length}</span>
+                    </div>
+                    <div className={styles.grid}>
+                        {nativeLoading
+                            ? Array(3).fill(0).map((_, i) => <SkeletonCard key={i} />)
+                            : publishedCourses.length === 0
+                                ? <EmptyState message={searchQuery ? 'Sin resultados.' : 'No hay cursos publicados aún.'} />
+                                : publishedCourses.map((course, i) => (
+                                    <CourseCard key={course.id} course={course} index={i} {...cardSharedProps} />
+                                ))
+                        }
+                    </div>
+                </section>
+
+                {/* Borradores */}
+                <section className={`${styles.section} ${activeTab === 'published' ? styles.hiddenOnMobile : ''}`}>
+                    <div className={styles.sectionHeader}>
+                        <Lock size={14} className={styles.sectionHeaderIcon} strokeWidth={2} />
+                        <h2 className={styles.sectionTitle}>Borradores</h2>
+                        <span className={styles.sectionBadge}>{draftCourses.length}</span>
+                    </div>
+                    <div className={styles.grid}>
+                        {nativeLoading
+                            ? Array(2).fill(0).map((_, i) => <SkeletonCard key={i} />)
+                            : draftCourses.length === 0
+                                ? <EmptyState message={searchQuery ? 'Sin resultados.' : 'No hay borradores.'} />
+                                : draftCourses.map((course, i) => (
+                                    <CourseCard key={course.id} course={course} index={i} {...cardSharedProps} />
+                                ))
+                        }
+                    </div>
+                </section>
             </div>
 
-            {/* ── Dropdown de tarjeta con position:fixed ─────────────────────
-                Se renderiza aquí (fuera de columnas/tarjetas) para escapar
-                de cualquier overflow/clip del layout padre.
-            ───────────────────────────────────────────────────────────────── */}
+            {/* ── Dropdown de tarjeta con position:fixed ─────────────────────── */}
             <AnimatePresence>
                 {activeDropdown && activeCourse && (
                     <motion.div
@@ -617,7 +591,7 @@ export default function KanbanCoursesView({
                             </button>
                         )}
                         <Link
-                            href={`/induccion/cursos/${activeCourse.id}/editar`}
+                            href={`/induccion/cursos/${activeCourse.id}/editar-v2`}
                             className={styles.menuItem}
                             role="menuitem"
                             onClick={closeDropdown}

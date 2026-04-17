@@ -2,8 +2,8 @@
 
 .slide {
     /* Tokens locales */
-    --c-surface:     #1e2432;
-    --c-panel:       #151924;
+    --c-surface:     var(--bg-secondary);
+    --c-panel:       var(--bg-primary);
     --c-blue:        #3b82f6;
     --c-blue-dim:    rgba(59, 130, 246, 0.15);
     --c-blue-border: rgba(59, 130, 246, 0.35);
@@ -12,8 +12,8 @@
     --c-red-border:  rgba(248, 113, 113, 0.35);
     --c-green:       #4ade80;
     --c-amber:       #fbbf24;
-    --c-text-dim:    rgba(255, 255, 255, 0.45);
-    --c-text-mid:    rgba(255, 255, 255, 0.65);
+    --c-text-dim:    var(--text-tertiary);
+    --c-text-mid:    var(--text-secondary);
 
     width: 100%;
     max-width: 1100px;
@@ -24,7 +24,7 @@
     gap: 1rem;
     padding: 1.5rem 2rem 1.75rem;
     background: var(--c-surface);
-    color: #f1f5f9;
+    color: var(--text-primary);
     font-family: var(--font-body), 'Roboto', sans-serif;
     border-radius: 16px;
     overflow-y: auto;
@@ -56,7 +56,7 @@
     font-family: var(--font-serif), 'Montserrat', sans-serif;
     font-size: clamp(var(--course-font-lg, 1.05rem), 2.3vw, var(--course-font-2xl, 1.6rem));
     font-weight: 700;
-    color: #f8fafc;
+    color: var(--text-primary);
     margin: 0 0 0.2rem;
 }
 
@@ -71,8 +71,8 @@
     display: flex;
     align-items: center;
     gap: 0.5rem;
-    background: rgba(255, 255, 255, 0.07);
-    border: 1px solid rgba(255, 255, 255, 0.12);
+    background: var(--bg-secondary);
+    box-shadow: rgba(0,0,0,0.08) 0px 0px 0px 1px;
     border-radius: 99px;
     padding: 0.35rem 0.9rem;
     font-size: var(--course-font-xs, 0.78rem);
@@ -110,7 +110,7 @@
 /* ── Tarjetas ── */
 .card {
     background: var(--c-panel);
-    border: 1px solid rgba(255, 255, 255, 0.08);
+    box-shadow: rgba(0,0,0,0.08) 0px 0px 0px 1px;
     border-radius: 12px;
     padding: 1rem;
     display: flex;
@@ -132,7 +132,7 @@
     width: fit-content;
 }
 
-.cardBadgeGray { background: rgba(255,255,255,0.08); color: var(--c-text-mid); }
+.cardBadgeGray { background: var(--bg-secondary); box-shadow: rgba(0,0,0,0.08) 0px 0px 0px 1px; color: var(--text-secondary); }
 .cardBadgeBlue { background: var(--c-blue-dim);       color: var(--c-blue);    }
 .cardBadgeRed  { background: var(--c-red-dim);        color: var(--c-red);     }
 
@@ -148,13 +148,13 @@
     padding: 0.5rem 0;
 }
 
-.activityIcon { color: rgba(255, 255, 255, 0.55); }
+.activityIcon { color: var(--text-tertiary); }
 
 .activityTitle {
     font-family: var(--font-serif), 'Montserrat', sans-serif;
     font-size: var(--course-font-base, 0.95rem);
     font-weight: 600;
-    color: #f1f5f9;
+    color: var(--text-primary);
     margin: 0;
     line-height: 1.4;
 }
@@ -172,7 +172,7 @@
     justify-content: center;
 }
 
-.arrowIcon { color: rgba(255,255,255,0.15); }
+.arrowIcon { color: var(--border-color); }
 
 /* ── Lista de opciones ── */
 .optionsList {
@@ -185,12 +185,13 @@
 .optionBtn {
     width: 100%;
     text-align: left;
-    background: rgba(255,255,255,0.04);
-    border: 1px solid rgba(255,255,255,0.1);
+    background: var(--bg-secondary);
+    box-shadow: rgba(0,0,0,0.08) 0px 0px 0px 1px;
+    border: none;
     border-radius: 8px;
     padding: 0.55rem 0.75rem;
     font-size: var(--course-font-sm, 0.8rem);
-    color: var(--c-text-mid);
+    color: var(--text-secondary);
     font-family: var(--font-body), 'Roboto', sans-serif;
     cursor: pointer;
     transition: border-color 0.15s, background 0.15s, color 0.15s;
@@ -201,15 +202,15 @@
 }
 
 .optionBtn:hover {
-    background: rgba(255,255,255,0.08);
-    color: #f1f5f9;
+    background: var(--bg-primary);
+    color: var(--text-primary);
 }
 
 /* Seleccionado Aspecto (azul) */
 .optionBtnBlueActive {
     background: var(--c-blue-dim) !important;
     border-color: var(--c-blue) !important;
-    color: #f1f5f9 !important;
+    color: var(--text-primary) !important;
     box-shadow: 0 0 0 1px var(--c-blue);
 }
 
@@ -217,7 +218,7 @@
 .optionBtnRedActive {
     background: var(--c-red-dim) !important;
     border-color: var(--c-red) !important;
-    color: #f1f5f9 !important;
+    color: var(--text-primary) !important;
     box-shadow: 0 0 0 1px var(--c-red);
 }
 
@@ -256,8 +257,7 @@
     font-weight: 500;
     margin: 0;
     line-height: 1.5;
-    /* Siempre blanco, independientemente del tipo de feedback */
-    color: #f1f5f9;
+    color: var(--text-primary);
 }
 
 /* ── Footer (botón verificar) ── */
@@ -265,7 +265,7 @@
     display: flex;
     justify-content: center;
     padding-top: 0.5rem;
-    border-top: 1px solid rgba(255,255,255,0.07);
+    border-top: 1px solid var(--border-color);
 }
 
 .verifyBtn {
@@ -293,8 +293,8 @@
 }
 
 .verifyBtnDisabled {
-    background: rgba(255,255,255,0.1) !important;
-    color: var(--c-text-dim) !important;
+    background: var(--bg-secondary) !important;
+    color: var(--text-tertiary) !important;
     cursor: not-allowed !important;
     box-shadow: none !important;
     transform: none !important;
@@ -318,7 +318,7 @@
     font-family: var(--font-serif), 'Montserrat', sans-serif;
     font-size: var(--course-font-2xl, 1.6rem);
     font-weight: 700;
-    color: #f8fafc;
+    color: var(--text-primary);
     margin: 0;
 }
 

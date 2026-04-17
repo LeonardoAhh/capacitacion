@@ -67,6 +67,29 @@
     --course-sh-float: 0 8px 32px rgba(0,0,0,0.14), 0 1px 8px rgba(0,0,0,0.06);
 }
 
+/* ── Dark theme overrides for course tokens ── */
+[data-theme="dark"] {
+    --course-content-bg:   #0a0a0a;
+    --course-overlay-bg:   #0a0a0a;
+    --course-slide-bg:     #141414;
+    --course-slide-text:   #ededed;
+    --course-slide-text-secondary: #a1a1a1;
+    --course-slide-text-muted:     #707070;
+    --course-card-bg:      #141414;
+    --course-card-border:  rgba(255, 255, 255, 0.08);
+    --course-nav-bg:       #0a0a0a;
+    --course-nav-border:   rgba(255, 255, 255, 0.08);
+    --course-btn-bg:       #141414;
+    --course-btn-border:   rgba(255, 255, 255, 0.1);
+    --course-btn-text:     #ededed;
+    --course-btn-hover-bg: rgba(255, 255, 255, 0.06);
+    --course-dot-bg:       rgba(255, 255, 255, 0.12);
+    --course-progress-bg:  rgba(255, 255, 255, 0.1);
+    --course-sh-card:  0 1px 4px rgba(0,0,0,0.4),  0 2px 12px rgba(0,0,0,0.3);
+    --course-sh-lift:  0 4px 20px rgba(0,0,0,0.6),  0 1px 6px rgba(0,0,0,0.4);
+    --course-sh-float: 0 8px 32px rgba(0,0,0,0.8),  0 1px 8px rgba(0,0,0,0.5);
+}
+
 /* ── Border Radius (Contratos) ── */
 :root {
     --course-radius-sm:   8px;

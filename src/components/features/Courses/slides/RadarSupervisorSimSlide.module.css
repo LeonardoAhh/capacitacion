@@ -37,10 +37,10 @@
     display: inline-flex;
     align-items: center;
     gap: 0.45rem;
-    border: 1px solid var(--border-light, #d1d5db);
+    box-shadow: rgba(0,0,0,0.08) 0px 0px 0px 1px;
     border-radius: 999px;
     padding: 0.4rem 0.8rem;
-    background: #fff;
+    background: var(--bg-primary);
     font-size: var(--course-font-sm, 0.8rem);
     color: var(--text-secondary, #374151);
 }
@@ -52,8 +52,8 @@
 }
 
 .levelCard {
-    background: #fff;
-    border: 1px solid var(--border-light, #e5e7eb);
+    background: var(--bg-primary);
+    box-shadow: rgba(0,0,0,0.08) 0px 0px 0px 1px;
     border-radius: 12px;
     padding: 0.8rem;
     display: flex;
@@ -76,10 +76,10 @@
 }
 
 .itemRow {
-    border: 1px solid var(--border-light, #e5e7eb);
+    box-shadow: rgba(0,0,0,0.08) 0px 0px 0px 1px;
     border-radius: 10px;
     padding: 0.55rem;
-    background: #fff;
+    background: var(--bg-primary);
 }
 
 .itemRow p {
@@ -98,9 +98,9 @@
 }
 
 .choiceBtn {
-    border: 1px solid var(--border-light, #d1d5db);
+    box-shadow: rgba(0,0,0,0.08) 0px 0px 0px 1px;
     border-radius: 8px;
-    background: #fff;
+    background: var(--bg-primary);
     color: var(--text-secondary, #4b5563);
     font-size: var(--course-font-xs, 0.72rem);
     font-weight: 600;
@@ -119,7 +119,7 @@
 
 .choiceBtnActive {
     border-color: var(--color-primary, #003ccc);
-    background: color-mix(in srgb, var(--color-primary, #003ccc) 12%, #fff);
+    background: color-mix(in srgb, var(--color-primary, #003ccc) 12%, var(--bg-primary));
     color: var(--color-primary, #003ccc);
 }
 
@@ -145,7 +145,7 @@
 }
 
 .secondaryBtn {
-    background: #fff;
+    background: var(--bg-primary);
     color: var(--color-primary, #003ccc);
     border: 1px solid color-mix(in srgb, var(--color-primary, #003ccc) 35%, transparent);
     display: inline-flex;
@@ -160,9 +160,9 @@
 
 .report {
     border-radius: 12px;
-    border: 1px solid var(--border-light, #d1d5db);
+    box-shadow: rgba(0,0,0,0.08) 0px 0px 0px 1px;
     padding: 0.85rem;
-    background: #fff;
+    background: var(--bg-primary);
 }
 
 .reportHead {
@@ -198,7 +198,7 @@
 .track {
     height: 7px;
     border-radius: 999px;
-    background: #e5e7eb;
+    background: rgba(var(--border-color-rgb), 0.2);
     overflow: hidden;
 }
 

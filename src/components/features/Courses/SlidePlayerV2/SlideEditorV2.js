@@ -1,0 +1,668 @@
+'use client';
+
+import { useReducer, useEffect, useCallback, useRef, useState, useMemo } from 'react';
+import SlideRendererV2 from './SlideRendererV2';
+import { SLIDE_TYPE_LABELS, getDefaultSlideData } from '@/components/features/Courses/Editor/slideConstants';
+import s from './editor-v2.module.css';
+
+/* ── Slide type sections for the "add slide" modal ── */
+const SLIDE_SECTIONS = [
+  {
+    label: 'General',
+    types: [
+      { type: 'title',      label: 'Portada',      desc: 'Título principal del curso' },
+      { type: 'content',    label: 'Contenido',     desc: 'Texto e imagen' },
+      { type: 'objective',  label: 'Objetivo',      desc: 'Objetivo de aprendizaje' },
+      { type: 'definition', label: 'Definición',    desc: 'Término y definición' },
+      { type: 'benefits',   label: 'Beneficios',    desc: 'Lista de beneficios' },
+      { type: 'icon_grid',  label: 'Íconos',        desc: 'Cuadrícula de íconos' },
+      { type: 'comparison', label: 'Comparación',   desc: 'Dos columnas comparativas' },
+      { type: 'steps',      label: 'Paso a Paso',   desc: 'Secuencia numerada' },
+      { type: 'dynamic',    label: 'Dinámica',      desc: 'Actividad colaborativa' },
+      { type: 'quiz',       label: 'Quiz',          desc: 'Pregunta con opciones' },
+      { type: 'video',      label: 'Video',         desc: 'YouTube o MP4' },
+      { type: 'flashcard',  label: 'Tarjetas',      desc: 'Tarjetas con flip' },
+      { type: 'fill_blank', label: 'Completa',      desc: 'Rellena el espacio' },
+      { type: 'checklist',  label: 'Checklist',     desc: 'Lista de verificación' },
+    ],
+  },
+  {
+    label: 'Simuladores',
+    types: [
+      { type: 'thermal_sim',  label: 'Sim. Térmico',    desc: 'Disipación térmica LOTO' },
+      { type: 'env_sim',      label: 'Sim. Ambiental',  desc: 'Matriz Causa-Efecto' },
+      { type: 'iceberg_sim',  label: 'Sim. Iceberg',    desc: 'Causas visibles vs ocultas' },
+      { type: 'radar_sim',    label: 'Sim. Radar',      desc: 'Diagnóstico de equipo' },
+    ],
+  },
+];
+
+/* ── Lazy-load slide editors ─────────────────────── */
+import TitleSlideEditor from '@/components/features/Courses/Editor/SlideEditors/TitleSlideEditor';
+import ContentSlideEditor from '@/components/features/Courses/Editor/SlideEditors/ContentSlideEditor';
+import SimpleBodySlideEditor from '@/components/features/Courses/Editor/SlideEditors/SimpleBodySlideEditor';
+import BenefitsSlideEditor from '@/components/features/Courses/Editor/SlideEditors/BenefitsSlideEditor';
+import IconGridSlideEditor from '@/components/features/Courses/Editor/SlideEditors/IconGridSlideEditor';
+import ComparisonSlideEditor from '@/components/features/Courses/Editor/SlideEditors/ComparisonSlideEditor';
+import DynamicSlideEditor from '@/components/features/Courses/Editor/SlideEditors/DynamicSlideEditor';
+import StepsSlideEditor from '@/components/features/Courses/Editor/SlideEditors/StepsSlideEditor';
+import QuizSlideEditor from '@/components/features/Courses/Editor/SlideEditors/QuizSlideEditor';
+import VideoSlideEditor from '@/components/features/Courses/Editor/SlideEditors/VideoSlideEditor';
+import FlashcardSlideEditor from '@/components/features/Courses/Editor/SlideEditors/FlashcardSlideEditor';
+import FillBlankSlideEditor from '@/components/features/Courses/Editor/SlideEditors/FillBlankSlideEditor';
+import ChecklistSlideEditor from '@/components/features/Courses/Editor/SlideEditors/ChecklistSlideEditor';
+import EnvSimSlideEditor from '@/components/features/Courses/Editor/SlideEditors/EnvSimSlideEditor';
+import IcebergLineaSimSlideEditor from '@/components/features/Courses/Editor/SlideEditors/IcebergLineaSimSlideEditor';
+import RadarSupervisorSimSlideEditor from '@/components/features/Courses/Editor/SlideEditors/RadarSupervisorSimSlideEditor';
+
+/* ── Field router ────────────────────────────────── */
+function SlideFieldRouter({ type, formData, handleChange, handleBatchChange, setFormData }) {
+  const props = { formData, handleChange, setFormData, styles: s };
+  switch (type) {
+    case 'title':                          return <TitleSlideEditor {...props} />;
+    case 'content':                        return <ContentSlideEditor {...props} handleBatchChange={handleBatchChange} />;
+    case 'icon_grid':                      return <IconGridSlideEditor {...props} />;
+    case 'comparison':                     return <ComparisonSlideEditor {...props} />;
+    case 'steps':                          return <StepsSlideEditor {...props} />;
+    case 'group_dynamic': case 'dynamic':  return <DynamicSlideEditor {...props} />;
+    case 'group_quiz': case 'quiz':        return <QuizSlideEditor {...props} />;
+    case 'objective': case 'definition':   return <SimpleBodySlideEditor {...props} />;
+    case 'benefits':                       return <BenefitsSlideEditor {...props} />;
+    case 'video':                          return <VideoSlideEditor {...props} />;
+    case 'flashcard':                      return <FlashcardSlideEditor {...props} />;
+    case 'fill_blank':                     return <FillBlankSlideEditor {...props} />;
+    case 'checklist':                      return <ChecklistSlideEditor {...props} />;
+    case 'env_sim':                        return <EnvSimSlideEditor {...props} />;
+    case 'iceberg_sim':                    return <IcebergLineaSimSlideEditor {...props} />;
+    case 'radar_sim':                      return <RadarSupervisorSimSlideEditor {...props} />;
+    default:
+      return <p className={s.noEditor}>Editor no disponible para tipo: <strong>{type}</strong></p>;
+  }
+}
+
+/* ── Reducer ─────────────────────────────────────── */
+const initialState = {
+  course: null,
+  slides: [],
+  loading: true,
+  selectedSlide: null,
+  livePreviewSlide: null,
+  saving: false,
+  showSlideModal: false,
+};
+
+function editorReducer(state, action) {
+  switch (action.type) {
+    case 'LOAD_SUCCESS':
+      return {
+        ...state,
+        loading: false,
+        course: action.course,
+        slides: action.slides,
+        selectedSlide: action.slides[0] ?? null,
+        livePreviewSlide: action.slides[0] ?? null,
+      };
+    case 'LOAD_ERROR':
+      return { ...state, loading: false };
+    case 'SELECT_SLIDE':
+      return { ...state, selectedSlide: action.slide, livePreviewSlide: action.slide };
+    case 'SLIDE_SAVED': {
+      const slides = state.slides.map(sl =>
+        sl.id === action.slideId ? { ...sl, data: action.newData } : sl
+      );
+      const selectedSlide = state.selectedSlide?.id === action.slideId
+        ? { ...state.selectedSlide, data: action.newData }
+        : state.selectedSlide;
+      return { ...state, slides, selectedSlide };
+    }
+    case 'SLIDE_DELETED': {
+      const idx = state.slides.findIndex(sl => sl.id === action.slideId);
+      const remaining = state.slides.filter(sl => sl.id !== action.slideId);
+      const renumbered = remaining.map((sl, i) => ({ ...sl, order: i + 1 }));
+      const next = renumbered[idx] ?? renumbered[idx - 1] ?? null;
+      return { ...state, slides: renumbered, selectedSlide: next, livePreviewSlide: next };
+    }
+    case 'SLIDE_ADDED': {
+      const slides = [...state.slides, action.slide];
+      return { ...state, slides, selectedSlide: action.slide, livePreviewSlide: action.slide };
+    }
+    case 'SLIDES_REORDERED':
+      return { ...state, slides: action.slides };
+    case 'FORM_CHANGED':
+      return {
+        ...state,
+        livePreviewSlide: state.livePreviewSlide
+          ? { ...state.livePreviewSlide, data: action.data }
+          : null,
+      };
+    case 'SAVE_START': return { ...state, saving: true };
+    case 'SAVE_END':   return { ...state, saving: false };
+    case 'TOGGLE_MODAL': return { ...state, showSlideModal: action.open };
+    default: return state;
+  }
+}
+
+/* ── Auto-save hook ──────────────────────────────── */
+const DEBOUNCE_MS = 4000;
+
+function useAutoSave(slide, formData, onSave) {
+  const [saveState, setSaveState] = useState('idle');
+  const timerRef = useRef(null);
+  const mountedRef = useRef(true);
+
+  useEffect(() => {
+    mountedRef.current = true;
+    return () => { mountedRef.current = false; if (timerRef.current) clearTimeout(timerRef.current); };
+  }, []);
+
+  useEffect(() => {
+    if (!slide || Object.keys(formData).length === 0) return;
+    if (JSON.stringify(slide.data ?? {}) === JSON.stringify(formData)) return;
+
+    setSaveState('saving');
+    if (timerRef.current) clearTimeout(timerRef.current);
+
+    timerRef.current = setTimeout(async () => {
+      try {
+        await onSave(slide.id, formData);
+        if (!mountedRef.current) return;
+        setSaveState('saved');
+        setTimeout(() => { if (mountedRef.current) setSaveState(c => c === 'saved' ? 'idle' : c); }, 2000);
+      } catch {
+        if (mountedRef.current) setSaveState('error');
+      }
+    }, DEBOUNCE_MS);
+
+    return () => { if (timerRef.current) clearTimeout(timerRef.current); };
+  }, [formData, slide, onSave]);
+
+  return saveState;
+}
+
+/* ── Editor form sub-component ───────────────────── */
+function EditorForm({ slide, onSave, onDelete, onFormChange, isSaving }) {
+  const [formData, setFormData] = useState(() => structuredClone(slide?.data ?? {}));
+  const saveState = useAutoSave(slide, formData, onSave);
+
+  useEffect(() => { if (onFormChange) onFormChange(formData); }, [formData, onFormChange]);
+
+  const handleChange = useCallback((field, value) => {
+    setFormData(prev => {
+      const next = { ...prev, [field]: value };
+      if (value === undefined) delete next[field];
+      return next;
+    });
+  }, []);
+
+  const handleBatchChange = useCallback((updates) => {
+    setFormData(prev => ({ ...prev, ...updates }));
+  }, []);
+
+  if (!slide) {
+    return (
+      <div className={s.emptyState}>
+        <div className={s.emptyIcon}>
+          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="15,18 9,12 15,6" /></svg>
+        </div>
+        <p>Selecciona un slide para editar</p>
+      </div>
+    );
+  }
+
+  return (
+    <>
+      <div className={s.editorPanelHeader}>
+        <h2 className={s.editorPanelTitle}>
+          Slide {slide.order} — {SLIDE_TYPE_LABELS[slide.type] || slide.type}
+        </h2>
+        <div className={s.editorPanelActions}>
+          <span className={`${s.saveBadge} ${s[saveState] || ''}`}>
+            {saveState === 'saving' && <><SpinnerIcon /> Guardando...</>}
+            {saveState === 'saved' && <><CheckIcon /> Guardado</>}
+            {saveState === 'error' && <>Error</>}
+            {saveState === 'idle' && <span>Auto-guardado</span>}
+          </span>
+          <button
+            className={s.deleteBtn}
+            onClick={() => onDelete(slide.id)}
+            disabled={isSaving}
+            title="Eliminar slide"
+            aria-label="Eliminar slide"
+          >
+            <TrashIcon />
+          </button>
+        </div>
+      </div>
+      <div className={s.editorScrollArea}>
+        {/* ── Font size selector ── */}
+        <div className={s.formGroup}>
+          <label className={s.label}>Tamaño de letra</label>
+          <div className={s.fontSizeBar}>
+            {[
+              { key: 'sm', label: 'A', title: 'Pequeña' },
+              { key: 'md', label: 'A', title: 'Mediana (default)' },
+              { key: 'lg', label: 'A', title: 'Grande' },
+              { key: 'xl', label: 'A', title: 'Extra grande' },
+            ].map(({ key, label, title }) => (
+              <button
+                key={key}
+                className={`${s.fontSizeBtn} ${(formData.fontSize || 'md') === key ? s.fontSizeBtnActive : ''}`}
+                onClick={() => handleChange('fontSize', key === 'md' ? undefined : key)}
+                title={title}
+                aria-label={title}
+                style={{ fontSize: key === 'sm' ? 11 : key === 'md' ? 13 : key === 'lg' ? 16 : 19 }}
+              >
+                {label}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        <SlideFieldRouter
+          type={slide.type}
+          formData={formData}
+          handleChange={handleChange}
+          handleBatchChange={handleBatchChange}
+          setFormData={setFormData}
+        />
+      </div>
+    </>
+  );
+}
+
+/* ═══════════════════════════════════════════════════
+   SlideEditorV2 — Main component
+   ═══════════════════════════════════════════════════ */
+export default function SlideEditorV2({
+  courseId,
+  loadCourse,
+  saveSlideFn,
+  addSlideFn,
+  deleteSlideFn,
+  reorderSlidesFn,
+  syncMetadataFn,
+  onClose,
+}) {
+  const [state, dispatch] = useReducer(editorReducer, initialState);
+  const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [confirmDialog, setConfirmDialog] = useState(null); // { onConfirm: fn }
+  const stateRef = useRef(state);
+  useEffect(() => { stateRef.current = state; }, [state]);
+
+  /* ── Load course ────────────────────────────────── */
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      const result = await loadCourse(courseId);
+      if (cancelled) return;
+      if (result.success) {
+        dispatch({ type: 'LOAD_SUCCESS', course: result.data.course, slides: result.data.slides });
+      } else {
+        dispatch({ type: 'LOAD_ERROR' });
+      }
+    })();
+    return () => { cancelled = true; };
+  }, [courseId, loadCourse]);
+
+  /* ── Handlers ───────────────────────────────────── */
+  const handleSaveSlide = useCallback(async (slideId, newData) => {
+    // Strip undefined values — Firestore rejects them
+    const clean = Object.fromEntries(
+      Object.entries(newData).filter(([, v]) => v !== undefined)
+    );
+    const result = await saveSlideFn(courseId, slideId, { data: clean });
+    if (result.success) dispatch({ type: 'SLIDE_SAVED', slideId, newData: clean });
+  }, [courseId, saveSlideFn]);
+
+  const handleDeleteSlide = useCallback((slideId) => {
+    setConfirmDialog({
+      onConfirm: async () => {
+        setConfirmDialog(null);
+        dispatch({ type: 'SAVE_START' });
+        const result = await deleteSlideFn(courseId, slideId, stateRef.current.slides);
+        if (result.success) {
+          dispatch({ type: 'SLIDE_DELETED', slideId });
+          const remaining = stateRef.current.slides.filter(sl => sl.id !== slideId);
+          syncMetadataFn?.(courseId, remaining.length);
+        }
+        dispatch({ type: 'SAVE_END' });
+      },
+    });
+  }, [courseId, deleteSlideFn, syncMetadataFn]);
+
+  const handleAddSlide = useCallback(async (type) => {
+    dispatch({ type: 'TOGGLE_MODAL', open: false });
+    dispatch({ type: 'SAVE_START' });
+    const defaultData = getDefaultSlideData(type);
+    const result = await addSlideFn(courseId, { type, data: defaultData, order: stateRef.current.slides.length + 1 });
+    if (result.success) {
+      const newSlide = { id: result.slideId || result.id, type, data: defaultData, order: result.order || stateRef.current.slides.length + 1 };
+      dispatch({ type: 'SLIDE_ADDED', slide: newSlide });
+      syncMetadataFn?.(courseId, stateRef.current.slides.length + 1);
+    }
+    dispatch({ type: 'SAVE_END' });
+  }, [courseId, addSlideFn, syncMetadataFn]);
+
+  const handleSelectSlide = useCallback((slide) => {
+    dispatch({ type: 'SELECT_SLIDE', slide });
+    if (window.innerWidth < 768) setSidebarOpen(false);
+  }, []);
+
+  const handleFormChange = useCallback((data) => {
+    dispatch({ type: 'FORM_CHANGED', data });
+  }, []);
+
+  /* ── Filtered slides ────────────────────────────── */
+  const filteredSlides = useMemo(() => {
+    if (!searchQuery.trim()) return state.slides;
+    const q = searchQuery.toLowerCase();
+    return state.slides.filter(sl =>
+      (sl.data?.title || sl.data?.heading || '').toLowerCase().includes(q) ||
+      (SLIDE_TYPE_LABELS[sl.type] || sl.type).toLowerCase().includes(q)
+    );
+  }, [state.slides, searchQuery]);
+
+  /* ── Keyboard shortcuts ─────────────────────────── */
+  useEffect(() => {
+    const onKey = (e) => {
+      const tag = e.target.tagName;
+      if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT' || e.target.isContentEditable) return;
+
+      if (e.key === 'Escape' && stateRef.current.showSlideModal) {
+        e.preventDefault();
+        dispatch({ type: 'TOGGLE_MODAL', open: false });
+        return;
+      }
+
+      if (!e.altKey || e.ctrlKey || e.metaKey || e.shiftKey) return;
+
+      const { slides, selectedSlide, saving } = stateRef.current;
+      const idx = slides.findIndex(sl => sl.id === selectedSlide?.id);
+
+      switch (e.key) {
+        case 'ArrowDown':
+          e.preventDefault();
+          if (slides[idx + 1]) dispatch({ type: 'SELECT_SLIDE', slide: slides[idx + 1] });
+          break;
+        case 'ArrowUp':
+          e.preventDefault();
+          if (slides[idx - 1]) dispatch({ type: 'SELECT_SLIDE', slide: slides[idx - 1] });
+          break;
+        case 'n': case 'N':
+          e.preventDefault();
+          dispatch({ type: 'TOGGLE_MODAL', open: true });
+          break;
+        case 'Delete':
+          e.preventDefault();
+          if (selectedSlide && !saving) handleDeleteSlide(selectedSlide.id);
+          break;
+      }
+    };
+    document.addEventListener('keydown', onKey);
+    return () => document.removeEventListener('keydown', onKey);
+  }, [handleDeleteSlide]);
+
+  /* ── Loading state ──────────────────────────────── */
+  if (state.loading) {
+    return (
+      <div className={s.root} style={{ alignItems: 'center', justifyContent: 'center' }}>
+        <SpinnerIcon /><p style={{ marginTop: 8, color: 'var(--text-tertiary)', fontSize: 13 }}>Cargando editor...</p>
+      </div>
+    );
+  }
+
+  const { course, slides, selectedSlide, livePreviewSlide, saving, showSlideModal } = state;
+
+  return (
+    <div className={s.root}>
+      {/* ══ HEADER ═══════════════════════════════════ */}
+      <header className={s.header}>
+        <div className={s.headerLeft}>
+          <button className={s.iconBtn} onClick={() => setSidebarOpen(v => !v)} aria-label={sidebarOpen ? 'Ocultar slides' : 'Mostrar slides'} title={sidebarOpen ? 'Ocultar slides' : 'Mostrar slides'}>
+            <MenuIcon />
+          </button>
+          <div className={s.titleGroup}>
+            <h1 className={s.courseTitle}>{course?.title ?? 'Sin título'}</h1>
+            <span className={s.subtitleLabel}>Editor</span>
+          </div>
+        </div>
+
+        <div className={s.headerCenter}>
+          <span className={s.badge}>{slides.length} slides</span>
+          <span className={s.shortcutsHint}>Alt+↑↓ · Alt+N nuevo · Alt+Supr eliminar</span>
+        </div>
+
+        <div className={s.headerRight}>
+          {onClose && (
+            <button className={s.closeBtn} onClick={onClose} aria-label="Cerrar editor">
+              Cerrar
+            </button>
+          )}
+        </div>
+      </header>
+
+      {/* ══ WORKSPACE ════════════════════════════════ */}
+      <div className={s.workspace}>
+        {/* ── Mobile overlay ── */}
+        {sidebarOpen && <div className={`${s.overlay} ${s.mobileOnly}`} onClick={() => setSidebarOpen(false)} />}
+
+        {/* ── Sidebar ── */}
+        <aside className={`${s.sidebar} ${sidebarOpen ? '' : s.sidebarClosed}`}>
+          <div className={s.sidebarHeader}>
+            <span className={s.sidebarTitle}>Slides ({slides.length})</span>
+            <button className={s.iconBtn} onClick={() => setSidebarOpen(false)} aria-label="Cerrar panel">
+              <CloseIcon />
+            </button>
+          </div>
+
+          <div className={s.sidebarSearch}>
+            <input
+              className={s.searchInput}
+              type="text"
+              placeholder="Buscar slide..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+            />
+          </div>
+
+          <nav className={s.slideList}>
+            {filteredSlides.map((slide, idx) => {
+              const isActive = slide.id === selectedSlide?.id;
+              const label = slide.data?.heading || slide.data?.title || SLIDE_TYPE_LABELS[slide.type] || slide.type;
+              return (
+                <button
+                  key={slide.id}
+                  className={`${s.slideItem} ${isActive ? s.slideItemActive : ''}`}
+                  onClick={() => handleSelectSlide(slide)}
+                >
+                  <span className={s.slideItemNum}>{slide.order ?? idx + 1}</span>
+                  <div className={s.slideItemInfo}>
+                    <span className={s.slideItemTitle}>{label}</span>
+                    <span className={s.slideItemMeta}>{SLIDE_TYPE_LABELS[slide.type] || slide.type}</span>
+                  </div>
+                </button>
+              );
+            })}
+          </nav>
+
+          <button
+            className={s.addSlideBtn}
+            onClick={() => dispatch({ type: 'TOGGLE_MODAL', open: true })}
+            disabled={saving}
+          >
+            <PlusIcon /> Agregar slide
+          </button>
+        </aside>
+
+        {/* ── Editor panel ── */}
+        <div className={s.editorPanel}>
+          <EditorForm
+            key={selectedSlide?.id}
+            slide={selectedSlide}
+            onSave={handleSaveSlide}
+            onDelete={handleDeleteSlide}
+            onFormChange={handleFormChange}
+            isSaving={saving}
+          />
+        </div>
+
+        {/* ── Live preview panel ── */}
+        <div className={s.previewPanel}>
+          <div className={s.previewHeader}>
+            <h3 className={s.previewTitle}>Vista previa</h3>
+          </div>
+          <div className={s.previewContent}>
+            <div className={s.previewFrame}>
+              {livePreviewSlide ? (
+                <SlideRendererV2
+                  slide={livePreviewSlide}
+                  courseTitle={course?.title ?? ''}
+                />
+              ) : (
+                <div className={s.emptyState}>
+                  <p>Sin slide seleccionado</p>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* ══ ADD SLIDE MODAL ══════════════════════════ */}
+      {showSlideModal && (
+        <div className={s.modalBackdrop} onClick={(e) => { if (e.target === e.currentTarget) dispatch({ type: 'TOGGLE_MODAL', open: false }); }}>
+          <div className={s.modalBox}>
+            <div className={s.modalHeader}>
+              <div>
+                <h2 className={s.modalTitle}>Agregar Slide</h2>
+                <p className={s.modalSubtitle}>Selecciona el tipo de slide</p>
+              </div>
+              <button className={s.iconBtn} onClick={() => dispatch({ type: 'TOGGLE_MODAL', open: false })} aria-label="Cerrar">
+                <CloseIcon />
+              </button>
+            </div>
+            <div className={s.modalBody}>
+              {SLIDE_SECTIONS.map((section) => (
+                <div key={section.label} className={s.modalSection}>
+                  <p className={s.modalSectionLabel}>{section.label}</p>
+                  <div className={s.slideTypesGrid}>
+                    {section.types.map(({ type, label, desc }) => (
+                      <button
+                        key={type}
+                        className={s.slideTypeCard}
+                        onClick={() => handleAddSlide(type)}
+                        disabled={saving}
+                      >
+                        <div className={s.slideTypeIcon}>
+                          <SlideTypeIconSVG type={type} />
+                        </div>
+                        <div>
+                          <h3 className={s.slideTypeName}>{label}</h3>
+                          <p className={s.slideTypeDesc}>{desc}</p>
+                        </div>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ══ CONFIRM DELETE DIALOG ════════════════════ */}
+      {confirmDialog && (
+        <div className={s.confirmBackdrop} onClick={() => setConfirmDialog(null)}>
+          <div className={s.confirmBox} onClick={e => e.stopPropagation()} role="alertdialog" aria-modal="true">
+            <div className={s.confirmIconWrap}>
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <polyline points="3 6 5 6 21 6" /><path d="M19 6l-1 14H6L5 6" /><path d="M10 11v6" /><path d="M14 11v6" /><path d="M9 6V4h6v2" />
+              </svg>
+            </div>
+            <h2 className={s.confirmTitle}>Eliminar slide</h2>
+            <p className={s.confirmText}>Esta acción no se puede deshacer.</p>
+            <div className={s.confirmActions}>
+              <button className={s.confirmBtnCancel} onClick={() => setConfirmDialog(null)}>Cancelar</button>
+              <button className={s.confirmBtnDanger} onClick={confirmDialog.onConfirm}>Eliminar</button>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+/* ─── Inline SVG icons ───────────────────────────── */
+function MenuIcon() {
+  return (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <line x1="4" y1="6" x2="20" y2="6" /><line x1="4" y1="12" x2="20" y2="12" /><line x1="4" y1="18" x2="20" y2="18" />
+    </svg>
+  );
+}
+
+function CloseIcon() {
+  return (
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" />
+    </svg>
+  );
+}
+
+function PlusIcon() {
+  return (
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <line x1="12" y1="5" x2="12" y2="19" /><line x1="5" y1="12" x2="19" y2="12" />
+    </svg>
+  );
+}
+
+function TrashIcon() {
+  return (
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <polyline points="3,6 5,6 21,6" /><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
+    </svg>
+  );
+}
+
+function CheckIcon() {
+  return (
+    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+      <polyline points="20,6 9,17 4,12" />
+    </svg>
+  );
+}
+
+function SpinnerIcon() {
+  return (
+    <svg className={s.spin} width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+      <path d="M21 12a9 9 0 1 1-6.219-8.56" />
+    </svg>
+  );
+}
+
+/* ── Slide type icon (generic per-type) ──────────── */
+function SlideTypeIconSVG({ type }) {
+  const icons = {
+    title: <><rect x="3" y="3" width="18" height="18" rx="2" /><line x1="7" y1="9" x2="17" y2="9" /><line x1="7" y1="13" x2="13" y2="13" /></>,
+    content: <><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" /><polyline points="14,2 14,8 20,8" /></>,
+    objective: <><circle cx="12" cy="12" r="10" /><circle cx="12" cy="12" r="6" /><circle cx="12" cy="12" r="2" /></>,
+    definition: <><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" /><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" /></>,
+    benefits: <><polyline points="20,6 9,17 4,12" /></>,
+    icon_grid: <><rect x="3" y="3" width="7" height="7" /><rect x="14" y="3" width="7" height="7" /><rect x="3" y="14" width="7" height="7" /><rect x="14" y="14" width="7" height="7" /></>,
+    comparison: <><line x1="12" y1="3" x2="12" y2="21" /><rect x="2" y="3" width="20" height="18" rx="2" /></>,
+    steps: <><line x1="8" y1="6" x2="21" y2="6" /><line x1="8" y1="12" x2="21" y2="12" /><line x1="8" y1="18" x2="21" y2="18" /><circle cx="4" cy="6" r="1" fill="currentColor" /><circle cx="4" cy="12" r="1" fill="currentColor" /><circle cx="4" cy="18" r="1" fill="currentColor" /></>,
+    quiz: <><circle cx="12" cy="12" r="10" /><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3" /><circle cx="12" cy="17" r="0.5" fill="currentColor" /></>,
+    dynamic: <><polygon points="13,2 3,14 12,14 11,22 21,10 12,10" /></>,
+    video: <><polygon points="5,3 19,12 5,21" /></>,
+    flashcard: <><rect x="2" y="4" width="16" height="14" rx="2" /><rect x="6" y="6" width="16" height="14" rx="2" /></>,
+    fill_blank: <><line x1="4" y1="18" x2="20" y2="18" /><line x1="4" y1="12" x2="12" y2="12" /><line x1="4" y1="6" x2="16" y2="6" /></>,
+    checklist: <><rect x="3" y="5" width="4" height="4" rx="1" /><line x1="10" y1="7" x2="21" y2="7" /><rect x="3" y="15" width="4" height="4" rx="1" /><line x1="10" y1="17" x2="21" y2="17" /></>,
+  };
+  return (
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+      {icons[type] || icons.content}
+    </svg>
+  );
+}

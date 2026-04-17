@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { getCourseWithSlides } from '@/lib/courseService';
-import CoursePlayer from '@/components/features/Courses/CoursePlayer';
+import SlidePlayerV2 from '@/components/features/Courses/SlidePlayerV2/SlidePlayerV2';
 import styles from './page.module.css';
 
 export default function PublicCoursePage({ params }) {
@@ -65,11 +65,10 @@ export default function PublicCoursePage({ params }) {
     }
 
     return (
-        <CoursePlayer
+        <SlidePlayerV2
             course={course}
             slides={slides}
             onClose={() => router.push('/')}
-            userId={null}
         />
     );
 }

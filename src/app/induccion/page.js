@@ -7,7 +7,7 @@ import { useToast } from '@/components/ui/Toast/Toast';
 import { Suspense } from 'react';
 import AdminLayout from '@/components/layout/AdminLayout/AdminLayout';
 import CourseWizardModal from '@/components/features/Courses/CourseWizardModal';
-import CoursePlayer from '@/components/features/Courses/CoursePlayer';
+import SlidePlayerV2 from '@/components/features/Courses/SlidePlayerV2/SlidePlayerV2';
 import KanbanCoursesView from '@/components/features/Induccion/views/KanbanCoursesView';
 import { useConfirm } from '@/hooks/useConfirm';
 import { Dialog, DialogHeader, DialogTitle, DialogBody, DialogFooter, DialogClose } from '@/components/ui/Dialog/Dialog';
@@ -302,7 +302,7 @@ function InduccionContent() {
 
     if (playerData) {
         return (
-            <CoursePlayer
+            <SlidePlayerV2
                 course={playerData.course}
                 slides={playerData.slides}
                 onClose={() => setPlayerData(null)}

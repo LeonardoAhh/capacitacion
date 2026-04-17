@@ -100,50 +100,41 @@
 }
 
 [data-theme="dark"] {
-  /* Dark Mode - Dark Glass VIÑOPLASTIC */
-  --bg-primary: #060612;
-  /* Deep Navy Base */
-  --bg-secondary: #0a0f2e;
-  /* Navy Elevado */
-  --bg-tertiary: #10163a;
-  /* Navy Superior */
-  --bg-primary-rgb: 6, 6, 18;
+  /* Dark Mode – Vercel/Geist Neutral Dark */
+  --bg-primary: #0a0a0a;
+  --bg-secondary: #141414;
+  --bg-tertiary: #1a1a1a;
+  --bg-primary-rgb: 10, 10, 10;
 
-  --app-background: #060612;
-  --card-background: rgba(10, 15, 46, 0.75);
-  /* Liquid Glass Base */
-  --card-border: rgba(77, 128, 255, 0.15);
-  /* Subtly Blue Border */
-  --popover-background: #0a0f2e;
+  --app-background: #0a0a0a;
+  --card-background: rgba(20, 20, 20, 0.85);
+  --card-border: rgba(255, 255, 255, 0.08);
+  --popover-background: #141414;
 
   /* Text Colors */
-  --text-primary: #ffffff;
-  --text-secondary: #94a3b8;
-  --text-tertiary: #64748b;
+  --text-primary: #ededed;
+  --text-secondary: #a1a1a1;
+  --text-tertiary: #707070;
 
   /* Separator */
-  --border-color: rgba(77, 128, 255, 0.12);
-  --border-color-rgb: 77, 128, 255;
+  --border-color: rgba(255, 255, 255, 0.1);
+  --border-color-rgb: 255, 255, 255;
 
-  /* Shadows (Tinte frío nocturno) */
-  --shadow-sm: 0 2px 8px rgba(0, 5, 20, 0.5);
-  --shadow-md: 0 8px 24px rgba(0, 5, 20, 0.7);
-  --shadow-lg: 0 16px 48px rgba(0, 5, 20, 0.9);
+  /* Shadows */
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.5);
+  --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.7);
+  --shadow-lg: 0 16px 48px rgba(0, 0, 0, 0.9);
 
-  /* Vibrant Colors - VIÑOPLASTIC */
-  --color-primary: #003ccc;
-  /* Azul Corporativo (antes ambar) */
-  --color-secondary: #0050e0;
+  /* Vibrant Colors */
+  --color-primary: #0070f3;
+  --color-secondary: #0060df;
   --color-accent: #3b82f6;
-  /* Azul brillante para hovers/selections */
 
-  --color-warning: #f59e0b;
-  /* Mantener para alertas de Cuidado */
-  --color-danger: #d40000;
-  /* Rojo Corporativo (antes red generico) */
+  --color-warning: #f5a623;
+  --color-danger: #ee0000;
 
   /* Scrollbar Dark */
-  --scrollbar-thumb: rgba(77, 128, 255, 0.2);
+  --scrollbar-thumb: rgba(255, 255, 255, 0.15);
   --scrollbar-track: transparent;
 }
 
