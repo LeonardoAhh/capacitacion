@@ -621,3 +621,91 @@
         transform: none;
     }
 }
+
+/* ─── Logout overlay ────────────────────────────────────── */
+
+.logoutOverlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(255, 255, 255, 0.97);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.logoutContent {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+    text-align: center;
+}
+
+/* Ring container — mirrors .ringWrap from login */
+.logoutRingWrap {
+    position: relative;
+    width: 80px;
+    height: 80px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.logoutPulse1,
+.logoutPulse2 {
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    background: #ef4444;
+    pointer-events: none;
+}
+
+.logoutSvgIcon {
+    width: 56px;
+    height: 56px;
+    position: relative;
+    z-index: 1;
+    flex-shrink: 0;
+}
+
+.logoutLogoText {
+    font-family: var(--font-serif, 'Montserrat', sans-serif);
+    font-size: 1.75rem;
+    font-weight: 800;
+    color: var(--text-primary, #18181b);
+    letter-spacing: -0.02em;
+}
+
+.logoutLogoAccent {
+    color: #2563eb;
+}
+
+.logoutMsg {
+    font-size: 1rem;
+    color: var(--text-secondary, #4b5563);
+    font-weight: 600;
+    margin: 0;
+}
+
+.logoutCountdownBar {
+    width: 200px;
+    height: 3px;
+    background: #e5e7eb;
+    border-radius: 9999px;
+    overflow: hidden;
+}
+
+.logoutCountdownFill {
+    height: 100%;
+    background: #ef4444;
+    border-radius: 9999px;
+}
+
+.logoutRedirectMsg {
+    font-size: 0.8rem;
+    color: #9ca3af;
+    margin: 0;
+}

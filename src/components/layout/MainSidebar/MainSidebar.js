@@ -6,7 +6,7 @@ import { usePathname } from 'next/navigation';
 import NextImage from 'next/image';
 import {
     Users, Zap, FileCheck, UserCheck, LayoutDashboard,
-    LogOut, X, GraduationCap, Trophy,
+    X, GraduationCap, Trophy,
 } from 'lucide-react';
 import styles from './MainSidebar.module.css';
 
@@ -97,21 +97,6 @@ export default function MainSidebar({ user, handleLogout, isOpen, onClose, isCol
                         );
                     })}
                 </nav>
-
-                {/* Footer */}
-                <div className={styles.footer}>
-                    <div className={styles.separator} />
-                    <button
-                        className={styles.logoutBtn}
-                        onClick={handleLogout}
-                        aria-label="Cerrar sesión"
-                        title="Cerrar sesión"
-                        type="button"
-                    >
-                        <LogOut size={15} />
-                        {!isCollapsed && <span>Cerrar sesión</span>}
-                    </button>
-                </div>
             </aside>
         </>
     );

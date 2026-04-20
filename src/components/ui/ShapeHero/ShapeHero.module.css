@@ -4,42 +4,87 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 1.2rem;
-  min-height: 160px;
+  gap: 1rem;
+  min-height: 200px;
   background: transparent;
   border: none;
   box-shadow: none;
-  padding: 2.5rem 0 2rem 0;
+  padding: 2rem 0 2rem 0;
 }
 
-.successState svg {
-  color: #16a34a;
-  width: 48px;
-  height: 48px;
-  background: #e7faed;
+/* Ring container for pulsing circles + SVG checkmark */
+.ringWrap {
+  position: relative;
+  width: 80px;
+  height: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.pulse1,
+.pulse2 {
+  position: absolute;
+  inset: 0;
   border-radius: 50%;
-  padding: 0.5rem;
+  background: #16a34a;
+  pointer-events: none;
 }
 
-.successState p {
+.svgCheck {
+  width: 56px;
+  height: 56px;
+  position: relative;
+  z-index: 1;
+  flex-shrink: 0;
+}
+
+.successText {
   color: #16a34a;
   font-size: 1.15rem;
-  font-weight: 600;
+  font-weight: 700;
   margin: 0;
   text-align: center;
+  letter-spacing: 0.01em;
+}
+
+/* 5-second countdown progress bar */
+.countdownBar {
+  width: 100%;
+  max-width: 200px;
+  height: 3px;
+  background: #e5e7eb;
+  border-radius: 9999px;
+  overflow: hidden;
+}
+
+.countdownFill {
+  height: 100%;
+  background: #16a34a;
+  border-radius: 9999px;
+}
+
+.redirectMsg {
+  font-size: 0.8rem;
+  color: #9ca3af;
+  text-align: center;
+  margin: 0;
 }
 
 @media (max-width: 600px) {
   .successState {
-    min-height: 120px;
+    min-height: 160px;
     padding: 1.5rem 0 1rem 0;
   }
-  .successState svg {
-    width: 36px;
-    height: 36px;
-    padding: 0.3rem;
+  .ringWrap {
+    width: 64px;
+    height: 64px;
   }
-  .successState p {
+  .svgCheck {
+    width: 44px;
+    height: 44px;
+  }
+  .successText {
     font-size: 1rem;
   }
 }

@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useCallback, useEffect, useRef } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '@/contexts/AuthContext';
 import { useTheme } from '@/contexts/ThemeContext';
 import { useRouter } from 'next/navigation';
@@ -107,6 +108,10 @@ export default function Navbar() {
         try {
             setIsSigningOut(true);
             setDrawerOpen(false);
+            // Esperar 5s PRIMERO para que la animación complete,
+            // luego sign out. Si signOut corre antes, onAuthStateChanged
+            // dispara user=null → page guards redirigen a /login inmediatamente.
+            await new Promise(resolve => setTimeout(resolve, 5000));
             const result = await signOut();
             if (result?.success !== false) router.push('/');
         } catch (err) {
@@ -118,6 +123,129 @@ export default function Navbar() {
 
     return (
         <>
+            {/* ── Logout overlay ── */}
+            <AnimatePresence>
+                {isSigningOut && (
+                    <motion.div
+                        className={styles.logoutOverlay}
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0, scale: 0.98 }}
+                        transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
+                        role="status"
+                        aria-live="assertive"
+                        aria-label="Cerrando sesión"
+                    >
+                        <motion.div
+                            className={styles.logoutContent}
+                            initial={{ scale: 0.85, opacity: 0, y: 20 }}
+                            animate={{ scale: 1, opacity: 1, y: 0 }}
+                            transition={{ delay: 0.1, duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+                        >
+                            {/* Rings + SVG logout icon — mirrors login checkmark */}
+                            <div className={styles.logoutRingWrap}>
+                                <motion.div
+                                    className={styles.logoutPulse1}
+                                    initial={{ scale: 1, opacity: 0.4 }}
+                                    animate={{ scale: 2.2, opacity: 0 }}
+                                    transition={{ duration: 2, repeat: Infinity, ease: 'easeOut' }}
+                                />
+                                <motion.div
+                                    className={styles.logoutPulse2}
+                                    initial={{ scale: 1, opacity: 0.25 }}
+                                    animate={{ scale: 2.8, opacity: 0 }}
+                                    transition={{ duration: 2, repeat: Infinity, ease: 'easeOut', delay: 0.7 }}
+                                />
+                                <motion.svg
+                                    className={styles.logoutSvgIcon}
+                                    viewBox="0 0 52 52"
+                                    aria-hidden="true"
+                                    initial={{ rotate: 90, scale: 0.6 }}
+                                    animate={{ rotate: 0, scale: 1 }}
+                                    transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
+                                >
+                                    <motion.circle
+                                        cx="26" cy="26" r="23"
+                                        fill="#fff0f0"
+                                        stroke="#ef4444"
+                                        strokeWidth="2"
+                                        initial={{ pathLength: 0 }}
+                                        animate={{ pathLength: 1 }}
+                                        transition={{ duration: 0.8, ease: 'easeOut' }}
+                                    />
+                                    {/* Door bracket — right side */}
+                                    <motion.path
+                                        fill="none"
+                                        stroke="#ef4444"
+                                        strokeWidth="3"
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                        d="M33 14 L40 14 L40 38 L33 38"
+                                        initial={{ pathLength: 0 }}
+                                        animate={{ pathLength: 1 }}
+                                        transition={{ duration: 0.35, delay: 0.6, ease: [0.22, 1, 0.36, 1] }}
+                                    />
+                                    {/* Exit arrow — right */}
+                                    <motion.path
+                                        fill="none"
+                                        stroke="#ef4444"
+                                        strokeWidth="3.5"
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                        d="M13 26 L31 26 M23 18 L31 26 L23 34"
+                                        initial={{ pathLength: 0 }}
+                                        animate={{ pathLength: 1 }}
+                                        transition={{ duration: 0.45, delay: 0.8, ease: [0.22, 1, 0.36, 1] }}
+                                    />
+                                </motion.svg>
+                            </div>
+
+                            <motion.span
+                                className={styles.logoutLogoText}
+                                initial={{ opacity: 0, y: 14 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                transition={{ delay: 0.9, duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+                            >
+                                VIÑO<span className={styles.logoutLogoAccent}>PLASTIC</span>
+                            </motion.span>
+
+                            <motion.p
+                                className={styles.logoutMsg}
+                                initial={{ opacity: 0 }}
+                                animate={{ opacity: 1 }}
+                                transition={{ delay: 1.1 }}
+                            >
+                                Hasta pronto
+                            </motion.p>
+
+                            <motion.div
+                                className={styles.logoutCountdownBar}
+                                initial={{ opacity: 0 }}
+                                animate={{ opacity: 1 }}
+                                transition={{ delay: 1.1 }}
+                            >
+                                <motion.div
+                                    className={styles.logoutCountdownFill}
+                                    initial={{ scaleX: 1 }}
+                                    animate={{ scaleX: 0 }}
+                                    transition={{ duration: 3.9, ease: 'linear', delay: 1.1 }}
+                                    style={{ transformOrigin: 'left' }}
+                                />
+                            </motion.div>
+
+                            <motion.span
+                                className={styles.logoutRedirectMsg}
+                                initial={{ opacity: 0 }}
+                                animate={{ opacity: 1 }}
+                                transition={{ delay: 1.3 }}
+                            >
+                                Cerrando sesión...
+                            </motion.span>
+                        </motion.div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
+
             {/* ── Pill flotante ── */}
             <nav
                 className={styles.pill}

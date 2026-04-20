@@ -3,7 +3,7 @@
 import { useReducer, useEffect, useCallback, useRef } from 'react';
 import Image from 'next/image';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { Lock, CheckCircle2, AlertCircle } from 'lucide-react';
+import { Lock, AlertCircle } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '@/contexts/AuthContext';
 import { createSession } from '@/lib/sessionApi';
@@ -112,10 +112,11 @@ export default function ShapeHero() {
 
     /* Redirige si ya está autenticado */
     useEffect(() => {
-        // Solo redirige automáticamente si el usuario está autenticado y NO está en estado de éxito
-        if (!user || isSuccess) return;
+        // loading = true significa que hay un submit en curso (esperando createSession).
+        // No redirigir hasta que el flujo termine para evitar race con createSession.
+        if (!user || isSuccess || loading) return;
         router.replace('/induccion');
-    }, [user, router, isSuccess]);
+    }, [user, router, isSuccess, loading]);
 
     /* Restaura rate limit del localStorage al montar */
     useEffect(() => {
@@ -256,13 +257,88 @@ export default function ShapeHero() {
                                 <motion.div
                                     key="success"
                                     className={styles.successState}
-                                    initial={{ opacity: 0, scale: 0.85, y: 30 }}
-                                    animate={{ opacity: 1, scale: 1, y: 0 }}
-                                    exit={{ opacity: 0, scale: 0.85, y: -30 }}
-                                    transition={{ type: 'spring', stiffness: 340, damping: 22, duration: 0.7 }}
+                                    initial={{ opacity: 0 }}
+                                    animate={{ opacity: 1 }}
+                                    exit={{ opacity: 0, scale: 0.9 }}
+                                    transition={{ duration: 0.5 }}
                                 >
-                                    <CheckCircle2 />
-                                    <p>Acceso concedido</p>
+                                    {/* Rings + Animated checkmark */}
+                                    <div className={styles.ringWrap}>
+                                        <motion.div
+                                            className={styles.pulse1}
+                                            initial={{ scale: 1, opacity: 0.45 }}
+                                            animate={{ scale: 2.2, opacity: 0 }}
+                                            transition={{ duration: 2, repeat: Infinity, ease: 'easeOut' }}
+                                        />
+                                        <motion.div
+                                            className={styles.pulse2}
+                                            initial={{ scale: 1, opacity: 0.3 }}
+                                            animate={{ scale: 2.8, opacity: 0 }}
+                                            transition={{ duration: 2, repeat: Infinity, ease: 'easeOut', delay: 0.7 }}
+                                        />
+                                        <motion.svg
+                                            className={styles.svgCheck}
+                                            viewBox="0 0 52 52"
+                                            aria-hidden="true"
+                                            initial={{ rotate: -90, scale: 0.6 }}
+                                            animate={{ rotate: 0, scale: 1 }}
+                                            transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
+                                        >
+                                            <motion.circle
+                                                cx="26" cy="26" r="23"
+                                                fill="#e7faed"
+                                                stroke="#16a34a"
+                                                strokeWidth="2"
+                                                initial={{ pathLength: 0 }}
+                                                animate={{ pathLength: 1 }}
+                                                transition={{ duration: 0.8, ease: 'easeOut' }}
+                                            />
+                                            <motion.path
+                                                fill="none"
+                                                stroke="#16a34a"
+                                                strokeWidth="3.5"
+                                                strokeLinecap="round"
+                                                strokeLinejoin="round"
+                                                d="M13 26 L21 34 L39 16"
+                                                initial={{ pathLength: 0 }}
+                                                animate={{ pathLength: 1 }}
+                                                transition={{ duration: 0.5, delay: 0.75, ease: [0.22, 1, 0.36, 1] }}
+                                            />
+                                        </motion.svg>
+                                    </div>
+
+                                    <motion.p
+                                        className={styles.successText}
+                                        initial={{ opacity: 0, y: 14 }}
+                                        animate={{ opacity: 1, y: 0 }}
+                                        transition={{ delay: 0.9, duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+                                    >
+                                        Acceso concedido
+                                    </motion.p>
+
+                                    <motion.div
+                                        className={styles.countdownBar}
+                                        initial={{ opacity: 0 }}
+                                        animate={{ opacity: 1 }}
+                                        transition={{ delay: 1.1 }}
+                                    >
+                                        <motion.div
+                                            className={styles.countdownFill}
+                                            initial={{ scaleX: 1 }}
+                                            animate={{ scaleX: 0 }}
+                                            transition={{ duration: 3.9, ease: 'linear', delay: 1.1 }}
+                                            style={{ transformOrigin: 'left' }}
+                                        />
+                                    </motion.div>
+
+                                    <motion.span
+                                        className={styles.redirectMsg}
+                                        initial={{ opacity: 0 }}
+                                        animate={{ opacity: 1 }}
+                                        transition={{ delay: 1.3 }}
+                                    >
+                                        Redirigiendo...
+                                    </motion.span>
                                 </motion.div>
                             ) : (
                                 <motion.div key="form">
