@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useCallback, useRef, useMemo, memo } from 'react';
+import Image from 'next/image';
 import { ICON_CATALOG } from '@/components/features/Courses/Editor/IconPicker';
 import ThermalSimSlide from '@/components/features/Courses/slides/ThermalSimSlide';
 import EnvSimSlide from '@/components/features/Courses/slides/EnvSimSlide';
@@ -167,7 +168,7 @@ function ContentV2({ data }) {
       {hasImages && (
         <div className={s.mediaCol}>
           {gallery.map((url, idx) => (
-            <img key={idx} src={url} alt={`${heading || 'Imagen'} ${idx + 1}`} className={s.contentImg} loading="lazy" onClick={() => setLightbox(url)} />
+            <Image key={idx} src={url} alt={`${heading || 'Imagen'} ${idx + 1}`} className={s.contentImg} width={0} height={0} sizes="100vw" style={{ width: '100%', height: 'auto' }} unoptimized onClick={() => setLightbox(url)} />
           ))}
         </div>
       )}
@@ -284,7 +285,7 @@ function StepsV2({ data }) {
               <div className={s.stepBody}>
                 {step.title && <h3 className={s.stepTitle}>{step.title}</h3>}
                 {step.desc && <p className={s.stepDesc}>{step.desc}</p>}
-                {step.image && <img src={step.image} alt={step.title} className={s.stepImg} loading="lazy" />}
+                {step.image && <Image src={step.image} alt={step.title || 'Imagen'} className={s.stepImg} width={0} height={0} sizes="100vw" style={{ width: '100%', height: 'auto', maxHeight: '200px', objectFit: 'cover' }} unoptimized />}
               </div>
             </li>
           ))}
@@ -591,7 +592,7 @@ function DynamicV2({ data, commitmentValue = '', onCommitmentChange }) {
 function Lightbox({ src, alt, onClose }) {
   return (
     <div className={s.lightbox} onClick={onClose} role="dialog" aria-label="Imagen ampliada">
-      <img src={src} alt={alt || 'Imagen'} className={s.lightboxImg} onClick={(e) => e.stopPropagation()} />
+      <Image src={src} alt={alt || 'Imagen'} className={s.lightboxImg} width={0} height={0} sizes="90vw" style={{ width: 'auto', height: 'auto', maxWidth: '90vw', maxHeight: '90vh', objectFit: 'contain' }} unoptimized onClick={(e) => e.stopPropagation()} />
       <button className={s.lightboxClose} onClick={onClose} aria-label="Cerrar">
         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" /></svg>
       </button>
