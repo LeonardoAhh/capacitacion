@@ -29,6 +29,8 @@
   --color-warning: var(--amber-500);
   --color-danger: var(--red-500);
   --color-info: #111110;
+  --color-focus: var(--blue-500);
+  --color-focus-ring: rgba(0, 122, 255, 0.2);
 
   /* RGB decompositions — for rgba(var(--color-X-rgb), alpha) usage */
   --color-danger-rgb: 255, 59, 48;
@@ -132,6 +134,10 @@
 
   --color-warning: #f5a623;
   --color-danger: #ee0000;
+
+  /* Focus - consistent blue in dark mode */
+  --color-focus: #3b9eff;
+  --color-focus-ring: rgba(59, 158, 255, 0.2);
 
   /* Scrollbar Dark */
   --scrollbar-thumb: rgba(255, 255, 255, 0.15);
@@ -325,8 +331,26 @@ textarea {
   font: inherit;
 }
 
+input,
+select,
+textarea {
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  border-radius: var(--radius-md);
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+  outline: none;
+  border-color: var(--color-focus);
+  box-shadow: none;
+}
+
 :focus-visible {
-  outline: 2px solid var(--color-primary);
+  outline: 2px solid transparent;
   outline-offset: 2px;
 }
 
@@ -426,8 +450,8 @@ a:hover {
 }
 
 .input-field:focus {
-  border-color: var(--color-primary);
-  box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-primary) 15%, transparent);
+  border-color: var(--color-focus);
+  box-shadow: none;
   outline: none;
 }
 
