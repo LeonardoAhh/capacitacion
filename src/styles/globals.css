@@ -345,7 +345,6 @@ input:focus,
 select:focus,
 textarea:focus {
   outline: none;
-  border-color: var(--color-focus);
   box-shadow: none;
 }
 
@@ -450,7 +449,6 @@ a:hover {
 }
 
 .input-field:focus {
-  border-color: var(--color-focus);
   box-shadow: none;
   outline: none;
 }
