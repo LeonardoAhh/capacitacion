@@ -128,27 +128,11 @@ export function useConfirm() {
                     aria-describedby={state.description ? 'confirm-desc' : undefined}
                     className={`${styles.dialog} ${styles[`v_${state.variant}`]}`}
                 >
-                    {/* Acciones superiores — solo iconos */}
-                    <div className={styles.actions}>
-                        <button
-                            type="button"
-                            className={styles.iconBtn}
-                            onClick={handleCancel}
-                            aria-label={state.cancelLabel}
-                            title={state.cancelLabel}
-                        >
-                            <IconX />
-                        </button>
-                        <button
-                            ref={confirmBtnRef}
-                            type="button"
-                            className={`${styles.iconBtn} ${styles.iconBtnConfirm} ${styles[`btn_${state.variant}`]}`}
-                            onClick={handleConfirm}
-                            aria-label={state.confirmLabel}
-                            title={state.confirmLabel}
-                        >
+                    {/* Icono centrado superior */}
+                    <div className={styles.iconWrap} aria-hidden="true">
+                        <span className={`${styles.iconBadge} ${styles[`badge_${state.variant}`]}`}>
                             <VariantIcon />
-                        </button>
+                        </span>
                     </div>
 
                     {/* Contenido */}
@@ -161,6 +145,25 @@ export function useConfirm() {
                                 {state.description}
                             </p>
                         )}
+                    </div>
+
+                    {/* Acciones inferiores — etiquetadas */}
+                    <div className={styles.actions}>
+                        <button
+                            type="button"
+                            className={`${styles.btn} ${styles.btnCancel}`}
+                            onClick={handleCancel}
+                        >
+                            {state.cancelLabel}
+                        </button>
+                        <button
+                            ref={confirmBtnRef}
+                            type="button"
+                            className={`${styles.btn} ${styles.btnConfirm} ${styles[`btn_${state.variant}`]}`}
+                            onClick={handleConfirm}
+                        >
+                            {state.confirmLabel}
+                        </button>
                     </div>
                 </div>
             </div>,

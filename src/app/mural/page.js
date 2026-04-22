@@ -1,10 +1,11 @@
 'use client';
 
 import { useState, useEffect, useMemo, useCallback } from 'react';
+import { createPortal } from 'react-dom';
 import { db } from '@/lib/firebase';
 import { doc, getDoc } from 'firebase/firestore';
 import styles from './page.module.css';
-import { Search, Award, Star, Calendar, CheckCircle2, AlertCircle, RefreshCw, BookOpen } from 'lucide-react';
+import { Search, Award, Star, Calendar, CheckCircle2, AlertCircle, RefreshCw, BookOpen, GraduationCap, MessageCircle, X, ChevronRight, Clock } from 'lucide-react';
 import FloatingThemeToggle from '@/components/layout/ThemeToggle/FloatingThemeToggle';
 
 
@@ -55,7 +56,105 @@ const Confetti = () => {
 const DEFAULT_CONFIG = {
     successMessage: '¡Felicidades! Has aprobado tu examen teórico. Estás un paso más cerca de tu promoción.',
     motivationalMessage: 'El aprendizaje es un proceso constante. Te invitamos a repasar y prepararte para tu siguiente intento. ¡Confiamos en ti!',
+    complianceWhatsapp: '',
+    complianceExamDates: [],
 };
+
+function ComplianceModal({ onClose, whatsapp, examDates }) {
+    useEffect(() => {
+        const esc = (e) => { if (e.key === 'Escape') onClose(); };
+        document.addEventListener('keydown', esc);
+        return () => document.removeEventListener('keydown', esc);
+    }, [onClose]);
+
+    const waLink = whatsapp
+        ? `https://wa.me/52${whatsapp.replace(/\D/g, '')}`
+        : null;
+
+    return createPortal(
+        <div
+            className={styles.complianceOverlay}
+            onMouseDown={(e) => { if (e.target === e.currentTarget) onClose(); }}
+            role="dialog"
+            aria-modal="true"
+            aria-label="Cumplimiento de capacitación"
+        >
+            <div className={styles.complianceModal}>
+                <div className={styles.complianceModalHeader}>
+                    <div className={styles.complianceModalIcon}>
+                        <GraduationCap size={18} aria-hidden="true" />
+                    </div>
+                    <div>
+                        <h2 className={styles.complianceModalTitle}>Cumplimiento de Capacitación</h2>
+                        <p className={styles.complianceModalSubtitle}>Fechas de aplicación — Exámenes Teóricos</p>
+                    </div>
+                    <button
+                        className={styles.complianceCloseBtn}
+                        onClick={onClose}
+                        aria-label="Cerrar"
+                    >
+                        <X size={16} />
+                    </button>
+                </div>
+
+                <div className={styles.complianceModalBody}>
+                    {/* Exam dates */}
+                    {examDates && examDates.length > 0 ? (
+                        <div className={styles.complianceDatesList}>
+                            <p className={styles.complianceSectionLabel}>
+                                <Clock size={13} aria-hidden="true" />
+                                Próximas fechas de examen
+                            </p>
+                            {examDates.map((item, i) => (
+                                <div key={i} className={styles.complianceDateItem}>
+                                    <div className={styles.complianceDateBullet} aria-hidden="true" />
+                                    <div>
+                                        {item.label && (
+                                            <p className={styles.complianceDateLabel}>{item.label}</p>
+                                        )}
+                                        {(item.dateFrom || item.dateTo) ? (
+                                            <p className={styles.complianceDateValue}>
+                                                <Calendar size={12} aria-hidden="true" />
+                                                {item.dateFrom}{item.dateFrom && item.dateTo ? ' — ' : ''}{item.dateTo}
+                                            </p>
+                                        ) : item.date ? (
+                                            <p className={styles.complianceDateValue}>
+                                                <Calendar size={12} aria-hidden="true" />
+                                                {item.date}
+                                            </p>
+                                        ) : null}
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    ) : (
+                        <p className={styles.complianceEmpty}>Próximamente se publicarán las fechas de examen.</p>
+                    )}
+
+                    {/* WhatsApp contact */}
+                    {waLink && (
+                        <div className={styles.complianceContact}>
+                            <p className={styles.complianceSectionLabel}>
+                                <MessageCircle size={13} aria-hidden="true" />
+                                ¿Tienes dudas? Contáctanos
+                            </p>
+                            <a
+                                href={waLink}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className={styles.complianceWaBtn}
+                            >
+                                <MessageCircle size={15} aria-hidden="true" />
+                                Escribir por WhatsApp
+                            </a>
+                        </div>
+                    )}
+                </div>
+            </div>
+        </div>,
+        document.body
+    );
+}
 
 export default function MuralPage() {
     const [employeeId, setEmployeeId] = useState('');
@@ -63,6 +162,7 @@ export default function MuralPage() {
     const [result, setResult] = useState(null);
     const [errorMsg, setErrorMsg] = useState('');
     const [config, setConfig] = useState(DEFAULT_CONFIG);
+    const [complianceOpen, setComplianceOpen] = useState(false);
 
     useEffect(() => {
         const fetchConfig = async () => {
@@ -291,7 +391,34 @@ export default function MuralPage() {
                     </div>
                 )}
 
+                {/* Compliance info card — always visible */}
+                <div className={styles.complianceCard}>
+                    <div className={styles.complianceCardIcon}>
+                        <GraduationCap size={16} aria-hidden="true" />
+                    </div>
+                    <div className={styles.complianceCardContent}>
+                        <p className={styles.complianceCardTitle}>Conoce tu cumplimiento de capacitación</p>
+                        <p className={styles.complianceCardDesc}>Fechas de aplicación de exámenes teóricos</p>
+                    </div>
+                    <button
+                        className={styles.complianceCardBtn}
+                        onClick={() => setComplianceOpen(true)}
+                        aria-label="Ver más información sobre cumplimiento de capacitación"
+                    >
+                        Ver más
+                        <ChevronRight size={14} aria-hidden="true" />
+                    </button>
+                </div>
+
             </div>
+
+            {complianceOpen && (
+                <ComplianceModal
+                    onClose={() => setComplianceOpen(false)}
+                    whatsapp={config.complianceWhatsapp}
+                    examDates={config.complianceExamDates || []}
+                />
+            )}
         </main>
     );
 }

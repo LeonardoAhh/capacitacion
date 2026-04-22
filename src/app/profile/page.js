@@ -971,7 +971,7 @@ function AdminSection() {
 }
 
 //  ADMIN MURAL SECTION 
-import { Presentation, Save, RefreshCcw, Pencil, Check, X as CancelIcon } from 'lucide-react';
+import { Presentation, Save, RefreshCcw, Pencil, Check, X as CancelIcon, Phone, Plus, Trash2 as TrashIcon } from 'lucide-react';
 import { deleteDoc } from 'firebase/firestore';
 
 const extractFirstName = (fullName) => {
@@ -1017,12 +1017,23 @@ function AdminMuralSection() {
         successMessage: '', motivationalMessage: '',
     });
 
+    const [complianceConfig, setComplianceConfig] = useState({
+        complianceWhatsapp: '',
+        complianceExamDates: [],
+    });
+    const [complianceOpen, setComplianceOpen] = useState(false);
+
     useEffect(() => {
         // Configuración de mensajes
         const fetchMuralConfig = async () => {
             const docSnap = await getDoc(doc(db, 'app_config', 'mural'));
             if (docSnap.exists()) {
-                setMessages(prev => ({ ...prev, ...docSnap.data() }));
+                const data = docSnap.data();
+                setMessages(prev => ({ ...prev, ...data }));
+                setComplianceConfig({
+                    complianceWhatsapp: data.complianceWhatsapp || '',
+                    complianceExamDates: Array.isArray(data.complianceExamDates) ? data.complianceExamDates : [],
+                });
             } else {
                 setMessages({
                     successMessage: '¡Felicidades! Has aprobado tu examen teórico. Estás un paso más cerca de tu promoción.',
@@ -1128,6 +1139,40 @@ function AdminMuralSection() {
         } catch {
             toast.error('No se pudieron guardar los mensajes');
         }
+    };
+
+    const saveCompliance = async () => {
+        try {
+            await setDoc(doc(db, 'app_config', 'mural'), {
+                complianceWhatsapp: complianceConfig.complianceWhatsapp,
+                complianceExamDates: complianceConfig.complianceExamDates,
+            }, { merge: true });
+            toast.success('Información de cumplimiento guardada');
+        } catch {
+            toast.error('No se pudo guardar la información de cumplimiento');
+        }
+    };
+
+    const addExamDate = () => {
+        setComplianceConfig(prev => ({
+            ...prev,
+            complianceExamDates: [...prev.complianceExamDates, { label: '', date: '' }],
+        }));
+    };
+
+    const removeExamDate = (idx) => {
+        setComplianceConfig(prev => ({
+            ...prev,
+            complianceExamDates: prev.complianceExamDates.filter((_, i) => i !== idx),
+        }));
+    };
+
+    const updateExamDate = (idx, field, value) => {
+        setComplianceConfig(prev => {
+            const dates = [...prev.complianceExamDates];
+            dates[idx] = { ...dates[idx], [field]: value };
+            return { ...prev, complianceExamDates: dates };
+        });
     };
 
     const handleManualSubmit = async () => {
@@ -1283,6 +1328,99 @@ function AdminMuralSection() {
                                     placeholder="Usa [Nombre] para personalizar el saludo..."
                                 />
                             </div>
+                        </div>
+                    </div>
+
+                    {/* Cumplimiento de capacitación */}
+                    <div className={styles.complianceAdminPanel}>
+                        <div className={styles.complianceAdminHeader}>
+                            <div>
+                                <p className={styles.complianceAdminTitle}>
+                                    Cumplimiento de Capacitación
+                                </p>
+                                <p className={styles.complianceAdminDesc}>
+                                    WhatsApp de contacto y fechas de exámenes teóricos visibles en el mural público.
+                                </p>
+                            </div>
+                            <button
+                                type="button"
+                                className={`${styles.accordionActionBtn} ${styles.accordionActionBtnPrimary}`}
+                                onClick={saveCompliance}
+                                title="Guardar cumplimiento"
+                                aria-label="Guardar información de cumplimiento"
+                            >
+                                <Save size={14} />
+                            </button>
+                        </div>
+
+                        <div className={styles.fieldGroup}>
+                            <label className={styles.fieldLabel}>
+                                <Phone size={13} /> WhatsApp de contacto (10 dígitos, sin código de país)
+                            </label>
+                            <input
+                                type="tel"
+                                className={styles.fieldInput}
+                                value={complianceConfig.complianceWhatsapp}
+                                onChange={(e) => setComplianceConfig(prev => ({
+                                    ...prev,
+                                    complianceWhatsapp: e.target.value.replace(/\D/g, '').slice(0, 10),
+                                }))}
+                                placeholder="Ej. 4421234567"
+                                maxLength={10}
+                            />
+                        </div>
+
+                        <div className={styles.fieldGroup}>
+                            <div className={styles.complianceDatesHeader}>
+                                <label className={styles.fieldLabel}>Fechas de Exámenes Teóricos</label>
+                                <button
+                                    type="button"
+                                    className={styles.complianceAddDateBtn}
+                                    onClick={addExamDate}
+                                    aria-label="Agregar fecha"
+                                >
+                                    <Plus size={13} /> Agregar
+                                </button>
+                            </div>
+                            {complianceConfig.complianceExamDates.length === 0 && (
+                                <p className={styles.complianceDatesEmpty}>Sin fechas configuradas.</p>
+                            )}
+                            {complianceConfig.complianceExamDates.map((item, idx) => (
+                                <div key={idx} className={styles.complianceDateRow}>
+                                    <input
+                                        type="text"
+                                        className={styles.fieldInput}
+                                        value={item.label}
+                                        onChange={(e) => updateExamDate(idx, 'label', e.target.value)}
+                                        placeholder="Descripción (ej. 2o. Período 2026)"
+                                    />
+                                    <div className={styles.complianceDateRange}>
+                                        <input
+                                            type="text"
+                                            className={styles.fieldInput}
+                                            value={item.dateFrom || ''}
+                                            onChange={(e) => updateExamDate(idx, 'dateFrom', e.target.value)}
+                                            placeholder="Desde (ej. 10 de enero)"
+                                        />
+                                        <span className={styles.complianceDateRangeSep}>—</span>
+                                        <input
+                                            type="text"
+                                            className={styles.fieldInput}
+                                            value={item.dateTo || ''}
+                                            onChange={(e) => updateExamDate(idx, 'dateTo', e.target.value)}
+                                            placeholder="Hasta (ej. 14 de enero)"
+                                        />
+                                    </div>
+                                    <button
+                                        type="button"
+                                        className={`${styles.tableIconBtn} ${styles.tableIconBtnRed}`}
+                                        onClick={() => removeExamDate(idx)}
+                                        aria-label="Eliminar fecha"
+                                    >
+                                        <TrashIcon size={13} />
+                                    </button>
+                                </div>
+                            ))}
                         </div>
                     </div>
 

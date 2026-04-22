@@ -227,7 +227,7 @@ function InduccionContent() {
 
     const handleDeleteNative = useCallback(async (e, courseId) => {
         e.stopPropagation();
-        if (!await showConfirm('¿Eliminar este curso y todos sus slides?', { title: 'Eliminar Curso', confirmLabel: 'Eliminar' })) return;
+        if (!await showConfirm('¿Eliminar este curso y todos sus slides?', { title: 'Eliminar Curso', variant: 'delete', confirmLabel: 'Eliminar' })) return;
         const course = nativeCourses.find(c => c.id === courseId);
         const result = await deleteCourse(courseId);
         if (result.success) {

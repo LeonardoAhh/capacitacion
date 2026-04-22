@@ -544,3 +544,282 @@
     from { opacity: 0; transform: translateY(14px); }
     to   { opacity: 1; transform: translateY(0); }
 }
+
+/* =============================================================
+   COMPLIANCE CARD (info strip)
+   ============================================================= */
+@keyframes complianceFadeIn {
+    from { opacity: 0; transform: translateY(8px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+.complianceCard {
+    display: flex;
+    align-items: center;
+    gap: var(--s-12);
+    padding: var(--s-14) var(--s-16);
+    background: var(--ds-bg-tertiary);
+    border: 1px solid var(--ds-border-hairline);
+    border-left: 3px solid var(--accent-teal);
+    border-radius: var(--radius-lg);
+    animation: complianceFadeIn 0.28s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.complianceCardIcon {
+    width: 32px;
+    height: 32px;
+    background: rgba(31, 138, 101, 0.10);
+    border: 1px solid rgba(31, 138, 101, 0.22);
+    border-radius: var(--radius-md);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--accent-teal);
+    flex-shrink: 0;
+}
+
+.complianceCardContent {
+    flex: 1;
+    min-width: 0;
+}
+
+.complianceCardTitle {
+    font-family: var(--font-display), system-ui, sans-serif;
+    font-size: var(--text-button);
+    font-weight: var(--weight-announce);
+    color: var(--ds-text);
+    margin: 0 0 var(--s-2);
+    line-height: var(--lh-snug);
+}
+
+.complianceCardDesc {
+    font-family: var(--font-display), system-ui, sans-serif;
+    font-size: var(--text-caption);
+    color: var(--ds-text-muted);
+    margin: 0;
+}
+
+.complianceCardBtn {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--s-4);
+    padding: var(--s-6) var(--s-12);
+    background: rgba(31, 138, 101, 0.08);
+    color: var(--accent-teal);
+    border: 1px solid rgba(31, 138, 101, 0.22);
+    border-radius: var(--radius-pill);
+    font-family: var(--font-display), system-ui, sans-serif;
+    font-size: var(--text-caption);
+    font-weight: var(--weight-announce);
+    cursor: pointer;
+    white-space: nowrap;
+    flex-shrink: 0;
+    transition: background var(--transition-fast),
+                box-shadow var(--transition-fast);
+}
+
+.complianceCardBtn:hover {
+    background: rgba(31, 138, 101, 0.15);
+    box-shadow: var(--elev-focus);
+}
+
+/* =============================================================
+   COMPLIANCE MODAL
+   ============================================================= */
+.complianceOverlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(38, 37, 30, 0.45);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9000;
+    padding: var(--s-16);
+}
+
+.complianceModal {
+    width: 100%;
+    max-width: 420px;
+    max-height: calc(100dvh - 2rem);
+    display: flex;
+    flex-direction: column;
+    background: var(--ds-bg-tertiary);
+    border: 1px solid var(--ds-border-hairline);
+    border-radius: var(--radius-xl);
+    box-shadow: var(--shadow-feature);
+    overflow: hidden;
+    animation: slideUp 0.28s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.complianceModalHeader {
+    display: flex;
+    align-items: center;
+    gap: var(--s-12);
+    padding: var(--s-20) var(--s-20) var(--s-16);
+    border-bottom: 1px solid var(--ds-border-hairline);
+}
+
+.complianceModalIcon {
+    width: 36px;
+    height: 36px;
+    background: rgba(31, 138, 101, 0.10);
+    border: 1px solid rgba(31, 138, 101, 0.22);
+    border-radius: var(--radius-md);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--accent-teal);
+    flex-shrink: 0;
+}
+
+.complianceModalTitle {
+    font-family: var(--font-display), system-ui, sans-serif;
+    font-size: var(--text-h4, 1rem);
+    font-weight: var(--weight-announce);
+    color: var(--ds-text);
+    margin: 0 0 var(--s-2);
+    letter-spacing: var(--track-h3);
+    line-height: var(--lh-snug);
+}
+
+.complianceModalSubtitle {
+    font-family: var(--font-display), system-ui, sans-serif;
+    font-size: var(--text-caption);
+    color: var(--ds-text-muted);
+    margin: 0;
+}
+
+.complianceCloseBtn {
+    margin-left: auto;
+    width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--ds-bg-floor, var(--ds-bg));
+    border: 1px solid var(--ds-border-hairline);
+    border-radius: var(--radius-md);
+    color: var(--ds-text-muted);
+    cursor: pointer;
+    flex-shrink: 0;
+    transition: color var(--transition-fast), background var(--transition-fast);
+}
+
+.complianceCloseBtn:hover {
+    color: var(--ds-text);
+    background: var(--ds-bg-secondary, var(--ds-bg-tertiary));
+}
+
+.complianceModalBody {
+    padding: var(--s-16) var(--s-20) var(--s-20);
+    display: flex;
+    flex-direction: column;
+    gap: var(--s-16);
+    overflow-y: auto;
+    flex: 1;
+    min-height: 0;
+}
+
+/* ─── Section label ── */
+.complianceSectionLabel {
+    display: flex;
+    align-items: center;
+    gap: var(--s-6);
+    font-family: var(--font-display), system-ui, sans-serif;
+    font-size: var(--text-caption);
+    font-weight: var(--weight-announce);
+    text-transform: uppercase;
+    letter-spacing: var(--track-mono-sm);
+    color: var(--ds-text-muted);
+    margin: 0 0 var(--s-10);
+}
+
+/* ─── Dates list ── */
+.complianceDatesList {
+    display: flex;
+    flex-direction: column;
+}
+
+.complianceDateItem {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--s-12);
+    padding: var(--s-10) 0;
+    border-bottom: 1px solid var(--ds-border-hairline);
+}
+
+.complianceDateItem:last-child {
+    border-bottom: none;
+}
+
+.complianceDateBullet {
+    width: 8px;
+    height: 8px;
+    background: var(--accent-teal);
+    border-radius: 50%;
+    flex-shrink: 0;
+    margin-top: 4px;
+}
+
+.complianceDateLabel {
+    font-family: var(--font-display), system-ui, sans-serif;
+    font-size: var(--text-button);
+    font-weight: var(--weight-announce);
+    color: var(--ds-text);
+    margin: 0 0 var(--s-2);
+}
+
+.complianceDateValue {
+    display: flex;
+    align-items: center;
+    gap: var(--s-5);
+    font-family: var(--font-mono), ui-monospace, monospace;
+    font-size: var(--text-button);
+    color: var(--ds-text-secondary);
+    margin: 0;
+    font-feature-settings: var(--feat-mono);
+}
+
+/* ─── Empty state ── */
+.complianceEmpty {
+    font-family: var(--font-serif), Georgia, serif;
+    font-size: var(--text-body);
+    color: var(--ds-text-secondary);
+    margin: 0;
+    padding: var(--s-14) var(--s-16);
+    background: var(--ds-bg);
+    border: 1px solid var(--ds-border-hairline);
+    border-radius: var(--radius-md);
+    font-feature-settings: var(--feat-serif);
+}
+
+/* ─── WhatsApp contact ── */
+.complianceContact {
+    display: flex;
+    flex-direction: column;
+}
+
+.complianceWaBtn {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--s-8);
+    padding: var(--s-10) var(--s-16);
+    background: rgba(31, 138, 101, 0.08);
+    color: var(--accent-teal);
+    border: 1px solid rgba(31, 138, 101, 0.25);
+    border-radius: var(--radius-lg);
+    font-family: var(--font-display), system-ui, sans-serif;
+    font-size: var(--text-button);
+    font-weight: var(--weight-announce);
+    text-decoration: none;
+    transition: background var(--transition-fast),
+                box-shadow var(--transition-fast);
+    align-self: flex-start;
+}
+
+.complianceWaBtn:hover {
+    background: rgba(31, 138, 101, 0.15);
+    box-shadow: var(--elev-focus);
+}

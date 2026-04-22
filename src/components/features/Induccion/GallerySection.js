@@ -178,7 +178,7 @@ export default function GallerySection({ items = [], canEdit = false, userId, us
     // ── Eliminar ──
     const handleDelete = useCallback(async (e, item) => {
         e.stopPropagation();
-        if (!await showConfirm('¿Eliminar este elemento?', { title: 'Eliminar', confirmLabel: 'Eliminar' })) return;
+        if (!await showConfirm('¿Eliminar este elemento?', { title: 'Eliminar', variant: 'delete', confirmLabel: 'Eliminar' })) return;
         await deleteDoc(doc(db, 'induccion_galeria', item.id));
         logInduccionAction({ userId, userName: userName || 'Desconocido', action: 'gallery_delete', target: item.nombre || item.id });
         toast.success('Eliminado', 'Elemento eliminado de la galería.');

@@ -16,15 +16,15 @@
 .overlay {
     position: absolute;
     inset: 0;
-    background: rgba(38, 37, 30, 0.40);
+    background: color-mix(in oklab, var(--ds-text) 38%, transparent);
     backdrop-filter: blur(4px);
     -webkit-backdrop-filter: blur(4px);
-    animation: fadeIn 0.2s var(--ease-out);
+    animation: fadeIn var(--transition-base) var(--ease-out);
 }
 
 .content {
     position: relative;
-    background: var(--ds-bg-tertiary);
+    background: var(--ds-bg-pure);
     border: 1px solid var(--ds-border-hairline);
     border-radius: var(--radius-xl);
     box-shadow: var(--shadow-feature);
@@ -34,7 +34,7 @@
     overflow: visible;
     display: flex;
     flex-direction: column;
-    animation: dialogSlideIn 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+    animation: dialogSlideIn var(--transition-slow) var(--ease-out);
 }
 
 .header {
@@ -82,8 +82,8 @@
 
 .footer {
     padding: var(--s-16) var(--s-32);
-    background: var(--ds-bg);
-    border-top: 1px solid var(--ds-border-hairline);
+    background: var(--ds-bg-emphasis);
+    border-top: 1px solid var(--ds-border-medium);
     display: flex;
     align-items: center;
     justify-content: flex-end;
@@ -110,7 +110,7 @@
 }
 
 .closeButton:hover {
-    background: rgba(38, 37, 30, 0.06);
+    background: var(--ds-bg-ghost-hover);
     color: var(--accent-crimson);
 }
 
