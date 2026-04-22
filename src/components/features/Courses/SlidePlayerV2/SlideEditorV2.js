@@ -143,46 +143,143 @@ function editorReducer(state, action) {
 }
 
 /* ── Auto-save hook ──────────────────────────────── */
-const DEBOUNCE_MS = 4000;
+const DEBOUNCE_MS = 1200; // tiempo desde último cambio hasta persistir
 
-function useAutoSave(slide, formData, onSave) {
+/**
+ * Hook autosave optimizado:
+ *  - Debounce corto (1.2s) para sensación inmediata.
+ *  - Comparación O(1) con snapshot estable (sin stringify por keystroke).
+ *  - flush() expuesto vía ref para guardar inmediato (switch slide, cerrar, Ctrl+S, beforeunload).
+ *  - Estado 'saving' sólo se activa cuando el timer dispara, no por cada tecla.
+ */
+function useAutoSave(slide, formData, onSave, flushRef) {
   const [saveState, setSaveState] = useState('idle');
   const timerRef = useRef(null);
   const mountedRef = useRef(true);
+  const lastSavedRef = useRef(null);            // snapshot serializado de lo último guardado
+  const pendingDataRef = useRef(null);          // último formData "dirty" sin guardar
+  const inFlightRef = useRef(false);            // evita writes solapados
 
+  // Reset snapshot al cambiar de slide
   useEffect(() => {
-    mountedRef.current = true;
-    return () => { mountedRef.current = false; if (timerRef.current) clearTimeout(timerRef.current); };
-  }, []);
+    lastSavedRef.current = JSON.stringify(slide?.data ?? {});
+    pendingDataRef.current = null;
+    setSaveState('idle');
+  }, [slide?.id]);
 
+  // Guardar inmediato (manual o por flush externo)
+  const doSave = useCallback(async (dataToSave) => {
+    if (!slide || inFlightRef.current) return;
+    const serialized = JSON.stringify(dataToSave);
+    if (serialized === lastSavedRef.current) return;
+    inFlightRef.current = true;
+    if (mountedRef.current) setSaveState('saving');
+    try {
+      await onSave(slide.id, dataToSave);
+      lastSavedRef.current = serialized;
+      pendingDataRef.current = null;
+      if (!mountedRef.current) return;
+      setSaveState('saved');
+      setTimeout(() => {
+        if (mountedRef.current) setSaveState(c => c === 'saved' ? 'idle' : c);
+      }, 1500);
+    } catch {
+      if (mountedRef.current) setSaveState('error');
+    } finally {
+      inFlightRef.current = false;
+    }
+  }, [slide, onSave]);
+
+  // Programa autosave con debounce
   useEffect(() => {
     if (!slide || Object.keys(formData).length === 0) return;
-    if (JSON.stringify(slide.data ?? {}) === JSON.stringify(formData)) return;
+    const serialized = JSON.stringify(formData);
+    if (serialized === lastSavedRef.current) return;
 
-    setSaveState('saving');
+    pendingDataRef.current = formData;
     if (timerRef.current) clearTimeout(timerRef.current);
-
-    timerRef.current = setTimeout(async () => {
-      try {
-        await onSave(slide.id, formData);
-        if (!mountedRef.current) return;
-        setSaveState('saved');
-        setTimeout(() => { if (mountedRef.current) setSaveState(c => c === 'saved' ? 'idle' : c); }, 2000);
-      } catch {
-        if (mountedRef.current) setSaveState('error');
-      }
+    timerRef.current = setTimeout(() => {
+      if (pendingDataRef.current) doSave(pendingDataRef.current);
     }, DEBOUNCE_MS);
 
     return () => { if (timerRef.current) clearTimeout(timerRef.current); };
-  }, [formData, slide, onSave]);
+  }, [formData, slide, doSave]);
+
+  // Exponer flush() al padre (antes de switch/close/unmount)
+  useEffect(() => {
+    if (!flushRef) return;
+    flushRef.current = () => {
+      if (timerRef.current) { clearTimeout(timerRef.current); timerRef.current = null; }
+      if (pendingDataRef.current) {
+        const data = pendingDataRef.current;
+        return doSave(data);
+      }
+      return Promise.resolve();
+    };
+    return () => { if (flushRef) flushRef.current = null; };
+  }, [flushRef, doSave]);
+
+  // Mount/unmount + flush en unmount + listeners pagehide/visibilitychange/beforeunload
+  useEffect(() => {
+    mountedRef.current = true;
+    const flushNow = () => {
+      if (pendingDataRef.current && slide) {
+        // sincrónico best-effort: no awaitable en pagehide
+        try { onSave(slide.id, pendingDataRef.current); } catch (_) {}
+        pendingDataRef.current = null;
+      }
+    };
+    const onVisibility = () => { if (document.visibilityState === 'hidden') flushNow(); };
+    const onPageHide = () => flushNow();
+    const onBeforeUnload = (e) => {
+      if (pendingDataRef.current) {
+        flushNow();
+        e.preventDefault();
+        e.returnValue = '';
+      }
+    };
+    document.addEventListener('visibilitychange', onVisibility);
+    window.addEventListener('pagehide', onPageHide);
+    window.addEventListener('beforeunload', onBeforeUnload);
+
+    return () => {
+      mountedRef.current = false;
+      if (timerRef.current) clearTimeout(timerRef.current);
+      document.removeEventListener('visibilitychange', onVisibility);
+      window.removeEventListener('pagehide', onPageHide);
+      window.removeEventListener('beforeunload', onBeforeUnload);
+      // Best-effort flush al desmontar
+      if (pendingDataRef.current && slide) {
+        try { onSave(slide.id, pendingDataRef.current); } catch (_) {}
+      }
+    };
+  }, [slide, onSave]);
 
   return saveState;
 }
 
 /* ── Editor form sub-component ───────────────────── */
-function EditorForm({ slide, onSave, onDelete, onFormChange, isSaving }) {
+function EditorForm({ slide, onSave, onDelete, onFormChange, onFlushReady, isSaving }) {
   const [formData, setFormData] = useState(() => structuredClone(slide?.data ?? {}));
-  const saveState = useAutoSave(slide, formData, onSave);
+  const flushRef = useRef(null);
+  const saveState = useAutoSave(slide, formData, onSave, flushRef);
+
+  // Reportar flush al padre
+  useEffect(() => {
+    if (onFlushReady) onFlushReady(flushRef);
+  }, [onFlushReady]);
+
+  // Ctrl/Cmd + S → flush manual
+  useEffect(() => {
+    const onKey = (e) => {
+      if ((e.ctrlKey || e.metaKey) && (e.key === 's' || e.key === 'S')) {
+        e.preventDefault();
+        if (flushRef.current) flushRef.current();
+      }
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, []);
 
   useEffect(() => { if (onFormChange) onFormChange(formData); }, [formData, onFormChange]);
 
@@ -287,8 +384,34 @@ export default function SlideEditorV2({
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
   const [confirmDialog, setConfirmDialog] = useState(null); // { onConfirm: fn }
+  const [isDark, setIsDark] = useState(false);
   const stateRef = useRef(state);
+  const editorFlushRef = useRef(null); // flush handle del EditorForm activo
+  const prevThemeRef = useRef(null);
   useEffect(() => { stateRef.current = state; }, [state]);
+
+  /* ── Theme toggle (local al editor, restaura al desmontar) ── */
+  useEffect(() => {
+    prevThemeRef.current = document.documentElement.getAttribute('data-theme') || 'light';
+    let saved = null;
+    try { saved = localStorage.getItem('vtx_player_theme'); } catch (_) {}
+    if (saved === 'dark') {
+      document.documentElement.setAttribute('data-theme', 'dark');
+      setIsDark(true);
+    }
+    return () => {
+      document.documentElement.setAttribute('data-theme', prevThemeRef.current);
+    };
+  }, []);
+
+  const toggleTheme = useCallback(() => {
+    setIsDark((prev) => {
+      const next = !prev;
+      document.documentElement.setAttribute('data-theme', next ? 'dark' : 'light');
+      try { localStorage.setItem('vtx_player_theme', next ? 'dark' : 'light'); } catch (_) {}
+      return next;
+    });
+  }, []);
 
   /* ── Load course ────────────────────────────────── */
   useEffect(() => {
@@ -345,6 +468,10 @@ export default function SlideEditorV2({
   }, [courseId, addSlideFn, syncMetadataFn]);
 
   const handleSelectSlide = useCallback((slide) => {
+    // Flush cambios del slide actual antes de cambiar (evita pérdida)
+    if (editorFlushRef.current) {
+      try { editorFlushRef.current(); } catch (_) {}
+    }
     dispatch({ type: 'SELECT_SLIDE', slide });
     if (window.innerWidth < 768) setSidebarOpen(false);
   }, []);
@@ -352,6 +479,17 @@ export default function SlideEditorV2({
   const handleFormChange = useCallback((data) => {
     dispatch({ type: 'FORM_CHANGED', data });
   }, []);
+
+  const handleFlushReady = useCallback((flushRef) => {
+    editorFlushRef.current = flushRef.current;
+  }, []);
+
+  const handleClose = useCallback(async () => {
+    if (editorFlushRef.current) {
+      try { await editorFlushRef.current(); } catch (_) {}
+    }
+    if (onClose) onClose();
+  }, [onClose]);
 
   /* ── Filtered slides ────────────────────────────── */
   const filteredSlides = useMemo(() => {
@@ -434,8 +572,17 @@ export default function SlideEditorV2({
         </div>
 
         <div className={s.headerRight}>
+          <button
+            className={s.iconBtn}
+            onClick={toggleTheme}
+            aria-label={isDark ? 'Cambiar a tema claro' : 'Cambiar a tema oscuro'}
+            aria-pressed={isDark}
+            title={isDark ? 'Tema claro' : 'Tema oscuro'}
+          >
+            {isDark ? <SunIcon /> : <MoonIcon />}
+          </button>
           {onClose && (
-            <button className={s.closeBtn} onClick={onClose} aria-label="Cerrar editor">
+            <button className={s.closeBtn} onClick={handleClose} aria-label="Cerrar editor">
               Cerrar
             </button>
           )}
@@ -503,6 +650,7 @@ export default function SlideEditorV2({
             onSave={handleSaveSlide}
             onDelete={handleDeleteSlide}
             onFormChange={handleFormChange}
+            onFlushReady={handleFlushReady}
             isSaving={saving}
           />
         </div>
@@ -638,6 +786,23 @@ function SpinnerIcon() {
   return (
     <svg className={s.spin} width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
       <path d="M21 12a9 9 0 1 1-6.219-8.56" />
+    </svg>
+  );
+}
+
+function SunIcon() {
+  return (
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <circle cx="12" cy="12" r="4" />
+      <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41" />
+    </svg>
+  );
+}
+
+function MoonIcon() {
+  return (
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
     </svg>
   );
 }

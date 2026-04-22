@@ -2,16 +2,16 @@
 
 .slide {
     /* Tokens locales */
-    --c-primary-sim:  #3b82f6;
-    --c-safe-line:    #4ade80;
-    --c-amber-line:   #fbbf24;
-    --c-danger-local: #f87171;
-    --c-surface-sim:  var(--bg-secondary);
-    --c-panel-sim:    var(--bg-primary);
-    --c-text-dim:     var(--text-tertiary);
-    --c-success:      #4ade80;
-    --c-amber:        #fbbf24;
-    --c-danger:       #f87171;
+    --c-primary-sim:  var(--timeline-read);
+    --c-safe-line:    var(--accent-teal);
+    --c-amber-line:   var(--accent-gold);
+    --c-danger-local: var(--accent-crimson);
+    --c-surface-sim:  var(--ds-bg);
+    --c-panel-sim:    var(--ds-bg-pure);
+    --c-text-dim:     var(--ds-text-tertiary);
+    --c-success:      var(--accent-teal);
+    --c-amber:        var(--accent-gold);
+    --c-danger:       var(--accent-crimson);
 
     width: 100%;
     max-width: 1100px;
@@ -23,8 +23,8 @@
     gap: 1rem;
     padding: 1.5rem 2rem 1.75rem;
     background: var(--c-surface-sim);
-    color: var(--text-primary);
-    font-family: var(--font-body), 'Roboto', sans-serif;
+    color: var(--ds-text);
+    font-family: var(--font-body), sans-serif;
     border-radius: 16px;
     overflow-y: auto;
     animation: courseFadeIn var(--course-duration-slow, 0.4s) var(--course-ease-out, ease-out);
@@ -46,10 +46,10 @@
 }
 
 .heading {
-    font-family: var(--font-serif), 'Montserrat', sans-serif;
+    font-family: var(--font-serif), serif;
     font-size: clamp(var(--course-font-lg, 1.1rem), 2.3vw, var(--course-font-2xl, 1.7rem));
     font-weight: 700;
-    color: var(--text-primary);
+    color: var(--ds-text);
     margin: 0;
 }
 
@@ -84,7 +84,7 @@
 .statValue {
     font-size: var(--course-font-lg, 1.15rem);
     font-weight: 700;
-    color: var(--text-primary);
+    color: var(--ds-text);
 }
 
 .statusSafe  { color: var(--c-success) !important; }
@@ -132,7 +132,7 @@
 }
 
 .statusText {
-    font-family: var(--font-serif), 'Montserrat', sans-serif;
+    font-family: var(--font-serif), serif;
     font-size: var(--course-font-sm, 0.8rem);
     font-weight: 700;
     letter-spacing: 0.1em;
@@ -163,14 +163,14 @@
 
 /* Recharts text override */
 .chartWrap text {
-    fill: var(--text-tertiary) !important;
-    font-family: var(--font-body), 'Roboto', sans-serif !important;
+    fill: var(--ds-text-tertiary) !important;
+    font-family: var(--font-body), sans-serif !important;
     font-size: 11px !important;
 }
 
 /* ── Tooltip ── */
 .tooltip {
-    background: var(--bg-primary);
+    background: var(--ds-bg-pure);
     box-shadow: rgba(0,0,0,0.08) 0px 0px 0px 1px;
     border-radius: 8px;
     padding: 0.5rem 0.75rem;
@@ -207,7 +207,7 @@
 .controlLabel {
     font-size: var(--course-font-xs, 0.75rem);
     font-weight: 600;
-    color: var(--text-secondary);
+    color: var(--ds-text-secondary);
     white-space: normal;
     overflow-wrap: anywhere;
     word-break: break-word;
@@ -242,7 +242,7 @@
     border-radius: 50%;
     background: var(--c-primary-sim);
     cursor: pointer;
-    border: 2px solid #fff;
+    border: 2px solid var(--ds-bg-pure);
     transition: transform 0.15s;
 }
 
@@ -253,22 +253,22 @@
 .sliderValue {
     font-size: var(--course-font-base, 0.9rem);
     font-weight: 700;
-    color: var(--text-primary);
+    color: var(--ds-text);
     min-width: 2.5rem;
     text-align: center;
-    background: var(--bg-secondary);
+    background: var(--ds-bg);
     border-radius: 6px;
     padding: 0.15rem 0.4rem;
 }
 
 /* ── Select ── */
 .select {
-    background: var(--bg-secondary);
+    background: var(--ds-bg);
     box-shadow: rgba(0,0,0,0.08) 0px 0px 0px 1px;
     border: none;
     border-radius: 8px;
-    color: var(--text-primary);
-    font-family: var(--font-body), 'Roboto', sans-serif;
+    color: var(--ds-text);
+    font-family: var(--font-body), sans-serif;
     font-size: var(--course-font-sm, 0.85rem);
     padding: 0.35rem 0.75rem;
     outline: none;
@@ -281,8 +281,8 @@
 }
 
 .select option {
-    background: var(--bg-secondary);
-    color: var(--text-primary);
+    background: var(--ds-bg);
+    color: var(--ds-text);
 }
 
 /* ── Responsive ── */

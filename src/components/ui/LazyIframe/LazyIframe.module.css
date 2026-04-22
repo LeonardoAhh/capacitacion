@@ -5,7 +5,7 @@
     min-height: 400px;
     border-radius: 12px;
     overflow: hidden;
-    background: var(--bg-secondary, #f5f5f7);
+    background: var(--bg-secondary, var(--ds-bg-subtle));
 }
 
 .iframe {
@@ -28,9 +28,9 @@
     align-items: center;
     justify-content: center;
     background: linear-gradient(90deg,
-            var(--bg-secondary, #f5f5f7) 0%,
-            var(--bg-tertiary, #e5e5ea) 50%,
-            var(--bg-secondary, #f5f5f7) 100%);
+            var(--bg-secondary, var(--ds-bg-subtle)) 0%,
+            var(--bg-tertiary, var(--ds-border-hairline)) 50%,
+            var(--bg-secondary, var(--ds-bg-subtle)) 100%);
     background-size: 200% 100%;
     animation: shimmer 2s infinite;
 }
@@ -38,15 +38,15 @@
 .spinner {
     width: 40px;
     height: 40px;
-    border: 3px solid var(--border-color, #e5e5ea);
-    border-top-color: var(--color-primary, #007aff);
+    border: 3px solid var(--border-color, var(--ds-border-hairline));
+    border-top-color: var(--color-primary, var(--accent-orange));
     border-radius: 50%;
     animation: spin 0.8s linear infinite;
     margin-bottom: 16px;
 }
 
 .loadingText {
-    color: var(--text-secondary, #8e8e93);
+    color: var(--text-secondary, var(--ds-text-tertiary));
     font-size: 0.9rem;
     margin: 0;
 }
@@ -60,8 +60,8 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    background: var(--bg-secondary, #f5f5f7);
-    border: 2px dashed var(--border-color, #e5e5ea);
+    background: var(--bg-secondary, var(--ds-bg-subtle));
+    border: 2px dashed var(--border-color, var(--ds-border-hairline));
     border-radius: 12px;
 }
 
@@ -72,7 +72,7 @@
 }
 
 .placeholderText {
-    color: var(--text-tertiary, #c7c7cc);
+    color: var(--text-tertiary, var(--ds-border-medium));
     font-size: 0.9rem;
     margin: 0;
 }
@@ -97,19 +97,19 @@
 /* Dark mode support */
 @media (prefers-color-scheme: dark) {
     .lazyIframeContainer {
-        background: var(--bg-secondary, #1c1c1e);
+        background: var(--bg-secondary, var(--ds-text));
     }
 
     .skeleton {
         background: linear-gradient(90deg,
-                var(--bg-secondary, #1c1c1e) 0%,
-                var(--bg-tertiary, #2c2c2e) 50%,
-                var(--bg-secondary, #1c1c1e) 100%);
+                var(--bg-secondary, var(--ds-text)) 0%,
+                var(--bg-tertiary, var(--ds-text)) 50%,
+                var(--bg-secondary, var(--ds-text)) 100%);
     }
 
     .placeholder {
-        background: var(--bg-secondary, #1c1c1e);
-        border-color: var(--border-color, #38383a);
+        background: var(--bg-secondary, var(--ds-text));
+        border-color: var(--border-color, var(--ds-text-secondary));
     }
 }
 

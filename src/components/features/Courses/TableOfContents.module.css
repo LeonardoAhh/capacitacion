@@ -27,8 +27,8 @@
     bottom: 0;
     width: 280px;
     z-index: 160;
-    background: var(--bg-primary);
-    border-right: 1px solid var(--border-color);
+    background: var(--ds-bg-pure);
+    border-right: 1px solid var(--ds-border-hairline);
     display: flex;
     flex-direction: column;
     transform: translateX(-100%);
@@ -47,28 +47,28 @@
     align-items: flex-start;
     justify-content: space-between;
     padding: 18px 16px 14px;
-    border-bottom: 1px solid var(--border-color);
+    border-bottom: 1px solid var(--ds-border-hairline);
     flex-shrink: 0;
-    background: var(--bg-secondary);
+    background: var(--ds-bg);
 }
 
 .drawerTitle {
     font-family: var(--font-serif);
     font-size: 0.9rem;
     font-weight: 700;
-    color: var(--text-primary);
+    color: var(--ds-text);
     margin: 0 0 2px;
 }
 
 .drawerMeta {
     font-size: 0.72rem;
-    color: var(--text-tertiary);
+    color: var(--ds-text-tertiary);
     font-weight: 500;
 }
 
 .closeBtn {
     background: transparent;
-    border: 1px solid var(--border-color);
+    border: 1px solid var(--ds-border-hairline);
     border-radius: var(--radius-sm, 8px);
     width: 28px;
     height: 28px;
@@ -76,15 +76,15 @@
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    color: var(--text-secondary);
+    color: var(--ds-text-secondary);
     transition: background var(--transition-fast), border-color var(--transition-fast), color var(--transition-fast);
     flex-shrink: 0;
 }
 
 .closeBtn:hover {
-    background: var(--bg-tertiary);
-    border-color: var(--color-primary);
-    color: var(--color-primary);
+    background: var(--ds-bg-tertiary);
+    border-color: var(--accent-orange);
+    color: var(--accent-orange);
 }
 
 /* ── Lista ── */
@@ -121,16 +121,16 @@
     text-align: left;
     transition: background var(--transition-fast), border-color var(--transition-fast);
     position: relative;
-    color: var(--text-primary);
+    color: var(--ds-text);
 }
 
 .item:hover {
-    background: var(--bg-secondary);
+    background: var(--ds-bg);
 }
 
 .itemActive {
-    background: color-mix(in srgb, var(--color-primary) 8%, transparent);
-    border-color: color-mix(in srgb, var(--color-primary) 25%, transparent);
+    background: color-mix(in srgb, var(--accent-orange) 8%, transparent);
+    border-color: color-mix(in srgb, var(--accent-orange) 25%, transparent);
 }
 
 .itemVisited {
@@ -143,21 +143,21 @@
     width: 26px;
     height: 26px;
     border-radius: 50%;
-    background: var(--bg-tertiary);
-    border: 1px solid var(--border-color);
+    background: var(--ds-bg-tertiary);
+    border: 1px solid var(--ds-border-hairline);
     display: flex;
     align-items: center;
     justify-content: center;
     font-size: 0.72rem;
     font-weight: 700;
-    color: var(--text-secondary);
+    color: var(--ds-text-secondary);
     font-variant-numeric: tabular-nums;
 }
 
 .itemNumActive {
-    background: var(--color-primary);
-    border-color: var(--color-primary);
-    color: #fff;
+    background: var(--accent-orange);
+    border-color: var(--accent-orange);
+    color: var(--ds-bg-pure);
 }
 
 /* Contenido */
@@ -174,13 +174,13 @@
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.08em;
-    color: var(--badge-color, var(--text-tertiary));
+    color: var(--badge-color, var(--ds-text-tertiary));
 }
 
 .itemTitle {
     font-size: 0.8rem;
     font-weight: 500;
-    color: var(--text-primary);
+    color: var(--ds-text);
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
@@ -191,7 +191,7 @@
     width: 5px;
     height: 5px;
     border-radius: 50%;
-    background: var(--color-primary);
+    background: var(--accent-orange);
     flex-shrink: 0;
 }
 

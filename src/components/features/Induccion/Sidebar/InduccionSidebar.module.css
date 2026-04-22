@@ -329,7 +329,7 @@
 /* Dark mode: el drawer móvil también necesita fondo opaco */
 @media (max-width: 768px) {
     [data-theme="dark"] .sidebar {
-        background: #0d0f1f;
+        background: var(--cursor-dark);
     }
 }
 
@@ -383,7 +383,7 @@
         /* En drawer móvil el fondo debe ser opaco — el token --sb-bg es
            transparent en desktop (se funde con el grid), pero aquí está
            en position: fixed sobre el contenido, necesita superficie sólida */
-        background: var(--c-surface, #ffffff);
+        background: var(--c-surface, var(--ds-bg-pure));
     }
 
     .sidebar.open {

@@ -1,7 +1,7 @@
 /* Portal Training — Azul profundo / Indigo VIÑOPLASTIC */
 .container {
-    --login-accent: #1a2ecc;
+    --login-accent: var(--accent-orange);
     --login-accent-rgb: 26, 46, 204;
-    --login-gradient-from: #1a2ecc;
-    --login-gradient-to: #2a3ee0;
+    --login-gradient-from: var(--accent-orange);
+    --login-gradient-to: var(--accent-orange);
 }

@@ -1,6 +1,6 @@
 .container {
-    background: var(--bg-secondary);
-    border: 1px solid var(--border-color);
+    background: var(--ds-bg);
+    border: 1px solid var(--ds-border-hairline);
     border-radius: var(--radius-xl);
     padding: 1.25rem;
     margin-bottom: 1.5rem;
@@ -25,7 +25,7 @@
     font-weight: 600;
     font-family: var(--font-body);
     letter-spacing: 0.05em;
-    color: var(--text-tertiary);
+    color: var(--ds-text-tertiary);
     display: block;
     margin-bottom: 0.125rem;
     text-transform: uppercase;
@@ -37,13 +37,13 @@
     font-family: var(--font-serif);
     margin: 0;
     line-height: 1.2;
-    color: var(--color-primary);
+    color: var(--accent-orange);
 }
 
 /* Level Badge */
 .levelBadge {
-    background: var(--bg-tertiary);
-    border: 1px solid var(--border-color);
+    background: var(--ds-bg-tertiary);
+    border: 1px solid var(--ds-border-hairline);
     border-radius: var(--radius-md);
     padding: 0.375rem 0.625rem;
     text-align: center;
@@ -55,13 +55,13 @@
     font-size: 1.25rem;
     font-weight: 700;
     line-height: 1;
-    color: var(--text-primary);
+    color: var(--ds-text);
 }
 
 .levelLabel {
     font-size: 0.5625rem;
     font-weight: 600;
-    color: var(--text-tertiary);
+    color: var(--ds-text-tertiary);
     letter-spacing: 0.05em;
     text-transform: uppercase;
 }
@@ -73,7 +73,7 @@
 
 .progressBarBg {
     height: 6px;
-    background: var(--bg-tertiary);
+    background: var(--ds-bg-tertiary);
     border-radius: 3px;
     overflow: hidden;
     margin-bottom: 0.375rem;
@@ -82,7 +82,7 @@
 .progressBarFill {
     height: 100%;
     border-radius: 3px;
-    background: var(--color-primary);
+    background: var(--accent-orange);
 }
 
 .progressStats {
@@ -90,7 +90,7 @@
     justify-content: space-between;
     gap: 0.5rem;
     font-size: 0.75rem;
-    color: var(--text-secondary);
+    color: var(--ds-text-secondary);
     font-weight: 500;
 }
 
@@ -99,7 +99,7 @@
     display: flex;
     gap: 1rem;
     padding-top: 0.75rem;
-    border-top: 1px solid var(--border-color);
+    border-top: 1px solid var(--ds-border-hairline);
 }
 
 .badgeCount {
@@ -108,11 +108,11 @@
     gap: 0.375rem;
     font-size: 0.8125rem;
     font-weight: 500;
-    color: var(--text-primary);
+    color: var(--ds-text);
 }
 
 .icon {
-    color: var(--color-warning);
+    color: var(--accent-gold);
     flex-shrink: 0;
 }
 

@@ -1,13 +1,15 @@
-/* Drawer Overlay */
+/* =============================================================
+   Drawer — design.md (Cursor System)
+   Bottom sheet, cream tertiary surface, atmospheric lift.
+   ============================================================= */
 .overlay {
     position: fixed;
     inset: 0;
-    background: rgba(0, 0, 0, 0.5);
-    z-index: 10000;
+    background: rgba(38, 37, 30, 0.40);
     backdrop-filter: blur(2px);
+    z-index: 10000;
 }
 
-/* Drawer Container */
 .drawer {
     position: fixed;
     bottom: 0;
@@ -17,99 +19,103 @@
     z-index: 10001;
     width: 100%;
     max-width: 600px;
-    background: var(--bg-primary);
-    border-radius: 24px 24px 0 0;
-    box-shadow: 0 -4px 24px rgba(0, 0, 0, 0.15);
+    background: var(--ds-bg-tertiary);
+    border: 1px solid var(--ds-border-hairline);
+    border-bottom: none;
+    border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+    box-shadow: 0 -28px 70px rgba(0, 0, 0, 0.14),
+                0 -14px 32px rgba(0, 0, 0, 0.10);
     max-height: 85vh;
     overflow: hidden;
     display: flex;
     flex-direction: column;
 }
 
-/* Drawer Header */
 .drawerHeader {
-    padding: 24px 24px 16px 24px;
-    border-bottom: 1px solid var(--border-color);
+    padding: var(--s-24);
+    padding-bottom: var(--s-16);
+    border-bottom: 1px solid var(--ds-border-hairline);
     flex-shrink: 0;
 }
 
 .drawerTitle {
-    font-size: 20px;
-    font-weight: 600;
-    color: var(--text-primary);
+    font-family: var(--font-display), system-ui, sans-serif;
+    font-size: var(--text-h3);
+    font-weight: var(--weight-read);
+    color: var(--ds-text);
     margin: 0;
+    letter-spacing: var(--track-h3);
 }
 
 .drawerDescription {
-    font-size: 14px;
-    color: var(--text-secondary);
-    margin: 8px 0 0 0;
-    line-height: 1.5;
+    font-family: var(--font-serif), Georgia, serif;
+    font-size: var(--text-body);
+    color: var(--ds-text-secondary);
+    margin: var(--s-8) 0 0 0;
+    line-height: var(--lh-base);
+    font-feature-settings: var(--feat-serif);
 }
 
-/* Drawer Body (scrollable) */
 .drawerBody {
     flex: 1;
     overflow-y: auto;
     overflow-x: hidden;
 }
 
-/* Drawer Footer */
 .drawerFooter {
-    padding: 16px 24px 24px 24px;
-    border-top: 1px solid var(--border-color);
+    padding: var(--s-16) var(--s-24) var(--s-24);
+    border-top: 1px solid var(--ds-border-hairline);
     display: flex;
-    gap: 12px;
+    gap: var(--s-12);
     flex-direction: column;
     flex-shrink: 0;
 }
 
-/* Close Button */
 .closeButton {
     position: absolute;
-    top: 20px;
-    right: 20px;
+    top: var(--s-16);
+    right: var(--s-16);
     width: 32px;
     height: 32px;
-    border-radius: 8px;
-    border: 1px solid var(--border-color);
-    background: var(--bg-secondary);
+    border-radius: var(--radius-md);
+    border: 1px solid var(--ds-border-hairline);
+    background: var(--ds-bg-pure);
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    transition: all 0.2s;
+    transition: background var(--transition-fast),
+                color var(--transition-fast);
 }
 
 .closeButton:hover {
-    background: var(--bg-tertiary);
-    border-color: var(--text-tertiary);
+    background: rgba(38, 37, 30, 0.06);
+    color: var(--accent-crimson);
+}
+
+.closeButton:focus-visible {
+    outline: none;
+    box-shadow: var(--elev-focus);
+    border-color: var(--ds-border-medium);
 }
 
 .closeIcon {
-    width: 18px;
-    height: 18px;
-    color: var(--text-secondary);
+    width: 16px;
+    height: 16px;
+    color: var(--ds-text-secondary);
 }
 
-/* Content Area */
 .drawerContent {
-    padding: 24px;
+    padding: var(--s-24);
 }
 
-/* Responsive */
 @media (max-width: 768px) {
     .drawer {
         max-width: 100%;
         max-height: 92vh;
-        border-radius: 20px 20px 0 0;
     }
 
-    .drawerHeader {
-        padding: 20px 20px 14px 20px;
-    }
-
-    .drawerFooter {
-        padding: 12px 20px 20px 20px;
-    }
+    .drawerHeader { padding: var(--s-16); padding-bottom: var(--s-12); }
+    .drawerFooter { padding: var(--s-12) var(--s-16) var(--s-16); }
+    .drawerContent { padding: var(--s-16); }
 }

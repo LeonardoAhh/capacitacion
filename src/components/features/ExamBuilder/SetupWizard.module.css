@@ -16,7 +16,7 @@
 }
 
 .wizard {
-    background: var(--bg-primary);
+    background: var(--ds-bg-pure);
     border-radius: 24px;
     width: 100%;
     max-width: 520px;
@@ -32,8 +32,8 @@
     align-items: center;
     justify-content: space-between;
     padding: var(--spacing-md) var(--spacing-xl);
-    border-bottom: 1px solid var(--border-color);
-    background: var(--bg-secondary);
+    border-bottom: 1px solid var(--ds-border-hairline);
+    background: var(--ds-bg);
 }
 
 .brand {
@@ -43,7 +43,7 @@
     font-family: var(--font-serif);
     font-size: 0.95rem;
     font-weight: 700;
-    color: var(--text-primary);
+    color: var(--ds-text);
 }
 
 .skipBtn {
@@ -51,10 +51,10 @@
     align-items: center;
     gap: 5px;
     padding: 5px 12px;
-    border: 1px solid var(--border-color);
+    border: 1px solid var(--ds-border-hairline);
     border-radius: 999px;
     background: transparent;
-    color: var(--text-secondary);
+    color: var(--ds-text-secondary);
     font-family: var(--font-body);
     font-size: 0.78rem;
     font-weight: 500;
@@ -63,8 +63,8 @@
 }
 
 .skipBtn:hover {
-    border-color: var(--color-primary);
-    color: var(--color-primary);
+    border-color: var(--accent-orange);
+    color: var(--accent-orange);
 }
 
 /* ── Indicador de pasos ───────────────────────────────────────────── */
@@ -79,12 +79,12 @@
     width: 8px;
     height: 8px;
     border-radius: 50%;
-    background: var(--border-color);
+    background: var(--ds-border-hairline);
     transition: all 0.25s;
 }
 
 .stepDotActive {
-    background: var(--color-primary);
+    background: var(--accent-orange);
     width: 24px;
     border-radius: 999px;
 }
@@ -92,7 +92,7 @@
 .stepLabel {
     font-family: var(--font-body);
     font-size: 0.75rem;
-    color: var(--text-secondary);
+    color: var(--ds-text-secondary);
     margin-left: 4px;
 }
 
@@ -109,7 +109,7 @@
     font-family: var(--font-serif);
     font-size: clamp(1.1rem, 2vw, 1.3rem);
     font-weight: 800;
-    color: var(--text-primary);
+    color: var(--ds-text);
     margin: 0;
     letter-spacing: -0.01em;
 }
@@ -140,7 +140,7 @@
 .stepDesc {
     font-family: var(--font-body);
     font-size: 0.87rem;
-    color: var(--text-secondary);
+    color: var(--ds-text-secondary);
     margin: 0;
     line-height: 1.6;
 }
@@ -175,7 +175,7 @@
     font-family: var(--font-body);
     font-size: 0.78rem;
     font-weight: 600;
-    color: var(--text-secondary);
+    color: var(--ds-text-secondary);
     text-transform: uppercase;
     letter-spacing: 0.04em;
 }
@@ -183,10 +183,10 @@
 .input {
     width: 100%;
     padding: 10px 14px;
-    border: 1px solid var(--border-color);
+    border: 1px solid var(--ds-border-hairline);
     border-radius: 12px;
-    background: var(--bg-secondary);
-    color: var(--text-primary);
+    background: var(--ds-bg);
+    color: var(--ds-text);
     font-family: var(--font-body);
     font-size: 0.9rem;
     outline: none;
@@ -195,8 +195,8 @@
 }
 
 .input:focus {
-    border-color: var(--color-primary);
-    box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-primary) 15%, transparent);
+    border-color: var(--accent-orange);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent-orange) 15%, transparent);
 }
 
 /* ── Selección de Puestos ─────────────────────────────────────────── */
@@ -216,7 +216,7 @@
     border-radius: 10px;
 }
 .puestosContainer::-webkit-scrollbar-thumb {
-    background: var(--border-color);
+    background: var(--ds-border-hairline);
     border-radius: 10px;
 }
 .puestosContainer::-webkit-scrollbar-thumb:hover {
@@ -234,10 +234,10 @@
     align-items: center;
     gap: 8px;
     padding: 8px 12px;
-    background: var(--bg-secondary);
-    border: 1px solid var(--border-color);
+    background: var(--ds-bg);
+    border: 1px solid var(--ds-border-hairline);
     border-radius: 10px;
-    color: var(--text-secondary);
+    color: var(--ds-text-secondary);
     font-family: var(--font-body);
     font-size: 0.82rem;
     font-weight: 500;
@@ -246,14 +246,14 @@
 .puestoChipReadOnly {
     background: rgba(245, 158, 11, 0.05); /* Ligeramente ámbar */
     border-color: rgba(245, 158, 11, 0.2);
-    color: var(--text-primary);
+    color: var(--ds-text);
 }
 
 .puestoDot {
     width: 8px;
     height: 8px;
     border-radius: 50%;
-    background: var(--color-primary);
+    background: var(--accent-orange);
     opacity: 0.8;
 }
 
@@ -284,15 +284,15 @@
 .emptyText {
     font-family: var(--font-body);
     font-size: 0.85rem;
-    color: var(--text-secondary);
+    color: var(--ds-text-secondary);
     text-align: center;
     padding: var(--spacing-md) 0;
 }
 
 /* ── Card de resumen ──────────────────────────────────────────────── */
 .summaryCard {
-    background: var(--bg-secondary);
-    border: 1px solid var(--border-color);
+    background: var(--ds-bg);
+    border: 1px solid var(--ds-border-hairline);
     border-radius: 14px;
     padding: var(--spacing-md) var(--spacing-lg);
     display: flex;
@@ -306,7 +306,7 @@
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.06em;
-    color: var(--text-secondary);
+    color: var(--ds-text-secondary);
     margin: 0;
 }
 
@@ -317,11 +317,11 @@
     gap: var(--spacing-sm);
     font-family: var(--font-body);
     font-size: 0.85rem;
-    color: var(--text-secondary);
+    color: var(--ds-text-secondary);
 }
 
 .summaryRow strong {
-    color: var(--text-primary);
+    color: var(--ds-text);
     font-weight: 600;
     text-align: right;
     max-width: 60%;
@@ -334,17 +334,17 @@
     align-items: center;
     gap: var(--spacing-sm);
     padding: var(--spacing-md) var(--spacing-xl) var(--spacing-xl);
-    border-top: 1px solid var(--border-color);
+    border-top: 1px solid var(--ds-border-hairline);
 }
 
 .navSpacer { flex: 1; }
 
 .btnPrev {
     padding: 9px 18px;
-    border: 1px solid var(--border-color);
+    border: 1px solid var(--ds-border-hairline);
     border-radius: 10px;
-    background: var(--bg-secondary);
-    color: var(--text-primary);
+    background: var(--ds-bg);
+    color: var(--ds-text);
     font-family: var(--font-body);
     font-size: 0.85rem;
     font-weight: 500;
@@ -353,8 +353,8 @@
 }
 
 .btnPrev:hover {
-    border-color: var(--color-primary);
-    color: var(--color-primary);
+    border-color: var(--accent-orange);
+    color: var(--accent-orange);
 }
 
 .btnNext {
@@ -362,10 +362,10 @@
     align-items: center;
     gap: 6px;
     padding: 10px 22px;
-    border: 1px solid var(--color-primary);
+    border: 1px solid var(--accent-orange);
     border-radius: 10px;
-    background: color-mix(in srgb, var(--color-primary) 10%, transparent);
-    color: var(--color-primary);
+    background: color-mix(in srgb, var(--accent-orange) 10%, transparent);
+    color: var(--accent-orange);
     font-family: var(--font-body);
     font-size: 0.88rem;
     font-weight: 700;
@@ -374,7 +374,7 @@
 }
 
 .btnNext:hover:not(:disabled) {
-    background: color-mix(in srgb, var(--color-primary) 18%, transparent);
+    background: color-mix(in srgb, var(--accent-orange) 18%, transparent);
 }
 
 .btnNext:disabled {
@@ -389,7 +389,7 @@
     padding: 10px 24px;
     border: none;
     border-radius: 10px;
-    background: var(--color-primary);
+    background: var(--accent-orange);
     color: #fff;
     font-family: var(--font-body);
     font-size: 0.88rem;
@@ -401,7 +401,7 @@
 .btnFinish:hover:not(:disabled) {
     opacity: 0.88;
     transform: translateY(-2px);
-    box-shadow: 0 6px 20px color-mix(in srgb, var(--color-primary) 40%, transparent);
+    box-shadow: 0 6px 20px color-mix(in srgb, var(--accent-orange) 40%, transparent);
 }
 
 .btnFinish:disabled {

@@ -1,6 +1,7 @@
 import React, { useRef, useState } from 'react';
 import { Upload, X, Image as ImageIcon, Loader2 } from 'lucide-react';
 import { uploadCourseAsset } from '@/lib/upload';
+import DriveImage from '@/components/ui/DriveImage';
 import styles from '@/app/induccion/cursos/[id]/editar/editor.module.css';
 
 export default function ImageUploader({ currentImage, onImageChange, label = "Imagen", compact = false }) {
@@ -73,10 +74,10 @@ export default function ImageUploader({ currentImage, onImageChange, label = "Im
                     border: '1px solid var(--border-color)',
                     background: 'var(--bg-secondary)'
                 }}>
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img
+                    <DriveImage
                         src={currentImage}
                         alt="Preview"
+                        showLabel={!compact}
                         style={compact
                             ? { width: '100%', height: '100%', objectFit: 'cover', display: 'block' }
                             : { width: '100%', height: 'auto', display: 'block' }

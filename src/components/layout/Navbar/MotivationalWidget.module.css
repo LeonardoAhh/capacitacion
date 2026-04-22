@@ -27,7 +27,7 @@
 
 .quoteText {
     font-size: 0.85rem;
-    color: var(--text-secondary);
+    color: var(--ds-text-secondary);
     font-style: italic;
     white-space: nowrap;
     overflow: hidden;

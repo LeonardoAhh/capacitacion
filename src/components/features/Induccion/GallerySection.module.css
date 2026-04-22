@@ -13,24 +13,24 @@
     min-width: 140px;
     padding: 8px 12px;
     border-radius: 8px;
-    border: 1.5px solid var(--border-color);
-    background: var(--bg-secondary);
-    color: var(--text-primary);
+    border: 1.5px solid var(--ds-border-hairline);
+    background: var(--ds-bg);
+    color: var(--ds-text);
     font-size: 0.82rem;
     outline: none;
     transition: border-color 0.2s;
 }
 
 .searchInput:focus {
-    border-color: var(--color-primary);
+    border-color: var(--accent-orange);
 }
 
 .sortSelect {
     padding: 8px 10px;
     border-radius: 8px;
-    border: 1.5px solid var(--border-color);
-    background: var(--bg-secondary);
-    color: var(--text-primary);
+    border: 1.5px solid var(--ds-border-hairline);
+    background: var(--ds-bg);
+    color: var(--ds-text);
     font-size: 0.82rem;
     outline: none;
     cursor: pointer;
@@ -39,7 +39,7 @@
 .viewToggle {
     display: flex;
     gap: 2px;
-    border: 1.5px solid var(--border-color);
+    border: 1.5px solid var(--ds-border-hairline);
     border-radius: 8px;
     overflow: hidden;
 }
@@ -48,7 +48,7 @@
     padding: 6px 10px;
     background: transparent;
     border: none;
-    color: var(--text-tertiary);
+    color: var(--ds-text-tertiary);
     cursor: pointer;
     display: flex;
     align-items: center;
@@ -56,13 +56,13 @@
 }
 
 .viewBtn:hover {
-    background: var(--bg-secondary);
-    color: var(--text-primary);
+    background: var(--ds-bg);
+    color: var(--ds-text);
 }
 
 .viewBtnActive {
-    background: var(--bg-secondary);
-    color: var(--color-primary);
+    background: var(--ds-bg);
+    color: var(--accent-orange);
 }
 
 /* ── Filtro de categorías ── */
@@ -76,9 +76,9 @@
 .categoryChip {
     padding: 4px 12px;
     border-radius: 99px;
-    border: 1.5px solid var(--border-color);
+    border: 1.5px solid var(--ds-border-hairline);
     background: transparent;
-    color: var(--text-secondary);
+    color: var(--ds-text-secondary);
     font-size: 0.75rem;
     font-weight: 500;
     cursor: pointer;
@@ -86,14 +86,14 @@
 }
 
 .categoryChip:hover {
-    border-color: var(--color-primary);
-    color: var(--color-primary);
+    border-color: var(--accent-orange);
+    color: var(--accent-orange);
 }
 
 .categoryChipActive {
-    background: rgba(var(--color-primary-rgb), 0.12);
-    border-color: rgba(var(--color-primary-rgb), 0.4);
-    color: var(--color-primary);
+    background: rgba(245, 78, 0, 0.12);
+    border-color: rgba(245, 78, 0, 0.4);
+    color: var(--accent-orange);
     font-weight: 600;
 }
 
@@ -114,14 +114,14 @@
 .card {
     border-radius: 12px;
     overflow: hidden;
-    border: 1px solid var(--border-color);
-    background: var(--surface-primary, #ffffff);
+    border: 1px solid var(--ds-border-hairline);
+    background: var(--surface-primary, var(--ds-bg-pure));
     transition: border-color 0.2s, box-shadow 0.2s, transform 0.15s;
     cursor: pointer;
 }
 
 .card:hover {
-    border-color: rgba(var(--color-primary-rgb), 0.3);
+    border-color: rgba(245, 78, 0, 0.3);
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
     transform: translateY(-2px);
 }
@@ -131,7 +131,7 @@
     height: 130px;
     position: relative;
     overflow: hidden;
-    background: var(--bg-secondary);
+    background: var(--ds-bg);
 }
 
 .thumb {
@@ -151,7 +151,7 @@
     display: none;
     align-items: center;
     justify-content: center;
-    background: var(--bg-secondary);
+    background: var(--ds-bg);
 }
 
 .playOverlay {
@@ -190,7 +190,7 @@
     left: 8px;
     font-size: 0.65rem;
     font-weight: 600;
-    background: rgba(var(--color-primary-rgb), 0.85);
+    background: rgba(245, 78, 0, 0.85);
     color: white;
     padding: 2px 7px;
     border-radius: 99px;
@@ -202,13 +202,13 @@
     align-items: center;
     gap: 6px;
     padding: 8px 10px;
-    background: var(--surface-primary, #ffffff);
+    background: var(--surface-primary, var(--ds-bg-pure));
 }
 
 .itemName {
     flex: 1;
     font-size: 0.78rem;
-    color: var(--text-secondary);
+    color: var(--ds-text-secondary);
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -221,7 +221,7 @@
     padding: 4px;
     background: transparent;
     border: none;
-    color: var(--text-tertiary);
+    color: var(--ds-text-tertiary);
     cursor: pointer;
     border-radius: 6px;
     display: flex;
@@ -231,7 +231,7 @@
 
 .deleteBtn:hover {
     background: rgba(239, 68, 68, 0.1);
-    color: #ef4444;
+    color: var(--accent-crimson);
 }
 
 /* ── Vista lista ── */
@@ -240,15 +240,15 @@
     align-items: center;
     gap: 12px;
     padding: 8px 12px;
-    border: 1px solid var(--border-color);
+    border: 1px solid var(--ds-border-hairline);
     border-radius: 10px;
-    background: var(--surface-primary, #ffffff);
+    background: var(--surface-primary, var(--ds-bg-pure));
     cursor: pointer;
     transition: border-color 0.15s;
 }
 
 .listCard:hover {
-    border-color: var(--color-primary);
+    border-color: var(--accent-orange);
 }
 
 .listThumb {
@@ -257,7 +257,7 @@
     border-radius: 8px;
     object-fit: cover;
     flex-shrink: 0;
-    background: var(--bg-secondary);
+    background: var(--ds-bg);
 }
 
 .listInfo {
@@ -268,7 +268,7 @@
 .listName {
     font-size: 0.85rem;
     font-weight: 500;
-    color: var(--text-primary);
+    color: var(--ds-text);
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -276,7 +276,7 @@
 
 .listMeta {
     font-size: 0.72rem;
-    color: var(--text-tertiary);
+    color: var(--ds-text-tertiary);
     display: flex;
     gap: 8px;
     margin-top: 2px;
@@ -286,7 +286,7 @@
 .empty {
     text-align: center;
     padding: 40px 20px;
-    color: var(--text-tertiary);
+    color: var(--ds-text-tertiary);
     font-size: 0.88rem;
 }
 
@@ -310,8 +310,8 @@
 }
 
 .modalBox {
-    --color-primary: #003ccc;
-    background: #ffffff;
+    --color-primary: var(--accent-orange);
+    background: var(--ds-bg-pure);
     border: 1px solid rgba(0, 60, 204, 0.12);
     border-radius: 18px;
     padding: 28px 28px 24px;
@@ -322,8 +322,8 @@
 }
 
 [data-theme="dark"] .modalBox {
-    --color-primary: #6699ff;
-    background: #0a0c23 !important;
+    --color-primary: var(--accent-orange);
+    background: var(--cursor-dark) !important;
     opacity: 1 !important;
     backdrop-filter: none !important;
     -webkit-backdrop-filter: none !important;
@@ -347,12 +347,12 @@
     font-size: 1.1rem;
     font-weight: 700;
     margin: 0;
-    color: var(--text-primary);
+    color: var(--ds-text);
 }
 
 .modalHeader p {
     font-size: 0.82rem;
-    color: var(--text-tertiary);
+    color: var(--ds-text-tertiary);
     margin: 0;
 }
 
@@ -363,9 +363,9 @@
     width: 30px;
     height: 30px;
     border-radius: 50%;
-    background: var(--bg-secondary);
+    background: var(--ds-bg);
     border: none;
-    color: var(--text-secondary);
+    color: var(--ds-text-secondary);
     cursor: pointer;
     display: flex;
     align-items: center;
@@ -374,14 +374,14 @@
 }
 
 .closeModalBtn:hover {
-    background: var(--bg-tertiary);
+    background: var(--ds-bg-tertiary);
 }
 
 .typeSelector {
     display: flex;
     gap: 8px;
     margin-bottom: 16px;
-    background: var(--bg-secondary);
+    background: var(--ds-bg);
     border-radius: 10px;
     padding: 4px;
 }
@@ -400,7 +400,7 @@
     border-radius: 7px;
     border: none;
     background: transparent;
-    color: var(--text-tertiary);
+    color: var(--ds-text-tertiary);
     font-size: 0.82rem;
     font-weight: 500;
     cursor: pointer;
@@ -408,14 +408,14 @@
 }
 
 .typeBtnActive {
-    background: var(--bg-primary);
-    color: var(--text-primary);
+    background: var(--ds-bg-pure);
+    color: var(--ds-text);
     box-shadow: 0 1px 4px rgba(0, 0, 0, 0.15);
 }
 
 [data-theme="dark"] .typeBtnActive {
     background: rgba(77, 128, 255, 0.1);
-    color: #6699ff;
+    color: var(--accent-orange);
     box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
 }
 
@@ -429,7 +429,7 @@
 
 .inputGroup label {
     font-size: 0.8rem;
-    color: var(--text-secondary);
+    color: var(--ds-text-secondary);
     font-weight: 500;
 }
 
@@ -437,9 +437,9 @@
     width: 100%;
     padding: 8px 12px;
     border-radius: 8px;
-    border: 1.5px solid var(--border-color);
-    background: var(--bg-secondary);
-    color: var(--text-primary);
+    border: 1.5px solid var(--ds-border-hairline);
+    background: var(--ds-bg);
+    color: var(--ds-text);
     font-size: 0.85rem;
     outline: none;
     transition: border-color 0.2s;
@@ -447,7 +447,7 @@
 }
 
 .input:focus {
-    border-color: var(--color-primary);
+    border-color: var(--accent-orange);
 }
 
 [data-theme="dark"] .input {
@@ -456,7 +456,7 @@
 }
 
 [data-theme="dark"] .input:focus {
-    border-color: #6699ff;
+    border-color: var(--accent-orange);
     background: rgba(0, 60, 204, 0.08);
 }
 
@@ -467,10 +467,10 @@
     justify-content: center;
     gap: 8px;
     padding: 16px;
-    border: 2px dashed var(--border-color);
+    border: 2px dashed var(--ds-border-hairline);
     border-radius: 10px;
     cursor: pointer;
-    color: var(--text-tertiary);
+    color: var(--ds-text-tertiary);
     font-size: 0.83rem;
     font-weight: 500;
     transition: border-color 0.2s, background 0.2s, color 0.2s;
@@ -478,14 +478,14 @@
 }
 
 .fileLabel:hover {
-    border-color: var(--color-primary);
-    color: var(--color-primary);
-    background: rgba(var(--color-primary-rgb), 0.04);
+    border-color: var(--accent-orange);
+    color: var(--accent-orange);
+    background: rgba(245, 78, 0, 0.04);
 }
 
 .fileLabelActive {
-    border-color: var(--color-primary);
-    color: var(--color-primary);
+    border-color: var(--accent-orange);
+    color: var(--accent-orange);
 }
 
 [data-theme="dark"] .fileLabel {
@@ -494,14 +494,14 @@
 }
 
 [data-theme="dark"] .fileLabel:hover {
-    border-color: #6699ff;
-    color: #6699ff;
+    border-color: var(--accent-orange);
+    color: var(--accent-orange);
     background: rgba(77, 128, 255, 0.08);
 }
 
 .fileLabelDrag {
-    border-color: var(--color-primary) !important;
-    background: rgba(var(--color-primary-rgb), 0.08) !important;
+    border-color: var(--accent-orange) !important;
+    background: rgba(245, 78, 0, 0.08) !important;
     transform: scale(1.01);
 }
 
@@ -509,7 +509,7 @@
     border-radius: 10px;
     overflow: hidden;
     margin-bottom: 10px;
-    border: 1.5px solid var(--border-color);
+    border: 1.5px solid var(--ds-border-hairline);
     max-height: 160px;
     display: flex;
     align-items: center;
@@ -527,7 +527,7 @@
 .progressWrap {
     position: relative;
     height: 6px;
-    background: var(--bg-secondary);
+    background: var(--ds-bg);
     border-radius: 99px;
     overflow: hidden;
     margin-bottom: 10px;
@@ -538,7 +538,7 @@
     left: 0;
     top: 0;
     height: 100%;
-    background: var(--color-primary);
+    background: var(--accent-orange);
     border-radius: 99px;
     transition: width 0.2s;
 }
@@ -546,7 +546,7 @@
 .progressText {
     text-align: center;
     font-size: 0.75rem;
-    color: var(--text-tertiary);
+    color: var(--ds-text-tertiary);
     margin-top: 4px;
 }
 
@@ -560,9 +560,9 @@
 .btnSecondary {
     padding: 8px 16px;
     border-radius: 9px;
-    border: 1.5px solid var(--border-color);
+    border: 1.5px solid var(--ds-border-hairline);
     background: transparent;
-    color: var(--text-secondary);
+    color: var(--ds-text-secondary);
     font-size: 0.83rem;
     font-weight: 500;
     cursor: pointer;
@@ -570,14 +570,14 @@
 }
 
 .btnSecondary:hover {
-    background: var(--bg-secondary);
+    background: var(--ds-bg);
 }
 
 .btnPrimary {
     padding: 8px 18px;
     border-radius: 9px;
     border: none;
-    background: var(--color-primary);
+    background: var(--accent-orange);
     color: white;
     font-size: 0.83rem;
     font-weight: 600;

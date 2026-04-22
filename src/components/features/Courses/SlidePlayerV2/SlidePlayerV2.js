@@ -67,6 +67,13 @@ export default function SlidePlayerV2({ course, slides = [], onClose }) {
   const prevThemeRef = useRef(null);
   useEffect(() => {
     prevThemeRef.current = document.documentElement.getAttribute('data-theme') || 'light';
+    // Restaurar preferencia previa del usuario para el reproductor
+    let saved = null;
+    try { saved = localStorage.getItem('vtx_player_theme'); } catch (_) {}
+    if (saved === 'dark') {
+      document.documentElement.setAttribute('data-theme', 'dark');
+      setIsDark(true);
+    }
     return () => {
       document.documentElement.setAttribute('data-theme', prevThemeRef.current);
     };
@@ -76,6 +83,7 @@ export default function SlidePlayerV2({ course, slides = [], onClose }) {
     setIsDark((prev) => {
       const next = !prev;
       document.documentElement.setAttribute('data-theme', next ? 'dark' : 'light');
+      try { localStorage.setItem('vtx_player_theme', next ? 'dark' : 'light'); } catch (_) {}
       return next;
     });
   }, []);
@@ -143,14 +151,53 @@ export default function SlidePlayerV2({ course, slides = [], onClose }) {
     return () => window.removeEventListener('keydown', onKey);
   }, [goNext, goPrev, goTo, totalSlides, sidebarOpen, onClose]);
 
-  /* ── Touch swipe (vertical) ─────────────────────── */
+  /* ── Touch swipe (vertical) — sólo navega si scroll está en el borde ── */
   const touchStartY = useRef(null);
-  const handleTouchStart = useCallback((e) => { touchStartY.current = e.touches[0].clientY; }, []);
+  const touchStartX = useRef(null);
+  const touchStartT = useRef(0);
+  const touchScrollLocked = useRef(false); // true si el gesto comenzó scrolleando contenido
+
+  const handleTouchStart = useCallback((e) => {
+    touchStartY.current = e.touches[0].clientY;
+    touchStartX.current = e.touches[0].clientX;
+    touchStartT.current = Date.now();
+    touchScrollLocked.current = false;
+  }, []);
+
+  const handleTouchMove = useCallback((e) => {
+    if (touchStartY.current === null) return;
+    const el = slideAreaRef.current;
+    if (!el) return;
+    const dy = e.touches[0].clientY - touchStartY.current;
+    // Si hay margen de scroll en la dirección del gesto, marcar como scroll-lock
+    const canScrollDown = el.scrollHeight - el.clientHeight - el.scrollTop > 1;
+    const canScrollUp   = el.scrollTop > 1;
+    if ((dy < 0 && canScrollDown) || (dy > 0 && canScrollUp)) {
+      touchScrollLocked.current = true;
+    }
+  }, []);
+
   const handleTouchEnd = useCallback((e) => {
     if (touchStartY.current === null) return;
-    const diff = touchStartY.current - e.changedTouches[0].clientY;
-    if (Math.abs(diff) > 60) { diff > 0 ? goNext() : goPrev(); }
+    const dy = touchStartY.current - e.changedTouches[0].clientY;
+    const dx = touchStartX.current !== null ? touchStartX.current - e.changedTouches[0].clientX : 0;
+    const dt = Date.now() - touchStartT.current;
     touchStartY.current = null;
+    touchStartX.current = null;
+
+    // Si el gesto fue scroll de contenido, abortar navegación
+    if (touchScrollLocked.current) return;
+    // Descartar swipes horizontales o muy lentos
+    if (Math.abs(dx) > Math.abs(dy)) return;
+    if (dt > 600) return;
+
+    const el = slideAreaRef.current;
+    const atBottom = el ? (el.scrollHeight - el.clientHeight - el.scrollTop <= 1) : true;
+    const atTop    = el ? (el.scrollTop <= 1) : true;
+
+    const THRESHOLD = 80;
+    if (dy > THRESHOLD && atBottom) goNext();
+    else if (dy < -THRESHOLD && atTop) goPrev();
   }, [goNext, goPrev]);
 
   /* ── Sidebar toggle ─────────────────────────────── */
@@ -282,6 +329,7 @@ export default function SlidePlayerV2({ course, slides = [], onClose }) {
           className={s.main}
           ref={mainRef}
           onTouchStart={handleTouchStart}
+          onTouchMove={handleTouchMove}
           onTouchEnd={handleTouchEnd}
           aria-label={currentSlide ? `Slide ${currentIndex + 1} de ${totalSlides}: ${currentSlide.data?.heading || currentSlide.data?.title || typeLabel(currentSlide.type)}` : 'Sin contenido'}
         >

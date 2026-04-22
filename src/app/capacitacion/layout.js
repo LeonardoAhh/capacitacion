@@ -1,2 +1,0 @@
-export const metadata = { title: 'Capacitación' };
-export default function Layout({ children }) { return children; }

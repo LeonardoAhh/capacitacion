@@ -1,94 +1,103 @@
+/* =============================================================
+   Badge — design.md (Cursor System)
+   Pill (radius full) + warm cream surfaces + Geist Sans 14/400.
+   Workflow accents (orange/crimson/teal) + timeline AI ops colors.
+   ============================================================= */
 .badge {
     display: inline-flex;
     align-items: center;
-    gap: 0.375rem;
-    font-weight: 500;
-    border-radius: var(--radius-full);
-    transition: all var(--transition-fast);
+    gap: var(--s-4);
+    padding: var(--s-3) var(--s-8);
+    border-radius: var(--radius-pill);
+    font-family: var(--font-display), system-ui, sans-serif;
+    font-size: var(--text-button);
+    font-weight: var(--weight-read);
+    line-height: 1.5;
     white-space: nowrap;
+    transition: background var(--transition-fast),
+                color var(--transition-fast);
 }
 
-/* Sizes */
+/* ─── Sizes ────────────────────────────────────────────── */
 .sm {
-    font-size: 0.7rem;
-    padding: 0.125rem 0.5rem;
+    padding: 1px var(--s-6);
+    font-size: var(--text-caption);
 }
 
 .md {
-    font-size: 0.75rem;
-    padding: 0.25rem 0.625rem;
+    padding: var(--s-3) var(--s-8);
 }
 
 .lg {
-    font-size: 0.85rem;
-    padding: 0.375rem 0.875rem;
+    padding: var(--s-4) var(--s-12);
+    font-size: var(--text-ui);
 }
 
-/* Variants */
+/* ─── Default (warm cream pill) ────────────────────────── */
 .default {
-    background-color: var(--bg-tertiary);
-    color: var(--text-primary);
+    background: var(--cursor-cream-400);
+    color: var(--ds-text-muted);
 }
 
 .secondary {
-    background-color: var(--color-secondary);
-    background: linear-gradient(135deg, rgba(139, 92, 246, 0.15), rgba(139, 92, 246, 0.25));
-    color: #8b5cf6;
+    background: var(--cursor-cream-500);
+    color: var(--ds-text-muted);
+}
+
+/* ─── Workflow accents (semantic only) ─────────────────── */
+.ship,
+.danger {
+    background: rgba(245, 78, 0, 0.10);
+    color: var(--accent-orange);
+}
+
+.preview,
+.warning {
+    background: rgba(192, 133, 50, 0.12);
+    color: var(--accent-gold);
+}
+
+.develop,
+.info {
+    background: rgba(159, 187, 224, 0.20);
+    color: #2d5a8a;
 }
 
 .success {
-    background: linear-gradient(135deg, rgba(34, 197, 94, 0.15), rgba(34, 197, 94, 0.25));
-    color: #22c55e;
+    background: rgba(31, 138, 101, 0.10);
+    color: var(--accent-teal);
 }
 
-.warning {
-    background: linear-gradient(135deg, rgba(245, 158, 11, 0.15), rgba(245, 158, 11, 0.25));
-    color: #f59e0b;
+.crimson {
+    background: rgba(207, 45, 86, 0.10);
+    color: var(--accent-crimson);
 }
 
-.danger {
-    background: linear-gradient(135deg, rgba(239, 68, 68, 0.15), rgba(239, 68, 68, 0.25));
-    color: #ef4444;
-}
+/* ─── Timeline AI ops ──────────────────────────────────── */
+.thinking { background: rgba(223, 168, 143, 0.20); color: #8a4a2e; }
+.grep     { background: rgba(159, 201, 162, 0.22); color: #2d5a32; }
+.read     { background: rgba(159, 187, 224, 0.20); color: #2d5a8a; }
+.edit     { background: rgba(192, 168, 221, 0.22); color: #5a3d8a; }
 
-.info {
-    background: linear-gradient(135deg, rgba(59, 130, 246, 0.15), rgba(59, 130, 246, 0.25));
-    color: #3b82f6;
-}
-
+/* ─── White (max contrast on warm bg) ─────────────────── */
 .white {
-    background-color: var(--bg-tertiary);
-    color: var(--text-secondary);
-    border: 1px solid var(--border-color);
+    background: var(--ds-bg-pure);
+    color: var(--ds-text);
+    box-shadow: inset 0 0 0 1px var(--ds-border-hairline);
 }
 
-[data-theme="dark"] .white {
-    background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.2));
-    color: #ffffff;
-    border: 1px solid rgba(255, 255, 255, 0.1);
+/* ─── Outlined (warm border ring) ──────────────────────── */
+.outlined {
+    background: transparent;
+    color: var(--ds-text-secondary);
+    box-shadow: inset 0 0 0 1px var(--ds-border-medium);
 }
 
-/* Dot indicator */
-.withDot {
-    padding-left: 0.5rem;
-}
-
+/* ─── Dot indicator ────────────────────────────────────── */
 .dot {
     width: 6px;
     height: 6px;
     border-radius: 50%;
-    background-color: currentColor;
-    animation: pulse 2s infinite;
-}
-
-@keyframes pulse {
-
-    0%,
-    100% {
-        opacity: 1;
-    }
-
-    50% {
-        opacity: 0.5;
-    }
+    background: currentColor;
+    flex-shrink: 0;
 }

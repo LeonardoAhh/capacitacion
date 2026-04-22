@@ -1,6 +1,7 @@
 import React, { useRef, useState } from 'react';
 import { Upload, X, Image as ImageIcon, Video, Loader2 } from 'lucide-react';
 import { uploadCourseAsset } from '@/lib/upload';
+import DriveImage from '@/components/ui/DriveImage';
 import styles from '@/app/induccion/cursos/[id]/editar/editor.module.css';
 
 export default function MediaUploader({ currentMedia, onMediaChange, label = "Fondo Multimedia (Opcional)" }) {
@@ -63,8 +64,7 @@ export default function MediaUploader({ currentMedia, onMediaChange, label = "Fo
                     {currentMedia.type === 'video' ? (
                         <video src={currentMedia.url} controls style={{ width: '100%', height: 'auto', display: 'block', maxHeight: 200, objectFit: 'cover' }} />
                     ) : (
-                        /* eslint-disable-next-line @next/next/no-img-element */
-                        <img src={currentMedia.url} alt="Media Preview" style={{ width: '100%', height: 'auto', display: 'block', maxHeight: 200, objectFit: 'cover' }} />
+                        <DriveImage src={currentMedia.url} alt="Media Preview" style={{ width: '100%', height: 'auto', display: 'block', maxHeight: 200, objectFit: 'cover' }} />
                     )}
                     <button
                         onClick={handleRemove}

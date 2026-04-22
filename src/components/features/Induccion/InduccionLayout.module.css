@@ -25,7 +25,7 @@
     font-weight: 600;
     letter-spacing: 0.07em;
     text-transform: uppercase;
-    color: var(--text-tertiary);
+    color: var(--ds-text-tertiary);
     padding: 0 10px;
     margin-bottom: 4px;
 }
@@ -38,7 +38,7 @@
     border-radius: 10px;
     border: none;
     background: transparent;
-    color: var(--text-secondary);
+    color: var(--ds-text-secondary);
     font-size: 0.875rem;
     font-weight: 500;
     cursor: pointer;
@@ -49,13 +49,13 @@
 }
 
 .sidebarItem:hover {
-    background: var(--bg-secondary);
-    color: var(--text-primary);
+    background: var(--ds-bg);
+    color: var(--ds-text);
 }
 
 .sidebarItemActive {
-    background: rgba(var(--color-primary-rgb), 0.1);
-    color: var(--color-primary);
+    background: rgba(245, 78, 0, 0.1);
+    color: var(--accent-orange);
     font-weight: 600;
 }
 
@@ -67,7 +67,7 @@
     transform: translateY(-50%);
     width: 3px;
     height: 60%;
-    background: var(--color-primary);
+    background: var(--accent-orange);
     border-radius: 0 3px 3px 0;
 }
 
@@ -75,15 +75,15 @@
     margin-left: auto;
     font-size: 0.65rem;
     font-weight: 600;
-    color: var(--text-tertiary);
-    background: var(--bg-secondary);
+    color: var(--ds-text-tertiary);
+    background: var(--ds-bg);
     padding: 1px 6px;
     border-radius: 99px;
 }
 
 .sidebarDivider {
     height: 1px;
-    background: var(--border-color);
+    background: var(--ds-border-hairline);
     margin: 6px 12px;
 }
 
@@ -92,7 +92,7 @@
     flex: 1;
     min-width: 0;
     padding-left: 24px;
-    border-left: 1px solid var(--border-color);
+    border-left: 1px solid var(--ds-border-hairline);
 }
 
 /* ── Bottom Navigation (Móvil < 768px) ── */
@@ -126,8 +126,8 @@
         left: 0;
         right: 0;
         height: 64px;
-        background: var(--bg-primary);
-        border-top: 1px solid var(--border-color);
+        background: var(--ds-bg-pure);
+        border-top: 1px solid var(--ds-border-hairline);
         backdrop-filter: blur(12px);
         z-index: 200;
         align-items: stretch;
@@ -144,7 +144,7 @@
         gap: 3px;
         border: none;
         background: transparent;
-        color: var(--text-tertiary);
+        color: var(--ds-text-tertiary);
         font-size: 0.65rem;
         font-weight: 500;
         cursor: pointer;
@@ -155,11 +155,11 @@
     }
 
     .bottomNavItem:hover {
-        color: var(--text-secondary);
+        color: var(--ds-text-secondary);
     }
 
     .bottomNavItemActive {
-        color: var(--color-primary);
+        color: var(--accent-orange);
     }
 
     .bottomNavItemActive::before {
@@ -168,7 +168,7 @@
         top: 6px;
         width: 24px;
         height: 3px;
-        background: var(--color-primary);
+        background: var(--accent-orange);
         border-radius: 0 0 3px 3px;
         top: 0;
     }
@@ -179,7 +179,7 @@
         right: calc(50% - 14px);
         font-size: 0.58rem;
         font-weight: 700;
-        background: var(--color-primary);
+        background: var(--accent-orange);
         color: white;
         width: 16px;
         height: 16px;

@@ -86,7 +86,7 @@
 :global([data-theme="light"]) .logoText h1,
 :global([data-theme="light"]) .headline,
 :global([data-theme="light"]) .featureCard h3 {
-    color: #1e293b;
+    color: var(--ds-text);
 }
 
 :global([data-theme="light"]) .greeting,
@@ -106,7 +106,7 @@
 }
 
 :global([data-theme="light"]) .featureCard:hover h3 {
-    color: #1e293b;
+    color: var(--ds-text);
 }
 
 :global([data-theme="light"]) .featureCard:hover .cardList li {
@@ -214,7 +214,7 @@
 .logo {
     width: 48px;
     height: 48px;
-    background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+    background: linear-gradient(135deg, var(--accent-orange) 0%, var(--accent-orange) 100%);
     border-radius: 12px;
     display: flex;
     align-items: center;
@@ -313,7 +313,7 @@
 }
 
 .gradientText {
-    background: linear-gradient(135deg, #60a5fa 0%, #a78bfa 50%, #34d399 100%);
+    background: linear-gradient(135deg, var(--timeline-read) 0%, var(--accent-orange) 50%, var(--accent-teal) 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
@@ -445,7 +445,7 @@
 }
 
 .bullet {
-    color: #6366f1;
+    color: var(--accent-orange);
     font-weight: 600;
     font-size: 1rem;
 }
@@ -478,7 +478,7 @@
 .statusDot {
     width: 8px;
     height: 8px;
-    background: #10b981;
+    background: var(--accent-teal);
     border-radius: 50%;
     animation: statusPulse 2s ease-in-out infinite;
 }
@@ -501,7 +501,7 @@
     display: flex;
     align-items: center;
     gap: 0.75rem;
-    background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+    background: linear-gradient(135deg, var(--accent-orange) 0%, var(--accent-orange) 100%);
     color: white;
     border: none;
     padding: 0.875rem 1.75rem;
@@ -529,7 +529,7 @@
 /* Legacy styles kept for compatibility */
 .intro {
     margin-bottom: 1.5rem;
-    color: var(--text-secondary);
+    color: var(--ds-text-secondary);
     font-size: 0.95rem;
     line-height: 1.5;
 }
@@ -542,10 +542,10 @@
 }
 
 .feature {
-    background: var(--bg-primary);
+    background: var(--ds-bg-pure);
     padding: 1rem;
     border-radius: 8px;
-    border: 1px solid var(--border-color);
+    border: 1px solid var(--ds-border-hairline);
 }
 
 .icon {
@@ -560,51 +560,51 @@
 
 .iconPurple {
     background: rgba(126, 34, 206, 0.1);
-    color: #a855f7;
+    color: var(--accent-orange);
 }
 
 .iconBlue {
     background: rgba(37, 99, 235, 0.1);
-    color: var(--color-primary);
+    color: var(--accent-orange);
 }
 
 .iconGreen {
     background: rgba(22, 163, 74, 0.1);
-    color: var(--color-success);
+    color: var(--accent-teal);
 }
 
 .iconOrange {
     background: rgba(194, 65, 12, 0.1);
-    color: var(--color-warning);
+    color: var(--accent-gold);
 }
 
 .feature h3 {
     font-size: 0.9rem;
     font-weight: 600;
     margin-bottom: 0.4rem;
-    color: var(--text-primary);
+    color: var(--ds-text);
 }
 
 .feature p {
     font-size: 0.8rem;
-    color: var(--text-secondary);
+    color: var(--ds-text-secondary);
     line-height: 1.4;
 }
 
 .tip {
-    background-color: var(--bg-tertiary);
+    background-color: var(--ds-bg-tertiary);
     padding: 0.75rem;
     border-radius: 6px;
     font-size: 0.85rem;
-    color: var(--text-secondary);
-    border: 1px solid var(--border-color);
+    color: var(--ds-text-secondary);
+    border: 1px solid var(--ds-border-hairline);
 }
 
 .infoCard {
-    background: var(--bg-primary);
+    background: var(--ds-bg-pure);
     padding: 1.25rem;
     border-radius: 8px;
-    border: 1px solid var(--border-color);
+    border: 1px solid var(--ds-border-hairline);
     margin-bottom: 1rem;
 }
 
@@ -612,7 +612,7 @@
     font-size: 1rem;
     font-weight: 600;
     margin-bottom: 1rem;
-    color: var(--text-primary);
+    color: var(--ds-text);
 }
 
 .menuList {
@@ -627,7 +627,7 @@
 
 .menuList>li>strong {
     display: block;
-    color: var(--text-primary);
+    color: var(--ds-text);
     font-size: 0.95rem;
     margin-bottom: 0.5rem;
 }
@@ -639,7 +639,7 @@
 }
 
 .menuList>li>ul>li {
-    color: var(--text-secondary);
+    color: var(--ds-text-secondary);
     font-size: 0.85rem;
     line-height: 1.6;
 }

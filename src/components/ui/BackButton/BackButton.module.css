@@ -5,7 +5,7 @@
     padding: 10px 18px;
     font-size: 0.875rem;
     font-weight: 500;
-    color: var(--text-secondary);
+    color: var(--ds-text-secondary);
     text-decoration: none;
     border-radius: 50px;
     background: rgba(255, 255, 255, 0.5);
@@ -25,8 +25,8 @@
 }
 
 .backButton:hover {
-    color: var(--text-primary);
-    background: var(--bg-secondary);
+    color: var(--ds-text);
+    background: var(--ds-bg);
     transform: translateX(-4px);
 }
 

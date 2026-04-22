@@ -1,7 +1,7 @@
 /* ═══════════════════════════════════════════════════════════════
    LOGIN BASE — Editorial White  ·  VIÑOPLASTIC
    Cohesivo con /employees, /candidatos/dashboard y ShapeHero
-   Azul corporativo #003ccc · Rojo #d40000
+   Azul corporativo var(--accent-orange) · Rojo var(--accent-crimson)
    Cada portal puede sobreescribir:
      --login-accent | --login-accent-rgb
      --login-gradient-from | --login-gradient-to
@@ -37,11 +37,11 @@
 
 .container {
     /* Tokens de acento — cada portal puede sobrescribir */
-    --login-accent:          #003ccc;
+    --login-accent:          var(--accent-orange);
     --login-accent-rgb:      0, 60, 204;
-    --login-gradient-from:   #003ccc;
-    --login-gradient-to:     #1a55e0;
-    --login-bar:             #d40000;
+    --login-gradient-from:   var(--accent-orange);
+    --login-gradient-to:     var(--accent-orange);
+    --login-bar:             var(--accent-crimson);
 
     /* Layout */
     position: relative;
@@ -58,7 +58,7 @@
     font-family: var(--font-body);
 
     /* Fondo cohesivo con ShapeHero */
-    background: #f5f7ff;
+    background: var(--ds-bg-subtle);
 }
 
 /* Grid sutil — idéntico al Hero */
@@ -95,7 +95,7 @@
 
 /* ── Dark mode ── */
 [data-theme="dark"] .container {
-    background: #060612;
+    background: var(--cursor-dark);
 }
 
 [data-theme="dark"] .container::before {
@@ -143,8 +143,8 @@
     margin: 0 1.5rem;
     padding: 2.5rem 2rem;
 
-    background: #ffffff;
-    border: 1.5px solid #e2e6f0;
+    background: var(--ds-bg-pure);
+    border: 1.5px solid var(--ds-bg-tertiary);
     border-radius: 24px;
     box-shadow:
         0 4px 24px rgba(0, 40, 180, 0.08),
@@ -152,7 +152,7 @@
 }
 
 [data-theme="dark"] .loginCard {
-    background: #13172a;
+    background: var(--cursor-dark);
     border-color: rgba(77, 128, 255, 0.12);
     box-shadow:
         0 4px 32px rgba(0, 0, 0, 0.55),
@@ -171,7 +171,7 @@
     display: block;
     width: 32px;
     height: 2px;
-    background: var(--login-bar, #d40000);
+    background: var(--login-bar, var(--accent-crimson));
     border-radius: 2px;
     margin-bottom: 1.25rem;
     transform-origin: left;
@@ -187,8 +187,8 @@
     height: 3rem;
     margin-bottom: 1rem;
     background: linear-gradient(135deg,
-        var(--login-gradient-from, #003ccc) 0%,
-        var(--login-gradient-to, #1a55e0) 100%);
+        var(--login-gradient-from, var(--accent-orange)) 0%,
+        var(--login-gradient-to, var(--accent-orange)) 100%);
     border-radius: 12px;
     box-shadow: 0 4px 16px rgba(var(--login-accent-rgb, 0, 60, 204), 0.25);
 }
@@ -196,7 +196,7 @@
 .icon {
     width: 1.3rem;
     height: 1.3rem;
-    color: #ffffff;
+    color: var(--ds-bg-pure);
 }
 
 .title {
@@ -206,11 +206,11 @@
     font-size: 1.9rem;
     letter-spacing: -0.025em;
     line-height: 1.1;
-    color: #0a0f2e;
+    color: var(--cursor-dark);
 }
 
 [data-theme="dark"] .title {
-    color: #e8eaff;
+    color: var(--ds-bg-subtle);
 }
 
 .subtitle {
@@ -218,7 +218,7 @@
     font-size: 0.82rem;
     font-weight: 400;
     letter-spacing: 0.02em;
-    color: #6b7280;
+    color: var(--ds-text-secondary);
 }
 
 [data-theme="dark"] .subtitle {
@@ -235,16 +235,16 @@
     padding: 0.8rem 1rem;
     background: rgba(212, 0, 0, 0.05);
     border: 1.5px solid rgba(212, 0, 0, 0.18);
-    border-left: 3px solid #d40000;
+    border-left: 3px solid var(--accent-crimson);
     border-radius: 0 10px 10px 0;
-    color: #b91c1c;
+    color: var(--accent-crimson);
     font-size: 0.82rem;
     text-align: left;
 }
 
 [data-theme="dark"] .errorMessage {
     background: rgba(212, 0, 0, 0.08);
-    color: #fca5a5;
+    color: rgba(207, 45, 86, 0.40);
 }
 
 /* ─── Blocked / Rate-limit Message ─────────────────────────── */
@@ -254,15 +254,15 @@
     padding: 0.8rem 1rem;
     background: rgba(0, 60, 204, 0.05);
     border: 1.5px solid rgba(0, 60, 204, 0.18);
-    border-left: 3px solid var(--login-accent, #003ccc);
+    border-left: 3px solid var(--login-accent, var(--accent-orange));
     border-radius: 0 10px 10px 0;
-    color: #003ccc;
+    color: var(--accent-orange);
     font-size: 0.82rem;
     font-weight: 500;
 }
 
 [data-theme="dark"] .blockedMessage {
-    color: #93b4ff;
+    color: var(--accent-orange);
     background: rgba(0, 60, 204, 0.08);
 }
 
@@ -274,9 +274,9 @@
     padding: 0.8rem 1rem;
     background: rgba(0, 60, 204, 0.05);
     border: 1.5px solid rgba(0, 60, 204, 0.18);
-    border-left: 3px solid var(--login-accent, #003ccc);
+    border-left: 3px solid var(--login-accent, var(--accent-orange));
     border-radius: 0 10px 10px 0;
-    color: #003ccc;
+    color: var(--accent-orange);
     font-size: 0.82rem;
 }
 
@@ -299,7 +299,7 @@
     font-weight: 700;
     letter-spacing: 0.09em;
     text-transform: uppercase;
-    color: #6b7280;
+    color: var(--ds-text-secondary);
 }
 
 [data-theme="dark"] .label {
@@ -317,7 +317,7 @@
     left: 0.9rem;
     width: 1rem;
     height: 1rem;
-    color: #9ca3af;
+    color: var(--ds-text-tertiary);
     pointer-events: none;
     transition: color 0.2s;
 }
@@ -329,10 +329,10 @@
 .input {
     width: 100%;
     padding: 0.8rem 1rem 0.8rem 2.6rem;
-    background: #f9fafb;
-    border: 1.5px solid #e5e7eb;
+    background: var(--ds-bg-floor);
+    border: 1.5px solid var(--ds-border-hairline);
     border-radius: 10px;
-    color: #111827;
+    color: var(--ds-text);
     font-family: var(--font-body);
     font-size: 0.95rem;
     outline: none;
@@ -342,11 +342,11 @@
 [data-theme="dark"] .input {
     background: rgba(255, 255, 255, 0.05);
     border-color: rgba(77, 128, 255, 0.14);
-    color: #e8eaff;
+    color: var(--ds-bg-subtle);
 }
 
 .input::placeholder {
-    color: #d1d5db;
+    color: var(--ds-border-medium);
     font-weight: 300;
 }
 
@@ -355,8 +355,8 @@
 }
 
 .input:focus {
-    background: #ffffff;
-    border-color: var(--login-accent, #003ccc);
+    background: var(--ds-bg-pure);
+    border-color: var(--login-accent, var(--accent-orange));
     box-shadow: 0 0 0 3px rgba(var(--login-accent-rgb, 0, 60, 204), 0.10);
 }
 
@@ -365,7 +365,7 @@
 }
 
 .inputWrapper:focus-within .inputIcon {
-    color: var(--login-accent, #003ccc);
+    color: var(--login-accent, var(--accent-orange));
 }
 
 .input:disabled {
@@ -381,7 +381,7 @@
 .helperText {
     margin: 0;
     font-size: 0.7rem;
-    color: #9ca3af;
+    color: var(--ds-text-tertiary);
     letter-spacing: 0.02em;
 }
 
@@ -407,10 +407,10 @@
     font-family: var(--font-body);
     font-weight: 600;
     font-size: 0.92rem;
-    color: #ffffff;
+    color: var(--ds-bg-pure);
     background: linear-gradient(135deg,
-        var(--login-gradient-from, #003ccc) 0%,
-        var(--login-gradient-to, #1a55e0) 100%);
+        var(--login-gradient-from, var(--accent-orange)) 0%,
+        var(--login-gradient-to, var(--accent-orange)) 100%);
     border: none;
     border-radius: 9999px;
     cursor: pointer;
@@ -456,7 +456,7 @@
 }
 
 .submitButton:focus-visible {
-    outline: 2px solid var(--login-accent, #003ccc);
+    outline: 2px solid var(--login-accent, var(--accent-orange));
     outline-offset: 3px;
 }
 
@@ -467,7 +467,7 @@
     width: 1.1rem;
     height: 1.1rem;
     border: 2px solid rgba(255, 255, 255, 0.30);
-    border-top-color: #ffffff;
+    border-top-color: var(--ds-bg-pure);
     border-radius: 50%;
     animation: spin 0.7s linear infinite;
 }
@@ -478,7 +478,7 @@
     display: flex;
     align-items: center;
     gap: 0.75rem;
-    color: #9ca3af;
+    color: var(--ds-text-tertiary);
     font-size: 0.72rem;
     font-weight: 600;
     letter-spacing: 0.08em;
@@ -490,7 +490,7 @@
     content: '';
     flex: 1;
     height: 1.5px;
-    background: #e5e7eb;
+    background: var(--ds-border-hairline);
 }
 
 [data-theme="dark"] .divider {
@@ -513,9 +513,9 @@
     font-family: var(--font-body);
     font-weight: 500;
     font-size: 0.9rem;
-    color: #374151;
-    background: #ffffff;
-    border: 1.5px solid #e5e7eb;
+    color: var(--ds-text-secondary);
+    background: var(--ds-bg-pure);
+    border: 1.5px solid var(--ds-border-hairline);
     border-radius: 9999px;
     cursor: pointer;
     transition: border-color 0.2s, box-shadow 0.2s, transform 0.2s;
@@ -530,7 +530,7 @@
 }
 
 [data-theme="dark"] .googleButton {
-    color: #e8eaff;
+    color: var(--ds-bg-subtle);
     background: rgba(255, 255, 255, 0.05);
     border-color: rgba(77, 128, 255, 0.14);
 }
@@ -559,7 +559,7 @@
     gap: 0.4rem;
     font-size: 0.82rem;
     font-weight: 600;
-    color: var(--login-accent, #003ccc);
+    color: var(--login-accent, var(--accent-orange));
     text-decoration: none;
     padding: 0.3rem 0;
     border-bottom: 1px solid transparent;
@@ -567,7 +567,7 @@
 }
 
 .whatsappLink:hover {
-    border-bottom-color: var(--login-accent, #003ccc);
+    border-bottom-color: var(--login-accent, var(--accent-orange));
 }
 
 /* ─── Success Container ─────────────────────────────────────── */
@@ -587,7 +587,7 @@
 .footer {
     margin-top: 1.5rem;
     padding-top: 1.25rem;
-    border-top: 1.5px solid #e5e7eb;
+    border-top: 1.5px solid var(--ds-border-hairline);
     text-align: center;
 }
 
@@ -599,7 +599,7 @@
     margin: 0 0 0.5rem;
     font-size: 0.78rem;
     line-height: 1.6;
-    color: #9ca3af;
+    color: var(--ds-text-tertiary);
 }
 
 [data-theme="dark"] .footerText {
@@ -758,6 +758,6 @@
 /* ─── Print ─────────────────────────────────────────────────── */
 
 @media print {
-    .container { background: #ffffff; }
+    .container { background: var(--ds-bg-pure); }
     .overlay   { display: none; }
 }

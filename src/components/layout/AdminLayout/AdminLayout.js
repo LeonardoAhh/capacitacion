@@ -7,8 +7,9 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import NextImage from 'next/image';
 import MainSidebar from '@/components/layout/MainSidebar/MainSidebar';
+import ThemeToggle from '@/components/layout/ThemeToggle/ThemeToggle';
 import styles from './AdminLayout.module.css';
-import { Menu, PanelLeft, LayoutDashboard, LogOut } from 'lucide-react';
+import { Menu, LogOut } from 'lucide-react';
 
 function getRoleLabel(rol) {
     const map = { super_admin: 'Super Admin', admin: 'Admin', instructor: 'Instructor' };
@@ -182,21 +183,13 @@ export default function AdminLayout({ children, title = 'Dashboard' }) {
                 isOpen={isMobileOpen}
                 onClose={() => setIsMobileOpen(false)}
                 isCollapsed={isCollapsed}
+                onToggleCollapse={() => setIsCollapsed(p => !p)}
             />
 
             <div className={styles.main}>
                 {/* Header */}
                 <header className={styles.header}>
                     <div className={styles.headerLeft}>
-                        {/* Desktop: toggle collapse */}
-                        <button
-                            className={`${styles.iconBtn} ${styles.desktopOnly}`}
-                            onClick={() => setIsCollapsed(p => !p)}
-                            aria-label={isCollapsed ? 'Expandir menú' : 'Colapsar menú'}
-                            type="button"
-                        >
-                            <PanelLeft size={18} />
-                        </button>
                         {/* Mobile: open drawer */}
                         <button
                             className={`${styles.iconBtn} ${styles.mobileOnly}`}
@@ -207,23 +200,14 @@ export default function AdminLayout({ children, title = 'Dashboard' }) {
                             <Menu size={18} />
                         </button>
 
-                        <div className={styles.headerDivider} />
-
-                        {/* Breadcrumb */}
+                        {/* Breadcrumb (sin icono home: /dashboard fue removido) */}
                         <nav className={styles.breadcrumb} aria-label="Breadcrumb">
-                            <Link href="/dashboard" className={styles.breadcrumbHome}>
-                                <LayoutDashboard size={14} />
-                            </Link>
-                            {title !== 'Dashboard' && (
-                                <>
-                                    <span className={styles.breadcrumbSep}>/</span>
-                                    <span className={styles.breadcrumbCurrent}>{title}</span>
-                                </>
-                            )}
+                            <span className={styles.breadcrumbCurrent}>{title}</span>
                         </nav>
                     </div>
 
                     <div className={styles.headerRight}>
+                        <ThemeToggle />
                         <button
                             type="button"
                             className={styles.headerLogoutBtn}

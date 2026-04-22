@@ -3,30 +3,30 @@
    Material Expressive 3 · Cohesivo con /contratos
    ================================================================ */
 
-/* ── Design Tokens (espejo de /contratos) ── */
+/* ── Design Tokens (Cursor design system) ── */
 .container {
-    --c-surface:      #ffffff;
-    --c-bg:           #fafaf8;
-    --c-ink:          var(--text-primary, #111827);
-    --c-muted:        var(--text-secondary, #6b7280);
-    --c-line:         var(--border-color, #e5e7eb);
-    --c-line-strong:  color-mix(in srgb, var(--text-primary, #111827) 14%, transparent);
-    --c-primary:      #111110;
-    --c-primary-dim:  rgba(17, 17, 16, 0.08);
-    --c-primary-mid:  rgba(17, 17, 16, 0.18);
-    --c-danger:       #ef4444;
-    --c-danger-dim:   rgba(239, 68, 68, 0.09);
-    --c-success:      #16a34a;
-    --c-success-dim:  rgba(22, 163, 74, 0.10);
-    --c-success-mid:  rgba(22, 163, 74, 0.22);
-    --r-xl:   20px;
-    --r-lg:   16px;
-    --r-md:   12px;
-    --r-sm:   8px;
-    --r-full: 9999px;
-    --sh-card:  0 1px 4px rgba(0,0,0,0.06), 0 2px 12px rgba(0,0,0,0.04);
-    --sh-lift:  0 4px 20px rgba(0,0,0,0.10), 0 1px 6px rgba(0,0,0,0.06);
-    --sh-float: 0 8px 32px rgba(0,0,0,0.14), 0 1px 8px rgba(0,0,0,0.06);
+    --c-surface:      var(--ds-bg-emphasis);
+    --c-bg:           var(--ds-bg);
+    --c-ink:          var(--ds-text);
+    --c-muted:        var(--ds-text-secondary);
+    --c-line:         var(--ds-border-hairline);
+    --c-line-strong:  var(--ds-border-medium);
+    --c-primary:      var(--cursor-cream-400);
+    --c-primary-dim:  var(--cursor-cream-300);
+    --c-primary-mid:  var(--cursor-cream-500);
+    --c-danger:       var(--accent-crimson);
+    --c-danger-dim:   rgba(207, 45, 86, 0.08);
+    --c-success:      var(--accent-teal);
+    --c-success-dim:  rgba(31, 138, 101, 0.10);
+    --c-success-mid:  rgba(31, 138, 101, 0.22);
+    --r-xl:   var(--radius-xl);
+    --r-lg:   var(--radius-lg);
+    --r-md:   var(--radius-md);
+    --r-sm:   var(--radius-sm);
+    --r-full: var(--radius-pill);
+    --sh-card:  var(--elev-ambient);
+    --sh-lift:  var(--elev-focus);
+    --sh-float: var(--shadow-feature);
     --ease: cubic-bezier(0.4, 0, 0.2, 1);
     --t: 0.20s;
 
@@ -200,7 +200,7 @@
 
 .primaryBtn {
     background: var(--c-primary);
-    color: #ffffff;
+    color: var(--ds-bg-pure);
     border-color: var(--c-primary);
     box-shadow: 0 2px 12px rgba(0,60,204,0.22);
 }
@@ -231,7 +231,7 @@
     padding: 16px 18px;
     border-radius: var(--r-lg);
     background: var(--c-surface);
-    border: 1px solid hsl(214.3 31.8% 91.4%);
+    border: 1px solid var(--ds-border-hairline);
     box-shadow: 0 1px 3px rgba(0,0,0,0.05), 0 1px 2px rgba(0,0,0,0.04);
     display: flex;
     gap: 14px;
@@ -247,19 +247,19 @@
     width: 36px;
     height: 36px;
     border-radius: var(--r-md);
-    background: hsl(220 14% 96%);
-    border: 1px solid hsl(214.3 31.8% 91.4%);
+    background: var(--ds-bg-tertiary);
+    border: 1px solid var(--ds-border-hairline);
     display: flex;
     align-items: center;
     justify-content: center;
-    color: hsl(215.4 16.3% 46.9%);
+    color: var(--ds-text-secondary);
     flex-shrink: 0;
     margin-top: 1px;
 }
 
 .shareCardIconCourse {
-    background: hsl(222 47% 97%);
-    border-color: hsl(222 47% 88%);
+    background: var(--ds-bg-subtle);
+    border-color: var(--ds-border-hairline);
     color: var(--c-primary);
 }
 
@@ -287,7 +287,7 @@
     border-radius: var(--r-sm);
     border: 1px solid transparent;
     background: transparent;
-    color: hsl(215.4 16.3% 56.9%);
+    color: var(--ds-text-secondary);
     cursor: pointer;
     margin-left: auto;
     flex-shrink: 0;
@@ -295,9 +295,9 @@
 }
 
 .shareCardClose:hover {
-    background: hsl(0 84% 60% / 0.08);
-    color: hsl(0 84% 50%);
-    border-color: hsl(0 84% 60% / 0.20);
+    background: rgba(207, 45, 86, 0.08);
+    color: var(--accent-crimson);
+    border-color: rgba(207, 45, 86, 0.20);
 }
 
 .shareCardClose:focus-visible {
@@ -309,7 +309,7 @@
     margin: 0;
     font-size: 0.875rem;
     font-weight: 600;
-    color: hsl(222.2 47.4% 11.2%);
+    color: var(--ds-text);
     font-family: var(--font-body), sans-serif;
     letter-spacing: -0.01em;
 }
@@ -324,16 +324,16 @@
     font-weight: 600;
     letter-spacing: 0.04em;
     text-transform: uppercase;
-    background: hsl(210 40% 96.1%);
-    color: hsl(215.4 16.3% 36%);
-    border: 1px solid hsl(214.3 31.8% 88%);
+    background: var(--ds-bg-subtle);
+    color: var(--ds-text-secondary);
+    border: 1px solid var(--ds-border-medium);
     font-family: var(--font-body), sans-serif;
 }
 
 .shareCardDesc {
     margin: 0;
     font-size: 0.80rem;
-    color: hsl(215.4 16.3% 56.9%);
+    color: var(--ds-text-secondary);
     font-family: var(--font-body), sans-serif;
     line-height: 1.5;
 }
@@ -352,8 +352,8 @@
     font-family: var(--font-mono), monospace;
     color: var(--c-primary);
     text-decoration: none;
-    background: hsl(222 47% 97%);
-    border: 1px solid hsl(222 47% 88%);
+    background: var(--ds-bg-subtle);
+    border: 1px solid var(--ds-border-hairline);
     border-radius: var(--r-sm);
     padding: 5px 10px;
     white-space: nowrap;
@@ -364,8 +364,8 @@
 }
 
 .shareCardUrl:hover {
-    background: hsl(222 47% 93%);
-    border-color: hsl(222 47% 80%);
+    background: var(--ds-bg-tertiary);
+    border-color: var(--ds-border-medium);
     text-decoration: underline;
 }
 
@@ -376,9 +376,9 @@
     height: 30px;
     padding: 0 12px;
     border-radius: var(--r-sm);
-    border: 1px solid hsl(214.3 31.8% 84%);
-    background: hsl(0 0% 100%);
-    color: hsl(222.2 47.4% 11.2%);
+    border: 1px solid var(--ds-border-hairline);
+    background: var(--ds-bg-pure);
+    color: var(--ds-text);
     font-size: 0.78rem;
     font-weight: 500;
     font-family: var(--font-body), sans-serif;
@@ -389,13 +389,13 @@
 }
 
 .shareCardCopyBtn:hover {
-    background: hsl(210 40% 96.1%);
-    border-color: hsl(214.3 31.8% 76%);
+    background: var(--ds-bg-subtle);
+    border-color: var(--ds-border-medium);
     box-shadow: 0 1px 3px rgba(0,0,0,0.08);
 }
 
 .shareCardCopyBtn:active {
-    background: hsl(210 40% 93%);
+    background: var(--ds-bg-tertiary);
     transform: scale(0.98);
 }
 
@@ -404,15 +404,15 @@
     height: 100px;
     object-fit: contain;
     border-radius: var(--r-md);
-    border: 1px solid hsl(214.3 31.8% 91.4%);
-    background: #ffffff;
+    border: 1px solid var(--ds-border-hairline);
+    background: var(--ds-bg-pure);
     padding: 4px;
 }
 
 .shareCardError {
     margin: 0;
     font-size: 0.78rem;
-    color: hsl(0 72% 51%);
+    color: var(--accent-crimson);
     font-family: var(--font-body), sans-serif;
     display: flex;
     align-items: center;
@@ -428,7 +428,7 @@
     transform: translateY(-1px);
     background: var(--c-primary);
     border-color: var(--c-primary);
-    color: #ffffff;
+    color: var(--ds-bg-pure);
 }
 
 /* ================================================================
@@ -456,18 +456,18 @@
     width: 36px;
     min-width: 36px;
     height: 100%;
-    background: hsl(0 0% 100%);
+    background: var(--ds-bg-pure);
     border: none;
-    border-right: 1px solid hsl(214.3 31.8% 91.4%);
-    color: hsl(215.4 16.3% 56.9%);
+    border-right: 1px solid var(--ds-border-hairline);
+    color: var(--ds-text-secondary);
     cursor: pointer;
     flex-shrink: 0;
     transition: background 0.15s, color 0.15s;
 }
 
 .sidebarReopenBtn:hover {
-    background: hsl(210 40% 96.1%);
-    color: hsl(222.2 47.4% 20%);
+    background: var(--ds-bg-subtle);
+    color: var(--ds-text);
 }
 
 .sidebarReopenCount {
@@ -476,7 +476,7 @@
     font-size: 0.65rem;
     font-weight: 700;
     font-family: var(--font-body), sans-serif;
-    color: hsl(215.4 16.3% 56.9%);
+    color: var(--ds-text-secondary);
     letter-spacing: 0.04em;
     user-select: none;
 }
@@ -495,7 +495,7 @@
 
 .sidebarHeader {
     padding: 12px 14px;
-    border-bottom: 1px solid hsl(214.3 31.8% 91.4%);
+    border-bottom: 1px solid var(--ds-border-hairline);
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -510,16 +510,16 @@
     width: 24px;
     height: 24px;
     background: transparent;
-    border: 1px solid hsl(214.3 31.8% 91.4%);
+    border: 1px solid var(--ds-border-hairline);
     border-radius: var(--r-sm);
-    color: hsl(215.4 16.3% 56.9%);
+    color: var(--ds-text-secondary);
     cursor: pointer;
     transition: all var(--t);
 }
 
 .sidebarCloseBtn:hover {
-    background: hsl(210 40% 96.1%);
-    color: hsl(222.2 47.4% 11.2%);
+    background: var(--ds-bg-subtle);
+    color: var(--ds-text);
 }
 
 /* Overlay de sidebar en mobile */
@@ -537,7 +537,7 @@
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.08em;
-    color: hsl(215.4 16.3% 46.9%);
+    color: var(--ds-text-secondary);
     font-family: var(--font-body), sans-serif;
 }
 
@@ -773,7 +773,7 @@
     padding: 32px 40px;
     display: flex;
     justify-content: center;
-    background: hsl(210 40% 98%);
+    background: var(--ds-bg-floor);
 }
 
 /* Quitar el borde cuando no hay preview */
@@ -835,7 +835,7 @@
 
 .previewFontBtnActive {
     background: var(--c-ink);
-    color: #ffffff;
+    color: var(--ds-bg-pure);
     border-color: var(--c-ink);
 }
 
@@ -915,7 +915,7 @@
 .panelTitle {
     font-size: 1.05rem;
     font-weight: 700;
-    font-family: var(--font-serif, 'Montserrat'), sans-serif;
+    font-family: var(--font-serif), serif;
     color: var(--c-ink);
     margin: 0;
     letter-spacing: -0.01em;
@@ -959,7 +959,7 @@
 .formTitle {
     font-size: 1.10rem;
     font-weight: 700;
-    font-family: var(--font-serif, 'Montserrat'), sans-serif;
+    font-family: var(--font-serif), serif;
     color: var(--c-ink);
     margin: 0 0 20px;
     padding-bottom: 14px;
@@ -997,8 +997,8 @@
 
 .mediaLayoutBtnActive {
     background: var(--c-primary) !important;
-    border-color: var(--c-primary) !important;
-    color: #fff !important;
+    border-color: var(--c-line-strong) !important;
+    color: var(--c-ink) !important;
 }
 
 .mediaLayoutBtn:hover:not(.mediaLayoutBtnActive) {
@@ -1036,7 +1036,7 @@
     margin-bottom: 5px;
     font-size: 0.75rem;
     font-weight: 500;
-    color: hsl(215.4 16.3% 36%);
+    color: var(--ds-text-secondary);
     font-family: var(--font-body), sans-serif;
     letter-spacing: 0;
 }
@@ -1047,9 +1047,9 @@
     width: 100%;
     padding: 9px 12px;
     border-radius: var(--r-md);
-    border: 1px solid hsl(214.3 31.8% 88%);
-    background: hsl(0 0% 100%);
-    color: hsl(222.2 47.4% 11.2%);
+    border: 1px solid var(--ds-border-medium);
+    background: var(--ds-bg-pure);
+    color: var(--ds-text);
     font-size: 0.875rem;
     font-family: var(--font-body), sans-serif;
     transition: border-color 0.15s, box-shadow 0.15s;
@@ -1060,13 +1060,13 @@
 .input:focus,
 .textarea:focus,
 .select:focus {
-    border-color: hsl(222.2 47.4% 44%);
-    box-shadow: 0 0 0 3px hsl(222.2 47.4% 44% / 0.15);
+    border-color: var(--ds-border-medium);
+    box-shadow: 0 0 0 3px rgba(38, 37, 30, 0.15);
 }
 
 .input::placeholder,
 .textarea::placeholder {
-    color: hsl(215.4 16.3% 66%);
+    color: var(--ds-text-tertiary);
 }
 
 .select {
@@ -1192,8 +1192,8 @@
     position: absolute;
     top: 4px;
     right: 4px;
-    background: rgba(0, 0, 0, 0.65);
-    color: #fff;
+    background: rgba(38, 37, 30, 0.65);
+    color: var(--ds-bg-pure);
     border: none;
     border-radius: 50%;
     width: 22px;
@@ -1329,7 +1329,7 @@
 }
 
 .slideModalTitle {
-    font-family: var(--font-serif, 'Montserrat'), sans-serif;
+    font-family: var(--font-serif), serif;
     font-size: 1.15rem;
     font-weight: 700;
     color: var(--c-ink);

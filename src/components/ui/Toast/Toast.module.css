@@ -1,13 +1,16 @@
-/* Toast.module.css — shadcn/Sonner style */
-
+/* =============================================================
+   Toast — design.md (Cursor System)
+   Cream tertiary surface + atmospheric shadow + warm semantics.
+   Title gothic 13/500. Body serif 13/400.
+   ============================================================= */
 .toastContainer {
     position: fixed;
-    bottom: 24px;
-    right: 24px;
+    bottom: var(--s-24);
+    right: var(--s-24);
     z-index: 10000;
     display: flex;
     flex-direction: column-reverse;
-    gap: 8px;
+    gap: var(--s-8);
     pointer-events: none;
     width: 360px;
 }
@@ -20,12 +23,12 @@
 .toast {
     display: flex;
     align-items: flex-start;
-    gap: 10px;
-    padding: 14px 16px;
-    background: var(--card-background);
-    border: 1px solid var(--card-border);
-    border-radius: 8px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08), 0 1px 3px rgba(0, 0, 0, 0.06);
+    gap: var(--s-10);
+    padding: var(--s-14) var(--s-16);
+    background: var(--ds-bg-tertiary);
+    border: 1px solid var(--ds-border-hairline);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-feature);
     width: 100%;
     position: relative;
     animation: toastIn 0.35s cubic-bezier(0.16, 1, 0.3, 1) both;
@@ -36,25 +39,13 @@
 }
 
 @keyframes toastIn {
-    from {
-        transform: translateY(12px);
-        opacity: 0;
-    }
-    to {
-        transform: translateY(0);
-        opacity: 1;
-    }
+    from { transform: translateY(12px); opacity: 0; }
+    to   { transform: translateY(0); opacity: 1; }
 }
 
 @keyframes toastOut {
-    from {
-        transform: translateY(0);
-        opacity: 1;
-    }
-    to {
-        transform: translateY(6px);
-        opacity: 0;
-    }
+    from { transform: translateY(0); opacity: 1; }
+    to   { transform: translateY(6px); opacity: 0; }
 }
 
 /* Icon */
@@ -65,12 +56,12 @@
     margin-top: 1px;
 }
 
-.icon.success { color: #16a34a; }
-.icon.error   { color: #dc2626; }
-.icon.warning { color: #d97706; }
-.icon.info    { color: #2563eb; }
+.icon.success { color: var(--accent-teal); }
+.icon.error   { color: var(--accent-crimson); }
+.icon.warning { color: var(--accent-gold); }
+.icon.info    { color: var(--timeline-read); }
 
-/* Message area */
+/* Message */
 .message {
     flex: 1;
     display: flex;
@@ -80,69 +71,71 @@
 }
 
 .messageTitle {
-    font-size: 13px;
-    font-weight: 600;
-    color: var(--text-primary);
+    font-family: var(--font-display), system-ui, sans-serif;
+    font-size: 0.8125rem;
+    font-weight: var(--weight-ui);
+    color: var(--ds-text);
     line-height: 1.45;
     display: block;
 }
 
 .messageBody {
-    font-size: 13px;
-    font-weight: 400;
-    color: var(--text-secondary);
+    font-family: var(--font-serif), Georgia, serif;
+    font-size: 0.8125rem;
+    font-weight: var(--weight-read);
+    color: var(--ds-text-secondary);
     line-height: 1.45;
     display: block;
     word-break: break-word;
+    font-feature-settings: var(--feat-serif);
 }
 
-/* Close button */
+/* Close */
 .closeBtn {
     flex-shrink: 0;
     background: transparent;
     border: none;
     cursor: pointer;
     padding: 2px;
-    border-radius: 4px;
-    color: var(--text-secondary);
+    border-radius: var(--radius-sm);
+    color: var(--ds-text-secondary);
     display: flex;
     align-items: center;
     justify-content: center;
     opacity: 0.6;
-    transition: opacity 0.15s, background 0.15s;
+    transition: opacity var(--transition-fast),
+                background var(--transition-fast),
+                color var(--transition-fast);
     margin-top: 1px;
 }
 
 .closeBtn:hover {
     opacity: 1;
-    background: var(--bg-secondary);
+    background: rgba(38, 37, 30, 0.06);
+    color: var(--accent-crimson);
 }
 
 .closeBtn:focus-visible {
-    outline: 2px solid var(--color-primary);
+    outline: 2px solid var(--accent-orange);
     outline-offset: 2px;
     opacity: 1;
 }
 
-/* Mobile */
 @media (max-width: 600px) {
     .toastContainer {
-        bottom: 16px;
-        right: 12px;
-        left: 12px;
+        bottom: var(--s-16);
+        right: var(--s-12);
+        left: var(--s-12);
         width: auto;
     }
 }
 
-/* Reduced motion */
 @media (prefers-reduced-motion: reduce) {
-    .toast {
-        animation: none;
-    }
+    .toast { animation: none; }
     .toast.closing {
         animation: none;
         opacity: 0;
-        transition: opacity 0.15s;
+        transition: opacity var(--transition-fast);
     }
 }
 

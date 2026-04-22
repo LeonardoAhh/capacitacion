@@ -43,33 +43,33 @@
 
 .faceFront {
     transform: rotateY(0deg) translateZ(10px);
-    background: linear-gradient(135deg, #6366f1, #a855f7);
+    background: linear-gradient(135deg, var(--accent-orange), var(--accent-orange));
 }
 
 /* Indigo-Purple */
 .faceBack {
     transform: rotateY(180deg) translateZ(10px);
-    background: linear-gradient(135deg, #a855f7, #6366f1);
+    background: linear-gradient(135deg, var(--accent-orange), var(--accent-orange));
 }
 
 .faceRight {
     transform: rotateY(90deg) translateZ(10px);
-    background: linear-gradient(135deg, #3b82f6, #6366f1);
+    background: linear-gradient(135deg, var(--timeline-read), var(--accent-orange));
 }
 
 .faceLeft {
     transform: rotateY(-90deg) translateZ(10px);
-    background: linear-gradient(135deg, #6366f1, #3b82f6);
+    background: linear-gradient(135deg, var(--accent-orange), var(--timeline-read));
 }
 
 .faceTop {
     transform: rotateX(90deg) translateZ(10px);
-    background: #3b82f6;
+    background: var(--timeline-read);
 }
 
 .faceBottom {
     transform: rotateX(-90deg) translateZ(10px);
-    background: #a855f7;
+    background: var(--accent-orange);
 }
 
 /* Role Text */
@@ -93,14 +93,14 @@
 .roleText {
     font-size: 0.8rem;
     font-weight: 600;
-    color: var(--text-primary);
+    color: var(--ds-text);
     text-transform: capitalize;
     letter-spacing: 0.5px;
 }
 
 .roleLabel {
     font-size: 0.65rem;
-    color: var(--text-tertiary);
+    color: var(--ds-text-tertiary);
     margin-right: 0.4rem;
     text-transform: uppercase;
     font-weight: 700;

@@ -1,95 +1,169 @@
 'use client';
 
-import { useState, useCallback, useRef } from 'react';
+import { useState, useCallback, useRef, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import styles from './useConfirm.module.css';
 
+/* ── Iconos inline (sin dependencias) ───────────────────── */
+const IconCheck = (props) => (
+    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true" {...props}>
+        <path d="M3.5 8.5l3 3 6-7" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+);
+const IconX = (props) => (
+    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true" {...props}>
+        <path d="M4 4l8 8M12 4l-8 8" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" />
+    </svg>
+);
+const IconTrash = (props) => (
+    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true" {...props}>
+        <path d="M2.5 4h11M6 4V2.5h4V4M4 4l.7 9a1.5 1.5 0 0 0 1.5 1.4h3.6a1.5 1.5 0 0 0 1.5-1.4L12 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+);
+const IconAlert = (props) => (
+    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true" {...props}>
+        <path d="M8 2.5L1.5 13.5h13L8 2.5z" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round" />
+        <path d="M8 6.5v3M8 11.5v.01" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" />
+    </svg>
+);
+
 /**
- * Hook global para reemplazar window.confirm() con un modal estilo AlertDialog.
+ * useConfirm — Dialog moderno, minimalista.
+ * Acciones (Cancelar / Confirmar) en la parte superior.
  *
  * Uso:
  *   const { confirmDialog, showConfirm } = useConfirm();
- *
- *   // En el JSX raíz del componente:
  *   {confirmDialog}
  *
- *   // En handlers async:
- *   const ok = await showConfirm('¿Eliminar este elemento?', { danger: true });
+ *   const ok = await showConfirm('¿Eliminar curso?', { variant: 'delete' });
  *   if (!ok) return;
+ *
+ * Opciones:
+ *   - title?: string                       → si se omite, el primer arg es el título
+ *   - description?: string                 → texto secundario opcional
+ *   - variant?: 'default' | 'delete' | 'warning'
+ *   - confirmLabel?: string                → default según variante
+ *   - cancelLabel?: string                 → default 'Cancelar'
+ *   - danger?: boolean                     → alias legacy de variant='delete'
  */
 export function useConfirm() {
     const [state, setState] = useState({
         open: false,
-        message: '',
+        closing: false,
         title: '',
-        danger: false,
-        confirmLabel: 'Confirmar',
+        description: '',
+        variant: 'default',
+        confirmLabel: '',
         cancelLabel: 'Cancelar',
     });
 
     const resolveRef = useRef(null);
+    const confirmBtnRef = useRef(null);
+    const closeTimerRef = useRef(null);
 
     const showConfirm = useCallback((message, options = {}) => {
         return new Promise((resolve) => {
             resolveRef.current = resolve;
+            const variant = options.variant
+                ?? (options.danger === false ? 'default' : (options.danger ? 'delete' : 'default'));
+            const defaultConfirm =
+                variant === 'delete'  ? 'Eliminar' :
+                variant === 'warning' ? 'Continuar' :
+                                        'Confirmar';
             setState({
                 open: true,
-                message,
-                title: options.title || '¿Confirmar acción?',
-                danger: options.danger ?? true,
-                confirmLabel: options.confirmLabel || 'Confirmar',
+                closing: false,
+                // Si options.title presente → message va a description; si no, message es título
+                title: options.title || message,
+                description: options.title ? message : (options.description || ''),
+                variant,
+                confirmLabel: options.confirmLabel || defaultConfirm,
                 cancelLabel: options.cancelLabel || 'Cancelar',
             });
         });
     }, []);
 
-    const handleConfirm = useCallback(() => {
-        setState(s => ({ ...s, open: false }));
-        resolveRef.current?.(true);
+    /* Cierre con animación de salida (180ms) antes de desmontar */
+    const closeWith = useCallback((result) => {
+        setState(s => ({ ...s, closing: true }));
+        if (closeTimerRef.current) clearTimeout(closeTimerRef.current);
+        closeTimerRef.current = setTimeout(() => {
+            setState(s => ({ ...s, open: false, closing: false }));
+            resolveRef.current?.(result);
+        }, 180);
     }, []);
 
-    const handleCancel = useCallback(() => {
-        setState(s => ({ ...s, open: false }));
-        resolveRef.current?.(false);
+    const handleConfirm = useCallback(() => closeWith(true), [closeWith]);
+    const handleCancel  = useCallback(() => closeWith(false), [closeWith]);
+
+    useEffect(() => () => {
+        if (closeTimerRef.current) clearTimeout(closeTimerRef.current);
     }, []);
+
+    /* Esc → cancela, Enter → confirma. Focus inicial en confirm. */
+    useEffect(() => {
+        if (!state.open) return;
+        confirmBtnRef.current?.focus();
+        const onKey = (e) => {
+            if (e.key === 'Escape') { e.stopPropagation(); handleCancel(); }
+            else if (e.key === 'Enter') { e.stopPropagation(); handleConfirm(); }
+        };
+        document.addEventListener('keydown', onKey, true);
+        return () => document.removeEventListener('keydown', onKey, true);
+    }, [state.open, handleCancel, handleConfirm]);
+
+    const VariantIcon =
+        state.variant === 'delete'  ? IconTrash :
+        state.variant === 'warning' ? IconAlert :
+                                      IconCheck;
 
     const confirmDialog = state.open
         ? createPortal(
-            <>
+            <div className={`${styles.root} ${state.closing ? styles.closing : ''}`} role="presentation">
                 <div className={styles.overlay} onClick={handleCancel} aria-hidden="true" />
-                <div className={styles.wrapper}>
-                    <div
-                        role="alertdialog"
-                        aria-modal="true"
-                        aria-labelledby="confirm-title"
-                        aria-describedby="confirm-message"
-                        className={styles.dialog}
-                    >
-                        <div className={styles.header}>
-                            <h2 id="confirm-title" className={styles.title}>
-                                {state.title}
-                            </h2>
-                        </div>
+                <div
+                    role="alertdialog"
+                    aria-modal="true"
+                    aria-labelledby="confirm-title"
+                    aria-describedby={state.description ? 'confirm-desc' : undefined}
+                    className={`${styles.dialog} ${styles[`v_${state.variant}`]}`}
+                >
+                    {/* Acciones superiores — solo iconos */}
+                    <div className={styles.actions}>
+                        <button
+                            type="button"
+                            className={styles.iconBtn}
+                            onClick={handleCancel}
+                            aria-label={state.cancelLabel}
+                            title={state.cancelLabel}
+                        >
+                            <IconX />
+                        </button>
+                        <button
+                            ref={confirmBtnRef}
+                            type="button"
+                            className={`${styles.iconBtn} ${styles.iconBtnConfirm} ${styles[`btn_${state.variant}`]}`}
+                            onClick={handleConfirm}
+                            aria-label={state.confirmLabel}
+                            title={state.confirmLabel}
+                        >
+                            <VariantIcon />
+                        </button>
+                    </div>
 
-                        <p id="confirm-message" className={styles.message}>
-                            {state.message}
-                        </p>
-
-                        <div className={styles.footer}>
-                            <button className={styles.cancelBtn} onClick={handleCancel} type="button">
-                                {state.cancelLabel}
-                            </button>
-                            <button
-                                className={`${styles.confirmBtn} ${state.danger ? styles.danger : styles.default}`}
-                                onClick={handleConfirm}
-                                type="button"
-                            >
-                                {state.confirmLabel}
-                            </button>
-                        </div>
+                    {/* Contenido */}
+                    <div className={styles.content}>
+                        <h2 id="confirm-title" className={styles.title}>
+                            {state.title}
+                        </h2>
+                        {state.description && (
+                            <p id="confirm-desc" className={styles.description}>
+                                {state.description}
+                            </p>
+                        )}
                     </div>
                 </div>
-            </>,
+            </div>,
             document.body
         )
         : null;

@@ -14,13 +14,13 @@
 }
 
 .modal {
-    --color-primary: #111;
-    background: var(--bg-primary);
+    --color-primary: var(--cursor-dark);
+    background: var(--ds-bg-pure);
     width: 100%;
     max-width: 520px;
     border-radius: 24px;
     box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25),
-        0 0 0 1px var(--border-color);
+        0 0 0 1px var(--ds-border-hairline);
     display: flex;
     flex-direction: column;
     overflow: hidden;
@@ -37,8 +37,8 @@
 }
 
 [data-theme="dark"] .modal {
-    --color-primary: #6699ff;
-    background: #0a0c23;
+    --color-primary: var(--accent-orange);
+    background: var(--cursor-dark);
     border: 1px solid rgba(77, 128, 255, 0.20);
     box-shadow:
         0 8px 32px rgba(0, 0, 0, 0.5),
@@ -49,7 +49,7 @@
 .progressContainer {
     width: 100%;
     height: 4px;
-    background: var(--bg-tertiary);
+    background: var(--ds-bg-tertiary);
     position: absolute;
     top: 0;
     left: 0;
@@ -65,7 +65,7 @@
 .progressFill {
     width: 100%;
     height: 100%;
-    background: #111;
+    background: var(--cursor-dark);
     transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
     transform-origin: left;
 }
@@ -91,14 +91,14 @@
     font-family: var(--font-heading);
     font-size: 1.75rem;
     font-weight: 700;
-    color: var(--text-primary);
+    color: var(--ds-text);
     letter-spacing: -0.02em;
     margin-bottom: 0.5rem;
 }
 
 .stepSubtitle {
     font-size: 1rem;
-    color: var(--text-secondary);
+    color: var(--ds-text-secondary);
     line-height: 1.5;
 }
 
@@ -113,35 +113,35 @@
     width: 56px;
     height: 56px;
     margin: 0 auto 1rem;
-    background: linear-gradient(135deg, color-mix(in srgb, var(--color-primary) 20%, transparent), transparent);
+    background: linear-gradient(135deg, color-mix(in srgb, var(--accent-orange) 20%, transparent), transparent);
     border-radius: 24px;
     display: flex;
     align-items: center;
     justify-content: center;
-    color: var(--color-primary, #003ccc);
-    box-shadow: 0 8px 16px -4px color-mix(in srgb, var(--color-primary) 20%, transparent);
+    color: var(--color-primary, var(--accent-orange));
+    box-shadow: 0 8px 16px -4px color-mix(in srgb, var(--accent-orange) 20%, transparent);
 }
 
 .heroTitle {
     font-family: var(--font-heading);
     font-size: 1.5rem;
     font-weight: 800;
-    color: var(--text-primary);
+    color: var(--ds-text);
     letter-spacing: -0.03em;
     margin-bottom: 0.75rem;
 }
 
 .heroSubtitle {
     font-size: 0.9rem;
-    color: var(--text-secondary);
+    color: var(--ds-text-secondary);
     max-width: 380px;
     margin: 0 auto;
     line-height: 1.5;
 }
 
 .featuresList {
-    background: var(--bg-secondary);
-    border: 1px solid var(--border-color);
+    background: var(--ds-bg);
+    border: 1px solid var(--ds-border-hairline);
     border-radius: 16px;
     padding: 1.25rem;
     display: flex;
@@ -164,8 +164,8 @@
     width: 40px;
     height: 40px;
     border-radius: 12px;
-    background: color-mix(in srgb, var(--color-primary) 10%, var(--bg-primary));
-    color: var(--color-primary);
+    background: color-mix(in srgb, var(--accent-orange) 10%, var(--ds-bg-pure));
+    color: var(--accent-orange);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -174,14 +174,14 @@
 
 .featureText strong {
     display: block;
-    color: var(--text-primary);
+    color: var(--ds-text);
     font-weight: 600;
     font-size: 0.95rem;
     margin-bottom: 0.25rem;
 }
 
 .featureText p {
-    color: var(--text-secondary);
+    color: var(--ds-text-secondary);
     font-size: 0.85rem;
     line-height: 1.4;
     margin: 0;
@@ -196,22 +196,22 @@
     display: block;
     font-weight: 600;
     font-size: 0.9rem;
-    color: var(--text-primary);
+    color: var(--ds-text);
     margin-bottom: 0.5rem;
 }
 
 .required {
-    color: var(--color-danger);
+    color: var(--accent-crimson);
 }
 
 .input,
 .select {
     width: 100%;
     padding: 0.85rem 1rem;
-    background: var(--bg-tertiary);
-    border: 1px solid var(--border-color);
+    background: var(--ds-bg-tertiary);
+    border: 1px solid var(--ds-border-hairline);
     border-radius: 12px;
-    color: var(--text-primary);
+    color: var(--ds-text);
     font-size: 1rem;
     transition: all 0.2s ease;
     box-shadow: 0 1px 2px rgba(0, 0, 0, 0.02);
@@ -226,13 +226,13 @@
 .input:focus,
 .select:focus {
     outline: none;
-    border-color: var(--color-primary);
-    background: var(--bg-primary);
-    box-shadow: 0 0 0 4px color-mix(in srgb, var(--color-primary) 15%, transparent);
+    border-color: var(--accent-orange);
+    background: var(--ds-bg-pure);
+    box-shadow: 0 0 0 4px color-mix(in srgb, var(--accent-orange) 15%, transparent);
 }
 
 .input::placeholder {
-    color: var(--text-tertiary);
+    color: var(--ds-text-tertiary);
 }
 
 .selectWrapper {
@@ -252,8 +252,8 @@
     display: flex;
     align-items: center;
     padding: 1rem;
-    background: var(--bg-secondary);
-    border: 1px solid var(--border-color);
+    background: var(--ds-bg);
+    border: 1px solid var(--ds-border-hairline);
     border-radius: 16px;
     cursor: pointer;
     transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
@@ -266,23 +266,23 @@
 }
 
 .templateCard:hover {
-    background: var(--bg-tertiary);
+    background: var(--ds-bg-tertiary);
     transform: translateY(-2px);
     box-shadow: 0 8px 16px -8px rgba(0, 0, 0, 0.1);
 }
 
 .templateCard.selectedTemplate {
-    background: color-mix(in srgb, var(--color-primary) 4%, var(--bg-primary));
-    border-color: var(--color-primary);
-    box-shadow: 0 4px 12px -4px color-mix(in srgb, var(--color-primary) 30%, transparent);
+    background: color-mix(in srgb, var(--accent-orange) 4%, var(--ds-bg-pure));
+    border-color: var(--accent-orange);
+    box-shadow: 0 4px 12px -4px color-mix(in srgb, var(--accent-orange) 30%, transparent);
 }
 
 .templateIconWrapper {
     width: 48px;
     height: 48px;
     border-radius: 12px;
-    background: var(--bg-tertiary);
-    color: var(--text-secondary);
+    background: var(--ds-bg-tertiary);
+    color: var(--ds-text-secondary);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -291,8 +291,8 @@
 }
 
 .templateCard.selectedTemplate .templateIconWrapper {
-    background: color-mix(in srgb, var(--color-primary) 10%, transparent);
-    color: var(--color-primary);
+    background: color-mix(in srgb, var(--accent-orange) 10%, transparent);
+    color: var(--accent-orange);
 }
 
 .templateInfo {
@@ -303,21 +303,21 @@
 
 .templateLabel {
     font-weight: 600;
-    color: var(--text-primary);
+    color: var(--ds-text);
     font-size: 1rem;
     margin-bottom: 0.15rem;
 }
 
 .templateDesc {
     font-size: 0.85rem;
-    color: var(--text-secondary);
+    color: var(--ds-text-secondary);
 }
 
 .radioIndicator {
     width: 24px;
     height: 24px;
     border-radius: 50%;
-    border: 2px solid var(--border-color);
+    border: 2px solid var(--ds-border-hairline);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -325,8 +325,8 @@
 }
 
 .templateCard.selectedTemplate .radioIndicator {
-    border-color: var(--color-primary);
-    background: var(--color-primary);
+    border-color: var(--accent-orange);
+    background: var(--accent-orange);
 }
 
 .checkIcon {
@@ -341,13 +341,13 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    border-top: 1px solid var(--border-color);
+    border-top: 1px solid var(--ds-border-hairline);
 }
 
 .stepIndicator {
     font-size: 0.85rem;
     font-weight: 600;
-    color: var(--text-tertiary);
+    color: var(--ds-text-tertiary);
     text-transform: uppercase;
     letter-spacing: 0.05em;
 }
@@ -372,25 +372,25 @@
 
 .btnSecondary {
     background: transparent;
-    border: 1px solid var(--border-color);
-    color: var(--text-secondary);
+    border: 1px solid var(--ds-border-hairline);
+    color: var(--ds-text-secondary);
 }
 
 .btnSecondary:hover:not(:disabled) {
-    background: var(--bg-tertiary);
-    color: var(--text-primary);
+    background: var(--ds-bg-tertiary);
+    color: var(--ds-text);
 }
 
 .btnPrimary {
-    background: var(--color-primary);
-    border: 1px solid var(--color-primary);
+    background: var(--accent-orange);
+    border: 1px solid var(--accent-orange);
     color: white;
-    box-shadow: 0 4px 12px -4px color-mix(in srgb, var(--color-primary) 50%, transparent);
+    box-shadow: 0 4px 12px -4px color-mix(in srgb, var(--accent-orange) 50%, transparent);
 }
 
 .btnPrimary:hover:not(:disabled) {
     transform: translateY(-1px);
-    box-shadow: 0 6px 16px -4px color-mix(in srgb, var(--color-primary) 60%, transparent);
+    box-shadow: 0 6px 16px -4px color-mix(in srgb, var(--accent-orange) 60%, transparent);
 }
 
 .btnPrimary:disabled {
@@ -401,14 +401,14 @@
 }
 
 .btnFinish {
-    background: #111;
-    border-color: #111;
+    background: var(--cursor-dark);
+    border-color: var(--cursor-dark);
     box-shadow: 0 4px 12px -4px rgba(0,0,0,0.3);
     color: white;
 }
 
 .btnFinish:hover:not(:disabled) {
-    box-shadow: 0 6px 16px -4px color-mix(in srgb, var(--color-primary) 60%, transparent);
+    box-shadow: 0 6px 16px -4px color-mix(in srgb, var(--accent-orange) 60%, transparent);
 }
 
 /* ── Animations ── */

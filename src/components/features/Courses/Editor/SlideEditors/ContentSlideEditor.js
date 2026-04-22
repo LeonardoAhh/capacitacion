@@ -5,6 +5,7 @@ import { IconPlus, IconTrash2 } from '@/lib/icons';
 import ImageUploader from '../ImageUploader';
 import RichTextEditor from '../RichTextEditor';
 import { Select } from '@/components/ui/Select/Select';
+import DriveImage from '@/components/ui/DriveImage/DriveImage';
 
 const BODY_MAX_CHARS = 2000;
 
@@ -60,8 +61,7 @@ export default function ContentSlideEditor({ formData, handleChange, handleBatch
                     <div className={styles.imageGrid}>
                         {images.map((url, idx) => (
                             <div key={url + idx} className={styles.imageThumb}>
-                                {/* eslint-disable-next-line @next/next/no-img-element */}
-                                <img src={url} alt={`Imagen ${idx + 1}`} className={styles.imageThumbImg} />
+                                <DriveImage src={url} alt={`Imagen ${idx + 1}`} className={styles.imageThumbImg} showLabel={false} />
                                 <button
                                     className={styles.imageRemoveBtn}
                                     onClick={() => handleRemoveImage(idx)}

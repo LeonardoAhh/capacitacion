@@ -1,46 +1,22 @@
-/* =======================================================
-   Navbar — iOS Liquid Glass Pill · Bottom Fixed
-   Temas con [data-theme="dark"]
-   ======================================================= */
+/* =============================================================
+   Navbar — design.md (Vercel/Geist)
+   - Pill flotante achromática (preserva UX iOS)
+   - shadow stack achromático en vez de glass amber
+   - Drawer bottom sheet con shadow-as-border
+   ============================================================= */
 
 /* ─── Keyframes ─────────────────────────────────────────── */
-
 @keyframes pillSlideUp {
-    from {
-        opacity: 0;
-        transform: translateX(-50%) translateY(24px);
-    }
-
-    to {
-        opacity: 1;
-        transform: translateX(-50%) translateY(0);
-    }
+    from { opacity: 0; transform: translateX(-50%) translateY(24px); }
+    to   { opacity: 1; transform: translateX(-50%) translateY(0); }
 }
 
 @keyframes themeFlip {
-    from {
-        opacity: 0;
-        transform: rotate(-30deg) scale(0.6);
-    }
-
-    to {
-        opacity: 1;
-        transform: rotate(0deg) scale(1);
-    }
-}
-
-@keyframes drawerIn {
-    from {
-        transform: translateY(100%);
-    }
-
-    to {
-        transform: translateY(0);
-    }
+    from { opacity: 0; transform: rotate(-30deg) scale(0.6); }
+    to   { opacity: 1; transform: rotate(0) scale(1); }
 }
 
 /* ─── Pill flotante ─────────────────────────────────────── */
-
 .pill {
     position: fixed;
     bottom: 20px;
@@ -51,49 +27,26 @@
 
     display: flex;
     align-items: center;
-    gap: 16px;
+    gap: var(--s-16);
 
-    padding: 6px 8px 6px 20px;
+    padding: var(--s-6) var(--s-8) var(--s-6) var(--s-20);
     height: 56px;
     max-width: min(860px, calc(100vw - 32px));
     width: max-content;
 
-    /* Glass light */
-    background: rgba(255, 255, 255, 0.78);
-    backdrop-filter: blur(28px) saturate(200%);
-    -webkit-backdrop-filter: blur(28px) saturate(200%);
-    border: 1px solid rgba(255, 255, 255, 0.5);
+    background: var(--ds-bg);
     border-radius: 100px;
-    box-shadow:
-        0 8px 32px rgba(0, 0, 0, 0.1),
-        0 2px 8px rgba(0, 0, 0, 0.06),
-        inset 0 1px 0 rgba(255, 255, 255, 1);
+    box-shadow: var(--shadow-feature);
 
     animation: pillSlideUp 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) both;
-    transition:
-        background 0.3s ease,
-        box-shadow 0.3s ease,
-        border-color 0.3s ease;
+    transition: box-shadow 0.3s ease, background 0.3s ease;
 }
 
-[data-theme="dark"] .pill {
-    background: rgba(28, 28, 30, 0.82);
-    border-color: rgba(255, 255, 255, 0.1);
-    box-shadow:
-        0 8px 32px rgba(0, 0, 0, 0.5),
-        0 2px 8px rgba(0, 0, 0, 0.3),
-        inset 0 1px 0 rgba(255, 255, 255, 0.06);
-}
-
-/* Safe area PWA / Dynamic Island */
 @supports (padding: max(0px)) {
-    .pill {
-        bottom: max(20px, env(safe-area-inset-bottom));
-    }
+    .pill { bottom: max(20px, env(safe-area-inset-bottom)); }
 }
 
 /* ─── Logo ──────────────────────────────────────────────── */
-
 .logoWrap {
     display: flex;
     align-items: center;
@@ -101,8 +54,7 @@
     padding-right: 4px;
 }
 
-/* ─── Widget motivacional (solo visible en desktop) ─────── */
-
+/* ─── Widget motivacional ───────────────────────────────── */
 .widgetWrap {
     flex: 1;
     min-width: 0;
@@ -111,45 +63,32 @@
 }
 
 @media (max-width: 640px) {
-    .widgetWrap {
-        display: none;
-    }
+    .widgetWrap { display: none; }
 }
 
-/* ─── Controls (derecha) ────────────────────────────────── */
-
+/* ─── Controls ──────────────────────────────────────────── */
 .controls {
     display: flex;
     align-items: center;
     gap: 4px;
-    background: rgba(0, 0, 0, 0.04);
+    background: var(--ds-bg-subtle);
     padding: 4px;
     border-radius: 50px;
     flex-shrink: 0;
 }
 
-[data-theme="dark"] .controls {
-    background: rgba(255, 255, 255, 0.07);
-}
-
 /* ─── Divisor ───────────────────────────────────────────── */
-
 .divider {
     display: block;
     width: 1px;
     height: 18px;
-    background: rgba(0, 0, 0, 0.1);
+    background: var(--ds-border-hairline);
     border-radius: 1px;
     flex-shrink: 0;
     margin: 0 2px;
 }
 
-[data-theme="dark"] .divider {
-    background: rgba(255, 255, 255, 0.12);
-}
-
-/* ─── Icon button (tema) ────────────────────────────────── */
-
+/* ─── Icon button ───────────────────────────────────────── */
 .iconBtn {
     width: 40px;
     height: 40px;
@@ -160,18 +99,14 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    color: rgba(60, 60, 67, 0.65);
-    transition: background 0.2s ease, color 0.2s ease, transform 0.2s ease;
-}
-
-[data-theme="dark"] .iconBtn {
-    color: rgba(235, 235, 245, 0.65);
+    color: var(--ds-text-secondary);
+    transition: background 0.2s ease, color 0.2s ease;
 }
 
 .iconBtn:hover {
-    background: rgba(245, 158, 11, 0.12);
-    color: #f59e0b;
-    transform: scale(1.08);
+    background: var(--ds-bg);
+    color: var(--ds-text);
+    box-shadow: var(--ring-light);
 }
 
 .themeIcon {
@@ -181,36 +116,27 @@
     animation: themeFlip 0.3s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
-/* ─── Avatar button (abre drawer) ───────────────────────── */
-
+/* ─── Avatar button ─────────────────────────────────────── */
 .avatarBtn {
     display: flex;
     align-items: center;
-    gap: 6px;
-    padding: 4px 10px 4px 4px;
+    gap: var(--s-6);
+    padding: 4px var(--s-10) 4px 4px;
     background: transparent;
     border: none;
     cursor: pointer;
     border-radius: 50px;
-    transition: background 0.2s ease, transform 0.15s ease;
-    color: rgba(60, 60, 67, 0.55);
-}
-
-[data-theme="dark"] .avatarBtn {
-    color: rgba(235, 235, 245, 0.55);
+    transition: background 0.2s ease;
+    color: var(--ds-text-secondary);
 }
 
 .avatarBtn:hover {
-    background: rgba(0, 0, 0, 0.05);
-    transform: scale(1.03);
-}
-
-[data-theme="dark"] .avatarBtn:hover {
-    background: rgba(255, 255, 255, 0.08);
+    background: var(--ds-bg);
+    box-shadow: var(--ring-light);
 }
 
 .avatarBtn:focus-visible {
-    outline: 2px solid #f59e0b;
+    outline: 2px solid var(--ds-focus);
     outline-offset: 2px;
 }
 
@@ -220,9 +146,9 @@
     height: 32px;
     border-radius: 50%;
     overflow: hidden;
-    border: 1.5px solid rgba(245, 158, 11, 0.4);
+    box-shadow: var(--ring-border);
     flex-shrink: 0;
-    background: rgba(0, 0, 0, 0.06);
+    background: var(--ds-bg-subtle);
 }
 
 .avatarImg {
@@ -240,8 +166,8 @@
     align-items: center;
     justify-content: center;
     font-size: 0.7rem;
-    font-weight: 700;
-    color: #f59e0b;
+    font-weight: var(--weight-announce);
+    color: var(--ds-text);
 }
 
 .menuIconWrap {
@@ -250,28 +176,24 @@
 }
 
 /* ─── Overlay ───────────────────────────────────────────── */
-
 .overlay {
     position: fixed;
     inset: 0;
     z-index: 1001;
     background: rgba(0, 0, 0, 0);
-    backdrop-filter: blur(0px);
+    backdrop-filter: blur(0);
     pointer-events: none;
-    transition:
-        background 0.35s ease,
-        backdrop-filter 0.35s ease;
+    transition: background 0.35s ease, backdrop-filter 0.35s ease;
 }
 
 .overlayVisible {
-    background: rgba(0, 0, 0, 0.35);
+    background: rgba(0, 0, 0, 0.4);
     backdrop-filter: blur(4px);
     -webkit-backdrop-filter: blur(4px);
     pointer-events: auto;
 }
 
 /* ─── Drawer ────────────────────────────────────────────── */
-
 .drawer {
     position: fixed;
     bottom: 0;
@@ -281,64 +203,38 @@
     max-height: 88dvh;
     overflow-y: auto;
 
-    background: rgba(255, 255, 255, 0.88);
-    backdrop-filter: blur(40px) saturate(200%);
-    -webkit-backdrop-filter: blur(40px) saturate(200%);
-    border-top: 1px solid rgba(255, 255, 255, 0.6);
-    border-radius: 24px 24px 0 0;
-    box-shadow:
-        0 -8px 40px rgba(0, 0, 0, 0.12),
-        0 -2px 8px rgba(0, 0, 0, 0.06),
-        inset 0 1px 0 rgba(255, 255, 255, 1);
+    background: var(--ds-bg);
+    border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+    box-shadow: 0 -8px 32px rgba(0, 0, 0, 0.12), var(--ring-border);
 
-    padding: 12px 20px 20px;
+    padding: var(--s-12) var(--s-20) var(--s-20);
 
     transform: translateY(100%);
     transition: transform 0.4s cubic-bezier(0.32, 0.72, 0, 1);
     will-change: transform;
 }
 
-[data-theme="dark"] .drawer {
-    background: rgba(28, 28, 30, 0.92);
-    border-top-color: rgba(255, 255, 255, 0.1);
-    box-shadow:
-        0 -8px 40px rgba(0, 0, 0, 0.5),
-        0 -2px 8px rgba(0, 0, 0, 0.3),
-        inset 0 1px 0 rgba(255, 255, 255, 0.07);
-}
+.drawerOpen { transform: translateY(0); }
 
-.drawerOpen {
-    transform: translateY(0);
-}
-
-/* Safe area bottom */
 @supports (padding: max(0px)) {
-    .drawer {
-        padding-bottom: max(20px, env(safe-area-inset-bottom));
-    }
+    .drawer { padding-bottom: max(20px, env(safe-area-inset-bottom)); }
 }
 
 /* ─── Handle ────────────────────────────────────────────── */
-
 .drawerHandle {
     width: 36px;
     height: 4px;
     border-radius: 2px;
-    background: rgba(0, 0, 0, 0.14);
-    margin: 0 auto 16px;
+    background: var(--ds-border-hairline);
+    margin: 0 auto var(--s-16);
 }
 
-[data-theme="dark"] .drawerHandle {
-    background: rgba(255, 255, 255, 0.18);
-}
-
-/* ─── Header del drawer ─────────────────────────────────── */
-
+/* ─── Header drawer ─────────────────────────────────────── */
 .drawerHeader {
     display: flex;
     align-items: center;
-    gap: 14px;
-    margin-bottom: 8px;
+    gap: var(--s-14);
+    margin-bottom: var(--s-8);
     padding-bottom: 4px;
 }
 
@@ -347,9 +243,9 @@
     height: 52px;
     border-radius: 50%;
     overflow: hidden;
-    border: 2px solid rgba(245, 158, 11, 0.35);
+    box-shadow: var(--ring-border);
     flex-shrink: 0;
-    background: rgba(0, 0, 0, 0.06);
+    background: var(--ds-bg-subtle);
 }
 
 .drawerAvatarImg {
@@ -366,8 +262,8 @@
 .drawerName {
     display: block;
     font-size: 1.0625rem;
-    font-weight: 700;
-    color: var(--text-primary, #1c1c1e);
+    font-weight: var(--weight-announce);
+    color: var(--ds-text);
     letter-spacing: -0.015em;
     white-space: nowrap;
     overflow: hidden;
@@ -376,8 +272,8 @@
 
 .drawerEmail {
     display: block;
-    font-size: 0.75rem;
-    color: var(--text-secondary, rgba(60, 60, 67, 0.6));
+    font-size: var(--text-caption);
+    color: var(--ds-text-secondary);
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -388,71 +284,56 @@
     display: inline-block;
     margin-top: 4px;
     font-size: 0.625rem;
-    font-weight: 600;
+    font-weight: var(--weight-announce);
     letter-spacing: 0.08em;
     text-transform: uppercase;
-    color: #f59e0b;
-    background: rgba(245, 158, 11, 0.1);
+    color: var(--ds-text);
+    background: var(--ds-bg-subtle);
     padding: 2px 8px;
-    border-radius: 999px;
-    border: 1px solid rgba(245, 158, 11, 0.2);
+    border-radius: var(--radius-pill);
+    box-shadow: var(--ring-light);
 }
 
-/* ─── Close button ──────────────────────────────────────── */
-
+/* ─── Close ─────────────────────────────────────────────── */
 .closeBtn {
     width: 36px;
     height: 36px;
     border-radius: 50%;
-    background: rgba(0, 0, 0, 0.06);
+    background: var(--ds-bg-subtle);
     border: none;
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
-    color: var(--text-secondary, rgba(60, 60, 67, 0.6));
+    color: var(--ds-text-secondary);
     flex-shrink: 0;
-    transition: background 0.2s ease, transform 0.2s ease;
+    transition: background 0.2s ease, color 0.2s ease;
     margin-left: auto;
 }
 
-[data-theme="dark"] .closeBtn {
-    background: rgba(255, 255, 255, 0.1);
-}
-
 .closeBtn:hover {
-    background: rgba(239, 68, 68, 0.1);
-    color: #ef4444;
-    transform: rotate(90deg);
+    background: rgba(255, 91, 79, 0.08);
+    color: var(--accent-crimson);
 }
 
-/* ─── Widget en el drawer (visible en móvil) ────────────── */
-
+/* ─── Widget en drawer ──────────────────────────────────── */
 .drawerWidget {
     display: none;
-    margin-bottom: 8px;
+    margin-bottom: var(--s-8);
 }
 
 @media (max-width: 640px) {
-    .drawerWidget {
-        display: block;
-    }
+    .drawerWidget { display: block; }
 }
 
 /* ─── Divider interno ───────────────────────────────────── */
-
 .drawerDivider {
     height: 1px;
-    background: rgba(0, 0, 0, 0.07);
-    margin: 10px 0;
-}
-
-[data-theme="dark"] .drawerDivider {
-    background: rgba(255, 255, 255, 0.08);
+    background: var(--ds-border-hairline);
+    margin: var(--s-10) 0;
 }
 
 /* ─── Menú items ────────────────────────────────────────── */
-
 .drawerMenu {
     display: flex;
     flex-direction: column;
@@ -462,12 +343,12 @@
 .drawerItem {
     display: flex;
     align-items: center;
-    gap: 12px;
-    padding: 12px 14px;
-    border-radius: 14px;
+    gap: var(--s-12);
+    padding: var(--s-12) var(--s-14);
+    border-radius: var(--radius-lg);
     font-size: 0.9375rem;
-    font-weight: 500;
-    color: var(--text-primary, #1c1c1e);
+    font-weight: var(--weight-ui);
+    color: var(--ds-text);
     text-decoration: none;
     background: transparent;
     border: none;
@@ -479,16 +360,11 @@
 }
 
 .drawerItem:hover {
-    background: rgba(0, 0, 0, 0.05);
-    color: #f59e0b;
-}
-
-[data-theme="dark"] .drawerItem:hover {
-    background: rgba(255, 255, 255, 0.07);
+    background: var(--ds-bg-subtle);
 }
 
 .drawerItem:focus-visible {
-    outline: 2px solid #f59e0b;
+    outline: 2px solid var(--ds-focus);
     outline-offset: -2px;
 }
 
@@ -498,46 +374,42 @@
     justify-content: center;
     width: 34px;
     height: 34px;
-    border-radius: 10px;
-    background: rgba(0, 0, 0, 0.05);
+    border-radius: var(--radius-md);
+    background: var(--ds-bg-subtle);
     flex-shrink: 0;
-    color: var(--text-secondary, rgba(60, 60, 67, 0.6));
+    color: var(--ds-text-secondary);
     transition: background 0.2s ease, color 0.2s ease;
 }
 
-[data-theme="dark"] .drawerItemIcon {
-    background: rgba(255, 255, 255, 0.08);
-}
-
 .drawerItem:hover .drawerItemIcon {
-    background: rgba(245, 158, 11, 0.12);
-    color: #f59e0b;
+    background: var(--ds-bg);
+    box-shadow: var(--ring-light);
+    color: var(--ds-text);
 }
 
 .drawerBadge {
     margin-left: auto;
     font-size: 0.625rem;
-    font-weight: 600;
-    color: #f59e0b;
+    font-weight: var(--weight-announce);
+    color: var(--ds-text);
     text-transform: uppercase;
     letter-spacing: 0.06em;
-    background: rgba(245, 158, 11, 0.1);
-    border: 1px solid rgba(245, 158, 11, 0.2);
+    background: var(--ds-bg-subtle);
+    box-shadow: var(--ring-light);
     padding: 2px 8px;
-    border-radius: 999px;
+    border-radius: var(--radius-pill);
 }
 
 /* ─── Sign out ──────────────────────────────────────────── */
-
 .drawerSignOut {
     display: flex;
     align-items: center;
-    gap: 12px;
-    padding: 12px 14px;
-    border-radius: 14px;
+    gap: var(--s-12);
+    padding: var(--s-12) var(--s-14);
+    border-radius: var(--radius-lg);
     font-size: 0.9375rem;
-    font-weight: 500;
-    color: #ef4444;
+    font-weight: var(--weight-ui);
+    color: var(--accent-crimson);
     background: transparent;
     border: none;
     cursor: pointer;
@@ -548,7 +420,7 @@
 }
 
 .drawerSignOut:hover {
-    background: rgba(239, 68, 68, 0.08);
+    background: rgba(255, 91, 79, 0.08);
 }
 
 .drawerSignOut:disabled {
@@ -557,21 +429,17 @@
 }
 
 .drawerSignOut:focus-visible {
-    outline: 2px solid #ef4444;
+    outline: 2px solid var(--accent-crimson);
     outline-offset: -2px;
 }
 
 /* ─── Responsive ────────────────────────────────────────── */
-
 @media (max-width: 480px) {
     .pill {
-        padding: 6px 6px 6px 14px;
-        gap: 10px;
+        padding: 6px 6px 6px var(--s-14);
+        gap: var(--s-10);
     }
-
-    .logoWrap {
-        padding-right: 0;
-    }
+    .logoWrap { padding-right: 0; }
 }
 
 @media (min-width: 1024px) {
@@ -580,15 +448,10 @@
         left: 50%;
         right: auto;
         transform: translateX(-50%) translateY(100%);
-        border-radius: 24px 24px 0 0;
+        border-radius: var(--radius-xl) var(--radius-xl) 0 0;
     }
-
-    .drawerOpen {
-        transform: translateX(-50%) translateY(0);
-    }
+    .drawerOpen { transform: translateX(-50%) translateY(0); }
 }
-
-/* ─── Reduced motion ────────────────────────────────────── */
 
 @media (prefers-reduced-motion: reduce) {
     .pill {
@@ -596,34 +459,11 @@
         opacity: 1;
         transform: translateX(-50%) translateY(0);
     }
-
-    .drawer {
-        transition: none;
-    }
-
-    .overlay {
-        transition: none;
-    }
-
-    .themeIcon {
-        animation: none;
-    }
-
-    .closeBtn:hover {
-        transform: none;
-    }
-
-    .iconBtn:hover {
-        transform: none;
-    }
-
-    .avatarBtn:hover {
-        transform: none;
-    }
+    .drawer, .overlay { transition: none; }
+    .themeIcon { animation: none; }
 }
 
 /* ─── Logout overlay ────────────────────────────────────── */
-
 .logoutOverlay {
     position: fixed;
     inset: 0;
@@ -640,11 +480,10 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 1rem;
+    gap: var(--s-16);
     text-align: center;
 }
 
-/* Ring container — mirrors .ringWrap from login */
 .logoutRingWrap {
     position: relative;
     width: 80px;
@@ -659,7 +498,7 @@
     position: absolute;
     inset: 0;
     border-radius: 50%;
-    background: #ef4444;
+    background: var(--accent-crimson);
     pointer-events: none;
 }
 
@@ -672,40 +511,38 @@
 }
 
 .logoutLogoText {
-    font-family: var(--font-serif, 'Montserrat', sans-serif);
-    font-size: 1.75rem;
-    font-weight: 800;
-    color: var(--text-primary, #18181b);
-    letter-spacing: -0.02em;
+    font-family: var(--font-display), var(--font-body), sans-serif;
+    font-size: var(--text-h3);
+    font-weight: var(--weight-announce);
+    color: var(--ds-text);
+    letter-spacing: var(--track-h3);
 }
 
-.logoutLogoAccent {
-    color: #2563eb;
-}
+.logoutLogoAccent { color: var(--accent-develop); }
 
 .logoutMsg {
-    font-size: 1rem;
-    color: var(--text-secondary, #4b5563);
-    font-weight: 600;
+    font-size: var(--text-body);
+    color: var(--ds-text-secondary);
+    font-weight: var(--weight-ui);
     margin: 0;
 }
 
 .logoutCountdownBar {
     width: 200px;
     height: 3px;
-    background: #e5e7eb;
-    border-radius: 9999px;
+    background: var(--ds-bg-subtle);
+    border-radius: var(--radius-pill);
     overflow: hidden;
 }
 
 .logoutCountdownFill {
     height: 100%;
-    background: #ef4444;
-    border-radius: 9999px;
+    background: var(--accent-crimson);
+    border-radius: var(--radius-pill);
 }
 
 .logoutRedirectMsg {
-    font-size: 0.8rem;
-    color: #9ca3af;
+    font-size: var(--text-caption);
+    color: var(--ds-text-muted);
     margin: 0;
 }

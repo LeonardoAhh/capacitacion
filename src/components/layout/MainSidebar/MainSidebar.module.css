@@ -1,18 +1,19 @@
-/* ============================================================
-   MAIN SIDEBAR — shadcn/ui inspired, white theme
-   ============================================================ */
+/* =============================================================
+   MainSidebar — design.md (Vercel/Geist)
+   - Achromático puro, sticky 240px (collapsed 56px)
+   - Item activo: bg-subtle + announce weight
+   - shadow-as-border en su lugar de border CSS
+   ============================================================= */
 
 /* ── Overlay (mobile) ─────────────────────────────────────── */
-.overlay {
-    display: none;
-}
+.overlay { display: none; }
 
 @media (max-width: 767px) {
     .overlay {
         display: block;
         position: fixed;
         inset: 0;
-        background: rgba(0, 0, 0, 0.5);
+        background: rgba(0, 0, 0, 0.4);
         z-index: 998;
         opacity: 0;
         visibility: hidden;
@@ -33,15 +34,15 @@
     top: 0;
     display: flex;
     flex-direction: column;
-    background: #fff;
-    border-right: 1px solid #e4e4e7;
+    background: var(--ds-bg-tertiary);
+    border-right: 1px solid var(--ds-border-hairline);
     overflow: hidden;
     flex-shrink: 0;
     transition: width 0.2s ease, min-width 0.2s ease;
     z-index: 100;
 }
 
-/* Desktop collapsed (icon-only) */
+/* Desktop collapsed */
 @media (min-width: 768px) {
     .sidebar.collapsed {
         width: 56px;
@@ -53,6 +54,13 @@
     .sidebar.collapsed .closeBtn {
         display: none;
     }
+    /* Cuando colapsado: brand centra dot + botón colapsar apilados */
+    .sidebar.collapsed .brand {
+        flex-direction: column;
+        height: auto;
+        gap: var(--s-8);
+        padding: var(--s-12) 0;
+    }
     .sidebar.collapsed .navItem {
         justify-content: center;
         padding: 0;
@@ -60,9 +68,7 @@
         height: 40px;
         margin: 0 auto;
     }
-    .sidebar.collapsed .navIcon {
-        margin: 0;
-    }
+    .sidebar.collapsed .navIcon { margin: 0; }
     .sidebar.collapsed .logoutBtn {
         justify-content: center;
         padding: 0;
@@ -70,7 +76,7 @@
     }
 }
 
-/* Mobile: drawer */
+/* Mobile drawer */
 @media (max-width: 767px) {
     .sidebar {
         position: fixed;
@@ -81,32 +87,27 @@
         z-index: 999;
         transform: translateX(-100%);
         transition: transform 0.2s ease;
-        box-shadow: 4px 0 24px rgba(0, 0, 0, 0.1);
-        border-right: none;
+        box-shadow: var(--shadow-feature);
     }
-    .sidebar.open {
-        transform: translateX(0);
-    }
-    .closeBtn {
-        display: flex !important;
-    }
+    .sidebar.open { transform: translateX(0); }
+    .closeBtn { display: flex !important; }
 }
 
 /* ── Brand ────────────────────────────────────────────────── */
 .brand {
     height: 56px;
-    padding: 0 16px;
+    padding: 0 var(--s-16);
     display: flex;
     align-items: center;
     justify-content: space-between;
-    border-bottom: 1px solid #e4e4e7;
+    box-shadow: inset 0 -1px 0 var(--ds-border-hairline);
     flex-shrink: 0;
 }
 
 .brandInner {
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: var(--s-10);
     min-width: 0;
 }
 
@@ -115,16 +116,16 @@
     height: 8px;
     min-width: 8px;
     border-radius: 50%;
-    background: #18181b;
+    background: var(--ds-text);
     flex-shrink: 0;
 }
 
 .brandName {
-    font-size: 0.875rem;
-    font-weight: 700;
+    font-size: var(--text-ui);
+    font-weight: var(--weight-announce);
     letter-spacing: -0.01em;
-    color: #18181b;
-    font-family: var(--font-serif, 'Montserrat'), sans-serif;
+    color: var(--ds-text);
+    font-family: var(--font-display), var(--font-body), sans-serif;
     white-space: nowrap;
     text-transform: uppercase;
 }
@@ -136,23 +137,58 @@
     width: 28px;
     height: 28px;
     border: none;
-    border-radius: 6px;
+    border-radius: var(--radius-md);
     background: transparent;
-    color: #71717a;
+    color: var(--ds-text-secondary);
     cursor: pointer;
     flex-shrink: 0;
-    transition: background 0.15s, color 0.15s;
+    transition: background var(--transition-fast), color var(--transition-fast);
 }
 
 .closeBtn:hover {
-    background: #f4f4f5;
-    color: #18181b;
+    background: var(--ds-bg-subtle);
+    color: var(--accent-crimson);
+}
+
+/* ── Toggle colapsar (solo desktop) ───────────────────────── */
+.iconBtn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    border: none;
+    border-radius: var(--radius-md);
+    background: transparent;
+    color: var(--ds-text-secondary);
+    cursor: pointer;
+    flex-shrink: 0;
+    transition: background var(--transition-fast),
+                color var(--transition-fast),
+                transform var(--transition-fast);
+}
+
+.iconBtn:hover {
+    background: var(--ds-bg-subtle);
+    color: var(--ds-text);
+}
+
+.iconBtn:active { transform: scale(0.94); }
+
+.iconBtn:focus-visible {
+    outline: none;
+    box-shadow: var(--elev-focus);
+}
+
+/* Mobile: ocultar (en mobile el cierre va por .closeBtn) */
+@media (max-width: 768px) {
+    .collapseBtn { display: none; }
 }
 
 /* ── Nav ──────────────────────────────────────────────────── */
 .nav {
     flex: 1;
-    padding: 8px 8px;
+    padding: var(--s-8);
     display: flex;
     flex-direction: column;
     gap: 1px;
@@ -165,29 +201,29 @@
 .navItem {
     display: flex;
     align-items: center;
-    gap: 10px;
-    padding: 0 10px;
+    gap: var(--s-10);
+    padding: 0 var(--s-10);
     height: 36px;
-    border-radius: 6px;
-    color: #71717a;
-    font-size: 0.8125rem;
-    font-weight: 500;
-    font-family: var(--font-body, 'Roboto'), sans-serif;
+    border-radius: var(--radius-md);
+    color: var(--ds-text-secondary);
+    font-size: var(--text-ui);
+    font-weight: var(--weight-ui);
+    font-family: var(--font-body), system-ui, sans-serif;
     text-decoration: none;
     white-space: nowrap;
     overflow: hidden;
-    transition: background 0.15s, color 0.15s;
+    transition: background var(--transition-fast), color var(--transition-fast);
 }
 
 .navItem:hover {
-    background: #f4f4f5;
-    color: #18181b;
+    background: var(--ds-bg-subtle);
+    color: var(--accent-crimson);
 }
 
 .navItem.active {
-    background: #f4f4f5;
-    color: #18181b;
-    font-weight: 600;
+    background: var(--ds-bg-subtle);
+    color: var(--ds-text);
+    font-weight: var(--weight-announce);
 }
 
 .navIcon {
@@ -211,36 +247,34 @@
 
 /* ── Footer / User ────────────────────────────────────────── */
 .footer {
-    padding: 8px;
+    padding: var(--s-8);
     flex-shrink: 0;
 }
 
 .separator {
     height: 1px;
-    background: #e4e4e7;
-    margin-bottom: 8px;
+    background: var(--ds-border-hairline);
+    margin-bottom: var(--s-8);
 }
 
 .userRow {
     display: flex;
     align-items: center;
-    gap: 8px;
-    padding: 6px 8px;
-    border-radius: 6px;
-    transition: background 0.15s;
+    gap: var(--s-8);
+    padding: var(--s-6) var(--s-8);
+    border-radius: var(--radius-md);
+    transition: background var(--transition-fast);
 }
 
-.userRow:hover {
-    background: #f4f4f5;
-}
+.userRow:hover { background: var(--ds-bg-subtle); }
 
 .userAvatar {
     width: 32px;
     height: 32px;
     min-width: 32px;
-    border-radius: 6px;
+    border-radius: var(--radius-md);
     overflow: hidden;
-    background: #f4f4f5;
+    background: var(--ds-bg-subtle);
     flex-shrink: 0;
 }
 
@@ -259,47 +293,47 @@
 }
 
 .userName {
-    font-size: 0.8125rem;
-    font-weight: 600;
-    color: #18181b;
-    font-family: var(--font-body, 'Roboto'), sans-serif;
+    font-size: var(--text-ui);
+    font-weight: var(--weight-announce);
+    color: var(--ds-text);
+    font-family: var(--font-body), system-ui, sans-serif;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    line-height: 1.3;
+    line-height: var(--lh-snug);
 }
 
 .userRole {
-    font-size: 0.7rem;
-    color: #71717a;
+    font-size: var(--text-caption);
+    color: var(--ds-text-muted);
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    line-height: 1.3;
+    line-height: var(--lh-snug);
 }
 
 .logoutBtn {
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: var(--s-8);
     width: 100%;
     height: 36px;
-    padding: 0 10px;
+    padding: 0 var(--s-10);
     border: none;
-    border-radius: 6px;
+    border-radius: var(--radius-md);
     background: transparent;
-    color: #71717a;
-    font-size: 0.8125rem;
-    font-family: var(--font-body, 'Roboto'), sans-serif;
+    color: var(--ds-text-secondary);
+    font-size: var(--text-ui);
+    font-family: var(--font-body), system-ui, sans-serif;
     cursor: pointer;
-    transition: background 0.15s, color 0.15s;
+    transition: background var(--transition-fast), color var(--transition-fast);
     text-align: left;
     flex-shrink: 0;
 }
 
 .logoutBtn:hover {
-    background: #fee2e2;
-    color: #dc2626;
+    background: rgba(255, 91, 79, 0.08);
+    color: var(--accent-crimson);
 }
 
 @media print {

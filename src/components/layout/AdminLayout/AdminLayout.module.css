@@ -1,15 +1,16 @@
-/* ============================================================
-   ADMIN LAYOUT — shadcn/ui inspired
-   ============================================================ */
+/* =============================================================
+   AdminLayout — design.md (Vercel/Geist achromatic)
+   - Header sticky 56px, fondo blanco, hairline inferior
+   - Logout overlay limpio sin gradientes
+   ============================================================= */
 
 .root {
     display: flex;
     min-height: 100dvh;
-    background: #fafafa;
+    background: var(--ds-bg-subtle);
 }
 
 /* ── Logout overlay ──────────────────────────────────────── */
-
 .logoutOverlay {
     position: fixed;
     inset: 0;
@@ -26,7 +27,7 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 1rem;
+    gap: var(--s-16);
     text-align: center;
 }
 
@@ -44,7 +45,7 @@
     position: absolute;
     inset: 0;
     border-radius: 50%;
-    background: #ef4444;
+    background: var(--accent-crimson);
     pointer-events: none;
 }
 
@@ -57,45 +58,43 @@
 }
 
 .logoutLogoText {
-    font-family: var(--font-serif, 'Montserrat', sans-serif);
-    font-size: 1.75rem;
-    font-weight: 800;
-    color: var(--text-primary, #18181b);
-    letter-spacing: -0.02em;
+    font-family: var(--font-display), var(--font-body), sans-serif;
+    font-size: var(--text-h3);
+    font-weight: var(--weight-announce);
+    color: var(--ds-text);
+    letter-spacing: var(--track-h3);
 }
 
-.logoutLogoAccent {
-    color: #2563eb;
-}
+.logoutLogoAccent { color: var(--accent-develop); }
 
 .logoutMsg {
-    font-size: 1rem;
-    color: var(--text-secondary, #4b5563);
-    font-weight: 600;
+    font-size: var(--text-body);
+    color: var(--ds-text-secondary);
+    font-weight: var(--weight-ui);
+    margin: 0;
+}
+
+.logoutRedirectMsg {
+    font-size: var(--text-caption);
+    color: var(--ds-text-muted);
     margin: 0;
 }
 
 .logoutCountdownBar {
     width: 200px;
     height: 3px;
-    background: #e5e7eb;
-    border-radius: 9999px;
+    background: var(--ds-bg-subtle);
+    border-radius: var(--radius-pill);
     overflow: hidden;
 }
 
 .logoutCountdownFill {
     height: 100%;
-    background: #ef4444;
-    border-radius: 9999px;
+    background: var(--accent-crimson);
+    border-radius: var(--radius-pill);
 }
 
-.logoutRedirectMsg {
-    font-size: 0.8rem;
-    color: #9ca3af;
-    margin: 0;
-}
-
-/* ── Main area (header + content) ────────────────────────── */
+/* ── Main area ───────────────────────────────────────────── */
 .main {
     flex: 1;
     min-width: 0;
@@ -110,32 +109,30 @@
     align-items: center;
     justify-content: center;
     min-height: 100dvh;
-    background: #fafafa;
+    background: var(--ds-bg-subtle);
 }
 
 .loadingSpinner {
     width: 24px;
     height: 24px;
-    border: 2px solid #e4e4e7;
-    border-top-color: #18181b;
+    border: 2px solid var(--ds-border-hairline);
+    border-top-color: var(--ds-text);
     border-radius: 50%;
     animation: spin 0.7s linear infinite;
 }
 
-@keyframes spin {
-    to { transform: rotate(360deg); }
-}
+@keyframes spin { to { transform: rotate(360deg); } }
 
 /* ── Header ───────────────────────────────────────────────── */
 .header {
     height: 56px;
-    border-bottom: 1px solid #e4e4e7;
-    background: #fff;
+    background: var(--ds-bg);
+    border-bottom: 1px solid var(--ds-border-hairline);
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 0 16px;
-    gap: 12px;
+    padding: 0 var(--s-16);
+    gap: var(--s-12);
     position: sticky;
     top: 0;
     z-index: 50;
@@ -145,7 +142,7 @@
 .headerLeft {
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: var(--s-8);
     min-width: 0;
     flex: 1;
 }
@@ -153,42 +150,12 @@
 .headerRight {
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: var(--s-8);
     flex-shrink: 0;
 }
 
-/* Header logout — icon-only, minimalist */
-.headerLogoutBtn {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 32px;
-    height: 32px;
-    border: none;
-    border-radius: 6px;
-    background: transparent;
-    color: #a1a1aa;
-    cursor: pointer;
-    flex-shrink: 0;
-    transition: background 0.15s, color 0.15s;
-}
-
-.headerLogoutBtn:hover {
-    background: #fee2e2;
-    color: #dc2626;
-}
-
-.headerLogoutBtn:disabled {
-    opacity: 0.4;
-    cursor: not-allowed;
-}
-
-.headerLogoutBtn:focus-visible {
-    outline: 2px solid #dc2626;
-    outline-offset: 2px;
-}
-
-/* Icon button */
+/* ── Header buttons ──────────────────────────────────────── */
+.headerLogoutBtn,
 .iconBtn {
     display: flex;
     align-items: center;
@@ -196,82 +163,89 @@
     width: 32px;
     height: 32px;
     border: none;
-    border-radius: 6px;
+    border-radius: var(--radius-md);
     background: transparent;
-    color: #71717a;
     cursor: pointer;
     flex-shrink: 0;
-    transition: background 0.15s, color 0.15s;
+    transition: background var(--transition-fast), color var(--transition-fast);
 }
 
+.iconBtn { color: var(--ds-text-secondary); }
 .iconBtn:hover {
-    background: #f4f4f5;
-    color: #18181b;
+    background: var(--ds-bg-subtle);
+    color: var(--accent-crimson);
 }
 
+.headerLogoutBtn { color: var(--ds-text-muted); }
+.headerLogoutBtn:hover {
+    background: rgba(255, 91, 79, 0.08);
+    color: var(--accent-crimson);
+}
+.headerLogoutBtn:disabled { opacity: 0.4; cursor: not-allowed; }
+.headerLogoutBtn:focus-visible,
 .iconBtn:focus-visible {
-    outline: 2px solid #18181b;
+    outline: 2px solid var(--ds-focus);
     outline-offset: 2px;
 }
 
 .headerDivider {
     width: 1px;
     height: 20px;
-    background: #e4e4e7;
+    background: var(--ds-border-hairline);
     flex-shrink: 0;
 }
 
-/* Breadcrumb */
+/* ── Breadcrumb ──────────────────────────────────────────── */
 .breadcrumb {
     display: flex;
     align-items: center;
-    gap: 6px;
+    gap: var(--s-6);
     min-width: 0;
 }
 
 .breadcrumbHome {
     display: flex;
     align-items: center;
-    color: #71717a;
+    color: var(--ds-text-secondary);
     text-decoration: none;
-    transition: color 0.15s;
+    transition: color var(--transition-fast);
     flex-shrink: 0;
 }
-.breadcrumbHome:hover { color: #18181b; }
+.breadcrumbHome:hover { color: var(--accent-crimson); }
 
 .breadcrumbSep {
-    color: #d4d4d8;
-    font-size: 0.875rem;
+    color: var(--ds-text-muted);
+    font-size: var(--text-ui);
     flex-shrink: 0;
 }
 
 .breadcrumbCurrent {
-    font-size: 0.8125rem;
-    font-weight: 500;
-    color: #18181b;
-    font-family: var(--font-body, 'Roboto'), sans-serif;
+    font-size: var(--text-ui);
+    font-weight: var(--weight-ui);
+    color: var(--ds-text);
+    font-family: var(--font-body), system-ui, sans-serif;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
 }
 
-/* User chip */
+/* ── User chip ───────────────────────────────────────────── */
 .userChip {
     display: flex;
     align-items: center;
-    gap: 8px;
-    padding: 4px 10px 4px 4px;
-    border-radius: 9999px;
-    border: 1px solid #e4e4e7;
-    background: #fff;
+    gap: var(--s-8);
+    padding: 4px var(--s-10) 4px 4px;
+    border-radius: var(--radius-pill);
+    background: var(--ds-bg);
+    box-shadow: var(--ring-border);
     text-decoration: none;
-    transition: background 0.15s, border-color 0.15s;
+    transition: background var(--transition-fast), box-shadow var(--transition-fast);
     cursor: pointer;
 }
 
 .userChip:hover {
-    background: #f4f4f5;
-    border-color: #d4d4d8;
+    background: var(--ds-bg-subtle);
+    box-shadow: var(--ring-border), var(--elev-subtle);
 }
 
 .chipAvatar {
@@ -279,7 +253,7 @@
     height: 24px;
     border-radius: 50%;
     overflow: hidden;
-    background: #f4f4f5;
+    background: var(--ds-bg-subtle);
     flex-shrink: 0;
 }
 
@@ -291,14 +265,14 @@
 }
 
 .chipName {
-    font-size: 0.8125rem;
-    font-weight: 500;
-    color: #18181b;
-    font-family: var(--font-body, 'Roboto'), sans-serif;
+    font-size: var(--text-ui);
+    font-weight: var(--weight-ui);
+    color: var(--ds-text);
+    font-family: var(--font-body), system-ui, sans-serif;
     white-space: nowrap;
 }
 
-/* Responsive visibility */
+/* Responsive */
 .desktopOnly { display: flex; }
 .mobileOnly  { display: none; }
 
@@ -311,11 +285,10 @@
 /* ── Page content ─────────────────────────────────────────── */
 .content {
     flex: 1;
-    padding: clamp(1rem, 3vw, 1.5rem);
-    padding-bottom: 3rem;
+    padding: clamp(var(--s-16), 3vw, var(--s-24));
+    padding-bottom: var(--s-48);
 }
 
-/* ── Print ────────────────────────────────────────────────── */
 @media print {
     .header { display: none !important; }
     .root { display: block; }

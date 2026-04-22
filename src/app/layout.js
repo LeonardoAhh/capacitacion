@@ -4,36 +4,35 @@ import { ToastProvider } from '@/components/ui/Toast/Toast';
 import { OfflineIndicator, UpdatePrompt } from '@/components/guards/pwa';
 import MaintenanceGuard from '@/components/guards/MaintenanceGuard';
 import '@/styles/globals.css';
-import { Roboto, Montserrat, Roboto_Mono } from 'next/font/google';
+import { GeistSans } from 'geist/font/sans';
+import { GeistMono } from 'geist/font/mono';
+import { Fraunces } from 'next/font/google';
 
-/* ─── Fuentes del sistema ──────────────────────────────────────────
-   Todas las fuentes se cargan aquí y solo aquí.
-   Los módulos CSS usan ÚNICAMENTE var(--font-serif / --font-body / --font-mono).
+/* ─── Fuentes del sistema (design.md → Cursor System) ─────────────
+   Sustitutos libres de las fuentes propietarias de Cursor:
+     CursorGothic → Geist Sans   (display + UI, tracking compresivo)
+     jjannon      → Fraunces     (serif body, OpenType "swsh" + "ss01")
+     berkeleyMono → Geist Mono   (code + technical labels)
+
+   Variables expuestas (usar SIEMPRE, nunca hardcodear):
+     - var(--font-display) → Geist Sans  (headings, buttons, UI)
+     - var(--font-body)    → Geist Sans  (sans body, sistema)
+     - var(--font-serif)   → Fraunces    (editorial body, párrafos)
+     - var(--font-mono)    → Geist Mono  (code, labels técnicos)
+
    Para cambiar una fuente en toda la plataforma: editar solo este archivo.
    ────────────────────────────────────────────────────────────────── */
 
-const roboto = Roboto({
+const fraunces = Fraunces({
     subsets: ['latin'],
-    weight: ['300', '400', '500', '700'],
-    variable: '--font-body',
     display: 'swap',
-});
-
-const robotoMono = Roboto_Mono({
-    subsets: ['latin'],
-    variable: '--font-mono',
-    display: 'swap',
-});
-
-const montserrat = Montserrat({
-    subsets: ['latin'],
-    weight: ['400', '500', '600', '700', '800'],
-    variable: '--font-serif', // Reusamos el alias var(--font-serif) para los títulos
-    display: 'swap',
+    weight: ['400', '500', '600'],
+    style: ['normal', 'italic'],
+    variable: '--font-fraunces',
 });
 
 export const viewport = {
-    themeColor: '#ffffff',
+    themeColor: '#f2f1ed',
     width: 'device-width',
     initialScale: 1,
     maximumScale: 5,
@@ -75,10 +74,19 @@ export default function RootLayout({ children }) {
             lang="es"
             suppressHydrationWarning
             /*
-             * Las tres variables CSS quedan disponibles en :root
-             * y en TODOS los módulos CSS sin @import adicional.
+             * Variables CSS expuestas para todos los módulos:
+             *   font-family: var(--font-display) → Geist Sans (headings/UI)
+             *   font-family: var(--font-body)    → Geist Sans (sans body)
+             *   font-family: var(--font-serif)   → Fraunces   (editorial body)
+             *   font-family: var(--font-mono)    → Geist Mono (code)
              */
-            className={`${roboto.variable} ${robotoMono.variable} ${montserrat.variable}`}
+            className={`${GeistSans.variable} ${GeistMono.variable} ${fraunces.variable}`}
+            style={{
+                '--font-body':    'var(--font-geist-sans)',
+                '--font-display': 'var(--font-geist-sans)',
+                '--font-serif':   'var(--font-fraunces)',
+                '--font-mono':    'var(--font-geist-mono)',
+            }}
         >
             <body>
                 {/* Skip Link — navegación por teclado (WCAG 2.4.1) */}

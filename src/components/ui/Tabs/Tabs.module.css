@@ -1,45 +1,60 @@
+/* =============================================================
+   Tabs — design.md (Cursor System)
+   Tab nav: bottom border with active tab differentiation
+   (Cursor pattern: `1px solid oklab(0.263 / 0.1)` rule).
+   Active: orange accent underline + dark text.
+   ============================================================= */
 .tabs {
     display: flex;
     flex-direction: column;
     width: 100%;
 }
 
+/* ─── Underline style (Cursor canonical) ─────────────────── */
 .tabsList {
-    display: flex;
+    display: inline-flex;
     align-items: center;
-    gap: var(--spacing-xs);
-    padding: var(--spacing-xs);
-    background-color: var(--bg-tertiary);
-    border-radius: var(--radius-lg);
+    gap: var(--s-4);
+    border-bottom: 1px solid var(--ds-border-hairline);
     overflow-x: auto;
+    scrollbar-width: none;
 }
+
+.tabsList::-webkit-scrollbar { display: none; }
 
 .tabsTrigger {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    gap: var(--spacing-sm);
-    padding: var(--spacing-sm) var(--spacing-lg);
+    gap: var(--s-8);
+    padding: var(--s-10) var(--s-14);
     background: transparent;
     border: none;
-    border-radius: var(--radius-md);
-    font-size: 0.875rem;
-    font-weight: 500;
-    color: var(--text-secondary);
+    border-bottom: 2px solid transparent;
+    margin-bottom: -1px;
+    font-family: var(--font-display), system-ui, sans-serif;
+    font-size: var(--text-ui);
+    font-weight: var(--weight-ui);
+    color: var(--ds-text-secondary);
     white-space: nowrap;
     cursor: pointer;
-    transition: all var(--transition-fast);
+    transition: color var(--transition-fast),
+                border-color var(--transition-fast);
 }
 
 .tabsTrigger:hover {
-    color: var(--text-primary);
-    background-color: var(--bg-secondary);
+    color: var(--accent-crimson);
+}
+
+.tabsTrigger:focus-visible {
+    outline: none;
+    box-shadow: var(--elev-focus);
+    border-radius: var(--radius-sm);
 }
 
 .tabsTrigger.active {
-    background-color: var(--bg-secondary);
-    color: var(--text-primary);
-    box-shadow: var(--shadow-sm);
+    color: var(--ds-text);
+    border-bottom-color: var(--accent-orange);
 }
 
 .tabIcon {
@@ -54,40 +69,55 @@
 }
 
 .tabsContent {
-    padding: var(--spacing-xl) 0;
-    animation: tabFadeIn 0.2s ease-out;
+    padding: var(--s-32) 0;
+    animation: tabFadeIn 0.2s var(--ease-out);
 }
 
 @keyframes tabFadeIn {
-    from {
-        opacity: 0;
-        transform: translateY(4px);
-    }
-
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
+    from { opacity: 0; transform: translateY(4px); }
+    to   { opacity: 1; transform: translateY(0); }
 }
 
-/* Scrollbar styling for tabs overflow */
-.tabsList::-webkit-scrollbar {
-    height: 4px;
+/* ─── Pill style variant (for sub-nav) ───────────────────── */
+.pillsList {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--s-2);
+    padding: var(--s-3);
+    background: var(--cursor-cream-400);
+    border-radius: var(--radius-pill);
+    overflow-x: auto;
 }
 
-.tabsList::-webkit-scrollbar-track {
+.pill {
+    padding: var(--s-6) var(--s-12);
+    border-radius: var(--radius-pill);
     background: transparent;
+    color: var(--ds-text-muted);
+    font-family: var(--font-display), system-ui, sans-serif;
+    font-size: var(--text-button);
+    font-weight: var(--weight-read);
+    border: none;
+    cursor: pointer;
+    transition: background var(--transition-fast),
+                color var(--transition-fast);
 }
 
-.tabsList::-webkit-scrollbar-thumb {
-    background-color: var(--border-color);
-    border-radius: var(--radius-full);
+.pill:hover { color: var(--accent-crimson); }
+
+.pill:focus-visible {
+    outline: none;
+    box-shadow: var(--elev-focus);
 }
 
-/* Responsive */
+.pill.active {
+    background: var(--cursor-cream-500);
+    color: var(--ds-text);
+}
+
 @media (max-width: 640px) {
     .tabsTrigger {
-        padding: var(--spacing-sm) var(--spacing-md);
-        font-size: 0.8rem;
+        padding: var(--s-8) var(--s-10);
+        font-size: var(--text-button);
     }
 }

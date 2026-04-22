@@ -1,3 +1,324 @@
+/* =============================================================
+   ShapeHero — design.md (Cursor System)
+   Landing + Login portal: cream canvas + atmospheric depth.
+   Decorative grid (oklab borders) + warm glow orb.
+   Card: cream tertiary surface + feature shadow + serif body.
+   ============================================================= */
+
+/* ─── Canvas hero ─────────────────────────────────────────── */
+.hero {
+    position: relative;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: var(--ds-bg);
+    color: var(--ds-text);
+    font-family: var(--font-display), system-ui, sans-serif;
+    padding: var(--s-32) var(--s-16);
+    overflow: hidden;
+    isolation: isolate;
+}
+
+/* ─── Decorative grid (warm hairline) ─────────────────────── */
+.grid {
+    position: absolute;
+    inset: 0;
+    background-image:
+        linear-gradient(to right, var(--ds-border-hairline) 1px, transparent 1px),
+        linear-gradient(to bottom, var(--ds-border-hairline) 1px, transparent 1px);
+    background-size: 56px 56px;
+    mask-image: radial-gradient(ellipse 80% 60% at 50% 50%, var(--cursor-dark) 25%, transparent 75%);
+    -webkit-mask-image: radial-gradient(ellipse 80% 60% at 50% 50%, var(--cursor-dark) 25%, transparent 75%);
+    pointer-events: none;
+    z-index: -1;
+    opacity: 0.7;
+}
+
+/* ─── Glow orb (atmospheric warm light) ───────────────────── */
+.glowOrb {
+    position: absolute;
+    top: 30%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: clamp(280px, 50vw, 600px);
+    aspect-ratio: 1;
+    background: radial-gradient(
+        circle at center,
+        rgba(245, 78, 0, 0.08) 0%,
+        rgba(245, 78, 0, 0.03) 40%,
+        transparent 70%
+    );
+    filter: blur(40px);
+    pointer-events: none;
+    z-index: -1;
+}
+
+/* ─── Content shell ───────────────────────────────────────── */
+.content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    max-width: 420px;
+    margin: 0 auto;
+    gap: var(--s-32);
+    position: relative;
+    z-index: 1;
+}
+
+/* ─── Brand (left column) ─────────────────────────────────── */
+.left {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--s-12);
+    width: 100%;
+}
+
+.brand {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--s-6);
+    width: 100%;
+}
+
+.portal {
+    font-family: var(--font-mono), ui-monospace, monospace;
+    font-size: var(--text-mono-sm);
+    font-weight: var(--weight-ui);
+    letter-spacing: var(--track-mono-sm);
+    text-transform: uppercase;
+    color: var(--ds-text-muted);
+    font-feature-settings: var(--feat-mono);
+}
+
+.title {
+    font-family: var(--font-display), system-ui, sans-serif;
+    font-size: clamp(2.25rem, 6vw, var(--text-h1));
+    font-weight: var(--weight-announce);
+    letter-spacing: var(--track-h1);
+    line-height: var(--lh-tight);
+    color: var(--ds-text);
+    margin: var(--s-4) 0;
+    text-align: center;
+}
+
+.titleAccent {
+    color: var(--accent-orange);
+}
+
+.location {
+    font-family: var(--font-serif), Georgia, serif;
+    font-size: var(--text-body);
+    font-style: italic;
+    color: var(--ds-text-secondary);
+    font-feature-settings: var(--feat-serif);
+}
+
+.divider {
+    width: 100%;
+    max-width: 280px;
+    height: 1px;
+    background: var(--ds-border-hairline);
+    margin: var(--s-8) 0 0;
+}
+
+/* ─── Login card (right column) ───────────────────────────── */
+.right {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.card {
+    width: 100%;
+    max-width: 400px;
+    padding: var(--s-32);
+    border-radius: var(--radius-xl);
+    background: var(--ds-bg-tertiary);
+    border: 1px solid var(--ds-border-hairline);
+    box-shadow: var(--shadow-feature);
+}
+
+.card:has(.successState) {
+    background: transparent;
+    border: none;
+    box-shadow: none;
+}
+
+/* ─── Card header ─────────────────────────────────────────── */
+.cardHeader {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--s-8);
+    margin-bottom: var(--s-24);
+}
+
+.iconBadge {
+    width: 40px;
+    height: 40px;
+    border-radius: var(--radius-lg);
+    background: var(--cursor-cream-300);
+    color: var(--ds-text);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: var(--elev-ambient);
+}
+
+.cardTitle {
+    font-family: var(--font-display), system-ui, sans-serif;
+    font-size: var(--text-h3);
+    font-weight: var(--weight-announce);
+    color: var(--ds-text);
+    margin: var(--s-4) 0 0;
+    line-height: var(--lh-snug);
+    letter-spacing: var(--track-h3);
+    text-align: center;
+}
+
+.cardSubtitle {
+    font-family: var(--font-serif), Georgia, serif;
+    font-size: var(--text-body);
+    color: var(--ds-text-secondary);
+    margin: var(--s-2) 0 0;
+    line-height: var(--lh-base);
+    text-align: center;
+    font-feature-settings: var(--feat-serif);
+}
+
+/* ─── Form ────────────────────────────────────────────────── */
+.form {
+    display: flex;
+    flex-direction: column;
+    gap: var(--s-16);
+}
+
+/* ─── Error box (warm crimson) ────────────────────────────── */
+.errorBox {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--s-8);
+    padding: var(--s-12) var(--s-14);
+    background: rgba(207, 45, 86, 0.06);
+    border: 1px solid rgba(207, 45, 86, 0.20);
+    border-left: 3px solid var(--accent-crimson);
+    border-radius: var(--radius-md);
+    font-family: var(--font-display), system-ui, sans-serif;
+    font-size: var(--text-button);
+    color: var(--accent-crimson);
+    line-height: var(--lh-base);
+}
+
+/* ─── Footer ──────────────────────────────────────────────── */
+.footer {
+    margin-top: var(--s-40);
+    color: var(--ds-text-muted);
+    font-family: var(--font-serif), Georgia, serif;
+    font-size: var(--text-button);
+    text-align: center;
+    font-feature-settings: var(--feat-serif);
+}
+
+/* =============================================================
+   Success State (post-login confirmation)
+   Verde teal warm-shifted alineado a Cursor accent palette.
+   ============================================================= */
+.successState {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: var(--s-16);
+    min-height: 200px;
+    padding: var(--s-32) 0;
+    background: transparent;
+    border: none;
+    box-shadow: none;
+}
+
+.ringWrap {
+    position: relative;
+    width: 80px;
+    height: 80px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.pulse1,
+.pulse2 {
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    background: var(--accent-teal);
+    pointer-events: none;
+}
+
+.svgCheck {
+    width: 56px;
+    height: 56px;
+    position: relative;
+    z-index: 1;
+    flex-shrink: 0;
+}
+
+.successText {
+    font-family: var(--font-display), system-ui, sans-serif;
+    color: var(--accent-teal);
+    font-size: var(--text-body-lg);
+    font-weight: var(--weight-announce);
+    margin: 0;
+    text-align: center;
+    letter-spacing: var(--track-h3);
+}
+
+.countdownBar {
+    width: 100%;
+    max-width: 200px;
+    height: 3px;
+    background: var(--cursor-cream-500);
+    border-radius: var(--radius-pill);
+    overflow: hidden;
+}
+
+.countdownFill {
+    height: 100%;
+    background: var(--accent-teal);
+    border-radius: var(--radius-pill);
+}
+
+.redirectMsg {
+    font-family: var(--font-mono), ui-monospace, monospace;
+    font-size: var(--text-mono-sm);
+    color: var(--ds-text-muted);
+    text-align: center;
+    margin: 0;
+    font-feature-settings: var(--feat-mono);
+}
+
+/* ─── Responsive ──────────────────────────────────────────── */
+@media (max-width: 600px) {
+    .hero { padding: var(--s-16); }
+    .content { max-width: 100%; gap: var(--s-24); }
+    .card {
+        padding: var(--s-24) var(--s-16);
+        max-width: 100%;
+    }
+    .successState { min-height: 160px; padding: var(--s-24) 0; }
+    .ringWrap { width: 64px; height: 64px; }
+    .svgCheck { width: 44px; height: 44px; }
+    .successText { font-size: var(--text-body); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .pulse1, .pulse2 { animation: none; }
+}
 /* --- Success State --- */
 .successState {
   display: flex;
@@ -27,7 +348,7 @@
   position: absolute;
   inset: 0;
   border-radius: 50%;
-  background: #16a34a;
+  background: var(--accent-teal);
   pointer-events: none;
 }
 
@@ -40,7 +361,7 @@
 }
 
 .successText {
-  color: #16a34a;
+  color: var(--accent-teal);
   font-size: 1.15rem;
   font-weight: 700;
   margin: 0;
@@ -53,20 +374,20 @@
   width: 100%;
   max-width: 200px;
   height: 3px;
-  background: #e5e7eb;
+  background: var(--ds-border-hairline);
   border-radius: 9999px;
   overflow: hidden;
 }
 
 .countdownFill {
   height: 100%;
-  background: #16a34a;
+  background: var(--accent-teal);
   border-radius: 9999px;
 }
 
 .redirectMsg {
   font-size: 0.8rem;
-  color: #9ca3af;
+  color: var(--ds-text-tertiary);
   text-align: center;
   margin: 0;
 }
@@ -96,9 +417,9 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  background: #fff;
-  color: #18181b;
-  font-family: var(--font-body, 'Roboto', Arial, sans-serif);
+  background: var(--ds-bg-pure);
+  color: var(--ds-text);
+  font-family: var(--font-body);
   padding: 2rem 1rem 1rem;
   transition: background 0.2s, color 0.2s;
 }
@@ -140,31 +461,31 @@
   font-weight: 500;
   letter-spacing: 0.12em;
   text-transform: uppercase;
-  color: #a1a1aa;
+  color: var(--ds-text-tertiary);
 }
 
 .title {
-  font-family: var(--font-serif, 'Montserrat', Arial, sans-serif);
+  font-family: var(--font-serif);
   font-size: 2.2rem;
   font-weight: 800;
-  color: #18181b;
+  color: var(--ds-text);
   margin: 0.2rem 0 0.3rem;
   text-align: center;
 }
 
 .titleAccent {
-  color: #003ccc;
+  color: var(--accent-orange);
 }
 
 .location {
   font-size: 0.9rem;
-  color: #a1a1aa;
+  color: var(--ds-text-tertiary);
 }
 
 .divider {
   width: 100%;
   height: 1px;
-  background: #e4e4e7;
+  background: var(--ds-border-hairline);
   margin-bottom: 1.25rem;
 }
 
@@ -180,8 +501,8 @@
   max-width: 380px;
   padding: 2rem 1.5rem 1.5rem;
   border-radius: 12px;
-  background: #fff;
-  border: 1px solid #e4e4e7;
+  background: var(--ds-bg-pure);
+  border: 1px solid var(--ds-border-hairline);
   box-shadow: 0 2px 8px 0 rgba(24,24,27,0.04);
 }
 
@@ -214,20 +535,20 @@
   width: 38px;
   height: 38px;
   border-radius: 8px;
-  background: #003ccc;
+  background: var(--accent-orange);
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #fff;
+  color: var(--ds-bg-pure);
   margin-bottom: 0.7rem;
   box-shadow: 0 1px 2px rgba(0,0,0,0.04);
 }
 
 .cardTitle {
-  font-family: var(--font-serif, 'Montserrat', Arial, sans-serif);
+  font-family: var(--font-serif);
   font-size: 1.25rem;
   font-weight: 700;
-  color: #18181b;
+  color: var(--ds-text);
   margin: 0;
   line-height: 1.2;
   text-align: center;
@@ -235,7 +556,7 @@
 
 .cardSubtitle {
   font-size: 0.95rem;
-  color: #71717a;
+  color: var(--ds-text-secondary);
   margin: 0;
   line-height: 1.5;
   text-align: center;
@@ -252,18 +573,18 @@
   align-items: flex-start;
   gap: 0.5rem;
   padding: 0.7rem 0.9rem;
-  background: #fff0f0;
-  border: 1px solid #ffd6d6;
-  border-left: 3px solid #d40000;
+  background: var(--ds-bg-pure)0f0;
+  border: 1px solid rgba(207, 45, 86, 0.20);
+  border-left: 3px solid var(--accent-crimson);
   border-radius: 8px;
   font-size: 0.92rem;
-  color: #d40000;
+  color: var(--accent-crimson);
   line-height: 1.5;
 }
 
 .footer {
   margin-top: 2.5rem;
-  color: #a1a1aa;
+  color: var(--ds-text-tertiary);
   font-size: 0.95rem;
   text-align: center;
 }
@@ -286,3 +607,4 @@
     font-size: 1.5rem;
   }
 }
+

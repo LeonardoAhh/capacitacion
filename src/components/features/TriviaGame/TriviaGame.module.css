@@ -33,19 +33,19 @@
     margin: 0;
     font-size: 1.4rem;
     font-weight: 700;
-    color: var(--text-primary);
+    color: var(--ds-text);
     letter-spacing: -0.5px;
 }
 
 .header p {
     margin: 4px 0 0 0;
     font-size: 0.95rem;
-    color: var(--text-secondary);
+    color: var(--ds-text-secondary);
 }
 
 .progressBadge {
     background: rgba(0, 0, 0, 0.05);
-    color: var(--text-secondary);
+    color: var(--ds-text-secondary);
     padding: 6px 14px;
     border-radius: 20px;
     font-size: 0.85rem;
@@ -56,7 +56,7 @@
 [data-theme="dark"] .progressBadge {
     background: rgba(255, 255, 255, 0.1);
     border-color: rgba(255, 255, 255, 0.05);
-    color: var(--text-primary);
+    color: var(--ds-text);
 }
 
 /* ================= GAME AREA ================= */
@@ -85,7 +85,7 @@
     border-radius: 50%;
     border: 1px solid rgba(0, 0, 0, 0.08);
     background: rgba(255, 255, 255, 0.9);
-    color: #1a1a1a;
+    color: var(--ds-text);
     font-size: 1.6rem;
     display: flex;
     align-items: center;
@@ -106,8 +106,8 @@
 
 .navBtn:hover {
     transform: scale(1.15);
-    background: #007AFF;
-    border-color: #007AFF;
+    background: var(--accent-orange);
+    border-color: var(--accent-orange);
     color: white;
     box-shadow: 0 8px 25px rgba(0, 122, 255, 0.3);
 }
@@ -202,8 +202,8 @@
 
 /* CARA TRASERA (Respuesta) */
 .cardBack {
-    background: #ffffff;
-    color: #1a1a1a;
+    background: var(--ds-bg-pure);
+    color: var(--ds-text);
     transform: rotateY(180deg);
     padding: 40px 30px;
     justify-content: center;
@@ -213,7 +213,7 @@
 }
 
 [data-theme="dark"] .cardBack {
-    background: #1c1c1e;
+    background: var(--ds-text);
     color: white;
     border: 1px solid rgba(255, 255, 255, 0.1);
 }
@@ -229,7 +229,7 @@
     position: absolute;
     bottom: 25px;
     font-size: 0.8rem;
-    color: #8e8e93;
+    color: var(--ds-text-tertiary);
     text-transform: uppercase;
     letter-spacing: 0.5px;
 }

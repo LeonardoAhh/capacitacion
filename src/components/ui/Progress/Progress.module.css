@@ -1,37 +1,33 @@
+/* =============================================================
+   Progress — design.md (Cursor System)
+   Track: cream-500. Indicator: solid warm.
+   Variants use timeline + warm semantic colors (no gradients).
+   Mono font for numeric value with tnum.
+   ============================================================= */
 .progressWrapper {
     display: flex;
     align-items: center;
-    gap: var(--spacing-md);
+    gap: var(--s-12);
 }
 
 .progress {
     flex: 1;
-    background-color: var(--bg-tertiary);
-    border-radius: var(--radius-full);
+    background: var(--cursor-cream-500);
+    border: 1px solid var(--ds-border-hairline);
+    border-radius: var(--radius-pill);
     overflow: hidden;
 }
 
 /* Sizes */
-.xs {
-    height: 4px;
-}
-
-.sm {
-    height: 6px;
-}
-
-.md {
-    height: 8px;
-}
-
-.lg {
-    height: 12px;
-}
+.xs { height: 4px; }
+.sm { height: 6px; }
+.md { height: 8px; }
+.lg { height: 12px; }
 
 .indicator {
     height: 100%;
-    border-radius: var(--radius-full);
-    transition: width 0.5s ease-out;
+    border-radius: var(--radius-pill);
+    transition: width 0.5s var(--ease-out);
 }
 
 .animated {
@@ -39,42 +35,35 @@
     animation: shimmer 2s linear infinite;
 }
 
-/* Variants */
-.default {
-    background: linear-gradient(90deg, var(--color-primary), var(--color-accent));
-}
+/* ─── Variants (Cursor warm semantics) ─── */
+.default { background: var(--ds-text); }
+.brand   { background: var(--accent-orange); }
+.success { background: var(--accent-teal); }
+.warning { background: var(--accent-gold); }
+.danger  { background: var(--accent-crimson); }
 
-.success {
-    background: linear-gradient(90deg, #22c55e, #16a34a);
-}
-
-.warning {
-    background: linear-gradient(90deg, #f59e0b, #d97706);
-}
-
-.danger {
-    background: linear-gradient(90deg, #ef4444, #dc2626);
-}
+/* Timeline AI ops indicators */
+.thinking { background: var(--timeline-thinking); }
+.grep     { background: var(--timeline-grep); }
+.read     { background: var(--timeline-read); }
+.edit     { background: var(--timeline-edit); }
 
 .value {
-    font-size: 0.85rem;
-    font-weight: 600;
-    color: var(--text-primary);
+    font-family: var(--font-mono), ui-monospace, monospace;
+    font-size: var(--text-mono-sm);
+    font-weight: var(--weight-ui);
+    color: var(--ds-text);
     min-width: 45px;
     text-align: right;
+    font-feature-settings: "tnum";
 }
 
 @keyframes shimmer {
-    0% {
-        background-position: 200% 0;
-    }
-
-    100% {
-        background-position: -200% 0;
-    }
+    0%   { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
 }
 
-/* Circular Progress */
+/* ─── Circular Progress ─── */
 .circularWrapper {
     position: relative;
     display: inline-flex;
@@ -82,24 +71,24 @@
     justify-content: center;
 }
 
-.circularSvg {
-    transform: rotate(-90deg);
-}
+.circularSvg { transform: rotate(-90deg); }
 
 .circularBg {
     fill: none;
-    stroke: var(--bg-tertiary);
+    stroke: var(--ds-border-hairline);
 }
 
 .circularIndicator {
     fill: none;
     stroke-linecap: round;
-    transition: stroke-dashoffset 0.5s ease-out;
+    transition: stroke-dashoffset 0.5s var(--ease-out);
 }
 
 .circularValue {
     position: absolute;
-    font-size: 0.85rem;
-    font-weight: 600;
-    color: var(--text-primary);
+    font-family: var(--font-mono), ui-monospace, monospace;
+    font-size: var(--text-mono-sm);
+    font-weight: var(--weight-ui);
+    color: var(--ds-text);
+    font-feature-settings: "tnum";
 }

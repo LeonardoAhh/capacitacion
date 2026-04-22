@@ -7,6 +7,7 @@ import { AiOutlineClockCircle } from 'react-icons/ai';
 import SlideRenderer from './SlideRenderer';
 import CompletionScreen from './CompletionScreen';
 import TableOfContents from './TableOfContents';
+import DriveImage from '@/components/ui/DriveImage';
 import {
     saveUserProgress, getUserProgress,
     saveSlideNote, getCourseNotes,
@@ -569,8 +570,7 @@ export default function CoursePlayer({ course, slides, onClose, inline = false, 
                                 className={styles.mediaFull}
                             />
                         ) : (
-                            /* eslint-disable-next-line @next/next/no-img-element */
-                            <img src={bgMedia.url} alt="Fondo" className={styles.mediaFull} />
+                            <DriveImage src={bgMedia.url} alt="Fondo" className={styles.mediaFull} showLabel={false} />
                         )}
                         <div className={styles.mediaOverlay} />
                     </>
@@ -601,8 +601,7 @@ export default function CoursePlayer({ course, slides, onClose, inline = false, 
                         {bgMedia.type === 'video' ? (
                             <video src={bgMedia.url} autoPlay loop muted playsInline className={styles.mediaFull} />
                         ) : (
-                            /* eslint-disable-next-line @next/next/no-img-element */
-                            <img src={bgMedia.url} alt="Media adjunto" className={styles.mediaFull} />
+                            <DriveImage src={bgMedia.url} alt="Media adjunto" className={styles.mediaFull} />
                         )}
                     </div>
                 )}

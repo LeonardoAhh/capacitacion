@@ -3,6 +3,7 @@
 import { Wrench, Clock, AlertTriangle } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useState, useEffect } from 'react';
+import ThemeToggle from '@/components/layout/ThemeToggle/ThemeToggle';
 import styles from './MaintenanceScreen.module.css';
 
 const stagger = (i) => ({
@@ -67,9 +68,12 @@ export default function MaintenanceScreen({ message, targetDate }) {
                     <Wrench size={15} strokeWidth={2} aria-hidden="true" />
                     <span>Vertx System</span>
                 </div>
-                <div className={styles.statusPill} role="status">
-                    <span className={styles.statusDot} aria-hidden="true" />
-                    Mantenimiento activo
+                <div className={styles.topBarRight}>
+                    <div className={styles.statusPill} role="status">
+                        <span className={styles.statusDot} aria-hidden="true" />
+                        Mantenimiento activo
+                    </div>
+                    <ThemeToggle />
                 </div>
             </header>
 

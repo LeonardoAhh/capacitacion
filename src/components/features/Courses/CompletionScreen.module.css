@@ -25,13 +25,13 @@
 
 /* ── Card ── */
 .card {
-    background: var(--bg-primary);
+    background: var(--ds-bg-pure);
     border-radius: var(--radius-xl, 20px);
     padding: 36px 28px;
     width: 100%;
     max-width: 420px;
     text-align: center;
-    border: 1px solid var(--border-color);
+    border: 1px solid var(--ds-border-hairline);
     box-shadow: var(--shadow-lg);
     transform: scale(0.9) translateY(20px);
     opacity: 0;
@@ -39,7 +39,7 @@
         opacity 0.4s var(--ease-spring, ease);
     position: relative;
     z-index: 2;
-    color: var(--text-primary);
+    color: var(--ds-text);
 }
 
 .card.cardVisible {
@@ -60,12 +60,12 @@
 }
 
 .iconSuccess {
-    background: linear-gradient(135deg, var(--color-primary), var(--color-secondary, var(--color-primary)));
+    background: linear-gradient(135deg, var(--accent-orange), var(--color-secondary, var(--accent-orange)));
     box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
 }
 
 .iconWarning {
-    background: linear-gradient(135deg, var(--color-accent, #6366f1), var(--color-secondary, #8b5cf6));
+    background: linear-gradient(135deg, var(--color-accent, var(--accent-orange)), var(--color-secondary, var(--accent-orange)));
     box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
 }
 
@@ -79,14 +79,14 @@
     font-family: var(--font-serif);
     font-size: 1.5rem;
     font-weight: 800;
-    color: var(--text-primary);
+    color: var(--ds-text);
     margin: 0 0 6px;
     letter-spacing: -0.02em;
 }
 
 .courseTitle {
     font-size: 0.85rem;
-    color: var(--text-tertiary);
+    color: var(--ds-text-tertiary);
     margin: 0 0 24px;
     font-weight: 500;
 }
@@ -103,8 +103,8 @@
 .statCard {
     flex: 1;
     min-width: 80px;
-    background: var(--bg-secondary);
-    border: 1px solid var(--border-color);
+    background: var(--ds-bg);
+    border: 1px solid var(--ds-border-hairline);
     border-radius: var(--radius-md, 14px);
     padding: 12px 10px;
     display: flex;
@@ -127,13 +127,13 @@
 }
 
 .statSuccess {
-    border-color: var(--color-success, #34c759);
-    background: color-mix(in srgb, var(--color-success, #34c759) 8%, transparent);
+    border-color: var(--color-success, var(--accent-teal));
+    background: color-mix(in srgb, var(--color-success, var(--accent-teal)) 8%, transparent);
 }
 
 .statFail {
-    border-color: var(--color-danger, #ff3b30);
-    background: color-mix(in srgb, var(--color-danger, #ff3b30) 8%, transparent);
+    border-color: var(--accent-crimson);
+    background: color-mix(in srgb, var(--accent-crimson) 8%, transparent);
 }
 
 .statEmoji {
@@ -144,7 +144,7 @@
 .statValue {
     font-size: 1.3rem;
     font-weight: 800;
-    color: var(--text-primary);
+    color: var(--ds-text);
     font-variant-numeric: tabular-nums;
 }
 
@@ -153,15 +153,15 @@
     font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 0.08em;
-    color: var(--text-tertiary);
+    color: var(--ds-text-tertiary);
 }
 
 /* ── Retry msg ── */
 .retryMsg {
     font-size: 0.82rem;
-    color: var(--text-secondary);
-    background: var(--bg-secondary);
-    border: 1px solid var(--border-color);
+    color: var(--ds-text-secondary);
+    background: var(--ds-bg);
+    border: 1px solid var(--ds-border-hairline);
     border-radius: var(--radius-md, 10px);
     padding: 10px 14px;
     margin-bottom: 20px;
@@ -182,8 +182,8 @@
     padding: 12px 20px;
     border-radius: var(--radius-md, 12px);
     border: none;
-    background: var(--color-primary);
-    color: #fff;
+    background: var(--accent-orange);
+    color: var(--ds-bg-pure);
     font-weight: 700;
     font-size: 0.9rem;
     cursor: pointer;
@@ -200,9 +200,9 @@
     flex: 1;
     padding: 12px 20px;
     border-radius: var(--radius-md, 12px);
-    border: 1px solid var(--border-color);
-    background: var(--bg-secondary);
-    color: var(--text-primary);
+    border: 1px solid var(--ds-border-hairline);
+    background: var(--ds-bg);
+    color: var(--ds-text);
     font-weight: 600;
     font-size: 0.9rem;
     cursor: pointer;
@@ -211,7 +211,7 @@
 }
 
 .btnSecondary:hover {
-    border-color: var(--color-primary);
+    border-color: var(--accent-orange);
     transform: translateY(-1px);
 }
 
@@ -304,7 +304,7 @@
 
 .ratingLabel {
     font-size: 0.88rem;
-    color: var(--text-secondary, #6b7280);
+    color: var(--ds-text-secondary);
     font-family: var(--font-body), sans-serif;
     margin: 0;
 }
@@ -319,21 +319,21 @@
     background: none;
     border: none;
     cursor: pointer;
-    color: var(--border-color, #d1d5db);
+    color: var(--border-color, var(--ds-border-medium));
     transition: color 0.15s, transform 0.15s;
     padding: 0 2px;
     line-height: 1;
 }
 
 .starActive {
-    color: #f59e0b;
+    color: var(--accent-gold);
     transform: scale(1.15);
 }
 
 .ratingThanks {
     margin: 16px 0 0;
     font-size: 0.88rem;
-    color: #f59e0b;
+    color: var(--accent-gold);
     font-family: var(--font-body), sans-serif;
     font-weight: 600;
 }

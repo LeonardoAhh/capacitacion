@@ -1,17 +1,33 @@
+/* =============================================================
+   Button — design.md (Cursor System)
+   Variants:
+     - primary   → Surface 300 cream + dark text + hover→crimson
+     - secondary → Surface 100 light + dark text + ring border
+     - ghost     → transparent warm + secondary text
+     - outline   → alias semántico de secondary
+     - danger    → bg light + crimson text
+     - success   → bg light + teal text
+   Type: Geist Sans (sustituto CursorGothic) @ 14px/400/0 tracking
+   Hover signature: text shifts to var(--accent-crimson)
+   ============================================================= */
 .button {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    gap: var(--spacing-sm);
-    font-family: inherit;
-    font-weight: 500;
+    gap: var(--s-8);
+    font-family: var(--font-display), system-ui, sans-serif;
+    font-size: var(--text-button);
+    font-weight: var(--weight-read);
+    line-height: var(--lh-button);
     border: none;
-    border-radius: var(--radius-md);
+    border-radius: var(--radius-lg);
     cursor: pointer;
-    transition: all var(--transition-base);
+    white-space: nowrap;
+    transition: color var(--transition-fast),
+                background-color var(--transition-fast),
+                box-shadow var(--transition-fast);
     position: relative;
     overflow: hidden;
-    white-space: nowrap;
 }
 
 .button:disabled {
@@ -19,105 +35,91 @@
     cursor: not-allowed;
 }
 
-/* Sizes */
+.button:focus-visible {
+    outline: none;
+    box-shadow: var(--elev-focus);
+}
+
+/* ─── Sizes (Cursor padding 10px 14px estándar) ─────────── */
 .sm {
-    height: 32px;
-    padding: 0 var(--spacing-md);
-    font-size: 0.8rem;
+    height: 30px;
+    padding: var(--s-6) var(--s-12);
+    font-size: var(--text-button);
 }
 
 .md {
-    height: 40px;
-    padding: 0 var(--spacing-lg);
-    font-size: 0.9rem;
+    height: 36px;
+    padding: var(--s-10) var(--s-14);
 }
 
 .lg {
-    height: 48px;
-    padding: 0 var(--spacing-xl);
-    font-size: 1rem;
+    height: 44px;
+    padding: var(--s-12) var(--s-24);
+    font-size: var(--text-ui);
 }
 
-/* Variants */
+/* ─── Primary (Surface 300 cream + warm dark) ──────────── */
 .primary {
-    background: linear-gradient(135deg, var(--color-primary), var(--color-accent));
-    color: white;
-    box-shadow: var(--shadow-md);
+    background: var(--cursor-cream-300);
+    color: var(--ds-text);
 }
 
 .primary:hover:not(:disabled) {
-    box-shadow: var(--shadow-lg);
-    transform: translateY(-1px);
+    color: var(--accent-crimson);
 }
 
-.primary:active:not(:disabled) {
-    transform: translateY(0);
-}
-
-.secondary {
-    background-color: var(--bg-tertiary);
-    color: var(--text-primary);
-    border: 1px solid var(--border-color);
-}
-
-.secondary:hover:not(:disabled) {
-    background-color: var(--bg-secondary);
-    border-color: var(--color-primary);
-}
-
+/* ─── Secondary (Surface 100 light + ring) ─────────────── */
+.secondary,
 .outline {
-    background: transparent;
-    color: var(--color-primary);
-    border: 2px solid var(--color-primary);
+    background: var(--ds-bg-floor);
+    color: var(--ds-text);
+    box-shadow: inset 0 0 0 1px var(--ds-border-hairline);
 }
 
+.secondary:hover:not(:disabled),
 .outline:hover:not(:disabled) {
-    background-color: color-mix(in srgb, var(--color-primary) 10%, transparent);
+    color: var(--accent-crimson);
+    box-shadow: inset 0 0 0 1px var(--ds-border-medium);
 }
 
+/* ─── Ghost (transparent warm) ─────────────────────────── */
 .ghost {
-    background: transparent;
-    color: var(--text-secondary);
+    background: rgba(38, 37, 30, 0.06);
+    color: var(--ds-text-secondary);
 }
 
 .ghost:hover:not(:disabled) {
-    background-color: var(--bg-tertiary);
-    color: var(--text-primary);
+    color: var(--accent-crimson);
 }
 
+/* ─── Danger (warm crimson, no harsh red) ──────────────── */
 .danger {
-    background: var(--color-danger);
-    color: white;
-    box-shadow: var(--shadow-md);
+    background: var(--ds-bg-floor);
+    color: var(--accent-crimson);
+    box-shadow: inset 0 0 0 1px var(--ds-border-hairline);
 }
 
 .danger:hover:not(:disabled) {
-    filter: brightness(1.1);
-    box-shadow: var(--shadow-lg);
-    transform: translateY(-1px);
+    background: rgba(207, 45, 86, 0.08);
+    box-shadow: inset 0 0 0 1px var(--accent-crimson);
 }
 
+/* ─── Success (warm teal) ──────────────────────────────── */
 .success {
-    background: var(--color-success);
-    color: white;
-    box-shadow: var(--shadow-md);
+    background: var(--ds-bg-floor);
+    color: var(--accent-teal);
+    box-shadow: inset 0 0 0 1px var(--ds-border-hairline);
 }
 
 .success:hover:not(:disabled) {
-    filter: brightness(1.08);
-    box-shadow: var(--shadow-lg);
-    transform: translateY(-1px);
+    background: rgba(31, 138, 101, 0.08);
+    box-shadow: inset 0 0 0 1px var(--accent-teal);
 }
 
-/* Full width */
-.fullWidth {
-    width: 100%;
-}
+/* ─── Modifiers ────────────────────────────────────────── */
+.fullWidth { width: 100%; }
 
-/* Loading state */
-.loading {
-    color: transparent;
-}
+.loading { color: transparent; }
 
 .content {
     display: inline-flex;
@@ -125,25 +127,16 @@
     justify-content: center;
 }
 
-.loading .content {
-    visibility: hidden;
-}
+.loading .content { visibility: hidden; }
 
 .spinner {
     position: absolute;
-    width: 18px;
-    height: 18px;
+    width: 16px;
+    height: 16px;
     border: 2px solid currentColor;
     border-top-color: transparent;
     border-radius: 50%;
     animation: spin 0.6s linear infinite;
-}
-
-.primary .spinner,
-.danger .spinner,
-.success .spinner {
-    border-color: rgba(255, 255, 255, 0.35);
-    border-top-color: white;
 }
 
 .icon {
@@ -153,19 +146,23 @@
 }
 
 .icon svg {
-    width: 18px;
-    height: 18px;
+    width: 16px;
+    height: 16px;
 }
 
-/* Icon Button */
+/* ─── Icon Button ──────────────────────────────────────── */
 .iconButton {
     display: inline-flex;
     align-items: center;
     justify-content: center;
     border: none;
-    border-radius: var(--radius-md);
+    border-radius: var(--radius-lg);
     cursor: pointer;
-    transition: all var(--transition-fast);
+    background: transparent;
+    color: var(--ds-text-secondary);
+    transition: color var(--transition-fast),
+                background-color var(--transition-fast),
+                box-shadow var(--transition-fast);
 }
 
 .iconButton:disabled {
@@ -173,54 +170,37 @@
     cursor: not-allowed;
 }
 
-/* Icon Button Sizes */
-.iconSm {
-    width: 28px;
-    height: 28px;
-}
+.iconSm { width: 28px; height: 28px; }
+.iconMd { width: 36px; height: 36px; }
+.iconLg { width: 44px; height: 44px; }
 
-.iconMd {
-    width: 36px;
-    height: 36px;
-}
-
-.iconLg {
-    width: 44px;
-    height: 44px;
-}
-
-/* Icon Button Variants */
 .iconGhost {
     background: transparent;
-    color: var(--text-secondary);
+    color: var(--ds-text-secondary);
 }
 
 .iconGhost:hover:not(:disabled) {
-    background-color: var(--bg-tertiary);
-    color: var(--text-primary);
+    background: rgba(38, 37, 30, 0.06);
+    color: var(--accent-crimson);
 }
 
 .iconPrimary {
-    background-color: var(--color-primary);
-    color: white;
+    background: var(--cursor-cream-300);
+    color: var(--ds-text);
 }
 
 .iconPrimary:hover:not(:disabled) {
-    opacity: 0.9;
+    color: var(--accent-crimson);
 }
 
 .iconDanger {
     background: transparent;
-    color: var(--text-secondary);
+    color: var(--ds-text-secondary);
 }
 
 .iconDanger:hover:not(:disabled) {
-    background-color: color-mix(in srgb, var(--color-danger) 10%, transparent);
-    color: var(--color-danger);
+    background: rgba(207, 45, 86, 0.08);
+    color: var(--accent-crimson);
 }
 
-@keyframes spin {
-    to {
-        transform: rotate(360deg);
-    }
-}
+@keyframes spin { to { transform: rotate(360deg); } }

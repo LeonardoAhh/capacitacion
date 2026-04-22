@@ -1,136 +1,136 @@
+/* =============================================================
+   FormField — design.md (Cursor System)
+   Label gothic 11px micro + serif body for help/error.
+   States: default / focused / error / valid / disabled.
+   ============================================================= */
 .container {
     display: flex;
     flex-direction: column;
-    gap: 0.375rem;
+    gap: var(--s-6);
     width: 100%;
 }
 
 .label {
-    font-size: 0.875rem;
-    font-weight: 500;
-    color: var(--text-primary);
+    font-family: var(--font-display), system-ui, sans-serif;
+    font-size: var(--text-button);
+    font-weight: var(--weight-ui);
+    color: var(--ds-text);
     display: flex;
     align-items: center;
-    gap: 0.25rem;
+    gap: var(--s-4);
 }
 
 .required {
-    color: var(--color-danger);
-    font-weight: 700;
+    color: var(--accent-crimson);
+    font-weight: var(--weight-announce);
 }
 
 .inputWrapper {
     position: relative;
     display: flex;
     align-items: center;
-    border: 2px solid var(--border-color);
-    border-radius: var(--radius-md);
-    background: var(--bg-primary);
-    transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+    background: var(--ds-bg-pure);
+    border: 1px solid var(--ds-border-hairline);
+    border-radius: var(--radius-lg);
+    transition: border-color var(--transition-fast),
+                box-shadow var(--transition-fast);
+}
+
+.inputWrapper:hover:not(.error):not(.valid) {
+    border-color: var(--ds-border-medium);
 }
 
 .inputWrapper:focus-within,
 .inputWrapper.focused {
-    border-color: var(--color-primary);
-    box-shadow: 0 0 0 3px rgba(var(--color-primary), 0.1);
+    border-color: var(--ds-border-medium);
+    box-shadow: var(--elev-focus);
 }
 
 .inputWrapper.error {
-    border-color: var(--color-danger);
-    background: rgba(var(--color-danger), 0.02);
+    border-color: var(--accent-crimson);
 }
 
 .inputWrapper.error:focus-within {
-    box-shadow: 0 0 0 3px rgba(var(--color-danger), 0.1);
+    border-color: var(--accent-crimson);
+    box-shadow: 0 4px 12px rgba(207, 45, 86, 0.15);
 }
 
 .inputWrapper.valid {
-    border-color: var(--color-success);
+    border-color: var(--accent-teal);
 }
 
 .inputWrapper.valid:focus-within {
-    box-shadow: 0 0 0 3px rgba(var(--color-success), 0.1);
+    border-color: var(--accent-teal);
+    box-shadow: 0 4px 12px rgba(31, 138, 101, 0.15);
 }
 
 .inputWrapper:has(.input:disabled) {
-    background: var(--bg-secondary);
+    background: var(--ds-bg-floor);
     cursor: not-allowed;
     opacity: 0.7;
 }
 
 .input {
     flex: 1;
-    padding: 0.625rem 0.875rem;
+    padding: var(--s-10) var(--s-14);
     border: none;
     background: transparent;
-    font-size: 0.9375rem;
-    color: var(--text-primary);
+    box-shadow: none;
+    font-family: var(--font-display), system-ui, sans-serif;
+    font-size: var(--text-ui);
+    color: var(--ds-text);
     outline: none;
     width: 100%;
 }
 
-.input::placeholder {
-    color: var(--text-tertiary);
-}
+.input::placeholder { color: var(--ds-text-tertiary); }
 
-.input:disabled {
-    cursor: not-allowed;
-}
+.input:disabled { cursor: not-allowed; }
 
 .passwordToggle {
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 0.5rem;
+    padding: var(--s-8);
     background: transparent;
     border: none;
-    color: var(--text-tertiary);
+    color: var(--ds-text-secondary);
     cursor: pointer;
     transition: color var(--transition-fast);
 }
 
-.passwordToggle:hover {
-    color: var(--text-secondary);
-}
+.passwordToggle:hover { color: var(--accent-crimson); }
 
 .statusIcon {
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 0 0.5rem;
+    padding: 0 var(--s-8);
     pointer-events: none;
 }
 
-.inputWrapper.error .statusIcon {
-    color: var(--color-danger);
-}
-
-.inputWrapper.valid .statusIcon {
-    color: var(--color-success);
-}
+.inputWrapper.error .statusIcon  { color: var(--accent-crimson); }
+.inputWrapper.valid .statusIcon  { color: var(--accent-teal); }
 
 .helpText {
-    font-size: 0.8125rem;
-    color: var(--text-tertiary);
+    font-family: var(--font-serif), Georgia, serif;
+    font-size: var(--text-caption);
+    color: var(--ds-text-secondary);
+    line-height: var(--lh-system);
     margin: 0;
 }
 
 .errorText {
-    font-size: 0.8125rem;
-    color: var(--color-danger);
+    font-family: var(--font-display), system-ui, sans-serif;
+    font-size: var(--text-caption);
+    color: var(--accent-crimson);
     margin: 0;
     display: flex;
     align-items: center;
-    gap: 0.25rem;
+    gap: var(--s-4);
 }
 
 @media (max-width: 480px) {
-    .label {
-        font-size: 0.8125rem;
-    }
-
-    .input {
-        padding: 0.75rem;
-        font-size: 16px;
-    }
+    /* iOS no-zoom */
+    .input { font-size: 16px; padding: var(--s-12); }
 }

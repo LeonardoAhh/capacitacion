@@ -6,8 +6,8 @@
     border-radius: 50%;
     overflow: hidden;
     flex-shrink: 0;
-    background-color: var(--bg-tertiary);
-    border: 2px solid var(--bg-secondary);
+    background-color: var(--ds-bg-tertiary);
+    border: 2px solid var(--ds-bg);
 }
 
 /* Sizes */
@@ -79,10 +79,10 @@
 }
 
 .remaining {
-    background: linear-gradient(135deg, var(--bg-tertiary), var(--border-color));
+    background: linear-gradient(135deg, var(--ds-bg-tertiary), var(--ds-border-hairline));
 }
 
 .remaining .fallback {
-    color: var(--text-secondary);
+    color: var(--ds-text-secondary);
     font-size: 0.75rem;
 }

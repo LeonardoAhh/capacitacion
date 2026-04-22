@@ -21,7 +21,7 @@
     top: 30px;
     bottom: 0;
     width: 1px;
-    background: var(--border-color);
+    background: var(--ds-border-hairline);
 }
 
 /* Ícono del evento */
@@ -46,7 +46,7 @@
 .actionLabel {
     font-size: 0.82rem;
     font-weight: 600;
-    color: var(--text-primary);
+    color: var(--ds-text);
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -54,7 +54,7 @@
 
 .meta {
     font-size: 0.74rem;
-    color: var(--text-tertiary);
+    color: var(--ds-text-tertiary);
     display: flex;
     gap: 8px;
     flex-wrap: wrap;
@@ -63,8 +63,8 @@
 
 .target {
     font-size: 0.75rem;
-    color: var(--text-secondary);
-    background: var(--bg-secondary);
+    color: var(--ds-text-secondary);
+    background: var(--ds-bg);
     padding: 2px 8px;
     border-radius: 99px;
     margin-top: 4px;
@@ -80,9 +80,9 @@
     margin-top: 8px;
     padding: 7px 16px;
     border-radius: 8px;
-    border: 1.5px solid var(--border-color);
+    border: 1.5px solid var(--ds-border-hairline);
     background: transparent;
-    color: var(--text-secondary);
+    color: var(--ds-text-secondary);
     font-size: 0.8rem;
     font-weight: 500;
     cursor: pointer;
@@ -91,13 +91,13 @@
 }
 
 .loadMore:hover {
-    background: var(--bg-secondary);
-    color: var(--text-primary);
+    background: var(--ds-bg);
+    color: var(--ds-text);
 }
 
 .empty {
     text-align: center;
-    color: var(--text-tertiary);
+    color: var(--ds-text-tertiary);
     font-size: 0.85rem;
     padding: 32px 0;
 }

@@ -75,7 +75,7 @@
 }
 
 [data-theme="dark"] .dropdown {
-    background: #1e1e24;
+    background: var(--cursor-dark);
     border-color: rgba(255, 255, 255, 0.08);
     box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3);
 }

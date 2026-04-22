@@ -5,17 +5,17 @@
 .wrapper {
     display: flex;
     flex-direction: column;
-    border: 1px solid hsl(214.3 31.8% 91.4%);
+    border: 1px solid var(--ds-border-hairline);
     border-radius: 8px;
     overflow: visible;
-    background: hsl(0 0% 100%);
+    background: var(--ds-bg-pure);
     transition: border-color 0.15s, box-shadow 0.15s;
     position: relative;
 }
 
 .wrapper:focus-within {
-    border-color: hsl(222.2 47.4% 44%);
-    box-shadow: 0 0 0 3px hsl(222.2 47.4% 44% / 0.15);
+    border-color: var(--ds-border-medium);
+    box-shadow: 0 0 0 3px rgba(38, 37, 30, 0.15);
 }
 
 /* ── Toolbar ── */
@@ -24,8 +24,8 @@
     align-items: center;
     gap: 2px;
     padding: 4px 6px;
-    background: hsl(210 40% 98%);
-    border-bottom: 1px solid hsl(214.3 31.8% 91.4%);
+    background: var(--ds-bg-floor);
+    border-bottom: 1px solid var(--ds-border-hairline);
     flex-shrink: 0;
     flex-wrap: wrap;
     border-radius: 8px 8px 0 0;
@@ -48,7 +48,7 @@
     border-radius: 5px;
     background: transparent;
     cursor: pointer;
-    color: hsl(215.4 16.3% 36%);
+    color: var(--ds-text-secondary);
     font-size: 0.82rem;
     font-family: inherit;
     line-height: 1;
@@ -57,23 +57,23 @@
 }
 
 .toolBtn:hover {
-    background: hsl(0 0% 100%);
-    border-color: hsl(214.3 31.8% 88%);
-    color: hsl(222.2 47.4% 11.2%);
+    background: var(--ds-bg-pure);
+    border-color: var(--ds-border-medium);
+    color: var(--ds-text);
     box-shadow: 0 1px 2px rgba(0,0,0,0.06);
 }
 
 .toolBtn:active {
-    background: hsl(222.2 47.4% 11.2% / 0.08);
-    border-color: hsl(222.2 47.4% 44% / 0.30);
-    color: hsl(222.2 47.4% 30%);
+    background: rgba(38, 37, 30, 0.08);
+    border-color: rgba(38, 37, 30, 0.30);
+    color: var(--ds-text);
     transform: scale(0.95);
 }
 
 .toolDivider {
     width: 1px;
     height: 16px;
-    background: hsl(214.3 31.8% 88%);
+    background: var(--ds-border-medium);
     margin: 0 3px;
     flex-shrink: 0;
 }
@@ -97,7 +97,7 @@
     width: 14px;
     height: 3px;
     border-radius: 2px;
-    border: 1px solid hsl(0 0% 0% / 0.12);
+    border: 1px solid var(--ds-border-hairline);
 }
 
 /* Popover picker */
@@ -107,28 +107,56 @@
     left: 0;
     z-index: 200;
     display: grid;
-    grid-template-columns: repeat(6, 22px);
-    gap: 4px;
+    grid-template-columns: repeat(4, 24px);
+    gap: 6px;
     padding: 8px;
-    background: hsl(0 0% 100%);
-    border: 1px solid hsl(214.3 31.8% 91.4%);
-    border-radius: 8px;
-    box-shadow: 0 4px 16px rgba(0,0,0,0.12), 0 1px 4px rgba(0,0,0,0.06);
+    background: var(--ds-bg-pure);
+    border: 1px solid var(--ds-border-hairline);
+    border-radius: var(--radius-md, 8px);
+    box-shadow: var(--shadow-feature);
 }
 
 .colorSwatch {
-    width: 22px;
-    height: 22px;
-    border-radius: 4px;
-    border: 1.5px solid hsl(0 0% 0% / 0.14);
+    width: 24px;
+    height: 24px;
+    border-radius: var(--radius-sm, 4px);
+    border: 1.5px solid var(--ds-border-hairline);
     cursor: pointer;
-    transition: transform 0.1s, box-shadow 0.1s;
+    transition: transform 120ms ease, box-shadow 120ms ease, border-color 120ms ease;
     padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .colorSwatch:hover {
-    transform: scale(1.18);
-    box-shadow: 0 2px 8px rgba(0,0,0,0.20);
+    transform: scale(1.15);
+    border-color: var(--ds-border-medium);
+}
+
+.colorSwatch:focus-visible {
+    outline: none;
+    box-shadow: var(--elev-focus);
+}
+
+.colorSwatchActive {
+    border-color: var(--accent-orange);
+    box-shadow: 0 0 0 2px var(--ds-bg-pure), 0 0 0 4px var(--accent-orange);
+}
+
+/* Auto / por defecto: usa color de texto del tema (cohesivo light/dark) */
+.colorSwatchAuto {
+    background: var(--ds-bg-floor) !important;
+    border-style: dashed;
+    border-color: var(--ds-border-medium);
+}
+
+.colorSwatchAutoMark {
+    font-family: var(--font-display), system-ui, sans-serif;
+    font-size: 12px;
+    font-weight: var(--weight-announce);
+    color: var(--ds-text);
+    line-height: 1;
 }
 
 /* ── Área editable ── */
@@ -136,7 +164,7 @@
     padding: 10px 12px;
     font-size: 0.875rem;
     line-height: 1.7;
-    color: hsl(222.2 47.4% 11.2%);
+    color: var(--ds-text);
     outline: none;
     overflow-y: auto;
     word-break: break-word;
@@ -147,7 +175,7 @@
 
 .editor:empty::before {
     content: attr(data-placeholder);
-    color: hsl(215.4 16.3% 66%);
+    color: var(--ds-text-tertiary);
     pointer-events: none;
     font-style: italic;
 }
@@ -161,10 +189,10 @@
 .counter {
     padding: 3px 10px 4px;
     font-size: 0.70rem;
-    color: hsl(215.4 16.3% 56.9%);
+    color: var(--ds-text-secondary);
     text-align: right;
-    background: hsl(210 40% 98%);
-    border-top: 1px solid hsl(214.3 31.8% 91.4%);
+    background: var(--ds-bg-floor);
+    border-top: 1px solid var(--ds-border-hairline);
     flex-shrink: 0;
     border-radius: 0 0 8px 8px;
     font-family: var(--font-mono), monospace;

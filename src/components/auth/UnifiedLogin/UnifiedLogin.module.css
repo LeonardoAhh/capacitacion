@@ -1,7 +1,7 @@
 /* Portal RRHH — Azul Royal VIÑOPLASTIC */
 .container {
-    --login-accent: #003ccc;
+    --login-accent: var(--accent-orange);
     --login-accent-rgb: 0, 60, 204;
-    --login-gradient-from: #003ccc;
-    --login-gradient-to: #0050e0;
+    --login-gradient-from: var(--accent-orange);
+    --login-gradient-to: var(--accent-orange);
 }

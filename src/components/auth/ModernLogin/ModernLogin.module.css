@@ -4,10 +4,10 @@
 
 /* Custom properties en container para herencia */
 .container {
-    --login-accent: #6366f1;
+    --login-accent: var(--accent-orange);
     --login-accent-rgb: 99, 102, 241;
-    --login-gradient-from: #6366f1;
-    --login-gradient-to: #8b5cf6;
+    --login-gradient-from: var(--accent-orange);
+    --login-gradient-to: var(--accent-orange);
     /* Forzar inclusión en bundle de Next.js */
     isolation: isolate;
 }

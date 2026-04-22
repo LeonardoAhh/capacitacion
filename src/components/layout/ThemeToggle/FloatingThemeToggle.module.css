@@ -1,0 +1,42 @@
+/* =============================================================
+   FloatingThemeToggle — wrapper fijo para ThemeToggle global
+   Tokens del design system, safe-area en móvil, no tapa contenido
+   ============================================================= */
+.fab {
+    position: fixed;
+    z-index: 1500; /* por encima de contenido, por debajo de modales/toasts */
+    pointer-events: none;
+}
+
+/* Permite click solo en el botón, no en el wrapper */
+.fab > * {
+    pointer-events: auto;
+}
+
+/* Posiciones (con safe-area iOS) */
+.pos_top_right {
+    top: max(var(--s-12), env(safe-area-inset-top));
+    right: max(var(--s-12), env(safe-area-inset-right));
+}
+
+.pos_top_left {
+    top: max(var(--s-12), env(safe-area-inset-top));
+    left: max(var(--s-12), env(safe-area-inset-left));
+}
+
+.pos_bottom_right {
+    bottom: max(var(--s-12), env(safe-area-inset-bottom));
+    right: max(var(--s-12), env(safe-area-inset-right));
+}
+
+.pos_bottom_left {
+    bottom: max(var(--s-12), env(safe-area-inset-bottom));
+    left: max(var(--s-12), env(safe-area-inset-left));
+}
+
+@media (min-width: 768px) {
+    .pos_top_right    { top: var(--s-16); right: var(--s-16); }
+    .pos_top_left     { top: var(--s-16); left:  var(--s-16); }
+    .pos_bottom_right { bottom: var(--s-16); right: var(--s-16); }
+    .pos_bottom_left  { bottom: var(--s-16); left:  var(--s-16); }
+}

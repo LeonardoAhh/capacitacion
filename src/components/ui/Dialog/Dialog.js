@@ -18,13 +18,42 @@ export function Dialog({
     ...props
 }) {
     const [mounted, setMounted] = useState(false);
+    const [visible, setVisible] = useState(false);
+    const [closing, setClosing] = useState(false);
     const dialogRef = useRef(null);
     const previousActiveElement = useRef(null);
+    const closeTimerRef = useRef(null);
 
     // Only render portal after component mounts on client
     useEffect(() => {
         setMounted(true);
     }, []);
+
+    // Sync visibility with `open` prop, deferring unmount for exit animation
+    useEffect(() => {
+        if (open) {
+            if (closeTimerRef.current) {
+                clearTimeout(closeTimerRef.current);
+                closeTimerRef.current = null;
+            }
+            setClosing(false);
+            setVisible(true);
+        } else if (visible) {
+            setClosing(true);
+            closeTimerRef.current = setTimeout(() => {
+                setVisible(false);
+                setClosing(false);
+                closeTimerRef.current = null;
+            }, 220);
+        }
+        return () => {
+            if (closeTimerRef.current) {
+                clearTimeout(closeTimerRef.current);
+                closeTimerRef.current = null;
+            }
+        };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [open]);
 
     // Close on Escape key
     const handleKeyDown = useCallback((e) => {
@@ -81,10 +110,10 @@ export function Dialog({
         };
     }, [open]);
 
-    if (!open || !mounted) return null;
+    if (!visible || !mounted) return null;
 
     return createPortal(
-        <div className={styles.dialogRoot} {...props}>
+        <div className={cn(styles.dialogRoot, closing && styles.closing)} {...props}>
             <div
                 className={styles.overlay}
                 onClick={() => onOpenChange?.(false)}

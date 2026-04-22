@@ -1,6 +1,6 @@
 .flatCard {
-    background: var(--c-surface, #ffffff);
-    border: 1px solid var(--border-color);
+    background: var(--c-surface, var(--ds-bg-pure));
+    border: 1px solid var(--ds-border-hairline);
     border-radius: var(--radius-lg, 12px);
     padding: var(--spacing-xl, 1.5rem);
     box-shadow: var(--shadow-sm);
@@ -22,7 +22,7 @@
     font-size: 1.5rem;
     font-family: var(--font-serif);
     font-weight: 800;
-    color: var(--text-primary);
+    color: var(--ds-text);
 }
 
 .detailsBtn {
@@ -31,9 +31,9 @@
     gap: 6px;
     padding: 6px 12px;
     border-radius: 6px;
-    border: 1px solid var(--border-color);
-    background: var(--bg-secondary);
-    color: var(--text-secondary);
+    border: 1px solid var(--ds-border-hairline);
+    background: var(--ds-bg);
+    color: var(--ds-text-secondary);
     font-size: 0.8rem;
     font-weight: 500;
     cursor: pointer;
@@ -43,7 +43,7 @@
 .detailsBtn:hover {
     color: var(--c-primary);
     border-color: var(--c-primary);
-    background: var(--bg-primary);
+    background: var(--ds-bg-pure);
 }
 
 .detailsBtn svg {
@@ -62,7 +62,7 @@
 .metricLabel {
     font-size: 0.85rem;
     font-family: var(--font-serif);
-    color: var(--text-secondary);
+    color: var(--ds-text-secondary);
     text-transform: uppercase;
     letter-spacing: 0.05em;
     font-weight: 600;
@@ -77,24 +77,24 @@
     margin-bottom: 8px;
 }
 
-.colorGreen { color: var(--c-success, #10b981); }
-.colorYellow { color: var(--c-primary, #f59e0b); }
-.colorRed { color: var(--c-danger, #ef4444); }
+.colorGreen { color: var(--c-success, var(--accent-teal)); }
+.colorYellow { color: var(--c-primary, var(--accent-gold)); }
+.colorRed { color: var(--c-danger, var(--accent-crimson)); }
 
 .metricSubtext {
     font-size: 0.8rem;
-    color: var(--text-tertiary);
-    background: var(--bg-secondary);
+    color: var(--ds-text-tertiary);
+    background: var(--ds-bg);
     padding: 4px 10px;
     border-radius: 20px;
 }
 
 .divider {
     height: 1px;
-    background: var(--border-color);
+    background: var(--ds-border-hairline);
     width: 100%;
     margin-bottom: var(--spacing-lg, 1.5rem);
-    border-bottom: 1px dashed var(--border-color);
+    border-bottom: 1px dashed var(--ds-border-hairline);
 }
 
 /* SECONDARY METRIC */
@@ -112,7 +112,7 @@
 
 .metricLabelSmall {
     font-size: 0.8rem;
-    color: var(--text-secondary);
+    color: var(--ds-text-secondary);
     font-weight: 600;
     text-transform: uppercase;
 }
@@ -121,14 +121,14 @@
     font-family: var(--font-mono);
     font-size: 1.1rem;
     font-weight: 600;
-    color: var(--text-primary);
+    color: var(--ds-text);
 }
 
 /* PROGRESS BAR */
 .progressBarBg {
     width: 100%;
     height: 6px;
-    background: var(--bg-secondary);
+    background: var(--ds-bg);
     border-radius: 4px;
     overflow: hidden;
     margin-bottom: 8px;
@@ -144,10 +144,10 @@
 .specsRow {
     display: flex;
     justify-content: space-between;
-    background: var(--bg-secondary);
+    background: var(--ds-bg);
     padding: 10px 12px;
     border-radius: 6px;
-    border: 1px dashed var(--border-color);
+    border: 1px dashed var(--ds-border-hairline);
 }
 
 .spec {
@@ -158,12 +158,12 @@
 
 .specLabel {
     font-size: 0.7rem;
-    color: var(--text-tertiary);
+    color: var(--ds-text-tertiary);
     text-transform: uppercase;
 }
 
 .specValue {
     font-size: 0.95rem;
-    color: var(--text-primary);
+    color: var(--ds-text);
     font-weight: 700;
 }

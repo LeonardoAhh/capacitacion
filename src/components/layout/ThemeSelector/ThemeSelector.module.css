@@ -79,12 +79,12 @@
 }
 
 .toggleBtn:focus-visible {
-    outline: 2px solid #003ccc;
+    outline: 2px solid var(--accent-orange);
     outline-offset: 3px;
 }
 
 [data-theme="dark"] .toggleBtn:focus-visible {
-    outline-color: #7ba8ff;
+    outline-color: var(--accent-orange);
 }
 
 /* ─── Ícono ─────────────────────────────────────────────── */

@@ -1,46 +1,85 @@
+/* =============================================================
+   Card — design.md (Cursor System)
+   Surface 400 (#e6e5e0) + oklab border + atmospheric ambient.
+   Hover: shadow intensification (ambient → elevated card stack).
+   ============================================================= */
 .card {
-    background-color: var(--bg-secondary);
-    border: 1px solid var(--border-color);
+    background: var(--ds-bg-tertiary);
+    border: 1px solid var(--ds-border-hairline);
+    border-radius: var(--radius-lg);
+    padding: var(--s-24);
+    box-shadow: var(--elev-ambient);
+    transition: box-shadow var(--transition-base),
+                border-color var(--transition-base);
+}
+
+.card:hover {
+    box-shadow: var(--shadow-feature);
+    border-color: var(--ds-border-medium);
+}
+
+/* Featured (larger radius + heavier elevation default) */
+.cardFeatured {
+    background: var(--ds-bg-tertiary);
+    border: 1px solid var(--ds-border-hairline);
     border-radius: var(--radius-xl);
-    overflow: hidden;
-    transition: all var(--transition-base);
+    padding: var(--s-32);
+    box-shadow: var(--shadow-feature);
 }
 
-.hover:hover {
-    box-shadow: var(--shadow-lg);
-    transform: translateY(-2px);
-    border-color: var(--color-primary);
+/* Compact (smaller radius for inline use) */
+.cardCompact {
+    background: var(--ds-bg-tertiary);
+    border: 1px solid var(--ds-border-hairline);
+    border-radius: var(--radius-md);
+    padding: var(--s-16);
+    box-shadow: var(--elev-ambient);
 }
 
+/* Header / body / footer slots */
 .cardHeader {
-    padding: var(--spacing-xl);
-    padding-bottom: 0;
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: var(--s-12);
+    margin-bottom: var(--s-16);
 }
 
 .cardTitle {
-    font-size: 1.25rem;
-    font-weight: 600;
-    color: var(--text-primary);
+    font-family: var(--font-display), system-ui, sans-serif;
+    font-size: var(--text-h3);
+    font-weight: var(--weight-read);
+    line-height: var(--lh-snug);
+    letter-spacing: var(--track-h3);
+    color: var(--ds-text);
     margin: 0;
-    line-height: 1.4;
 }
 
 .cardDescription {
-    font-size: 0.875rem;
-    color: var(--text-secondary);
-    margin: var(--spacing-xs) 0 0 0;
-    line-height: 1.5;
+    font-family: var(--font-serif), Georgia, serif;
+    font-size: var(--text-body);
+    font-weight: var(--weight-read);
+    line-height: var(--lh-base);
+    color: var(--ds-text-secondary);
+    margin-top: var(--s-4);
+    font-feature-settings: var(--feat-serif);
 }
 
-.cardContent {
-    padding: var(--spacing-xl);
+.cardBody {
+    color: var(--ds-text);
 }
 
 .cardFooter {
-    padding: var(--spacing-lg) var(--spacing-xl);
-    background-color: var(--bg-tertiary);
-    border-top: 1px solid var(--border-color);
     display: flex;
     align-items: center;
-    gap: var(--spacing-md);
+    justify-content: flex-end;
+    gap: var(--s-8);
+    margin-top: var(--s-24);
+    padding-top: var(--s-16);
+    border-top: 1px solid var(--ds-border-hairline);
+}
+
+@media (max-width: 480px) {
+    .card           { padding: var(--s-16); }
+    .cardFeatured   { padding: var(--s-24); }
 }

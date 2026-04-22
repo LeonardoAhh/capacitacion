@@ -25,7 +25,7 @@
     width: 3px;
     min-height: 1.7rem;
     align-self: stretch;
-    background: #003ccc;
+    background: var(--accent-orange);
     border-radius: 2px;
     flex-shrink: 0;
     transition: background 0.3s;
@@ -39,19 +39,19 @@
 }
 
 .label {
-    font-family: var(--font-body, 'Roboto', Arial, sans-serif);
+    font-family: var(--font-body);
     font-size: .85rem;
     font-weight: 400;
-    color: #71717a;
+    color: var(--ds-text-secondary);
     letter-spacing: 0.01em;
     white-space: nowrap;
 }
 
 .author {
-    font-family: var(--font-body, 'Roboto', Arial, sans-serif);
+    font-family: var(--font-body);
     font-size: .85rem;
     font-weight: 700;
-    color: #003ccc;
+    color: var(--accent-orange);
     letter-spacing: 0.01em;
     white-space: nowrap;
 }
@@ -70,19 +70,19 @@
     width: 12px;
     height: 12px;
     border-radius: 50%;
-    background: #e4e4e7;
+    background: var(--ds-border-hairline);
     cursor: pointer;
     transition: background 0.2s, width 0.25s, border-radius 0.25s;
 }
 .dot:hover,
 .dot:focus-visible {
-    background: #003ccc;
+    background: var(--accent-orange);
     outline: none;
 }
 .dotActive {
     width: 28px;
     border-radius: 6px;
-    background: #003ccc;
+    background: var(--accent-orange);
 }
 
 @media (max-width: 600px) {

@@ -5,6 +5,7 @@ import { db } from '@/lib/firebase';
 import { doc, getDoc } from 'firebase/firestore';
 import styles from './page.module.css';
 import { Search, Award, Star, Calendar, CheckCircle2, AlertCircle, RefreshCw, BookOpen } from 'lucide-react';
+import FloatingThemeToggle from '@/components/layout/ThemeToggle/FloatingThemeToggle';
 
 
 const CONFETTI_COLORS = ['#fbbf24', '#f59e0b', '#10b981', '#34d399', '#d1fae5'];
@@ -146,6 +147,7 @@ export default function MuralPage() {
 
     return (
         <main className={styles.page}>
+            <FloatingThemeToggle />
             <div className={styles.wrapper}>
 
                 {/* Brand header */}
@@ -153,7 +155,7 @@ export default function MuralPage() {
                     <div className={styles.brandIcon}>
                         <Award size={18} aria-hidden="true" />
                     </div>
-                    <span className={styles.brandName}>Vertx · Mural de Resultados</span>
+                    <span className={styles.brandName}>VIÑOPLASTIC QUERÉTARO</span>
                 </div>
 
                 {/* Search card — visible when no result yet */}
@@ -162,7 +164,7 @@ export default function MuralPage() {
                         <div className={styles.searchCardHeader}>
                             <h1 className={styles.pageTitle}>Consulta tu resultado</h1>
                             <p className={styles.pageSubtitle}>
-                                Ingresa tu número de empleado para ver tu calificación
+                                Ingresa tu número de empleado para ver tu resultado más reciente en el examen teórico de promoción. ¡Suerte!
                             </p>
                         </div>
 

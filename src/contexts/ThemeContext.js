@@ -31,21 +31,37 @@ export function ThemeProvider({ children }) {
         metaThemeColor.setAttribute('content', color);
     };
 
-    const setTheme = (_newTheme) => {
-        // Desactivado temporalmente — el cambio de tema está bloqueado
+    const setTheme = (newTheme) => {
+        if (newTheme !== 'light' && newTheme !== 'dark') return;
+        setThemeState(newTheme);
+        if (typeof document !== 'undefined') {
+            document.documentElement.setAttribute('data-theme', newTheme);
+        }
+        if (typeof window !== 'undefined') {
+            try { localStorage.setItem('theme', newTheme); } catch { /* ignore */ }
+        }
+        updateThemeColor(newTheme);
     };
 
     const toggleTheme = () => {
-        // Desactivado temporalmente — el cambio de tema está bloqueado
+        setTheme(theme === 'dark' ? 'light' : 'dark');
     };
 
-    // Forzar tema claro al montar (selector de tema desactivado)
+    // Restaura preferencia guardada (o tema del sistema). Default: claro.
     useEffect(() => {
         if (typeof window === 'undefined') return;
-        setThemeState('light');
-        document.documentElement.setAttribute('data-theme', 'light');
-        localStorage.setItem('theme', 'light');
-        updateThemeColor('light');
+        let initial = 'light';
+        try {
+            const stored = localStorage.getItem('theme');
+            if (stored === 'light' || stored === 'dark') {
+                initial = stored;
+            } else if (window.matchMedia?.('(prefers-color-scheme: dark)').matches) {
+                initial = 'dark';
+            }
+        } catch { /* ignore */ }
+        setThemeState(initial);
+        document.documentElement.setAttribute('data-theme', initial);
+        updateThemeColor(initial);
     }, []);
 
 

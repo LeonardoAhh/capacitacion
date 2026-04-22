@@ -3,19 +3,18 @@
 import { useEffect, useRef, useCallback, useState } from 'react';
 import styles from './RichTextEditor.module.css';
 
-// Colores de texto disponibles
+// Paleta de texto adaptada al design system Cursor.
+// "default" = sin color inline → hereda var(--ds-text) y se adapta al tema (light/dark).
+// El resto usa colores del design system con suficiente luminosidad en ambos temas.
 const TEXT_COLORS = [
-    { label: 'Negro',    value: '#111827' },
-    { label: 'Gris',     value: '#6b7280' },
-    { label: 'Azul',     value: '#003ccc' },
-    { label: 'Cian',     value: '#0891b2' },
-    { label: 'Verde',    value: '#16a34a' },
-    { label: 'Amarillo', value: '#ca8a04' },
-    { label: 'Naranja',  value: '#ea580c' },
-    { label: 'Rojo',     value: '#dc2626' },
-    { label: 'Morado',   value: '#7c3aed' },
-    { label: 'Rosa',     value: '#db2777' },
-    { label: 'Blanco',   value: '#ffffff' },
+    { label: 'Por defecto (auto)', value: null,      preview: 'currentColor' },
+    { label: 'Naranja (énfasis)',  value: '#f54e00', preview: '#f54e00' }, // --accent-orange
+    { label: 'Crimson (alerta)',   value: '#cf2d56', preview: '#cf2d56' }, // --accent-crimson
+    { label: 'Teal (éxito)',       value: '#1f8a65', preview: '#1f8a65' }, // --accent-teal
+    { label: 'Dorado (premium)',   value: '#c08532', preview: '#c08532' }, // --accent-gold
+    { label: 'Azul (info)',        value: '#5b8def', preview: '#5b8def' }, // visible en ambos
+    { label: 'Morado',             value: '#a78bfa', preview: '#a78bfa' }, // visible en ambos
+    { label: 'Rosa',               value: '#f472b6', preview: '#f472b6' }, // visible en ambos
 ];
 
 /**
@@ -33,7 +32,7 @@ export default function RichTextEditor({
     const onChangeRef = useRef(onChange);
     const isComposingRef = useRef(false);
     const [showColorPicker, setShowColorPicker] = useState(false);
-    const [activeColor, setActiveColor] = useState('#111827');
+    const [activeColor, setActiveColor] = useState(null);
     const colorBtnRef = useRef(null);
     useEffect(() => { onChangeRef.current = onChange; }, [onChange]);
 
@@ -106,12 +105,24 @@ export default function RichTextEditor({
         emitChange();
     }, [emitChange]);
 
-    // Aplicar color de texto
+    // Aplicar color de texto. value=null → quitar color (auto/tema).
     const applyColor = useCallback((color) => {
         setActiveColor(color);
         setShowColorPicker(false);
-        applyFormat('foreColor', color);
-    }, [applyFormat]);
+        const el = editorRef.current;
+        if (!el) return;
+        el.focus();
+        if (color === null) {
+            // Quitar color inline para que herede del tema activo
+            document.execCommand('foreColor', false, 'inherit');
+            // Fallback: removeFormat parcial sólo de color (browser-dependent).
+            // Como execCommand no permite borrar selectivamente, dejamos 'inherit'
+            // que la mayoría de navegadores aplica como `color: inherit` en span.
+        } else {
+            document.execCommand('foreColor', false, color);
+        }
+        emitChange();
+    }, [emitChange]);
 
     const minHeight = `${minRows * 1.6}rem`;
 
@@ -179,23 +190,34 @@ export default function RichTextEditor({
                         aria-expanded={showColorPicker}
                     >
                         <span className={styles.colorIcon}>
-                            <strong style={{ color: activeColor === '#ffffff' ? '#111827' : activeColor }}>A</strong>
-                            <span className={styles.colorBar} style={{ background: activeColor }} />
+                            <strong style={{ color: activeColor || 'currentColor' }}>A</strong>
+                            <span
+                                className={styles.colorBar}
+                                style={{ background: activeColor || 'currentColor' }}
+                            />
                         </span>
                     </button>
                     {showColorPicker && (
                         <div className={styles.colorPicker} role="dialog" aria-label="Elegir color de texto">
-                            {TEXT_COLORS.map(c => (
-                                <button
-                                    key={c.value}
-                                    type="button"
-                                    className={styles.colorSwatch}
-                                    style={{ background: c.value, outline: c.value === activeColor ? '2px solid #003ccc' : undefined, outlineOffset: '2px' }}
-                                    onMouseDown={(e) => { e.preventDefault(); applyColor(c.value); }}
-                                    title={c.label}
-                                    aria-label={c.label}
-                                />
-                            ))}
+                            {TEXT_COLORS.map(c => {
+                                const isActive = c.value === activeColor;
+                                return (
+                                    <button
+                                        key={c.label}
+                                        type="button"
+                                        className={`${styles.colorSwatch} ${c.value === null ? styles.colorSwatchAuto : ''} ${isActive ? styles.colorSwatchActive : ''}`}
+                                        style={{ background: c.value === null ? 'transparent' : c.value }}
+                                        onMouseDown={(e) => { e.preventDefault(); applyColor(c.value); }}
+                                        title={c.label}
+                                        aria-label={c.label}
+                                        aria-pressed={isActive}
+                                    >
+                                        {c.value === null && (
+                                            <span aria-hidden="true" className={styles.colorSwatchAutoMark}>A</span>
+                                        )}
+                                    </button>
+                                );
+                            })}
                         </div>
                     )}
                 </div>

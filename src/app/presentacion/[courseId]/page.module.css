@@ -1,6 +1,6 @@
 /* ================================================================
-   PRESENTACION PAGE — page.module.css
-   shadcn/ui · Loading & Error states
+   presentacion/[courseId]/page.module.css â€” Cursor design system
+   Tokens-only. Loading & Error states.
    ================================================================ */
 
 .shell {
@@ -8,27 +8,30 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    background: hsl(210 40% 98%);
-    padding: 24px 16px;
-    font-family: var(--font-body), sans-serif;
+    background: var(--ds-bg);
+    padding: var(--s-24) var(--s-16);
+    font-family: var(--font-body);
 }
 
-/* ── Estado de carga ── */
+/* â”€â”€ Loading state â”€â”€ */
 .centered {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 16px;
-    color: hsl(215.4 16.3% 56.9%);
-    font-size: var(--text-sm, 0.875rem);
+    gap: var(--s-16);
+    color: var(--ds-text-secondary);
+    font-family: var(--font-serif);
+    font-feature-settings: var(--feat-serif);
+    font-style: italic;
+    font-size: var(--text-sm);
 }
 
 .spinner {
     display: block;
     width: 36px;
     height: 36px;
-    border: 2.5px solid hsl(214.3 31.8% 91.4%);
-    border-top-color: var(--color-primary, #003ccc);
+    border: 2.5px solid var(--ds-border-hairline);
+    border-top-color: var(--accent-orange);
     border-radius: 50%;
     animation: spin 0.65s linear infinite;
 }
@@ -37,56 +40,60 @@
     to { transform: rotate(360deg); }
 }
 
-/* ── Tarjeta de error (shadcn Card) ── */
+/* â”€â”€ Error card â”€â”€ */
 .errorCard {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 12px;
-    background: hsl(0 0% 100%);
-    border: 1px solid hsl(214.3 31.8% 91.4%);
-    border-radius: 12px;
-    padding: 32px 28px;
+    gap: var(--s-12);
+    background: var(--ds-bg-emphasis);
+    border: 1px solid var(--ds-border-hairline);
+    border-radius: var(--radius-xl);
+    padding: var(--s-32) var(--s-24);
     max-width: 360px;
     width: 100%;
     text-align: center;
-    color: hsl(215.4 16.3% 46.9%);
-    font-size: var(--text-sm, 0.875rem);
-    box-shadow: 0 1px 3px rgba(0,0,0,.06), 0 4px 12px rgba(0,0,0,.04);
+    box-shadow: var(--shadow-feature);
 }
 
 .errorCard p {
     margin: 0;
-    line-height: 1.6;
-    color: hsl(215.4 16.3% 36.9%);
+    font-family: var(--font-serif);
+    font-feature-settings: var(--feat-serif);
+    font-size: var(--text-sm);
+    line-height: var(--lh-relaxed);
+    color: var(--ds-text);
 }
 
 .btn {
-    margin-top: 4px;
+    margin-top: var(--s-4);
     display: inline-flex;
     align-items: center;
+    justify-content: center;
     height: 36px;
-    padding: 0 20px;
-    background: var(--color-primary, #003ccc);
-    color: #fff;
-    border: none;
-    border-radius: 8px;
-    font-size: var(--text-sm, 0.875rem);
-    font-family: var(--font-body), sans-serif;
-    font-weight: 600;
+    padding: 0 var(--s-24);
+    background: var(--cursor-cream-300);
+    color: var(--ds-text);
+    border: 1px solid var(--ds-border-medium);
+    border-radius: var(--radius-md);
+    font-family: var(--font-body);
+    font-size: var(--text-sm);
+    font-weight: var(--weight-ui);
     cursor: pointer;
-    transition: opacity 150ms ease, transform 100ms ease;
+    transition: background 0.15s ease, color 0.15s ease, box-shadow 0.2s ease;
 }
 
-.btn:hover  { opacity: 0.9; transform: translateY(-1px); }
-.btn:active { opacity: 1;   transform: scale(0.98); }
+.btn:hover {
+    background: var(--cursor-cream-400);
+    color: var(--accent-crimson);
+    box-shadow: var(--elev-focus);
+}
+
 .btn:focus-visible {
-    outline: 2px solid var(--color-primary, #003ccc);
+    outline: 2px solid var(--accent-orange);
     outline-offset: 2px;
 }
 
 @media (prefers-reduced-motion: reduce) {
     .spinner { animation: none; }
-    .btn:hover  { transform: none; }
-    .btn:active { transform: none; }
 }

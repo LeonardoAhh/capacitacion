@@ -5,10 +5,10 @@
 
 /* Step: Init / Intro */
 .introCard {
-    background-color: var(--bg-tertiary);
+    background-color: var(--ds-bg-tertiary);
     border-radius: var(--radius-lg);
     padding: 1.5rem;
-    border: 1px solid var(--border-color);
+    border: 1px solid var(--ds-border-hairline);
 }
 
 .headerRow {
@@ -33,19 +33,19 @@
     margin: 0;
     font-size: 1.1rem;
     font-weight: 700;
-    color: var(--text-primary);
+    color: var(--ds-text);
 }
 
 .description {
     margin: 0.25rem 0 0;
     font-size: 0.9rem;
-    color: var(--text-secondary);
+    color: var(--ds-text-secondary);
     line-height: 1.4;
 }
 
 .buttonPrimary {
     width: 100%;
-    background-color: var(--color-primary);
+    background-color: var(--accent-orange);
     color: white;
     font-weight: 600;
     padding: 0.875rem;
@@ -71,10 +71,10 @@
 
 /* Step: Show QR */
 .qrContainer {
-    background-color: var(--bg-tertiary);
+    background-color: var(--ds-bg-tertiary);
     border-radius: var(--radius-lg);
     padding: 1.5rem;
-    border: 1px solid var(--border-color);
+    border: 1px solid var(--ds-border-hairline);
     text-align: center;
     animation: fadeIn 0.4s ease;
 }
@@ -82,7 +82,7 @@
 .qrTitle {
     font-size: 1.1rem;
     font-weight: 600;
-    color: var(--text-primary);
+    color: var(--ds-text);
     margin: 0 0 1.5rem;
 }
 
@@ -106,7 +106,7 @@
     display: block;
     font-size: 0.9rem;
     font-weight: 500;
-    color: var(--text-secondary);
+    color: var(--ds-text-secondary);
     margin-bottom: 0.5rem;
 }
 
@@ -117,17 +117,17 @@
     text-align: center;
     letter-spacing: 0.25em;
     padding: 0.75rem;
-    border: 2px solid var(--border-color);
+    border: 2px solid var(--ds-border-hairline);
     border-radius: var(--radius-md);
-    background-color: var(--bg-secondary);
-    color: var(--text-primary);
+    background-color: var(--ds-bg);
+    color: var(--ds-text);
     margin-bottom: 1rem;
     outline: none;
     transition: border-color 0.2s;
 }
 
 .codeInput:focus {
-    border-color: var(--color-primary);
+    border-color: var(--accent-orange);
 }
 
 .actions {
@@ -139,8 +139,8 @@
 .buttonSecondary {
     flex: 1;
     background-color: transparent;
-    border: 1px solid var(--border-color);
-    color: var(--text-primary);
+    border: 1px solid var(--ds-border-hairline);
+    color: var(--ds-text);
     padding: 0.75rem;
     border-radius: var(--radius-md);
     cursor: pointer;
@@ -149,7 +149,7 @@
 
 .buttonVerify {
     flex: 1;
-    background-color: var(--color-success);
+    background-color: var(--accent-teal);
     color: white;
     border: none;
     padding: 0.75rem;
@@ -167,7 +167,7 @@
 .errorBox {
     background-color: rgba(255, 59, 48, 0.1);
     /* red-500 opacity */
-    color: var(--color-danger);
+    color: var(--accent-crimson);
     padding: 0.75rem;
     border-radius: var(--radius-sm);
     font-size: 0.9rem;
@@ -187,7 +187,7 @@
 
 .successIcon {
     font-size: 3rem;
-    background: var(--bg-secondary);
+    background: var(--ds-bg);
     width: 80px;
     height: 80px;
     border-radius: 50%;
@@ -195,17 +195,17 @@
     align-items: center;
     justify-content: center;
     margin: 0 auto 1rem;
-    color: var(--color-success);
+    color: var(--accent-teal);
 }
 
 .successTitle {
-    color: var(--color-success);
+    color: var(--accent-teal);
     margin: 0;
     font-size: 1.25rem;
 }
 
 .successText {
-    color: var(--text-secondary);
+    color: var(--ds-text-secondary);
     margin-top: 0.5rem;
     font-size: 0.95rem;
 }
@@ -238,7 +238,7 @@
     background: rgba(16, 185, 129, 0.1);
     border-radius: 8px;
     font-size: 0.9375rem;
-    color: var(--text-primary);
+    color: var(--ds-text);
 }
 
 .statusItem svg {
@@ -249,7 +249,7 @@
 .buttonDanger {
     width: 100%;
     padding: 0.875rem 1.5rem;
-    background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+    background: linear-gradient(135deg, var(--accent-crimson) 0%, var(--accent-crimson) 100%);
     color: white;
     border: none;
     border-radius: 12px;

@@ -7,7 +7,7 @@
 
 /* Card Skeleton */
 .card {
-    background: var(--bg-primary);
+    background: var(--ds-bg-pure);
     border-radius: 16px;
     padding: 20px;
     border: 1px solid rgba(0, 0, 0, 0.08);
@@ -30,7 +30,7 @@
     width: 56px;
     height: 56px;
     border-radius: 50%;
-    background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+    background: linear-gradient(90deg, var(--ds-bg-floor) 25%, var(--ds-border-hairline) 50%, var(--ds-bg-floor) 75%);
     background-size: 200% 100%;
     animation: shimmer 1.5s infinite;
 }
@@ -52,7 +52,7 @@
     height: 16px;
     width: 70%;
     border-radius: 4px;
-    background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+    background: linear-gradient(90deg, var(--ds-bg-floor) 25%, var(--ds-border-hairline) 50%, var(--ds-bg-floor) 75%);
     background-size: 200% 100%;
     animation: shimmer 1.5s infinite;
 }
@@ -61,7 +61,7 @@
     height: 14px;
     width: 50%;
     border-radius: 4px;
-    background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+    background: linear-gradient(90deg, var(--ds-bg-floor) 25%, var(--ds-border-hairline) 50%, var(--ds-bg-floor) 75%);
     background-size: 200% 100%;
     animation: shimmer 1.5s infinite;
     animation-delay: 0.2s;
@@ -90,7 +90,7 @@
     height: 12px;
     width: 80px;
     border-radius: 4px;
-    background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+    background: linear-gradient(90deg, var(--ds-bg-floor) 25%, var(--ds-border-hairline) 50%, var(--ds-bg-floor) 75%);
     background-size: 200% 100%;
     animation: shimmer 1.5s infinite;
     animation-delay: 0.4s;
@@ -100,7 +100,7 @@
     height: 24px;
     width: 60px;
     border-radius: 12px;
-    background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+    background: linear-gradient(90deg, var(--ds-bg-floor) 25%, var(--ds-border-hairline) 50%, var(--ds-bg-floor) 75%);
     background-size: 200% 100%;
     animation: shimmer 1.5s infinite;
     animation-delay: 0.6s;

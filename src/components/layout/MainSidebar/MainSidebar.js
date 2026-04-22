@@ -5,8 +5,8 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import NextImage from 'next/image';
 import {
-    Users, Zap, FileCheck, UserCheck, LayoutDashboard,
-    X, GraduationCap, Trophy,
+    Users, Zap, FileCheck, UserCheck,
+    X, GraduationCap, Trophy, PanelLeftClose, PanelLeftOpen,
 } from 'lucide-react';
 import styles from './MainSidebar.module.css';
 
@@ -15,7 +15,6 @@ const NAV_ITEMS = [
     // { id: 'perfil',       label: 'Detalle Empleado',  href: '/detalle',       icon: UserCheck },
     { id: 'induccion',    label: 'Presentaciones Cursos', href: '/induccion',                 icon: GraduationCap },
     { id: 'mural',        label: 'Mural Resultados',    href: '/mural',                     icon: Trophy },
-    { id: 'asistencia',   label: 'Registro de Asistencia',         href: '/asistencia',          icon: LayoutDashboard },
 ];
 
 const INSTRUCTOR_ITEMS = [
@@ -27,7 +26,7 @@ function getRoleLabel(rol) {
     return map[rol] || rol || 'Usuario';
 }
 
-export default function MainSidebar({ user, handleLogout, isOpen, onClose, isCollapsed }) {
+export default function MainSidebar({ user, handleLogout, isOpen, onClose, isCollapsed, onToggleCollapse }) {
     const pathname = usePathname();
     const isInstructor = user?.rol === 'instructor' || user?.rol === 'Instructor';
 
@@ -63,6 +62,21 @@ export default function MainSidebar({ user, handleLogout, isOpen, onClose, isCol
                             <span className={styles.brandName}>Viñoplastic</span>
                         )}
                     </div>
+
+                    {/* Desktop: toggle collapse */}
+                    {onToggleCollapse && (
+                        <button
+                            className={`${styles.iconBtn} ${styles.collapseBtn}`}
+                            onClick={onToggleCollapse}
+                            aria-label={isCollapsed ? 'Expandir menú' : 'Colapsar menú'}
+                            title={isCollapsed ? 'Expandir menú' : 'Colapsar menú'}
+                            type="button"
+                        >
+                            {isCollapsed ? <PanelLeftOpen size={16} /> : <PanelLeftClose size={16} />}
+                        </button>
+                    )}
+
+                    {/* Mobile: close drawer */}
                     <button
                         className={styles.closeBtn}
                         onClick={onClose}

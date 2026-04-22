@@ -20,8 +20,8 @@
 .promptCard {
     pointer-events: auto;
     width: 340px;
-    background: hsl(0 0% 100%);
-    border: 1px solid hsl(214.3 31.8% 91.4%);
+    background: var(--ds-bg-pure);
+    border: 1px solid var(--ds-border-hairline);
     border-radius: 12px;
     box-shadow: 0 4px 6px -1px rgba(0,0,0,0.08), 0 10px 30px -3px rgba(0,0,0,0.10);
     padding: 16px;
@@ -47,27 +47,27 @@
     background: transparent;
     border: 1px solid transparent;
     border-radius: 6px;
-    color: hsl(215.4 16.3% 56.9%);
+    color: var(--ds-text-tertiary);
     cursor: pointer;
     transition: background 0.15s, color 0.15s, border-color 0.15s;
 }
 
 .closeBtn:hover {
-    background: hsl(210 40% 96.1%);
-    border-color: hsl(214.3 31.8% 91.4%);
-    color: hsl(222.2 47.4% 11.2%);
+    background: var(--ds-bg-subtle);
+    border-color: var(--ds-border-hairline);
+    color: var(--ds-text);
 }
 
 .iconWrapper {
     width: 40px;
     height: 40px;
-    background: hsl(214.3 31.8% 96%);
-    border: 1px solid hsl(214.3 31.8% 91.4%);
+    background: var(--ds-bg-tertiary);
+    border: 1px solid var(--ds-border-hairline);
     border-radius: 8px;
     display: flex;
     align-items: center;
     justify-content: center;
-    color: hsl(221.2 83.2% 53.3%);
+    color: var(--accent-orange);
     flex-shrink: 0;
 }
 
@@ -82,7 +82,7 @@
 .title {
     font-size: 0.875rem;
     font-weight: 600;
-    color: hsl(222.2 47.4% 11.2%);
+    color: var(--ds-text);
     margin: 0;
     font-family: var(--font-body), sans-serif;
     line-height: 1.4;
@@ -90,7 +90,7 @@
 
 .description {
     font-size: 0.8rem;
-    color: hsl(215.4 16.3% 46.9%);
+    color: var(--ds-text-secondary);
     line-height: 1.5;
     margin: 0;
     font-family: var(--font-body), sans-serif;
@@ -101,11 +101,11 @@
     flex-direction: column;
     gap: 4px;
     padding: 10px 12px;
-    background: hsl(214.3 31.8% 97%);
-    border: 1px solid hsl(214.3 31.8% 91.4%);
+    background: var(--ds-bg-subtle);
+    border: 1px solid var(--ds-border-hairline);
     border-radius: 8px;
     font-size: 0.78rem;
-    color: hsl(215.4 16.3% 36%);
+    color: var(--ds-text-secondary);
     font-family: var(--font-body), sans-serif;
     line-height: 1.5;
 }
@@ -113,8 +113,8 @@
 .installButton {
     width: 100%;
     padding: 8px 16px;
-    background: hsl(222.2 47.4% 11.2%);
-    color: hsl(210 40% 98%);
+    background: var(--ds-text);
+    color: var(--ds-bg-floor);
     border: none;
     border-radius: 8px;
     font-size: 0.875rem;
@@ -125,7 +125,7 @@
 }
 
 .installButton:hover {
-    background: hsl(222.2 47.4% 20%);
+    background: var(--ds-text);
 }
 
 @media (max-width: 480px) {

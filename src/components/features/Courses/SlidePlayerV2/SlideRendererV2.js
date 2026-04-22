@@ -18,10 +18,41 @@ const ICON_MAP = Object.fromEntries(ICON_CATALOG.map(({ name, Icon }) => [name, 
    ═══════════════════════════════════════════════════ */
 
 /* ── Helpers ──────────────────────────────────────── */
+
+/**
+ * Sanitiza colores legacy guardados en HTML que rompen contraste en tema oscuro.
+ * - Negros casi-puros (#000, #111827, #1f2937…) y blancos puros (#fff, #ffffff)
+ *   se eliminan para que herede `--ds-text` del tema activo.
+ * - Resto de colores (acentos del design system) se respetan.
+ */
+function sanitizeLegacyColors(html) {
+  if (!html || typeof html !== 'string') return html;
+  // Lista de hex problemáticos que el editor antiguo guardaba como "Negro"/"Blanco"
+  const NEUTRALS = /#(?:000(?:000)?|111827|1f2937|374151|4b5563|fff(?:fff)?|f9fafb|f3f4f6)\b/i;
+  return html
+    // Atributo legacy <font color="#xxx">
+    .replace(/\s+color="(#[0-9a-f]{3,8})"/gi, (m, hex) =>
+      NEUTRALS.test(hex) ? '' : m
+    )
+    // style="color:#xxx" inline
+    .replace(/color\s*:\s*(#[0-9a-f]{3,8})\s*;?/gi, (m, hex) =>
+      NEUTRALS.test(hex) ? '' : m
+    );
+}
+
 function renderBody(body) {
   if (!body) return null;
-  const isHTML = /<[a-z][\s\S]*>/i.test(body);
-  if (isHTML) return <div className={s.body} dangerouslySetInnerHTML={{ __html: body }} />;
+  // Detecta tags HTML O entidades (&gt; &amp; &nbsp; &#39; etc).
+  // El RichTextEditor emite innerHTML donde `>` se serializa como `&gt;`,
+  // por lo que el body puede no tener tags pero sí entidades — debe parsearse igual.
+  const hasMarkup = /<[a-z][\s\S]*?>|&(?:[a-z]+|#\d+);/i.test(body);
+  if (hasMarkup) {
+    // Si carece de tags de bloque, envolver en <p> para preservar layout
+    const hasBlock = /<(?:p|div|ul|ol|li|h\d|br|blockquote|pre)\b/i.test(body);
+    const cleaned = sanitizeLegacyColors(body);
+    const html = hasBlock ? cleaned : `<p>${cleaned}</p>`;
+    return <div className={s.body} dangerouslySetInnerHTML={{ __html: html }} />;
+  }
   return <div className={s.body}>{body.split('\n').map((p, i) => <p key={i}>{p}</p>)}</div>;
 }
 
