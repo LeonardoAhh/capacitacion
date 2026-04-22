@@ -371,10 +371,6 @@ export default function MuralPage() {
 
                         {/* Footer */}
                         <div className={styles.resultFooter}>
-                            <div className={styles.dateRow}>
-                                <Calendar size={13} aria-hidden="true" />
-                                <span>Evaluación: {result.data.date || 'Reciente'}</span>
-                            </div>
                             <button
                                 className={`${styles.newSearchBtn} ${result.data.passed ? styles.newSearchBtnSuccess : styles.newSearchBtnFail}`}
                                 onClick={handleReset}
