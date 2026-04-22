@@ -161,12 +161,11 @@ function useAutoSave(slide, formData, onSave, flushRef) {
   const inFlightRef = useRef(false);            // evita writes solapados
 
   // Reset snapshot al cambiar de slide (slide?.data solo init, no debe re-disparar)
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
     lastSavedRef.current = JSON.stringify(slide?.data ?? {});
     pendingDataRef.current = null;
     setSaveState('idle');
-  }, [slide?.id]);
+  }, [slide?.id]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Guardar inmediato (manual o por flush externo)
   const doSave = useCallback(async (dataToSave) => {
