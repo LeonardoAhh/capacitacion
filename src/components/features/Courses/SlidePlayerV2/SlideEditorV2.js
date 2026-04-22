@@ -160,7 +160,8 @@ function useAutoSave(slide, formData, onSave, flushRef) {
   const pendingDataRef = useRef(null);          // último formData "dirty" sin guardar
   const inFlightRef = useRef(false);            // evita writes solapados
 
-  // Reset snapshot al cambiar de slide
+  // Reset snapshot al cambiar de slide (slide?.data solo init, no debe re-disparar)
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
     lastSavedRef.current = JSON.stringify(slide?.data ?? {});
     pendingDataRef.current = null;
