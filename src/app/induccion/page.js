@@ -263,6 +263,16 @@ function InduccionContent() {
 
 
 
+    const handleCopyCourseUrl = useCallback(async (courseId) => {
+        try {
+            const url = `${window.location.origin}/presentacion/${courseId}`;
+            await navigator.clipboard.writeText(url);
+            toast.success('Copiado', 'Enlace del curso copiado al portapapeles.');
+        } catch {
+            toast.error('Error', 'No se pudo copiar el enlace.');
+        }
+    }, [toast]);
+
     const handleSyncAllPuestos = useCallback(async () => {
         setSyncing(true);
         const result = await syncCoursePuestosFromPositions();
@@ -353,6 +363,7 @@ function InduccionContent() {
                             updatingNative={updatingNative}
                             onSyncAllPuestos={handleSyncAllPuestos}
                             syncing={syncing}
+                            onCopyCourseUrl={handleCopyCourseUrl}
                         />
                     </main>
                 </div>
