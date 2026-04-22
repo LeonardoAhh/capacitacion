@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { useAuth } from '@/contexts/AuthContext';
@@ -1456,7 +1456,6 @@ function AdminMuralSection() {
                                         <th>Puesto Actual</th>
                                         <th>Destino</th>
                                         <th>Estado</th>
-                                        <th>Feedback</th>
                                         <th className={styles.rowMenuCell}></th>
                                     </tr>
                                 </thead>
@@ -1511,17 +1510,6 @@ function AdminMuralSection() {
                                                         : <span className={styles.statusFailed}>REPROBADO</span>
                                                     }
                                                 </td>
-                                                <td>
-                                                    <div className={styles.recTagsList}>
-                                                        {Array.isArray(item.recommendations) && item.recommendations.length > 0
-                                                            ? item.recommendations.map((rec, i) => <span key={i} className={styles.recTag}>{rec}</span>)
-                                                            : (item.recommendations
-                                                                ? <span className={styles.recTag}>{item.recommendations}</span>
-                                                                : <span style={{ color: 'var(--text-tertiary)', fontSize: '0.76rem' }}></span>
-                                                            )
-                                                        }
-                                                    </div>
-                                                </td>
                                                 <td className={styles.rowMenuCell}>
                                                     <RowMenu
                                                         onEdit={() => handleEditClick(item)}
@@ -1533,7 +1521,7 @@ function AdminMuralSection() {
                                     })}
                                     {filteredMuralList.length === 0 && (
                                         <tr className={styles.tableEmptyRow}>
-                                            <td colSpan="7">No hay resultados en el mural.</td>
+                                            <td colSpan="6">No hay resultados en el mural.</td>
                                         </tr>
                                     )}
                                 </tbody>
@@ -1642,9 +1630,10 @@ function AdminMuralSection() {
                                             </div>
                                             <div className={styles.fieldGroup}>
                                                 <label className={styles.fieldLabel}>Puesto Objetivo</label>
-                                                <input type="text" className={`${styles.fieldInput} ${styles.fieldInputReadonly}`}
+                                                <input type="text" className={styles.fieldInput}
                                                     value={manualData.promotionTo}
-                                                    readOnly tabIndex={-1} />
+                                                    onChange={e => setManualData({ ...manualData, promotionTo: e.target.value })}
+                                                    placeholder="Puesto de destino" />
                                             </div>
                                         </div>
                                     )}
@@ -1664,9 +1653,10 @@ function AdminMuralSection() {
                                                 </div>
                                                 <div className={styles.fieldGroup}>
                                                     <label className={styles.fieldLabel}>Calificación requerida (%)</label>
-                                                    <input type="number" className={`${styles.fieldInput} ${styles.fieldInputReadonly}`}
+                                                    <input type="number" min="0" max="100" className={styles.fieldInput}
                                                         value={manualData.requiredScore}
-                                                        readOnly tabIndex={-1} />
+                                                        onChange={e => setManualData({ ...manualData, requiredScore: e.target.value })}
+                                                        placeholder="0 – 100" />
                                                 </div>
                                             </div>
 

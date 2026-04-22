@@ -11,6 +11,99 @@
     to   { opacity: 1; transform: translateY(0); }
 }
 
+@keyframes resultReveal {
+    from { opacity: 0; transform: scale(0.95) translateY(20px); }
+    to   { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+@keyframes scoreSpring {
+    0%   { opacity: 0; transform: scale(0.35); }
+    55%  { opacity: 1; transform: scale(1.10); }
+    75%  { transform: scale(0.96); }
+    90%  { transform: scale(1.03); }
+    100% { transform: scale(1); }
+}
+
+@keyframes badgeFloat {
+    from { opacity: 0; transform: translateY(-10px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeSlideUp {
+    from { opacity: 0; transform: translateY(12px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ─── Intro veil ──────────────────────────────────────────── */
+@keyframes introVeilOut {
+    0%   { transform: translateY(0); }
+    60%  { transform: translateY(0); }
+    100% { transform: translateY(-100%); }
+}
+@keyframes introIconGlow {
+    0%, 100% { box-shadow: 0 0 24px rgba(192, 133, 50, 0.45), 0 0 60px rgba(192, 133, 50, 0.2); }
+    50%       { box-shadow: 0 0 48px rgba(192, 133, 50, 0.9), 0 0 110px rgba(192, 133, 50, 0.45), 0 0 180px rgba(192, 133, 50, 0.15); }
+}
+@keyframes introContentIn {
+    from { opacity: 0; transform: translateY(18px) scale(0.96); }
+    to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+@keyframes introSubIn {
+    from { opacity: 0; letter-spacing: 0.08em; }
+    to   { opacity: 0.45; letter-spacing: 0.22em; }
+}
+
+.introVeil {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    background: #1a1914;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    animation: introVeilOut 5s cubic-bezier(0.55, 0, 0.8, 0.45) forwards;
+    pointer-events: none;
+    will-change: transform;
+}
+
+.introContent {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+    animation: introContentIn 0.7s cubic-bezier(0.16, 1, 0.3, 1) 0.1s both;
+}
+
+.introIcon {
+    width: 80px;
+    height: 80px;
+    background: #c08532;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #1a1914;
+    animation: introIconGlow 1.8s ease-in-out 0.6s infinite;
+    flex-shrink: 0;
+}
+
+.introTitle {
+    font-family: var(--font-mono), ui-monospace, monospace;
+    font-size: 1.15rem;
+    font-weight: 500;
+    color: #f2f1ed;
+    letter-spacing: 0.32em;
+    text-transform: uppercase;
+}
+
+.introSub {
+    font-family: var(--font-mono), ui-monospace, monospace;
+    font-size: 0.68rem;
+    color: #f2f1ed;
+    text-transform: uppercase;
+    animation: introSubIn 0.9s cubic-bezier(0.16, 1, 0.3, 1) 0.5s both;
+}
+
 /* ─── Page shell ──────────────────────────────────────────── */
 .page {
     min-height: 100dvh;
@@ -228,7 +321,7 @@
     border: 1px solid var(--ds-border-hairline);
     border-radius: var(--radius-xl);
     overflow: hidden;
-    animation: slideUp 0.32s cubic-bezier(0.22, 1, 0.36, 1) both;
+    animation: resultReveal 0.65s cubic-bezier(0.16, 1, 0.3, 1) both;
     position: relative;
     box-shadow: var(--shadow-feature);
 }
@@ -281,6 +374,7 @@
     padding: var(--s-4) var(--s-12);
     border-radius: var(--radius-pill);
     margin-bottom: var(--s-16);
+    animation: badgeFloat 0.4s cubic-bezier(0.16, 1, 0.3, 1) 0.15s both;
 }
 
 .statusBadgeSuccess {
@@ -310,6 +404,7 @@
     line-height: 1;
     letter-spacing: -0.04em;
     font-feature-settings: var(--feat-serif);
+    animation: scoreSpring 0.7s cubic-bezier(0.34, 1.56, 0.64, 1) 0.28s both;
 }
 
 .scoreNumberSuccess { color: var(--accent-teal); }
@@ -334,6 +429,7 @@
     margin: 0 0 var(--s-4);
     letter-spacing: var(--track-h3);
     font-feature-settings: var(--feat-serif);
+    animation: fadeSlideUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) 0.42s both;
 }
 
 .employeePosition {
@@ -341,6 +437,7 @@
     font-size: var(--text-button);
     color: var(--ds-text-secondary);
     margin: 0;
+    animation: fadeSlideUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) 0.52s both;
 }
 
 /* ─── Result body ────────────────────────────────────────── */
@@ -349,6 +446,7 @@
     display: flex;
     flex-direction: column;
     gap: var(--s-12);
+    animation: fadeSlideUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) 0.62s both;
 }
 
 .messageText {

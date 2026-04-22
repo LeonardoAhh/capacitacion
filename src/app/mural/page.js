@@ -5,7 +5,7 @@ import { createPortal } from 'react-dom';
 import { db } from '@/lib/firebase';
 import { doc, getDoc } from 'firebase/firestore';
 import styles from './page.module.css';
-import { Search, Award, Star, Calendar, CheckCircle2, AlertCircle, RefreshCw, BookOpen, GraduationCap, MessageCircle, X, ChevronRight, Clock } from 'lucide-react';
+import { Search, Award, Star, Calendar, CheckCircle2, AlertCircle, RefreshCw, GraduationCap, MessageCircle, X, ChevronRight, Clock } from 'lucide-react';
 import FloatingThemeToggle from '@/components/layout/ThemeToggle/FloatingThemeToggle';
 
 
@@ -163,6 +163,12 @@ export default function MuralPage() {
     const [errorMsg, setErrorMsg] = useState('');
     const [config, setConfig] = useState(DEFAULT_CONFIG);
     const [complianceOpen, setComplianceOpen] = useState(false);
+    const [introPlaying, setIntroPlaying] = useState(true);
+
+    useEffect(() => {
+        const timer = setTimeout(() => setIntroPlaying(false), 5000);
+        return () => clearTimeout(timer);
+    }, []);
 
     useEffect(() => {
         const fetchConfig = async () => {
@@ -218,28 +224,6 @@ export default function MuralPage() {
         setEmployeeId(e.target.value.replace(/[^0-9mM]/g, ''));
     }, []);
 
-    const renderRecommendations = (recommendations) => {
-        if (!recommendations) return null;
-        const isArray = Array.isArray(recommendations) && recommendations.length > 0;
-
-        return (
-            <div className={styles.recommendations}>
-                <h4 className={styles.recommendationsTitle}>
-                    <BookOpen size={15} aria-hidden="true" /> Recomendaciones de Estudio
-                </h4>
-                {isArray ? (
-                    <div className={styles.recommendationTags}>
-                        {recommendations.map((rec, i) => (
-                            <span key={i} className={styles.recommendationTag}>{rec}</span>
-                        ))}
-                    </div>
-                ) : (
-                    <p className={styles.recommendationText}>{recommendations}</p>
-                )}
-            </div>
-        );
-    };
-
     const getMessage = (passed, name) => {
         const msg = passed ? config.successMessage : config.motivationalMessage;
         return msg.replace('[Nombre]', name || '');
@@ -247,6 +231,18 @@ export default function MuralPage() {
 
     return (
         <main className={styles.page}>
+            {introPlaying && createPortal(
+                <div className={styles.introVeil} aria-hidden="true">
+                    <div className={styles.introContent}>
+                        <div className={styles.introIcon}>
+                            <Award size={36} />
+                        </div>
+                        <span className={styles.introTitle}>VIÑOPLASTIC</span>
+                        <span className={styles.introSub}>MURAL DE RECONOCIMIENTO</span>
+                    </div>
+                </div>,
+                document.body
+            )}
             <FloatingThemeToggle />
             <div className={styles.wrapper}>
 
@@ -371,7 +367,6 @@ export default function MuralPage() {
                                 </div>
                             </div>
 
-                            {!result.data.passed && renderRecommendations(result.data.recommendations)}
                         </div>
 
                         {/* Footer */}
