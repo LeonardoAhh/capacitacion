@@ -1,7 +1,6 @@
 'use client';
 
 import { useState, useCallback, useEffect, useRef } from 'react';
-import { AnimatePresence, motion } from 'framer-motion';
 import SlideRendererV2 from './SlideRendererV2';
 import s from './SlidePlayerV2.module.css';
 
@@ -47,23 +46,10 @@ export default function SlidePlayerV2({ course, slides = [], onClose }) {
   const [visited, setVisited] = useState(() => new Set([0]));
   const [quizScore, setQuizScore] = useState(null);
   const [commitmentText, setCommitmentText] = useState('');
-  const [direction, setDirection] = useState('down');   // 'down' | 'up'
-  const [slideKey, setSlideKey] = useState(0);          // forces re-mount for animation
   const [isDark, setIsDark] = useState(false);
   const [exporting, setExporting] = useState(false);
   const slideAreaRef = useRef(null);
   const mainRef = useRef(null);
-
-  /* ── Framer Motion slide variants ───────────────── */
-  const slideVariants = {
-    enter: (dir) => ({ opacity: 0, y: dir === 'down' ? 40 : -40 }),
-    center: { opacity: 1, y: 0 },
-    exit: (dir) => ({ opacity: 0, y: dir === 'down' ? -40 : 40 }),
-  };
-  const slideTransition = {
-    duration: 0.38,
-    ease: [0.16, 1, 0.3, 1],
-  };
 
   /* ── Theme toggle (local to player, restores on unmount) ── */
   const prevThemeRef = useRef(null);
@@ -98,8 +84,6 @@ export default function SlidePlayerV2({ course, slides = [], onClose }) {
   const goTo = useCallback(
     (idx) => {
       if (idx >= 0 && idx < totalSlides && idx !== currentIndex) {
-        setDirection(idx > currentIndex ? 'down' : 'up');
-        setSlideKey((k) => k + 1);
         setCurrentIndex(idx);
         setVisited((prev) => new Set(prev).add(idx));
         setSidebarOpen(false);
@@ -167,39 +151,29 @@ export default function SlidePlayerV2({ course, slides = [], onClose }) {
   }, []);
 
   const handleTouchMove = useCallback((e) => {
-    if (touchStartY.current === null) return;
-    const el = slideAreaRef.current;
-    if (!el) return;
+    if (touchStartY.current === null || touchStartX.current === null) return;
     const dy = e.touches[0].clientY - touchStartY.current;
-    // Si hay margen de scroll en la dirección del gesto, marcar como scroll-lock
-    const canScrollDown = el.scrollHeight - el.clientHeight - el.scrollTop > 1;
-    const canScrollUp   = el.scrollTop > 1;
-    if ((dy < 0 && canScrollDown) || (dy > 0 && canScrollUp)) {
+    const dx = e.touches[0].clientX - touchStartX.current;
+    // Si hay más movimiento vertical que horizontal, es un intento de scroll normal
+    if (Math.abs(dy) > Math.abs(dx)) {
       touchScrollLocked.current = true;
     }
   }, []);
 
   const handleTouchEnd = useCallback((e) => {
-    if (touchStartY.current === null) return;
-    const dy = touchStartY.current - e.changedTouches[0].clientY;
-    const dx = touchStartX.current !== null ? touchStartX.current - e.changedTouches[0].clientX : 0;
+    if (touchStartX.current === null) return;
+    const dx = touchStartX.current - e.changedTouches[0].clientX;
     const dt = Date.now() - touchStartT.current;
     touchStartY.current = null;
     touchStartX.current = null;
 
-    // Si el gesto fue scroll de contenido, abortar navegación
+    // Si el gesto fue predominantemente vertical, abortar navegación (scroll natural)
     if (touchScrollLocked.current) return;
-    // Descartar swipes horizontales o muy lentos
-    if (Math.abs(dx) > Math.abs(dy)) return;
     if (dt > 600) return;
 
-    const el = slideAreaRef.current;
-    const atBottom = el ? (el.scrollHeight - el.clientHeight - el.scrollTop <= 1) : true;
-    const atTop    = el ? (el.scrollTop <= 1) : true;
-
-    const THRESHOLD = 80;
-    if (dy > THRESHOLD && atBottom) goNext();
-    else if (dy < -THRESHOLD && atTop) goPrev();
+    const THRESHOLD = 50;
+    if (dx > THRESHOLD) goNext(); // Swipe a la izquierda -> siguiente
+    else if (dx < -THRESHOLD) goPrev(); // Swipe a la derecha -> anterior
   }, [goNext, goPrev]);
 
   /* ── Sidebar toggle ─────────────────────────────── */
@@ -352,27 +326,16 @@ export default function SlidePlayerV2({ course, slides = [], onClose }) {
         >
           <div className={`${s.slideArea} ${s.slideAreaFullbleed}`} ref={slideAreaRef}>
             {currentSlide ? (
-              <AnimatePresence mode="wait" custom={direction}>
-                <motion.div
-                  key={slideKey}
-                  custom={direction}
-                  variants={slideVariants}
-                  initial="enter"
-                  animate="center"
-                  exit="exit"
-                  transition={slideTransition}
-                  className={s.slideFullbleed}
-                >
-                  <SlideRendererV2
-                    slide={currentSlide}
-                    courseTitle={course?.title ?? ''}
-                    onQuizSubmit={handleQuizSubmit}
-                    onCheckChange={handleCheckChange}
-                    commitmentValue={commitmentText}
-                    onCommitmentChange={handleCommitmentChange}
-                  />
-                </motion.div>
-              </AnimatePresence>
+              <div className={s.slideFullbleed} key={currentIndex}>
+                <SlideRendererV2
+                  slide={currentSlide}
+                  courseTitle={course?.title ?? ''}
+                  onQuizSubmit={handleQuizSubmit}
+                  onCheckChange={handleCheckChange}
+                  commitmentValue={commitmentText}
+                  onCommitmentChange={handleCommitmentChange}
+                />
+              </div>
             ) : (
               <p className={s.emptyMsg}>No hay slides en este curso.</p>
             )}
