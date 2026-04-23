@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useRef, useCallback, useEffect } from 'react';
+import { useState, useRef, useCallback, useEffect, useMemo } from 'react';
 import ImageUploader from '../ImageUploader';
 import RichTextEditor from '../RichTextEditor';
 import { uploadCourseAsset } from '@/lib/upload';
@@ -80,6 +80,7 @@ function CanvasElement({ el, isSelected, onPointerDownMove, onPointerDownResize,
             }}
           />
         : el.kind === 'image'
+            // eslint-disable-next-line @next/next/no-img-element -- dynamic external Drive URLs, no known dimensions
             ? <img
                 src={el.src}
                 alt=""
@@ -131,7 +132,7 @@ export default function FreeformSlideEditor({ formData, setFormData }) {
     const dragRef                       = useRef(null);     // estado del drag en progreso
     const imgInputRef                   = useRef(null);
 
-    const elements    = formData.elements || [];
+    const elements    = useMemo(() => formData.elements || [], [formData.elements]);
     const selectedEl  = elements.find(e => e.id === selectedId) ?? null;
 
     // Fusión de posiciones reales + override del drag en curso

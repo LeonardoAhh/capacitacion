@@ -1,4 +1,4 @@
-﻿/* =============================================================
+/* =============================================================
    VTX Design System â€” basado en design.md (Cursor System)
    -------------------------------------------------------------
    FilosofÃ­a: warm minimalism + code-editor elegance.
@@ -17,6 +17,11 @@
 /* Confetti (mural inline) */
 @keyframes confettiFall {
     to { transform: translateY(120vh) rotate(720deg); opacity: 0; }
+}
+
+/* Global spinner (used by inline-styled loaders) */
+@keyframes spin {
+    to { transform: rotate(360deg); }
 }
 
 /* Course system */
