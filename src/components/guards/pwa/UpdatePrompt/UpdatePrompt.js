@@ -12,26 +12,19 @@ export default function UpdatePrompt() {
     if (!updateAvailable || dismissed) return null;
 
     return (
-        <div className={styles.prompt}>
-            <div className={styles.icon}>
-                <RefreshCw size={16} />
-            </div>
-            <div className={styles.text}>
-                <p className={styles.title}>Nueva versión disponible</p>
-                <p className={styles.subtitle}>Actualiza para obtener las últimas mejoras</p>
-            </div>
-            <div className={styles.actions}>
-                <button
-                    onClick={() => setDismissed(true)}
-                    className={styles.dismissBtn}
-                    aria-label="Descartar"
-                >
-                    <X size={14} />
-                </button>
-                <button onClick={applyUpdate} className={styles.updateBtn}>
-                    Actualizar
-                </button>
-            </div>
+        <div className={styles.pill} role="status" aria-live="polite">
+            <span className={styles.dot} aria-hidden="true" />
+            <span className={styles.label}>Nueva actualización disponible</span>
+            <button onClick={applyUpdate} className={styles.action}>
+                Actualizar
+            </button>
+            <button
+                onClick={() => setDismissed(true)}
+                className={styles.close}
+                aria-label="Descartar"
+            >
+                <X size={12} strokeWidth={2.5} />
+            </button>
         </div>
     );
 }

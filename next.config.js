@@ -50,13 +50,24 @@ const withPWA = require('next-pwa')({
             },
         },
         {
+            urlPattern: /\/api\/drive-image\?/i,
+            handler: 'CacheFirst',
+            options: {
+                cacheName: 'drive-image-proxy',
+                expiration: {
+                    maxEntries: 128,
+                    maxAgeSeconds: 30 * 24 * 60 * 60,
+                },
+            },
+        },
+        {
             urlPattern: /\/_next\/image\?url=.+$/i,
             handler: 'StaleWhileRevalidate',
             options: {
                 cacheName: 'next-image',
                 expiration: {
-                    maxEntries: 64,
-                    maxAgeSeconds: 24 * 60 * 60,
+                    maxEntries: 128,
+                    maxAgeSeconds: 30 * 24 * 60 * 60,
                 },
             },
         },
@@ -189,6 +200,10 @@ const nextConfig = {
             {
                 protocol: 'https',
                 hostname: 'drive.google.com',
+            },
+            {
+                protocol: 'https',
+                hostname: 'firebasestorage.googleapis.com',
             },
         ],
     },

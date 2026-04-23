@@ -1,9 +1,35 @@
 import { NextResponse } from 'next/server';
 import { google } from 'googleapis';
 
-export const dynamic = 'force-dynamic';
 export const runtime = 'nodejs';
+// Allow Vercel/Next.js to cache responses (ISR-style) — revalidate every 7 days
+export const revalidate = 604800;
 
+/* ── In-memory LRU cache (per-serverless-instance) ── */
+const CACHE_MAX = 200;
+const CACHE_TTL = 7 * 24 * 60 * 60 * 1000; // 7 days
+const cache = new Map();
+
+function cacheGet(key) {
+    const entry = cache.get(key);
+    if (!entry) return null;
+    if (Date.now() - entry.ts > CACHE_TTL) {
+        cache.delete(key);
+        return null;
+    }
+    return entry;
+}
+
+function cacheSet(key, buffer, contentType) {
+    // Evict oldest when full
+    if (cache.size >= CACHE_MAX) {
+        const oldest = cache.keys().next().value;
+        cache.delete(oldest);
+    }
+    cache.set(key, { buffer, contentType, ts: Date.now() });
+}
+
+/* ── Drive OAuth client (lazy singleton) ── */
 let driveClient = null;
 function getDriveClient() {
     if (driveClient) return driveClient;
@@ -20,6 +46,65 @@ function getDriveClient() {
     return driveClient;
 }
 
+/* ── Fetch strategies ── */
+
+/**
+ * Primary: lh3.googleusercontent.com (Google's CDN — fastest)
+ */
+async function fetchViaLh3(fileId, sz) {
+    try {
+        const url = `https://lh3.googleusercontent.com/d/${fileId}=${sz}`;
+        const res = await fetch(url, {
+            headers: {
+                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
+                Accept: 'image/avif,image/webp,image/*,*/*;q=0.8',
+            },
+            redirect: 'follow',
+            signal: AbortSignal.timeout(8000),
+        });
+
+        if (!res.ok) return null;
+        const contentType = res.headers.get('content-type') || '';
+        if (!contentType.startsWith('image/')) return null;
+
+        const buffer = await res.arrayBuffer();
+        if (!buffer || buffer.byteLength < 100) return null;
+        return { buffer, contentType };
+    } catch {
+        return null;
+    }
+}
+
+/**
+ * Fallback: Drive thumbnail endpoint
+ */
+async function fetchViaThumbnail(fileId, sz) {
+    try {
+        const url = `https://drive.google.com/thumbnail?id=${fileId}&sz=${sz}`;
+        const res = await fetch(url, {
+            headers: {
+                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
+                Accept: 'image/avif,image/webp,image/*,*/*;q=0.8',
+            },
+            redirect: 'follow',
+            signal: AbortSignal.timeout(8000),
+        });
+
+        if (!res.ok) return null;
+        const contentType = res.headers.get('content-type') || '';
+        if (!contentType.startsWith('image/')) return null;
+
+        const buffer = await res.arrayBuffer();
+        if (!buffer || buffer.byteLength < 100) return null;
+        return { buffer, contentType };
+    } catch {
+        return null;
+    }
+}
+
+/**
+ * Last resort: Drive API with OAuth (authenticated, always works)
+ */
 async function fetchViaDriveApi(fileId) {
     const drive = getDriveClient();
     if (!drive) return null;
@@ -41,57 +126,29 @@ async function fetchViaDriveApi(fileId) {
         if (!buffer || buffer.byteLength < 100) return null;
         return { buffer, contentType };
     } catch (err) {
-        console.warn(`[drive-image] API auth fallback falló para id=${fileId}:`, err.message);
+        console.warn(`[drive-image] API auth fallback failed for id=${fileId}:`, err.message);
         return null;
     }
 }
+
+/* ── Response headers (aggressive caching) ── */
+const CACHE_HEADERS = {
+    'Cache-Control': 'public, max-age=2592000, s-maxage=2592000, stale-while-revalidate=604800, immutable',
+    'CDN-Cache-Control': 'public, max-age=2592000',
+    'Vercel-CDN-Cache-Control': 'public, max-age=2592000',
+};
 
 /**
- * GET /api/drive-image?id=FILE_ID&sz=w1920
- * Proxy que descarga una imagen pública de Google Drive y la sirve
- * directamente, evitando CORS y redirects del navegador.
+ * GET /api/drive-image?id=FILE_ID&sz=w800
  *
- * Drive ya no responde de forma confiable a `uc?export=view`
- * (regresa HTML o página de virus-scan). Probamos varios endpoints
- * en cascada y validamos que el content-type sea realmente imagen.
+ * Proxy that fetches a Google Drive image and serves it with aggressive caching.
+ * Uses lh3 CDN first (fastest), then Drive thumbnail, then authenticated API.
+ * In-memory cache avoids repeated fetches within the same serverless instance.
  */
-
-const buildEndpoints = (id, sz) => [
-    `https://lh3.googleusercontent.com/d/${id}=${sz}`,
-    `https://drive.google.com/thumbnail?id=${id}&sz=${sz}`,
-    `https://drive.google.com/uc?export=download&id=${id}`,
-    `https://drive.google.com/uc?export=view&id=${id}`,
-];
-
-async function tryFetch(url) {
-    try {
-        const res = await fetch(url, {
-            headers: {
-                'User-Agent':
-                    'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0 Safari/537.36',
-                Accept: 'image/avif,image/webp,image/apng,image/*,*/*;q=0.8',
-            },
-            redirect: 'follow',
-        });
-
-        if (!res.ok) return null;
-
-        const contentType = res.headers.get('content-type') || '';
-        if (!contentType.startsWith('image/')) return null;
-
-        const buffer = await res.arrayBuffer();
-        if (!buffer || buffer.byteLength < 100) return null;
-
-        return { buffer, contentType };
-    } catch {
-        return null;
-    }
-}
-
 export async function GET(request) {
     const { searchParams } = new URL(request.url);
     const fileId = searchParams.get('id');
-    const sz = searchParams.get('sz') || 'w1920';
+    const sz = searchParams.get('sz') || 'w800';
 
     if (!fileId || !/^[a-zA-Z0-9_-]+$/.test(fileId)) {
         return NextResponse.json({ error: 'ID inválido' }, { status: 400 });
@@ -100,33 +157,42 @@ export async function GET(request) {
         return NextResponse.json({ error: 'Tamaño inválido' }, { status: 400 });
     }
 
-    for (const url of buildEndpoints(fileId, sz)) {
-        const result = await tryFetch(url);
-        if (result) {
-            return new NextResponse(result.buffer, {
-                status: 200,
-                headers: {
-                    'Content-Type': result.contentType,
-                    'Cache-Control': 'public, max-age=86400, stale-while-revalidate=3600',
-                },
-            });
-        }
-    }
+    const cacheKey = `${fileId}_${sz}`;
 
-    // Fallback final: usar Drive API autenticada (OAuth refresh token).
-    // Bypasea problemas de permisos públicos porque actuamos como dueño.
-    const apiResult = await fetchViaDriveApi(fileId);
-    if (apiResult) {
-        return new NextResponse(apiResult.buffer, {
+    // Check in-memory cache first
+    const cached = cacheGet(cacheKey);
+    if (cached) {
+        return new NextResponse(cached.buffer, {
             status: 200,
             headers: {
-                'Content-Type': apiResult.contentType,
-                'Cache-Control': 'public, max-age=86400, stale-while-revalidate=3600',
+                'Content-Type': cached.contentType,
+                'X-Cache': 'HIT',
+                ...CACHE_HEADERS,
             },
         });
     }
 
-    console.warn(`[drive-image] todos los endpoints fallaron para id=${fileId}`);
+    // Try strategies in order of speed
+    const result =
+        await fetchViaLh3(fileId, sz) ||
+        await fetchViaThumbnail(fileId, sz) ||
+        await fetchViaDriveApi(fileId);
+
+    if (result) {
+        // Store in memory for subsequent requests
+        cacheSet(cacheKey, result.buffer, result.contentType);
+
+        return new NextResponse(result.buffer, {
+            status: 200,
+            headers: {
+                'Content-Type': result.contentType,
+                'X-Cache': 'MISS',
+                ...CACHE_HEADERS,
+            },
+        });
+    }
+
+    console.warn(`[drive-image] all endpoints failed for id=${fileId}`);
     return NextResponse.json(
         {
             error:

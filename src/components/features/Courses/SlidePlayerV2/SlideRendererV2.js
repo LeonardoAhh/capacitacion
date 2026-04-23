@@ -13,6 +13,25 @@ import s from './slides-v2.module.css';
 /* Build a lookup map: icon name → React component */
 const ICON_MAP = Object.fromEntries(ICON_CATALOG.map(({ name, Icon }) => [name, Icon]));
 
+/**
+ * Detect if image URL is from the Drive proxy (/api/drive-image?id=...).
+ * Drive images go through our own caching proxy — skip Next.js Image optimization
+ * to avoid double-proxy overhead. Firebase Storage URLs use Next.js optimization.
+ */
+const isDriveUrl = (url) => typeof url === 'string' && url.includes('/api/drive-image');
+
+/**
+ * Append size hint to Drive proxy URL for right-sized images.
+ * Avoids downloading full-res when a smaller version suffices.
+ */
+function optimizeSrc(url, width = 800) {
+    if (!isDriveUrl(url)) return url;
+    const sep = url.includes('?') ? '&' : '?';
+    // Only append sz if not already present
+    if (url.includes('sz=')) return url;
+    return `${url}${sep}sz=w${width}`;
+}
+
 /* ═══════════════════════════════════════════════════
    SlideRendererV2 — Unified slide renderer
    No cards · No emojis · 2-column where useful · Responsive
@@ -208,11 +227,11 @@ function ContentV2({ data }) {
           {gallery.length > 1 ? (
             <div className={s.galleryGrid} data-count={gallery.length}>
               {gallery.map((url, idx) => (
-                <Image key={idx} src={url} alt={`${heading || 'Imagen'} ${idx + 1}`} className={s.galleryImg} width={0} height={0} sizes="(max-width: 640px) 50vw, 33vw" style={{ width: '100%', height: '100%', objectFit: 'cover' }} unoptimized onClick={() => setLightbox(url)} />
+                <Image key={idx} src={optimizeSrc(url, 600)} alt={`${heading || 'Imagen'} ${idx + 1}`} className={s.galleryImg} width={700} height={525} sizes="(max-width: 640px) 50vw, 33vw" style={{ width: '100%', height: '100%', objectFit: 'cover' }} unoptimized={isDriveUrl(url)} onClick={() => setLightbox(url)} />
               ))}
             </div>
           ) : (
-            <Image src={gallery[0]} alt={`${heading || 'Imagen'} 1`} className={s.contentImg} width={0} height={0} sizes="100vw" style={{ width: '100%', height: 'auto', maxHeight: '450px', objectFit: 'contain' }} unoptimized onClick={() => setLightbox(gallery[0])} />
+            <Image src={optimizeSrc(gallery[0], 800)} alt={`${heading || 'Imagen'} 1`} className={s.contentImg} width={1400} height={788} sizes="(max-width: 768px) 100vw, 50vw" style={{ width: '100%', height: 'auto', maxHeight: '450px', objectFit: 'contain' }} unoptimized={isDriveUrl(gallery[0])} onClick={() => setLightbox(gallery[0])} />
           )}
         </div>
       )}
@@ -329,7 +348,7 @@ function StepsV2({ data }) {
               <div className={s.stepBody}>
                 {step.title && <h3 className={s.stepTitle}>{step.title}</h3>}
                 {step.desc && <p className={s.stepDesc}>{step.desc}</p>}
-                {step.image && <Image src={step.image} alt={step.title || 'Imagen'} className={s.stepImg} width={0} height={0} sizes="100vw" style={{ width: '100%', height: 'auto', maxHeight: '200px', objectFit: 'cover' }} unoptimized />}
+                {step.image && <Image src={optimizeSrc(step.image, 600)} alt={step.title || 'Imagen'} className={s.stepImg} width={800} height={400} sizes="(max-width: 768px) 100vw, 50vw" style={{ width: '100%', height: 'auto', maxHeight: '200px', objectFit: 'cover' }} unoptimized={isDriveUrl(step.image)} />}
               </div>
             </li>
           ))}
@@ -636,7 +655,7 @@ function DynamicV2({ data, commitmentValue = '', onCommitmentChange }) {
 function Lightbox({ src, alt, onClose }) {
   return (
     <div className={s.lightbox} onClick={onClose} role="dialog" aria-label="Imagen ampliada">
-      <Image src={src} alt={alt || 'Imagen'} className={s.lightboxImg} width={0} height={0} sizes="90vw" style={{ width: 'auto', height: 'auto', maxWidth: '90vw', maxHeight: '90vh', objectFit: 'contain' }} unoptimized onClick={(e) => e.stopPropagation()} />
+      <Image src={src} alt={alt || 'Imagen'} className={s.lightboxImg} width={1400} height={1050} sizes="90vw" style={{ width: 'auto', height: 'auto', maxWidth: '90vw', maxHeight: '90vh', objectFit: 'contain' }} unoptimized onClick={(e) => e.stopPropagation()} />
       <button className={s.lightboxClose} onClick={onClose} aria-label="Cerrar">
         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" /></svg>
       </button>
