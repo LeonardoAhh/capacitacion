@@ -27,6 +27,7 @@ const SLIDE_BADGES = {
   env_sim: { label: 'Sim. Ambiental' },
   iceberg_sim: { label: 'Sim. Iceberg' },
   radar_sim: { label: 'Sim. Radar' },
+    // freeform:  { label: 'Lienzo Libre' }, // Desactivado temporal
 };
 
 const typeLabel = (type) => SLIDE_BADGES[type]?.label || type;

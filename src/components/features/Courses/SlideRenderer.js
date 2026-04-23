@@ -17,6 +17,7 @@ import EnvSimSlide from './slides/EnvSimSlide';
 import DynamicActivitySlide from './slides/DynamicActivitySlide';
 import IcebergLineaSimSlide from './slides/IcebergLineaSimSlide';
 import RadarSupervisorSimSlide from './slides/RadarSupervisorSimSlide';
+import FreeformSlide from './slides/FreeformSlide';
 
 const SLIDE_COMPONENTS = {
     title: TitleSlide,
@@ -36,6 +37,7 @@ const SLIDE_COMPONENTS = {
     env_sim: EnvSimSlide,
     iceberg_sim: IcebergLineaSimSlide,
     radar_sim: RadarSupervisorSimSlide,
+    freeform:  FreeformSlide,
     // Mapeos para tipos especiales
     group_quiz: QuizSlide,
     group_dynamic: DynamicActivitySlide,

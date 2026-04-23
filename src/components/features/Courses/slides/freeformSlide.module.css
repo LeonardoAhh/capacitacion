@@ -1,0 +1,46 @@
+/* ================================================================
+   FREEFORM SLIDE — freeformSlide.module.css
+   Canvas 16:9 con elementos de posición absoluta.
+   Requiere que el ancestro tenga container-type: size para que
+   la container query de escala funcione correctamente.
+   ================================================================ */
+
+.freeformSlide {
+    position:    relative;
+    width:       100%;
+    aspect-ratio: 16 / 9;
+
+    /* Safety net: si aspect-ratio falla, el slide no colapsa a 0 */
+    min-height:  80px;
+
+    overflow:    hidden;
+    background:  var(--ds-bg-pure, #fff);
+
+    /* Evita compresión en contextos flex/grid del CoursePlayer */
+    flex:        none;
+
+    margin:      0 auto;
+    max-width:   100%;
+
+    /* Defaults tipográficos de último recurso;
+       los elementos inline sobreescriben con sus propios estilos */
+    font-family: var(--font-body, sans-serif);
+    color:       var(--ds-text, #26251e);
+
+    /* Aísla el stacking context: evita que z-index / blend-modes
+       de los hijos afecten capas externas */
+    isolation:   isolate;
+
+    /* Optimización de reflow: el layout interno no afecta al árbol exterior */
+    contain:     layout;
+}
+
+/* ── Escala "object-fit: contain" dentro de SlidePlayerV2 ──────────────────
+   Requiere container-type: size en el ancestro contenedor.
+   Fórmula: el ancho es el menor entre (ancho disponible) y (alto * 16/9),
+   lo que garantiza que el slide nunca exceda ninguna de las dos dimensiones. */
+@container (min-height: 1px) {
+    .freeformSlide {
+        width: min(100cqw, calc(100cqh * 16 / 9));
+    }
+}

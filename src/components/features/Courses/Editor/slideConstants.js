@@ -27,6 +27,7 @@ export const SLIDE_TYPE_LABELS = {
     flashcard:     'Tarjetas',
     fill_blank:    'Completa la Frase',
     checklist:     'Checklist',
+        // freeform:      'Lienzo Libre', // Desactivado temporal
 };
 
 // ── Helper para IDs estables en listas ───────────────────────────────────────
@@ -161,6 +162,13 @@ const SLIDE_DEFAULT_DATA_FACTORIES = {
         ],
         requireAll: false,
     }),
+    freeform: () => ({
+        background: '',
+        elements: [
+            { id: makeId(), kind: 'text', x: 10, y: 15, w: 80, h: 18, content: 'Título del Slide', fontSize: 40, fontWeight: 700, align: 'center', color: '' },
+            { id: makeId(), kind: 'text', x: 10, y: 40, w: 80, h: 45, content: 'Agrega tu contenido aquí...', fontSize: 18, fontWeight: 400, align: 'left', color: '' },
+        ],
+    }),
 };
 
 /**
@@ -172,3 +180,98 @@ export function getDefaultSlideData(type) {
     const factory = SLIDE_DEFAULT_DATA_FACTORIES[type];
     return factory ? factory() : { heading: 'Nuevo Slide', body: '' };
 }
+// ── Convertidor: tipo existente → Lienzo Libre ────────────────────────────────
+// (Desactivado temporal, bloque comentado para evitar error de sintaxis)
+// /**
+//  * Convierte los datos de cualquier slide tipado a la estructura de un slide freeform.
+//  * Los elementos resultantes usan coordenadas en % relativas al canvas 16:9.
+//  */
+//     const txt = (id, x, y, w, h, content, fontSize, fontWeight, align = 'left') =>
+//         ({ id: id || makeId(), kind: 'text', x, y, w, h, content: content || '', fontSize, fontWeight, align, color: '' });
+//
+//     const img = (src, x, y, w, h) =>
+//         ({ id: makeId(), kind: 'image', x, y, w, h, src: src || '', fit: 'contain', radius: 8 });
+//
+//     switch (type) {
+//         case 'title': {
+//             if (data.title)    els.push(txt(null, 5, 28, 90, 20, data.title,    44, 700, 'center'));
+//             if (data.subtitle) els.push(txt(null, 10, 52, 80, 14, data.subtitle, 20, 400, 'center'));
+//             break;
+//         }
+//         case 'content': {
+//             if (data.heading) els.push(txt(null, 5, 4, 90, 13, data.heading, 30, 700, 'left'));
+//             const imgs = Array.isArray(data.images) && data.images.length > 0
+//                 ? data.images : data.image ? [data.image] : [];
+//             const bodyW = imgs.length > 0 ? 50 : 90;
+//             if (data.body)    els.push(txt(null, 5, 19, bodyW, 73, data.body, 16, 400, 'left'));
+//             imgs.slice(0, 1).forEach(src => els.push(img(src, 57, 19, 38, 73));
+//             break;
+//         }
+//         case 'objective':
+//         case 'definition': {
+//             if (data.heading) els.push(txt(null, 5, 5, 90, 15, data.heading, 30, 700, 'left'));
+//             if (data.body)    els.push(txt(null, 5, 23, 90, 67, data.body, 18, 400, 'left'));
+//             break;
+//         }
+//         case 'benefits': {
+//             if (data.heading) els.push(txt(null, 5, 4, 90, 13, data.heading, 28, 700, 'left'));
+//             const items = data.items || [];
+//             items.forEach((item, i) => {
+//                 const col = i % 3;
+//                 const row = Math.floor(i / 3);
+//                 els.push(txt(null, 5 + col * 32, 20 + row * 22, 30, 18,
+//                     `• ${item.text || item}`, 14, 400, 'left'));
+//             });
+//             break;
+//         }
+//         case 'steps': {
+//             if (data.heading) els.push(txt(null, 5, 3, 90, 13, data.heading, 26, 700, 'left'));
+//             const steps = data.steps || [];
+//             const colW = steps.length > 0 ? Math.min(Math.floor(88 / steps.length), 28) : 28;
+//             steps.forEach((step, i) => {
+//                 const x = 5 + i * (colW + 2);
+//                 const content = `${i + 1}. ${step.title || ''}\n${step.desc || ''}`;
+//                 els.push(txt(null, x, 18, colW, 74, content, 13, 400, 'left'));
+//                 if (step.image) els.push(img(step.image, x, 18, colW, 30));
+//             });
+//             break;
+//         }
+//         case 'comparison': {
+//             if (data.heading) els.push(txt(null, 5, 3, 90, 13, data.heading, 28, 700, 'left'));
+//             if (data.left?.title)  els.push(txt(null, 5, 18, 43, 12, data.left.title,  20, 700, 'center'));
+//             if (data.right?.title) els.push(txt(null, 52, 18, 43, 12, data.right.title, 20, 700, 'center'));
+//             const leftItems  = data.left?.items  || [];
+//             const rightItems = data.right?.items || [];
+//             if (leftItems.length)  els.push(txt(null, 5,  32, 43, 60, leftItems.map(i  => `• ${i}`).join('\n'), 14, 400, 'left'));
+//             if (rightItems.length) els.push(txt(null, 52, 32, 43, 60, rightItems.map(i => `• ${i}`).join('\n'), 14, 400, 'left'));
+//             break;
+//         }
+//         case 'icon_grid': {
+//             if (data.heading) els.push(txt(null, 5, 4, 90, 13, data.heading, 28, 700, 'left'));
+//             const gridItems = data.items || [];
+//             const cols = Math.min(gridItems.length, 3) || 1;
+//             const cellW = Math.floor(88 / cols);
+//             gridItems.forEach((item, i) => {
+//                 const col = i % cols;
+//                 const row = Math.floor(i / cols);
+//                 const content = `${item.label || ''}\n${item.description || ''}`.trim();
+//                 els.push(txt(null, 6 + col * (cellW + 1), 20 + row * 30, cellW - 1, 26, content, 14, 400, 'center'));
+//             });
+//             break;
+//         }
+//         default: {
+//             const heading = data.heading || data.title || data.question || '';
+//             const body    = data.body || data.instructions || data.description || '';
+//             if (heading) els.push(txt(null, 5, 5, 90, 15, heading, 28, 700, 'left'));
+//             if (body)    els.push(txt(null, 5, 23, 90, 67,
+//                 typeof body === 'string' ? body : JSON.stringify(body, null, 2), 16, 400, 'left'));
+//         }
+//     }
+//
+//     // Fallback: al menos un elemento vacío
+//     if (els.length === 0) {
+//         els.push(txt(null, 10, 30, 80, 40, data.title || data.heading || 'Contenido', 24, 400, 'center'));
+//     }
+//
+//     return { background: '', elements: els };
+// }

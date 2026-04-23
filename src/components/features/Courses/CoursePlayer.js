@@ -45,6 +45,7 @@ const SLIDE_BADGES = {
     env_sim:      { emoji: '🌿', label: 'Simulador Ambiental' },
     iceberg_sim:  { emoji: '🧊', label: 'Simulador Iceberg' },
     radar_sim:    { emoji: '📡', label: 'Simulador Radar' },
+    freeform:     { emoji: '🎨', label: 'Lienzo Libre' },
 };
 
 // ── Utilidades ──────────────────────────────────────────────────────────────

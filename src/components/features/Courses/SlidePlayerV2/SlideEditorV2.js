@@ -24,6 +24,7 @@ const SLIDE_SECTIONS = [
       { type: 'flashcard',  label: 'Tarjetas',      desc: 'Tarjetas con flip' },
       { type: 'fill_blank', label: 'Completa',      desc: 'Rellena el espacio' },
       { type: 'checklist',  label: 'Checklist',     desc: 'Lista de verificación' },
+        // { type: 'freeform',   label: 'Lienzo Libre',   desc: 'Canvas libre: arrastra texto e imágenes' }, // Desactivado temporal
     ],
   },
   {
@@ -54,6 +55,8 @@ import ChecklistSlideEditor from '@/components/features/Courses/Editor/SlideEdit
 import EnvSimSlideEditor from '@/components/features/Courses/Editor/SlideEditors/EnvSimSlideEditor';
 import IcebergLineaSimSlideEditor from '@/components/features/Courses/Editor/SlideEditors/IcebergLineaSimSlideEditor';
 import RadarSupervisorSimSlideEditor from '@/components/features/Courses/Editor/SlideEditors/RadarSupervisorSimSlideEditor';
+import FreeformSlideEditor from '@/components/features/Courses/Editor/SlideEditors/FreeformSlideEditor';
+import { convertSlideToFreeform } from '@/components/features/Courses/Editor/slideConstants';
 
 /* ── Field router ────────────────────────────────── */
 function SlideFieldRouter({ type, formData, handleChange, handleBatchChange, setFormData }) {
@@ -75,6 +78,7 @@ function SlideFieldRouter({ type, formData, handleChange, handleBatchChange, set
     case 'env_sim':                        return <EnvSimSlideEditor {...props} />;
     case 'iceberg_sim':                    return <IcebergLineaSimSlideEditor {...props} />;
     case 'radar_sim':                      return <RadarSupervisorSimSlideEditor {...props} />;
+      // case 'freeform':                        return <FreeformSlideEditor {...props} />; // Desactivado temporal
     default:
       return <p className={s.noEditor}>Editor no disponible para tipo: <strong>{type}</strong></p>;
   }
@@ -382,6 +386,7 @@ export default function SlideEditorV2({
 }) {
   const [state, dispatch] = useReducer(editorReducer, initialState);
   const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [previewMode, setPreviewMode] = useState('desktop'); // 'desktop' | 'mobile'
   const [searchQuery, setSearchQuery] = useState('');
   const [confirmDialog, setConfirmDialog] = useState(null); // { onConfirm: fn }
   const [isDark, setIsDark] = useState(false);
@@ -453,6 +458,22 @@ export default function SlideEditorV2({
       },
     });
   }, [courseId, deleteSlideFn, syncMetadataFn]);
+
+  // const handleConvertToFreeform = useCallback(async (slide) => {
+  //   dispatch({ type: 'SAVE_START' });
+  //   const freeformData = convertSlideToFreeform(slide);
+  //   const result = await addSlideFn(courseId, {
+  //     type: 'freeform',
+  //     data: freeformData,
+  //     order: stateRef.current.slides.length + 1,
+  //   });
+  //   if (result.success) {
+  //     const newSlide = { id: result.slideId || result.id, type: 'freeform', data: freeformData, order: result.order || stateRef.current.slides.length + 1 };
+  //     dispatch({ type: 'SLIDE_ADDED', slide: newSlide });
+  //     syncMetadataFn?.(courseId, stateRef.current.slides.length + 1);
+  //   }
+  //   dispatch({ type: 'SAVE_END' });
+  // }, [courseId, addSlideFn, syncMetadataFn]);
 
   const handleAddSlide = useCallback(async (type) => {
     dispatch({ type: 'TOGGLE_MODAL', open: false });
@@ -628,6 +649,20 @@ export default function SlideEditorV2({
                     <span className={s.slideItemTitle}>{label}</span>
                     <span className={s.slideItemMeta}>{SLIDE_TYPE_LABELS[slide.type] || slide.type}</span>
                   </div>
+                  {/* Botón 'Copiar como Lienzo Libre' desactivado temporal */}
+                  {/*
+                  {slide.type !== 'freeform' && (
+                    <button
+                      className={s.slideItemConvertBtn}
+                      onClick={(e) => { e.stopPropagation(); handleConvertToFreeform(slide); }}
+                      disabled={saving}
+                      title="Copiar como Lienzo Libre"
+                      aria-label={`Copiar slide ${slide.order ?? idx + 1} como Lienzo Libre`}
+                    >
+                      <CanvasIcon />
+                    </button>
+                  )}
+                  */}
                 </button>
               );
             })}
@@ -659,9 +694,29 @@ export default function SlideEditorV2({
         <div className={s.previewPanel}>
           <div className={s.previewHeader}>
             <h3 className={s.previewTitle}>Vista previa</h3>
+            <div className={s.previewModeToggle} role="group" aria-label="Modo de vista previa">
+              <button
+                type="button"
+                className={`${s.previewModeBtn} ${previewMode === 'desktop' ? s.previewModeBtnActive : ''}`}
+                onClick={() => setPreviewMode('desktop')}
+                aria-pressed={previewMode === 'desktop'}
+                title="Vista escritorio"
+              >
+                <DesktopIcon /> <span>Escritorio</span>
+              </button>
+              <button
+                type="button"
+                className={`${s.previewModeBtn} ${previewMode === 'mobile' ? s.previewModeBtnActive : ''}`}
+                onClick={() => setPreviewMode('mobile')}
+                aria-pressed={previewMode === 'mobile'}
+                title="Vista móvil"
+              >
+                <MobileIcon /> <span>Móvil</span>
+              </button>
+            </div>
           </div>
           <div className={s.previewContent}>
-            <div className={s.previewFrame}>
+            <div className={`${s.previewFrame} ${previewMode === 'mobile' ? s.previewFrameMobile : ''}`}>
               {livePreviewSlide ? (
                 <SlideRendererV2
                   slide={livePreviewSlide}
@@ -824,10 +879,35 @@ function SlideTypeIconSVG({ type }) {
     flashcard: <><rect x="2" y="4" width="16" height="14" rx="2" /><rect x="6" y="6" width="16" height="14" rx="2" /></>,
     fill_blank: <><line x1="4" y1="18" x2="20" y2="18" /><line x1="4" y1="12" x2="12" y2="12" /><line x1="4" y1="6" x2="16" y2="6" /></>,
     checklist: <><rect x="3" y="5" width="4" height="4" rx="1" /><line x1="10" y1="7" x2="21" y2="7" /><rect x="3" y="15" width="4" height="4" rx="1" /><line x1="10" y1="17" x2="21" y2="17" /></>,
+    freeform: <><rect x="3" y="3" width="18" height="18" rx="2" /><circle cx="8.5" cy="8.5" r="1.5" /><polyline points="21,15 16,10 5,21" /></>,
   };
   return (
     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
       {icons[type] || icons.content}
+    </svg>
+  );
+}
+
+function CanvasIcon() {
+  return (
+    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <rect x="3" y="3" width="18" height="18" rx="2" /><circle cx="8.5" cy="8.5" r="1.5" /><polyline points="21,15 16,10 5,21" />
+    </svg>
+  );
+}
+
+function DesktopIcon() {
+  return (
+    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <rect x="2" y="4" width="20" height="13" rx="2" /><line x1="8" y1="21" x2="16" y2="21" /><line x1="12" y1="17" x2="12" y2="21" />
+    </svg>
+  );
+}
+
+function MobileIcon() {
+  return (
+    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <rect x="6" y="2" width="12" height="20" rx="2" /><line x1="11" y1="18" x2="13" y2="18" />
     </svg>
   );
 }

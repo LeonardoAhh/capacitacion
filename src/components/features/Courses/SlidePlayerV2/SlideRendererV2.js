@@ -7,6 +7,7 @@ import ThermalSimSlide from '@/components/features/Courses/slides/ThermalSimSlid
 import EnvSimSlide from '@/components/features/Courses/slides/EnvSimSlide';
 import IcebergLineaSimSlide from '@/components/features/Courses/slides/IcebergLineaSimSlide';
 import RadarSupervisorSimSlide from '@/components/features/Courses/slides/RadarSupervisorSimSlide';
+import FreeformSlide from '@/components/features/Courses/slides/FreeformSlide';
 import s from './slides-v2.module.css';
 
 /* Build a lookup map: icon name → React component */
@@ -96,6 +97,12 @@ const SlideRendererV2 = memo(function SlideRendererV2({ slide, courseTitle, onQu
     case 'env_sim':      content = <EnvSimSlide data={data} />; break;
     case 'iceberg_sim':  content = <IcebergLineaSimSlide data={data} />; break;
     case 'radar_sim':    content = <RadarSupervisorSimSlide data={data} />; break;
+    case 'freeform':
+      return (
+        <div className={s.freeformWrapper}>
+          <FreeformSlide data={data} />
+        </div>
+      );
     default:
       content = (
         <article className={s.slide}>
@@ -198,9 +205,15 @@ function ContentV2({ data }) {
       </div>
       {hasImages && (
         <div className={s.mediaCol}>
-          {gallery.map((url, idx) => (
-            <Image key={idx} src={url} alt={`${heading || 'Imagen'} ${idx + 1}`} className={s.contentImg} width={0} height={0} sizes="100vw" style={{ width: '100%', height: 'auto' }} unoptimized onClick={() => setLightbox(url)} />
-          ))}
+          {gallery.length > 1 ? (
+            <div className={s.galleryGrid} data-count={gallery.length}>
+              {gallery.map((url, idx) => (
+                <Image key={idx} src={url} alt={`${heading || 'Imagen'} ${idx + 1}`} className={s.galleryImg} width={0} height={0} sizes="(max-width: 640px) 50vw, 33vw" style={{ width: '100%', height: '100%', objectFit: 'cover' }} unoptimized onClick={() => setLightbox(url)} />
+              ))}
+            </div>
+          ) : (
+            <Image src={gallery[0]} alt={`${heading || 'Imagen'} 1`} className={s.contentImg} width={0} height={0} sizes="100vw" style={{ width: '100%', height: 'auto', maxHeight: '450px', objectFit: 'contain' }} unoptimized onClick={() => setLightbox(gallery[0])} />
+          )}
         </div>
       )}
       {lightbox && <Lightbox src={lightbox} alt={heading} onClose={() => setLightbox(null)} />}

@@ -9,6 +9,7 @@ import {
     IconTarget, IconFileText, IconGraduationCap,
     IconCheckSquare, IconGrid, IconColumns, IconBookOpen, IconList,
     IconPlay, IconCopy, IconEdit, IconLink, IconUploadCloud, IconEye, IconActivity,
+    IconPalette,
 } from '@/lib/icons';
 import {
     getCourseWithSlides, updateSlide, addSlide, deleteSlide,
@@ -21,6 +22,7 @@ import SlideEditorPanel from '@/components/features/Courses/Editor/SlideEditorPa
 import SlideEditorErrorBoundary from '@/components/features/Courses/Editor/SlideEditorErrorBoundary';
 import CoursePlayer from '@/components/features/Courses/CoursePlayer';
 import { SLIDE_TYPE_LABELS, getDefaultSlideData } from '@/components/features/Courses/Editor/slideConstants';
+import { convertSlideToFreeform } from '@/components/features/Courses/Editor/slideConstants';
 import styles from './editor.module.css';
 
 const FS_STEPS = [
@@ -51,6 +53,7 @@ const SLIDE_SECTIONS = [
             { type: 'flashcard',  label: 'Tarjetas',      icon: IconCopy,          iconColor: '#8b5cf6',                  desc: 'Mazo de tarjetas con flip' },
             { type: 'fill_blank', label: 'Completa',      icon: IconEdit,          iconColor: '#0ea5e9',                  desc: 'Rellena el espacio en blanco' },
             { type: 'checklist',  label: 'Checklist',     icon: IconCheckSquare,   iconColor: '#16a34a',                  desc: 'Lista de verificación' },
+            { type: 'freeform',   label: 'Lienzo Libre',  icon: IconPalette,        iconColor: '#8b5cf6',                  desc: 'Canvas libre: arrastra texto e imágenes' },
         ],
     },
     {
@@ -447,9 +450,28 @@ export default function EditorPage({ params }) {
         await updateSlidesOrder(courseId, newOrderedSlides);
     }, [courseId]);
 
-    // ── Duplicar slide ───────────────────────────────────────────────────────
-    const handleDuplicateSlide = useCallback(async (slide) => {
+    // ── Copiar slide existente como Lienzo Libre ─────────────────────────────
+    const handleConvertToFreeform = useCallback(async (slide) => {
         dispatch({ type: 'SAVE_START' });
+        const freeformData = convertSlideToFreeform(slide);
+        const result = await addSlide(courseId, {
+            type:  'freeform',
+            data:  freeformData,
+            order: stateRef.current.slides.length + 1,
+        });
+        if (result.success) {
+            const newSlide = { id: result.id, type: 'freeform', data: freeformData, order: result.order };
+            dispatch({ type: 'SLIDE_ADDED', slide: newSlide });
+            toast.success('Lienzo Libre creado', 'Se generó una copia editable del slide en modo canvas');
+            syncCourseMetadata(stateRef.current.slides.length + 1);
+        } else {
+            toast.error('Error', result.error || 'No se pudo crear el Lienzo Libre');
+        }
+        dispatch({ type: 'SAVE_END' });
+    }, [courseId, toast, syncCourseMetadata]);
+
+    // ── Duplicar slide ───────────────────────────────────────────────────────
+    const handleDuplicateSlide = useCallback(async (slide) => {        dispatch({ type: 'SAVE_START' });
         const result = await duplicateSlide(courseId, slide, stateRef.current.slides);
         if (result.success) {
             dispatch({ type: 'SLIDE_DUPLICATED', newSlide: result.newSlide, originalId: slide.id });
@@ -775,6 +797,7 @@ export default function EditorPage({ params }) {
                         onAdd={() => dispatch({ type: 'TOGGLE_MODAL', open: true })}
                         onReorder={handleReorderSlides}
                         onDuplicate={handleDuplicateSlide}
+                        onConvertToFreeform={handleConvertToFreeform}
                         disabled={saving}
                     />
                 </aside>

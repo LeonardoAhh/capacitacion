@@ -38,22 +38,23 @@
     top: 0;
     left: 0;
     right: 0;
-    padding: 16px 32px;
+    padding: var(--s-16, 16px) var(--s-32, 32px);
     display: flex;
     align-items: center;
     justify-content: space-between;
     border-bottom: 1px solid var(--ds-border-hairline);
-    background: rgba(255, 255, 255, 0.85);
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
+    background: color-mix(in srgb, var(--ds-bg-pure) 85%, transparent);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
 }
 
 .logo {
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: var(--s-8, 8px);
+    font-family: var(--font-display, var(--font-body)), sans-serif;
     font-size: 0.78rem;
-    font-weight: 700;
+    font-weight: var(--weight-announce, 700);
     letter-spacing: 0.06em;
     text-transform: uppercase;
     color: var(--ds-text);
@@ -62,14 +63,15 @@
 .statusPill {
     display: inline-flex;
     align-items: center;
-    gap: 6px;
+    gap: var(--s-6, 6px);
+    font-family: var(--font-body), sans-serif;
     font-size: 0.7rem;
-    font-weight: 600;
+    font-weight: var(--weight-announce, 600);
     color: var(--accent-crimson);
-    background: rgba(207, 45, 86, 0.05);
-    border: 1px solid rgba(207, 45, 86, 0.30);
+    background: color-mix(in srgb, var(--accent-crimson) 6%, transparent);
+    border: 1px solid color-mix(in srgb, var(--accent-crimson) 25%, transparent);
     padding: 5px 12px;
-    border-radius: 9999px;
+    border-radius: var(--radius-pill, 9999px);
     letter-spacing: 0.04em;
     text-transform: uppercase;
 }
@@ -77,7 +79,7 @@
 .topBarRight {
     display: flex;
     align-items: center;
-    gap: var(--s-12);
+    gap: var(--s-12, 12px);
 }
 
 .statusDot {
@@ -85,7 +87,7 @@
     height: 6px;
     flex-shrink: 0;
     border-radius: 50%;
-    background: var(--c-danger);
+    background: var(--accent-crimson);
     animation: blink 2s ease-in-out infinite;
 }
 
@@ -108,27 +110,28 @@
 
 /* ── Eyebrow ── */
 .eyebrow {
+    font-family: var(--font-body), sans-serif;
     font-size: 0.75rem;
-    font-weight: 700;
+    font-weight: var(--weight-announce, 700);
     letter-spacing: 0.12em;
     text-transform: uppercase;
-    color: var(--c-muted);
-    margin-bottom: 24px;
+    color: var(--ds-text-secondary);
+    margin-bottom: var(--s-24, 24px);
 }
 
 /* ── Heading ── */
 .heading {
-    font-family: var(--font-serif, var(--font-serif)), sans-serif;
+    font-family: var(--font-serif), serif;
     font-size: clamp(3rem, 8vw, 6rem);
-    font-weight: 800;
+    font-weight: var(--weight-announce, 800);
     line-height: 1.05;
     letter-spacing: -0.03em;
-    color: var(--c-ink);
-    margin-bottom: 30px;
+    color: var(--ds-text);
+    margin-bottom: var(--s-32, 30px);
 }
 
 .headingAccent {
-    color: var(--c-ink);
+    color: var(--ds-text);
     position: relative;
     display: inline-block;
 }
@@ -141,9 +144,9 @@
     left: 0;
     right: 0;
     height: 16px;
-    background: var(--c-primary);
-    opacity: 0.4;
-    border-radius: var(--r-sm);
+    background: var(--accent-orange, var(--color-accent));
+    opacity: 0.35;
+    border-radius: var(--radius-sm, 4px);
     transform: scaleX(0);
     transform-origin: left;
     animation: underlineIn 0.8s cubic-bezier(0.22, 1, 0.36, 1) 0.6s forwards;
@@ -156,11 +159,12 @@
 
 /* ── Description ── */
 .description {
+    font-family: var(--font-body), sans-serif;
     font-size: 1rem;
     line-height: 1.65;
     color: var(--ds-text-secondary);
     max-width: 480px;
-    font-weight: 400;
+    font-weight: var(--weight-body, 400);
 }
 
 /* ─ Divider ─ */
@@ -201,15 +205,15 @@
     min-width: 80px;
     background: var(--ds-bg-pure);
     border: 1px solid var(--ds-border-hairline);
-    border-radius: 10px;
-    padding: 12px 8px 8px;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    border-radius: var(--radius-lg, 10px);
+    padding: var(--s-12, 12px) var(--s-8, 8px) var(--s-8, 8px);
+    box-shadow: var(--ring-light, 0 1px 3px rgba(0,0,0,0.05));
 }
 
 .segmentValue {
-    font-family: var(--font-serif, var(--font-serif)), monospace;
+    font-family: var(--font-serif), monospace;
     font-size: clamp(2rem, 5vw, 3.2rem);
-    font-weight: 800;
+    font-weight: var(--weight-announce, 800);
     line-height: 1;
     color: var(--ds-text);
     font-variant-numeric: tabular-nums;

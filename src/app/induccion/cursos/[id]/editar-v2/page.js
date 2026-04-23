@@ -21,15 +21,17 @@ export default function EditorV2Page({ params }) {
   };
 
   return (
-    <SlideEditorV2
-      courseId={courseId}
-      loadCourse={getCourseWithSlides}
-      saveSlideFn={updateSlide}
-      addSlideFn={addSlide}
-      deleteSlideFn={deleteSlide}
-      reorderSlidesFn={updateSlidesOrder}
-      syncMetadataFn={handleSyncMetadata}
-      onClose={() => router.push('/induccion')}
-    />
+    <div>
+      <SlideEditorV2
+        courseId={courseId}
+        loadCourse={getCourseWithSlides}
+        saveSlideFn={updateSlide}
+        addSlideFn={addSlide}
+        deleteSlideFn={deleteSlide}
+        reorderSlidesFn={updateSlidesOrder}
+        syncMetadataFn={handleSyncMetadata}
+        onClose={() => router.push('/induccion')}
+      />
+    </div>
   );
 }

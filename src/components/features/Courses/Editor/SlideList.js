@@ -23,7 +23,7 @@ import { CSS } from '@dnd-kit/utilities';
 import {
     IconHolder, IconCopy, IconPlus, IconSearch,
     IconLayout, IconFontSize, IconFileText, IconCheckSquare,
-    IconListBullets, IconGrid, IconDiff, IconZap,
+    IconListBullets, IconGrid, IconDiff, IconZap, IconPalette,
 } from '@/lib/icons';
 
 import { SLIDE_TYPE_LABELS } from './slideConstants';
@@ -44,6 +44,7 @@ const SLIDE_TYPE_ICONS = {
     group_dynamic: <IconZap size={14} />,
     iceberg_sim:   <IconZap size={14} />,
     radar_sim:     <IconZap size={14} />,
+    freeform:      <IconPalette size={14} />,
 };
 
 const getSlideIcon = (type) => SLIDE_TYPE_ICONS[type] ?? <IconFileText size={14} />;
@@ -52,7 +53,7 @@ const getSlideLabel = (slide) =>
     slide.data?.title || slide.data?.heading || slide.data?.question || 'Sin título';
 
 // ── Ítem sortable individual ──────────────────────────────────────────────────
-function SortableSlideItem({ slide, index, isActive, onSelect, onDuplicate, disabled }) {
+function SortableSlideItem({ slide, index, isActive, onSelect, onDuplicate, onConvertToFreeform, disabled }) {
     const {
         attributes,
         listeners,
@@ -109,6 +110,19 @@ function SortableSlideItem({ slide, index, isActive, onSelect, onDuplicate, disa
                 >
                     <IconCopy size={13} />
                 </button>
+                {/* Solo slides que no son freeform pueden convertirse */}
+                {slide.type !== 'freeform' && (
+                    <button
+                        className={styles.slideActionBtn}
+                        onClick={e => { e.stopPropagation(); onConvertToFreeform?.(slide); }}
+                        disabled={disabled}
+                        title="Copiar como Lienzo Libre"
+                        aria-label={`Copiar slide ${index + 1} como Lienzo Libre`}
+                        tabIndex={-1}
+                    >
+                        <IconPalette size={13} />
+                    </button>
+                )}
                 <span style={{ color: isActive ? 'var(--c-primary)' : 'var(--c-muted)', flexShrink: 0 }}>
                     {getSlideIcon(slide.type)}
                 </span>
@@ -127,9 +141,10 @@ function SortableSlideItem({ slide, index, isActive, onSelect, onDuplicate, disa
  * @param {Function} onAdd         - Callback para abrir el modal de tipo de slide
  * @param {Function} onReorder     - Callback al reordenar (recibe el array nuevo)
  * @param {Function} onDuplicate   - Callback al duplicar un slide
+ * @param {Function} onConvertToFreeform - Callback al copiar como Lienzo Libre
  * @param {boolean}  disabled      - Deshabilita DnD y botones durante operaciones
  */
-export default function SlideList({ slides, currentSlide, onSelect, onAdd, onReorder, onDuplicate, disabled }) {
+export default function SlideList({ slides, currentSlide, onSelect, onAdd, onReorder, onDuplicate, onConvertToFreeform, disabled }) {
     const [activeId, setActiveId] = useState(null);
     const [searchQuery, setSearchQuery] = useState('');
 
@@ -217,6 +232,7 @@ export default function SlideList({ slides, currentSlide, onSelect, onAdd, onReo
                                     isActive={currentSlide?.id === slide.id}
                                     onSelect={onSelect}
                                     onDuplicate={handleDuplicate}
+                                    onConvertToFreeform={onConvertToFreeform}
                                     disabled={disabled}
                                 />
                             ))}

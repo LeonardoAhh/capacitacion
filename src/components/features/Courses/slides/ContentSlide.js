@@ -109,9 +109,11 @@ const ContentSlide = React.memo(function ContentSlide({ data, accentColor, hasBg
                                     gallery.length === 4 ? '1fr 1fr' :
                                         gallery.length === 5 ? 'repeat(6, 1fr)' :
                                             'repeat(3, 1fr)',
-                            gridAutoRows: 'minmax(100px, 150px)',
-                            gap: 12,
+                            gridAutoRows: 'minmax(80px, 130px)',
+                            gap: 10,
                             width: '100%',
+                            maxHeight: '450px',
+                            overflow: 'hidden',
                         }}>
                             {gallery.map((url, idx) => {
                                 // Configurar layout dinámico para 5 imágenes (2 grandes arriba, 3 abajo)
