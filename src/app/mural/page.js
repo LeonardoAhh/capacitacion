@@ -56,7 +56,7 @@ const Confetti = () => {
 const DEFAULT_CONFIG = {
     successMessage: '¡Felicidades! Has aprobado tu examen teórico. Estás un paso más cerca de tu promoción.',
     motivationalMessage: 'El aprendizaje es un proceso constante. Te invitamos a repasar y prepararte para tu siguiente intento. ¡Confiamos en ti!',
-    complianceWhatsapp: '',
+    complianceWhatsapp: '15529296117',
     complianceExamDates: [],
 };
 
