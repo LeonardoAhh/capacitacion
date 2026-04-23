@@ -3,16 +3,10 @@
    Minimal · Shadow-as-border · Centered · No noise
    ================================================================ */
 
-@keyframes promptIn {
-    from { opacity: 0; transform: translateX(-50%) translateY(10px) scale(0.97); }
-    to   { opacity: 1; transform: translateX(-50%) translateY(0) scale(1); }
-}
-
 .pill {
     position: fixed;
-    bottom: 24px;
+    top: 50%;
     left: 50%;
-    transform: translateX(-50%);
     z-index: 9999;
 
     display: inline-flex;
@@ -32,7 +26,6 @@
         0 8px 24px -4px rgba(0,0,0,0.08);
 
     font-family: var(--font-body), sans-serif;
-    animation: promptIn 0.35s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
 /* ── Status dot (pulse) ── */
@@ -105,36 +98,11 @@
     color: var(--ds-text);
 }
 
-/* ── Mobile: slim bottom bar ── */
+/* ── Mobile ── */
 @media (max-width: 480px) {
-    @keyframes promptIn {
-        from { opacity: 0; transform: translateY(100%); }
-        to   { opacity: 1; transform: translateY(0); }
-    }
-
     .pill {
-        bottom: 0;
-        left: 0;
-        right: 0;
-        transform: none;
         width: 100%;
-        max-width: none;
-        border-radius: 0;
-        height: 48px;
-        padding: 0 8px 0 16px;
-        justify-content: center;
-        box-shadow:
-            0 -1px 0 0 var(--ds-border-hairline),
-            0 -4px 16px rgba(0,0,0,0.06);
-        animation: promptIn 0.3s cubic-bezier(0.22,1,0.36,1) both;
+        max-width: calc(100vw - 32px);
     }
 }
 
-@supports (padding: max(0px)) {
-    @media (max-width: 480px) {
-        .pill {
-            padding-bottom: env(safe-area-inset-bottom);
-            height: calc(48px + env(safe-area-inset-bottom));
-        }
-    }
-}
