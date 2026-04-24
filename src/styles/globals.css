@@ -8,10 +8,11 @@
    - Pills extremas (radius 9999px) en tags/badges, NO en CTAs primarios.
    - Hover signature: text shift a warm crimson #cf2d56.
    - Sombras grandes y difusas (28px/70px blur, 0.14 opacity) â€” atmospheric lift.
-   - Sustitutos de fuentes propietarias:
-       CursorGothic â†’ Geist Sans (con tracking compresivo idÃ©ntico)
-       jjannon     â†’ Fraunces (Google Fonts, soporta `"swsh"` swash)
-       berkeleyMono â†’ Geist Mono
+   - Stack tipográfico:
+       display / headings → Montserrat (via --font-display)
+       editorial / serif  → Montserrat (via --font-serif)
+       body / UI          → Poppins    (via --font-body)
+       mono / code        → ui-monospace (via --font-mono)
    ============================================================= */
 
 /* Confetti (mural inline) */
@@ -418,9 +419,9 @@ h5, h6 {
     letter-spacing: 0;
 }
 
-/* Body â€” serif editorial (jjannon â†’ Fraunces) */
+/* Body — editorial (Montserrat via --font-serif) */
 p {
-    font-family: var(--font-serif), Georgia, 'Iowan Old Style', 'Palatino Linotype', ui-serif, serif;
+    font-family: var(--font-serif), 'Helvetica Neue', Arial, system-ui, sans-serif;
     font-size: var(--text-body);
     font-weight: var(--weight-read);
     line-height: var(--lh-base);

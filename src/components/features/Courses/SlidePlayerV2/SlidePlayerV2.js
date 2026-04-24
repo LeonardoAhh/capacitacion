@@ -47,7 +47,6 @@ export default function SlidePlayerV2({ course, slides = [], onClose }) {
   const [quizScore, setQuizScore] = useState(null);
   const [commitmentText, setCommitmentText] = useState('');
   const [isDark, setIsDark] = useState(false);
-  const [exporting, setExporting] = useState(false);
   const slideAreaRef = useRef(null);
   const mainRef = useRef(null);
 
@@ -187,20 +186,6 @@ export default function SlidePlayerV2({ course, slides = [], onClose }) {
   const handleCheckChange = useCallback(() => {}, []);
   const handleCommitmentChange = useCallback((val) => setCommitmentText(val), []);
 
-  /* ── PDF export ─────────────────────────────────── */
-  const handleExportPdf = useCallback(async () => {
-    if (exporting) return;
-    setExporting(true);
-    try {
-      const { exportCoursePdf } = await import('@/lib/exportCoursePdf');
-      await exportCoursePdf(course, slides);
-    } catch (err) {
-      console.error('Error exporting PDF:', err);
-    } finally {
-      setExporting(false);
-    }
-  }, [course, slides, exporting]);
-
   return (
     <div
       className={s.root}
@@ -242,7 +227,6 @@ export default function SlidePlayerV2({ course, slides = [], onClose }) {
         </div>
 
         <div className={s.headerRight}>
-          {/* Botón de PDF removido */}
           <button
             className={s.themeToggle}
             onClick={toggleTheme}
@@ -444,24 +428,6 @@ function MoonIcon() {
   return (
     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
       <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
-    </svg>
-  );
-}
-
-function DownloadIcon() {
-  return (
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
-      <polyline points="7,10 12,15 17,10" />
-      <line x1="12" y1="15" x2="12" y2="3" />
-    </svg>
-  );
-}
-
-function LoaderIcon() {
-  return (
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ animation: 'spin 1s linear infinite' }}>
-      <path d="M21 12a9 9 0 1 1-6.219-8.56" />
     </svg>
   );
 }

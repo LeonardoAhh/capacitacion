@@ -6,16 +6,17 @@
 
 /* ── Scoped design tokens ─────────────────────────── */
 .slide {
-  /* Vercel shadow layers */
-  --v-ring: 0 0 0 1px var(--card-border, rgba(0,0,0,0.08));
-  --v-subtle: var(--v-ring), 0 2px 2px rgba(0,0,0,0.04);
-  --v-card: var(--v-ring), 0 2px 2px rgba(0,0,0,0.04), 0 8px 8px -8px rgba(0,0,0,0.04);
-  --v-focus: 0 0 0 2px var(--bg-primary, var(--ds-bg-pure)), 0 0 0 4px hsla(212, 100%, 48%, 1);
-  /* Semantic */
+  /* Shadow layers (theme-aware via --ds-text-rgb) */
+  --v-ring: 0 0 0 1px var(--ds-border-hairline);
+  --v-subtle: var(--v-ring), 0 2px 2px rgba(var(--ds-text-rgb), 0.04);
+  --v-card: var(--v-ring), 0 2px 2px rgba(var(--ds-text-rgb), 0.04), 0 8px 8px -8px rgba(var(--ds-text-rgb), 0.06);
+  --v-card-hover: var(--v-ring), 0 4px 8px rgba(var(--ds-text-rgb), 0.06), 0 12px 20px -8px rgba(var(--ds-text-rgb), 0.08);
+  --v-focus: 0 0 0 2px var(--ds-bg-pure), 0 0 0 4px var(--accent-orange);
+  /* Semantic (color-mix keeps contrast in both themes) */
   --v-success: var(--accent-teal);
-  --v-success-bg: rgba(52, 199, 89, 0.08);
+  --v-success-bg: color-mix(in srgb, var(--accent-teal) 10%, transparent);
   --v-danger: var(--accent-crimson);
-  --v-danger-bg: rgba(255, 59, 48, 0.06);
+  --v-danger-bg: color-mix(in srgb, var(--accent-crimson) 10%, transparent);
 }
 
 /* ── Base slide ───────────────────────────────────── */
@@ -35,9 +36,16 @@
   box-sizing: border-box;
   background: var(--ds-bg-pure);
   /* Centra verticalmente el contenido cuando el slide es corto;
-     contenido largo igual fluye gracias a overflow-y: auto */
-  justify-content: center;
+     `safe` evita que contenido más alto que el viewport se corte arriba */
+  justify-content: safe center;
+  /* Wrap de textos largos (URLs, palabras sin cortes) en cualquier tipo de slide */
+  overflow-wrap: anywhere;
+  word-break: normal;
+  hyphens: auto;
 }
+
+/* Nunca permitir que un elemento rompa el ancho del slide por tener texto sin espacios */
+.slide * { min-width: 0; }
 
 .inner {
   max-width: 960px;
@@ -357,33 +365,48 @@
    ═══════════════════════════════════════════════════ */
 .iconGrid {
   display: grid;
-  gap: 1rem;
+  gap: clamp(0.625rem, 1.2vw, 1rem);
   margin-top: 0.5rem;
+  /* default: auto-fit by tile width so 7+ items (ignored today) or unknown counts still lay out cleanly */
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  justify-items: stretch;
 }
-.iconGrid[data-count="1"],
-.iconGrid[data-count="2"] { grid-template-columns: repeat(2, 1fr); }
-.iconGrid[data-count="3"] { grid-template-columns: repeat(3, 1fr); }
-.iconGrid[data-count="4"] { grid-template-columns: repeat(2, 1fr); }
-.iconGrid[data-count="5"],
-.iconGrid[data-count="6"] { grid-template-columns: repeat(3, 1fr); }
+/* 1 item: single centered card with bounded width */
+.iconGrid[data-count="1"] {
+  grid-template-columns: minmax(0, 360px);
+  justify-content: center;
+}
+.iconGrid[data-count="2"] { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.iconGrid[data-count="3"] { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.iconGrid[data-count="4"] { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+/* 5 items on a 6-col track so last row (2 items) is centered */
+.iconGrid[data-count="5"] {
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+}
+.iconGrid[data-count="5"] > * { grid-column: span 2; }
+.iconGrid[data-count="5"] > :nth-child(4) { grid-column-start: 2; }
+.iconGrid[data-count="6"] { grid-template-columns: repeat(3, minmax(0, 1fr)); }
 .iconCard {
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: flex-start;
   text-align: center;
   gap: 0.625rem;
-  padding: 1.5rem 1rem;
+  padding: clamp(1rem, 2vw, 1.5rem) clamp(0.75rem, 1.5vw, 1rem);
+  min-height: 140px;
   border-radius: 8px;
   background: var(--card-background, var(--ds-bg-pure));
   box-shadow: var(--v-card);
   transition: box-shadow 200ms var(--ease-spring);
 }
 .iconCard:hover {
-  box-shadow: var(--v-ring), 0 4px 8px rgba(0,0,0,0.06), 0 12px 20px -8px rgba(0,0,0,0.06);
+  box-shadow: var(--v-card-hover);
 }
 .iconCircle {
-  width: 48px;
-  height: 48px;
+  width: clamp(40px, 4.5vw, 52px);
+  aspect-ratio: 1;
+  height: auto;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -393,14 +416,17 @@
   font-size: 1.25rem;
   font-weight: 600;
   box-shadow: var(--v-ring);
+  flex: 0 0 auto;
 }
 .iconCircleImg {
-  width: 80px;
-  height: 80px;
+  width: clamp(56px, 8vw, 88px);
+  aspect-ratio: 1;
+  height: auto;
   border-radius: 12px;
   object-fit: cover;
   display: block;
   box-shadow: var(--v-ring);
+  flex: 0 0 auto;
 }
 .iconLabel {
   font-family: var(--font-serif);
@@ -460,7 +486,7 @@
 .compDivider {
   width: 1px;
   flex-shrink: 0;
-  box-shadow: 1px 0 0 0 var(--card-border, rgba(0,0,0,0.08));
+  box-shadow: 1px 0 0 0 var(--ds-border-hairline);
 }
 .compColTitle {
   font-family: var(--font-serif);
@@ -535,7 +561,7 @@
 .stepLine {
   flex: 1;
   width: 1px;
-  background: var(--card-border, rgba(0,0,0,0.08));
+  background: var(--ds-border-hairline);
   margin: 4px 0;
 }
 .stepBody {
@@ -605,15 +631,15 @@
   box-shadow: var(--v-focus);
 }
 .optionSelected {
-  box-shadow: 0 0 0 1px var(--ds-text), 0 2px 2px rgba(0,0,0,0.04);
+  box-shadow: 0 0 0 1px var(--ds-text), 0 2px 2px rgba(var(--ds-text-rgb), 0.04);
   background: var(--ds-bg);
 }
 .optionCorrect {
-  box-shadow: 0 0 0 1px var(--v-success), 0 2px 4px rgba(52, 199, 89, 0.12);
+  box-shadow: 0 0 0 1px var(--v-success), 0 2px 4px color-mix(in srgb, var(--accent-teal) 15%, transparent);
   background: var(--v-success-bg);
 }
 .optionWrong {
-  box-shadow: 0 0 0 1px var(--v-danger), 0 2px 4px rgba(255, 59, 48, 0.12);
+  box-shadow: 0 0 0 1px var(--v-danger), 0 2px 4px color-mix(in srgb, var(--accent-crimson) 15%, transparent);
   background: var(--v-danger-bg);
 }
 .optionLetter {
@@ -669,7 +695,7 @@
   padding-bottom: 56.25%;
   border-radius: 12px;
   overflow: hidden;
-  background: var(--cursor-dark);
+  background: #000;
   box-shadow: var(--v-ring);
 }
 .videoIframe,
@@ -705,7 +731,9 @@
   perspective: 800px;
   width: 100%;
   max-width: 480px;
-  height: 260px;
+  /* alto fluido que escala con el viewport pero mantiene mínimo legible;
+     overflow interno maneja contenido más largo (no se recorta). */
+  min-height: clamp(220px, 34vh, 360px);
   cursor: pointer;
   margin: 0 auto;
 }
@@ -713,6 +741,7 @@
   position: relative;
   width: 100%;
   height: 100%;
+  min-height: inherit;
   transition: transform 0.5s cubic-bezier(.4, 0, .2, 1);
   transform-style: preserve-3d;
 }
@@ -722,14 +751,27 @@
   position: absolute;
   inset: 0;
   display: flex;
-  align-items: center;
+  align-items: safe center;
   justify-content: center;
   backface-visibility: hidden;
   border-radius: 12px;
-  padding: 2rem;
+  padding: clamp(1.25rem, 3vw, 2rem);
   text-align: center;
   font-size: 1.0625rem;
   line-height: 1.56;
+  overflow-wrap: anywhere;
+}
+/* Scroll del texto VA en el hijo — aplicar overflow al face mismo
+   aplana el contexto 3D y rompe el backface-visibility. */
+.flashFront > p,
+.flashBack > p {
+  margin: 0;
+  max-height: 100%;
+  max-width: none;
+  overflow-y: auto;
+  overflow-wrap: anywhere;
+  /* Ignorar el color secundario global para <p>; cada face define el suyo. */
+  color: inherit;
 }
 .flashFront {
   background: var(--card-background, var(--ds-bg-pure));
@@ -775,7 +817,7 @@
   transition: border-color 150ms ease;
 }
 .fillInput:focus {
-  border-bottom-color: hsla(212, 100%, 48%, 1);
+  border-bottom-color: var(--accent-orange);
 }
 .fillAnswer {
   display: inline-block;
@@ -844,7 +886,7 @@
   align-items: center;
   gap: 0.75rem;
   padding: 0.75rem 0;
-  box-shadow: 0 1px 0 0 var(--card-border, rgba(0,0,0,0.06));
+  box-shadow: 0 1px 0 0 var(--ds-border-hairline);
   transition: opacity 200ms ease;
 }
 .checkDone { opacity: 0.5; }
@@ -857,7 +899,7 @@
   align-items: center;
   justify-content: center;
   background: var(--ds-bg-pure);
-  box-shadow: 0 0 0 1.5px var(--card-border, rgba(0,0,0,0.16));
+  box-shadow: 0 0 0 1.5px var(--ds-border-medium);
   cursor: pointer;
   flex-shrink: 0;
   transition: background 150ms ease, box-shadow 150ms ease;
@@ -926,7 +968,7 @@
   color: var(--ds-text-tertiary);
   margin: 0 0 0.5rem;
   padding-bottom: 0.375rem;
-  box-shadow: 0 1px 0 0 var(--card-border, rgba(0,0,0,0.06));
+  box-shadow: 0 1px 0 0 var(--ds-border-hairline);
 }
 .infoBlock p {
   font-size: 0.9375rem;
@@ -1002,13 +1044,13 @@
   border: 0;
   border-radius: 6px;
   background: var(--ds-bg-pure);
-  box-shadow: 0 0 0 1px rgba(38, 37, 30, 0.16);
+  box-shadow: 0 0 0 1px var(--ds-border-medium);
   color: var(--ds-text);
   cursor: pointer;
   transition: box-shadow 150ms ease;
 }
 .outlineBtn:hover:not(:disabled) {
-  box-shadow: 0 0 0 1px var(--ds-text-tertiary);
+  box-shadow: 0 0 0 1px var(--ds-border-strong);
 }
 .outlineBtn:focus-visible {
   outline: none;
@@ -1026,8 +1068,9 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: hsla(0, 0%, 98%, 0.85);
+  background: color-mix(in srgb, var(--ds-bg) 88%, transparent);
   backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
   cursor: zoom-out;
 }
 .lightboxImg {
@@ -1068,41 +1111,39 @@
   .twoCol .inner { flex: 0 0 auto; }
   .mediaCol { flex: 0 0 auto; max-height: min(45vh, 320px); width: 100%; align-self: center; }
   .compGrid { flex-direction: column; gap: 1.5rem; }
-  .compDivider { width: 100%; height: 0; box-shadow: 0 1px 0 0 var(--card-border, rgba(0,0,0,0.08)); }
+  .compDivider { width: 100%; height: 0; box-shadow: 0 1px 0 0 var(--ds-border-hairline); }
   .dynamicGrid { grid-template-columns: 1fr; }
   .iconGrid { gap: 0.625rem; }
+  /* Móvil: colapsar a 2 columnas para 3/5/6; 4 sigue 2x2; 1 se mantiene 1 col centrada; 2 sigue 2 cols */
   .iconGrid[data-count="3"],
-  .iconGrid[data-count="5"],
-  .iconGrid[data-count="6"] { grid-template-columns: repeat(2, 1fr); }
-  .iconCard { padding: 0.75rem 0.5rem; gap: 0.4rem; }
-  .iconCircle { width: 36px; height: 36px; font-size: 1rem; }
-  .iconCircleImg { width: 56px; height: 56px; }
+  .iconGrid[data-count="6"] { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  /* 3 items en 2 cols: centrar el último para balance */
+  .iconGrid[data-count="3"] > :nth-child(3) { grid-column: 1 / -1; max-width: 50%; margin-inline: auto; width: 100%; }
+  .iconGrid[data-count="5"] { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  .iconGrid[data-count="5"] > * { grid-column: span 2; }
+  .iconGrid[data-count="5"] > :nth-child(5) { grid-column-start: 2; }
+  .iconCard { padding: 0.75rem 0.5rem; gap: 0.4rem; min-height: 120px; }
   .iconLabel { font-size: 0.75rem; line-height: 1.2; }
   .iconDesc { font-size: 0.7rem; line-height: 1.3; }
-  .flashScene { height: 220px; }
+  .flashCard { min-height: 200px; }
 }
 
 @media (max-width: 480px) {
   .slide { padding: 1.5rem 1rem; }
   .titleH1 { font-size: 1.75rem; letter-spacing: -0.04em; }
-  /* Mantener 2 columnas siempre en móvil para que el slide quepa sin scroll;
-     ocupar 1 sola columna se evita porque genera scroll innecesario en cuadrículas grandes */
-  .iconGrid[data-count="3"],
-  .iconGrid[data-count="4"],
-  .iconGrid[data-count="5"],
-  .iconGrid[data-count="6"] { grid-template-columns: repeat(2, 1fr); }
-  .flashScene { height: 180px; }
+  .flashCard { min-height: 180px; }
 }
 
 /* Container query: mismo comportamiento responsivo dentro del preview móvil del editor */
 @container slide (max-width: 640px) {
   .iconGrid { gap: 0.625rem; }
   .iconGrid[data-count="3"],
-  .iconGrid[data-count="5"],
-  .iconGrid[data-count="6"] { grid-template-columns: repeat(2, 1fr); }
-  .iconCard { padding: 0.75rem 0.5rem; gap: 0.4rem; }
-  .iconCircle { width: 36px; height: 36px; font-size: 1rem; }
-  .iconCircleImg { width: 56px; height: 56px; }
+  .iconGrid[data-count="6"] { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .iconGrid[data-count="3"] > :nth-child(3) { grid-column: 1 / -1; max-width: 50%; margin-inline: auto; width: 100%; }
+  .iconGrid[data-count="5"] { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  .iconGrid[data-count="5"] > * { grid-column: span 2; }
+  .iconGrid[data-count="5"] > :nth-child(5) { grid-column-start: 2; }
+  .iconCard { padding: 0.75rem 0.5rem; gap: 0.4rem; min-height: 120px; }
   .iconLabel { font-size: 0.75rem; line-height: 1.2; }
   .iconDesc { font-size: 0.7rem; line-height: 1.3; }
 }

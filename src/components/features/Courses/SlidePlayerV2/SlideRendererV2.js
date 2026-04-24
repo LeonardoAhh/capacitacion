@@ -491,7 +491,7 @@ function FlashcardV2({ data }) {
       <div className={s.inner}>
         <span className={s.label}>Tarjeta {idx + 1} de {cards.length}</span>
         {heading && <h2 className={s.heading}>{heading}</h2>}
-        <div className={s.flashScene} onClick={flip} role="button" tabIndex={0} aria-label={flipped ? 'Mostrando respuesta' : 'Clic para voltear'} onKeyDown={(e) => e.key === 'Enter' && flip()}>
+        <div className={s.flashScene} onClick={flip} role="button" tabIndex={0} aria-label={flipped ? 'Mostrando respuesta' : 'Clic para voltear'} onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); flip(); } }}>
           <div className={`${s.flashCard} ${flipped ? s.flashFlipped : ''}`}>
             <div className={s.flashFront}><p>{card.front}</p></div>
             <div className={s.flashBack}><p>{card.back}</p></div>

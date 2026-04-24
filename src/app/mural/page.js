@@ -60,16 +60,14 @@ const DEFAULT_CONFIG = {
     complianceExamDates: [],
 };
 
-function ComplianceModal({ onClose, whatsapp, examDates }) {
+function ComplianceModal({ onClose, examDates }) {
     useEffect(() => {
         const esc = (e) => { if (e.key === 'Escape') onClose(); };
         document.addEventListener('keydown', esc);
         return () => document.removeEventListener('keydown', esc);
     }, [onClose]);
 
-    const waLink = whatsapp
-        ? `https://wa.me/52${whatsapp.replace(/\D/g, '')}`
-        : null;
+    const waLink = 'https://vinoplasticqro.xyz/bot';
 
     return createPortal(
         <div
@@ -164,6 +162,9 @@ export default function MuralPage() {
     const [config, setConfig] = useState(DEFAULT_CONFIG);
     const [complianceOpen, setComplianceOpen] = useState(false);
     const [introPlaying, setIntroPlaying] = useState(true);
+    const [mounted, setMounted] = useState(false);
+
+    useEffect(() => { setMounted(true); }, []);
 
     useEffect(() => {
         const timer = setTimeout(() => setIntroPlaying(false), 5000);
@@ -231,7 +232,7 @@ export default function MuralPage() {
 
     return (
         <main className={styles.page}>
-            {introPlaying && createPortal(
+            {mounted && introPlaying && createPortal(
                 <div className={styles.introVeil} aria-hidden="true">
                     <div className={styles.introContent}>
                         <div className={styles.introIcon}>
@@ -406,7 +407,6 @@ export default function MuralPage() {
             {complianceOpen && (
                 <ComplianceModal
                     onClose={() => setComplianceOpen(false)}
-                    whatsapp={config.complianceWhatsapp}
                     examDates={config.complianceExamDates || []}
                 />
             )}

@@ -29,14 +29,115 @@ const DEMO_SLIDES = [
   {
     id: '5', type: 'icon_grid', order: 4,
     data: {
-      heading: 'Equipo de Protección Personal',
+      heading: 'Equipo de Protección Personal (6)',
       items: [
-        { id: 'i1', icon: '🪖', label: 'Casco', description: 'Protección craneal' },
-        { id: 'i2', icon: '🥽', label: 'Lentes', description: 'Protección ocular' },
-        { id: 'i3', icon: '🧤', label: 'Guantes', description: 'Protección manual' },
-        { id: 'i4', icon: '👂', label: 'Tapones', description: 'Protección auditiva' },
-        { id: 'i5', icon: '🦺', label: 'Chaleco', description: 'Visibilidad' },
-        { id: 'i6', icon: '👟', label: 'Calzado', description: 'Protección de pies' },
+        { id: 'i1', icon: 'Safety', label: 'Casco', description: 'Protección craneal' },
+        { id: 'i2', icon: 'Eye', label: 'Lentes', description: 'Protección ocular' },
+        { id: 'i3', icon: 'Tool', label: 'Guantes', description: 'Protección manual' },
+        { id: 'i4', icon: 'Bell', label: 'Tapones', description: 'Protección auditiva' },
+        { id: 'i5', icon: 'Flag', label: 'Chaleco', description: 'Visibilidad' },
+        { id: 'i6', icon: 'Rocket', label: 'Calzado', description: 'Protección de pies' },
+      ],
+    },
+  },
+  {
+    id: '5a', type: 'icon_grid', order: 4.1,
+    data: {
+      heading: 'EPP Básico (5)',
+      description: 'La última fila se centra cuando hay 5 elementos.',
+      items: [
+        { id: 'i1', icon: 'Safety', label: 'Casco' },
+        { id: 'i2', icon: 'Eye', label: 'Lentes' },
+        { id: 'i3', icon: 'Tool', label: 'Guantes' },
+        { id: 'i4', icon: 'Flag', label: 'Chaleco' },
+        { id: 'i5', icon: 'Rocket', label: 'Calzado' },
+      ],
+    },
+  },
+  {
+    id: '5b', type: 'icon_grid', order: 4.2,
+    data: {
+      heading: 'Pilares de Seguridad (4)',
+      items: [
+        { id: 'i1', icon: 'Safety', label: 'Prevención', description: 'Anticiparse al riesgo' },
+        { id: 'i2', icon: 'Warning', label: 'Detección', description: 'Identificar a tiempo' },
+        { id: 'i3', icon: 'Heart', label: 'Respuesta', description: 'Actuar con protocolo' },
+        { id: 'i4', icon: 'Book', label: 'Registro', description: 'Documentar todo' },
+      ],
+    },
+  },
+  {
+    id: '5c', type: 'icon_grid', order: 4.3,
+    data: {
+      heading: 'Principios Clave (3)',
+      items: [
+        { id: 'i1', icon: 'Safety', label: 'Prevención' },
+        { id: 'i2', icon: 'Heart', label: 'Respuesta' },
+        { id: 'i3', icon: 'Trophy', label: 'Mejora' },
+      ],
+    },
+  },
+  {
+    id: '5d', type: 'icon_grid', order: 4.4,
+    data: {
+      heading: 'Mensaje Central (1)',
+      items: [
+        { id: 'i1', icon: 'Safety', label: 'Cero accidentes', description: 'Meta compartida por todo el equipo.' },
+      ],
+    },
+  },
+  /* ── Font size + long text stress tests ──────── */
+  {
+    id: '5e', type: 'definition', order: 4.5,
+    data: {
+      fontSize: 'sm',
+      heading: 'Tamaño de texto: Pequeño (sm)',
+      body: 'Esta definición usa fontSize=sm. Texto largo para probar el wrap: La seguridad industrial es el conjunto integral de normas, procedimientos, políticas, estrategias preventivas y herramientas de control destinadas a preservar la integridad física y mental de los trabajadores, minimizando los riesgos derivados de las actividades laborales en el entorno productivo, administrativo y operativo de la organización.',
+    },
+  },
+  {
+    id: '5f', type: 'definition', order: 4.6,
+    data: {
+      heading: 'Tamaño de texto: Mediano (md, default)',
+      body: 'Este es el tamaño por defecto. Sirve como referencia para comparar los demás niveles (sm / md / lg / xl). Un texto un poco largo ayuda a ver la altura de línea, el ritmo de lectura y cómo se comporta el contenido en distintos anchos de viewport.',
+    },
+  },
+  {
+    id: '5g', type: 'content', order: 4.7,
+    data: {
+      fontSize: 'lg',
+      heading: 'Tamaño de texto: Grande (lg)',
+      body: 'Con fontSize=lg el cuerpo de texto aumenta ~1.2× y los encabezados también. Ideal para aulas con proyector o público mayor.',
+      bullets: [
+        'Bullets también escalan a lg.',
+        'Los encabezados de sección mantienen la jerarquía visual.',
+        'La ley de la seguridad industrial establece responsabilidades compartidas entre empleador y colaborador.',
+      ],
+    },
+  },
+  {
+    id: '5h', type: 'content', order: 4.8,
+    data: {
+      fontSize: 'xl',
+      heading: 'Tamaño de texto: Extra grande (xl)',
+      body: 'Máximo nivel de zoom tipográfico. Todos los elementos escalan: títulos, cuerpo, bullets, opciones de quiz, textos de flashcard, chips y más.',
+      bullets: [
+        'Accesibilidad: lectores con baja visión.',
+        'Presentación presencial a grupos grandes.',
+      ],
+    },
+  },
+  {
+    id: '5i', type: 'flashcard', order: 4.9,
+    data: {
+      fontSize: 'xl',
+      heading: 'Flashcard con texto largo (xl)',
+      cards: [
+        {
+          id: 'fL1',
+          front: '¿Cuál es la definición completa de seguridad industrial según la NOM-STPS?',
+          back: 'Conjunto de disposiciones técnicas, organizacionales y legales orientadas a preservar la vida, la salud y la integridad física y psicológica de los trabajadores, así como prevenir los daños materiales al entorno productivo. Incluye identificación de riesgos, controles de ingeniería y administrativos, uso correcto de EPP y programas permanentes de capacitación.',
+        },
       ],
     },
   },
