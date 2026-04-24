@@ -21,17 +21,6 @@ function isPublicRoute(pathname) {
     );
 }
 
-function getRequiredSessionType(_pathname) {
-    return 'admin';
-}
-
-function getLoginUrl(sessionType) {
-    switch (sessionType) {
-        case 'admin':
-        default: return '/login';
-    }
-}
-
 // ─── Middleware ─────────────────────────────────────────────────────────────────
 
 export async function middleware(request) {
@@ -71,31 +60,19 @@ export async function middleware(request) {
         return NextResponse.next();
     }
 
-    // 3. Todas las rutas no públicas requieren sesión válida
-    const requiredType = getRequiredSessionType(pathname);
-
-    // 4. Verificar y validar la cookie de sesión firmada con HMAC
+    // 3. Rutas no públicas requieren cookie de sesión firmada con HMAC
     const sessionCookie = request.cookies.get('__session');
     const session = sessionCookie ? await deserializeSession(sessionCookie.value) : null;
 
-    // 5. Sin cookie válida → redirigir al login correspondiente
-    if (!session) {
-        const loginUrl = getLoginUrl(requiredType);
+    // 4. Sin cookie válida o tipo incorrecto → redirigir al login
+    if (!session || session.type !== 'admin') {
         const url = request.nextUrl.clone();
-        url.pathname = loginUrl;
-        url.searchParams.set('redirect', pathname);
+        url.pathname = '/login';
+        if (!session) url.searchParams.set('redirect', pathname);
         return NextResponse.redirect(url);
     }
 
-    // 6. Cookie válida pero tipo incorrecto → redirigir al login correcto
-    if (session.type !== requiredType) {
-        const loginUrl = getLoginUrl(requiredType);
-        const url = request.nextUrl.clone();
-        url.pathname = loginUrl;
-        return NextResponse.redirect(url);
-    }
-
-    // 7. Cookie válida → permitir acceso
+    // 5. Cookie válida → permitir acceso
     return NextResponse.next();
 }
 

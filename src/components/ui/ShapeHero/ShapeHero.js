@@ -286,8 +286,8 @@ export default function ShapeHero() {
                                         >
                                             <motion.circle
                                                 cx="26" cy="26" r="23"
-                                                fill="#e7faed"
-                                                stroke="#16a34a"
+                                                fill="rgba(var(--accent-teal-rgb), 0.12)"
+                                                stroke="var(--accent-teal)"
                                                 strokeWidth="2"
                                                 initial={{ pathLength: 0 }}
                                                 animate={{ pathLength: 1 }}
@@ -295,7 +295,7 @@ export default function ShapeHero() {
                                             />
                                             <motion.path
                                                 fill="none"
-                                                stroke="#16a34a"
+                                                stroke="var(--accent-teal)"
                                                 strokeWidth="3.5"
                                                 strokeLinecap="round"
                                                 strokeLinejoin="round"
