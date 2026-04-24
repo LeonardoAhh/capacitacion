@@ -41,8 +41,8 @@
     100% { transform: translateY(-100%); }
 }
 @keyframes introIconGlow {
-    0%, 100% { box-shadow: 0 0 24px rgba(192, 133, 50, 0.45), 0 0 60px rgba(192, 133, 50, 0.2); }
-    50%       { box-shadow: 0 0 48px rgba(192, 133, 50, 0.9), 0 0 110px rgba(192, 133, 50, 0.45), 0 0 180px rgba(192, 133, 50, 0.15); }
+    0%, 100% { box-shadow: 0 0 24px rgba(var(--accent-gold-rgb), 0.45), 0 0 60px rgba(var(--accent-gold-rgb), 0.2); }
+    50%      { box-shadow: 0 0 48px rgba(var(--accent-gold-rgb), 0.9), 0 0 110px rgba(var(--accent-gold-rgb), 0.45), 0 0 180px rgba(var(--accent-gold-rgb), 0.15); }
 }
 @keyframes introContentIn {
     from { opacity: 0; transform: translateY(18px) scale(0.96); }
@@ -57,7 +57,7 @@
     position: fixed;
     inset: 0;
     z-index: 9999;
-    background: #1a1914;
+    background: var(--cursor-dark);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -70,19 +70,19 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 20px;
+    gap: var(--s-20);
     animation: introContentIn 0.7s cubic-bezier(0.16, 1, 0.3, 1) 0.1s both;
 }
 
 .introIcon {
     width: 80px;
     height: 80px;
-    background: #c08532;
+    background: var(--accent-gold);
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
-    color: #1a1914;
+    color: var(--cursor-dark);
     animation: introIconGlow 1.8s ease-in-out 0.6s infinite;
     flex-shrink: 0;
 }
@@ -90,8 +90,8 @@
 .introTitle {
     font-family: var(--font-mono), ui-monospace, monospace;
     font-size: 1.15rem;
-    font-weight: 500;
-    color: #f2f1ed;
+    font-weight: var(--weight-ui);
+    color: var(--cursor-cream);
     letter-spacing: 0.32em;
     text-transform: uppercase;
 }
@@ -99,7 +99,7 @@
 .introSub {
     font-family: var(--font-mono), ui-monospace, monospace;
     font-size: 0.68rem;
-    color: #f2f1ed;
+    color: var(--cursor-cream);
     text-transform: uppercase;
     animation: introSubIn 0.9s cubic-bezier(0.16, 1, 0.3, 1) 0.5s both;
 }
@@ -498,53 +498,6 @@
 .metricValueSuccess { color: var(--accent-teal); }
 .metricValueFail    { color: var(--accent-orange); }
 
-/* ─── Recommendations ────────────────────────────────────── */
-.recommendations {
-    border: 1px solid rgba(245, 78, 0, 0.30);
-    background: rgba(245, 78, 0, 0.05);
-    border-radius: var(--radius-md);
-    padding: var(--s-14) var(--s-16);
-}
-
-.recommendationsTitle {
-    font-family: var(--font-display), system-ui, sans-serif;
-    font-size: var(--text-caption);
-    font-weight: var(--weight-announce);
-    color: var(--accent-orange);
-    margin: 0 0 var(--s-10);
-    display: flex;
-    align-items: center;
-    gap: var(--s-6);
-    text-transform: uppercase;
-    letter-spacing: var(--track-mono-sm);
-}
-
-.recommendationTags {
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--s-6);
-}
-
-.recommendationTag {
-    font-family: var(--font-display), system-ui, sans-serif;
-    font-size: var(--text-button);
-    font-weight: var(--weight-ui);
-    padding: var(--s-3) var(--s-10);
-    background: var(--ds-bg-pure);
-    border: 1px solid rgba(245, 78, 0, 0.28);
-    border-radius: var(--radius-pill);
-    color: var(--accent-orange);
-}
-
-.recommendationText {
-    font-family: var(--font-serif), Georgia, serif;
-    font-size: var(--text-button);
-    color: var(--ds-text);
-    line-height: var(--lh-base);
-    margin: 0;
-    font-feature-settings: var(--feat-serif);
-}
-
 /* ─── Result footer ──────────────────────────────────────── */
 .resultFooter {
     padding: var(--s-14) var(--s-24);
@@ -555,16 +508,6 @@
     justify-content: center;
     gap: var(--s-10);
     flex-wrap: wrap;
-}
-
-.dateRow {
-    display: flex;
-    align-items: center;
-    gap: var(--s-6);
-    font-family: var(--font-mono), ui-monospace, monospace;
-    font-size: var(--text-mono-sm);
-    color: var(--ds-text-muted);
-    font-feature-settings: var(--feat-mono);
 }
 
 /* ─── New Search button ──────────────────────────────────── */
@@ -626,23 +569,6 @@
 @media (max-height: 600px) {
     .page { align-items: flex-start; padding-top: var(--s-16); }
 }
-/* ================================================================
-   /mural — page.module.css
-   Diseño: shadcn/ui — light, clean, cohesive
-   Página PÚBLICA — sin sidebar, centrada
-   ================================================================ */
-
-/* ── Spinner ── */
-@keyframes spin {
-    to { transform: rotate(360deg); }
-}
-
-/* ── Slide-up entry ── */
-@keyframes slideUp {
-    from { opacity: 0; transform: translateY(14px); }
-    to   { opacity: 1; transform: translateY(0); }
-}
-
 /* =============================================================
    COMPLIANCE CARD (info strip)
    ============================================================= */

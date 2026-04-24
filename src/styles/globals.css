@@ -70,6 +70,7 @@
     /* â”€â”€â”€ Acentos Cursor â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
     --accent-orange:       #f54e00;  /* primary brand accent */
     --accent-gold:         #c08532;  /* secondary premium */
+    --accent-gold-rgb:     192, 133, 50;
     --accent-crimson:      #cf2d56;  /* hover signature + error */
     --accent-teal:         #1f8a65;  /* success warm-shifted */
 
