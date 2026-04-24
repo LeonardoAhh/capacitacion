@@ -671,37 +671,6 @@
     font-family: var(--font-body);
 }
 
-.kCardPuestos {
-    font-size: var(--text-xs);
-    color: var(--ds-text-tertiary);
-    margin: 0;
-    line-height: var(--lh-base);
-    font-family: var(--font-body);
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    line-clamp: 2;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-}
-
-.kCardPuestosWarn { color: var(--accent-orange); }
-
-.kCardViewBadge {
-    display: inline-flex;
-    align-items: center;
-    gap: var(--s-4);
-    font-size: var(--text-caption);
-    font-weight: var(--weight-ui);
-    padding: var(--s-2) var(--s-8);
-    border-radius: var(--radius-pill);
-    background: var(--cursor-cream);
-    color: var(--ds-text-secondary);
-    font-family: var(--font-mono);
-    text-transform: uppercase;
-    letter-spacing: var(--track-micro);
-    width: fit-content;
-}
-
 .kCardFooter {
     display: flex;
     align-items: center;
