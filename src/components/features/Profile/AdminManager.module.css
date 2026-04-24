@@ -139,7 +139,7 @@
 }
 
 .roleTagAdmin {
-    background: rgba(192, 133, 50, 0.12);
+    background: rgba(var(--accent-gold-rgb), 0.12);
     color: var(--accent-gold);
 }
 
@@ -244,8 +244,8 @@
     justify-content: space-between;
     gap: var(--s-12);
     padding: var(--s-16);
-    background: rgba(245, 78, 0, 0.06);
-    border: 1px solid rgba(245, 78, 0, 0.18);
+    background: rgba(var(--accent-orange-rgb), 0.06);
+    border: 1px solid rgba(var(--accent-orange-rgb), 0.18);
     border-radius: var(--radius-md);
     margin-bottom: var(--s-24);
 }

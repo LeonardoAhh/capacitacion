@@ -226,8 +226,8 @@
 }
 
 .feedbackWrong {
-    background: rgba(245, 78, 0, 0.08);
-    border: 1px solid rgba(245, 78, 0, 0.3);
+    background: rgba(var(--accent-orange-rgb), 0.08);
+    border: 1px solid rgba(var(--accent-orange-rgb), 0.3);
 }
 
 .feedbackIcon {
@@ -393,8 +393,8 @@
 }
 
 .badgeFailed {
-    background: rgba(245, 78, 0, 0.1);
-    border-color: rgba(245, 78, 0, 0.35);
+    background: rgba(var(--accent-orange-rgb), 0.1);
+    border-color: rgba(var(--accent-orange-rgb), 0.35);
 }
 
 .resultsTitle {
@@ -491,9 +491,9 @@
 }
 
 .noteFail {
-    background: rgba(245, 78, 0, 0.1);
+    background: rgba(var(--accent-orange-rgb), 0.1);
     color: var(--accent-orange);
-    border: 1px solid rgba(245, 78, 0, 0.35);
+    border: 1px solid rgba(var(--accent-orange-rgb), 0.35);
 }
 
 /* â”€â”€â”€ Summary â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
@@ -524,8 +524,8 @@
 }
 
 .rowWrong {
-    background: rgba(245, 78, 0, 0.08);
-    border-color: rgba(245, 78, 0, 0.25);
+    background: rgba(var(--accent-orange-rgb), 0.08);
+    border-color: rgba(var(--accent-orange-rgb), 0.25);
 }
 
 .summaryIcon {

@@ -331,7 +331,7 @@
 }
 
 .resultCardFail {
-    border-color: rgba(245, 78, 0, 0.30);
+    border-color: rgba(var(--accent-orange-rgb), 0.30);
 }
 
 /* ─── Result header ──────────────────────────────────────── */
@@ -356,7 +356,7 @@
 .resultHeaderFail {
     background: linear-gradient(
         to bottom,
-        rgba(245, 78, 0, 0.05),
+        rgba(var(--accent-orange-rgb), 0.05),
         var(--ds-bg-tertiary) 85%
     );
 }
@@ -384,9 +384,9 @@
 }
 
 .statusBadgeFail {
-    background: rgba(245, 78, 0, 0.10);
+    background: rgba(var(--accent-orange-rgb), 0.10);
     color: var(--accent-orange);
-    border: 1px solid rgba(245, 78, 0, 0.28);
+    border: 1px solid rgba(var(--accent-orange-rgb), 0.28);
 }
 
 /* ─── Score (Montserrat display via --font-serif) ────────── */
@@ -536,8 +536,8 @@
 
 .newSearchBtnFail {
     color: var(--accent-orange);
-    background: rgba(245, 78, 0, 0.08);
-    border-color: rgba(245, 78, 0, 0.25);
+    background: rgba(var(--accent-orange-rgb), 0.08);
+    border-color: rgba(var(--accent-orange-rgb), 0.25);
 }
 
 .newSearchBtnFail:hover {

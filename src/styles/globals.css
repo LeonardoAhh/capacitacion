@@ -68,11 +68,13 @@
     --ds-bg-ghost-hover:   rgba(38, 37, 30, 0.06);
 
     /* â”€â”€â”€ Acentos Cursor â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
-    --accent-orange:       #f54e00;  /* primary brand accent */
-    --accent-gold:         #c08532;  /* secondary premium */
-    --accent-gold-rgb:     192, 133, 50;
+    --accent-orange:       #141e64;  /* ViñoPlastic navy — primary brand */
+    --accent-orange-rgb:   20, 30, 100;
+    --accent-gold:         #0fd2f0;  /* ViñoPlastic cyan — secondary (roller) */
+    --accent-gold-rgb:     15, 210, 240;
     --accent-crimson:      #cf2d56;  /* hover signature + error */
     --accent-teal:         #1f8a65;  /* success warm-shifted */
+    --accent-teal-rgb:     31, 138, 101;
 
     /* Timeline colors (AI operation states) */
     --timeline-thinking:   #dfa88f; /* warm peach */
@@ -88,7 +90,7 @@
     /* â”€â”€â”€ Link / Focus â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
     --ds-link:             var(--accent-orange);
     --ds-focus:            var(--accent-orange);
-    --ds-focus-ring:       0 0 0 2px rgba(245, 78, 0, 0.25);
+    --ds-focus-ring:       0 0 0 2px rgba(var(--accent-orange-rgb), 0.25);
 
     /* â”€â”€â”€ Shadows (Cursor warm depth) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
     --ring-border:         0 0 0 1px var(--ds-border-hairline);
@@ -228,7 +230,7 @@
     --color-danger:         var(--accent-crimson);
     --color-info:           var(--timeline-read);
     --color-focus:          var(--ds-focus);
-    --color-focus-ring:     rgba(245, 78, 0, 0.25);
+    --color-focus-ring:     rgba(var(--accent-orange-rgb), 0.25);
 
     --color-danger-rgb:     207, 45, 86;
     --color-success-rgb:    31, 138, 101;
@@ -314,8 +316,11 @@
     /* Hover ghost dark — 6% warm cream overlay */
     --ds-bg-ghost-hover:   rgba(242, 241, 237, 0.06);
 
-    /* ─── Acentos: se mantienen idénticos (Cursor Hue es theme-agnostic) ─── */
-    /* --accent-orange/crimson/teal/gold heredados sin cambio */
+    /* ─── Acentos en dark: brand navy se aclara a un azul cielo-marino para
+       mantener contraste sobre warm-dark. Cyan/crimson/teal se heredan
+       (ya leen bien sobre dark). ─── */
+    --accent-orange:       #6d8cff;  /* brand navy aclarado para dark */
+    --accent-orange-rgb:   109, 140, 255;
 
     /* ─── Shadows (warm depth en dark, alpha más densa) ─── */
     --elev-ambient:        0 0 16px rgba(0, 0, 0, 0.30),
@@ -625,7 +630,7 @@ a:focus {
 }
 
 /* Workflow / timeline accents (semantic only) */
-.badge-ship    { background: rgba(245, 78, 0, 0.10);   color: var(--accent-orange); }
+.badge-ship    { background: rgba(var(--accent-orange-rgb), 0.10);   color: var(--accent-orange); }
 .badge-preview { background: rgba(207, 45, 86, 0.10);  color: var(--accent-crimson); }
 .badge-develop { background: rgba(159, 187, 224, 0.20); color: #2d5a8a; }
 .badge-success { background: rgba(31, 138, 101, 0.10); color: var(--accent-teal); }

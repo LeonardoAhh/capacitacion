@@ -486,8 +486,8 @@
     align-items: center;
     gap: var(--s-8);
     padding: var(--s-8) var(--s-12);
-    background: rgba(245, 78, 0, 0.08);
-    border: 1px solid rgba(245, 78, 0, 0.25);
+    background: rgba(var(--accent-orange-rgb), 0.08);
+    border: 1px solid rgba(var(--accent-orange-rgb), 0.25);
     border-radius: var(--radius-md);
     font-family: var(--font-body);
     font-size: var(--text-xs);
@@ -878,9 +878,9 @@
     font-weight: var(--weight-announce);
     padding: 2px 8px;
     border-radius: var(--radius-pill);
-    background: rgba(245, 78, 0, 0.1);
+    background: rgba(var(--accent-orange-rgb), 0.1);
     color: var(--accent-orange);
-    border: 1px solid rgba(245, 78, 0, 0.3);
+    border: 1px solid rgba(var(--accent-orange-rgb), 0.3);
     text-transform: uppercase;
     letter-spacing: var(--track-micro);
 }
@@ -890,9 +890,9 @@
     font-size: 0.6875rem;
     padding: 2px 7px;
     border-radius: var(--radius-pill);
-    background: rgba(245, 78, 0, 0.08);
+    background: rgba(var(--accent-orange-rgb), 0.08);
     color: var(--accent-orange);
-    border: 1px solid rgba(245, 78, 0, 0.25);
+    border: 1px solid rgba(var(--accent-orange-rgb), 0.25);
 }
 
 /* ── Tag chips ── */
@@ -929,7 +929,7 @@
     background: var(--ds-bg-emphasis);
 }
 .muralMsgCardSuccess { border-color: rgba(31, 138, 101, 0.35); }
-.muralMsgCardFail    { border-color: rgba(245, 78, 0, 0.35); }
+.muralMsgCardFail    { border-color: rgba(var(--accent-orange-rgb), 0.35); }
 .muralMsgCardHeader {
     display: flex;
     align-items: center;
@@ -950,8 +950,8 @@
     color: var(--accent-teal);
 }
 .muralMsgCardFail    .muralMsgCardHeader {
-    background: rgba(245, 78, 0, 0.08);
-    border-bottom-color: rgba(245, 78, 0, 0.25);
+    background: rgba(var(--accent-orange-rgb), 0.08);
+    border-bottom-color: rgba(var(--accent-orange-rgb), 0.25);
     color: var(--accent-orange);
 }
 .muralMsgCardBody { padding: var(--s-10) var(--s-12); background: var(--ds-bg-pure); }
@@ -1121,7 +1121,7 @@
 .wizardStepActive  .wizardStepBubble {
     background: var(--accent-orange);
     color: var(--ds-bg-pure);
-    box-shadow: 0 0 0 4px rgba(245, 78, 0, 0.15);
+    box-shadow: 0 0 0 4px rgba(var(--accent-orange-rgb), 0.15);
 }
 .wizardStepDone    .wizardStepBubble {
     background: rgba(31, 138, 101, 0.15);
@@ -1211,8 +1211,8 @@
     border-color: rgba(31, 138, 101, 0.35);
 }
 .wizardResultFailed {
-    background: rgba(245, 78, 0, 0.08);
-    border-color: rgba(245, 78, 0, 0.35);
+    background: rgba(var(--accent-orange-rgb), 0.08);
+    border-color: rgba(var(--accent-orange-rgb), 0.35);
 }
 .wizardResultBadge {
     font-family: var(--font-body);

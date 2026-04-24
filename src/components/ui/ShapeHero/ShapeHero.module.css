@@ -46,8 +46,8 @@
     aspect-ratio: 1;
     background: radial-gradient(
         circle at center,
-        rgba(245, 78, 0, 0.08) 0%,
-        rgba(245, 78, 0, 0.03) 40%,
+        rgba(var(--accent-orange-rgb), 0.08) 0%,
+        rgba(var(--accent-orange-rgb), 0.03) 40%,
         transparent 70%
     );
     filter: blur(40px);

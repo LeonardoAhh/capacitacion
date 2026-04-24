@@ -54,7 +54,7 @@
 }
 
 .sidebarItemActive {
-    background: rgba(245, 78, 0, 0.1);
+    background: rgba(var(--accent-orange-rgb), 0.1);
     color: var(--accent-orange);
     font-weight: 600;
 }

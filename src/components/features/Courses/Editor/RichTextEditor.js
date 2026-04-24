@@ -8,10 +8,10 @@ import styles from './RichTextEditor.module.css';
 // El resto usa colores del design system con suficiente luminosidad en ambos temas.
 const TEXT_COLORS = [
     { label: 'Por defecto (auto)', value: null,      preview: 'currentColor' },
-    { label: 'Naranja (énfasis)',  value: '#f54e00', preview: '#f54e00' }, // --accent-orange
+    { label: 'Marino (énfasis)',   value: '#141e64', preview: '#141e64' }, // --accent-orange (ViñoPlastic brand)
     { label: 'Crimson (alerta)',   value: '#cf2d56', preview: '#cf2d56' }, // --accent-crimson
     { label: 'Teal (éxito)',       value: '#1f8a65', preview: '#1f8a65' }, // --accent-teal
-    { label: 'Dorado (premium)',   value: '#c08532', preview: '#c08532' }, // --accent-gold
+    { label: 'Cyan (secundario)',  value: '#0fd2f0', preview: '#0fd2f0' }, // --accent-gold (ViñoPlastic brand)
     { label: 'Azul (info)',        value: '#5b8def', preview: '#5b8def' }, // visible en ambos
     { label: 'Morado',             value: '#a78bfa', preview: '#a78bfa' }, // visible en ambos
     { label: 'Rosa',               value: '#f472b6', preview: '#f472b6' }, // visible en ambos
