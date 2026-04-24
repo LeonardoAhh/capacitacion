@@ -47,13 +47,13 @@
 /* ─── Workflow accents (semantic only) ─────────────────── */
 .ship,
 .danger {
-    background: rgba(245, 78, 0, 0.10);
+    background: rgba(var(--accent-orange-rgb), 0.10);
     color: var(--accent-orange);
 }
 
 .preview,
 .warning {
-    background: rgba(192, 133, 50, 0.12);
+    background: rgba(var(--accent-gold-rgb), 0.12);
     color: var(--accent-gold);
 }
 

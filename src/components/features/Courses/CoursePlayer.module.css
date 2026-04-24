@@ -310,7 +310,7 @@
 }
 
 .segment:hover { background: var(--cursor-cream-500); }
-.segmentVisited { background: var(--course-accent-mid, rgba(245, 78, 0, 0.35)); }
+.segmentVisited { background: var(--course-accent-mid, rgba(var(--accent-orange-rgb), 0.35)); }
 .segmentActive { background: var(--course-accent, var(--accent-orange)) !important; }
 
 .linearBar {
@@ -572,7 +572,7 @@
     outline-offset: 2px;
 }
 
-.dotVisited { background: var(--course-accent-mid, rgba(245, 78, 0, 0.4)); }
+.dotVisited { background: var(--course-accent-mid, rgba(var(--accent-orange-rgb), 0.4)); }
 
 .dotActive {
     width: 20px;

@@ -25,8 +25,8 @@ const C = {
     bg: '#FFFFFF',
     text: '#1a1a1a',
     muted: '#6b7280',
-    accent: '#f54e00',
-    accentLight: '#fff3ed',
+    accent: '#141e64',
+    accentLight: '#eef0f8',
     border: '#e5e5e5',
     cardBg: '#f9fafb',
 };
