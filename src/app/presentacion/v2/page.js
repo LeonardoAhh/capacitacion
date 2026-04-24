@@ -221,6 +221,50 @@ const DEMO_SLIDES = [
     },
   },
   {
+    id: '15', type: 'thermal_sim', order: 14.1,
+    data: {
+      heading: 'Simulador: Disipación Térmica LOTO',
+      subtitle: 'Ajusta componente + temperatura de operación y valida el tiempo de espera para mantenimiento.',
+      safeTemp: 50,
+    },
+  },
+  {
+    id: '16', type: 'env_sim', order: 14.2,
+    data: {
+      heading: 'Simulador: Matriz Causa-Efecto Ambiental',
+      subtitle: 'Identifica el Aspecto e Impacto ambiental de cada actividad de planta.',
+      scenarios: [],
+    },
+  },
+  {
+    id: '17', type: 'iceberg_sim', order: 14.3,
+    data: {
+      heading: 'Simulador: El Iceberg en la Línea',
+      subtitle: 'Clasifica cada situación según corresponda a parte visible o parte sumergida.',
+      cards: [
+        { id: 'ic1', text: 'El operador llegó tarde tres veces esta semana.', kind: 'visible', hint: 'Indicador observable en piso.' },
+        { id: 'ic2', text: 'Su padre lleva enfermo dos meses.', kind: 'submerged', hint: 'Contexto emocional profundo.' },
+        { id: 'ic3', text: 'Incremento de rechazos en su celda de trabajo.', kind: 'visible', hint: 'Resultado operativo medible.' },
+        { id: 'ic4', text: 'Su principal motivación es pagar los estudios de su hija.', kind: 'submerged', hint: 'Motivador personal profundo.' },
+      ],
+    },
+  },
+  {
+    id: '18', type: 'radar_sim', order: 14.4,
+    data: {
+      heading: 'Simulador: El Radar del Supervisor',
+      subtitle: 'Evalúa qué tanto conoces a tu equipo y detecta vacíos de información.',
+      items: [
+        { id: 'r1', level: 1, prompt: 'Nombre completo del colaborador' },
+        { id: 'r2', level: 1, prompt: 'Área / puesto específico' },
+        { id: 'r3', level: 2, prompt: 'Principales fortalezas técnicas' },
+        { id: 'r4', level: 2, prompt: 'Áreas de mejora observadas' },
+        { id: 'r5', level: 3, prompt: 'Motivadores personales clave' },
+        { id: 'r6', level: 3, prompt: 'Situación familiar relevante' },
+      ],
+    },
+  },
+  {
     id: '14', type: 'dynamic', order: 13,
     data: {
       heading: 'Dinámica: Inspección de Seguridad',

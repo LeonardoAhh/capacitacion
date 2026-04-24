@@ -73,8 +73,18 @@
     --accent-gold:         #0fd2f0;  /* ViñoPlastic cyan — secondary (roller) */
     --accent-gold-rgb:     15, 210, 240;
     --accent-crimson:      #cf2d56;  /* hover signature + error */
+    --accent-crimson-rgb:  207, 45, 86;
     --accent-teal:         #1f8a65;  /* success warm-shifted */
     --accent-teal-rgb:     31, 138, 101;
+
+    /* ─── Status RGB tokens (state tints para simuladores y feedback) ──────
+       RGB-only, para componer rgba(var(--status-*-rgb), α) en tints y bordes.
+       Cohesivos con los acentos Cursor + theme-safe (legibles en light y dark).
+       good = teal / warn = amber / bad = crimson / info = cyan cool     */
+    --status-good-rgb:     31, 138, 101;
+    --status-warn-rgb:     192, 133, 50;
+    --status-bad-rgb:      207, 45, 86;
+    --status-info-rgb:     59, 130, 246;
 
     /* Timeline colors (AI operation states) */
     --timeline-thinking:   #dfa88f; /* warm peach */

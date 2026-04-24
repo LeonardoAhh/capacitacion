@@ -5,11 +5,11 @@
     --c-surface:     var(--ds-bg);
     --c-panel:       var(--ds-bg-pure);
     --c-blue:        var(--timeline-read);
-    --c-blue-dim:    rgba(59, 130, 246, 0.15);
-    --c-blue-border: rgba(59, 130, 246, 0.35);
+    --c-blue-dim:    rgba(var(--status-info-rgb), 0.15);
+    --c-blue-border: rgba(var(--status-info-rgb), 0.35);
     --c-red:         var(--accent-crimson);
-    --c-red-dim:     rgba(248, 113, 113, 0.15);
-    --c-red-border:  rgba(248, 113, 113, 0.35);
+    --c-red-dim:     rgba(var(--status-bad-rgb), 0.15);
+    --c-red-border:  rgba(var(--status-bad-rgb), 0.35);
     --c-green:       var(--accent-teal);
     --c-amber:       var(--accent-gold);
     --c-text-dim:    var(--ds-text-tertiary);
@@ -72,7 +72,7 @@
     align-items: center;
     gap: 0.5rem;
     background: var(--ds-bg);
-    box-shadow: rgba(0,0,0,0.08) 0px 0px 0px 1px;
+    box-shadow: 0 0 0 1px var(--ds-border-hairline);
     border-radius: 99px;
     padding: 0.35rem 0.9rem;
     font-size: var(--course-font-xs, 0.78rem);
@@ -110,7 +110,7 @@
 /* ── Tarjetas ── */
 .card {
     background: var(--c-panel);
-    box-shadow: rgba(0,0,0,0.08) 0px 0px 0px 1px;
+    box-shadow: 0 0 0 1px var(--ds-border-hairline);
     border-radius: 12px;
     padding: 1rem;
     display: flex;
@@ -132,7 +132,7 @@
     width: fit-content;
 }
 
-.cardBadgeGray { background: var(--ds-bg); box-shadow: rgba(0,0,0,0.08) 0px 0px 0px 1px; color: var(--ds-text-secondary); }
+.cardBadgeGray { background: var(--ds-bg); box-shadow: 0 0 0 1px var(--ds-border-hairline); color: var(--ds-text-secondary); }
 .cardBadgeBlue { background: var(--c-blue-dim);       color: var(--c-blue);    }
 .cardBadgeRed  { background: var(--c-red-dim);        color: var(--c-red);     }
 
@@ -186,7 +186,7 @@
     width: 100%;
     text-align: left;
     background: var(--ds-bg);
-    box-shadow: rgba(0,0,0,0.08) 0px 0px 0px 1px;
+    box-shadow: 0 0 0 1px var(--ds-border-hairline);
     border: none;
     border-radius: 8px;
     padding: 0.55rem 0.75rem;
@@ -235,20 +235,20 @@
 /* El color de énfasis (verde/rojo/ámbar) va solo en borde e ícono.
    El texto siempre blanco para máximo contraste sobre fondo oscuro. */
 .feedback_success {
-    background: rgba(74, 222, 128, 0.1);
-    border-color: rgba(74, 222, 128, 0.3);
+    background: rgba(var(--status-good-rgb), 0.1);
+    border-color: rgba(var(--status-good-rgb), 0.3);
     color: var(--c-green); /* afecta al ícono */
 }
 
 .feedback_error {
-    background: rgba(248, 113, 113, 0.1);
-    border-color: rgba(248, 113, 113, 0.3);
+    background: rgba(var(--status-bad-rgb), 0.1);
+    border-color: rgba(var(--status-bad-rgb), 0.3);
     color: var(--c-red); /* afecta al ícono */
 }
 
 .feedback_warning {
-    background: rgba(251, 191, 36, 0.1);
-    border-color: rgba(251, 191, 36, 0.3);
+    background: rgba(var(--status-warn-rgb), 0.1);
+    border-color: rgba(var(--status-warn-rgb), 0.3);
     color: var(--c-amber); /* afecta al ícono */
 }
 
@@ -279,13 +279,13 @@
     font-family: var(--font-body), sans-serif;
     cursor: pointer;
     transition: background 0.15s, transform 0.1s, box-shadow 0.15s;
-    box-shadow: 0 2px 8px rgba(59,130,246,0.3);
+    box-shadow: 0 2px 8px rgba(var(--status-info-rgb),0.3);
 }
 
 .verifyBtn:hover {
     background: var(--timeline-read);
     transform: translateY(-1px);
-    box-shadow: 0 4px 16px rgba(59,130,246,0.45);
+    box-shadow: 0 4px 16px rgba(var(--status-info-rgb),0.45);
 }
 
 .verifyBtn:active {
@@ -335,8 +335,8 @@
     flex-direction: column;
     align-items: center;
     gap: 0.25rem;
-    background: rgba(74, 222, 128, 0.1);
-    border: 1px solid rgba(74, 222, 128, 0.25);
+    background: rgba(var(--status-good-rgb), 0.1);
+    border: 1px solid rgba(var(--status-good-rgb), 0.25);
     border-radius: 12px;
     padding: 0.75rem 2rem;
 }
@@ -377,7 +377,7 @@
 }
 
 /* ── Responsivo ── */
-@media (max-width: 768px) {
+@container slide (max-width: 768px) {
     .slide {
         padding: 1rem;
     }

@@ -28,7 +28,7 @@
 .meta {
     margin-top: 0.55rem;
     display: inline-flex;
-    box-shadow: rgba(0,0,0,0.08) 0px 0px 0px 1px;
+    box-shadow: 0 0 0 1px var(--ds-border-hairline);
     border-radius: 999px;
     background: var(--ds-bg-pure);
     padding: 0.3rem 0.75rem;
@@ -39,7 +39,7 @@
 .card,
 .result {
     background: var(--ds-bg-pure);
-    box-shadow: rgba(0,0,0,0.08) 0px 0px 0px 1px;
+    box-shadow: 0 0 0 1px var(--ds-border-hairline);
     border-radius: 12px;
     padding: 1rem;
 }
@@ -77,7 +77,7 @@
 }
 
 .choiceBtn {
-    box-shadow: rgba(0,0,0,0.08) 0px 0px 0px 1px;
+    box-shadow: 0 0 0 1px var(--ds-border-hairline);
     border-radius: 10px;
     background: var(--ds-bg-pure);
     color: var(--ds-text);
@@ -153,14 +153,14 @@
 }
 
 .ok {
-    border-color: rgba(16, 185, 129, 0.35);
-    background: rgba(16, 185, 129, 0.09);
+    border-color: rgba(var(--status-good-rgb), 0.35);
+    background: rgba(var(--status-good-rgb), 0.09);
     color: var(--accent-teal);
 }
 
 .error {
-    border-color: rgba(245, 158, 11, 0.35);
-    background: rgba(245, 158, 11, 0.1);
+    border-color: rgba(var(--status-warn-rgb), 0.35);
+    background: rgba(var(--status-warn-rgb), 0.1);
     color: var(--accent-gold);
 }
 
@@ -180,7 +180,7 @@
 .result_mid h3 { color: var(--timeline-read); }
 .result_high h3 { color: var(--accent-teal); }
 
-@media (max-width: 720px) {
+@container slide (max-width: 720px) {
     .slide {
         padding: 1rem 0.9rem 1.2rem;
     }
