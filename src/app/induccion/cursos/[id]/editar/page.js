@@ -9,7 +9,7 @@ import {
     IconTarget, IconFileText, IconGraduationCap,
     IconCheckSquare, IconGrid, IconColumns, IconBookOpen, IconList,
     IconPlay, IconCopy, IconEdit, IconLink, IconUploadCloud, IconEye, IconActivity,
-    IconPalette,
+    IconPalette, IconSettings,
 } from '@/lib/icons';
 import {
     getCourseWithSlides, updateSlide, addSlide, deleteSlide,
@@ -21,6 +21,7 @@ import SlideList from '@/components/features/Courses/Editor/SlideList';
 import SlideEditorPanel from '@/components/features/Courses/Editor/SlideEditorPanel';
 import SlideEditorErrorBoundary from '@/components/features/Courses/Editor/SlideEditorErrorBoundary';
 import CoursePlayer from '@/components/features/Courses/CoursePlayer';
+import CourseConfigModal from '@/components/features/Courses/Editor/CourseConfigModal';
 import { SLIDE_TYPE_LABELS, getDefaultSlideData } from '@/components/features/Courses/Editor/slideConstants';
 import { convertSlideToFreeform } from '@/components/features/Courses/Editor/slideConstants';
 import styles from './editor.module.css';
@@ -181,6 +182,7 @@ export default function EditorPage({ params }) {
     const [courseQrDataUrl, setCourseQrDataUrl] = useState('');
     const [courseQrGenerating, setCourseQrGenerating] = useState(false);
     const [courseQrError, setCourseQrError] = useState('');
+    const [showCourseConfigModal, setShowCourseConfigModal] = useState(false);
     const fileInputRef = useRef(null);
     const [previewFontSize, setPreviewFontSize] = useState(() => {
         if (typeof window === 'undefined') return 'md';
@@ -569,6 +571,22 @@ export default function EditorPage({ params }) {
         return () => document.removeEventListener('keydown', handleKeyDown);
     }, [handleDuplicateSlide, handleDeleteSlide]);
 
+    const handleSaveCourseConfig = useCallback(async (config) => {
+        // Asegurar que config sea un objeto válido
+        const cleanConfig = {
+            enabled: Boolean(config?.enabled),
+            url: String(config?.url || '').trim()
+        };
+        
+        const result = await updateCourseFields(courseId, { backgroundMusic: cleanConfig });
+        if (result.success) {
+            toast.success('Configuración guardada', 'La música de fondo ha sido actualizada.');
+            setShowCourseConfigModal(false);
+        } else {
+            toast.error('Error', result.error || 'No se pudo guardar la configuración.');
+        }
+    }, [courseId, toast]);
+
     // ── Render ───────────────────────────────────────────────────────────────
     if (state.loading) {
         return (
@@ -616,6 +634,16 @@ export default function EditorPage({ params }) {
                     </div>
                 </div>
                 <div className={styles.headerActions}>
+                    <button
+                        className={`${styles.actionBtn} ${styles.iconBtn}`}
+                        type="button"
+                        onClick={() => setShowCourseConfigModal(true)}
+                        disabled={saving}
+                        aria-label="Configurar curso"
+                        title="Configurar curso"
+                    >
+                        <IconSettings size={18} />
+                    </button>
                     <button
                         className={`${styles.actionBtn} ${styles.primaryBtn} ${styles.iconBtn}`}
                         type="button"
@@ -877,6 +905,14 @@ export default function EditorPage({ params }) {
                         </div>
                     </div>
                 </div>
+            )}
+
+            {showCourseConfigModal && (
+                <CourseConfigModal
+                    course={course}
+                    onSave={handleSaveCourseConfig}
+                    onCancel={() => setShowCourseConfigModal(false)}
+                />
             )}
         </div>
     );

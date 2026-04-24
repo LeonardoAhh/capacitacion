@@ -47,8 +47,10 @@ export default function SlidePlayerV2({ course, slides = [], onClose }) {
   const [quizScore, setQuizScore] = useState(null);
   const [commitmentText, setCommitmentText] = useState('');
   const [isDark, setIsDark] = useState(false);
+  const [musicPlaying, setMusicPlaying] = useState(false);
   const slideAreaRef = useRef(null);
   const mainRef = useRef(null);
+  const audioRef = useRef(null);
 
   /* ── Theme toggle (local to player, restores on unmount) ── */
   const prevThemeRef = useRef(null);
@@ -73,6 +75,71 @@ export default function SlidePlayerV2({ course, slides = [], onClose }) {
       try { localStorage.setItem('vtx_player_theme', next ? 'dark' : 'light'); } catch (_) {}
       return next;
     });
+  }, []);
+
+  /* ── Background music ── */
+  useEffect(() => {
+    const audio = audioRef.current;
+    if (audio && course?.backgroundMusic?.enabled && course.backgroundMusic.url) {
+      const url = course.backgroundMusic.url.trim();
+      const invalidDomains = ['bensound.com', 'example.com'];
+
+      if (!url || invalidDomains.some(domain => url.includes(domain))) {
+        console.warn('URL de música no válida o con problemas de certificado:', url);
+        setMusicPlaying(false);
+        return;
+      }
+
+      try {
+        new URL(url);
+      } catch {
+        console.warn('URL de música inválida:', url);
+        setMusicPlaying(false);
+        return;
+      }
+
+      audio.loop = true;
+      audio.volume = 0.3; // Bajo volumen
+      audio.muted = false;
+
+      if (audio.src !== url) {
+        audio.src = url;
+      }
+
+      const handleError = () => {
+        console.error('Error al cargar música de fondo:', url);
+        setMusicPlaying(false);
+      };
+
+      const handleCanPlay = () => {
+        if (musicPlaying) {
+          audio.play().catch(() => setMusicPlaying(false));
+        }
+      };
+
+      audio.addEventListener('error', handleError);
+      audio.addEventListener('canplaythrough', handleCanPlay);
+
+      if (musicPlaying) {
+        audio.play().catch(() => setMusicPlaying(false));
+      }
+
+      return () => {
+        audio.removeEventListener('error', handleError);
+        audio.removeEventListener('canplaythrough', handleCanPlay);
+        audio.pause();
+      };
+    }
+
+    if (audio) {
+      audio.pause();
+    }
+
+    return undefined;
+  }, [course?.backgroundMusic, musicPlaying]);
+
+  const toggleMusic = useCallback(() => {
+    setMusicPlaying((prev) => !prev);
   }, []);
 
   const totalSlides = slides.length;
@@ -227,6 +294,16 @@ export default function SlidePlayerV2({ course, slides = [], onClose }) {
         </div>
 
         <div className={s.headerRight}>
+          {course?.backgroundMusic?.enabled && (
+            <button
+              className={s.themeToggle}
+              onClick={toggleMusic}
+              aria-label={musicPlaying ? 'Pausar música de fondo' : 'Reproducir música de fondo'}
+              title={musicPlaying ? 'Pausar música' : 'Reproducir música'}
+            >
+              {musicPlaying ? <MusicOffIcon /> : <MusicIcon />}
+            </button>
+          )}
           <button
             className={s.themeToggle}
             onClick={toggleTheme}
@@ -360,6 +437,9 @@ export default function SlidePlayerV2({ course, slides = [], onClose }) {
           </div>
         </main>
       </div>
+
+      {/* Background music */}
+      <audio ref={audioRef} preload="none" />
     </div>
   );
 }
@@ -428,6 +508,27 @@ function MoonIcon() {
   return (
     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
       <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
+    </svg>
+  );
+}
+
+function MusicIcon() {
+  return (
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M9 18V5l12-2v13" />
+      <circle cx="6" cy="18" r="3" />
+      <circle cx="18" cy="16" r="3" />
+    </svg>
+  );
+}
+
+function MusicOffIcon() {
+  return (
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M9 18V5l12-2v13" />
+      <circle cx="6" cy="18" r="3" />
+      <circle cx="18" cy="16" r="3" />
+      <line x1="3" y1="3" x2="21" y2="21" />
     </svg>
   );
 }

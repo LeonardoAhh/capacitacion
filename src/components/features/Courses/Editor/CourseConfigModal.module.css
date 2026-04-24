@@ -1,0 +1,13 @@
+.formGroup {
+    margin-bottom: 1rem;
+}
+
+.formGroup label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+}
+
+.formGroup input[type="file"] {
+    margin-top: 0.5rem;
+}

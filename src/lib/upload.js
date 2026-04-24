@@ -112,7 +112,7 @@ export async function uploadDocument(file, employeeId, docType) {
 }
 
 /**
- * Sube un asset de curso (imagen o video) directamente a Firebase Storage.
+ * Sube un asset de curso (imagen, video o audio) directamente a Firebase Storage.
  * Evita el proxy de Drive y no requiere token OAuth.
  * @param {File} file
  * @returns {Promise<{success: boolean, data?: {viewLink: string}, error?: string}>}
@@ -122,17 +122,23 @@ export async function uploadCourseAsset(file) {
         if (!auth.currentUser) {
             return { success: false, error: 'Usuario no autenticado' };
         }
-        // Compress image client-side before uploading (resize + WebP)
-        const optimized = await compressImage(file, {
-            maxWidth: 1400,
-            maxHeight: 1400,
-            quality: 0.82,
-        });
-        const safeName = optimized.name.replace(/[^a-zA-Z0-9._-]/g, '_');
+
+        let fileToUpload = file;
+        
+        // Solo comprimir si es imagen
+        if (file.type.startsWith('image/')) {
+            fileToUpload = await compressImage(file, {
+                maxWidth: 1400,
+                maxHeight: 1400,
+                quality: 0.82,
+            });
+        }
+
+        const safeName = fileToUpload.name.replace(/[^a-zA-Z0-9._-]/g, '_');
         const path = `course_assets/${Date.now()}_${safeName}`;
         const storageRef = ref(storage, path);
-        const snapshot = await uploadBytes(storageRef, optimized, {
-            contentType: optimized.type,
+        const snapshot = await uploadBytes(storageRef, fileToUpload, {
+            contentType: fileToUpload.type,
             cacheControl: 'public, max-age=31536000, immutable',
         });
         const downloadURL = await getDownloadURL(snapshot.ref);
