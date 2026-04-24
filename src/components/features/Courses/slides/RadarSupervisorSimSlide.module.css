@@ -37,7 +37,7 @@
     display: inline-flex;
     align-items: center;
     gap: 0.45rem;
-    box-shadow: rgba(0,0,0,0.08) 0px 0px 0px 1px;
+    box-shadow: 0 0 0 1px var(--ds-border-hairline);
     border-radius: 999px;
     padding: 0.4rem 0.8rem;
     background: var(--ds-bg-pure);
@@ -53,7 +53,7 @@
 
 .levelCard {
     background: var(--ds-bg-pure);
-    box-shadow: rgba(0,0,0,0.08) 0px 0px 0px 1px;
+    box-shadow: 0 0 0 1px var(--ds-border-hairline);
     border-radius: 12px;
     padding: 0.8rem;
     display: flex;
@@ -76,7 +76,7 @@
 }
 
 .itemRow {
-    box-shadow: rgba(0,0,0,0.08) 0px 0px 0px 1px;
+    box-shadow: 0 0 0 1px var(--ds-border-hairline);
     border-radius: 10px;
     padding: 0.55rem;
     background: var(--ds-bg-pure);
@@ -98,7 +98,7 @@
 }
 
 .choiceBtn {
-    box-shadow: rgba(0,0,0,0.08) 0px 0px 0px 1px;
+    box-shadow: 0 0 0 1px var(--ds-border-hairline);
     border-radius: 8px;
     background: var(--ds-bg-pure);
     color: var(--ds-text-secondary);
@@ -160,7 +160,7 @@
 
 .report {
     border-radius: 12px;
-    box-shadow: rgba(0,0,0,0.08) 0px 0px 0px 1px;
+    box-shadow: 0 0 0 1px var(--ds-border-hairline);
     padding: 0.85rem;
     background: var(--ds-bg-pure);
 }
@@ -211,7 +211,7 @@
 .report_mid .reportHead { color: var(--timeline-read); }
 .report_high .reportHead { color: var(--accent-teal); }
 
-@media (max-width: 980px) {
+@container slide (max-width: 980px) {
     .grid {
         grid-template-columns: 1fr;
     }
@@ -221,7 +221,7 @@
     }
 }
 
-@media (max-width: 640px) {
+@container slide (max-width: 640px) {
     .slide {
         padding: 1rem 0.9rem 1.2rem;
     }

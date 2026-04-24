@@ -23,6 +23,7 @@ import ChecklistSlideEditor from './SlideEditors/ChecklistSlideEditor';
 import EnvSimSlideEditor from './SlideEditors/EnvSimSlideEditor';
 import IcebergLineaSimSlideEditor from './SlideEditors/IcebergLineaSimSlideEditor';
 import RadarSupervisorSimSlideEditor from './SlideEditors/RadarSupervisorSimSlideEditor';
+import ThermalSimSlideEditor from './SlideEditors/ThermalSimSlideEditor';
 import FreeformSlideEditor from './SlideEditors/FreeformSlideEditor';
 
 const DEBOUNCE_MS = 800;
@@ -66,6 +67,8 @@ function SlideFieldRouter({ type, formData, handleChange, handleBatchChange, set
             return <IcebergLineaSimSlideEditor {...props} />;
         case 'radar_sim':
             return <RadarSupervisorSimSlideEditor {...props} />;
+        case 'thermal_sim':
+            return <ThermalSimSlideEditor {...props} />;
         case 'freeform':
             return <FreeformSlideEditor formData={formData} setFormData={setFormData} />;
         default:

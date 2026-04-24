@@ -54,6 +54,7 @@ import ChecklistSlideEditor from '@/components/features/Courses/Editor/SlideEdit
 import EnvSimSlideEditor from '@/components/features/Courses/Editor/SlideEditors/EnvSimSlideEditor';
 import IcebergLineaSimSlideEditor from '@/components/features/Courses/Editor/SlideEditors/IcebergLineaSimSlideEditor';
 import RadarSupervisorSimSlideEditor from '@/components/features/Courses/Editor/SlideEditors/RadarSupervisorSimSlideEditor';
+import ThermalSimSlideEditor from '@/components/features/Courses/Editor/SlideEditors/ThermalSimSlideEditor';
 
 /* ── Field router ────────────────────────────────── */
 function SlideFieldRouter({ type, formData, handleChange, handleBatchChange, setFormData }) {
@@ -75,6 +76,7 @@ function SlideFieldRouter({ type, formData, handleChange, handleBatchChange, set
     case 'env_sim':                        return <EnvSimSlideEditor {...props} />;
     case 'iceberg_sim':                    return <IcebergLineaSimSlideEditor {...props} />;
     case 'radar_sim':                      return <RadarSupervisorSimSlideEditor {...props} />;
+    case 'thermal_sim':                    return <ThermalSimSlideEditor {...props} />;
     default:
       return <p className={s.noEditor}>Editor no disponible para tipo: <strong>{type}</strong></p>;
   }

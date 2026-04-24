@@ -171,7 +171,7 @@
 /* ── Tooltip ── */
 .tooltip {
     background: var(--ds-bg-pure);
-    box-shadow: rgba(0,0,0,0.08) 0px 0px 0px 1px;
+    box-shadow: 0 0 0 1px var(--ds-border-hairline);
     border-radius: 8px;
     padding: 0.5rem 0.75rem;
 }
@@ -264,7 +264,7 @@
 /* ── Select ── */
 .select {
     background: var(--ds-bg);
-    box-shadow: rgba(0,0,0,0.08) 0px 0px 0px 1px;
+    box-shadow: 0 0 0 1px var(--ds-border-hairline);
     border: none;
     border-radius: 8px;
     color: var(--ds-text);
@@ -277,7 +277,7 @@
 }
 
 .select:focus {
-    box-shadow: rgba(0,0,0,0.08) 0px 0px 0px 1px, 0 0 0 2px var(--c-primary-sim);
+    box-shadow: 0 0 0 1px var(--ds-border-hairline), 0 0 0 2px var(--c-primary-sim);
 }
 
 .select option {
@@ -286,7 +286,7 @@
 }
 
 /* ── Responsive ── */
-@media (max-width: 640px) {
+@container slide (max-width: 640px) {
     .slide {
         padding: 1rem;
     }
