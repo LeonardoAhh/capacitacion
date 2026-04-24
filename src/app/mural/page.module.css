@@ -2,7 +2,7 @@
    /mural — design.md (Cursor System)
    Página PÚBLICA: cream canvas + atmospheric depth.
    Resultado: success → accent-teal warm, fail → accent-orange.
-   Editorial body: Fraunces serif para mensajes y nombres.
+   Editorial body: Montserrat (via --font-serif) para mensajes y nombres.
    ============================================================= */
 
 @keyframes spin { to { transform: rotate(360deg); } }
@@ -389,7 +389,7 @@
     border: 1px solid rgba(245, 78, 0, 0.28);
 }
 
-/* ─── Score (Fraunces serif display) ────────────────────── */
+/* ─── Score (Montserrat display via --font-serif) ────────── */
 .scoreArea {
     display: flex;
     align-items: baseline;

@@ -4,31 +4,37 @@ import { ToastProvider } from '@/components/ui/Toast/Toast';
 import { OfflineIndicator, UpdatePrompt } from '@/components/guards/pwa';
 import MaintenanceGuard from '@/components/guards/MaintenanceGuard';
 import '@/styles/globals.css';
-import { GeistSans } from 'geist/font/sans';
-import { GeistMono } from 'geist/font/mono';
-import { Fraunces } from 'next/font/google';
+import { Montserrat, Poppins } from 'next/font/google';
 
-/* ─── Fuentes del sistema (design.md → Cursor System) ─────────────
-   Sustitutos libres de las fuentes propietarias de Cursor:
-     CursorGothic → Geist Sans   (display + UI, tracking compresivo)
-     jjannon      → Fraunces     (serif body, OpenType "swsh" + "ss01")
-     berkeleyMono → Geist Mono   (code + technical labels)
+/* ─── Fuentes del sistema ─────────────────────────────────────────
+   Stack tipográfico (self-hosted en build por next/font):
+     Montserrat → display + editorial serif (headings, hero, score)
+     Poppins    → UI body (párrafos, labels, botones)
+     ui-monospace (system) → código / labels técnicos
 
    Variables expuestas (usar SIEMPRE, nunca hardcodear):
-     - var(--font-display) → Geist Sans  (headings, buttons, UI)
-     - var(--font-body)    → Geist Sans  (sans body, sistema)
-     - var(--font-serif)   → Fraunces    (editorial body, párrafos)
-     - var(--font-mono)    → Geist Mono  (code, labels técnicos)
+     - var(--font-display) → Montserrat (headings, buttons, UI)
+     - var(--font-body)    → Poppins    (body, párrafos)
+     - var(--font-serif)   → Montserrat (editorial display / score)
+     - var(--font-mono)    → ui-monospace + fallbacks
 
    Para cambiar una fuente en toda la plataforma: editar solo este archivo.
    ────────────────────────────────────────────────────────────────── */
 
-const fraunces = Fraunces({
+const montserrat = Montserrat({
     subsets: ['latin'],
     display: 'swap',
-    weight: ['400', '500', '600'],
+    weight: ['400', '500', '600', '700'],
     style: ['normal', 'italic'],
-    variable: '--font-fraunces',
+    variable: '--font-montserrat',
+});
+
+const poppins = Poppins({
+    subsets: ['latin'],
+    display: 'swap',
+    weight: ['300', '400', '500', '600', '700'],
+    style: ['normal', 'italic'],
+    variable: '--font-poppins',
 });
 
 export const viewport = {
@@ -75,17 +81,17 @@ export default function RootLayout({ children }) {
             suppressHydrationWarning
             /*
              * Variables CSS expuestas para todos los módulos:
-             *   font-family: var(--font-display) → Geist Sans (headings/UI)
-             *   font-family: var(--font-body)    → Geist Sans (sans body)
-             *   font-family: var(--font-serif)   → Fraunces   (editorial body)
-             *   font-family: var(--font-mono)    → Geist Mono (code)
+             *   font-family: var(--font-display) → Montserrat (headings/UI)
+             *   font-family: var(--font-body)    → Poppins    (body)
+             *   font-family: var(--font-serif)   → Montserrat (display editorial)
+             *   font-family: var(--font-mono)    → ui-monospace (system)
              */
-            className={`${GeistSans.variable} ${GeistMono.variable} ${fraunces.variable}`}
+            className={`${montserrat.variable} ${poppins.variable}`}
             style={{
-                '--font-body':    'var(--font-geist-sans)',
-                '--font-display': 'var(--font-geist-sans)',
-                '--font-serif':   'var(--font-fraunces)',
-                '--font-mono':    'var(--font-geist-mono)',
+                '--font-body':    'var(--font-poppins)',
+                '--font-display': 'var(--font-montserrat)',
+                '--font-serif':   'var(--font-montserrat)',
+                '--font-mono':    'ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace',
             }}
         >
             <body>

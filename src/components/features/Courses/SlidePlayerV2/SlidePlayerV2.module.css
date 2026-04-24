@@ -106,18 +106,22 @@
   width: 32px;
   height: 32px;
   border: none;
-  border-radius: var(--radius-md);
+  border-radius: var(--radius-md, 6px);
   background: transparent;
   color: var(--ds-text);
   cursor: pointer;
-  transition: background 150ms ease, color 150ms ease;
+  transition: background 150ms ease, color 150ms ease, box-shadow 150ms ease;
   flex-shrink: 0;
 }
 .iconBtn:hover {
   background: var(--ds-bg);
 }
 .iconBtn:active {
-  background: rgba(0,0,0,0.06);
+  background: var(--ds-bg-ghost-hover, rgba(0,0,0,0.06));
+}
+.iconBtn:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 2px var(--ds-bg-pure), 0 0 0 4px var(--accent-orange);
 }
 
 /* ── Theme toggle ────────────────────────────────── */
@@ -134,7 +138,7 @@
   cursor: pointer;
   transition: background 150ms ease, color 150ms ease;
   flex-shrink: 0;
-  box-shadow: 0 0 0 1px var(--card-border, rgba(0,0,0,0.08));
+  box-shadow: 0 0 0 1px var(--ds-border-hairline);
 }
 .themeToggle:hover {
   background: var(--ds-bg);
@@ -156,22 +160,26 @@
   font-size: var(--text-sm, 0.8125rem);
   font-weight: 500;
   color: var(--ds-text);
-  background: var(--bg-primary, var(--ds-bg-pure));
-  border: 1px solid var(--border-color, var(--ds-bg-tertiary));
+  background: var(--ds-bg-pure);
+  border: 1px solid var(--ds-border-hairline);
   border-radius: var(--radius-md, 6px);
-  box-shadow: 0 1px 2px rgba(0,0,0,0.06), 0 1px 3px rgba(0,0,0,0.08);
+  box-shadow: 0 1px 2px rgba(var(--ds-text-rgb), 0.06), 0 1px 3px rgba(var(--ds-text-rgb), 0.08);
   cursor: pointer;
   transition: background 150ms ease, box-shadow 150ms ease, border-color 150ms ease;
   flex-shrink: 0;
 }
 .closeBtn:hover {
-  background: var(--bg-secondary, var(--ds-bg-floor));
-  border-color: var(--text-tertiary, var(--ds-text-tertiary));
-  box-shadow: 0 1px 3px rgba(0,0,0,0.1), 0 2px 6px rgba(0,0,0,0.08);
+  background: var(--ds-bg);
+  border-color: var(--ds-border-medium);
+  box-shadow: 0 1px 3px rgba(var(--ds-text-rgb), 0.10), 0 2px 6px rgba(var(--ds-text-rgb), 0.08);
 }
 .closeBtn:active {
-  background: rgba(0,0,0,0.04);
-  box-shadow: 0 0 0 rgba(0,0,0,0);
+  background: var(--ds-bg-ghost-hover);
+  box-shadow: none;
+}
+.closeBtn:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 2px var(--ds-bg-pure), 0 0 0 4px var(--accent-orange);
 }
 
 /* ══════════════════════════════════════════════════
@@ -327,10 +335,6 @@
   color: var(--ds-text-tertiary);
   line-height: 1.3;
 }
-.slideItemBadge {
-  font-size: 10px;
-}
-
 /* ══════════════════════════════════════════════════
    MAIN CONTENT
    ══════════════════════════════════════════════════ */
@@ -421,7 +425,11 @@
 }
 .navBtnOutline:hover:not(:disabled) {
   background: var(--ds-bg);
-  border-color: rgba(0,0,0,0.12);
+  border-color: var(--ds-border-medium);
+}
+.navBtn:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 2px var(--ds-bg-pure), 0 0 0 4px var(--accent-orange);
 }
 
 /* Primary variant */
@@ -443,8 +451,13 @@
   display: flex;
   align-items: center;
   gap: 5px;
-  overflow: hidden;
+  max-width: min(48vw, 360px);
+  overflow-x: auto;
+  overflow-y: hidden;
+  scrollbar-width: none;
+  padding: 2px 4px;
 }
+.dotsRow::-webkit-scrollbar { display: none; }
 
 .dot {
   width: 7px;
@@ -465,7 +478,7 @@
   transform: scale(1.2);
 }
 .dotVisited {
-  background: rgba(245, 78, 0, 0.35);
+  background: color-mix(in srgb, var(--accent-orange) 45%, transparent);
 }
 
 /* ══════════════════════════════════════════════════
@@ -509,7 +522,6 @@
   .navLabel { display: none; }
   .navBtn { padding: 0 10px; }
   .slideArea { padding: var(--spacing-sm); }
-  .slideFrame { border-radius: var(--radius-md); }
   .dotsRow { display: none; }
 }
 
@@ -523,11 +535,8 @@
   .slideArea { padding: 6px; }
 }
 
-/* ── Desktop: hide hamburger ─────────────────────── */
+/* ── Desktop: collapsed sidebar ──────────────────── */
 @media (min-width: 769px) {
-  .mobileOnly { display: none; }
-
-  /* Collapsed sidebar on desktop */
   .sidebarCollapsed {
     width: 0;
     min-width: 0;
@@ -561,9 +570,7 @@
 @media (prefers-reduced-motion: reduce) {
   .sidebar,
   .progressBar,
-  .overlay,
-  .slideAnimDown,
-  .slideAnimUp {
+  .overlay {
     transition: none;
     animation: none;
   }
