@@ -9,23 +9,47 @@ import { Search, Award, Star, Calendar, CheckCircle2, AlertCircle, RefreshCw, Gr
 import FloatingThemeToggle from '@/components/layout/ThemeToggle/FloatingThemeToggle';
 
 
-const CONFETTI_COLORS = ['#fbbf24', '#f59e0b', '#10b981', '#34d399', '#d1fae5'];
+/* Brand-aligned confetti palette (ViñoPlastic):
+   cyan rodillo, navy letras, teal accent, warm gold */
+const CONFETTI_COLORS = [
+    'var(--accent-gold)',    /* cyan #0fd2f0 */
+    'var(--accent-orange)',  /* navy #141e64 (light) / sky #6d8cff (dark) */
+    'var(--accent-teal)',
+    'var(--color-warning)',  /* warm amber for contrast */
+];
 
 const Confetti = () => {
+    const [shouldRender, setShouldRender] = useState(true);
+
+    /* Respeta prefers-reduced-motion + auto-stop tras una caída completa
+       (no más animaciones infinitas que drenan batería en mobile/PWA). */
+    useEffect(() => {
+        if (typeof window === 'undefined') return;
+        const mq = window.matchMedia('(prefers-reduced-motion: reduce)');
+        if (mq.matches) {
+            setShouldRender(false);
+            return;
+        }
+        const t = setTimeout(() => setShouldRender(false), 6500);
+        return () => clearTimeout(t);
+    }, []);
+
     const particles = useMemo(() =>
-        Array.from({ length: 40 }, (_, i) => ({
+        Array.from({ length: 24 }, (_, i) => ({
             id: i,
             width: i % 2 === 0 ? '8px' : '6px',
             height: i % 3 === 0 ? '12px' : '8px',
             color: CONFETTI_COLORS[i % CONFETTI_COLORS.length],
-            left: `${(i * 2.5) % 100}%`,
-            opacity: 0.5 + (i % 5) * 0.1,
+            left: `${(i * 4.16) % 100}%`,
+            opacity: 0.55 + (i % 5) * 0.08,
             rotation: (i * 37) % 360,
-            duration: 2 + (i % 3),
-            delay: (i % 5) * 0.4,
+            duration: 2.6 + (i % 3) * 0.5,
+            delay: (i % 5) * 0.25,
             isCircle: i % 2 === 0,
         })), []
     );
+
+    if (!shouldRender) return null;
 
     return (
         <div
@@ -44,7 +68,8 @@ const Confetti = () => {
                         top: '-10%',
                         opacity: p.opacity,
                         transform: `rotate(${p.rotation}deg)`,
-                        animation: `confettiFall ${p.duration}s linear ${p.delay}s infinite`,
+                        willChange: 'transform, opacity',
+                        animation: `confettiFall ${p.duration}s linear ${p.delay}s 1 forwards`,
                         borderRadius: p.isCircle ? '50%' : '2px',
                     }}
                 />

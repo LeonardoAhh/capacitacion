@@ -31,7 +31,7 @@
     box-shadow: var(--shadow-feature);
     width: 100%;
     position: relative;
-    animation: toastIn 0.35s cubic-bezier(0.16, 1, 0.3, 1) both;
+    animation: toastIn 0.35s var(--ease-out) both;
 }
 
 .toast.closing {

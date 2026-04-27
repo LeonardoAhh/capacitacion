@@ -1,7 +1,0 @@
-/* Portal Candidatos — Verde azulado (diferenciado del RRHH) */
-.container {
-    --login-accent: var(--accent-orange);
-    --login-accent-rgb: 0, 112, 192;
-    --login-gradient-from: var(--accent-orange);
-    --login-gradient-to: var(--accent-teal);
-}

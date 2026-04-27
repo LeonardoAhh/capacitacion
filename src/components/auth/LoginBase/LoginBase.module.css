@@ -175,7 +175,7 @@
     border-radius: 2px;
     margin-bottom: 1.25rem;
     transform-origin: left;
-    animation: lineExpand 0.5s cubic-bezier(0.16, 1, 0.3, 1) both;
+    animation: lineExpand 0.5s var(--ease-out) both;
     animation-delay: 0.1s;
 }
 

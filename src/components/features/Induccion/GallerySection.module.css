@@ -166,6 +166,7 @@
     align-items: center;
     justify-content: center;
     color: white;
+    -webkit-backdrop-filter: blur(4px);
     backdrop-filter: blur(4px);
 }
 
@@ -178,6 +179,7 @@
     background: rgba(0, 0, 0, 0.45);
     padding: 2px 7px;
     border-radius: 99px;
+    -webkit-backdrop-filter: blur(4px);
     backdrop-filter: blur(4px);
     display: flex;
     align-items: center;
@@ -194,6 +196,7 @@
     color: white;
     padding: 2px 7px;
     border-radius: 99px;
+    -webkit-backdrop-filter: blur(4px);
     backdrop-filter: blur(4px);
 }
 
@@ -295,6 +298,7 @@
     position: fixed;
     inset: 0;
     background: rgba(0, 0, 0, 0.6);
+    -webkit-backdrop-filter: blur(6px);
     backdrop-filter: blur(6px);
     z-index: 9999;
     display: flex;
@@ -636,6 +640,7 @@
     background: rgba(0, 0, 0, 0.4);
     padding: 6px 14px;
     border-radius: 99px;
+    -webkit-backdrop-filter: blur(4px);
     backdrop-filter: blur(4px);
 }
 
@@ -682,6 +687,7 @@
     justify-content: center;
     cursor: pointer;
     z-index: 100001;
+    -webkit-backdrop-filter: blur(4px);
     backdrop-filter: blur(4px);
     transition: background 0.2s, transform 0.15s;
 }

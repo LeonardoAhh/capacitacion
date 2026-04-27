@@ -10,7 +10,7 @@
     backdrop-filter: blur(8px);
     -webkit-backdrop-filter: blur(8px);
     padding: var(--spacing-md);
-    animation: fadeInOverlay 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    animation: fadeInOverlay 0.3s var(--ease-out);
 }
 
 .modal {
@@ -24,7 +24,7 @@
     display: flex;
     flex-direction: column;
     overflow: hidden;
-    animation: slideUpModal 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    animation: slideUpModal 0.4s var(--ease-out);
     position: relative;
     transition: background 0.3s, border-color 0.3s;
 }
@@ -66,7 +66,7 @@
     width: 100%;
     height: 100%;
     background: var(--cursor-dark);
-    transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+    transition: transform 0.5s var(--ease-out);
     transform-origin: left;
 }
 
@@ -256,7 +256,7 @@
     border: 1px solid var(--ds-border-hairline);
     border-radius: 16px;
     cursor: pointer;
-    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    transition: all 0.2s var(--ease-out);
     position: relative;
 }
 
@@ -332,7 +332,7 @@
 .checkIcon {
     color: white;
     stroke-width: 3px;
-    animation: zoomIn 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    animation: zoomIn 0.2s var(--ease-out);
 }
 
 /* ── Footer ── */
@@ -413,11 +413,11 @@
 
 /* ── Animations ── */
 .fadeIn {
-    animation: customFadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    animation: customFadeIn 0.3s var(--ease-out) forwards;
 }
 
 .fadeOut {
-    animation: customFadeOut 0.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    animation: customFadeOut 0.2s var(--ease-out) forwards;
 }
 
 @keyframes customFadeIn {

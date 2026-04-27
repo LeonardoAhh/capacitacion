@@ -71,7 +71,7 @@
     flex-direction: column;
     align-items: center;
     gap: var(--s-20);
-    animation: introContentIn 0.7s cubic-bezier(0.16, 1, 0.3, 1) 0.1s both;
+    animation: introContentIn 0.7s var(--ease-out) 0.1s both;
 }
 
 .introIcon {
@@ -101,7 +101,7 @@
     font-size: 0.68rem;
     color: var(--cursor-cream);
     text-transform: uppercase;
-    animation: introSubIn 0.9s cubic-bezier(0.16, 1, 0.3, 1) 0.5s both;
+    animation: introSubIn 0.9s var(--ease-out) 0.5s both;
 }
 
 /* ─── Page shell ──────────────────────────────────────────── */
@@ -321,7 +321,7 @@
     border: 1px solid var(--ds-border-hairline);
     border-radius: var(--radius-xl);
     overflow: hidden;
-    animation: resultReveal 0.65s cubic-bezier(0.16, 1, 0.3, 1) both;
+    animation: resultReveal 0.65s var(--ease-out) both;
     position: relative;
     box-shadow: var(--shadow-feature);
 }
@@ -374,7 +374,7 @@
     padding: var(--s-4) var(--s-12);
     border-radius: var(--radius-pill);
     margin-bottom: var(--s-16);
-    animation: badgeFloat 0.4s cubic-bezier(0.16, 1, 0.3, 1) 0.15s both;
+    animation: badgeFloat 0.4s var(--ease-out) 0.15s both;
 }
 
 .statusBadgeSuccess {
@@ -429,7 +429,7 @@
     margin: 0 0 var(--s-4);
     letter-spacing: var(--track-h3);
     font-feature-settings: var(--feat-serif);
-    animation: fadeSlideUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) 0.42s both;
+    animation: fadeSlideUp 0.5s var(--ease-out) 0.42s both;
 }
 
 .employeePosition {
@@ -437,7 +437,7 @@
     font-size: var(--text-button);
     color: var(--ds-text-secondary);
     margin: 0;
-    animation: fadeSlideUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) 0.52s both;
+    animation: fadeSlideUp 0.5s var(--ease-out) 0.52s both;
 }
 
 /* ─── Result body ────────────────────────────────────────── */
@@ -446,7 +446,7 @@
     display: flex;
     flex-direction: column;
     gap: var(--s-12);
-    animation: fadeSlideUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) 0.62s both;
+    animation: fadeSlideUp 0.5s var(--ease-out) 0.62s both;
 }
 
 .messageText {
