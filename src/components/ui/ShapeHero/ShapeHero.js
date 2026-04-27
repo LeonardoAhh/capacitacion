@@ -29,8 +29,17 @@ const DEFAULT_REDIRECT = '/induccion';
 function sanitizeRedirect(rawRedirect) {
     if (!rawRedirect || typeof rawRedirect !== 'string') return DEFAULT_REDIRECT;
     if (!rawRedirect.startsWith('/')) return DEFAULT_REDIRECT;
+    // Bloquea protocol-relative (`//evil.com`) y backslash tricks (`/\evil.com`).
     if (rawRedirect.startsWith('//') || rawRedirect.startsWith('/\\')) return DEFAULT_REDIRECT;
-    if (rawRedirect === '/login') return DEFAULT_REDIRECT;
+    // Bloquea cualquier variante de /login (exacto, subpath, con query) para
+    // evitar loop al iniciar sesión.
+    if (
+        rawRedirect === '/login' ||
+        rawRedirect.startsWith('/login/') ||
+        rawRedirect.startsWith('/login?')
+    ) {
+        return DEFAULT_REDIRECT;
+    }
     return rawRedirect;
 }
 
@@ -69,6 +78,18 @@ function loginReducer(state, action) {
             return { ...state, loading: false, error: action.error, failedAttempts: state.failedAttempts + 1 };
         case 'RESTORE_ATTEMPTS':
             return { ...state, failedAttempts: action.attempts };
+        case 'RESTORE_RATE_LIMIT':
+            // Reanuda un bloqueo persistido en localStorage SIN extender el tiempo.
+            // RATE_LIMIT_HIT crea un blockedUntil nuevo (Date.now()+10s); aquí
+            // restauramos el original para que el countdown muestre los segundos
+            // restantes correctos.
+            return {
+                ...state,
+                failedAttempts: action.attempts,
+                blockedUntil: action.blockedUntil,
+                remainingSeconds: action.remainingSeconds,
+                error: `Demasiados intentos fallidos. Espera ${action.remainingSeconds} segundos.`,
+            };
         case 'RATE_LIMIT_HIT': {
             const blockedUntil = Date.now() + RATE_LIMIT.BLOCK_DURATION_S * 1000;
             return {
@@ -157,8 +178,12 @@ export default function ShapeHero() {
 
         if (storedBlockedUntil && Date.now() < storedBlockedUntil) {
             const remaining = Math.ceil((storedBlockedUntil - Date.now()) / 1000);
-            dispatch({ type: 'RATE_LIMIT_HIT' });
-            dispatch({ type: 'RATE_LIMIT_TICK', seconds: remaining });
+            dispatch({
+                type: 'RESTORE_RATE_LIMIT',
+                attempts: storedAttempts,
+                blockedUntil: storedBlockedUntil,
+                remainingSeconds: remaining,
+            });
         } else if (storedAttempts >= RATE_LIMIT.MAX_ATTEMPTS) {
             clearRateLimitStorage();
         } else if (storedAttempts > 0) {

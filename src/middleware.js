@@ -67,18 +67,26 @@ export async function middleware(request) {
     const sessionCookie = request.cookies.get('__session');
     const session = sessionCookie ? await deserializeSession(sessionCookie.value) : null;
 
+    // Destino original incluyendo query string (ej. `/dashboard?tab=overview`).
+    // Lo guardamos en el `?redirect=` para que tras login el usuario vuelva
+    // exactamente a donde quería ir.
+    const originalDestination = pathname + (request.nextUrl.search || '');
+
     // 4. Sin cookie válida → redirigir al login (preservando destino original)
     if (!session) {
         const url = request.nextUrl.clone();
         url.pathname = LOGIN_URL;
-        url.searchParams.set('redirect', pathname);
+        url.search = '';
+        url.searchParams.set('redirect', originalDestination);
         return NextResponse.redirect(url);
     }
 
-    // 5. Cookie válida pero tipo incorrecto → redirigir al login
+    // 5. Cookie válida pero tipo incorrecto → redirigir al login (también con redirect)
     if (session.type !== SESSION_TYPE) {
         const url = request.nextUrl.clone();
         url.pathname = LOGIN_URL;
+        url.search = '';
+        url.searchParams.set('redirect', originalDestination);
         return NextResponse.redirect(url);
     }
 
