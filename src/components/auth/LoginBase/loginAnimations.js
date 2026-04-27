@@ -20,15 +20,6 @@ export const EASE_OUT = [0.22, 1, 0.36, 1];
  *  Coincide con el countdown bar visual: 1.1s delay + 3.9s duration ≈ 5s. */
 export const SUCCESS_REDIRECT_DELAY_MS = 5000;
 
-/** Variants reducidas (sin animación) para usuarios con prefers-reduced-motion. */
-export const REDUCED = {
-    hidden: { opacity: 1, scale: 1, y: 0, filter: 'blur(0px)', height: 'auto' },
-    visible: { opacity: 1, scale: 1, y: 0, filter: 'blur(0px)', height: 'auto', transition: { duration: 0 } },
-    initial: { opacity: 1, y: 0, filter: 'blur(0px)', height: 'auto' },
-    animate: { opacity: 1, y: 0, filter: 'blur(0px)', height: 'auto', transition: { duration: 0 } },
-    exit:    { opacity: 1, y: 0, filter: 'blur(0px)', height: 'auto', transition: { duration: 0 } },
-};
-
 /** Fade-up — para elementos individuales con delay custom (stagger). */
 export const FADE_UP_LOGIN = {
     hidden: { opacity: 0, y: 16 },
