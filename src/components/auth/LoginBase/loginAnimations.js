@@ -5,12 +5,15 @@
  * que en iOS Safari y Android low-end es CPU-bound y produce stutter.
  * El blur se conserva muy ligero (2px) sólo en CARD_ENTER para preservar
  * la sensación de "premium" sin penalizar dispositivos móviles.
- *
- * Easing: el token --ease-out de globals.css (cubic-bezier(0.16, 1, 0.3, 1))
- * no se puede compartir directamente desde JS; lo replicamos como constante.
  */
 
-/** Cubic-bezier ease-out idéntico a var(--ease-out) en globals.css */
+/**
+ * Cubic-bezier ease-out (easeOutQuart) usado por las animaciones JS de login.
+ * Nota: NO es el mismo curve que el token CSS `--ease-out` en globals.css
+ * (`cubic-bezier(0.16, 1, 0.3, 1)`, que es easeOutExpo). El de aquí es más
+ * suave en el final del recorrido y ya estaba en el código original; se
+ * mantiene para no alterar el feel visual de la entrada del login.
+ */
 export const EASE_OUT = [0.22, 1, 0.36, 1];
 
 /** Delay total entre LOGIN_SUCCESS y la navegación a /induccion (en ms).
