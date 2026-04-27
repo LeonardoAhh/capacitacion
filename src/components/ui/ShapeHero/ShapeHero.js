@@ -1,17 +1,38 @@
 'use client';
 
-import { useReducer, useEffect, useCallback, useRef } from 'react';
-import Image from 'next/image';
+import { useReducer, useEffect, useCallback, useRef, useMemo } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Lock, AlertCircle } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
 import { useAuth } from '@/contexts/AuthContext';
 import { createSession } from '@/lib/sessionApi';
-import { CARD_ENTER, FADE_UP_LOGIN, ERROR_VARIANTS, SUCCESS_ENTER } from '@/components/auth/LoginBase/loginAnimations';
+import {
+    CARD_ENTER,
+    FADE_UP_LOGIN,
+    ERROR_VARIANTS,
+    EASE_OUT,
+    SUCCESS_REDIRECT_DELAY_MS,
+} from '@/components/auth/LoginBase/loginAnimations';
 import { Button } from '@/components/ui/Button/Button';
 import { Input } from '@/components/ui/Input/Input';
 import DynamicCredits from '@/components/features/DynamicCredits/DynamicCredits';
 import styles from './ShapeHero.module.css';
+
+/* ─── Redirect safelist ──────────────────────────────────── */
+
+const DEFAULT_REDIRECT = '/induccion';
+
+/**
+ * Sanitiza el `?redirect=` para evitar open-redirect attacks.
+ * Sólo aceptamos paths internos (empiezan con "/" pero no con "//" o "/\").
+ */
+function sanitizeRedirect(rawRedirect) {
+    if (!rawRedirect || typeof rawRedirect !== 'string') return DEFAULT_REDIRECT;
+    if (!rawRedirect.startsWith('/')) return DEFAULT_REDIRECT;
+    if (rawRedirect.startsWith('//') || rawRedirect.startsWith('/\\')) return DEFAULT_REDIRECT;
+    if (rawRedirect === '/login') return DEFAULT_REDIRECT;
+    return rawRedirect;
+}
 
 /* ─── Rate limiting ──────────────────────────────────────── */
 
@@ -46,6 +67,8 @@ function loginReducer(state, action) {
             return { ...state, loading: false, isSuccess: true, failedAttempts: 0, blockedUntil: null };
         case 'LOGIN_ERROR':
             return { ...state, loading: false, error: action.error, failedAttempts: state.failedAttempts + 1 };
+        case 'RESTORE_ATTEMPTS':
+            return { ...state, failedAttempts: action.attempts };
         case 'RATE_LIMIT_HIT': {
             const blockedUntil = Date.now() + RATE_LIMIT.BLOCK_DURATION_S * 1000;
             return {
@@ -106,17 +129,25 @@ export default function ShapeHero() {
     const router = useRouter();
     const searchParams = useSearchParams();
     const timerRef = useRef(null);
+    const prefersReducedMotion = useReducedMotion();
 
     const { identifier, password, error, loading, isSuccess, failedAttempts, blockedUntil, remainingSeconds } = state;
     const isBlocked = blockedUntil !== null && Date.now() < blockedUntil;
+
+    /* Destino real del redirect — respeta `?redirect=` con safelist para
+       evitar open-redirect attacks. */
+    const redirectTarget = useMemo(
+        () => sanitizeRedirect(searchParams.get('redirect')),
+        [searchParams]
+    );
 
     /* Redirige si ya está autenticado */
     useEffect(() => {
         // loading = true significa que hay un submit en curso (esperando createSession).
         // No redirigir hasta que el flujo termine para evitar race con createSession.
         if (!user || isSuccess || loading) return;
-        router.replace('/induccion');
-    }, [user, router, isSuccess, loading]);
+        router.replace(redirectTarget);
+    }, [user, router, isSuccess, loading, redirectTarget]);
 
     /* Restaura rate limit del localStorage al montar */
     useEffect(() => {
@@ -131,10 +162,7 @@ export default function ShapeHero() {
         } else if (storedAttempts >= RATE_LIMIT.MAX_ATTEMPTS) {
             clearRateLimitStorage();
         } else if (storedAttempts > 0) {
-            for (let i = 0; i < storedAttempts; i++) {
-                dispatch({ type: 'LOGIN_ERROR', error: '' });
-            }
-            dispatch({ type: 'SET_FIELD', field: 'error', value: '' });
+            dispatch({ type: 'RESTORE_ATTEMPTS', attempts: storedAttempts });
         }
     }, []);
 
@@ -168,9 +196,9 @@ export default function ShapeHero() {
     /* Redirige tras login exitoso */
     useEffect(() => {
         if (!isSuccess) return;
-        const timer = setTimeout(() => router.push('/induccion'), 5000);
+        const timer = setTimeout(() => router.push(redirectTarget), SUCCESS_REDIRECT_DELAY_MS);
         return () => clearTimeout(timer);
-    }, [isSuccess, router]);
+    }, [isSuccess, router, redirectTarget]);
 
     const checkRateLimit = useCallback(() => {
         if (isBlocked) return false;
@@ -262,56 +290,64 @@ export default function ShapeHero() {
                                     exit={{ opacity: 0, scale: 0.9 }}
                                     transition={{ duration: 0.5 }}
                                 >
-                                    {/* Rings + Animated checkmark */}
+                                    {/* Rings + Animated checkmark.
+                                        Pulse rings se desactivan con prefers-reduced-motion para no
+                                        consumir batería en mobile/PWA. */}
                                     <div className={styles.ringWrap}>
-                                        <motion.div
-                                            className={styles.pulse1}
-                                            initial={{ scale: 1, opacity: 0.45 }}
-                                            animate={{ scale: 2.2, opacity: 0 }}
-                                            transition={{ duration: 2, repeat: Infinity, ease: 'easeOut' }}
-                                        />
-                                        <motion.div
-                                            className={styles.pulse2}
-                                            initial={{ scale: 1, opacity: 0.3 }}
-                                            animate={{ scale: 2.8, opacity: 0 }}
-                                            transition={{ duration: 2, repeat: Infinity, ease: 'easeOut', delay: 0.7 }}
-                                        />
+                                        {!prefersReducedMotion && (
+                                            <>
+                                                <motion.div
+                                                    className={styles.pulse1}
+                                                    initial={{ scale: 1, opacity: 0.45 }}
+                                                    animate={{ scale: 2.2, opacity: 0 }}
+                                                    transition={{ duration: 2, repeat: Infinity, ease: 'easeOut' }}
+                                                />
+                                                <motion.div
+                                                    className={styles.pulse2}
+                                                    initial={{ scale: 1, opacity: 0.3 }}
+                                                    animate={{ scale: 2.8, opacity: 0 }}
+                                                    transition={{ duration: 2, repeat: Infinity, ease: 'easeOut', delay: 0.7 }}
+                                                />
+                                            </>
+                                        )}
                                         <motion.svg
                                             className={styles.svgCheck}
                                             viewBox="0 0 52 52"
                                             aria-hidden="true"
-                                            initial={{ rotate: -90, scale: 0.6 }}
+                                            initial={prefersReducedMotion ? false : { rotate: -90, scale: 0.6 }}
                                             animate={{ rotate: 0, scale: 1 }}
-                                            transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
+                                            transition={{ duration: prefersReducedMotion ? 0 : 0.7, ease: EASE_OUT }}
                                         >
                                             <motion.circle
                                                 cx="26" cy="26" r="23"
-                                                fill="#e7faed"
-                                                stroke="#16a34a"
+                                                fill="rgba(var(--accent-teal-rgb), 0.12)"
+                                                stroke="var(--accent-teal)"
                                                 strokeWidth="2"
-                                                initial={{ pathLength: 0 }}
+                                                initial={prefersReducedMotion ? false : { pathLength: 0 }}
                                                 animate={{ pathLength: 1 }}
-                                                transition={{ duration: 0.8, ease: 'easeOut' }}
+                                                transition={{ duration: prefersReducedMotion ? 0 : 0.8, ease: 'easeOut' }}
                                             />
                                             <motion.path
                                                 fill="none"
-                                                stroke="#16a34a"
+                                                stroke="var(--accent-teal)"
                                                 strokeWidth="3.5"
                                                 strokeLinecap="round"
                                                 strokeLinejoin="round"
                                                 d="M13 26 L21 34 L39 16"
-                                                initial={{ pathLength: 0 }}
+                                                initial={prefersReducedMotion ? false : { pathLength: 0 }}
                                                 animate={{ pathLength: 1 }}
-                                                transition={{ duration: 0.5, delay: 0.75, ease: [0.22, 1, 0.36, 1] }}
+                                                transition={{ duration: prefersReducedMotion ? 0 : 0.5, delay: prefersReducedMotion ? 0 : 0.75, ease: EASE_OUT }}
                                             />
                                         </motion.svg>
                                     </div>
 
                                     <motion.p
                                         className={styles.successText}
+                                        role="status"
+                                        aria-live="polite"
                                         initial={{ opacity: 0, y: 14 }}
                                         animate={{ opacity: 1, y: 0 }}
-                                        transition={{ delay: 0.9, duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+                                        transition={{ delay: prefersReducedMotion ? 0 : 0.9, duration: 0.5, ease: EASE_OUT }}
                                     >
                                         Acceso concedido
                                     </motion.p>
@@ -320,13 +356,17 @@ export default function ShapeHero() {
                                         className={styles.countdownBar}
                                         initial={{ opacity: 0 }}
                                         animate={{ opacity: 1 }}
-                                        transition={{ delay: 1.1 }}
+                                        transition={{ delay: prefersReducedMotion ? 0 : 1.1 }}
                                     >
                                         <motion.div
                                             className={styles.countdownFill}
                                             initial={{ scaleX: 1 }}
                                             animate={{ scaleX: 0 }}
-                                            transition={{ duration: 3.9, ease: 'linear', delay: 1.1 }}
+                                            transition={{
+                                                duration: prefersReducedMotion ? 0 : (SUCCESS_REDIRECT_DELAY_MS - 1100) / 1000,
+                                                ease: 'linear',
+                                                delay: prefersReducedMotion ? 0 : 1.1,
+                                            }}
                                             style={{ transformOrigin: 'left' }}
                                         />
                                     </motion.div>
@@ -335,7 +375,7 @@ export default function ShapeHero() {
                                         className={styles.redirectMsg}
                                         initial={{ opacity: 0 }}
                                         animate={{ opacity: 1 }}
-                                        transition={{ delay: 1.3 }}
+                                        transition={{ delay: prefersReducedMotion ? 0 : 1.3 }}
                                     >
                                         Redirigiendo...
                                     </motion.span>
