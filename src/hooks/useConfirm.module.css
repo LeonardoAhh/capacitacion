@@ -39,7 +39,7 @@
     border-radius: var(--radius-lg);
     box-shadow: var(--shadow-feature);
     overflow: hidden;
-    animation: dialogIn 220ms cubic-bezier(0.16, 1, 0.3, 1);
+    animation: dialogIn 220ms var(--ease-out);
     display: flex;
     flex-direction: column;
 }

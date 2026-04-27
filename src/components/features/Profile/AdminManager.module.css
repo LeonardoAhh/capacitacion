@@ -196,7 +196,7 @@
     border: 1px solid var(--ds-border-hairline);
     box-shadow: var(--shadow-feature);
     overflow: hidden;
-    animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    animation: slideUp 0.3s var(--ease-out);
 }
 
 .modalHeader {

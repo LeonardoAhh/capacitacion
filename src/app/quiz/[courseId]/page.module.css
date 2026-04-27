@@ -6,6 +6,7 @@
 /* â”€â”€â”€ Shell â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 .shell {
     min-height: 100vh;
+    min-height: 100dvh;
     background: var(--ds-bg);
     display: flex;
     flex-direction: column;

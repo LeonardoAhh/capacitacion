@@ -12,13 +12,14 @@
     position: sticky;
     top: 0;
     height: 100vh;
+    height: 100dvh;
     display: flex;
     flex-direction: column;
     background: var(--sb-bg);
     overflow: hidden;
     z-index: 50;
     border-right: 1px solid var(--sb-border);
-    transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    transition: transform 0.3s var(--ease-out);
     /* Safe area para notch/isla dinámica en desktop con pantallas raras */
     padding-left: env(safe-area-inset-left, 0px);
 }
