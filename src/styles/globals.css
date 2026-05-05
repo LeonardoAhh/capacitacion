@@ -38,18 +38,18 @@
    ============================================================ */
 :root {
   /* â”€â”€â”€ Surfaces (warm cream scale) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
-  --cursor-cream: #f2f1ed;
+  --cursor-cream: #faf9f5;
   /* Surface 200 â€” page bg */
-  --cursor-cream-100: #f7f7f4;
+  --cursor-cream-100: #fdfcf9;
   /* Surface 100 â€” lightest button */
-  --cursor-cream-300: #ebeae5;
+  --cursor-cream-300: #f5f0e8;
   /* Surface 300 â€” primary button */
-  --cursor-cream-400: #e6e5e0;
+  --cursor-cream-400: #efe9de;
   /* Surface 400 â€” card */
-  --cursor-cream-500: #e1e0db;
+  --cursor-cream-500: #e8e0d2;
   /* Surface 500 â€” tertiary button */
-  --cursor-dark: #26251e;
-  /* warm near-black */
+  --cursor-dark: #141413;
+  /* ink — warm near-black (Claude) */
   --cursor-white: #ffffff;
   --cursor-black: #000000;
 
@@ -69,45 +69,59 @@
   /* â”€â”€â”€ Text colors (warm scale) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
   --ds-text: var(--cursor-dark);
   /* #26251e */
-  --ds-text-secondary: rgba(38, 37, 30, 0.55);
-  /* 55% warm */
-  --ds-text-tertiary: rgba(38, 37, 30, 0.4);
-  --ds-text-muted: rgba(38, 37, 30, 0.6);
-  /* button label tertiary */
-  --ds-text-rgb: 38, 37, 30;
+  --ds-text-secondary: #3d3d3a;
+  /* body — warm gray */
+  --ds-text-tertiary: #6c6a64;
+  /* muted — breadcrumbs, secondary */
+  --ds-text-muted: #8e8b82;
+  /* muted soft — captions, fine-print */
+  --ds-text-rgb: 20, 20, 19;
 
   /* â”€â”€â”€ Borders en oklab (warm brown perceptual) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
   /* oklab(0.263084 -0.00230259 0.0124794 / Î±) â€” fallback rgba */
-  --ds-border-hairline: rgba(38, 37, 30, 0.10);
-  --ds-border-medium: rgba(38, 37, 30, 0.20);
-  --ds-border-strong: rgba(38, 37, 30, 0.55);
+  --ds-border-hairline: #e6dfd8;
+  /* hairline — Claude warm cream border */
+  --ds-border-medium: #d4cdc4;
+  /* medium — subtle emphasis */
+  --ds-border-strong: rgba(20, 20, 19, 0.45);
   --ds-border-solid: var(--cursor-dark);
 
   /* Hover ghost — 6% warm overlay, use in ghost buttons + close buttons */
-  --ds-bg-ghost-hover: rgba(38, 37, 30, 0.06);
+  --ds-bg-ghost-hover: rgba(20, 20, 19, 0.06);
 
   /* â”€â”€â”€ Acentos Cursor â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+  --accent-coral: #cc785c;
+  /* Claude coral — primary warm accent */
+  --accent-coral-rgb: 204, 120, 92;
+  --accent-coral-active: #a9583e;
+  /* coral press/hover darker */
   --accent-orange: #141e64;
-  /* ViñoPlastic navy — primary brand */
+  /* ViñoPlastic navy — brand identity */
   --accent-orange-rgb: 20, 30, 100;
   --accent-gold: #0fd2f0;
   /* ViñoPlastic cyan — secondary (roller) */
   --accent-gold-rgb: 15, 210, 240;
-  --accent-crimson: #cf2d56;
-  /* hover signature + error */
-  --accent-crimson-rgb: 207, 45, 86;
-  --accent-teal: #1f8a65;
-  /* success warm-shifted */
-  --accent-teal-rgb: 31, 138, 101;
+  --accent-amber: #e8a55a;
+  /* Claude amber — warm companion tone */
+  --accent-crimson: #c64545;
+  /* Claude error red */
+  --accent-crimson-rgb: 198, 69, 69;
+  --accent-teal: #5db872;
+  /* Claude success green */
+  --accent-teal-rgb: 93, 184, 114;
 
   /* ─── Status RGB tokens (state tints para simuladores y feedback) ──────
        RGB-only, para componer rgba(var(--status-*-rgb), α) en tints y bordes.
        Cohesivos con los acentos Cursor + theme-safe (legibles en light y dark).
        good = teal / warn = amber / bad = crimson / info = cyan cool     */
-  --status-good-rgb: 31, 138, 101;
-  --status-warn-rgb: 192, 133, 50;
-  --status-bad-rgb: 207, 45, 86;
-  --status-info-rgb: 59, 130, 246;
+  --status-good-rgb: 93, 184, 114;
+  /* Claude success green */
+  --status-warn-rgb: 212, 160, 23;
+  /* Claude warning amber */
+  --status-bad-rgb: 198, 69, 69;
+  /* Claude error red */
+  --status-info-rgb: 93, 184, 166;
+  /* Claude accent teal */
 
   /* Timeline colors (AI operation states) */
   --timeline-thinking: #dfa88f;
@@ -302,14 +316,14 @@
   --color-focus: var(--ds-focus);
   --color-focus-ring: rgba(var(--accent-orange-rgb), 0.25);
 
-  --color-danger-rgb: 207, 45, 86;
-  --color-success-rgb: 31, 138, 101;
-  --color-info-rgb: 159, 187, 224;
+  --color-danger-rgb: 198, 69, 69;
+  --color-success-rgb: 93, 184, 114;
+  --color-info-rgb: 93, 184, 166;
 
   --bg-primary: var(--ds-bg);
   --bg-secondary: var(--ds-bg-tertiary);
   --bg-tertiary: var(--ds-bg-floor);
-  --bg-primary-rgb: 242, 241, 237;
+  --bg-primary-rgb: 250, 249, 245;
   --app-background: var(--ds-bg);
   --card-background: var(--ds-bg-tertiary);
   --card-border: var(--ds-border-hairline);
@@ -320,13 +334,13 @@
   --text-tertiary: var(--ds-text-tertiary);
 
   --border-color: var(--ds-border-hairline);
-  --border-color-rgb: 38, 37, 30;
+  --border-color-rgb: 20, 20, 19;
 
   --shadow-sm: var(--elev-ambient);
   --shadow-md: var(--shadow-card);
   --shadow-lg: var(--shadow-feature);
 
-  --scrollbar-thumb: rgba(38, 37, 30, 0.18);
+  --scrollbar-thumb: rgba(20, 20, 19, 0.15);
   --scrollbar-track: transparent;
 
   /* Escala tipogrÃ¡fica legacy (en rem) */
@@ -366,14 +380,7 @@
   --font-sans: var(--font-body);
 }
 
-/* Borders en oklab para perceptual uniformity (Chrome 111+, Safari 16.4+, Firefox 113+).
-   Override progresivo â€” fallback rgba ya estÃ¡ en :root. */
-@supports (border-color: oklab(0.5 0 0 / 0.1)) {
-  :root {
-    --ds-border-hairline: oklab(0.263084 -0.00230259 0.0124794 / 0.1);
-    --ds-border-medium: oklab(0.263084 -0.00230259 0.0124794 / 0.2);
-  }
-}
+/* Light borders use solid hex (#e6dfd8, #d4cdc4) — no oklab override needed. */
 
 /* ============================================================
    Dark theme — warm inversion of Cursor System
@@ -383,48 +390,71 @@
    ============================================================ */
 [data-theme="dark"] {
   /* ─── Surfaces (warm dark scale, derivado de cursor-dark #26251e) ─── */
-  --cursor-cream: #1c1b16;
-  /* page bg */
-  --cursor-cream-100: #16150f;
-  /* lowest surface */
-  --cursor-cream-300: #24231b;
-  /* button default */
-  --cursor-cream-400: #2c2b22;
-  /* card */
-  --cursor-cream-500: #36352c;
-  /* selected/active */
-  --cursor-dark: #f2f1ed;
-  /* texto principal (invertido) */
+  --cursor-cream: #181715;
+  /* Surface dark — Claude dark bg */
+  --cursor-cream-100: #131210;
+  /* Deepest surface */
+  --cursor-cream-300: #1f1e1b;
+  /* Surface dark soft */
+  --cursor-cream-400: #252320;
+  /* Surface dark elevated */
+  --cursor-cream-500: #302e2a;
+  /* Surface dark emphasis */
+  --cursor-dark: #faf9f5;
+  /* On dark — cream-tinted white (echoes canvas) */
 
-  --ds-bg: #1c1b16;
-  --ds-bg-subtle: #24231b;
-  --ds-bg-tertiary: #2c2b22;
-  --ds-bg-emphasis: #36352c;
-  --ds-bg-floor: #16150f;
-  --ds-bg-pure: #1f1e18;
+  --ds-bg: #181715;
+  --ds-bg-subtle: #1f1e1b;
+  --ds-bg-tertiary: #252320;
+  --ds-bg-emphasis: #302e2a;
+  --ds-bg-floor: #131210;
+  --ds-bg-pure: #1c1b18;
 
   /* ─── Text (cream warm scale sobre warm dark) ─── */
-  --ds-text: #f2f1ed;
-  --ds-text-secondary: rgba(242, 241, 237, 0.65);
-  --ds-text-tertiary: rgba(242, 241, 237, 0.45);
-  --ds-text-muted: rgba(242, 241, 237, 0.55);
-  --ds-text-rgb: 242, 241, 237;
+  --ds-text: #faf9f5;
+  /* On dark — cream white */
+  --ds-text-secondary: #a09d96;
+  /* On dark soft */
+  --ds-text-tertiary: #706d66;
+  /* On dark muted */
+  --ds-text-muted: #8a8780;
+  /* On dark muted soft */
+  --ds-text-rgb: 250, 249, 245;
 
   /* ─── Borders (cream alpha sobre dark) ─── */
-  --ds-border-hairline: rgba(242, 241, 237, 0.10);
-  --ds-border-medium: rgba(242, 241, 237, 0.20);
-  --ds-border-strong: rgba(242, 241, 237, 0.45);
-  --ds-border-solid: rgba(242, 241, 237, 0.55);
+  --ds-border-hairline: rgba(250, 249, 245, 0.08);
+  --ds-border-medium: rgba(250, 249, 245, 0.15);
+  --ds-border-strong: rgba(250, 249, 245, 0.35);
+  --ds-border-solid: rgba(250, 249, 245, 0.50);
 
   /* Hover ghost dark — 6% warm cream overlay */
-  --ds-bg-ghost-hover: rgba(242, 241, 237, 0.06);
+  --ds-bg-ghost-hover: rgba(250, 249, 245, 0.06);
 
   /* ─── Acentos en dark: brand navy se aclara a un azul cielo-marino para
        mantener contraste sobre warm-dark. Cyan/crimson/teal se heredan
        (ya leen bien sobre dark). ─── */
+  --accent-coral: #d9896e;
+  /* coral lighter for dark contrast */
+  --accent-coral-rgb: 217, 137, 110;
+  --accent-coral-active: #cc785c;
   --accent-orange: #6d8cff;
   /* brand navy aclarado para dark */
   --accent-orange-rgb: 109, 140, 255;
+  --accent-crimson: #e05858;
+  /* error red lighter for dark */
+  --accent-crimson-rgb: 224, 88, 88;
+  --accent-teal: #6ec97e;
+  /* success green lighter for dark */
+  --accent-teal-rgb: 110, 201, 126;
+
+  --status-good-rgb: 110, 201, 126;
+  --status-warn-rgb: 228, 180, 60;
+  --status-bad-rgb: 224, 88, 88;
+  --status-info-rgb: 110, 201, 180;
+
+  --color-danger-rgb: 224, 88, 88;
+  --color-success-rgb: 110, 201, 126;
+  --color-info-rgb: 110, 201, 180;
 
   /* ─── Shadows (warm depth en dark, alpha más densa) ─── */
   --elev-ambient: 0 0 16px rgba(0, 0, 0, 0.30),
@@ -437,7 +467,7 @@
     var(--ring-border);
   --shadow-hover: var(--ring-medium), var(--elev-subtle);
 
-  --scrollbar-thumb: rgba(242, 241, 237, 0.20);
+  --scrollbar-thumb: rgba(250, 249, 245, 0.18);
 
   /* Legacy aliases (compat) */
   --bg-primary: var(--ds-bg-pure);
@@ -626,7 +656,7 @@ a:hover {
   text-decoration: underline;
   text-underline-offset: 4px;
   text-decoration-thickness: 1px;
-  text-decoration-color: rgba(38, 37, 30, 0.4);
+  text-decoration-color: rgba(20, 20, 19, 0.4);
 }
 
 a:focus {
@@ -733,7 +763,7 @@ a:focus {
 
 /* Ghost transparent */
 .btn-ghost {
-  background: rgba(38, 37, 30, 0.06);
+  background: rgba(20, 20, 19, 0.06);
   color: var(--ds-text-secondary);
   padding: var(--s-6) var(--s-12);
   border-radius: var(--radius-lg);
