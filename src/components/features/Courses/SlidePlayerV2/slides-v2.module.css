@@ -949,7 +949,7 @@
 }
 
 .fillInput:focus {
-  border-bottom-color: var(--accent-orange);
+  border-bottom-color: var(--ds-text);
 }
 
 .fillAnswer {
@@ -1188,7 +1188,7 @@
 }
 
 .textarea:focus {
-  box-shadow: var(--v-focus);
+  box-shadow: var(--v-ring);
 }
 
 /* ═══════════════════════════════════════════════════

@@ -14,8 +14,8 @@
 }
 
 .wrapper:focus-within {
-    border-color: var(--ds-border-medium);
-    box-shadow: 0 0 0 3px rgba(38, 37, 30, 0.15);
+    border-color: var(--ds-border-hairline);
+    box-shadow: none;
 }
 
 /* ── Toolbar ── */
