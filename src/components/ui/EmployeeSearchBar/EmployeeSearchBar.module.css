@@ -14,41 +14,41 @@
     position: relative;
     display: flex;
     align-items: center;
-    background: rgba(255, 255, 255, 0.6);
+    background: var(--ds-bg-pure);
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
-    border: 1.5px solid rgba(255, 255, 255, 0.4);
+    border: 1.5px solid var(--ds-border-hairline);
     border-radius: 12px;
     padding: 12px 16px;
     transition: all 0.2s ease;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+    box-shadow: 0 1px 3px rgba(20, 20, 19, 0.04);
 }
 
 :global([data-theme="dark"]) .inputContainer {
-    background: rgba(30, 30, 35, 0.6);
-    border-color: rgba(255, 255, 255, 0.1);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    background: var(--ds-bg-tertiary);
+    border-color: var(--ds-border-hairline);
+    box-shadow: 0 1px 3px rgba(20, 20, 19, 0.15);
 }
 
 .inputContainer:hover {
-    background: rgba(255, 255, 255, 0.8);
-    border-color: var(--accent-orange);
+    background: var(--cursor-cream-300);
+    border-color: var(--accent-coral);
 }
 
 :global([data-theme="dark"]) .inputContainer:hover {
-    background: rgba(45, 55, 72, 0.6);
-    border-color: var(--accent-orange);
+    background: var(--ds-bg-floor);
+    border-color: var(--accent-coral);
 }
 
 .inputContainer:focus-within {
-    border-color: var(--accent-orange);
-    box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.1);
-    background: rgba(255, 255, 255, 0.9);
+    border-color: var(--accent-coral);
+    box-shadow: 0 0 0 3px rgba(var(--accent-coral-rgb), 0.1);
+    background: var(--ds-bg-pure);
 }
 
 :global([data-theme="dark"]) .inputContainer:focus-within {
-    background: rgba(30, 30, 35, 0.9);
-    box-shadow: 0 0 0 3px rgba(10, 132, 255, 0.2);
+    background: var(--ds-bg-tertiary);
+    box-shadow: 0 0 0 3px rgba(var(--accent-coral-rgb), 0.15);
 }
 
 .iconWrapper {
@@ -81,33 +81,33 @@
 
 /* Actions Panel */
 .actionsPanel {
-    background: rgba(255, 255, 255, 0.95);
+    background: var(--ds-bg-pure);
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
-    border: 1px solid rgba(255, 255, 255, 0.5);
+    border: 1px solid var(--ds-border-hairline);
     border-radius: 12px;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
+    box-shadow: 0 1px 3px rgba(20, 20, 19, 0.08);
     overflow: hidden;
 }
 
 :global([data-theme="dark"]) .actionsPanel {
-    background: rgba(30, 30, 35, 0.9);
-    border-color: rgba(255, 255, 255, 0.1);
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+    background: var(--ds-bg-tertiary);
+    border-color: var(--ds-border-hairline);
+    box-shadow: 0 1px 3px rgba(20, 20, 19, 0.2);
 }
 
 .actionsHeader {
     padding: 12px 16px 8px;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    border-bottom: 1px solid var(--ds-border-hairline);
 }
 
 :global([data-theme="dark"]) .actionsHeader {
-    border-bottom-color: rgba(255, 255, 255, 0.1);
+    border-bottom-color: var(--ds-border-hairline);
 }
 
 .actionsTitle {
     font-size: 11px;
-    font-weight: 600;
+    font-weight: 500;
     text-transform: uppercase;
     letter-spacing: 0.5px;
     color: var(--ds-text-tertiary);
@@ -136,7 +136,7 @@
 
 :global([data-theme="dark"]) .actionItem:hover,
 :global([data-theme="dark"]) .actionItemActive {
-    background: rgba(255, 255, 255, 0.1);
+    background: var(--ds-bg-floor);
 }
 
 .actionContent {
@@ -173,26 +173,26 @@
     font-size: 11px;
     font-weight: 500;
     padding: 3px 8px;
-    background: rgba(0, 0, 0, 0.05);
+    background: var(--ds-bg-tertiary);
     color: var(--ds-text-secondary);
     border-radius: 4px;
     font-family: 'SF Mono', Monaco, 'Courier New', monospace;
 }
 
 :global([data-theme="dark"]) .actionShortcut {
-    background: rgba(255, 255, 255, 0.1);
+    background: var(--ds-bg-floor);
     color: var(--ds-text-tertiary);
 }
 
 .actionsFooter {
     padding: 8px 16px 12px;
-    border-top: 1px solid rgba(0, 0, 0, 0.05);
-    background: rgba(255, 255, 255, 0.5);
+    border-top: 1px solid var(--ds-border-hairline);
+    background: var(--cursor-cream-300);
 }
 
 :global([data-theme="dark"]) .actionsFooter {
-    border-top-color: rgba(255, 255, 255, 0.1);
-    background: rgba(0, 0, 0, 0.2);
+    border-top-color: var(--ds-border-hairline);
+    background: var(--ds-bg-floor);
 }
 
 .footerText {

@@ -25,21 +25,21 @@
     max-height: 90vh;
     overflow-y: auto;
     overflow-x: hidden;
-    background: linear-gradient(135deg, rgba(15, 23, 42, 0.95) 0%, rgba(30, 41, 59, 0.95) 100%);
+    background: rgba(var(--ds-text-rgb), 0.95);
     border: 1px solid rgba(255, 255, 255, 0.1);
     border-radius: 24px;
     padding: 2.5rem;
     box-shadow:
         0 0 0 1px rgba(255, 255, 255, 0.05),
         0 25px 50px -12px rgba(0, 0, 0, 0.5),
-        0 0 100px -20px rgba(99, 102, 241, 0.3);
+        0 0 100px -20px rgba(var(--accent-coral-rgb), 0.15);
     transform: translateY(20px) scale(0.98);
     opacity: 0;
     transition: all 0.5s var(--ease-out);
 
     /* Custom Scrollbar */
     scrollbar-width: thin;
-    scrollbar-color: rgba(99, 102, 241, 0.5) transparent;
+    scrollbar-color: rgba(var(--accent-coral-rgb), 0.5) transparent;
 }
 
 /* Webkit Scrollbar */
@@ -54,26 +54,26 @@
 }
 
 .modalContainer::-webkit-scrollbar-thumb {
-    background: linear-gradient(180deg, rgba(99, 102, 241, 0.6) 0%, rgba(139, 92, 246, 0.6) 100%);
+    background: rgba(var(--accent-coral-rgb), 0.6);
     border-radius: 10px;
     border: 2px solid transparent;
     background-clip: padding-box;
 }
 
 .modalContainer::-webkit-scrollbar-thumb:hover {
-    background: linear-gradient(180deg, rgba(99, 102, 241, 0.8) 0%, rgba(139, 92, 246, 0.8) 100%);
+    background: rgba(var(--accent-coral-rgb), 0.8);
     background-clip: padding-box;
 }
 
 /* Light Theme Styles */
 :global([data-theme="light"]) .modalContainer {
-    background: linear-gradient(135deg, rgba(255, 255, 255, 0.98) 0%, rgba(248, 250, 252, 0.98) 100%);
+    background: rgba(var(--bg-primary-rgb), 0.98);
     border-color: rgba(0, 0, 0, 0.1);
     box-shadow:
         0 0 0 1px rgba(0, 0, 0, 0.05),
         0 25px 50px -12px rgba(0, 0, 0, 0.15),
-        0 0 100px -20px rgba(99, 102, 241, 0.15);
-    scrollbar-color: rgba(99, 102, 241, 0.4) rgba(0, 0, 0, 0.05);
+        0 0 100px -20px rgba(var(--accent-coral-rgb), 0.08);
+    scrollbar-color: rgba(var(--accent-coral-rgb), 0.4) rgba(0, 0, 0, 0.05);
 }
 
 :global([data-theme="light"]) .modalContainer::-webkit-scrollbar-track {
@@ -81,7 +81,7 @@
 }
 
 :global([data-theme="light"]) .modalContainer::-webkit-scrollbar-thumb {
-    background: linear-gradient(180deg, rgba(99, 102, 241, 0.5) 0%, rgba(139, 92, 246, 0.5) 100%);
+    background: rgba(var(--accent-coral-rgb), 0.5);
 }
 
 :global([data-theme="light"]) .logoText h1,
@@ -93,7 +93,7 @@
 :global([data-theme="light"]) .greeting,
 :global([data-theme="light"]) .cardList li,
 :global([data-theme="light"]) .footerInfo {
-    color: rgba(30, 41, 59, 0.7);
+    color: var(--ds-text-secondary);
 }
 
 :global([data-theme="light"]) .featureCard {
@@ -103,7 +103,7 @@
 
 :global([data-theme="light"]) .featureCard:hover {
     background: rgba(0, 0, 0, 0.04);
-    border-color: rgba(99, 102, 241, 0.3);
+    border-color: rgba(var(--accent-coral-rgb), 0.3);
 }
 
 :global([data-theme="light"]) .featureCard:hover h3 {
@@ -111,7 +111,7 @@
 }
 
 :global([data-theme="light"]) .featureCard:hover .cardList li {
-    color: rgba(30, 41, 59, 0.8);
+    color: var(--ds-text);
 }
 
 :global([data-theme="light"]) .closeBtn {
@@ -152,7 +152,7 @@
     right: -100px;
     width: 300px;
     height: 300px;
-    background: radial-gradient(circle, rgba(99, 102, 241, 0.3) 0%, transparent 70%);
+    background: radial-gradient(circle, rgba(var(--accent-coral-rgb), 0.3) 0%, transparent 70%);
     border-radius: 50%;
     pointer-events: none;
     animation: pulse 4s ease-in-out infinite;
@@ -164,7 +164,7 @@
     left: -80px;
     width: 250px;
     height: 250px;
-    background: radial-gradient(circle, rgba(16, 185, 129, 0.25) 0%, transparent 70%);
+    background: radial-gradient(circle, rgba(var(--accent-teal-rgb), 0.25) 0%, transparent 70%);
     border-radius: 50%;
     pointer-events: none;
     animation: pulse 5s ease-in-out infinite reverse;
@@ -215,12 +215,12 @@
 .logo {
     width: 48px;
     height: 48px;
-    background: linear-gradient(135deg, var(--accent-orange) 0%, var(--accent-orange) 100%);
+    background: var(--accent-coral);
     border-radius: 12px;
     display: flex;
     align-items: center;
     justify-content: center;
-    box-shadow: 0 4px 20px rgba(99, 102, 241, 0.4);
+    box-shadow: 0 1px 3px rgba(var(--accent-coral-rgb), 0.3);
     animation: logoGlow 3s ease-in-out infinite;
 }
 
@@ -228,11 +228,11 @@
 
     0%,
     100% {
-        box-shadow: 0 4px 20px rgba(99, 102, 241, 0.4);
+        box-shadow: 0 1px 3px rgba(var(--accent-coral-rgb), 0.3);
     }
 
     50% {
-        box-shadow: 0 4px 30px rgba(99, 102, 241, 0.6), 0 0 40px rgba(99, 102, 241, 0.2);
+        box-shadow: 0 2px 8px rgba(var(--accent-coral-rgb), 0.4);
     }
 }
 
@@ -254,7 +254,7 @@
 
 .logoText h1 {
     font-size: 1.25rem;
-    font-weight: 700;
+    font-weight: 500;
     color: white;
     margin: 0;
     letter-spacing: -0.02em;
@@ -307,14 +307,14 @@
 
 .headline {
     font-size: 2rem;
-    font-weight: 700;
+    font-weight: 500;
     color: white;
     line-height: 1.2;
     margin: 0;
 }
 
 .gradientText {
-    background: linear-gradient(135deg, var(--timeline-read) 0%, var(--accent-orange) 50%, var(--accent-teal) 100%);
+    background: linear-gradient(135deg, var(--timeline-read) 0%, var(--accent-coral) 50%, var(--accent-teal) 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
@@ -383,13 +383,13 @@
 }
 
 .cardActive {
-    border-color: rgba(99, 102, 241, 0.4);
+    border-color: rgba(var(--accent-coral-rgb), 0.4);
 }
 
 .cardGlow {
     position: absolute;
     inset: 0;
-    background: radial-gradient(circle at 50% 0%, rgba(99, 102, 241, 0.15) 0%, transparent 60%);
+    background: radial-gradient(circle at 50% 0%, rgba(var(--accent-coral-rgb), 0.15) 0%, transparent 60%);
     opacity: 0;
     transition: opacity 0.3s ease;
     pointer-events: none;
@@ -420,7 +420,7 @@
 
 .featureCard h3 {
     font-size: 1rem;
-    font-weight: 600;
+    font-weight: 500;
     color: white;
     margin: 0 0 0.75rem 0;
 }
@@ -446,8 +446,8 @@
 }
 
 .bullet {
-    color: var(--accent-orange);
-    font-weight: 600;
+    color: var(--accent-coral);
+    font-weight: 500;
     font-size: 1rem;
 }
 
@@ -489,12 +489,12 @@
     0%,
     100% {
         opacity: 1;
-        box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.4);
+        box-shadow: 0 0 0 0 rgba(var(--accent-teal-rgb), 0.4);
     }
 
     50% {
         opacity: 0.8;
-        box-shadow: 0 0 0 4px rgba(16, 185, 129, 0);
+        box-shadow: 0 0 0 4px rgba(var(--accent-teal-rgb), 0);
     }
 }
 
@@ -502,21 +502,21 @@
     display: flex;
     align-items: center;
     gap: 0.75rem;
-    background: linear-gradient(135deg, var(--accent-orange) 0%, var(--accent-orange) 100%);
+    background: var(--accent-coral);
     color: white;
     border: none;
     padding: 0.875rem 1.75rem;
     border-radius: 12px;
     font-size: 0.95rem;
-    font-weight: 600;
+    font-weight: 500;
     cursor: pointer;
     transition: all 0.3s ease;
-    box-shadow: 0 4px 20px rgba(99, 102, 241, 0.3);
+    box-shadow: 0 1px 3px rgba(var(--accent-coral-rgb), 0.2);
 }
 
 .ctaButton:hover {
     transform: translateY(-2px);
-    box-shadow: 0 6px 30px rgba(99, 102, 241, 0.5);
+    box-shadow: 0 2px 8px rgba(var(--accent-coral-rgb), 0.3);
 }
 
 .ctaButton svg {
@@ -560,28 +560,28 @@
 }
 
 .iconPurple {
-    background: rgba(126, 34, 206, 0.1);
-    color: var(--accent-orange);
+    background: rgba(var(--accent-coral-rgb), 0.08);
+    color: var(--accent-coral);
 }
 
 .iconBlue {
-    background: rgba(37, 99, 235, 0.1);
-    color: var(--accent-orange);
+    background: rgba(var(--accent-coral-rgb), 0.08);
+    color: var(--accent-coral);
 }
 
 .iconGreen {
-    background: rgba(22, 163, 74, 0.1);
+    background: rgba(var(--accent-teal-rgb), 0.08);
     color: var(--accent-teal);
 }
 
 .iconOrange {
-    background: rgba(194, 65, 12, 0.1);
+    background: rgba(var(--accent-gold-rgb), 0.08);
     color: var(--accent-gold);
 }
 
 .feature h3 {
     font-size: 0.9rem;
-    font-weight: 600;
+    font-weight: 500;
     margin-bottom: 0.4rem;
     color: var(--ds-text);
 }
@@ -611,7 +611,7 @@
 
 .infoCard h3 {
     font-size: 1rem;
-    font-weight: 600;
+    font-weight: 500;
     margin-bottom: 1rem;
     color: var(--ds-text);
 }

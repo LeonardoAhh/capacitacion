@@ -169,7 +169,7 @@
 
 .option.focused {
     background: var(--cursor-cream-300);
-    box-shadow: inset 0 0 0 1px var(--accent-orange);
+    box-shadow: inset 0 0 0 1px var(--accent-coral);
 }
 
 .option svg {

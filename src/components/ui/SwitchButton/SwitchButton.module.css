@@ -6,9 +6,9 @@
     padding: 0.5rem 1rem;
     /* default size */
     border-radius: 0.5rem;
-    background: linear-gradient(to bottom, rgba(250, 250, 250, 0.95), rgba(244, 244, 245, 0.95));
+    background: var(--ds-bg-pure);
     border: 1px solid var(--ds-border-hairline);
-    box-shadow: 0 1px 2px -1px rgba(0, 0, 0, 0.1), 0 1px 3px -2px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 1px 3px rgba(20, 20, 19, 0.06);
     color: var(--ds-text-secondary);
     cursor: pointer;
     transition: all 0.3s ease-out;
@@ -21,24 +21,24 @@
 }
 
 .button:hover {
-    background: linear-gradient(to bottom, rgba(244, 244, 245, 0.95), rgba(228, 228, 231, 0.95));
+    background: var(--cursor-cream-300);
     border-color: var(--ds-border-medium);
-    box-shadow: 0 2px 4px -2px rgba(0, 0, 0, 0.15), 0 2px 6px -3px rgba(0, 0, 0, 0.15);
+    box-shadow: 0 1px 3px rgba(20, 20, 19, 0.08);
     color: var(--ds-text);
 }
 
 [data-theme="dark"] .button {
-    background: linear-gradient(to bottom, rgba(39, 39, 42, 0.95), rgba(24, 24, 27, 0.95));
-    border-color: rgba(63, 63, 70, 0.8);
-    box-shadow: 0 1px 2px -1px rgba(0, 0, 0, 0.3), 0 1px 3px -2px rgba(0, 0, 0, 0.3);
+    background: var(--ds-bg-tertiary);
+    border-color: var(--ds-border-hairline);
+    box-shadow: 0 1px 3px rgba(20, 20, 19, 0.15);
     color: var(--ds-border-medium);
 }
 
 [data-theme="dark"] .button:hover {
-    background: linear-gradient(to bottom, rgba(63, 63, 70, 0.95), rgba(39, 39, 42, 0.95));
-    border-color: var(--ds-text-secondary);
+    background: var(--ds-bg-floor);
+    border-color: var(--ds-border-medium);
     color: var(--ds-bg);
-    box-shadow: 0 2px 4px -2px rgba(0, 0, 0, 0.4), 0 2px 6px -3px rgba(0, 0, 0, 0.4);
+    box-shadow: 0 1px 3px rgba(20, 20, 19, 0.2);
 }
 
 .iconWrapper {
@@ -56,14 +56,14 @@
     transition: all 0.7s ease-in-out;
     color: var(--accent-gold);
     /* amber-500 */
-    filter: drop-shadow(0 0 12px rgba(252, 211, 77, 0.3));
+    filter: drop-shadow(0 0 8px rgba(var(--accent-gold-rgb), 0.3));
 }
 
 [data-theme="dark"] .sunIcon {
     transform: rotate(180deg);
     color: var(--ds-border-medium);
     /* zinc-300 */
-    filter: drop-shadow(0 0 12px rgba(252, 211, 77, 0.2));
+    filter: drop-shadow(0 0 8px rgba(var(--accent-gold-rgb), 0.2));
 }
 
 .button:hover .sunIcon {
@@ -132,7 +132,7 @@
 .shine {
     position: absolute;
     inset: 0;
-    background: linear-gradient(to right, rgba(113, 113, 122, 0) 0%, rgba(113, 113, 122, 0.12) 50%, rgba(113, 113, 122, 0) 100%);
+    background: linear-gradient(to right, rgba(var(--ds-text-rgb), 0) 0%, rgba(var(--ds-text-rgb), 0.08) 50%, rgba(var(--ds-text-rgb), 0) 100%);
     transform: translateX(-100%);
     transition: transform 0.5s ease-in-out;
     pointer-events: none;

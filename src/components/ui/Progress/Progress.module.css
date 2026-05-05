@@ -37,7 +37,7 @@
 
 /* ─── Variants (Cursor warm semantics) ─── */
 .default { background: var(--ds-text); }
-.brand   { background: var(--accent-orange); }
+.brand   { background: var(--accent-coral); }
 .success { background: var(--accent-teal); }
 .warning { background: var(--accent-gold); }
 .danger  { background: var(--accent-crimson); }
