@@ -9,8 +9,8 @@ const ThemeContext = createContext({});
 export const useTheme = () => useContext(ThemeContext);
 
 export const THEMES = {
-    light: { name: 'Claro', color: '#ffffff', class: 'light' },
-    dark: { name: 'Oscuro', color: '#09090b', class: 'dark' },
+    light: { name: 'Claro', color: '#faf9f5', class: 'light' },
+    dark: { name: 'Oscuro', color: '#181715', class: 'dark' },
 };
 
 export function ThemeProvider({ children }) {
