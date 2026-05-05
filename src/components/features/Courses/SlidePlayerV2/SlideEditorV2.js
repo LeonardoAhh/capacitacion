@@ -26,6 +26,7 @@ const SLIDE_SECTIONS = [
       { type: 'flashcard', label: 'Tarjetas', desc: 'Tarjetas con flip' },
       { type: 'fill_blank', label: 'Completa', desc: 'Rellena el espacio' },
       { type: 'checklist', label: 'Checklist', desc: 'Lista de verificación' },
+      { type: 'org_chart', label: 'Organigrama', desc: 'Estructura organizacional' },
     ],
   },
   {
@@ -57,6 +58,7 @@ import EnvSimSlideEditor from '@/components/features/Courses/Editor/SlideEditors
 import IcebergLineaSimSlideEditor from '@/components/features/Courses/Editor/SlideEditors/IcebergLineaSimSlideEditor';
 import RadarSupervisorSimSlideEditor from '@/components/features/Courses/Editor/SlideEditors/RadarSupervisorSimSlideEditor';
 import ThermalSimSlideEditor from '@/components/features/Courses/Editor/SlideEditors/ThermalSimSlideEditor';
+import OrgChartSlideEditor from '@/components/features/Courses/Editor/SlideEditors/OrgChartSlideEditor';
 
 /* ── Course config modal ─────────────────────────── */
 import CourseConfigModal from '@/components/features/Courses/Editor/CourseConfigModal';
@@ -81,6 +83,7 @@ function SlideFieldRouter({ type, formData, handleChange, handleBatchChange, set
     case 'env_sim': return <EnvSimSlideEditor {...props} />;
     case 'iceberg_sim': return <IcebergLineaSimSlideEditor {...props} />;
     case 'radar_sim': return <RadarSupervisorSimSlideEditor {...props} />;
+    case 'org_chart': return <OrgChartSlideEditor {...props} />;
     case 'thermal_sim': return <ThermalSimSlideEditor {...props} />;
     default:
       return <p className={s.noEditor}>Editor no disponible para tipo: <strong>{type}</strong></p>;

@@ -27,6 +27,7 @@ export const SLIDE_TYPE_LABELS = {
     flashcard:     'Tarjetas',
     fill_blank:    'Completa la Frase',
     checklist:     'Checklist',
+    org_chart:     'Organigrama',
         // freeform:      'Lienzo Libre', // Desactivado temporal
 };
 
@@ -162,6 +163,14 @@ const SLIDE_DEFAULT_DATA_FACTORIES = {
         ],
         requireAll: false,
     }),
+    org_chart: () => ({
+        heading: 'Organigrama',
+        members: [
+            { id: makeId(), position: 'Director General', name: '', photo: '', level: 0 },
+            { id: makeId(), position: 'Gerente de Producción', name: '', photo: '', level: 1 },
+            { id: makeId(), position: 'Gerente de Calidad', name: '', photo: '', level: 1 },
+        ],
+    }),
     freeform: () => ({
         background: '',
         elements: [
@@ -247,6 +256,19 @@ export function convertSlideToFreeform(slide) {
             const rightItems = data.right?.items || [];
             if (leftItems.length)  els.push(txt(null, 5,  32, 43, 60, leftItems.map(i  => `• ${i}`).join('\n'), 14, 400, 'left'));
             if (rightItems.length) els.push(txt(null, 52, 32, 43, 60, rightItems.map(i => `• ${i}`).join('\n'), 14, 400, 'left'));
+            break;
+        }
+        case 'org_chart': {
+            if (data.heading) els.push(txt(null, 5, 3, 90, 13, data.heading, 28, 700, 'center'));
+            const members = data.members || [];
+            const cols = Math.min(members.length, 4) || 1;
+            const cellW = Math.floor(88 / cols);
+            members.forEach((m, i) => {
+                const col = i % cols;
+                const row = Math.floor(i / cols);
+                const content = `${m.position || ''}\n${m.name || ''}`.trim();
+                els.push(txt(null, 6 + col * (cellW + 1), 20 + row * 25, cellW - 1, 22, content, 13, 400, 'center'));
+            });
             break;
         }
         case 'icon_grid': {
