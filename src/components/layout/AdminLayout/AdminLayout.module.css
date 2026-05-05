@@ -230,72 +230,38 @@
     opacity: 1;
 }
 
-/* ── Actions bar (unified pill) ───────────────────── */
-.actionsBar {
+/* ── User menu (pill + dropdown) ──────────────────── */
+.userMenu {
+    position: relative;
+    flex-shrink: 0;
+}
+
+.userPill {
     display: flex;
     align-items: center;
-    gap: 0;
-    flex-shrink: 0;
-    background: var(--ds-bg);
+    gap: var(--s-6);
+    padding: 3px;
+    padding-right: var(--s-10);
     border: 1px solid var(--ds-border-hairline);
     border-radius: var(--radius-pill);
-    padding: 3px;
-    box-shadow: 0 1px 3px rgba(var(--ds-text-rgb, 0 0 0), 0.04);
-}
-
-.actionsDivider {
-    width: 1px;
-    height: 20px;
-    background: var(--ds-border-hairline);
-    flex-shrink: 0;
-}
-
-/* ── Icon button ──────────────────────────────────── */
-.iconBtn {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 32px;
-    height: 32px;
-    border: none;
-    border-radius: 50%;
-    background: transparent;
-    color: var(--ds-text-muted);
+    background: var(--ds-bg);
     cursor: pointer;
-    flex-shrink: 0;
-    transition: background var(--transition-fast), color var(--transition-fast);
+    transition: background var(--transition-fast), box-shadow var(--transition-fast), border-color var(--transition-fast);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
 }
-.iconBtn:hover {
-    background: rgba(255, 91, 79, 0.08);
-    color: var(--accent-crimson);
+.userPill:hover {
+    background: var(--ds-bg-subtle);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
 }
-.iconBtn:disabled {
-    opacity: 0.4;
-    cursor: not-allowed;
+.userPillOpen {
+    border-color: var(--ds-text-muted);
 }
-.iconBtn:focus-visible {
+.userPill:focus-visible {
     outline: 2px solid var(--ds-focus);
     outline-offset: 2px;
 }
 
-/* ── User chip (inside actions bar) ───────────────── */
-.userChip {
-    display: flex;
-    align-items: center;
-    gap: var(--s-6);
-    padding: 2px;
-    padding-right: var(--s-10);
-    border-radius: var(--radius-pill);
-    background: transparent;
-    text-decoration: none;
-    transition: background var(--transition-fast);
-    cursor: pointer;
-}
-.userChip:hover {
-    background: var(--ds-bg-subtle);
-}
-
-.chipAvatar {
+.pillAvatar {
     width: 28px;
     height: 28px;
     border-radius: 50%;
@@ -303,20 +269,144 @@
     background: var(--ds-bg-subtle);
     flex-shrink: 0;
 }
-
-.chipAvatarImg {
+.pillAvatarImg {
     width: 100%;
     height: 100%;
     object-fit: cover;
     display: block;
 }
 
-.chipName {
+.pillName {
     font-size: var(--text-ui);
     font-weight: var(--weight-ui);
     color: var(--ds-text);
     font-family: var(--font-body), system-ui, sans-serif;
     white-space: nowrap;
+}
+
+.pillChevron {
+    color: var(--ds-text-muted);
+    transition: transform 0.2s ease;
+    flex-shrink: 0;
+}
+.pillChevronOpen {
+    transform: rotate(180deg);
+}
+
+/* ── Dropdown panel ───────────────────────────────── */
+.dropdown {
+    position: absolute;
+    top: calc(100% + 6px);
+    right: 0;
+    width: 240px;
+    background: var(--ds-bg);
+    border: 1px solid var(--ds-border-hairline);
+    border-radius: var(--radius-lg, 12px);
+    box-shadow:
+        0 4px 16px rgba(0, 0, 0, 0.08),
+        0 12px 40px rgba(0, 0, 0, 0.04);
+    z-index: 200;
+    overflow: hidden;
+    opacity: 0;
+    transform: translateY(-6px) scale(0.97);
+    pointer-events: none;
+    transition: opacity 150ms ease, transform 150ms ease;
+}
+.dropdownOpen {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    pointer-events: auto;
+}
+
+/* User header inside dropdown */
+.dropdownHeader {
+    display: flex;
+    align-items: center;
+    gap: var(--s-10);
+    padding: var(--s-12) var(--s-16);
+}
+
+.dropdownAvatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    overflow: hidden;
+    background: var(--ds-bg-subtle);
+    flex-shrink: 0;
+}
+.dropdownAvatarImg {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.dropdownUserInfo {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+}
+.dropdownUserName {
+    font-size: var(--text-ui);
+    font-weight: var(--weight-announce);
+    color: var(--ds-text);
+    font-family: var(--font-body), system-ui, sans-serif;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.dropdownUserEmail {
+    font-size: var(--text-caption);
+    color: var(--ds-text-muted);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.dropdownDivider {
+    height: 1px;
+    background: var(--ds-border-hairline);
+    margin: 0 var(--s-8);
+}
+
+/* Dropdown menu items */
+.dropdownItem {
+    display: flex;
+    align-items: center;
+    gap: var(--s-10);
+    width: 100%;
+    padding: var(--s-10) var(--s-16);
+    border: none;
+    background: transparent;
+    color: var(--ds-text-secondary);
+    font-size: var(--text-ui);
+    font-weight: var(--weight-ui);
+    font-family: var(--font-body), system-ui, sans-serif;
+    text-decoration: none;
+    text-align: left;
+    cursor: pointer;
+    transition: background var(--transition-fast), color var(--transition-fast);
+}
+.dropdownItem:hover {
+    background: var(--ds-bg-subtle);
+    color: var(--ds-text);
+}
+.dropdownItem:focus-visible {
+    outline: none;
+    background: var(--ds-bg-subtle);
+    color: var(--ds-text);
+}
+.dropdownItem:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+
+.dropdownItemDanger {
+    color: var(--accent-crimson, #ef4444);
+}
+.dropdownItemDanger:hover {
+    background: rgba(255, 91, 79, 0.06);
+    color: var(--accent-crimson, #ef4444);
 }
 
 /* ══════════════════════════════════════════════════
@@ -347,12 +437,22 @@
     /* Hide nav links in navbar on mobile */
     .navLinks { display: none; }
 
-    /* Hide username on mobile */
-    .chipName { display: none; }
+    /* Compact user pill on mobile */
+    .pillName { display: none; }
+    .pillChevron { display: none; }
 
-    .chipAvatar {
+    .pillAvatar {
         width: 26px;
         height: 26px;
+    }
+
+    .userPill {
+        padding: 3px;
+    }
+
+    .dropdown {
+        right: -4px;
+        width: 220px;
     }
 
     /* Show bottom tabs */
