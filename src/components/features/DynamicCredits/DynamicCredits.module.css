@@ -1,122 +1,123 @@
-
-/* --- Flat, clean, blue-accented, shadcn/ui style --- */
+/* --- Claude.com warm editorial style --- */
 .credits {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 0.7rem;
-    margin-top: 1.5rem;
-    background: none;
-    box-shadow: none;
-    border-radius: 0;
-    padding: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.7rem;
+  margin-top: 1.5rem;
+  background: none;
+  padding: 0;
 }
 
 .pill {
-    display: flex;
-    align-items: center;
-    gap: 0.9rem;
-    min-height: 1.7rem;
-    position: relative;
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+  min-height: 1.7rem;
+  position: relative;
+  white-space: nowrap;
 }
 
 .bar {
-    display: block;
-    width: 3px;
-    min-height: 1.7rem;
-    align-self: stretch;
-    background: var(--accent-orange);
-    border-radius: 2px;
-    flex-shrink: 0;
-    transition: background 0.3s;
+  display: block;
+  width: 3px;
+  min-height: 1.7rem;
+  align-self: stretch;
+  background: var(--accent-coral);
+  border-radius: 2px;
+  flex-shrink: 0;
+  transition: background 200ms ease;
 }
 
 .text {
-    display: flex;
-    align-items: baseline;
-    gap: 0.4rem;
-    flex-wrap: wrap;
+  display: flex;
+  align-items: baseline;
+  gap: 0.4rem;
 }
 
 .label {
-    font-family: var(--font-body);
-    font-size: .85rem;
-    font-weight: 400;
-    color: var(--ds-text-secondary);
-    letter-spacing: 0.01em;
-    white-space: nowrap;
+  font-family: var(--font-body);
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: var(--ds-text-tertiary);
+  letter-spacing: 0.01em;
+  white-space: nowrap;
 }
 
 .author {
-    font-family: var(--font-body);
-    font-size: .85rem;
-    font-weight: 700;
-    color: var(--accent-orange);
-    letter-spacing: 0.01em;
-    white-space: nowrap;
+  font-family: var(--font-body);
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: var(--accent-coral);
+  letter-spacing: 0.01em;
+  white-space: nowrap;
 }
 
 .dots {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    margin-top: 0.2rem;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 0.2rem;
 }
 
 .dot {
-    appearance: none;
-    border: none;
-    padding: 0;
-    width: 12px;
-    height: 12px;
-    border-radius: 50%;
-    background: var(--ds-border-hairline);
-    cursor: pointer;
-    transition: background 0.2s, width 0.25s, border-radius 0.25s;
+  appearance: none;
+  border: none;
+  padding: 0;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: var(--ds-border-medium);
+  cursor: pointer;
+  transition: background 200ms ease, width 200ms ease, border-radius 200ms ease;
 }
+
 .dot:hover,
 .dot:focus-visible {
-    background: var(--accent-orange);
-    outline: none;
+  background: var(--accent-coral);
+  outline: none;
 }
+
 .dotActive {
-    width: 28px;
-    border-radius: 6px;
-    background: var(--accent-orange);
+  width: 28px;
+  border-radius: 6px;
+  background: var(--accent-coral);
 }
 
 @media (max-width: 600px) {
-    .credits {
-        gap: 0.5rem;
-        margin-top: 1rem;
-    }
-    .label {
-        font-size: 0.8rem;
-    }
-    .author {
-        font-size: 0.92rem;
-    }
-    .dot {
-        width: 9px;
-        height: 9px;
-    }
-    .dotActive {
-        width: 18px;
-    }
+  .credits {
+    gap: 0.5rem;
+    margin-top: 1rem;
+  }
+
+  .label {
+    font-size: 0.8rem;
+  }
+
+  .author {
+    font-size: 0.85rem;
+  }
+
+  .dot {
+    width: 9px;
+    height: 9px;
+  }
+
+  .dotActive {
+    width: 18px;
+  }
 }
 
-/* ─── Reduced Motion ────────────────────────────────────── */
-
 @media (prefers-reduced-motion: reduce) {
-    .credits {
-        animation: none;
-        opacity: 1;
-        transform: none;
-    }
+  .credits {
+    animation: none;
+    opacity: 1;
+    transform: none;
+  }
 
-    .dot,
-    .dotActive,
-    .bar {
-        transition: none;
-    }
+  .dot,
+  .dotActive,
+  .bar {
+    transition: none;
+  }
 }

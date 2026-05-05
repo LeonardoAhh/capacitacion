@@ -1,312 +1,332 @@
 /* =============================================================
-   ShapeHero — design.md (Cursor System)
+   ShapeHero — Claude.com warm editorial style
    Landing + Login portal: cream canvas + atmospheric depth.
-   Decorative grid (oklab borders) + warm glow orb.
-   Card: cream tertiary surface + feature shadow + serif body.
+   Decorative grid (hairline borders) + warm coral glow orb.
+   Card: cream card surface + editorial serif body.
    ============================================================= */
 
 /* ─── Canvas hero ─────────────────────────────────────────── */
 .hero {
-    position: relative;
-    min-height: 100vh;
-    min-height: 100dvh;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    background: var(--ds-bg);
-    color: var(--ds-text);
-    font-family: var(--font-display), system-ui, sans-serif;
-    padding: var(--s-32) var(--s-16);
-    overflow: hidden;
-    isolation: isolate;
+  position: relative;
+  min-height: 100vh;
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: var(--ds-bg);
+  color: var(--ds-text);
+  font-family: var(--font-display), system-ui, sans-serif;
+  padding: var(--s-32) var(--s-16);
+  overflow: hidden;
+  isolation: isolate;
 }
 
 /* ─── Decorative grid (warm hairline) ─────────────────────── */
 .grid {
-    position: absolute;
-    inset: 0;
-    background-image:
-        linear-gradient(to right, var(--ds-border-hairline) 1px, transparent 1px),
-        linear-gradient(to bottom, var(--ds-border-hairline) 1px, transparent 1px);
-    background-size: 56px 56px;
-    mask-image: radial-gradient(ellipse 80% 60% at 50% 50%, var(--cursor-dark) 25%, transparent 75%);
-    -webkit-mask-image: radial-gradient(ellipse 80% 60% at 50% 50%, var(--cursor-dark) 25%, transparent 75%);
-    pointer-events: none;
-    z-index: -1;
-    opacity: 0.7;
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(to right, var(--ds-border-hairline) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--ds-border-hairline) 1px, transparent 1px);
+  background-size: 56px 56px;
+  mask-image: radial-gradient(ellipse 80% 60% at 50% 50%, var(--cursor-dark) 25%, transparent 75%);
+  -webkit-mask-image: radial-gradient(ellipse 80% 60% at 50% 50%, var(--cursor-dark) 25%, transparent 75%);
+  pointer-events: none;
+  z-index: -1;
+  opacity: 0.7;
 }
 
-/* ─── Glow orb (atmospheric warm light) ───────────────────── */
+/* ─── Glow orb (warm coral light) ─────────────────────────── */
 .glowOrb {
-    position: absolute;
-    top: 30%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: clamp(280px, 50vw, 600px);
-    aspect-ratio: 1;
-    background: radial-gradient(
-        circle at center,
-        rgba(var(--accent-orange-rgb), 0.08) 0%,
-        rgba(var(--accent-orange-rgb), 0.03) 40%,
-        transparent 70%
-    );
-    filter: blur(40px);
-    pointer-events: none;
-    z-index: -1;
+  position: absolute;
+  top: 30%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: clamp(280px, 50vw, 600px);
+  aspect-ratio: 1;
+  background: radial-gradient(circle at center,
+      rgba(var(--accent-coral-rgb), 0.10) 0%,
+      rgba(var(--accent-coral-rgb), 0.04) 40%,
+      transparent 70%);
+  filter: blur(40px);
+  pointer-events: none;
+  z-index: -1;
 }
 
 /* ─── Content shell ───────────────────────────────────────── */
 .content {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    width: 100%;
-    max-width: 420px;
-    margin: 0 auto;
-    gap: var(--s-32);
-    position: relative;
-    z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  max-width: 420px;
+  margin: 0 auto;
+  gap: var(--s-32);
+  position: relative;
+  z-index: 1;
 }
 
-/* ─── Brand (left column) ─────────────────────────────────── */
+/* ─── Brand ───────────────────────────────────────────────── */
 .left {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: var(--s-12);
-    width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--s-12);
+  width: 100%;
 }
 
 .brand {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: var(--s-6);
-    width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--s-6);
+  width: 100%;
 }
 
 .portal {
-    font-family: var(--font-mono), ui-monospace, monospace;
-    font-size: var(--text-mono-sm);
-    font-weight: var(--weight-ui);
-    letter-spacing: var(--track-mono-sm);
-    text-transform: uppercase;
-    color: var(--ds-text-muted);
-    font-feature-settings: var(--feat-mono);
+  font-family: var(--font-mono), ui-monospace, monospace;
+  font-size: var(--text-mono-sm);
+  font-weight: var(--weight-ui);
+  letter-spacing: var(--track-mono-sm);
+  text-transform: uppercase;
+  color: var(--ds-text-muted);
+  font-feature-settings: var(--feat-mono);
 }
 
 .title {
-    font-family: var(--font-display), system-ui, sans-serif;
-    font-size: clamp(2.25rem, 6vw, var(--text-h1));
-    font-weight: var(--weight-announce);
-    letter-spacing: var(--track-h1);
-    line-height: var(--lh-tight);
-    color: var(--ds-text);
-    margin: var(--s-4) 0;
-    text-align: center;
+  font-family: var(--font-display), system-ui, sans-serif;
+  font-size: clamp(2.25rem, 6vw, var(--text-h1));
+  font-weight: 400;
+  letter-spacing: var(--track-h1);
+  line-height: var(--lh-tight);
+  color: var(--ds-text);
+  margin: var(--s-4) 0;
+  text-align: center;
 }
 
 .titleAccent {
-    color: var(--accent-orange);
+  color: var(--accent-coral);
 }
 
 .location {
-    font-family: var(--font-serif), Georgia, serif;
-    font-size: var(--text-body);
-    font-style: italic;
-    color: var(--ds-text-secondary);
-    font-feature-settings: var(--feat-serif);
+  font-family: var(--font-serif), Georgia, serif;
+  font-size: var(--text-body);
+  font-style: italic;
+  color: var(--ds-text-tertiary);
+  font-feature-settings: var(--feat-serif);
 }
 
 .divider {
-    width: 100%;
-    max-width: 280px;
-    height: 1px;
-    background: var(--ds-border-hairline);
-    margin: var(--s-8) 0 0;
+  width: 100%;
+  max-width: 280px;
+  height: 1px;
+  background: var(--ds-border-hairline);
+  margin: var(--s-8) 0 0;
 }
 
-/* ─── Login card (right column) ───────────────────────────── */
+/* ─── Login card ──────────────────────────────────────────── */
 .right {
-    width: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .card {
-    width: 100%;
-    max-width: 400px;
-    padding: var(--s-32);
-    border-radius: var(--radius-xl);
-    background: var(--ds-bg-tertiary);
-    border: 1px solid var(--ds-border-hairline);
-    box-shadow: var(--shadow-feature);
+  width: 100%;
+  max-width: 400px;
+  padding: var(--s-32);
+  border-radius: var(--radius-xl);
+  background: var(--ds-bg-tertiary);
+  border: 1px solid var(--ds-border-hairline);
+  box-shadow: var(--elev-subtle);
 }
 
 .card:has(.successState) {
-    background: transparent;
-    border: none;
-    box-shadow: none;
+  background: transparent;
+  border: none;
+  box-shadow: none;
 }
 
 /* ─── Card header ─────────────────────────────────────────── */
 .cardHeader {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: var(--s-8);
-    margin-bottom: var(--s-24);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--s-8);
+  margin-bottom: var(--s-24);
 }
 
 .iconBadge {
-    width: 40px;
-    height: 40px;
-    border-radius: var(--radius-lg);
-    background: var(--cursor-cream-300);
-    color: var(--ds-text);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    box-shadow: var(--elev-ambient);
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-lg);
+  background: var(--cursor-cream-300);
+  color: var(--ds-text);
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .cardTitle {
-    font-family: var(--font-display), system-ui, sans-serif;
-    font-size: var(--text-h3);
-    font-weight: var(--weight-announce);
-    color: var(--ds-text);
-    margin: var(--s-4) 0 0;
-    line-height: var(--lh-snug);
-    letter-spacing: var(--track-h3);
-    text-align: center;
+  font-family: var(--font-display), system-ui, sans-serif;
+  font-size: var(--text-h3);
+  font-weight: 500;
+  color: var(--ds-text);
+  margin: var(--s-4) 0 0;
+  line-height: var(--lh-snug);
+  letter-spacing: var(--track-h3);
+  text-align: center;
 }
 
 .cardSubtitle {
-    font-family: var(--font-serif), Georgia, serif;
-    font-size: var(--text-body);
-    color: var(--ds-text-secondary);
-    margin: var(--s-2) 0 0;
-    line-height: var(--lh-base);
-    text-align: center;
-    font-feature-settings: var(--feat-serif);
+  font-family: var(--font-serif), Georgia, serif;
+  font-size: var(--text-body);
+  color: var(--ds-text-tertiary);
+  margin: var(--s-2) 0 0;
+  line-height: var(--lh-base);
+  text-align: center;
+  font-feature-settings: var(--feat-serif);
 }
 
 /* ─── Form ────────────────────────────────────────────────── */
 .form {
-    display: flex;
-    flex-direction: column;
-    gap: var(--s-16);
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-16);
 }
 
-/* ─── Error box (warm crimson) ────────────────────────────── */
+/* ─── Error box (Claude error red) ────────────────────────── */
 .errorBox {
-    display: flex;
-    align-items: flex-start;
-    gap: var(--s-8);
-    padding: var(--s-12) var(--s-14);
-    background: rgba(var(--accent-crimson-rgb), 0.06);
-    border: 1px solid rgba(var(--accent-crimson-rgb), 0.20);
-    border-left: 3px solid var(--accent-crimson);
-    border-radius: var(--radius-md);
-    font-family: var(--font-display), system-ui, sans-serif;
-    font-size: var(--text-button);
-    color: var(--accent-crimson);
-    line-height: var(--lh-base);
+  display: flex;
+  align-items: flex-start;
+  gap: var(--s-8);
+  padding: var(--s-12) var(--s-14);
+  background: rgba(var(--accent-crimson-rgb), 0.06);
+  border: 1px solid rgba(var(--accent-crimson-rgb), 0.15);
+  border-left: 3px solid var(--accent-crimson);
+  border-radius: var(--radius-md);
+  font-family: var(--font-display), system-ui, sans-serif;
+  font-size: var(--text-button);
+  color: var(--accent-crimson);
+  line-height: var(--lh-base);
 }
 
-/* =============================================================
-   Success State (post-login confirmation)
-   Verde teal warm-shifted alineado a Cursor accent palette.
-   ============================================================= */
+/* ─── Success State ───────────────────────────────────────── */
 .successState {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: var(--s-16);
-    min-height: 200px;
-    padding: var(--s-32) 0;
-    background: transparent;
-    border: none;
-    box-shadow: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--s-16);
+  min-height: 200px;
+  padding: var(--s-32) 0;
+  background: transparent;
+  border: none;
+  box-shadow: none;
 }
 
 .ringWrap {
-    position: relative;
-    width: 80px;
-    height: 80px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+  position: relative;
+  width: 80px;
+  height: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .pulse1,
 .pulse2 {
-    position: absolute;
-    inset: 0;
-    border-radius: 50%;
-    background: var(--accent-teal);
-    pointer-events: none;
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: var(--accent-teal);
+  pointer-events: none;
 }
 
 .svgCheck {
-    width: 56px;
-    height: 56px;
-    position: relative;
-    z-index: 1;
-    flex-shrink: 0;
+  width: 56px;
+  height: 56px;
+  position: relative;
+  z-index: 1;
+  flex-shrink: 0;
 }
 
 .successText {
-    font-family: var(--font-display), system-ui, sans-serif;
-    color: var(--accent-teal);
-    font-size: var(--text-body-lg);
-    font-weight: var(--weight-announce);
-    margin: 0;
-    text-align: center;
-    letter-spacing: var(--track-h3);
+  font-family: var(--font-display), system-ui, sans-serif;
+  color: var(--accent-teal);
+  font-size: var(--text-body-lg);
+  font-weight: 500;
+  margin: 0;
+  text-align: center;
+  letter-spacing: var(--track-h3);
 }
 
 .countdownBar {
-    width: 100%;
-    max-width: 200px;
-    height: 3px;
-    background: var(--cursor-cream-500);
-    border-radius: var(--radius-pill);
-    overflow: hidden;
+  width: 100%;
+  max-width: 200px;
+  height: 3px;
+  background: var(--cursor-cream-500);
+  border-radius: var(--radius-pill);
+  overflow: hidden;
 }
 
 .countdownFill {
-    height: 100%;
-    background: var(--accent-teal);
-    border-radius: var(--radius-pill);
+  height: 100%;
+  background: var(--accent-teal);
+  border-radius: var(--radius-pill);
 }
 
 .redirectMsg {
-    font-family: var(--font-mono), ui-monospace, monospace;
-    font-size: var(--text-mono-sm);
-    color: var(--ds-text-muted);
-    text-align: center;
-    margin: 0;
-    font-feature-settings: var(--feat-mono);
+  font-family: var(--font-mono), ui-monospace, monospace;
+  font-size: var(--text-mono-sm);
+  color: var(--ds-text-muted);
+  text-align: center;
+  margin: 0;
+  font-feature-settings: var(--feat-mono);
 }
 
 /* ─── Responsive ──────────────────────────────────────────── */
 @media (max-width: 600px) {
-    .hero { padding: var(--s-16); }
-    .content { max-width: 100%; gap: var(--s-24); }
-    .card {
-        padding: var(--s-24) var(--s-16);
-        max-width: 100%;
-    }
-    .successState { min-height: 160px; padding: var(--s-24) 0; }
-    .ringWrap { width: 64px; height: 64px; }
-    .svgCheck { width: 44px; height: 44px; }
-    .successText { font-size: var(--text-body); }
+  .hero {
+    padding: var(--s-16);
+  }
+
+  .content {
+    max-width: 100%;
+    gap: var(--s-24);
+  }
+
+  .card {
+    padding: var(--s-24) var(--s-16);
+    max-width: 100%;
+  }
+
+  .successState {
+    min-height: 160px;
+    padding: var(--s-24) 0;
+  }
+
+  .ringWrap {
+    width: 64px;
+    height: 64px;
+  }
+
+  .svgCheck {
+    width: 44px;
+    height: 44px;
+  }
+
+  .successText {
+    font-size: var(--text-body);
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
-    .pulse1, .pulse2 { animation: none; }
+
+  .pulse1,
+  .pulse2 {
+    animation: none;
+  }
 }
