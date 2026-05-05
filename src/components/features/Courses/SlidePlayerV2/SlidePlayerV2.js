@@ -26,23 +26,17 @@ const SLIDE_BADGES = {
   env_sim: { label: 'Sim. Ambiental' },
   iceberg_sim: { label: 'Sim. Iceberg' },
   radar_sim: { label: 'Sim. Radar' },
-    // freeform:  { label: 'Lienzo Libre' }, // Desactivado temporal
 };
 
 const typeLabel = (type) => SLIDE_BADGES[type]?.label || type;
 
 /**
- * SlidePlayerV2 — shadcn-styled slide player with header + responsive sidebar.
- *
- * Props:
- *  - course      : { id, title, description, ... }
- *  - slides      : [{ id, type, data, order }]
- *  - onClose     : () => void
+ * SlidePlayerV2 — Unified top navbar player.
+ * No sidebar, no bottom nav. Everything in one place.
  */
 export default function SlidePlayerV2({ course, slides = [], onClose }) {
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const [panelOpen, setPanelOpen] = useState(false);
   const [visited, setVisited] = useState(() => new Set([0]));
   const [quizScore, setQuizScore] = useState(null);
   const [commitmentText, setCommitmentText] = useState('');
@@ -51,12 +45,12 @@ export default function SlidePlayerV2({ course, slides = [], onClose }) {
   const slideAreaRef = useRef(null);
   const mainRef = useRef(null);
   const audioRef = useRef(null);
+  const panelRef = useRef(null);
 
   /* ── Theme toggle (local to player, restores on unmount) ── */
   const prevThemeRef = useRef(null);
   useEffect(() => {
     prevThemeRef.current = document.documentElement.getAttribute('data-theme') || 'light';
-    // Restaurar preferencia previa del usuario para el reproductor
     let saved = null;
     try { saved = localStorage.getItem('vtx_player_theme'); } catch (_) {}
     if (saved === 'dark') {
@@ -99,7 +93,7 @@ export default function SlidePlayerV2({ course, slides = [], onClose }) {
       }
 
       audio.loop = true;
-      audio.volume = 0.3; // Bajo volumen
+      audio.volume = 0.3;
       audio.muted = false;
 
       if (audio.src !== url) {
@@ -152,7 +146,7 @@ export default function SlidePlayerV2({ course, slides = [], onClose }) {
       if (idx >= 0 && idx < totalSlides && idx !== currentIndex) {
         setCurrentIndex(idx);
         setVisited((prev) => new Set(prev).add(idx));
-        setSidebarOpen(false);
+        setPanelOpen(false);
         if (slideAreaRef.current) slideAreaRef.current.scrollTop = 0;
       }
     },
@@ -165,7 +159,6 @@ export default function SlidePlayerV2({ course, slides = [], onClose }) {
   /* ── Keyboard ───────────────────────────────────── */
   useEffect(() => {
     const onKey = (e) => {
-      // Don't capture keys when user is typing in inputs/textareas
       const tag = e.target.tagName;
       if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT' || e.target.isContentEditable) return;
 
@@ -192,7 +185,7 @@ export default function SlidePlayerV2({ course, slides = [], onClose }) {
           break;
         case 'Escape':
           e.preventDefault();
-          if (sidebarOpen) setSidebarOpen(false);
+          if (panelOpen) setPanelOpen(false);
           else if (onClose) onClose();
           break;
         default:
@@ -201,13 +194,25 @@ export default function SlidePlayerV2({ course, slides = [], onClose }) {
     };
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
-  }, [goNext, goPrev, goTo, totalSlides, sidebarOpen, onClose]);
+  }, [goNext, goPrev, goTo, totalSlides, panelOpen, onClose]);
 
-  /* ── Touch swipe (vertical) — sólo navega si scroll está en el borde ── */
+  /* ── Close panel on outside click ── */
+  useEffect(() => {
+    if (!panelOpen) return;
+    const handler = (e) => {
+      if (panelRef.current && !panelRef.current.contains(e.target)) {
+        setPanelOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handler);
+    return () => document.removeEventListener('mousedown', handler);
+  }, [panelOpen]);
+
+  /* ── Touch swipe (horizontal) ── */
   const touchStartY = useRef(null);
   const touchStartX = useRef(null);
   const touchStartT = useRef(0);
-  const touchScrollLocked = useRef(false); // true si el gesto comenzó scrolleando contenido
+  const touchScrollLocked = useRef(false);
 
   const handleTouchStart = useCallback((e) => {
     touchStartY.current = e.touches[0].clientY;
@@ -220,7 +225,6 @@ export default function SlidePlayerV2({ course, slides = [], onClose }) {
     if (touchStartY.current === null || touchStartX.current === null) return;
     const dy = e.touches[0].clientY - touchStartY.current;
     const dx = e.touches[0].clientX - touchStartX.current;
-    // Si hay más movimiento vertical que horizontal, es un intento de scroll normal
     if (Math.abs(dy) > Math.abs(dx)) {
       touchScrollLocked.current = true;
     }
@@ -233,20 +237,13 @@ export default function SlidePlayerV2({ course, slides = [], onClose }) {
     touchStartY.current = null;
     touchStartX.current = null;
 
-    // Si el gesto fue predominantemente vertical, abortar navegación (scroll natural)
     if (touchScrollLocked.current) return;
     if (dt > 600) return;
 
     const THRESHOLD = 50;
-    if (dx > THRESHOLD) goNext(); // Swipe a la izquierda -> siguiente
-    else if (dx < -THRESHOLD) goPrev(); // Swipe a la derecha -> anterior
+    if (dx > THRESHOLD) goNext();
+    else if (dx < -THRESHOLD) goPrev();
   }, [goNext, goPrev]);
-
-  /* ── Sidebar toggle ─────────────────────────────── */
-  const toggleSidebar = useCallback(() => {
-    if (window.innerWidth <= 768) setSidebarOpen((v) => !v);
-    else setSidebarCollapsed((v) => !v);
-  }, []);
 
   /* ── Interactive callbacks ──────────────────────── */
   const handleQuizSubmit = useCallback((score) => setQuizScore(score), []);
@@ -260,183 +257,155 @@ export default function SlidePlayerV2({ course, slides = [], onClose }) {
       aria-roledescription="presentación de slides"
       aria-label={course?.title ?? 'Presentación'}
     >
-      {/* ══ HEADER ══════════════════════════════════ */}
-      <header className={s.header}>
-        <div className={s.headerLeft}>
-          <button
-            className={s.iconBtn}
-            onClick={toggleSidebar}
-            aria-label={sidebarCollapsed ? 'Mostrar índice' : 'Ocultar índice'}
-            aria-expanded={!sidebarCollapsed}
-            title={sidebarCollapsed ? 'Mostrar índice' : 'Ocultar índice'}
-          >
-            <MenuIcon />
-          </button>
-
+      {/* ══ UNIFIED NAVBAR ═══════════════════════════ */}
+      <nav className={s.navbar} aria-label="Controles de presentación">
+        {/* Left: close + title */}
+        <div className={s.navLeft}>
+          {onClose && (
+            <button className={s.navIconBtn} onClick={onClose} aria-label="Cerrar presentación" title="Cerrar">
+              <CloseIcon />
+            </button>
+          )}
           <div className={s.titleGroup}>
             <h1 className={s.courseTitle}>{course?.title ?? 'Sin título'}</h1>
             {currentSlide && (
-              <span className={s.badge} data-type={currentSlide.type}>
-                {typeLabel(currentSlide.type)}
-              </span>
+              <span className={s.badge}>{typeLabel(currentSlide.type)}</span>
             )}
           </div>
         </div>
 
-        <div className={s.headerCenter}>
+        {/* Center: navigation */}
+        <div className={s.navCenter}>
+          <button
+            className={s.navArrow}
+            onClick={goPrev}
+            disabled={currentIndex === 0}
+            aria-label="Slide anterior"
+            title="Anterior"
+          >
+            <ChevronLeftIcon />
+          </button>
           <span className={s.slideCounter} aria-live="polite" aria-atomic="true">
             <span className={s.srOnly}>Slide </span>
             {currentIndex + 1}
-            <span className={s.counterSep} aria-hidden="true">/</span>
+            <span className={s.counterSep}>/</span>
             <span className={s.srOnly}> de </span>
             {totalSlides}
           </span>
+          <button
+            className={s.navArrow}
+            onClick={goNext}
+            disabled={currentIndex >= totalSlides - 1}
+            aria-label="Siguiente slide"
+            title="Siguiente"
+          >
+            <ChevronRightIcon />
+          </button>
         </div>
 
-        <div className={s.headerRight}>
+        {/* Right: slide list + theme + music */}
+        <div className={s.navRight}>
+          <button
+            className={`${s.navIconBtn} ${panelOpen ? s.navIconBtnActive : ''}`}
+            onClick={() => setPanelOpen((v) => !v)}
+            aria-label={panelOpen ? 'Cerrar índice' : 'Abrir índice'}
+            aria-expanded={panelOpen}
+            title="Índice de slides"
+          >
+            <ListIcon />
+          </button>
           {course?.backgroundMusic?.enabled && (
             <button
-              className={s.themeToggle}
+              className={s.navIconBtn}
               onClick={toggleMusic}
-              aria-label={musicPlaying ? 'Pausar música de fondo' : 'Reproducir música de fondo'}
+              aria-label={musicPlaying ? 'Pausar música' : 'Reproducir música'}
               title={musicPlaying ? 'Pausar música' : 'Reproducir música'}
             >
               {musicPlaying ? <MusicOffIcon /> : <MusicIcon />}
             </button>
           )}
           <button
-            className={s.themeToggle}
+            className={s.navIconBtn}
             onClick={toggleTheme}
-            aria-label={isDark ? 'Cambiar a tema claro' : 'Cambiar a tema oscuro'}
+            aria-label={isDark ? 'Tema claro' : 'Tema oscuro'}
             title={isDark ? 'Tema claro' : 'Tema oscuro'}
           >
             {isDark ? <SunIcon /> : <MoonIcon />}
           </button>
-          {onClose && (
-            <button className={s.closeBtn} onClick={onClose} aria-label="Cerrar presentación">
-              Cerrar
-            </button>
-          )}
         </div>
-      </header>
+      </nav>
 
-      {/* ══ PROGRESS BAR ════════════════════════════ */}
+      {/* ══ PROGRESS BAR ═════════════════════════════ */}
       <div className={s.progressTrack} role="progressbar" aria-valuenow={Math.round(progress)} aria-valuemin={0} aria-valuemax={100} aria-label="Progreso del curso">
         <div className={s.progressBar} style={{ width: `${progress}%` }} />
       </div>
 
-      {/* ══ BODY (sidebar + main) ═══════════════════ */}
-      <div className={s.body}>
-        {/* ── Overlay (mobile) ── */}
-        {sidebarOpen && (
-          <div className={s.overlay} onClick={() => setSidebarOpen(false)} aria-hidden="true" />
-        )}
-
-        {/* ── Sidebar ── */}
-        <aside
-          className={`${s.sidebar} ${sidebarOpen ? s.sidebarOpen : ''} ${sidebarCollapsed ? s.sidebarCollapsed : ''}`}
-          aria-label="Índice de contenido"
-        >
-          <div className={s.sidebarHeader}>
-            <span className={s.sidebarTitle}>Contenido</span>
-            <button
-              className={`${s.iconBtn} ${s.sidebarCloseBtn}`}
-              onClick={() => setSidebarOpen(false)}
-              aria-label="Cerrar índice"
-            >
-              <CloseIcon />
-            </button>
-          </div>
-
-          <nav className={s.slideList} aria-label="Lista de slides">
-            {slides.map((slide, idx) => {
-              const isActive = idx === currentIndex;
-              const isVisited = visited.has(idx);
-              return (
-                <button
-                  key={slide.id ?? idx}
-                  className={`${s.slideItem} ${isActive ? s.slideItemActive : ''} ${isVisited && !isActive ? s.slideItemVisited : ''}`}
-                  onClick={() => goTo(idx)}
-                  aria-current={isActive ? 'step' : undefined}
-                  aria-label={`Slide ${idx + 1}: ${slide.data?.heading || slide.data?.title || typeLabel(slide.type)}${isVisited ? ' (visitado)' : ''}`}
-                >
-                  <span className={s.slideItemNum} aria-hidden="true">{idx + 1}</span>
-                  <div className={s.slideItemInfo}>
-                    <span className={s.slideItemTitle}>
-                      {slide.data?.heading || slide.data?.title || typeLabel(slide.type)}
-                    </span>
-                    <span className={s.slideItemMeta}>
-                      {typeLabel(slide.type)}
-                    </span>
-                  </div>
-                  {isVisited && !isActive && <CheckSmallIcon />}
-                </button>
-              );
-            })}
-          </nav>
-        </aside>
-
-        {/* ── Main content area ── */}
-        <main
-          className={s.main}
-          ref={mainRef}
-          onTouchStart={handleTouchStart}
-          onTouchMove={handleTouchMove}
-          onTouchEnd={handleTouchEnd}
-          aria-label={currentSlide ? `Slide ${currentIndex + 1} de ${totalSlides}: ${currentSlide.data?.heading || currentSlide.data?.title || typeLabel(currentSlide.type)}` : 'Sin contenido'}
-        >
-          <div className={`${s.slideArea} ${s.slideAreaFullbleed}`} ref={slideAreaRef}>
-            {currentSlide ? (
-              <div className={s.slideFullbleed} key={currentIndex}>
-                <SlideRendererV2
-                  slide={currentSlide}
-                  courseTitle={course?.title ?? ''}
-                  onQuizSubmit={handleQuizSubmit}
-                  onCheckChange={handleCheckChange}
-                  commitmentValue={commitmentText}
-                  onCommitmentChange={handleCommitmentChange}
-                />
-              </div>
-            ) : (
-              <p className={s.emptyMsg}>No hay slides en este curso.</p>
-            )}
-          </div>
-
-          {/* ── Bottom nav ── */}
-          <div className={s.navBar} role="toolbar" aria-label="Navegación de slides">
-            <button
-              className={`${s.navBtn} ${s.navBtnOutline}`}
-              onClick={goPrev}
-              disabled={currentIndex === 0}
-              aria-label="Slide anterior"
-            >
-              <ChevronUpIcon /> <span className={s.navLabel}>Anterior</span>
-            </button>
-
-            {/* Dot indicators (desktop) */}
-            <div className={s.dotsRow} aria-hidden="true">
-              {slides.map((_, idx) => (
-                <button
-                  key={idx}
-                  className={`${s.dot} ${idx === currentIndex ? s.dotActive : ''} ${visited.has(idx) ? s.dotVisited : ''}`}
-                  onClick={() => goTo(idx)}
-                  tabIndex={-1}
-                  aria-label={`Ir a slide ${idx + 1}`}
-                />
-              ))}
-            </div>
-
-            <button
-              className={`${s.navBtn} ${currentIndex < totalSlides - 1 ? s.navBtnPrimary : s.navBtnOutline}`}
-              onClick={goNext}
-              disabled={currentIndex >= totalSlides - 1}
-              aria-label="Siguiente slide"
-            >
-              <span className={s.navLabel}>Siguiente</span> <ChevronDownIcon />
-            </button>
-          </div>
-        </main>
+      {/* ══ SLIDE LIST PANEL (dropdown from navbar) ══ */}
+      {panelOpen && (
+        <div className={s.panelBackdrop} onClick={() => setPanelOpen(false)} aria-hidden="true" />
+      )}
+      <div
+        ref={panelRef}
+        className={`${s.panel} ${panelOpen ? s.panelOpen : ''}`}
+        role="dialog"
+        aria-label="Índice de contenido"
+        aria-hidden={!panelOpen}
+      >
+        <div className={s.panelHeader}>
+          <span className={s.panelTitle}>Contenido</span>
+          <span className={s.panelCount}>{totalSlides} slides</span>
+        </div>
+        <nav className={s.panelList} aria-label="Lista de slides">
+          {slides.map((slide, idx) => {
+            const isActive = idx === currentIndex;
+            const isVisited = visited.has(idx);
+            return (
+              <button
+                key={slide.id ?? idx}
+                className={`${s.panelItem} ${isActive ? s.panelItemActive : ''} ${isVisited && !isActive ? s.panelItemVisited : ''}`}
+                onClick={() => goTo(idx)}
+                aria-current={isActive ? 'step' : undefined}
+              >
+                <span className={s.panelItemNum}>{idx + 1}</span>
+                <div className={s.panelItemInfo}>
+                  <span className={s.panelItemTitle}>
+                    {slide.data?.heading || slide.data?.title || typeLabel(slide.type)}
+                  </span>
+                  <span className={s.panelItemMeta}>{typeLabel(slide.type)}</span>
+                </div>
+                {isVisited && !isActive && <CheckSmallIcon />}
+              </button>
+            );
+          })}
+        </nav>
       </div>
+
+      {/* ══ MAIN CONTENT (full viewport) ═════════════ */}
+      <main
+        className={s.main}
+        ref={mainRef}
+        onTouchStart={handleTouchStart}
+        onTouchMove={handleTouchMove}
+        onTouchEnd={handleTouchEnd}
+        aria-label={currentSlide ? `Slide ${currentIndex + 1} de ${totalSlides}` : 'Sin contenido'}
+      >
+        <div className={`${s.slideArea} ${s.slideAreaFullbleed}`} ref={slideAreaRef}>
+          {currentSlide ? (
+            <div className={s.slideFullbleed} key={currentIndex}>
+              <SlideRendererV2
+                slide={currentSlide}
+                courseTitle={course?.title ?? ''}
+                onQuizSubmit={handleQuizSubmit}
+                onCheckChange={handleCheckChange}
+                commitmentValue={commitmentText}
+                onCommitmentChange={handleCommitmentChange}
+              />
+            </div>
+          ) : (
+            <p className={s.emptyMsg}>No hay slides en este curso.</p>
+          )}
+        </div>
+      </main>
 
       {/* Background music */}
       <audio ref={audioRef} preload="none" />
@@ -444,17 +413,7 @@ export default function SlidePlayerV2({ course, slides = [], onClose }) {
   );
 }
 
-/* ─── Inline SVG icons (tiny, no extra deps) ─────── */
-function MenuIcon() {
-  return (
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <line x1="4" y1="6" x2="20" y2="6" />
-      <line x1="4" y1="12" x2="20" y2="12" />
-      <line x1="4" y1="18" x2="20" y2="18" />
-    </svg>
-  );
-}
-
+/* ─── Inline SVG icons ───────────────────────────── */
 function CloseIcon() {
   return (
     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -464,18 +423,31 @@ function CloseIcon() {
   );
 }
 
-function ChevronUpIcon() {
+function ChevronLeftIcon() {
   return (
     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <polyline points="18,15 12,9 6,15" />
+      <polyline points="15,18 9,12 15,6" />
     </svg>
   );
 }
 
-function ChevronDownIcon() {
+function ChevronRightIcon() {
   return (
     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <polyline points="6,9 12,15 18,9" />
+      <polyline points="9,6 15,12 9,18" />
+    </svg>
+  );
+}
+
+function ListIcon() {
+  return (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <line x1="8" y1="6" x2="21" y2="6" />
+      <line x1="8" y1="12" x2="21" y2="12" />
+      <line x1="8" y1="18" x2="21" y2="18" />
+      <line x1="3" y1="6" x2="3.01" y2="6" />
+      <line x1="3" y1="12" x2="3.01" y2="12" />
+      <line x1="3" y1="18" x2="3.01" y2="18" />
     </svg>
   );
 }
