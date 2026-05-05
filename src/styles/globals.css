@@ -572,6 +572,14 @@ textarea:focus {
   border-radius: var(--radius-md);
 }
 
+/* Inputs/textareas/selects: no visible focus ring */
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible,
+[contenteditable]:focus-visible {
+  outline: none;
+}
+
 button:focus:not(:focus-visible) {
   outline: none;
 }
