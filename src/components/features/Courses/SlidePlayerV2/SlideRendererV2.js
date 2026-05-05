@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useCallback, useRef, useMemo, memo } from 'react';
+import React, { useState, useCallback, useRef, useEffect, useMemo, memo } from 'react';
 import Image from 'next/image';
 import { ImageOff } from 'lucide-react';
 import { ICON_CATALOG } from '@/components/features/Courses/Editor/IconPicker';
@@ -116,6 +116,42 @@ function sanitizeLegacyColors(html) {
     );
 }
 
+/**
+ * BodyHtml — renders rich-text HTML and patches broken <img> tags with a
+ * fallback placeholder (same style as SlideImage / DriveImage).
+ */
+function BodyHtml({ html }) {
+  const ref = useRef(null);
+
+  useEffect(() => {
+    if (!ref.current) return;
+    const imgs = ref.current.querySelectorAll('img');
+    const handlers = [];
+    imgs.forEach((img) => {
+      const handler = () => {
+        const placeholder = document.createElement('div');
+        placeholder.className = s.inlineImgFallback;
+        placeholder.setAttribute('role', 'img');
+        placeholder.setAttribute('aria-label', img.alt || 'Imagen no disponible');
+        placeholder.title = 'Imagen no disponible';
+        placeholder.innerHTML =
+          '<svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="opacity:0.45"><line x1="2" y1="2" x2="22" y2="22"/><path d="M10.41 10.41a2 2 0 1 1-2.83-2.83"/><line x1="13.5" y1="13.5" x2="6" y2="21"/><path d="M18 12l-7 7"/><path d="M3 3l3.59 3.59"/><path d="M21 15V5a2 2 0 0 0-2-2H9"/></svg>' +
+          '<span style="font-size:0.68rem;opacity:0.55">Imagen no disponible</span>';
+        img.replaceWith(placeholder);
+      };
+      img.addEventListener('error', handler, { once: true });
+      handlers.push({ img, handler });
+    });
+    return () => {
+      handlers.forEach(({ img, handler }) => {
+        img.removeEventListener('error', handler);
+      });
+    };
+  }, [html]);
+
+  return <div className={s.body} ref={ref} dangerouslySetInnerHTML={{ __html: html }} />;
+}
+
 function renderBody(body) {
   if (!body) return null;
   // Detecta tags HTML O entidades (&gt; &amp; &nbsp; &#39; etc).
@@ -127,7 +163,7 @@ function renderBody(body) {
     const hasBlock = /<(?:p|div|ul|ol|li|h\d|br|blockquote|pre)\b/i.test(body);
     const cleaned = sanitizeLegacyColors(body);
     const html = hasBlock ? cleaned : `<p>${cleaned}</p>`;
-    return <div className={s.body} dangerouslySetInnerHTML={{ __html: html }} />;
+    return <BodyHtml html={html} />;
   }
   return <div className={s.body}>{body.split('\n').map((p, i) => <p key={i}>{p}</p>)}</div>;
 }
@@ -708,9 +744,34 @@ function DynamicV2({ data, commitmentValue = '', onCommitmentChange }) {
 
 /* ── Lightbox (shared) ────────────────────────────── */
 function Lightbox({ src, alt, onClose }) {
+  const [errored, setErrored] = useState(false);
+
   return (
     <div className={s.lightbox} onClick={onClose} role="dialog" aria-label="Imagen ampliada">
-      <Image src={src} alt={alt || 'Imagen'} className={s.lightboxImg} width={1400} height={1050} sizes="90vw" style={{ width: 'auto', height: 'auto', maxWidth: '90vw', maxHeight: '90vh', objectFit: 'contain' }} unoptimized onClick={(e) => e.stopPropagation()} />
+      {!src || errored ? (
+        <div
+          className={s.lightboxFallback}
+          onClick={(e) => e.stopPropagation()}
+          role="img"
+          aria-label={alt || 'Imagen no disponible'}
+        >
+          <ImageOff size={40} style={{ opacity: 0.45 }} />
+          <span>Imagen no disponible</span>
+        </div>
+      ) : (
+        <Image
+          src={src}
+          alt={alt || 'Imagen'}
+          className={s.lightboxImg}
+          width={1400}
+          height={1050}
+          sizes="90vw"
+          style={{ width: 'auto', height: 'auto', maxWidth: '90vw', maxHeight: '90vh', objectFit: 'contain' }}
+          unoptimized
+          onClick={(e) => e.stopPropagation()}
+          onError={() => setErrored(true)}
+        />
+      )}
       <button className={s.lightboxClose} onClick={onClose} aria-label="Cerrar">
         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" /></svg>
       </button>
