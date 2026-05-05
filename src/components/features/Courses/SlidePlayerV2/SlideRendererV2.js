@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useCallback, useRef, useEffect, useMemo, memo } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import Image from 'next/image';
 import { ImageOff } from 'lucide-react';
 import { ICON_CATALOG } from '@/components/features/Courses/Editor/IconPicker';
@@ -202,6 +203,7 @@ const SlideRendererV2 = memo(function SlideRendererV2({ slide, courseTitle, onQu
     case 'flashcard': content = <FlashcardV2 data={data} />; break;
     case 'fill_blank': content = <FillBlankV2 data={data} onQuizSubmit={onQuizSubmit} />; break;
     case 'checklist': content = <ChecklistV2 data={data} onCheckChange={onCheckChange} />; break;
+    case 'org_chart': content = <OrgChartV2 data={data} />; break;
     case 'dynamic':
     case 'group_dynamic': content = <DynamicV2 data={data} commitmentValue={commitmentValue} onCommitmentChange={onCommitmentChange} />; break;
     case 'thermal_sim': content = <ThermalSimSlide data={data} />; break;
@@ -737,6 +739,89 @@ function DynamicV2({ data, commitmentValue = '', onCommitmentChange }) {
             <textarea className={s.textarea} value={commitmentValue} onChange={e => onCommitmentChange(e.target.value)} placeholder={data.commitmentPlaceholder || 'Tu compromiso...'} rows={3} maxLength={280} />
           </div>
         )}
+      </div>
+    </article>
+  );
+}
+
+/* ── ORG CHART ────────────────────────────────────── */
+function OrgChartV2({ data }) {
+  const { heading, members = [] } = data;
+  const [expanded, setExpanded] = useState(null);
+
+  const levels = useMemo(() => {
+    const map = new Map();
+    members.forEach(m => {
+      const lvl = m.level ?? 0;
+      if (!map.has(lvl)) map.set(lvl, []);
+      map.get(lvl).push(m);
+    });
+    return Array.from(map.entries()).sort((a, b) => a[0] - b[0]);
+  }, [members]);
+
+  const toggle = (id) => setExpanded(prev => prev === id ? null : id);
+
+  return (
+    <article className={s.slide} role="region" aria-label={heading || 'Organigrama'}>
+      <div className={s.inner}>
+        <span className={s.label}>Organigrama</span>
+        {heading && <h2 className={s.heading}>{heading}</h2>}
+        <div className={s.orgTree}>
+          {levels.map(([level, group]) => (
+            <div key={level} className={s.orgLevel}>
+              {level > 0 && <div className={s.orgConnector} aria-hidden="true" />}
+              <div className={s.orgRow} data-count={Math.min(group.length, 6)}>
+                {group.map((member) => {
+                  const isOpen = expanded === member.id;
+                  return (
+                    <div key={member.id} className={s.orgNodeWrap}>
+                      <motion.button
+                        type="button"
+                        className={`${s.orgNode} ${isOpen ? s.orgNodeActive : ''}`}
+                        onClick={() => toggle(member.id)}
+                        aria-expanded={isOpen}
+                        whileHover={{ y: -2 }}
+                        whileTap={{ scale: 0.97 }}
+                        transition={{ duration: 0.15, ease: [0.16, 1, 0.3, 1] }}
+                      >
+                        <span className={s.orgPosition}>{member.position}</span>
+                      </motion.button>
+                      <AnimatePresence>
+                        {isOpen && (
+                          <motion.div
+                            className={s.orgDetail}
+                            initial={{ opacity: 0, height: 0, y: -8 }}
+                            animate={{ opacity: 1, height: 'auto', y: 0 }}
+                            exit={{ opacity: 0, height: 0, y: -8 }}
+                            transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
+                          >
+                            {member.photo && (
+                              <SlideImage
+                                src={optimizeSrc(member.photo, 200)}
+                                alt={member.name || member.position}
+                                className={s.orgPhoto}
+                                width={80}
+                                height={80}
+                                unoptimized={isDriveUrl(member.photo)}
+                                style={{ width: 80, height: 80, objectFit: 'cover' }}
+                              />
+                            )}
+                            {member.name && (
+                              <span className={s.orgName}>{member.name}</span>
+                            )}
+                            {!member.photo && !member.name && (
+                              <span className={s.orgEmpty}>Sin información</span>
+                            )}
+                          </motion.div>
+                        )}
+                      </AnimatePresence>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          ))}
+        </div>
       </div>
     </article>
   );

@@ -1259,6 +1259,119 @@
 }
 
 /* ═══════════════════════════════════════════════════
+   ORG CHART
+   ═══════════════════════════════════════════════════ */
+.orgTree {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0;
+  width: 100%;
+}
+
+.orgLevel {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+}
+
+.orgConnector {
+  width: 2px;
+  height: 20px;
+  background: var(--ds-border-hairline);
+  flex-shrink: 0;
+}
+
+.orgRow {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 12px;
+  width: 100%;
+  padding: 0 8px;
+}
+
+.orgNodeWrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 0;
+}
+
+.orgNode {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 10px 20px;
+  border-radius: var(--radius-lg, 12px);
+  border: 1px solid var(--ds-border-hairline);
+  background: var(--ds-bg);
+  box-shadow: var(--v-subtle);
+  cursor: pointer;
+  font-family: var(--font-body);
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  min-width: 120px;
+  max-width: 200px;
+}
+
+.orgNode:hover {
+  border-color: var(--ds-text-muted);
+  box-shadow: var(--v-card-hover);
+}
+
+.orgNodeActive {
+  border-color: var(--accent-orange, var(--ds-text));
+  box-shadow: var(--v-card-hover);
+}
+
+.orgNode:focus-visible {
+  outline: 2px solid var(--ds-focus, var(--accent-orange));
+  outline-offset: 2px;
+}
+
+.orgPosition {
+  font-size: var(--text-ui, 0.8125rem);
+  font-weight: 600;
+  color: var(--ds-text);
+  line-height: 1.3;
+}
+
+.orgDetail {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 0 4px;
+  overflow: hidden;
+}
+
+.orgPhoto {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid var(--ds-border-hairline);
+  background: var(--ds-bg-subtle);
+}
+
+.orgName {
+  font-size: var(--text-body, 0.875rem);
+  font-weight: 500;
+  color: var(--ds-text-secondary);
+  text-align: center;
+  font-family: var(--font-body);
+}
+
+.orgEmpty {
+  font-size: var(--text-caption, 0.75rem);
+  color: var(--ds-text-muted);
+  font-style: italic;
+  font-family: var(--font-body);
+}
+
+/* ═══════════════════════════════════════════════════
    LIGHTBOX
    ═══════════════════════════════════════════════════ */
 .lightbox {
@@ -1435,6 +1548,21 @@
 
   .flashCard {
     min-height: 200px;
+  }
+
+  .orgRow {
+    gap: 8px;
+  }
+
+  .orgNode {
+    min-width: 100px;
+    max-width: 160px;
+    padding: 8px 14px;
+  }
+
+  .orgPhoto {
+    width: 64px;
+    height: 64px;
   }
 }
 
