@@ -1,7 +1,7 @@
 .textContainer {
     font-size: 2.5rem;
     /* Ajustado para el login, 6xl (3.75rem) podría ser muy grande */
-    font-weight: 700;
+    font-weight: 400;
 }
 
 .wrapper {

@@ -116,7 +116,7 @@
 }
 
 .closeBtn:focus-visible {
-    outline: 2px solid var(--accent-orange);
+    outline: 2px solid var(--accent-coral);
     outline-offset: 2px;
     opacity: 1;
 }

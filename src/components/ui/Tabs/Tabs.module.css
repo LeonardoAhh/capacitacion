@@ -54,7 +54,7 @@
 
 .tabsTrigger.active {
     color: var(--ds-text);
-    border-bottom-color: var(--accent-orange);
+    border-bottom-color: var(--accent-coral);
 }
 
 .tabIcon {

@@ -47,8 +47,8 @@
 /* ─── Workflow accents (semantic only) ─────────────────── */
 .ship,
 .danger {
-    background: rgba(var(--accent-orange-rgb), 0.10);
-    color: var(--accent-orange);
+    background: rgba(var(--accent-coral-rgb), 0.10);
+    color: var(--accent-coral);
 }
 
 .preview,
@@ -59,25 +59,25 @@
 
 .develop,
 .info {
-    background: rgba(159, 187, 224, 0.20);
-    color: #2d5a8a;
+    background: rgba(var(--status-info-rgb), 0.12);
+    color: var(--timeline-read);
 }
 
 .success {
-    background: rgba(31, 138, 101, 0.10);
+    background: rgba(var(--accent-teal-rgb), 0.10);
     color: var(--accent-teal);
 }
 
 .crimson {
-    background: rgba(207, 45, 86, 0.10);
+    background: rgba(var(--accent-crimson-rgb), 0.10);
     color: var(--accent-crimson);
 }
 
 /* ─── Timeline AI ops ──────────────────────────────────── */
-.thinking { background: rgba(223, 168, 143, 0.20); color: #8a4a2e; }
-.grep     { background: rgba(159, 201, 162, 0.22); color: #2d5a32; }
-.read     { background: rgba(159, 187, 224, 0.20); color: #2d5a8a; }
-.edit     { background: rgba(192, 168, 221, 0.22); color: #5a3d8a; }
+.thinking { background: rgba(var(--accent-coral-rgb), 0.12); color: var(--timeline-thinking); }
+.grep     { background: rgba(var(--accent-teal-rgb), 0.12); color: var(--timeline-grep); }
+.read     { background: rgba(var(--status-info-rgb), 0.12); color: var(--timeline-read); }
+.edit     { background: rgba(var(--accent-coral-rgb), 0.10); color: var(--timeline-edit); }
 
 /* ─── White (max contrast on warm bg) ─────────────────── */
 .white {

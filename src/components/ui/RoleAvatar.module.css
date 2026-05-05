@@ -7,58 +7,58 @@
     border: 2px solid;
     cursor: help;
     transition: all var(--transition-base);
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 1px 3px rgba(20, 20, 19, 0.08);
 }
 
 .avatar:hover {
     transform: scale(1.1);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    box-shadow: 0 1px 3px rgba(20, 20, 19, 0.12);
 }
 
 /* Super Admin - Vibrant Purple/Violet */
 .superadmin {
-    background: linear-gradient(135deg, rgba(139, 92, 246, 0.2), rgba(168, 85, 247, 0.2));
-    border-color: var(--accent-orange);
-    color: var(--accent-orange);
+    background: rgba(var(--accent-coral-rgb), 0.12);
+    border-color: var(--accent-coral);
+    color: var(--accent-coral);
 }
 
 .superadmin:hover {
-    background: linear-gradient(135deg, rgba(139, 92, 246, 0.3), rgba(168, 85, 247, 0.3));
-    border-color: var(--accent-orange);
+    background: rgba(var(--accent-coral-rgb), 0.18);
+    border-color: var(--accent-coral);
 }
 
 /* Admin - Vibrant Emerald */
 .admin {
-    background: linear-gradient(135deg, rgba(16, 185, 129, 0.2), rgba(5, 150, 105, 0.2));
+    background: rgba(var(--accent-teal-rgb), 0.12);
     border-color: var(--accent-teal);
     color: var(--accent-teal);
 }
 
 .admin:hover {
-    background: linear-gradient(135deg, rgba(16, 185, 129, 0.3), rgba(5, 150, 105, 0.3));
+    background: rgba(var(--accent-teal-rgb), 0.18);
     border-color: var(--accent-teal);
 }
 
 /* Demo - Vibrant Orange */
 .demo {
-    background: linear-gradient(135deg, rgba(249, 115, 22, 0.2), rgba(251, 146, 60, 0.2));
-    border-color: var(--accent-orange);
-    color: var(--accent-orange);
+    background: rgba(var(--accent-gold-rgb), 0.12);
+    border-color: var(--accent-gold);
+    color: var(--accent-gold);
 }
 
 .demo:hover {
-    background: linear-gradient(135deg, rgba(249, 115, 22, 0.3), rgba(251, 146, 60, 0.3));
-    border-color: var(--accent-orange);
+    background: rgba(var(--accent-gold-rgb), 0.18);
+    border-color: var(--accent-gold);
 }
 
 /* Default - Vibrant Blue */
 .default {
-    background: linear-gradient(135deg, rgba(59, 130, 246, 0.2), rgba(37, 99, 235, 0.2));
+    background: rgba(var(--status-info-rgb), 0.12);
     border-color: var(--timeline-read);
     color: var(--timeline-read);
 }
 
 .default:hover {
-    background: linear-gradient(135deg, rgba(59, 130, 246, 0.3), rgba(37, 99, 235, 0.3));
+    background: rgba(var(--status-info-rgb), 0.18);
     border-color: var(--timeline-read);
 }

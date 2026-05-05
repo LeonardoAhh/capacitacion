@@ -52,7 +52,7 @@
 
 .inputWrapper.error:focus-within {
     border-color: var(--accent-crimson);
-    box-shadow: 0 4px 12px rgba(207, 45, 86, 0.15);
+    box-shadow: 0 1px 3px rgba(var(--accent-crimson-rgb), 0.12);
 }
 
 .inputWrapper.valid {
@@ -61,7 +61,7 @@
 
 .inputWrapper.valid:focus-within {
     border-color: var(--accent-teal);
-    box-shadow: 0 4px 12px rgba(31, 138, 101, 0.15);
+    box-shadow: 0 1px 3px rgba(var(--accent-teal-rgb), 0.12);
 }
 
 .inputWrapper:has(.input:disabled) {

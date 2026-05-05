@@ -2,11 +2,11 @@
     display: flex;
     flex-direction: column;
     gap: var(--spacing-xs);
-    --color-primary: var(--accent-orange);
+    --color-primary: var(--accent-coral);
 }
 
 [data-theme="dark"] .comboboxWrapper {
-    --color-primary: var(--accent-orange);
+    --color-primary: var(--accent-coral);
 }
 
 .label {
@@ -47,8 +47,8 @@
 }
 
 .open .trigger {
-    border-color: var(--accent-orange);
-    box-shadow: 0 0 0 3px rgba(0, 60, 204, 0.12);
+    border-color: var(--accent-coral);
+    box-shadow: 0 0 0 3px rgba(var(--accent-coral-rgb), 0.12);
 }
 
 .disabled .trigger {
@@ -160,12 +160,12 @@
 }
 
 .option.selected {
-    background-color: rgba(0, 60, 204, 0.10);
-    color: var(--accent-orange);
+    background-color: rgba(var(--accent-coral-rgb), 0.10);
+    color: var(--accent-coral);
 }
 
 .option.selected svg {
-    color: var(--accent-orange);
+    color: var(--accent-coral);
 }
 
 .optionLabel {
