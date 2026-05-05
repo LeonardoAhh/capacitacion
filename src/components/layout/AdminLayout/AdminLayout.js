@@ -1,14 +1,14 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '@/contexts/AuthContext';
+import { useTheme } from '@/contexts/ThemeContext';
 import { useRouter, usePathname } from 'next/navigation';
 import Link from 'next/link';
 import NextImage from 'next/image';
-import ThemeToggle from '@/components/layout/ThemeToggle/ThemeToggle';
 import styles from './AdminLayout.module.css';
-import { LogOut, GraduationCap, Trophy } from 'lucide-react';
+import { LogOut, GraduationCap, Trophy, User, Moon, Sun, ChevronDown } from 'lucide-react';
 
 const NAV_ITEMS = [
     { id: 'induccion', label: 'Presentaciones Cursos', shortLabel: 'Cursos', href: '/induccion', icon: GraduationCap },
@@ -19,21 +19,21 @@ const INSTRUCTOR_ITEMS = [
     { id: 'induccion', label: 'Presentaciones Cursos', shortLabel: 'Cursos', href: '/induccion', icon: GraduationCap },
 ];
 
-function getRoleLabel(rol) {
-    const map = { super_admin: 'Super Admin', admin: 'Admin', instructor: 'Instructor' };
-    return map[rol] || rol || 'Usuario';
-}
-
 export default function AdminLayout({ children, title = 'Dashboard' }) {
     const { user, loading, signOut } = useAuth();
+    const { theme, toggleTheme } = useTheme();
     const router = useRouter();
     const pathname = usePathname();
     const [isSigningOut, setIsSigningOut] = useState(false);
+    const [menuOpen, setMenuOpen] = useState(false);
+    const menuRef = useRef(null);
 
     const isInstructor = user?.rol === 'instructor' || user?.rol === 'Instructor';
     const items = isInstructor ? INSTRUCTOR_ITEMS : NAV_ITEMS;
+    const isDark = theme === 'dark';
 
     const handleLogout = async () => {
+        setMenuOpen(false);
         if (isSigningOut) return;
         try {
             setIsSigningOut(true);
@@ -43,9 +43,29 @@ export default function AdminLayout({ children, title = 'Dashboard' }) {
         router.push('/');
     };
 
+    const handleToggleTheme = useCallback(() => {
+        toggleTheme();
+    }, [toggleTheme]);
+
     useEffect(() => {
         if (!loading && !user && !isSigningOut) router.replace('/login');
     }, [loading, user, router, isSigningOut]);
+
+    useEffect(() => {
+        if (!menuOpen) return;
+        const handleClickOutside = (e) => {
+            if (menuRef.current && !menuRef.current.contains(e.target)) setMenuOpen(false);
+        };
+        const handleEscape = (e) => {
+            if (e.key === 'Escape') setMenuOpen(false);
+        };
+        document.addEventListener('mousedown', handleClickOutside);
+        document.addEventListener('keydown', handleEscape);
+        return () => {
+            document.removeEventListener('mousedown', handleClickOutside);
+            document.removeEventListener('keydown', handleEscape);
+        };
+    }, [menuOpen]);
 
     if (loading || !user) {
         return (
@@ -56,6 +76,7 @@ export default function AdminLayout({ children, title = 'Dashboard' }) {
     }
 
     const firstName = (user?.nombre || user?.nickname || user?.name || 'Admin').split(' ')[0];
+    const userEmail = user?.email || '';
     const avatarSeed = user?.avatarSeed || user?.email || 'admin';
     const avatarStyle = user?.avatarStyle || 'lorelei';
     const avatarSrc = user?.photoURL || user?.avatar ||
@@ -212,34 +233,85 @@ export default function AdminLayout({ children, title = 'Dashboard' }) {
                     })}
                 </div>
 
-                {/* Right: unified actions bar */}
-                <div className={styles.actionsBar}>
-                    <ThemeToggle />
-                    <span className={styles.actionsDivider} aria-hidden="true" />
+                {/* Right: user menu */}
+                <div className={styles.userMenu} ref={menuRef}>
                     <button
                         type="button"
-                        className={styles.iconBtn}
-                        onClick={handleLogout}
-                        disabled={isSigningOut}
-                        aria-label="Cerrar sesión"
-                        title="Cerrar sesión"
+                        className={`${styles.userPill} ${menuOpen ? styles.userPillOpen : ''}`}
+                        onClick={() => setMenuOpen(o => !o)}
+                        aria-expanded={menuOpen}
+                        aria-haspopup="true"
                     >
-                        <LogOut size={16} />
-                    </button>
-                    <span className={styles.actionsDivider} aria-hidden="true" />
-                    <Link href="/profile" className={styles.userChip}>
-                        <div className={styles.chipAvatar}>
+                        <div className={styles.pillAvatar}>
                             <NextImage
                                 src={avatarSrc}
                                 alt={firstName}
                                 width={28}
                                 height={28}
-                                className={styles.chipAvatarImg}
+                                className={styles.pillAvatarImg}
                                 unoptimized
                             />
                         </div>
-                        <span className={styles.chipName}>{firstName}</span>
-                    </Link>
+                        <span className={styles.pillName}>{firstName}</span>
+                        <ChevronDown size={14} className={`${styles.pillChevron} ${menuOpen ? styles.pillChevronOpen : ''}`} />
+                    </button>
+
+                    {/* Dropdown */}
+                    <div className={`${styles.dropdown} ${menuOpen ? styles.dropdownOpen : ''}`} role="menu">
+                        {/* User header */}
+                        <div className={styles.dropdownHeader}>
+                            <div className={styles.dropdownAvatar}>
+                                <NextImage
+                                    src={avatarSrc}
+                                    alt={firstName}
+                                    width={40}
+                                    height={40}
+                                    className={styles.dropdownAvatarImg}
+                                    unoptimized
+                                />
+                            </div>
+                            <div className={styles.dropdownUserInfo}>
+                                <span className={styles.dropdownUserName}>{firstName}</span>
+                                {userEmail && <span className={styles.dropdownUserEmail}>{userEmail}</span>}
+                            </div>
+                        </div>
+
+                        <div className={styles.dropdownDivider} />
+
+                        {/* Menu items */}
+                        <Link
+                            href="/profile"
+                            className={styles.dropdownItem}
+                            role="menuitem"
+                            onClick={() => setMenuOpen(false)}
+                        >
+                            <User size={16} />
+                            <span>Perfil</span>
+                        </Link>
+
+                        <button
+                            type="button"
+                            className={styles.dropdownItem}
+                            role="menuitem"
+                            onClick={handleToggleTheme}
+                        >
+                            {isDark ? <Sun size={16} /> : <Moon size={16} />}
+                            <span>{isDark ? 'Modo claro' : 'Modo oscuro'}</span>
+                        </button>
+
+                        <div className={styles.dropdownDivider} />
+
+                        <button
+                            type="button"
+                            className={`${styles.dropdownItem} ${styles.dropdownItemDanger}`}
+                            role="menuitem"
+                            onClick={handleLogout}
+                            disabled={isSigningOut}
+                        >
+                            <LogOut size={16} />
+                            <span>Cerrar sesión</span>
+                        </button>
+                    </div>
                 </div>
             </nav>
 
