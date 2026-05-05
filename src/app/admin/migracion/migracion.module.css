@@ -1,0 +1,354 @@
+.page {
+  max-width: 860px;
+  margin: 0 auto;
+  padding: 40px 24px 80px;
+  font-family: var(--font-body);
+}
+
+/* ── Header ── */
+.header {
+  margin-bottom: 32px;
+}
+
+.title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--ds-text);
+  margin-bottom: 8px;
+}
+
+.subtitle {
+  font-size: 0.9rem;
+  color: var(--ds-text-secondary);
+  max-width: 600px;
+  line-height: 1.5;
+}
+
+/* ── Actions ── */
+.actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 28px;
+  flex-wrap: wrap;
+}
+
+.btnPrimary {
+  padding: 10px 20px;
+  background: var(--accent-orange);
+  color: #fff;
+  border: none;
+  border-radius: var(--radius-lg);
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: opacity 150ms ease;
+}
+
+.btnPrimary:hover {
+  opacity: 0.88;
+}
+
+.btnSecondary {
+  padding: 10px 18px;
+  background: var(--ds-bg-subtle);
+  color: var(--ds-text);
+  border: none;
+  border-radius: var(--radius-lg);
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: background 150ms ease;
+}
+
+.btnSecondary:hover {
+  background: var(--ds-bg-emphasis);
+}
+
+.btnDanger {
+  padding: 10px 18px;
+  background: rgba(var(--color-danger-rgb), 0.1);
+  color: var(--color-danger);
+  border: 1px solid rgba(var(--color-danger-rgb), 0.2);
+  border-radius: var(--radius-lg);
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: background 150ms ease;
+}
+
+.btnDanger:hover {
+  background: rgba(var(--color-danger-rgb), 0.16);
+}
+
+.btnDisabled {
+  padding: 10px 20px;
+  background: var(--ds-bg-subtle);
+  color: var(--ds-text-tertiary);
+  border: none;
+  border-radius: var(--radius-lg);
+  font-size: 0.875rem;
+  cursor: not-allowed;
+}
+
+.allGood {
+  font-size: 0.9rem;
+  color: var(--accent-teal);
+  font-weight: 500;
+}
+
+/* ── Error box diagnóstico ── */
+.errorBox {
+  margin-bottom: 20px;
+  padding: 12px 16px;
+  background: rgba(var(--color-danger-rgb), 0.06);
+  border: 1px solid rgba(var(--color-danger-rgb), 0.2);
+  border-radius: var(--radius-lg);
+  font-size: 0.82rem;
+  color: var(--color-danger);
+  line-height: 1.5;
+  word-break: break-all;
+}
+
+/* ── Progreso ── */
+.progressWrap {
+  margin-bottom: 28px;
+}
+
+.progressBar {
+  width: 100%;
+  height: 6px;
+  background: var(--ds-bg-subtle);
+  border-radius: 99px;
+  overflow: hidden;
+  margin-bottom: 8px;
+}
+
+.progressFill {
+  height: 100%;
+  background: var(--accent-orange);
+  border-radius: 99px;
+  transition: width 200ms ease;
+}
+
+.progressStats {
+  display: flex;
+  gap: 16px;
+  font-size: 0.8rem;
+  color: var(--ds-text-secondary);
+}
+
+.statOk {
+  color: var(--accent-teal);
+}
+
+.statSkip {
+  color: var(--ds-text-tertiary);
+}
+
+.statErr {
+  color: var(--color-danger);
+}
+
+/* ── Secciones ── */
+.section {
+  margin-bottom: 32px;
+}
+
+.sectionTitle {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--ds-text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.badge {
+  font-size: 0.7rem;
+  font-weight: 500;
+  text-transform: none;
+  letter-spacing: 0;
+  background: var(--ds-bg-subtle);
+  color: var(--ds-text-secondary);
+  padding: 2px 8px;
+  border-radius: 99px;
+}
+
+/* ── Cursos ── */
+.courseGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 10px;
+}
+
+.courseCard {
+  background: var(--ds-bg-pure);
+  border: 1px solid var(--ds-border-hairline);
+  border-radius: var(--radius-lg);
+  padding: 12px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.courseTitle {
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--ds-text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.courseMeta {
+  font-size: 0.75rem;
+  color: var(--ds-text-tertiary);
+}
+
+.badgeOk {
+  font-size: 0.72rem;
+  color: var(--accent-teal);
+  font-weight: 500;
+}
+
+.badgeErr {
+  font-size: 0.72rem;
+  color: var(--color-danger);
+  font-weight: 500;
+}
+
+/* ── Task list ── */
+.taskList {
+  border: 1px solid var(--ds-border-hairline);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+}
+
+.taskRow {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--ds-border-hairline);
+  transition: background 100ms ease;
+}
+
+.taskRow:last-child {
+  border-bottom: none;
+}
+
+.taskRow_ok {
+  background: rgba(var(--color-success-rgb), 0.04);
+}
+
+.taskRow_error {
+  background: rgba(var(--color-danger-rgb), 0.04);
+}
+
+.taskRow_skipped {
+  background: transparent;
+}
+
+.taskRow_pending {
+  background: transparent;
+}
+
+.taskStatus {
+  flex-shrink: 0;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 2px;
+}
+
+.dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--ds-border-medium);
+  display: block;
+}
+
+.iconOk {
+  font-size: 14px;
+  color: var(--accent-teal);
+  font-weight: 700;
+}
+
+.iconSkip {
+  font-size: 14px;
+  color: var(--ds-text-tertiary);
+}
+
+.iconErr {
+  font-size: 14px;
+  color: var(--color-danger);
+  font-weight: 700;
+}
+
+.taskInfo {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.taskCourse {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--ds-text);
+}
+
+.taskSlide {
+  font-size: 0.72rem;
+  color: var(--ds-text-secondary);
+}
+
+.taskSlide code {
+  font-family: var(--font-mono);
+  background: var(--ds-bg-subtle);
+  padding: 1px 4px;
+  border-radius: 3px;
+  font-size: 0.68rem;
+}
+
+.taskUrl {
+  font-size: 0.68rem;
+  color: var(--ds-text-tertiary);
+  font-family: var(--font-mono);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.taskNewUrl {
+  font-size: 0.68rem;
+  color: var(--accent-teal);
+  font-family: var(--font-mono);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.taskError {
+  font-size: 0.72rem;
+  color: var(--color-danger);
+}
+
+/* ── Done message ── */
+.doneMsg {
+  margin-top: 24px;
+  padding: 16px 20px;
+  background: var(--ds-bg-pure);
+  border: 1px solid var(--ds-border-hairline);
+  border-radius: var(--radius-lg);
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--ds-text);
+  text-align: center;
+}

@@ -4,131 +4,132 @@
    ============================================================= */
 
 .main {
-    display: flex;
-    flex-direction: column;
+  display: flex;
+  flex-direction: column;
 }
 
 .loadingCenter {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: 300px;
-    color: var(--ds-text-muted);
-    font-family: var(--font-display), system-ui, sans-serif;
-    font-size: var(--text-button);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 300px;
+  color: var(--ds-text-muted);
+  font-family: var(--font-display), system-ui, sans-serif;
+  font-size: var(--text-button);
 }
 
-.container { flex: 1; }
+.container {
+  flex: 1;
+}
 
 .contentArea {
-    display: flex;
-    flex-direction: column;
-    gap: var(--s-24);
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-24);
 }
 
 /* ─── Import modal ────────────────────────────────────────── */
 .importItem {
-    display: flex;
-    flex-direction: column;
-    gap: var(--s-10);
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-10);
 }
 
 .importItemIndex {
-    font-family: var(--font-mono), ui-monospace, monospace;
-    font-size: var(--text-caption);
-    font-weight: var(--weight-announce);
-    color: var(--ds-text-muted);
-    text-transform: uppercase;
-    letter-spacing: var(--track-mono-sm);
-    margin: 0;
-    font-feature-settings: var(--feat-mono);
+  font-family: var(--font-mono), ui-monospace, monospace;
+  font-size: var(--text-caption);
+  font-weight: var(--weight-announce);
+  color: var(--ds-text-muted);
+  text-transform: uppercase;
+  letter-spacing: var(--track-mono-sm);
+  margin: 0;
+  font-feature-settings: var(--feat-mono);
 }
 
 .importField {
-    display: flex;
-    flex-direction: column;
-    gap: var(--s-4);
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-4);
 }
 
 .importField label {
-    font-family: var(--font-display), system-ui, sans-serif;
-    font-size: var(--text-button);
-    font-weight: var(--weight-ui);
-    color: var(--ds-text-secondary);
+  font-family: var(--font-display), system-ui, sans-serif;
+  font-size: var(--text-button);
+  font-weight: var(--weight-ui);
+  color: var(--ds-text-secondary);
 }
 
 .importInput {
-    width: 100%;
-    height: 36px;
-    padding: 0 var(--s-12);
-    background: var(--ds-bg-pure);
-    border: 1px solid var(--ds-border-hairline);
-    border-radius: var(--radius-lg);
-    color: var(--ds-text);
-    font-family: var(--font-display), system-ui, sans-serif;
-    font-size: var(--text-ui);
-    outline: none;
-    transition: border-color var(--transition-fast),
-                box-shadow var(--transition-fast);
-    box-sizing: border-box;
+  width: 100%;
+  height: 36px;
+  padding: 0 var(--s-12);
+  background: var(--ds-bg-pure);
+  border: 1px solid var(--ds-border-hairline);
+  border-radius: var(--radius-lg);
+  color: var(--ds-text);
+  font-family: var(--font-display), system-ui, sans-serif;
+  font-size: var(--text-ui);
+  outline: none;
+  transition: border-color var(--transition-fast),
+    box-shadow var(--transition-fast);
+  box-sizing: border-box;
 }
 
 .importInput:focus {
-    border-color: var(--ds-border-medium);
-    box-shadow: var(--elev-focus);
+  box-shadow: none;
 }
 
 .importPreviewText {
-    font-family: var(--font-serif), Georgia, serif;
-    font-size: var(--text-caption);
-    color: var(--ds-text-muted);
-    margin: 0;
-    font-feature-settings: var(--feat-serif);
+  font-family: var(--font-serif), Georgia, serif;
+  font-size: var(--text-caption);
+  color: var(--ds-text-muted);
+  margin: 0;
+  font-feature-settings: var(--feat-serif);
 }
 
 /* ─── Buttons ─────────────────────────────────────────────── */
 .importCancelBtn {
-    height: 36px;
-    padding: 0 var(--s-14);
-    background: var(--ds-bg-floor);
-    border: 1px solid var(--ds-border-hairline);
-    border-radius: var(--radius-lg);
-    color: var(--ds-text);
-    font-family: var(--font-display), system-ui, sans-serif;
-    font-size: var(--text-button);
-    font-weight: var(--weight-ui);
-    cursor: pointer;
-    transition: color var(--transition-fast),
-                box-shadow var(--transition-fast);
+  height: 36px;
+  padding: 0 var(--s-14);
+  background: var(--ds-bg-floor);
+  border: 1px solid var(--ds-border-hairline);
+  border-radius: var(--radius-lg);
+  color: var(--ds-text);
+  font-family: var(--font-display), system-ui, sans-serif;
+  font-size: var(--text-button);
+  font-weight: var(--weight-ui);
+  cursor: pointer;
+  transition: color var(--transition-fast),
+    box-shadow var(--transition-fast);
 }
 
 .importCancelBtn:hover {
-    color: var(--accent-crimson);
-    box-shadow: var(--elev-focus);
+  color: var(--accent-crimson);
+  box-shadow: var(--elev-focus);
 }
 
 .importConfirmBtn {
-    height: 36px;
-    padding: 0 var(--s-14);
-    border: none;
-    border-radius: var(--radius-lg);
-    background: var(--cursor-cream-300);
-    color: var(--ds-text);
-    font-family: var(--font-display), system-ui, sans-serif;
-    font-size: var(--text-button);
-    font-weight: var(--weight-ui);
-    cursor: pointer;
-    transition: color var(--transition-fast),
-                box-shadow var(--transition-fast);
+  height: 36px;
+  padding: 0 var(--s-14);
+  border: none;
+  border-radius: var(--radius-lg);
+  background: var(--cursor-cream-300);
+  color: var(--ds-text);
+  font-family: var(--font-display), system-ui, sans-serif;
+  font-size: var(--text-button);
+  font-weight: var(--weight-ui);
+  cursor: pointer;
+  transition: color var(--transition-fast),
+    box-shadow var(--transition-fast);
 }
 
 .importConfirmBtn:hover:not(:disabled) {
-    color: var(--accent-crimson);
-    box-shadow: var(--elev-focus);
+  color: var(--accent-crimson);
+  box-shadow: var(--elev-focus);
 }
 
 .importConfirmBtn:disabled {
-    background: var(--ds-bg-floor);
-    color: var(--ds-text-tertiary);
-    cursor: not-allowed;
+  background: var(--ds-bg-floor);
+  color: var(--ds-text-tertiary);
+  cursor: not-allowed;
 }

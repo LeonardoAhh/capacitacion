@@ -6,281 +6,278 @@
 
 /* ── Contenedor raíz ─────────────────────────────────────────────────────── */
 .freeformEditorRoot {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-    width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 100%;
 }
 
 /* ── Barra de herramientas ───────────────────────────────────────────────── */
 .toolbar {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    flex-wrap: wrap;
-    padding: 10px 12px;
-    background: var(--ds-bg-emphasis, #ebeae5);
-    border: 1.5px solid var(--ds-border-medium, oklab(0.263084 -0.00230259 0.0124794 / 0.2));
-    border-radius: var(--radius-md, 8px);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  padding: 10px 12px;
+  background: var(--ds-bg-emphasis, #ebeae5);
+  border: 1.5px solid var(--ds-border-medium, oklab(0.263084 -0.00230259 0.0124794 / 0.2));
+  border-radius: var(--radius-md, 8px);
 }
 
 .toolBtn {
-    display: inline-flex;
-    align-items: center;
-    gap: 5px;
-    padding: 6px 12px;
-    background: var(--ds-bg-pure, #fff);
-    border: 1.5px solid var(--ds-border-medium, rgba(38, 37, 30, 0.2));
-    border-radius: var(--radius-sm, 6px);
-    font-size: 0.80rem;
-    font-weight: 600;
-    font-family: var(--font-body, sans-serif);
-    color: var(--ds-text, #26251e);
-    cursor: pointer;
-    transition: background 0.15s, border-color 0.15s, color 0.15s;
-    white-space: nowrap;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 6px 12px;
+  background: var(--ds-bg-pure, #fff);
+  border: 1.5px solid var(--ds-border-medium, rgba(38, 37, 30, 0.2));
+  border-radius: var(--radius-sm, 6px);
+  font-size: 0.80rem;
+  font-weight: 600;
+  font-family: var(--font-body, sans-serif);
+  color: var(--ds-text, #26251e);
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s, color 0.15s;
+  white-space: nowrap;
 }
 
 .toolBtn:hover {
-    background: var(--ds-bg-subtle, #f2f1ed);
-    border-color: var(--color-primary, #003ccc);
-    color: var(--color-primary, #003ccc);
+  background: var(--ds-bg-subtle, #f2f1ed);
+  border-color: var(--color-primary, #003ccc);
+  color: var(--color-primary, #003ccc);
 }
 
 .toolBtnGhost {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 28px;
-    height: 28px;
-    background: transparent;
-    border: 1px solid var(--ds-border-hairline, rgba(38, 37, 30, 0.1));
-    border-radius: var(--radius-sm, 6px);
-    font-size: 1rem;
-    color: var(--ds-text-secondary, rgba(38, 37, 30, 0.6));
-    cursor: pointer;
-    transition: background 0.15s, color 0.15s;
-    flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  background: transparent;
+  border: 1px solid var(--ds-border-hairline, rgba(38, 37, 30, 0.1));
+  border-radius: var(--radius-sm, 6px);
+  font-size: 1rem;
+  color: var(--ds-text-secondary, rgba(38, 37, 30, 0.6));
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+  flex-shrink: 0;
 }
 
 .toolBtnGhost:hover {
-    background: var(--ds-bg-subtle, #f2f1ed);
-    color: var(--ds-text, #26251e);
+  background: var(--ds-bg-subtle, #f2f1ed);
+  color: var(--ds-text, #26251e);
 }
 
 .toolBtnDanger {
-    border-color: rgba(207, 45, 86, 0.35);
-    color: var(--accent-crimson, #cf2d56);
+  border-color: rgba(207, 45, 86, 0.35);
+  color: var(--accent-crimson, #cf2d56);
 }
 
 .toolBtnDanger:hover {
-    background: rgba(207, 45, 86, 0.07);
-    border-color: var(--accent-crimson, #cf2d56);
-    color: var(--accent-crimson, #cf2d56);
+  background: rgba(207, 45, 86, 0.07);
+  border-color: var(--accent-crimson, #cf2d56);
+  color: var(--accent-crimson, #cf2d56);
 }
 
 .bgControl {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    margin-left: auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-left: auto;
 }
 
 .bgLabel {
-    font-size: 0.76rem;
-    font-weight: 600;
-    color: var(--ds-text-secondary, rgba(38, 37, 30, 0.6));
-    font-family: var(--font-body, sans-serif);
-    white-space: nowrap;
+  font-size: 0.76rem;
+  font-weight: 600;
+  color: var(--ds-text-secondary, rgba(38, 37, 30, 0.6));
+  font-family: var(--font-body, sans-serif);
+  white-space: nowrap;
 }
 
 .bgInput {
-    width: 32px;
-    height: 32px;
-    padding: 2px;
-    border: 1.5px solid var(--ds-border-medium, rgba(38, 37, 30, 0.2));
-    border-radius: var(--radius-sm, 6px);
-    cursor: pointer;
-    background: transparent;
-    flex-shrink: 0;
+  width: 32px;
+  height: 32px;
+  padding: 2px;
+  border: 1.5px solid var(--ds-border-medium, rgba(38, 37, 30, 0.2));
+  border-radius: var(--radius-sm, 6px);
+  cursor: pointer;
+  background: transparent;
+  flex-shrink: 0;
 }
 
 /* Oculta el uploader nativo — se usa solo como trigger programático */
 .hiddenUploader {
-    position: absolute;
-    opacity: 0;
-    pointer-events: none;
-    width: 0;
-    height: 0;
-    overflow: hidden;
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+  width: 0;
+  height: 0;
+  overflow: hidden;
 }
 
 /* ── Canvas ──────────────────────────────────────────────────────────────── */
 .canvasWrapper {
-    width: 100%;
-    border: 2px solid var(--ds-border-medium, rgba(38, 37, 30, 0.2));
-    border-radius: var(--radius-md, 8px);
-    overflow: hidden;
-    box-shadow: var(--elev-ambient, 0 1px 4px rgba(0,0,0,0.06));
+  width: 100%;
+  border: 2px solid var(--ds-border-medium, rgba(38, 37, 30, 0.2));
+  border-radius: var(--radius-md, 8px);
+  overflow: hidden;
+  box-shadow: var(--elev-ambient, 0 1px 4px rgba(0, 0, 0, 0.06));
 }
 
 .canvas {
-    position: relative;
-    width: 100%;
-    aspect-ratio: 16 / 9;
-    background: var(--ds-bg-pure, #ffffff);
-    overflow: hidden;
-    touch-action: none;
-    cursor: default;
-    /* Cuadrícula sutil como guía visual */
-    background-image:
-        linear-gradient(to right, rgba(38, 37, 30, 0.04) 1px, transparent 1px),
-        linear-gradient(to bottom, rgba(38, 37, 30, 0.04) 1px, transparent 1px);
-    background-size: 10% 10%;
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  background: var(--ds-bg-pure, #ffffff);
+  overflow: hidden;
+  touch-action: none;
+  cursor: default;
+  /* Cuadrícula sutil como guía visual */
+  background-image:
+    linear-gradient(to right, rgba(38, 37, 30, 0.04) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(38, 37, 30, 0.04) 1px, transparent 1px);
+  background-size: 10% 10%;
 }
 
 /* Cuando el elemento está siendo arrastrado, no mostrar cuadrícula para el fondo custom */
 .canvas[style*="background"] {
-    background-image: none;
+  background-image: none;
 }
 
 .canvasEmpty {
-    position: absolute;
-    inset: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 0.85rem;
-    color: var(--ds-text-tertiary, rgba(38, 37, 30, 0.4));
-    font-family: var(--font-body, sans-serif);
-    pointer-events: none;
-    text-align: center;
-    padding: 16px;
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.85rem;
+  color: var(--ds-text-tertiary, rgba(38, 37, 30, 0.4));
+  font-family: var(--font-body, sans-serif);
+  pointer-events: none;
+  text-align: center;
+  padding: 16px;
 }
 
 /* ── Panel de propiedades ────────────────────────────────────────────────── */
 .propsPanel {
-    padding: 14px 16px;
-    background: var(--ds-bg-subtle, #f7f7f4);
-    border: 1.5px solid var(--ds-border-hairline, rgba(38, 37, 30, 0.1));
-    border-radius: var(--radius-md, 8px);
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
+  padding: 14px 16px;
+  background: var(--ds-bg-subtle, #f7f7f4);
+  border: 1.5px solid var(--ds-border-hairline, rgba(38, 37, 30, 0.1));
+  border-radius: var(--radius-md, 8px);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
 }
 
 .propsPanelTitle {
-    margin: 0;
-    font-size: 0.72rem;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-    color: var(--ds-text-secondary, rgba(38, 37, 30, 0.6));
-    font-family: var(--font-body, sans-serif);
+  margin: 0;
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--ds-text-secondary, rgba(38, 37, 30, 0.6));
+  font-family: var(--font-body, sans-serif);
 }
 
 .propsGrid {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 8px;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
 }
 
 .propsRow {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-    align-items: flex-end;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: flex-end;
 }
 
 .propField {
-    display: flex;
-    flex-direction: column;
-    gap: 3px;
-    flex: 1 1 60px;
-    min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  flex: 1 1 60px;
+  min-width: 0;
 }
 
 .propLabel {
-    font-size: 0.68rem;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.06em;
-    color: var(--ds-text-secondary, rgba(38, 37, 30, 0.6));
-    font-family: var(--font-body, sans-serif);
-    white-space: nowrap;
+  font-size: 0.68rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--ds-text-secondary, rgba(38, 37, 30, 0.6));
+  font-family: var(--font-body, sans-serif);
+  white-space: nowrap;
 }
 
 .propInput {
-    width: 100%;
-    padding: 5px 8px;
-    background: var(--ds-bg-pure, #fff);
-    border: 1.5px solid var(--ds-border-hairline, rgba(38, 37, 30, 0.1));
-    border-radius: var(--radius-sm, 6px);
-    font-size: 0.80rem;
-    font-family: var(--font-mono, monospace);
-    color: var(--ds-text, #26251e);
-    outline: none;
-    box-sizing: border-box;
-    transition: border-color 0.15s;
+  width: 100%;
+  padding: 5px 8px;
+  background: var(--ds-bg-pure, #fff);
+  border: 1.5px solid var(--ds-border-hairline, rgba(38, 37, 30, 0.1));
+  border-radius: var(--radius-sm, 6px);
+  font-size: 0.80rem;
+  font-family: var(--font-mono, monospace);
+  color: var(--ds-text, #26251e);
+  outline: none;
+  box-sizing: border-box;
+  transition: border-color 0.15s;
 }
 
 .propInput:focus {
-    border-color: var(--color-primary, #003ccc);
-    box-shadow: 0 0 0 2px rgba(0, 60, 204, 0.1);
+  box-shadow: none;
 }
 
 .propSelect {
-    width: 100%;
-    padding: 5px 8px;
-    background: var(--ds-bg-pure, #fff);
-    border: 1.5px solid var(--ds-border-hairline, rgba(38, 37, 30, 0.1));
-    border-radius: var(--radius-sm, 6px);
-    font-size: 0.80rem;
-    font-family: var(--font-body, sans-serif);
-    color: var(--ds-text, #26251e);
-    outline: none;
-    cursor: pointer;
-    transition: border-color 0.15s;
+  width: 100%;
+  padding: 5px 8px;
+  background: var(--ds-bg-pure, #fff);
+  border: 1.5px solid var(--ds-border-hairline, rgba(38, 37, 30, 0.1));
+  border-radius: var(--radius-sm, 6px);
+  font-size: 0.80rem;
+  font-family: var(--font-body, sans-serif);
+  color: var(--ds-text, #26251e);
+  outline: none;
+  cursor: pointer;
+  transition: border-color 0.15s;
 }
 
-.propSelect:focus {
-    border-color: var(--color-primary, #003ccc);
-}
+
 
 .textEditorWrap {
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
 }
 
 .imgReplaceWrap {
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-    flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex: 1;
 }
 
 /* ── Hint de ayuda ───────────────────────────────────────────────────────── */
 .hintText {
-    margin: 0;
-    font-size: 0.73rem;
-    color: var(--ds-text-tertiary, rgba(38, 37, 30, 0.4));
-    font-family: var(--font-body, sans-serif);
-    text-align: center;
-    line-height: 1.5;
+  margin: 0;
+  font-size: 0.73rem;
+  color: var(--ds-text-tertiary, rgba(38, 37, 30, 0.4));
+  font-family: var(--font-body, sans-serif);
+  text-align: center;
+  line-height: 1.5;
 }
 
 /* ── Responsive ──────────────────────────────────────────────────────────── */
 @media (max-width: 600px) {
-    .propsGrid {
-        grid-template-columns: repeat(2, 1fr);
-    }
+  .propsGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
 
-    .propsRow {
-        flex-direction: column;
-    }
+  .propsRow {
+    flex-direction: column;
+  }
 
-    .bgControl {
-        margin-left: 0;
-    }
+  .bgControl {
+    margin-left: 0;
+  }
 }

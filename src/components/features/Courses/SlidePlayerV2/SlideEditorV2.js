@@ -12,29 +12,29 @@ const SLIDE_SECTIONS = [
   {
     label: 'General',
     types: [
-      { type: 'title',      label: 'Portada',      desc: 'Título principal del curso' },
-      { type: 'content',    label: 'Contenido',     desc: 'Texto e imagen' },
-      { type: 'objective',  label: 'Objetivo',      desc: 'Objetivo de aprendizaje' },
-      { type: 'definition', label: 'Definición',    desc: 'Término y definición' },
-      { type: 'benefits',   label: 'Beneficios',    desc: 'Lista de beneficios' },
-      { type: 'icon_grid',  label: 'Íconos',        desc: 'Cuadrícula de íconos' },
-      { type: 'comparison', label: 'Comparación',   desc: 'Dos columnas comparativas' },
-      { type: 'steps',      label: 'Paso a Paso',   desc: 'Secuencia numerada' },
-      { type: 'dynamic',    label: 'Dinámica',      desc: 'Actividad colaborativa' },
-      { type: 'quiz',       label: 'Quiz',          desc: 'Pregunta con opciones' },
-      { type: 'video',      label: 'Video',         desc: 'YouTube o MP4' },
-      { type: 'flashcard',  label: 'Tarjetas',      desc: 'Tarjetas con flip' },
-      { type: 'fill_blank', label: 'Completa',      desc: 'Rellena el espacio' },
-      { type: 'checklist',  label: 'Checklist',     desc: 'Lista de verificación' },
+      { type: 'title', label: 'Portada', desc: 'Título principal del curso' },
+      { type: 'content', label: 'Contenido', desc: 'Texto e imagen' },
+      { type: 'objective', label: 'Objetivo', desc: 'Objetivo de aprendizaje' },
+      { type: 'definition', label: 'Definición', desc: 'Término y definición' },
+      { type: 'benefits', label: 'Beneficios', desc: 'Lista de beneficios' },
+      { type: 'icon_grid', label: 'Íconos', desc: 'Cuadrícula de íconos' },
+      { type: 'comparison', label: 'Comparación', desc: 'Dos columnas comparativas' },
+      { type: 'steps', label: 'Paso a Paso', desc: 'Secuencia numerada' },
+      { type: 'dynamic', label: 'Dinámica', desc: 'Actividad colaborativa' },
+      { type: 'quiz', label: 'Quiz', desc: 'Pregunta con opciones' },
+      { type: 'video', label: 'Video', desc: 'YouTube o MP4' },
+      { type: 'flashcard', label: 'Tarjetas', desc: 'Tarjetas con flip' },
+      { type: 'fill_blank', label: 'Completa', desc: 'Rellena el espacio' },
+      { type: 'checklist', label: 'Checklist', desc: 'Lista de verificación' },
     ],
   },
   {
     label: 'Simuladores',
     types: [
-      { type: 'thermal_sim',  label: 'Sim. Térmico',    desc: 'Disipación térmica LOTO' },
-      { type: 'env_sim',      label: 'Sim. Ambiental',  desc: 'Matriz Causa-Efecto' },
-      { type: 'iceberg_sim',  label: 'Sim. Iceberg',    desc: 'Causas visibles vs ocultas' },
-      { type: 'radar_sim',    label: 'Sim. Radar',      desc: 'Diagnóstico de equipo' },
+      { type: 'thermal_sim', label: 'Sim. Térmico', desc: 'Disipación térmica LOTO' },
+      { type: 'env_sim', label: 'Sim. Ambiental', desc: 'Matriz Causa-Efecto' },
+      { type: 'iceberg_sim', label: 'Sim. Iceberg', desc: 'Causas visibles vs ocultas' },
+      { type: 'radar_sim', label: 'Sim. Radar', desc: 'Diagnóstico de equipo' },
     ],
   },
 ];
@@ -65,23 +65,23 @@ import CourseConfigModal from '@/components/features/Courses/Editor/CourseConfig
 function SlideFieldRouter({ type, formData, handleChange, handleBatchChange, setFormData }) {
   const props = { formData, handleChange, setFormData, styles: s };
   switch (type) {
-    case 'title':                          return <TitleSlideEditor {...props} />;
-    case 'content':                        return <ContentSlideEditor {...props} handleBatchChange={handleBatchChange} />;
-    case 'icon_grid':                      return <IconGridSlideEditor {...props} />;
-    case 'comparison':                     return <ComparisonSlideEditor {...props} />;
-    case 'steps':                          return <StepsSlideEditor {...props} />;
-    case 'group_dynamic': case 'dynamic':  return <DynamicSlideEditor {...props} />;
-    case 'group_quiz': case 'quiz':        return <QuizSlideEditor {...props} />;
-    case 'objective': case 'definition':   return <SimpleBodySlideEditor {...props} />;
-    case 'benefits':                       return <BenefitsSlideEditor {...props} />;
-    case 'video':                          return <VideoSlideEditor {...props} />;
-    case 'flashcard':                      return <FlashcardSlideEditor {...props} />;
-    case 'fill_blank':                     return <FillBlankSlideEditor {...props} />;
-    case 'checklist':                      return <ChecklistSlideEditor {...props} />;
-    case 'env_sim':                        return <EnvSimSlideEditor {...props} />;
-    case 'iceberg_sim':                    return <IcebergLineaSimSlideEditor {...props} />;
-    case 'radar_sim':                      return <RadarSupervisorSimSlideEditor {...props} />;
-    case 'thermal_sim':                    return <ThermalSimSlideEditor {...props} />;
+    case 'title': return <TitleSlideEditor {...props} />;
+    case 'content': return <ContentSlideEditor {...props} handleBatchChange={handleBatchChange} />;
+    case 'icon_grid': return <IconGridSlideEditor {...props} />;
+    case 'comparison': return <ComparisonSlideEditor {...props} />;
+    case 'steps': return <StepsSlideEditor {...props} />;
+    case 'group_dynamic': case 'dynamic': return <DynamicSlideEditor {...props} />;
+    case 'group_quiz': case 'quiz': return <QuizSlideEditor {...props} />;
+    case 'objective': case 'definition': return <SimpleBodySlideEditor {...props} />;
+    case 'benefits': return <BenefitsSlideEditor {...props} />;
+    case 'video': return <VideoSlideEditor {...props} />;
+    case 'flashcard': return <FlashcardSlideEditor {...props} />;
+    case 'fill_blank': return <FillBlankSlideEditor {...props} />;
+    case 'checklist': return <ChecklistSlideEditor {...props} />;
+    case 'env_sim': return <EnvSimSlideEditor {...props} />;
+    case 'iceberg_sim': return <IcebergLineaSimSlideEditor {...props} />;
+    case 'radar_sim': return <RadarSupervisorSimSlideEditor {...props} />;
+    case 'thermal_sim': return <ThermalSimSlideEditor {...props} />;
     default:
       return <p className={s.noEditor}>Editor no disponible para tipo: <strong>{type}</strong></p>;
   }
@@ -144,7 +144,7 @@ function editorReducer(state, action) {
           : null,
       };
     case 'SAVE_START': return { ...state, saving: true };
-    case 'SAVE_END':   return { ...state, saving: false };
+    case 'SAVE_END': return { ...state, saving: false };
     case 'TOGGLE_MODAL': return { ...state, showSlideModal: action.open };
     case 'TOGGLE_COURSE_CONFIG_MODAL': return { ...state, showCourseConfigModal: action.open };
     default: return state;
@@ -234,7 +234,7 @@ function useAutoSave(slide, formData, onSave, flushRef) {
     const flushNow = () => {
       if (pendingDataRef.current && slide) {
         // sincrónico best-effort: no awaitable en pagehide
-        try { onSave(slide.id, pendingDataRef.current); } catch (_) {}
+        try { onSave(slide.id, pendingDataRef.current); } catch (_) { }
         pendingDataRef.current = null;
       }
     };
@@ -259,7 +259,7 @@ function useAutoSave(slide, formData, onSave, flushRef) {
       window.removeEventListener('beforeunload', onBeforeUnload);
       // Best-effort flush al desmontar
       if (pendingDataRef.current && slide) {
-        try { onSave(slide.id, pendingDataRef.current); } catch (_) {}
+        try { onSave(slide.id, pendingDataRef.current); } catch (_) { }
       }
     };
   }, [slide, onSave]);
@@ -395,6 +395,8 @@ export default function SlideEditorV2({
   const [searchQuery, setSearchQuery] = useState('');
   const [confirmDialog, setConfirmDialog] = useState(null); // { onConfirm: fn }
   const [isDark, setIsDark] = useState(false);
+  const [dragState, setDragState] = useState({ draggingId: null, overIndex: null });
+  const dragSrcIndexRef = useRef(null);
   const { toast } = useToast();
   const stateRef = useRef(state);
   const editorFlushRef = useRef(null); // flush handle del EditorForm activo
@@ -405,7 +407,7 @@ export default function SlideEditorV2({
   useEffect(() => {
     prevThemeRef.current = document.documentElement.getAttribute('data-theme') || 'light';
     let saved = null;
-    try { saved = localStorage.getItem('vtx_player_theme'); } catch (_) {}
+    try { saved = localStorage.getItem('vtx_player_theme'); } catch (_) { }
     if (saved === 'dark') {
       document.documentElement.setAttribute('data-theme', 'dark');
       setIsDark(true);
@@ -419,7 +421,7 @@ export default function SlideEditorV2({
     setIsDark((prev) => {
       const next = !prev;
       document.documentElement.setAttribute('data-theme', next ? 'dark' : 'light');
-      try { localStorage.setItem('vtx_player_theme', next ? 'dark' : 'light'); } catch (_) {}
+      try { localStorage.setItem('vtx_player_theme', next ? 'dark' : 'light'); } catch (_) { }
       return next;
     });
   }, []);
@@ -481,7 +483,7 @@ export default function SlideEditorV2({
   const handleSelectSlide = useCallback((slide) => {
     // Flush cambios del slide actual antes de cambiar (evita pérdida)
     if (editorFlushRef.current) {
-      try { editorFlushRef.current(); } catch (_) {}
+      try { editorFlushRef.current(); } catch (_) { }
     }
     dispatch({ type: 'SELECT_SLIDE', slide });
     if (window.innerWidth < 768) setSidebarOpen(false);
@@ -497,10 +499,59 @@ export default function SlideEditorV2({
 
   const handleClose = useCallback(async () => {
     if (editorFlushRef.current) {
-      try { await editorFlushRef.current(); } catch (_) {}
+      try { await editorFlushRef.current(); } catch (_) { }
     }
     if (onClose) onClose();
   }, [onClose]);
+
+  /* ── Drag-and-drop reorder ────────────────────── */
+  const handleDragStart = useCallback((e, slide, index) => {
+    dragSrcIndexRef.current = index;
+    e.dataTransfer.effectAllowed = 'move';
+    e.dataTransfer.setData('text/plain', slide.id);
+    // Pequeño delay para que el ghost image se genere antes del estado visual
+    requestAnimationFrame(() => {
+      setDragState(prev => ({ ...prev, draggingId: slide.id }));
+    });
+  }, []);
+
+  const handleDragOver = useCallback((e, overIndex) => {
+    e.preventDefault();
+    e.dataTransfer.dropEffect = 'move';
+    setDragState(prev => {
+      if (prev.overIndex === overIndex) return prev;
+      return { ...prev, overIndex };
+    });
+  }, []);
+
+  const handleDragEnd = useCallback(() => {
+    setDragState({ draggingId: null, overIndex: null });
+    dragSrcIndexRef.current = null;
+  }, []);
+
+  const handleDrop = useCallback(async (e, dropIndex) => {
+    e.preventDefault();
+    const srcIndex = dragSrcIndexRef.current;
+    setDragState({ draggingId: null, overIndex: null });
+    dragSrcIndexRef.current = null;
+
+    if (srcIndex === null || srcIndex === dropIndex) return;
+
+    // Solo reordenar en la lista completa (no en búsqueda filtrada)
+    const { slides } = stateRef.current;
+    const reordered = [...slides];
+    const [moved] = reordered.splice(srcIndex, 1);
+    reordered.splice(dropIndex, 0, moved);
+    const renumbered = reordered.map((sl, i) => ({ ...sl, order: i + 1 }));
+
+    dispatch({ type: 'SLIDES_REORDERED', slides: renumbered });
+
+    if (reorderSlidesFn) {
+      dispatch({ type: 'SAVE_START' });
+      await reorderSlidesFn(courseId, renumbered);
+      dispatch({ type: 'SAVE_END' });
+    }
+  }, [courseId, reorderSlidesFn]);
 
   const handleSaveCourseConfig = useCallback(async (config) => {
     // Asegurar que config sea un objeto válido
@@ -508,7 +559,7 @@ export default function SlideEditorV2({
       enabled: Boolean(config?.enabled),
       url: String(config?.url || '').trim()
     };
-    
+
     const result = await updateCourseFields(courseId, { backgroundMusic: cleanConfig });
     if (result.success) {
       toast.success('Configuración guardada', 'La música de fondo ha sido actualizada.');
@@ -652,18 +703,30 @@ export default function SlideEditorV2({
             {filteredSlides.map((slide, idx) => {
               const isActive = slide.id === selectedSlide?.id;
               const label = slide.data?.heading || slide.data?.title || SLIDE_TYPE_LABELS[slide.type] || slide.type;
+              const isDragging = dragState.draggingId === slide.id;
+              const isDropTarget = !searchQuery.trim() && dragState.overIndex === idx && dragState.draggingId !== slide.id;
               return (
-                <button
+                <div
                   key={slide.id}
-                  className={`${s.slideItem} ${isActive ? s.slideItemActive : ''}`}
-                  onClick={() => handleSelectSlide(slide)}
+                  className={`${s.slideItemWrapper} ${isDropTarget ? s.slideItemDropTarget : ''}`}
+                  draggable={!searchQuery.trim()}
+                  onDragStart={(e) => handleDragStart(e, slide, idx)}
+                  onDragOver={(e) => handleDragOver(e, idx)}
+                  onDrop={(e) => handleDrop(e, idx)}
+                  onDragEnd={handleDragEnd}
                 >
-                  <span className={s.slideItemNum}>{slide.order ?? idx + 1}</span>
-                  <div className={s.slideItemInfo}>
-                    <span className={s.slideItemTitle}>{label}</span>
-                    <span className={s.slideItemMeta}>{SLIDE_TYPE_LABELS[slide.type] || slide.type}</span>
-                  </div>
-                </button>
+                  <button
+                    className={`${s.slideItem} ${isActive ? s.slideItemActive : ''} ${isDragging ? s.slideItemDragging : ''}`}
+                    onClick={() => handleSelectSlide(slide)}
+                  >
+                    <span className={s.slideItemDragHandle} aria-hidden="true">&#8942;</span>
+                    <span className={s.slideItemNum}>{slide.order ?? idx + 1}</span>
+                    <div className={s.slideItemInfo}>
+                      <span className={s.slideItemTitle}>{label}</span>
+                      <span className={s.slideItemMeta}>{SLIDE_TYPE_LABELS[slide.type] || slide.type}</span>
+                    </div>
+                  </button>
+                </div>
               );
             })}
           </nav>

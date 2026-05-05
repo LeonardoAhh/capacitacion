@@ -2,6 +2,7 @@
 
 import React, { useState, useCallback, useRef, useMemo, memo } from 'react';
 import Image from 'next/image';
+import { ImageOff } from 'lucide-react';
 import { ICON_CATALOG } from '@/components/features/Courses/Editor/IconPicker';
 import ThermalSimSlide from '@/components/features/Courses/slides/ThermalSimSlide';
 import EnvSimSlide from '@/components/features/Courses/slides/EnvSimSlide';
@@ -25,11 +26,66 @@ const isDriveUrl = (url) => typeof url === 'string' && url.includes('/api/drive-
  * Avoids downloading full-res when a smaller version suffices.
  */
 function optimizeSrc(url, width = 800) {
-    if (!isDriveUrl(url)) return url;
-    const sep = url.includes('?') ? '&' : '?';
-    // Only append sz if not already present
-    if (url.includes('sz=')) return url;
-    return `${url}${sep}sz=w${width}`;
+  if (!isDriveUrl(url)) return url;
+  const sep = url.includes('?') ? '&' : '?';
+  // Only append sz if not already present
+  if (url.includes('sz=')) return url;
+  return `${url}${sep}sz=w${width}`;
+}
+
+/**
+ * SlideImage — <Image> de Next.js con fallback automático si la imagen no carga.
+ * Muestra un placeholder con ícono en lugar del ícono roto del navegador.
+ */
+function SlideImage({ src, alt = '', className = '', style, width, height, sizes, onClick, unoptimized }) {
+  const [errored, setErrored] = useState(false);
+
+  if (!src || errored) {
+    return (
+      <div
+        className={className}
+        style={{
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          justifyContent: 'center',
+          gap: 6,
+          background: 'var(--ds-bg)',
+          border: '1px dashed var(--ds-border-hairline)',
+          borderRadius: 8,
+          color: 'var(--ds-text-tertiary)',
+          minHeight: 60,
+          width: '100%',
+          height: style?.height || '100%',
+          maxHeight: style?.maxHeight,
+          ...style,
+        }}
+        role="img"
+        aria-label={alt || 'Imagen no disponible'}
+        title="Imagen no disponible"
+      >
+        <ImageOff size={22} style={{ opacity: 0.45, flexShrink: 0 }} />
+        <span style={{ fontSize: '0.68rem', opacity: 0.55, textAlign: 'center', lineHeight: 1.3, padding: '0 8px' }}>
+          Imagen no disponible
+        </span>
+      </div>
+    );
+  }
+
+  return (
+    <Image
+      src={src}
+      alt={alt}
+      className={className}
+      style={style}
+      width={width}
+      height={height}
+      sizes={sizes}
+      unoptimized={unoptimized}
+      onClick={onClick}
+      onError={() => setErrored(true)}
+    />
+  );
 }
 
 /* ═══════════════════════════════════════════════════
@@ -96,26 +152,26 @@ const SlideRendererV2 = memo(function SlideRendererV2({ slide, courseTitle, onQu
 
   let content;
   switch (type) {
-    case 'title':       content = <TitleV2 data={data} courseTitle={courseTitle} />; break;
-    case 'objective':   content = <ObjectiveV2 data={data} />; break;
-    case 'definition':  content = <DefinitionV2 data={data} />; break;
-    case 'content':     content = <ContentV2 data={data} />; break;
-    case 'icon_grid':   content = <IconGridV2 data={data} />; break;
-    case 'benefits':    content = <BenefitsV2 data={data} />; break;
-    case 'comparison':  content = <ComparisonV2 data={data} />; break;
-    case 'steps':       content = <StepsV2 data={data} />; break;
+    case 'title': content = <TitleV2 data={data} courseTitle={courseTitle} />; break;
+    case 'objective': content = <ObjectiveV2 data={data} />; break;
+    case 'definition': content = <DefinitionV2 data={data} />; break;
+    case 'content': content = <ContentV2 data={data} />; break;
+    case 'icon_grid': content = <IconGridV2 data={data} />; break;
+    case 'benefits': content = <BenefitsV2 data={data} />; break;
+    case 'comparison': content = <ComparisonV2 data={data} />; break;
+    case 'steps': content = <StepsV2 data={data} />; break;
     case 'quiz':
-    case 'group_quiz':  content = <QuizV2 data={data} type={type} onQuizSubmit={onQuizSubmit} />; break;
-    case 'video':       content = <VideoV2 data={data} />; break;
-    case 'flashcard':   content = <FlashcardV2 data={data} />; break;
-    case 'fill_blank':  content = <FillBlankV2 data={data} onQuizSubmit={onQuizSubmit} />; break;
-    case 'checklist':   content = <ChecklistV2 data={data} onCheckChange={onCheckChange} />; break;
+    case 'group_quiz': content = <QuizV2 data={data} type={type} onQuizSubmit={onQuizSubmit} />; break;
+    case 'video': content = <VideoV2 data={data} />; break;
+    case 'flashcard': content = <FlashcardV2 data={data} />; break;
+    case 'fill_blank': content = <FillBlankV2 data={data} onQuizSubmit={onQuizSubmit} />; break;
+    case 'checklist': content = <ChecklistV2 data={data} onCheckChange={onCheckChange} />; break;
     case 'dynamic':
     case 'group_dynamic': content = <DynamicV2 data={data} commitmentValue={commitmentValue} onCommitmentChange={onCommitmentChange} />; break;
-    case 'thermal_sim':  content = <ThermalSimSlide data={data} />; break;
-    case 'env_sim':      content = <EnvSimSlide data={data} />; break;
-    case 'iceberg_sim':  content = <IcebergLineaSimSlide data={data} />; break;
-    case 'radar_sim':    content = <RadarSupervisorSimSlide data={data} />; break;
+    case 'thermal_sim': content = <ThermalSimSlide data={data} />; break;
+    case 'env_sim': content = <EnvSimSlide data={data} />; break;
+    case 'iceberg_sim': content = <IcebergLineaSimSlide data={data} />; break;
+    case 'radar_sim': content = <RadarSupervisorSimSlide data={data} />; break;
     case 'freeform':
       return (
         <div className={s.freeformWrapper}>
@@ -227,11 +283,11 @@ function ContentV2({ data }) {
           {gallery.length > 1 ? (
             <div className={s.galleryGrid} data-count={gallery.length}>
               {gallery.map((url, idx) => (
-                <Image key={idx} src={optimizeSrc(url, 600)} alt={`${heading || 'Imagen'} ${idx + 1}`} className={s.galleryImg} width={700} height={525} sizes="(max-width: 640px) 50vw, 33vw" style={{ width: '100%', height: '100%', objectFit: 'cover' }} unoptimized={isDriveUrl(url)} onClick={() => setLightbox(url)} />
+                <SlideImage key={idx} src={optimizeSrc(url, 600)} alt={`${heading || 'Imagen'} ${idx + 1}`} className={s.galleryImg} width={700} height={525} sizes="(max-width: 640px) 50vw, 33vw" style={{ width: '100%', height: '100%', objectFit: 'cover' }} unoptimized={isDriveUrl(url)} onClick={() => setLightbox(url)} />
               ))}
             </div>
           ) : (
-            <Image src={optimizeSrc(gallery[0], 800)} alt={`${heading || 'Imagen'} 1`} className={s.contentImg} width={1400} height={788} sizes="(max-width: 768px) 100vw, 50vw" style={{ width: '100%', height: 'auto', maxHeight: '450px', objectFit: 'contain' }} unoptimized={isDriveUrl(gallery[0])} onClick={() => setLightbox(gallery[0])} />
+            <SlideImage src={optimizeSrc(gallery[0], 800)} alt={`${heading || 'Imagen'} 1`} className={s.contentImg} width={1400} height={788} sizes="(max-width: 768px) 100vw, 50vw" style={{ width: '100%', height: 'auto', maxHeight: '450px', objectFit: 'contain' }} unoptimized={isDriveUrl(gallery[0])} onClick={() => setLightbox(gallery[0])} />
           )}
         </div>
       )}
@@ -255,8 +311,7 @@ function IconGridV2({ data }) {
             return (
               <div key={i} className={s.iconCard}>
                 {item.image ? (
-                  // eslint-disable-next-line @next/next/no-img-element
-                  <img src={item.image} alt={item.label || ''} className={s.iconCircleImg} />
+                  <SlideImage src={item.image} alt={item.label || ''} className={s.iconCircleImg} width={88} height={88} unoptimized style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                 ) : IconComp ? (
                   <div className={s.iconCircle}><IconComp size={28} aria-hidden="true" /></div>
                 ) : (
@@ -348,7 +403,7 @@ function StepsV2({ data }) {
               <div className={s.stepBody}>
                 {step.title && <h3 className={s.stepTitle}>{step.title}</h3>}
                 {step.desc && <p className={s.stepDesc}>{step.desc}</p>}
-                {step.image && <Image src={optimizeSrc(step.image, 600)} alt={step.title || 'Imagen'} className={s.stepImg} width={800} height={400} sizes="(max-width: 768px) 100vw, 50vw" style={{ width: '100%', height: 'auto', maxHeight: '200px', objectFit: 'cover' }} unoptimized={isDriveUrl(step.image)} />}
+                {step.image && <SlideImage src={optimizeSrc(step.image, 600)} alt={step.title || 'Imagen'} className={s.stepImg} width={800} height={400} sizes="(max-width: 768px) 100vw, 50vw" style={{ width: '100%', height: 'auto', maxHeight: '200px', objectFit: 'cover' }} unoptimized={isDriveUrl(step.image)} />}
               </div>
             </li>
           ))}

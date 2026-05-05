@@ -1,48 +1,43 @@
 {
-    "_schema_notes": {
-        "new_slide_types": {
-            "group_quiz": "Pregunta de opción múltiple para discutir en grupo. El facilitador lee la pregunta, el grupo debate y elige la respuesta. data: { heading, question, options:[{id,text}], correctOptionId, explanation, groupInstruction }",
-            "group_dynamic": "Dinámica grupal estructurada (no quiz). Puede ser un caso de análisis, roleplay, reflexión colectiva, votación con tarjetas, etc. data: { heading, type, duration, instructions, scenario(opcional), debrief }"
-        }
-    },
     "courses": [
         {
-            "id": "comunicacion-asertiva-001",
-            "title": "Comunicación Asertiva",
-            "description": "Desarrolla una comunicación clara, directa y respetuosa que fortalece las relaciones de trabajo y mejora el clima organizacional.",
-            "category": "Habilidades de Comunicación",
-            "duration": "75 min",
+            "id": "nom-018-stps-2015-006",
+            "title": "NOM-018-STPS-2015",
+            "description": "Sistema armonizado para la identificación y comunicación de peligros y riesgos por sustancias químicas peligrosas en los centros de trabajo (SGA).",
+            "category": "Seguridad y Salud en el Trabajo",
+            "duration": "60 min",
             "instructor": "Recursos Humanos",
-            "instructorRole": "Desarrollo Organizacional",
+            "instructorRole": "Seguridad y Salud Laboral",
             "company": "Viño Plastic",
             "year": "2025",
             "published": true,
             "audience": [
                 "Supervisores",
-                "Auxiliares de Supervisor"
+                "Auxiliares de Supervisor",
+                "Operadores"
             ],
-            "successIndicator": "% mejora en encuestas de clima organizacional",
+            "successIndicator": "Aprobación de evaluación NOM-018 ≥ 70%",
             "slides": [
                 {
-                    "id": "ca-s001",
+                    "id": "n18-s001",
                     "order": 1,
                     "type": "title",
                     "data": {
-                        "title": "Comunicación Asertiva",
-                        "subtitle": "Habla claro, escucha mejor, lidera con respeto"
+                        "title": "NOM-018-STPS-2015",
+                        "subtitle": "Identificación y Comunicación de Peligros Químicos (SGA)"
                     }
                 },
                 {
-                    "id": "ca-s002",
+                    "id": "n18-s002",
                     "order": 2,
                     "type": "objective",
                     "data": {
                         "heading": "Objetivo del Curso",
-                        "body": "Desarrollar la capacidad de comunicarse de manera clara, directa y respetuosa en el entorno laboral, fortaleciendo las relaciones con el equipo, resolviendo conflictos de forma constructiva y mejorando el clima organizacional."
+                        "body": "Conocer el Sistema Globalmente Armonizado (SGA) para identificar y comunicar peligros químicos, interpretando correctamente las etiquetas, pictogramas y las Hojas de Datos de Seguridad (HDS) para prevenir accidentes."
                     }
                 },
                 {
-                    "id": "ca-s003",
+                    "id": "n18-s003",
                     "order": 3,
                     "type": "icon_grid",
                     "data": {
@@ -50,1008 +45,200 @@
                         "description": "Contenido del curso:",
                         "items": [
                             {
-                                "label": "Estilos de comunicación",
-                                "icon": "MessageCircle",
-                                "description": "Pasivo, agresivo y asertivo"
+                                "label": "Sistema SGA",
+                                "icon": "Globe",
+                                "description": "Qué es y por qué es internacional"
                             },
                             {
-                                "label": "Técnicas asertivas",
-                                "icon": "Zap",
-                                "description": "Herramientas prácticas para el día a día"
+                                "label": "Pictogramas",
+                                "icon": "AlertTriangle",
+                                "description": "Símbolos de peligro y su significado"
                             },
                             {
-                                "label": "Mensajes en primera persona",
-                                "icon": "User",
-                                "description": "Cómo expresarte sin atacar"
-                            },
-                            {
-                                "label": "Comunicación no verbal",
-                                "icon": "Eye",
-                                "description": "Lo que dices sin hablar"
-                            }
-                        ]
-                    }
-                },
-                {
-                    "id": "ca-s004",
-                    "order": 4,
-                    "type": "comparison",
-                    "data": {
-                        "heading": "Los 3 Estilos de Comunicación",
-                        "left": {
-                            "title": "❌ Estilos que generan problemas",
-                            "items": [
-                                "PASIVO: Evita el conflicto, no expresa sus necesidades, acumula frustraciones",
-                                "AGRESIVO: Impone su punto de vista, interrumpe, usa tono intimidante o sarcástico",
-                                "Ambos generan mal clima, desconfianza y baja productividad"
-                            ]
-                        },
-                        "right": {
-                            "title": "✅ Estilo que genera resultados",
-                            "items": [
-                                "ASERTIVO: Expresa lo que piensa y siente con claridad y respeto",
-                                "Escucha al otro sin ceder sus propios límites",
-                                "Busca acuerdos y soluciones, no ganar o perder",
-                                "Genera confianza, respeto mutuo y equipos más fuertes"
-                            ]
-                        }
-                    }
-                },
-                {
-                    "id": "ca-d001",
-                    "order": 5,
-                    "type": "group_quiz",
-                    "data": {
-                        "heading": "⚡ Quiz Grupal — Ronda 1",
-                        "groupInstruction": "El facilitador lee el caso en voz alta. El grupo tiene 2 minutos para discutir y elegir UNA respuesta en consenso. Luego un representante la comparte.",
-                        "question": "Tu operador llega 20 minutos tarde por tercera vez en la semana. ¿Cuál es la respuesta más ASERTIVA del supervisor?",
-                        "options": [
-                            {
-                                "id": "A",
-                                "text": "No dices nada para no generar conflicto y esperas que se corrija solo."
-                            },
-                            {
-                                "id": "B",
-                                "text": "Le llamas la atención en frente de todos para que sirva de ejemplo al equipo."
-                            },
-                            {
-                                "id": "C",
-                                "text": "Lo hablas en privado: 'Cuando llegas tarde, la línea se atrasa. Necesito que lleguemos a tiempo. ¿Hay algo que esté pasando?'"
-                            },
-                            {
-                                "id": "D",
-                                "text": "Le mandas un mensaje de WhatsApp fuera de turno para no confrontarlo en persona."
-                            }
-                        ],
-                        "correctOptionId": "C",
-                        "explanation": "La opción C es asertiva porque: describe el comportamiento (llegar tarde), señala el impacto (la línea se atrasa), hace una solicitud concreta (puntualidad) y abre el diálogo de forma empática. Las otras opciones corresponden a estilos pasivo, agresivo e indirecto."
-                    }
-                },
-                {
-                    "id": "ca-s005",
-                    "order": 6,
-                    "type": "definition",
-                    "data": {
-                        "heading": "¿Qué es la Comunicación Asertiva?",
-                        "body": "La comunicación asertiva es la habilidad de expresar pensamientos, sentimientos y necesidades de forma honesta, directa y respetuosa, sin agredir a los demás ni someterse a sus deseos.\n\nComo supervisor o auxiliar, comunicarte asertivamente te permite dar instrucciones claras, retroalimentar sin herir y resolver conflictos antes de que escalen."
-                    }
-                },
-                {
-                    "id": "ca-s006",
-                    "order": 7,
-                    "type": "content",
-                    "data": {
-                        "heading": "Técnica: El Mensaje en Primera Persona",
-                        "body": "En lugar de acusar o generalizar, describe el comportamiento, el impacto que tiene y lo que necesitas. Esta fórmula de 3 pasos evita la defensividad y abre el diálogo:",
-                        "bullets": [
-                            "1. CUANDO... (describe el comportamiento específico sin juzgar): 'Cuando el reporte llega después de la hora acordada...'",
-                            "2. ME SIENTO / EL IMPACTO ES... (consecuencia objetiva): '...la línea de producción se detiene y perdemos tiempo.'",
-                            "3. NECESITO / TE PIDO... (solicitud concreta): '...que me avises con 30 minutos de anticipación si habrá un retraso.'"
-                        ]
-                    }
-                },
-                {
-                    "id": "ca-d002",
-                    "order": 8,
-                    "type": "group_dynamic",
-                    "data": {
-                        "heading": "🎭 Dinámica Grupal — Construye el Mensaje",
-                        "type": "construccion_colectiva",
-                        "duration": "8 minutos",
-                        "instructions": "El facilitador divide al grupo en 2 equipos. Cada equipo recibe uno de los siguientes casos y debe construir un 'Mensaje en Primera Persona' completo (CUANDO... / EL IMPACTO ES... / NECESITO...). Después cada equipo lo presenta y el grupo retroalimenta.",
-                        "scenario": "CASO EQUIPO 1: Un operador hace comentarios sarcásticos cuando recibes una instrucción nueva del corporativo, generando risas que bajan la moral del área.\n\nCASO EQUIPO 2: Uno de tus auxiliares reporta los números de producción al final del turno sin haberlos revisado, lo que genera correcciones tardías en el sistema.",
-                        "debrief": "Preguntas para cerrar la dinámica con el grupo completo: ¿Qué fue lo más difícil de construir el mensaje? ¿Cómo cambiaría la reacción del colaborador si usaran este formato en vez de una instrucción directa o una llamada de atención tradicional?"
-                    }
-                },
-                {
-                    "id": "ca-s007",
-                    "order": 9,
-                    "type": "icon_grid",
-                    "data": {
-                        "heading": "Técnicas Asertivas para Supervisores",
-                        "items": [
-                            {
-                                "label": "Disco rayado",
-                                "icon": "Repeat",
-                                "description": "Repite calmamente tu postura sin alterarte ante la presión o manipulación"
-                            },
-                            {
-                                "label": "Banco de niebla",
-                                "icon": "Cloud",
-                                "description": "Reconoce parcialmente la crítica sin ceder tu posición: 'Es posible que tengas razón en eso...'"
-                            },
-                            {
-                                "label": "Acuerdo asertivo",
-                                "icon": "Handshake",
-                                "description": "Acepta el error pero separa tu comportamiento de tu valor como persona"
-                            },
-                            {
-                                "label": "Pregunta asertiva",
-                                "icon": "HelpCircle",
-                                "description": "Pide retroalimentación específica: '¿Qué te gustaría que hiciera diferente?'"
-                            }
-                        ]
-                    }
-                },
-                {
-                    "id": "ca-s008",
-                    "order": 10,
-                    "type": "content",
-                    "data": {
-                        "heading": "Comunicación No Verbal: Lo Que Dices Sin Hablar",
-                        "body": "El 93% del impacto de un mensaje proviene de cómo lo dices, no de las palabras. Como mando medio, tu lenguaje corporal comunica autoridad, confianza o inseguridad.",
-                        "bullets": [
-                            "Contacto visual: mantenerlo transmite confianza y honestidad; evitarlo genera desconfianza",
-                            "Postura: erguida y abierta transmite seguridad; encorvada o cruzada transmite cierre o tensión",
-                            "Tono de voz: firme y tranquilo para instrucciones; suave y empático para retroalimentación",
-                            "Distancia: respetar el espacio personal evita que el mensaje se perciba como amenaza",
-                            "Expresión facial: congruente con el mensaje para evitar mensajes contradictorios"
-                        ]
-                    }
-                },
-                {
-                    "id": "ca-d003",
-                    "order": 11,
-                    "type": "group_dynamic",
-                    "data": {
-                        "heading": "🕵️ Dinámica — El Detective del Lenguaje Corporal",
-                        "type": "observacion_grupal",
-                        "duration": "6 minutos",
-                        "instructions": "El facilitador pide 2 voluntarios al frente. El Voluntario A da la misma instrucción ('Necesito que el reporte esté listo antes de las 3pm') dos veces: primero con lenguaje corporal CERRADO (brazos cruzados, sin contacto visual, tono plano), luego con lenguaje corporal ABIERTO (contacto visual, postura erguida, tono firme y amable). El resto del grupo observa en silencio.",
-                        "scenario": null,
-                        "debrief": "El facilitador pregunta al grupo: ¿Cómo se sintió diferente la misma instrucción? ¿Cuál versión generaría más compromiso en el operador? ¿Reconocen alguno de estos patrones en su día a día? El objetivo es que el grupo concluya que EL CÓMO importa tanto como EL QUÉ."
-                    }
-                },
-                {
-                    "id": "ca-s009",
-                    "order": 12,
-                    "type": "benefits",
-                    "data": {
-                        "heading": "Beneficios de la Comunicación Asertiva en Planta",
-                        "items": [
-                            "Instrucciones más claras = menos errores en línea de producción",
-                            "Retroalimentación sin temor = operadores que mejoran voluntariamente",
-                            "Conflictos resueltos a tiempo = menos ausentismo y rotación",
-                            "Mayor confianza del equipo = mejor clima organizacional",
-                            "Relación más sana con líderes y pares = menos tensión en turnos"
-                        ]
-                    }
-                },
-                {
-                    "id": "ca-d004",
-                    "order": 13,
-                    "type": "group_quiz",
-                    "data": {
-                        "heading": "⚡ Quiz de Cierre — Ronda Final",
-                        "groupInstruction": "Votación grupal: el facilitador lee cada afirmación. El grupo levanta la mano si considera que es VERDADERA. Discutan brevemente los resultados.",
-                        "question": "¿Cuál de las siguientes afirmaciones sobre comunicación asertiva es FALSA?",
-                        "options": [
-                            {
-                                "id": "A",
-                                "text": "La asertividad significa siempre conseguir lo que quieres en una conversación."
-                            },
-                            {
-                                "id": "B",
-                                "text": "Un mensaje en primera persona describe el comportamiento, no juzga a la persona."
-                            },
-                            {
-                                "id": "C",
-                                "text": "El lenguaje corporal puede contradecir un mensaje verbal y generar desconfianza."
-                            },
-                            {
-                                "id": "D",
-                                "text": "El estilo pasivo y el agresivo generan problemas distintos pero ambos dañan el clima."
-                            }
-                        ],
-                        "correctOptionId": "A",
-                        "explanation": "FALSO: La asertividad no garantiza que siempre obtengas lo que quieres. Su objetivo es comunicarte con claridad y respeto, y abrir el diálogo hacia un acuerdo. En muchos casos el resultado es una negociación, no una imposición."
-                    }
-                },
-                {
-                    "id": "ca-s010",
-                    "order": 14,
-                    "type": "content",
-                    "data": {
-                        "heading": "Puntos Clave para Recordar",
-                        "body": "Resumen de lo aprendido en este módulo:",
-                        "bullets": [
-                            "Existen 3 estilos de comunicación: pasivo, agresivo y asertivo. Solo el asertivo genera resultados sostenibles",
-                            "Usa el mensaje en primera persona para dar retroalimentación sin atacar",
-                            "Aplica técnicas como el disco rayado o el banco de niebla ante situaciones difíciles",
-                            "Tu comunicación no verbal debe ser congruente con tus palabras",
-                            "La asertividad es una habilidad que se practica y mejora con el tiempo"
-                        ]
-                    }
-                }
-            ]
-        },
-        {
-            "id": "escucha-activa-002",
-            "title": "Escucha Activa",
-            "description": "Fortalece tu capacidad de escuchar con empatía y efectividad para entender realmente a tu equipo y tomar mejores decisiones.",
-            "category": "Habilidades de Comunicación",
-            "duration": "75 min",
-            "instructor": "Recursos Humanos",
-            "instructorRole": "Desarrollo Organizacional",
-            "company": "Viño Plastic",
-            "year": "2025",
-            "published": true,
-            "audience": [
-                "Supervisores",
-                "Auxiliares de Supervisor"
-            ],
-            "successIndicator": "Encuesta 360° de comunicación",
-            "slides": [
-                {
-                    "id": "ea-s001",
-                    "order": 1,
-                    "type": "title",
-                    "data": {
-                        "title": "Escucha Activa",
-                        "subtitle": "Escuchar de verdad es el acto de liderazgo más poderoso"
-                    }
-                },
-                {
-                    "id": "ea-s002",
-                    "order": 2,
-                    "type": "objective",
-                    "data": {
-                        "heading": "Objetivo del Curso",
-                        "body": "Fortalecer la capacidad de escucha empática y efectiva en supervisores y auxiliares, reduciendo las barreras que impiden la comprensión real del equipo, y aplicando técnicas concretas que mejoren la comunicación y la toma de decisiones."
-                    }
-                },
-                {
-                    "id": "ea-s003",
-                    "order": 3,
-                    "type": "definition",
-                    "data": {
-                        "heading": "¿Qué es la Escucha Activa?",
-                        "body": "La escucha activa es la habilidad de prestar atención plena a quien habla, comprendiendo no solo las palabras, sino también las emociones e intenciones detrás del mensaje.\n\nNo es solo esperar tu turno para hablar. Es estar presente, hacer sentir al otro que es comprendido y responder de manera que lo demuestre."
-                    }
-                },
-                {
-                    "id": "ea-s004",
-                    "order": 4,
-                    "type": "comparison",
-                    "data": {
-                        "heading": "Escucha Pasiva vs. Escucha Activa",
-                        "left": {
-                            "title": "Escucha Pasiva (lo que hacemos sin darnos cuenta)",
-                            "items": [
-                                "Pensamos en nuestra respuesta mientras el otro habla",
-                                "Interrumpimos o completamos las frases del otro",
-                                "Miramos el celular o el entorno durante la conversación",
-                                "Juzgamos o llegamos a conclusiones antes de que termine",
-                                "Respondemos sin verificar si entendimos bien"
-                            ]
-                        },
-                        "right": {
-                            "title": "Escucha Activa (lo que necesitamos desarrollar)",
-                            "items": [
-                                "Atención completa al que habla, sin distractores",
-                                "Esperamos a que el otro termine antes de responder",
-                                "Verificamos nuestra comprensión con paráfrasis",
-                                "Observamos el lenguaje corporal y el tono emocional",
-                                "Respondemos a lo que dijeron, no a lo que suponíamos"
-                            ]
-                        }
-                    }
-                },
-                {
-                    "id": "ea-d001",
-                    "order": 5,
-                    "type": "group_dynamic",
-                    "data": {
-                        "heading": "🎧 Dinámica — El Teléfono Roto Consciente",
-                        "type": "experimentacion_grupal",
-                        "duration": "8 minutos",
-                        "instructions": "El facilitador pide que el grupo se forme en una fila o círculo. Lee el siguiente mensaje UNA SOLA VEZ al primero de la fila, quien lo susurra al siguiente sin repetir. Al llegar al último, ese participante dice en voz alta lo que recibió. El facilitador compara con el mensaje original.\n\nMENSAJE ORIGINAL: 'El turno de la noche reportó que la máquina 3 tuvo un paro de 15 minutos por falta de material. El operador avisó al auxiliar pero no quedó registrado en la minuta del turno anterior, por eso producción no pudo ajustar el plan del día siguiente.'",
-                        "scenario": null,
-                        "debrief": "Preguntas para el grupo: ¿Qué se perdió del mensaje original? ¿Qué consecuencias tendría en planta que esta información llegara distorsionada? ¿Qué podemos hacer para asegurarnos de que los mensajes críticos no se distorsionen? Conectar con la importancia de la escucha activa y la paráfrasis."
-                    }
-                },
-                {
-                    "id": "ea-s005",
-                    "order": 6,
-                    "type": "content",
-                    "data": {
-                        "heading": "Barreras de la Escucha: ¿Qué nos impide escuchar bien?",
-                        "body": "Identificar las barreras es el primer paso para superarlas:",
-                        "bullets": [
-                            "Barreras físicas: ruido de maquinaria, distancia, fatiga al final del turno",
-                            "Barreras emocionales: estrés, enojo previo con la persona, falta de empatía",
-                            "Barreras cognitivas: prejuicios, asumir que ya sabemos lo que van a decir",
-                            "Barreras de actitud: sentir que no vale la pena escuchar al colaborador",
-                            "Barreras tecnológicas: el celular o walkie-talkie que interrumpe la conversación"
-                        ]
-                    }
-                },
-                {
-                    "id": "ea-d002",
-                    "order": 7,
-                    "type": "group_quiz",
-                    "data": {
-                        "heading": "⚡ Quiz Grupal — Identifica la Barrera",
-                        "groupInstruction": "El facilitador lee cada situación. El grupo, en equipos de 3, identifica qué tipo de barrera de escucha está presente. Tienen 90 segundos por situación. El equipo que responde primero expone y los demás complementan.",
-                        "question": "Tu operador más veterano te viene a reportar un problema con la máquina. Mientras habla, tú ya sabes lo que vas a responderle porque 'siempre es lo mismo'. No lo dejas terminar y le dices la solución. ¿Qué barrera de escucha estás usando?",
-                        "options": [
-                            {
-                                "id": "A",
-                                "text": "Barrera física — el ruido del área te impide concentrarte."
-                            },
-                            {
-                                "id": "B",
-                                "text": "Barrera cognitiva — asumes que ya sabes lo que va a decir antes de escucharlo."
-                            },
-                            {
-                                "id": "C",
-                                "text": "Barrera tecnológica — tu celular te está distrayendo."
-                            },
-                            {
-                                "id": "D",
-                                "text": "Barrera emocional — tienes un conflicto previo con esa persona."
-                            }
-                        ],
-                        "correctOptionId": "B",
-                        "explanation": "Es una barrera COGNITIVA: el prejuicio de 'ya sé lo que va a decir' hace que no escuchemos realmente. Esto es especialmente peligroso en planta porque el operador podría tener información nueva o crítica que jamás llegaremos a escuchar si lo interrumpimos."
-                    }
-                },
-                {
-                    "id": "ea-s006",
-                    "order": 8,
-                    "type": "icon_grid",
-                    "data": {
-                        "heading": "Técnicas de Escucha Activa",
-                        "items": [
-                            {
-                                "label": "Paráfrasis",
-                                "icon": "RefreshCw",
-                                "description": "Repite con tus propias palabras lo que entendiste: 'Entonces lo que me estás diciendo es que...'"
-                            },
-                            {
-                                "label": "Preguntas poderosas",
-                                "icon": "HelpCircle",
-                                "description": "Haz preguntas abiertas que profundizan: '¿Qué pasó exactamente? ¿Cómo te afectó eso?'"
-                            },
-                            {
-                                "label": "Empatía activa",
-                                "icon": "Heart",
-                                "description": "Valida la emoción antes de dar soluciones: 'Entiendo que eso fue frustrante...'"
-                            },
-                            {
-                                "label": "Silencio productivo",
-                                "icon": "Pause",
-                                "description": "Haz una pausa después de que hablen. No llenes el silencio de inmediato"
-                            }
-                        ]
-                    }
-                },
-                {
-                    "id": "ea-s007",
-                    "order": 9,
-                    "type": "content",
-                    "data": {
-                        "heading": "Preguntas Poderosas: Herramienta Clave del Supervisor",
-                        "body": "Las preguntas poderosas son abiertas, invitan a la reflexión y generan información valiosa:",
-                        "bullets": [
-                            "Para explorar: '¿Qué fue lo que más te afectó de esa situación?'",
-                            "Para analizar causas: '¿Qué crees que está generando ese problema en la línea?'",
-                            "Para generar soluciones: '¿Qué harías diferente si pudieras decidirlo tú?'",
-                            "Para comprometer: '¿Qué estás dispuesto a hacer esta semana para mejorar eso?'",
-                            "Para cierre: '¿Quedó claro? ¿Hay algo más que necesites de mi parte?'"
-                        ]
-                    }
-                },
-                {
-                    "id": "ea-d003",
-                    "order": 10,
-                    "type": "group_dynamic",
-                    "data": {
-                        "heading": "🎯 Dinámica — La Paráfrasis en Acción",
-                        "type": "practica_en_pares_grupal",
-                        "duration": "10 minutos",
-                        "instructions": "El grupo se divide en tríos. Roles: HABLANTE, ESCUCHA, OBSERVADOR.\n\n1. El HABLANTE narra durante 90 segundos uno de estos casos (el facilitador asigna):\n   - 'Tuve un problema con un compañero del turno anterior que no me dejó las condiciones del área en orden.'\n   - 'Siento que mi equipo no me hace caso cuando doy instrucciones.'\n\n2. El ESCUCHA practica escucha activa: contacto visual, no interrumpe, luego hace UNA paráfrasis y UNA pregunta poderosa.\n\n3. El OBSERVADOR evalúa: ¿Hubo contacto visual? ¿Interrumpió? ¿La paráfrasis fue precisa? ¿La pregunta fue abierta?\n\nRotan roles hasta que todos hayan practicado los 3.",
-                        "scenario": null,
-                        "debrief": "Reflexión grupal: ¿Cómo se sintió ser escuchado de verdad vs. ser interrumpido? ¿Qué fue lo más difícil de practicar la escucha activa? ¿Qué van a cambiar en su próxima conversación difícil con un colaborador?"
-                    }
-                },
-                {
-                    "id": "ea-s008",
-                    "order": 11,
-                    "type": "content",
-                    "data": {
-                        "heading": "Empatía Activa: Más que Entender, Hacer Sentir que Entiendes",
-                        "body": "La empatía activa no significa estar de acuerdo con el colaborador. Significa reconocer su experiencia antes de dar una solución o instrucción:",
-                        "bullets": [
-                            "Paso 1 - Escucha sin interrumpir: deja que diga todo lo que necesita decir",
-                            "Paso 2 - Reconoce la emoción: 'Noto que estás frustrado con esa situación...'",
-                            "Paso 3 - Valida sin necesariamente estar de acuerdo: 'Entiendo por qué lo ves así'",
-                            "Paso 4 - Luego da tu punto de vista o instrucción: 'Dicho eso, lo que necesitamos hacer es...'",
-                            "Recuerda: Un colaborador que se siente escuchado es más receptivo y comprometido"
-                        ]
-                    }
-                },
-                {
-                    "id": "ea-d004",
-                    "order": 12,
-                    "type": "group_quiz",
-                    "data": {
-                        "heading": "⚡ Quiz de Cierre — ¿Qué harías tú?",
-                        "groupInstruction": "El facilitador presenta el caso. El grupo discute 2 minutos y elige la respuesta que mejor refleja ESCUCHA ACTIVA + EMPATÍA. Un representante diferente del grupo expone la decisión final.",
-                        "question": "Un operador se acerca al inicio del turno visiblemente molesto y te dice: 'Nadie en este turno me explica bien las cosas, siempre me entero de los cambios a última hora'. ¿Cuál es la respuesta que mejor combina escucha activa y empatía?",
-                        "options": [
-                            {
-                                "id": "A",
-                                "text": "'Todos estamos ocupados, trata de preguntar más seguido.' (Descarta la emoción, da consejo inmediato)"
-                            },
-                            {
-                                "id": "B",
-                                "text": "'Entiendo que es frustrante enterarte tarde de los cambios. Cuéntame, ¿qué pasó hoy específicamente?' (Valida la emoción, abre el diálogo con pregunta)"
-                            },
-                            {
-                                "id": "C",
-                                "text": "'Eso no es cierto, siempre mandamos los avisos por el grupo de WhatsApp.' (Defiende el proceso, invalida la percepción)"
-                            },
-                            {
-                                "id": "D",
-                                "text": "'Ahorita no tengo tiempo, al rato lo platicamos.' (Pospone sin comprometerse)"
-                            }
-                        ],
-                        "correctOptionId": "B",
-                        "explanation": "La opción B aplica empatía activa (valida la emoción sin estar de acuerdo) y escucha activa (hace una pregunta abierta para entender el caso específico antes de responder). Las otras opciones descalifican, defienden o evaden, lo que cierra el diálogo y desmotiva al colaborador."
-                    }
-                },
-                {
-                    "id": "ea-s009",
-                    "order": 13,
-                    "type": "benefits",
-                    "data": {
-                        "heading": "¿Por Qué Vale la Pena Escuchar Activamente?",
-                        "items": [
-                            "Detectas problemas en la línea antes de que escalen",
-                            "Generas confianza: el equipo te busca cuando hay un problema real",
-                            "Tomas mejores decisiones con información completa",
-                            "Reduces rumores y malentendidos en el área",
-                            "Aumentas el compromiso: las personas trabajan mejor para quienes las escuchan",
-                            "Mejoras tu 360° de comunicación y reconocimiento como líder"
-                        ]
-                    }
-                },
-                {
-                    "id": "ea-s010",
-                    "order": 14,
-                    "type": "content",
-                    "data": {
-                        "heading": "Puntos Clave para Recordar",
-                        "body": "Resumen del módulo de Escucha Activa:",
-                        "bullets": [
-                            "Escuchar activamente es una habilidad que se practica, no un rasgo de personalidad",
-                            "Identifica tus barreras personales de escucha y trabaja en eliminarlas",
-                            "Usa la paráfrasis para confirmar que entendiste antes de responder",
-                            "Las preguntas poderosas abren el diálogo y generan compromiso",
-                            "La empatía activa no es estar de acuerdo, es hacer sentir al otro que fue comprendido"
-                        ]
-                    }
-                }
-            ]
-        },
-        {
-            "id": "reuniones-efectivas-003",
-            "title": "Reuniones Efectivas",
-            "description": "Optimiza el tiempo y los resultados de tus reuniones de equipo con una metodología clara, agenda estructurada y seguimiento de acuerdos.",
-            "category": "Habilidades de Comunicación",
-            "duration": "60 min",
-            "instructor": "Recursos Humanos",
-            "instructorRole": "Desarrollo Organizacional",
-            "company": "Viño Plastic",
-            "year": "2025",
-            "published": true,
-            "audience": [
-                "Supervisores"
-            ],
-            "successIndicator": "% de reuniones con acuerdos cumplidos en tiempo",
-            "slides": [
-                {
-                    "id": "re-s001",
-                    "order": 1,
-                    "type": "title",
-                    "data": {
-                        "title": "Reuniones Efectivas",
-                        "subtitle": "Menos tiempo reunidos, más tiempo produciendo"
-                    }
-                },
-                {
-                    "id": "re-s002",
-                    "order": 2,
-                    "type": "objective",
-                    "data": {
-                        "heading": "Objetivo del Curso",
-                        "body": "Optimizar el tiempo y los resultados de las reuniones de equipo mediante el uso de agendas estructuradas, roles claros y mecanismos de seguimiento que aseguren que los acuerdos se cumplan."
-                    }
-                },
-                {
-                    "id": "re-s003",
-                    "order": 3,
-                    "type": "definition",
-                    "data": {
-                        "heading": "¿Qué hace que una reunión sea efectiva?",
-                        "body": "Una reunión es efectiva cuando termina con decisiones claras, responsables definidos y plazos establecidos, y cuando los participantes sienten que el tiempo invertido valió la pena.\n\nUna reunión inefectiva es una de las formas más costosas de perder tiempo productivo en planta. El reto del supervisor es convertir sus reuniones en momentos de acción, no de conversación sin rumbo."
-                    }
-                },
-                {
-                    "id": "re-d001",
-                    "order": 4,
-                    "type": "group_dynamic",
-                    "data": {
-                        "heading": "📊 Dinámica — ¿Cuánto nos cuestan nuestras reuniones?",
-                        "type": "calculo_grupal",
-                        "duration": "7 minutos",
-                        "instructions": "El facilitador guía al grupo en el siguiente cálculo colectivo:\n\nPASO 1: Piensen en una reunión semanal típica de su área. ¿Cuántas personas asisten? (El grupo da un número promedio)\n\nPASO 2: ¿Cuánto dura habitualmente? (El grupo estima)\n\nPASO 3: Estimen un costo-hora promedio por persona (pueden usar el dato que el facilitador proporcione o estimarlo).\n\nPASO 4: Multipliquen: Personas × Horas × Costo/hora × Semanas del año.\n\nEl facilitador escribe el cálculo en el pizarrón o pantalla en tiempo real.",
-                        "scenario": null,
-                        "debrief": "Reflexión grupal: ¿Les sorprende el resultado? ¿Ese costo se justifica con los resultados que se obtienen habitualmente? ¿Qué pasaría si redujéramos la duración o el número de asistentes a quienes realmente deben estar? Conectar con la importancia de la agenda y los roles."
-                    }
-                },
-                {
-                    "id": "re-s004",
-                    "order": 5,
-                    "type": "comparison",
-                    "data": {
-                        "heading": "Reunión Inefectiva vs. Reunión Efectiva",
-                        "left": {
-                            "title": "Reunión que desgasta al equipo",
-                            "items": [
-                                "No hay agenda definida, se improvisa el tema",
-                                "Comienza tarde y nadie sabe cuándo termina",
-                                "Todos hablan pero nadie decide",
-                                "Se va por las ramas sin llegar a acuerdos",
-                                "No hay minuta, nadie recuerda qué se acordó",
-                                "Los mismos temas se repiten en cada reunión"
-                            ]
-                        },
-                        "right": {
-                            "title": "Reunión que mueve al equipo",
-                            "items": [
-                                "Agenda enviada con anticipación con los temas y tiempos",
-                                "Comienza y termina a tiempo, siempre",
-                                "Cada punto llega a una decisión o acuerdo concreto",
-                                "Roles definidos: facilitador, timekeeper, secretario",
-                                "Minuta compartida en menos de 24 horas",
-                                "Seguimiento en la siguiente reunión: ¿se cumplió?"
-                            ]
-                        }
-                    }
-                },
-                {
-                    "id": "re-s005",
-                    "order": 6,
-                    "type": "content",
-                    "data": {
-                        "heading": "Antes de la Reunión: La Agenda Estructurada",
-                        "body": "Una buena reunión se gana antes de empezar. La agenda es la herramienta más importante del facilitador:",
-                        "bullets": [
-                            "Define el OBJETIVO de la reunión: ¿para qué nos reunimos? ¿qué debe quedar resuelto?",
-                            "Lista los TEMAS en orden de importancia, no de urgencia",
-                            "Asigna TIEMPO a cada punto (sé realista, agrega 20% de buffer)",
-                            "Identifica QUIÉN participa en cada punto y para qué (información, decisión, opinión)",
-                            "Comparte la agenda con 24 horas de anticipación mínimo",
-                            "Pide confirmación de asistencia y prepara los materiales necesarios"
-                        ]
-                    }
-                },
-                {
-                    "id": "re-d002",
-                    "order": 7,
-                    "type": "group_dynamic",
-                    "data": {
-                        "heading": "📝 Dinámica — Construye tu Agenda en Equipo",
-                        "type": "construccion_colectiva",
-                        "duration": "10 minutos",
-                        "instructions": "El facilitador presenta el siguiente escenario al grupo. En equipos de 3-4 personas, deben construir una agenda estructurada de 30 minutos para la reunión descrita.\n\nESCENARIO: 'Eres supervisor del área de ensamble. Necesitas reunirte mañana con tus 2 auxiliares y el representante de calidad. Los temas pendientes son: (1) El índice de scrap subió 3% esta semana y no sabemos la causa. (2) Hay un cambio de layout en 2 líneas que inicia el lunes. (3) Un operador pidió cambio de turno y hay que decidir. (4) Hay 2 cumpleaños en el equipo esta semana.'\n\nCada equipo debe: asignar tiempo, orden, definir si cada punto es para INFORMAR, DECIDIR u OPINAR, y si todos necesitan estar en cada punto.",
-                        "scenario": null,
-                        "debrief": "Cada equipo comparte su agenda. El facilitador guía la discusión: ¿Todos pusieron los puntos en el mismo orden? ¿Por qué? ¿Qué criterio usaron para priorizar? ¿Algún punto se puede resolver sin reunión? Conectar con que el objetivo define el contenido de la agenda."
-                    }
-                },
-                {
-                    "id": "re-s006",
-                    "order": 8,
-                    "type": "icon_grid",
-                    "data": {
-                        "heading": "Roles Clave en una Reunión Efectiva",
-                        "items": [
-                            {
-                                "label": "Facilitador",
-                                "icon": "Users",
-                                "description": "Guía la reunión, mantiene el foco, da la palabra y resume acuerdos. Generalmente el supervisor"
-                            },
-                            {
-                                "label": "Timekeeper",
-                                "icon": "Clock",
-                                "description": "Avisa cuando se agota el tiempo de cada punto. Protege la duración de la reunión"
-                            },
-                            {
-                                "label": "Secretario",
+                                "label": "Hojas de Datos",
                                 "icon": "FileText",
-                                "description": "Documenta los acuerdos, responsables y fechas en tiempo real durante la reunión"
+                                "description": "Las 16 secciones de la HDS"
                             },
                             {
-                                "label": "Participante activo",
-                                "icon": "MessageCircle",
-                                "description": "Llega preparado, participa en los temas de su área y se compromete con los acuerdos"
+                                "label": "Etiquetado",
+                                "icon": "Tag",
+                                "description": "Reglas para envases y trasvases"
                             }
                         ]
                     }
                 },
                 {
-                    "id": "re-d003",
-                    "order": 9,
-                    "type": "group_quiz",
-                    "data": {
-                        "heading": "⚡ Quiz Grupal — El Momento Crítico",
-                        "groupInstruction": "El facilitador describe la situación. El grupo tiene 2 minutos para discutir. Eligen la respuesta en consenso y un voluntario diferente la defiende ante el grupo.",
-                        "question": "Llevan 20 minutos de reunión. El punto del scrap debería haber durado 10 minutos pero el debate sigue sin conclusión. El timekeeper avisa que el tiempo se agotó. ¿Qué hace el facilitador?",
-                        "options": [
-                            {
-                                "id": "A",
-                                "text": "Deja que la discusión continúe hasta llegar a un acuerdo, aunque se extiendan 20 minutos más."
-                            },
-                            {
-                                "id": "B",
-                                "text": "Corta la discusión, decide él solo para no perder más tiempo."
-                            },
-                            {
-                                "id": "C",
-                                "text": "Detiene la discusión, resume los puntos clave, propone una decisión provisional o asigna a 2 personas para resolverlo fuera de la reunión con fecha límite."
-                            },
-                            {
-                                "id": "D",
-                                "text": "Cancela los demás puntos de la agenda para resolver bien este primero."
-                            }
-                        ],
-                        "correctOptionId": "C",
-                        "explanation": "La opción C protege el tiempo de todos, mantiene el respeto al plan de la reunión y asigna responsabilidad para resolver sin bloquear el avance. Un buen facilitador no decide solo ni permite que un punto secuestre toda la reunión. El 'parking lot' o la asignación de tarea fuera de reunión son herramientas clave."
-                    }
-                },
-                {
-                    "id": "re-s007",
-                    "order": 10,
-                    "type": "content",
-                    "data": {
-                        "heading": "Durante la Reunión: Técnicas de Facilitación",
-                        "body": "El facilitador es el responsable de que la reunión fluya y llegue a resultados:",
-                        "bullets": [
-                            "Abre con el objetivo: '¿Para qué estamos aquí hoy? Al terminar debemos tener...'",
-                            "Usa la técnica del 'parking lot': cuando surge un tema fuera de agenda, anótalo para después",
-                            "Ante discusiones que no avanzan: '¿Podemos tomar una decisión con lo que tenemos?'",
-                            "Cierra cada punto con un acuerdo SMART: ¿Qué? ¿Quién? ¿Para cuándo?",
-                            "Maneja el tiempo sin vergüenza: 'Nos quedan 5 minutos para este punto, ¿cuál es la decisión?'",
-                            "Controla al dominante: 'Gracias, ¿alguien más tiene un punto de vista diferente?'"
-                        ]
-                    }
-                },
-                {
-                    "id": "re-s008",
-                    "order": 11,
-                    "type": "content",
-                    "data": {
-                        "heading": "Acuerdos y Seguimiento: La Minuta de Reunión",
-                        "body": "Un acuerdo que no se documenta no existe. La minuta es la garantía de que la reunión generó resultados:",
-                        "bullets": [
-                            "Formato mínimo de la minuta: Fecha, asistentes, tema, ACUERDO, RESPONSABLE, FECHA LÍMITE",
-                            "Distribuir la minuta en máximo 24 horas después de la reunión",
-                            "El seguimiento es la apertura obligada de la siguiente reunión: '¿Qué se cumplió? ¿Qué no?'",
-                            "Los acuerdos incumplidos sin justificación deben ser atendidos directamente por el supervisor",
-                            "Mide el % de acuerdos cumplidos en tiempo como indicador de efectividad de tu reunión"
-                        ]
-                    }
-                },
-                {
-                    "id": "re-d004",
-                    "order": 12,
-                    "type": "group_dynamic",
-                    "data": {
-                        "heading": "📋 Dinámica Final — La Reunión Simulada",
-                        "type": "roleplay_grupal",
-                        "duration": "10 minutos",
-                        "instructions": "El facilitador asigna roles al grupo completo para una mini-reunión simulada de 5 minutos:\n\nROLES: 1 Facilitador (voluntario), 1 Timekeeper, 1 Secretario (anota en papel), el resto son Participantes.\n\nAGENDA DADA: Solo un punto — 'Decidir qué acción tomar ante el incremento de 3% en scrap esta semana. Tiempo: 5 minutos. Al terminar debe quedar: ¿QUÉ se hará? ¿QUIÉN lo hará? ¿PARA CUÁNDO?'\n\nEl grupo hace la mini-reunión. El facilitador real observa sin intervenir. Al terminar, el Secretario lee el acuerdo documentado.",
-                        "scenario": null,
-                        "debrief": "El facilitador real da retroalimentación al grupo: ¿Se respetó el tiempo? ¿Se llegó a un acuerdo con responsable y fecha? ¿El facilitador mantuvo el foco? ¿Qué cambiarían? Reflexión final: ¿Qué van a implementar en su próxima reunión real?"
-                    }
-                },
-                {
-                    "id": "re-s009",
-                    "order": 13,
-                    "type": "content",
-                    "data": {
-                        "heading": "Tipos de Reuniones en Planta y su Duración Ideal",
-                        "body": "No todas las reuniones son iguales. Adapta el formato al propósito:",
-                        "bullets": [
-                            "Reunión de arranque de turno (Daily): 5-10 min. Objetivo: alineación rápida de prioridades del día",
-                            "Reunión de seguimiento semanal: 30-45 min. Objetivo: revisión de indicadores y acuerdos",
-                            "Reunión de resolución de problemas: 60 min máx. Objetivo: análisis causa-raíz y plan de acción",
-                            "Reunión de retroalimentación individual: 15-30 min. Objetivo: desarrollo y seguimiento del colaborador",
-                            "Regla de oro: si puede resolverse con un mensaje o email, no amerita reunión"
-                        ]
-                    }
-                },
-                {
-                    "id": "re-s010",
-                    "order": 14,
-                    "type": "benefits",
-                    "data": {
-                        "heading": "Resultados de Reuniones Efectivas",
-                        "items": [
-                            "Menos tiempo perdido = más tiempo productivo en piso",
-                            "Acuerdos claros = menos malentendidos y reprocesos",
-                            "Seguimiento constante = cultura de cumplimiento y responsabilidad",
-                            "Equipo más comprometido = siente que su tiempo es valorado",
-                            "Indicador medible = % de acuerdos cumplidos en tiempo mejora progresivamente",
-                            "Credibilidad del supervisor = quien conduce buenas reuniones genera confianza"
-                        ]
-                    }
-                }
-            ]
-        },
-        {
-            "id": "equipos-multiculturales-004",
-            "title": "Gestión de Equipos Multiculturales",
-            "description": "Desarrolla las competencias para liderar equipos con diversidad cultural de forma efectiva, adaptando tu estilo de liderazgo y generando cohesión.",
-            "category": "Habilidades de Comunicación",
-            "duration": "75 min",
-            "instructor": "Recursos Humanos",
-            "instructorRole": "Desarrollo Organizacional",
-            "company": "Viño Plastic",
-            "year": "2025",
-            "published": true,
-            "audience": [
-                "Supervisores"
-            ],
-            "successIndicator": "Indicador de satisfacción multicultural del equipo",
-            "slides": [
-                {
-                    "id": "em-s001",
-                    "order": 1,
-                    "type": "title",
-                    "data": {
-                        "title": "Gestión de Equipos Multiculturales",
-                        "subtitle": "La diversidad cultural no es un obstáculo — es tu ventaja competitiva"
-                    }
-                },
-                {
-                    "id": "em-s002",
-                    "order": 2,
-                    "type": "objective",
-                    "data": {
-                        "heading": "Objetivo del Curso",
-                        "body": "Desarrollar en los supervisores las competencias de liderazgo intercultural necesarias para gestionar equipos con diversidad cultural de forma efectiva, identificando sesgos culturales, adaptando el estilo de liderazgo y construyendo un ambiente de trabajo inclusivo y de alto desempeño."
-                    }
-                },
-                {
-                    "id": "em-s003",
-                    "order": 3,
-                    "type": "definition",
-                    "data": {
-                        "heading": "¿Qué es un Equipo Multicultural?",
-                        "body": "Un equipo multicultural es aquel donde los integrantes provienen de diferentes regiones, estados, países o grupos culturales, con distintas formas de comunicarse, relacionarse con la autoridad, entender el trabajo en equipo y resolver conflictos.\n\nEn planta, esto puede significar diferencias en el idioma, las costumbres, la percepción del tiempo, el respeto a la jerarquía o la forma de expresar desacuerdo."
-                    }
-                },
-                {
-                    "id": "em-d001",
+                    "id": "n18-s004",
                     "order": 4,
-                    "type": "group_dynamic",
-                    "data": {
-                        "heading": "🌍 Dinámica — El Mapa de Nuestro Equipo",
-                        "type": "mapeo_grupal",
-                        "duration": "8 minutos",
-                        "instructions": "El facilitador dibuja un mapa simple de México (o del mundo si aplica) en el pizarrón o pantalla. Pide a cada participante que piense en su equipo de trabajo actual:\n\n1. ¿De cuántos estados o regiones diferentes proviene tu equipo?\n2. ¿Hay personas de otros países?\n3. ¿Hay diferencias generacionales importantes (edades muy distintas)?\n\nCada supervisor comparte brevemente. El facilitador marca en el mapa las regiones mencionadas y va contando la diversidad total del grupo en sala.",
-                        "scenario": null,
-                        "debrief": "Reflexión grupal: ¿Se dieron cuenta de cuánta diversidad ya tienen en sus equipos? ¿Han tenido algún malentendido que en retrospectiva podría tener un origen cultural? ¿Qué tan preparados se sienten para liderar esa diversidad? Conectar con el objetivo del curso."
-                    }
-                },
-                {
-                    "id": "em-s004",
-                    "order": 5,
-                    "type": "content",
-                    "data": {
-                        "heading": "¿Por Qué es un Reto Liderar Equipos Multiculturales?",
-                        "body": "La diversidad cultural enriquece, pero también genera fricciones si no se gestiona bien:",
-                        "bullets": [
-                            "Barreras de idioma: instrucciones mal comprendidas por diferencias lingüísticas o de dialecto",
-                            "Diferente relación con la autoridad: algunas culturas cuestionan al supervisor; otras jamás lo harían",
-                            "Percepciones distintas del tiempo: puntualidad y urgencia no significan lo mismo en todas las culturas",
-                            "Diferentes formas de expresar conflicto: directo vs. indirecto, explícito vs. implícito",
-                            "Estereotipos y sesgos inconscientes que afectan la asignación de tareas o la retroalimentación"
-                        ]
-                    }
-                },
-                {
-                    "id": "em-s005",
-                    "order": 6,
                     "type": "definition",
                     "data": {
-                        "heading": "¿Qué son los Sesgos Culturales?",
-                        "body": "Los sesgos culturales son suposiciones automáticas que hacemos sobre las personas basadas en su origen cultural, sin conocerlas individualmente.\n\nEjemplos comunes en planta: 'Los de X región son flojos', 'Los que hablan diferente no entienden bien', 'Ellos no están acostumbrados a este ritmo de trabajo'.\n\nEstos sesgos, aunque muchas veces inconscientes, afectan las decisiones de a quién se asciende, a quién se capacita y a quién se le da la oportunidad de destacar."
+                        "heading": "¿Qué es la NOM-018-STPS-2015?",
+                        "body": "Es la norma que establece los requisitos para integrar un sistema armonizado de identificación y comunicación de peligros por sustancias químicas peligrosas en México.\n\nEstá basada en el SGA (Sistema Globalmente Armonizado), lo que significa que los símbolos y etiquetas que usamos son los mismos que se usan en todo el mundo."
                     }
                 },
                 {
-                    "id": "em-d002",
-                    "order": 7,
-                    "type": "group_quiz",
+                    "id": "n18-s005",
+                    "order": 5,
+                    "type": "definition",
                     "data": {
-                        "heading": "⚡ Quiz Grupal — ¿Sesgo o Dato?",
-                        "groupInstruction": "El facilitador lee cada afirmación. El grupo, en equipos de 3, decide si es un SESGO CULTURAL o un DATO VERIFICABLE y por qué. Tienen 60 segundos por afirmación. Se comparte en plenaria.",
-                        "question": "¿Cuál de las siguientes afirmaciones es un SESGO CULTURAL (no un dato verificable)?",
-                        "options": [
-                            {
-                                "id": "A",
-                                "text": "'El operador que llegó del turno anterior dejó 3 piezas defectuosas sin identificar en el área.'"
-                            },
-                            {
-                                "id": "B",
-                                "text": "'Los trabajadores de esa región siempre llegan tarde, es parte de su cultura.'"
-                            },
-                            {
-                                "id": "C",
-                                "text": "'En la última semana, el área B tuvo 4 reportes de retraso en la entrega de componentes.'"
-                            },
-                            {
-                                "id": "D",
-                                "text": "'Este colaborador ha llegado tarde 3 veces en los últimos 10 días según el registro de asistencia.'"
-                            }
-                        ],
-                        "correctOptionId": "B",
-                        "explanation": "La opción B es un sesgo cultural: generaliza un comportamiento individual (llegar tarde) a toda una región o grupo, sin datos que lo soporten. Además, atribuye ese comportamiento a 'su cultura' como si fuera inmutable. Las otras opciones son datos específicos y verificables, no generalizaciones."
+                        "heading": "Pictogramas de Peligro",
+                        "body": "Son símbolos gráficos (un rombo con borde rojo y fondo blanco) que transmiten información específica sobre el peligro físico o para la salud de una sustancia.\n\nYa no se usan los rombos de colores (NFPA 704) para etiquetado en áreas de trabajo; el SGA es el estándar obligatorio."
                     }
                 },
                 {
-                    "id": "em-s006",
-                    "order": 8,
-                    "type": "icon_grid",
+                    "id": "n18-s006",
+                    "order": 6,
+                    "type": "content",
                     "data": {
-                        "heading": "Competencias del Supervisor Intercultural",
-                        "items": [
-                            {
-                                "label": "Autoconciencia cultural",
-                                "icon": "Eye",
-                                "description": "Reconocer tus propios valores y sesgos culturales antes de juzgar a otros"
-                            },
-                            {
-                                "label": "Curiosidad genuina",
-                                "icon": "Search",
-                                "description": "Interesarte en la cultura del colaborador sin estereotipar: pregunta, no asumas"
-                            },
-                            {
-                                "label": "Comunicación adaptada",
-                                "icon": "MessageCircle",
-                                "description": "Ajustar tu forma de comunicarte según el perfil cultural de tu interlocutor"
-                            },
-                            {
-                                "label": "Gestión de conflictos culturales",
-                                "icon": "Shield",
-                                "description": "Mediar diferencias reconociendo su origen cultural, no personal"
-                            }
+                        "heading": "Tipos de Peligros según el SGA",
+                        "body": "El sistema divide los peligros en dos grandes grupos:",
+                        "bullets": [
+                            "Peligros Físicos: Explosivos, inflamables, comburentes, gases a presión, corrosivos para metales.",
+                            "Peligros para la Salud: Toxicidad aguda, corrosión cutánea, irritación, sensibilización, carcinogenicidad.",
+                            "Peligros para el Medio Ambiente: Toxicidad acuática (aunque no es el foco principal de STPS, sí de SEMARNAT)."
                         ]
                     }
                 },
                 {
-                    "id": "em-s007",
-                    "order": 9,
+                    "id": "n18-s007",
+                    "order": 7,
+                    "type": "definition",
+                    "data": {
+                        "heading": "Hoja de Datos de Seguridad (HDS)",
+                        "body": "Es el documento más completo sobre una sustancia química. Contiene información detallada sobre sus propiedades, peligros, manejo seguro y respuesta a emergencias.\n\nConsta obligatoriamente de 16 secciones y debe estar SIEMPRE accesible en el área de trabajo donde se usa la sustancia."
+                    }
+                },
+                {
+                    "id": "n18-s008",
+                    "order": 8,
                     "type": "comparison",
                     "data": {
-                        "heading": "Adaptación del Liderazgo según el Perfil Cultural",
+                        "heading": "Etiqueta vs. Hoja de Datos de Seguridad (HDS)",
                         "left": {
-                            "title": "Culturas de alta distancia al poder (más jerárquicas)",
+                            "title": "🏷️ Etiqueta (En el envase)",
                             "items": [
-                                "El colaborador espera instrucciones claras y directas del supervisor",
-                                "Raramente cuestionarán una decisión en público",
-                                "Necesitan sentir que el líder es competente y firme",
-                                "Prefieren saber exactamente qué se espera de ellos",
-                                "Estrategia: sé claro en expectativas, reconoce en privado, explica el 'por qué' de las decisiones"
+                                "Información rápida y visual.",
+                                "Pegada directamente en el recipiente.",
+                                "Contiene: Pictogramas, palabra de advertencia (Peligro/Atención).",
+                                "Indicaciones de peligro y consejos de prudencia cortos."
                             ]
                         },
                         "right": {
-                            "title": "Culturas de baja distancia al poder (más horizontales)",
+                            "title": "📄 HDS (En la carpeta/sistema)",
                             "items": [
-                                "Esperan ser consultados en las decisiones que los afectan",
-                                "Cuestionarán al supervisor si no están de acuerdo",
-                                "Valoran la autonomía y el trabajo en equipo real",
-                                "Se desmotivan si se les trata como ejecutores sin criterio",
-                                "Estrategia: involúcralos en la solución, explica el razonamiento, escucha sus ideas"
+                                "Información extensa y técnica.",
+                                "Debe tener exactamente 16 secciones.",
+                                "Incluye primeros auxilios detallados y medidas contra incendios.",
+                                "Incluye propiedades físicas y químicas completas."
                             ]
                         }
                     }
                 },
                 {
-                    "id": "em-d003",
-                    "order": 10,
-                    "type": "group_dynamic",
+                    "id": "n18-s009",
+                    "order": 9,
+                    "type": "definition",
                     "data": {
-                        "heading": "🎭 Dinámica — El Caso del Nuevo Colaborador",
-                        "type": "analisis_de_caso_grupal",
-                        "duration": "10 minutos",
-                        "instructions": "El facilitador divide al grupo en 2 equipos y presenta el siguiente caso. Cada equipo analiza el caso desde su perspectiva asignada y propone cómo debe actuar el supervisor.\n\nCASO: 'Miguel llegó hace 3 semanas de otra ciudad. Es muy callado en las reuniones, nunca pregunta aunque se note confundido, y asiente a todo lo que el supervisor dice aunque luego no lo ejecute correctamente. Sus compañeros empiezan a comentar que 'no entiende nada' y que 'no le importa aprender'.'\n\nEQUIPO A: Analicen el caso desde la perspectiva cultural. ¿Por qué Miguel puede estar actuando así? ¿Es flojera o hay algo más?\n\nEQUIPO B: Propongan 3 acciones concretas que el supervisor puede hacer esta semana para integrar mejor a Miguel.",
-                        "scenario": null,
-                        "debrief": "Plenaria: El Equipo A comparte su análisis cultural. El Equipo B presenta sus acciones. El facilitador conecta: ¿Cómo cambia nuestra interpretación del comportamiento de Miguel cuando lo vemos desde una perspectiva cultural? ¿Qué sesgos estaban activados en los compañeros? ¿Y posiblemente en el supervisor?"
+                        "heading": "Trasvase y Envases Secundarios",
+                        "body": "Si pasas un químico de su tambo original a un envase más pequeño (como un atomizador o bidón), ese nuevo envase DEBE estar etiquetado.\n\nNunca se debe confiar en la memoria o el color del líquido. Un envase sin etiqueta es un riesgo inminente de accidente o intoxicación."
                     }
                 },
                 {
-                    "id": "em-s008",
+                    "id": "n18-s010",
+                    "order": 10,
+                    "type": "comparison",
+                    "data": {
+                        "heading": "Prácticas Peligrosas vs. Prácticas Seguras",
+                        "left": {
+                            "title": "❌ Prácticas Peligrosas",
+                            "items": [
+                                "Usar botellas de refresco o agua para guardar químicos.",
+                                "Dejar recipientes destapados o sin etiqueta.",
+                                "Guardar químicos incompatibles juntos.",
+                                "Limpiar derrames sin leer la HDS antes."
+                            ]
+                        },
+                        "right": {
+                            "title": "✅ Prácticas Seguras",
+                            "items": [
+                                "Todo recipiente secundario lleva su etiqueta SGA.",
+                                "Leer la etiqueta antes de manipular la sustancia.",
+                                "Usar el EPP (guantes, lentes) que indica la HDS.",
+                                "Revisar la sección de primeros auxilios de la HDS ante un contacto accidental."
+                            ]
+                        }
+                    }
+                },
+                {
+                    "id": "n18-s011",
                     "order": 11,
                     "type": "content",
                     "data": {
-                        "heading": "Estrategias Prácticas para Supervisores de Equipos Multiculturales",
-                        "body": "Acciones concretas para liderar mejor la diversidad en tu área:",
+                        "heading": "Obligaciones del Patrón",
+                        "body": "Según la NOM-018, la empresa debe garantizar:",
                         "bullets": [
-                            "Conoce a tu equipo individualmente: no trates a todos los de una cultura igual",
-                            "Verifica la comprensión: pide que repitan la instrucción con sus palabras, no solo que digan 'sí'",
-                            "Celebra los aportes culturales: diferentes formas de resolver problemas enriquecen al equipo",
-                            "Genera normas de convivencia compartidas: construidas con el equipo, no impuestas",
-                            "Intervén rápido ante actitudes discriminatorias o burlas culturales en piso",
-                            "Sé el modelo: demuestra respeto y curiosidad, tu equipo replicará tu actitud"
+                            "Contar con el sistema armonizado (SGA) implementado en planta.",
+                            "Tener las Hojas de Datos de Seguridad (HDS) de todas las sustancias actualizadas.",
+                            "Poner las HDS a disposición permanente de los trabajadores.",
+                            "Asegurar que todo recipiente (original o trasvase) esté correctamente etiquetado.",
+                            "Capacitar y adiestrar a los trabajadores sobre la interpretación del sistema SGA."
                         ]
                     }
                 },
                 {
-                    "id": "em-d004",
+                    "id": "n18-s012",
                     "order": 12,
-                    "type": "group_dynamic",
-                    "data": {
-                        "heading": "🤝 Dinámica de Cierre — Nuestras Normas de Equipo",
-                        "type": "construccion_colectiva",
-                        "duration": "8 minutos",
-                        "instructions": "El grupo completo construye en conjunto una lista de 5 NORMAS DE CONVIVENCIA MULTICULTURAL que debería tener cualquier área de trabajo en la planta.\n\nEl facilitador escribe en el pizarrón. Cada participante propone una norma y el grupo la refina o aprueba. Solo se agregan normas que el grupo acepta por mayoría.\n\nEjemplos para inspirar (no dar de entrada): 'Antes de juzgar un comportamiento, preguntamos', 'Verificamos que el mensaje fue entendido', 'Las burlas culturales no tienen lugar en esta área'.",
-                        "scenario": null,
-                        "debrief": "Al tener las 5 normas: ¿Qué tan difícil sería implementar estas normas en su equipo real? ¿Cuál sería la mayor resistencia? ¿Qué pasaría si fueran los propios colaboradores quienes construyeran estas normas contigo? Reflexión final: el supervisor que lidera con respeto cultural no solo mejora el clima, construye equipos que nadie quiere abandonar."
-                    }
-                },
-                {
-                    "id": "em-s009",
-                    "order": 13,
                     "type": "content",
                     "data": {
-                        "heading": "Construyendo un Equipo Cohesionado con Diversidad",
-                        "body": "La cohesión no significa que todos sean iguales. Significa que todos trabajan hacia el mismo objetivo con respeto mutuo:",
+                        "heading": "Obligaciones del Trabajador",
+                        "body": "Para que el sistema funcione, los trabajadores deben:",
                         "bullets": [
-                            "Identidad compartida: construye un sentido de equipo más allá de la cultura ('Somos el turno A, somos el área de ensamble')",
-                            "Rituales de equipo: reuniones de arranque, celebraciones de logros, momentos de reconocimiento incluyentes",
-                            "Comunicación visual: tableros, instrucciones con imágenes para superar barreras de idioma",
-                            "Sistema de compañero (buddy): pairing entre colaboradores para integración natural",
-                            "Medición de clima: encuesta de satisfacción multicultural para detectar áreas de mejora"
+                            "Participar en la capacitación proporcionada por la empresa.",
+                            "Conocer y aplicar la información de las etiquetas y las HDS.",
+                            "Informar al patrón si falta alguna etiqueta o está ilegible.",
+                            "Nunca retirar, rayar o dañar las etiquetas de los envases.",
+                            "Informar sobre la falta de Hojas de Datos de Seguridad en su área."
                         ]
                     }
                 },
                 {
-                    "id": "em-s010",
+                    "id": "n18-s013",
+                    "order": 13,
+                    "type": "comparison",
+                    "data": {
+                        "heading": "Impacto del Cumplimiento de la NOM-018",
+                        "left": {
+                            "title": "❌ Sin SGA o Etiquetas",
+                            "items": [
+                                "Riesgo extremo de intoxicación por confusión de líquidos.",
+                                "Uso incorrecto de EPP por desconocimiento del peligro.",
+                                "Errores fatales en la atención de derrames o emergencias médicas.",
+                                "Multas severas por parte de Protección Civil y STPS."
+                            ]
+                        },
+                        "right": {
+                            "title": "✅ Con SGA implementado",
+                            "items": [
+                                "Comunicación visual rápida, sin importar el idioma.",
+                                "Respuesta inmediata y correcta ante emergencias o salpicaduras.",
+                                "Almacenamiento seguro evitando reacciones químicas indeseadas.",
+                                "Cultura de prevención basada en el conocimiento real del riesgo."
+                            ]
+                        }
+                    }
+                },
+                {
+                    "id": "n18-s014",
                     "order": 14,
                     "type": "benefits",
                     "data": {
-                        "heading": "Beneficios de Gestionar Bien la Diversidad Cultural",
+                        "heading": "Puntos Clave para Recordar",
                         "items": [
-                            "Mayor creatividad en la resolución de problemas: perspectivas distintas generan mejores soluciones",
-                            "Menor rotación: los colaboradores se quedan donde se sienten respetados e incluidos",
-                            "Mejor desempeño del equipo: la confianza entre culturas elimina fricciones invisibles",
-                            "Cumplimiento de indicadores de satisfacción multicultural",
-                            "Reputación del supervisor como líder inclusivo y de alto impacto",
-                            "Ambiente de trabajo más sano, que se refleja en productividad y calidad"
+                            "La NOM-018 usa el SGA: Pictogramas de rombo con borde rojo.",
+                            "HDS = Hoja de Datos de Seguridad (siempre de 16 secciones).",
+                            "Todo envase, incluso trasvases a botellas pequeñas, debe estar etiquetado.",
+                            "Lee la etiqueta SIEMPRE antes de manipular una sustancia química.",
+                            "La empresa provee la información; tú tienes la obligación de leerla y usar el EPP."
                         ]
                     }
                 }
