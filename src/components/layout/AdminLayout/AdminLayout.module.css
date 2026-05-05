@@ -1,16 +1,19 @@
 /* =============================================================
-   AdminLayout — design.md (Vercel/Geist achromatic)
-   - Header sticky 56px, fondo blanco, hairline inferior
-   - Logout overlay limpio sin gradientes
+   AdminLayout — Unified Top Navbar
+   Single top bar with brand, nav links, theme, user.
+   No sidebar. Mobile: compact navbar + bottom tabs.
    ============================================================= */
 
 .root {
     display: flex;
+    flex-direction: column;
     min-height: 100dvh;
     background: var(--ds-bg-subtle);
 }
 
-/* ── Logout overlay ──────────────────────────────────────── */
+/* ══════════════════════════════════════════════════
+   LOGOUT OVERLAY (preserved)
+   ══════════════════════════════════════════════════ */
 .logoutOverlay {
     position: fixed;
     inset: 0;
@@ -94,16 +97,9 @@
     border-radius: var(--radius-pill);
 }
 
-/* ── Main area ───────────────────────────────────────────── */
-.main {
-    flex: 1;
-    min-width: 0;
-    display: flex;
-    flex-direction: column;
-    min-height: 100dvh;
-}
-
-/* ── Loading ──────────────────────────────────────────────── */
+/* ══════════════════════════════════════════════════
+   LOADING
+   ══════════════════════════════════════════════════ */
 .loadingPage {
     display: flex;
     align-items: center;
@@ -123,39 +119,126 @@
 
 @keyframes spin { to { transform: rotate(360deg); } }
 
-/* ── Header ───────────────────────────────────────────────── */
-.header {
-    height: 56px;
-    background: var(--ds-bg);
-    border-bottom: 1px solid var(--ds-border-hairline);
+/* ══════════════════════════════════════════════════
+   UNIFIED NAVBAR
+   ══════════════════════════════════════════════════ */
+.navbar {
     display: flex;
     align-items: center;
     justify-content: space-between;
+    height: 56px;
     padding: 0 var(--s-16);
-    gap: var(--s-12);
+    background: var(--ds-bg);
+    border-bottom: 1px solid var(--ds-border-hairline);
     position: sticky;
     top: 0;
-    z-index: 50;
+    z-index: 100;
+    flex-shrink: 0;
+    gap: var(--s-8);
+}
+
+/* ── Left: brand ──────────────────────────────────── */
+.navLeft {
+    display: flex;
+    align-items: center;
     flex-shrink: 0;
 }
 
-.headerLeft {
+.brand {
     display: flex;
     align-items: center;
-    gap: var(--s-8);
-    min-width: 0;
+    gap: var(--s-10);
+    text-decoration: none;
+    padding: var(--s-6) var(--s-8);
+    border-radius: var(--radius-md);
+    transition: background var(--transition-fast);
+}
+.brand:hover {
+    background: var(--ds-bg-subtle);
+}
+
+.brandDot {
+    width: 8px;
+    height: 8px;
+    min-width: 8px;
+    border-radius: 50%;
+    background: var(--ds-text);
+    flex-shrink: 0;
+}
+
+.brandName {
+    font-size: var(--text-ui);
+    font-weight: var(--weight-announce);
+    letter-spacing: -0.01em;
+    color: var(--ds-text);
+    font-family: var(--font-display), var(--font-body), sans-serif;
+    white-space: nowrap;
+}
+
+/* ── Center: nav links ────────────────────────────── */
+.navLinks {
+    display: flex;
+    align-items: center;
+    gap: 2px;
     flex: 1;
+    justify-content: center;
 }
 
-.headerRight {
+.navLink {
     display: flex;
     align-items: center;
-    gap: var(--s-8);
+    gap: var(--s-6);
+    padding: var(--s-6) var(--s-12);
+    border-radius: var(--radius-md);
+    font-size: var(--text-ui);
+    font-weight: var(--weight-ui);
+    font-family: var(--font-body), system-ui, sans-serif;
+    color: var(--ds-text-secondary);
+    text-decoration: none;
+    white-space: nowrap;
+    transition: background var(--transition-fast), color var(--transition-fast);
+    position: relative;
+}
+
+.navLink:hover {
+    background: var(--ds-bg-subtle);
+    color: var(--ds-text);
+}
+
+.navLinkActive {
+    color: var(--ds-text);
+    font-weight: var(--weight-announce);
+    background: var(--ds-bg-subtle);
+}
+
+.navLinkActive::after {
+    content: '';
+    position: absolute;
+    bottom: -10px;
+    left: var(--s-12);
+    right: var(--s-12);
+    height: 2px;
+    background: var(--accent-orange, var(--ds-text));
+    border-radius: 2px 2px 0 0;
+}
+
+.navLinkIcon {
+    flex-shrink: 0;
+    opacity: 0.7;
+}
+.navLinkActive .navLinkIcon {
+    opacity: 1;
+}
+
+/* ── Right: actions + user ────────────────────────── */
+.navRight {
+    display: flex;
+    align-items: center;
+    gap: var(--s-6);
     flex-shrink: 0;
 }
 
-/* ── Header buttons ──────────────────────────────────────── */
-.headerLogoutBtn,
+/* ── Icon button ──────────────────────────────────── */
 .iconBtn {
     display: flex;
     align-items: center;
@@ -165,76 +248,30 @@
     border: none;
     border-radius: var(--radius-md);
     background: transparent;
+    color: var(--ds-text-muted);
     cursor: pointer;
     flex-shrink: 0;
     transition: background var(--transition-fast), color var(--transition-fast);
 }
-
-.iconBtn { color: var(--ds-text-secondary); }
 .iconBtn:hover {
-    background: var(--ds-bg-subtle);
-    color: var(--accent-crimson);
-}
-
-.headerLogoutBtn { color: var(--ds-text-muted); }
-.headerLogoutBtn:hover {
     background: rgba(255, 91, 79, 0.08);
     color: var(--accent-crimson);
 }
-.headerLogoutBtn:disabled { opacity: 0.4; cursor: not-allowed; }
-.headerLogoutBtn:focus-visible,
+.iconBtn:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
 .iconBtn:focus-visible {
     outline: 2px solid var(--ds-focus);
     outline-offset: 2px;
 }
 
-.headerDivider {
-    width: 1px;
-    height: 20px;
-    background: var(--ds-border-hairline);
-    flex-shrink: 0;
-}
-
-/* ── Breadcrumb ──────────────────────────────────────────── */
-.breadcrumb {
-    display: flex;
-    align-items: center;
-    gap: var(--s-6);
-    min-width: 0;
-}
-
-.breadcrumbHome {
-    display: flex;
-    align-items: center;
-    color: var(--ds-text-secondary);
-    text-decoration: none;
-    transition: color var(--transition-fast);
-    flex-shrink: 0;
-}
-.breadcrumbHome:hover { color: var(--accent-crimson); }
-
-.breadcrumbSep {
-    color: var(--ds-text-muted);
-    font-size: var(--text-ui);
-    flex-shrink: 0;
-}
-
-.breadcrumbCurrent {
-    font-size: var(--text-ui);
-    font-weight: var(--weight-ui);
-    color: var(--ds-text);
-    font-family: var(--font-body), system-ui, sans-serif;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-
-/* ── User chip ───────────────────────────────────────────── */
+/* ── User chip ────────────────────────────────────── */
 .userChip {
     display: flex;
     align-items: center;
     gap: var(--s-8);
-    padding: 4px var(--s-10) 4px 4px;
+    padding: 3px var(--s-10) 3px 3px;
     border-radius: var(--radius-pill);
     background: var(--ds-bg);
     box-shadow: var(--ring-border);
@@ -242,15 +279,14 @@
     transition: background var(--transition-fast), box-shadow var(--transition-fast);
     cursor: pointer;
 }
-
 .userChip:hover {
     background: var(--ds-bg-subtle);
     box-shadow: var(--ring-border), var(--elev-subtle);
 }
 
 .chipAvatar {
-    width: 24px;
-    height: 24px;
+    width: 28px;
+    height: 28px;
     border-radius: 50%;
     overflow: hidden;
     background: var(--ds-bg-subtle);
@@ -272,24 +308,97 @@
     white-space: nowrap;
 }
 
-/* Responsive */
-.desktopOnly { display: flex; }
-.mobileOnly  { display: none; }
-
-@media (max-width: 767px) {
-    .desktopOnly { display: none; }
-    .mobileOnly  { display: flex; }
-    .chipName    { display: none; }
-}
-
-/* ── Page content ─────────────────────────────────────────── */
+/* ══════════════════════════════════════════════════
+   PAGE CONTENT
+   ══════════════════════════════════════════════════ */
 .content {
     flex: 1;
     padding: clamp(var(--s-16), 3vw, var(--s-24));
     padding-bottom: var(--s-48);
 }
 
+/* ══════════════════════════════════════════════════
+   BOTTOM TABS (mobile only)
+   ══════════════════════════════════════════════════ */
+.bottomTabs {
+    display: none;
+}
+
+/* ══════════════════════════════════════════════════
+   RESPONSIVE
+   ══════════════════════════════════════════════════ */
+@media (max-width: 767px) {
+    .navbar {
+        height: 52px;
+        padding: 0 var(--s-12);
+    }
+
+    /* Hide nav links in navbar on mobile */
+    .navLinks { display: none; }
+
+    /* Hide username on mobile */
+    .chipName { display: none; }
+
+    .chipAvatar {
+        width: 26px;
+        height: 26px;
+    }
+
+    /* Show bottom tabs */
+    .bottomTabs {
+        display: flex;
+        align-items: center;
+        justify-content: space-around;
+        height: 56px;
+        background: var(--ds-bg);
+        border-top: 1px solid var(--ds-border-hairline);
+        position: sticky;
+        bottom: 0;
+        z-index: 100;
+        padding: 0 var(--s-8);
+        padding-bottom: env(safe-area-inset-bottom, 0);
+    }
+
+    .bottomTab {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 3px;
+        flex: 1;
+        height: 100%;
+        padding: var(--s-6) 0;
+        color: var(--ds-text-muted);
+        font-size: 0.6875rem;
+        font-weight: var(--weight-ui);
+        font-family: var(--font-body), system-ui, sans-serif;
+        text-decoration: none;
+        transition: color var(--transition-fast);
+        position: relative;
+    }
+    .bottomTab:hover,
+    .bottomTabActive {
+        color: var(--ds-text);
+    }
+    .bottomTabActive::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 20%;
+        right: 20%;
+        height: 2px;
+        background: var(--accent-orange, var(--ds-text));
+        border-radius: 0 0 2px 2px;
+    }
+
+    /* More bottom padding on mobile for bottom tabs */
+    .content {
+        padding-bottom: var(--s-16);
+    }
+}
+
 @media print {
-    .header { display: none !important; }
+    .navbar,
+    .bottomTabs { display: none !important; }
     .root { display: block; }
 }
