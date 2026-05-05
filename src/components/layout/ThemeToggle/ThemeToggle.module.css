@@ -1,45 +1,35 @@
 .toggle {
-    width: 38px;
-    height: 38px;
+    width: 32px;
+    height: 32px;
     position: relative;
     display: flex;
     align-items: center;
     justify-content: center;
 
-    background: color-mix(in srgb, var(--accent-orange) 8%, transparent);
-    border: 1px solid color-mix(in srgb, var(--accent-orange) 22%, transparent);
-    border-radius: var(--radius-full);
+    background: transparent;
+    border: none;
+    border-radius: 50%;
     color: var(--accent-orange);
     cursor: pointer;
     padding: 0;
     margin: 0;
     overflow: hidden;
 
-    /* Ambient top line */
-    box-shadow:
-        inset 0 1px 0 color-mix(in srgb, var(--accent-orange) 20%, transparent);
-
     transition:
         background var(--transition-fast),
-        border-color var(--transition-fast),
-        box-shadow var(--transition-fast);
+        color var(--transition-fast);
 }
 
 .togglePlaceholder {
-    width: 38px;
-    height: 38px;
-    border-radius: var(--radius-full);
-    background: color-mix(in srgb, var(--accent-orange) 8%, transparent);
-    border: 1px solid color-mix(in srgb, var(--accent-orange) 14%, transparent);
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: transparent;
     opacity: 0.5;
 }
 
 .toggle:hover {
-    background: color-mix(in srgb, var(--accent-orange) 15%, transparent);
-    border-color: color-mix(in srgb, var(--accent-orange) 45%, transparent);
-    box-shadow:
-        inset 0 1px 0 color-mix(in srgb, var(--accent-orange) 30%, transparent),
-        0 4px 14px color-mix(in srgb, var(--accent-orange) 20%, transparent);
+    background: color-mix(in srgb, var(--accent-orange) 12%, transparent);
 }
 
 .toggle:focus-visible {

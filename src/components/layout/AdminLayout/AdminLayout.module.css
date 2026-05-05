@@ -230,11 +230,23 @@
     opacity: 1;
 }
 
-/* ── Right: actions + user ────────────────────────── */
-.navRight {
+/* ── Actions bar (unified pill) ───────────────────── */
+.actionsBar {
     display: flex;
     align-items: center;
-    gap: var(--s-6);
+    gap: 0;
+    flex-shrink: 0;
+    background: var(--ds-bg);
+    border: 1px solid var(--ds-border-hairline);
+    border-radius: var(--radius-pill);
+    padding: 3px;
+    box-shadow: 0 1px 3px rgba(var(--ds-text-rgb, 0 0 0), 0.04);
+}
+
+.actionsDivider {
+    width: 1px;
+    height: 20px;
+    background: var(--ds-border-hairline);
     flex-shrink: 0;
 }
 
@@ -246,7 +258,7 @@
     width: 32px;
     height: 32px;
     border: none;
-    border-radius: var(--radius-md);
+    border-radius: 50%;
     background: transparent;
     color: var(--ds-text-muted);
     cursor: pointer;
@@ -266,22 +278,21 @@
     outline-offset: 2px;
 }
 
-/* ── User chip ────────────────────────────────────── */
+/* ── User chip (inside actions bar) ───────────────── */
 .userChip {
     display: flex;
     align-items: center;
-    gap: var(--s-8);
-    padding: 3px var(--s-10) 3px 3px;
+    gap: var(--s-6);
+    padding: 2px;
+    padding-right: var(--s-10);
     border-radius: var(--radius-pill);
-    background: var(--ds-bg);
-    box-shadow: var(--ring-border);
+    background: transparent;
     text-decoration: none;
-    transition: background var(--transition-fast), box-shadow var(--transition-fast);
+    transition: background var(--transition-fast);
     cursor: pointer;
 }
 .userChip:hover {
     background: var(--ds-bg-subtle);
-    box-shadow: var(--ring-border), var(--elev-subtle);
 }
 
 .chipAvatar {
