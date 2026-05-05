@@ -337,6 +337,33 @@
   --text-lg: 1rem;
   --text-xl: 1.25rem;
   --text-2xl: 1.5rem;
+
+  /* ─── Semantic aliases for profile redesign ─────────────────── */
+  --color-background-primary: var(--ds-bg-pure);
+  --color-background-secondary: var(--ds-bg);
+  --color-background-tertiary: var(--ds-bg-subtle);
+  --color-background-info: rgba(var(--status-info-rgb), 0.09);
+  --color-background-success: rgba(var(--status-good-rgb), 0.09);
+  --color-background-warning: rgba(var(--status-warn-rgb), 0.09);
+  --color-background-danger: rgba(var(--status-bad-rgb), 0.09);
+
+  --color-text-primary: var(--ds-text);
+  --color-text-secondary: var(--ds-text-secondary);
+  --color-text-tertiary: var(--ds-text-tertiary);
+  --color-text-info: rgb(var(--status-info-rgb));
+  --color-text-success: rgb(var(--status-good-rgb));
+  --color-text-warning: rgb(var(--status-warn-rgb));
+  --color-text-danger: rgb(var(--status-bad-rgb));
+
+  --color-border-tertiary: var(--ds-border-hairline);
+  --color-border-secondary: var(--ds-border-medium);
+  --color-border-primary: var(--ds-border-strong);
+
+  --border-radius-md: var(--radius-md);
+  --border-radius-lg: var(--radius-lg);
+  --border-radius-xl: var(--radius-xl);
+
+  --font-sans: var(--font-body);
 }
 
 /* Borders en oklab para perceptual uniformity (Chrome 111+, Safari 16.4+, Firefox 113+).

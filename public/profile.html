@@ -1,0 +1,1272 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VIÑOPLASTIC — Perfil</title>
+<style>
+/* ================================================================
+   CSS Variables — Light & Dark mode
+   ================================================================ */
+:root {
+  --font-sans: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-mono: ui-monospace, "Cascadia Code", "Roboto Mono", Menlo, Consolas, monospace;
+
+  --color-background-primary: #ffffff;
+  --color-background-secondary: #f6f6f4;
+  --color-background-tertiary: #ebeae5;
+  --color-background-info: #e8f1fd;
+  --color-background-success: #e6f6ef;
+  --color-background-warning: #fef6e6;
+  --color-background-danger: #fde8ee;
+
+  --color-text-primary: #1c1c1a;
+  --color-text-secondary: rgba(28, 28, 26, 0.58);
+  --color-text-tertiary: rgba(28, 28, 26, 0.42);
+  --color-text-info: #2563eb;
+  --color-text-success: #177a50;
+  --color-text-warning: #a16b12;
+  --color-text-danger: #c0294e;
+
+  --color-border-tertiary: rgba(28, 28, 26, 0.10);
+  --color-border-secondary: rgba(28, 28, 26, 0.20);
+  --color-border-primary: rgba(28, 28, 26, 0.42);
+
+  --border-radius-md: 6px;
+  --border-radius-lg: 10px;
+  --border-radius-xl: 14px;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-background-primary: #161618;
+    --color-background-secondary: #1e1e21;
+    --color-background-tertiary: #27272b;
+    --color-background-info: #172033;
+    --color-background-success: #12261c;
+    --color-background-warning: #28200e;
+    --color-background-danger: #2a1219;
+
+    --color-text-primary: #e8e8e6;
+    --color-text-secondary: rgba(232, 232, 230, 0.60);
+    --color-text-tertiary: rgba(232, 232, 230, 0.42);
+    --color-text-info: #6ea8fe;
+    --color-text-success: #5ec79a;
+    --color-text-warning: #e0b44c;
+    --color-text-danger: #f27a94;
+
+    --color-border-tertiary: rgba(232, 232, 230, 0.08);
+    --color-border-secondary: rgba(232, 232, 230, 0.14);
+    --color-border-primary: rgba(232, 232, 230, 0.32);
+
+    --border-radius-md: 6px;
+    --border-radius-lg: 10px;
+    --border-radius-xl: 14px;
+  }
+}
+
+/* ================================================================
+   Reset & Base
+   ================================================================ */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: var(--font-sans);
+  font-size: 13px;
+  font-weight: 400;
+  color: var(--color-text-primary);
+  background: var(--color-background-secondary);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ================================================================
+   Page Layout
+   ================================================================ */
+.page-wrapper {
+  display: grid;
+  grid-template-columns: 220px 1fr;
+  gap: 2rem;
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 2rem 1.5rem;
+  align-items: start;
+}
+
+/* ================================================================
+   Section 1: Sidebar — User Profile
+   ================================================================ */
+.sidebar {
+  min-width: 0;
+}
+
+.profile-card {
+  background: var(--color-background-primary);
+  border: 0.5px solid var(--color-border-tertiary);
+  border-radius: var(--border-radius-lg);
+  padding: 1.25rem;
+}
+
+.profile-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding-bottom: 1rem;
+}
+
+.profile-avatar {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  background: var(--color-background-info);
+  color: var(--color-text-info);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 15px;
+  font-weight: 500;
+  flex-shrink: 0;
+  font-family: var(--font-sans);
+}
+
+.profile-name {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--color-text-primary);
+  line-height: 1.3;
+}
+
+.profile-position {
+  font-size: 11px;
+  color: var(--color-text-secondary);
+  margin-top: 1px;
+}
+
+.profile-divider {
+  border: none;
+  border-top: 0.5px solid var(--color-border-tertiary);
+  margin: 0;
+}
+
+.profile-rows {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding-top: 1rem;
+}
+
+.profile-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.profile-row-label {
+  font-size: 11px;
+  color: var(--color-text-tertiary);
+  font-weight: 400;
+}
+
+.profile-row-value {
+  font-size: 12px;
+  color: var(--color-text-primary);
+  font-weight: 400;
+}
+
+/* ================================================================
+   Pills / Badges
+   ================================================================ */
+.pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 11px;
+  font-weight: 500;
+  padding: 3px 10px;
+  border-radius: 20px;
+  font-family: var(--font-sans);
+  white-space: nowrap;
+}
+
+.pill-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: currentColor;
+  flex-shrink: 0;
+}
+
+.pill-info {
+  background: var(--color-background-info);
+  color: var(--color-text-info);
+}
+
+.pill-success {
+  background: var(--color-background-success);
+  color: var(--color-text-success);
+}
+
+.pill-danger {
+  background: var(--color-background-danger);
+  color: var(--color-text-danger);
+}
+
+.pill-warning {
+  background: var(--color-background-warning);
+  color: var(--color-text-warning);
+}
+
+/* ================================================================
+   Section 2: Mural de Reconocimiento
+   ================================================================ */
+.main-content {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  min-width: 0;
+}
+
+.card {
+  background: var(--color-background-primary);
+  border: 0.5px solid var(--color-border-tertiary);
+  border-radius: var(--border-radius-lg);
+  padding: 1.25rem;
+}
+
+.section-label {
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--color-text-tertiary);
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  margin-bottom: 12px;
+}
+
+/* Sub-block A: Configurable messages */
+.messages-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.msg-block {
+  padding: 1rem;
+  border-radius: var(--border-radius-md);
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.msg-block-success {
+  background: var(--color-background-success);
+  border: 0.5px solid var(--color-border-tertiary);
+}
+
+.msg-block-fail {
+  background: var(--color-background-secondary);
+  border: 0.5px solid var(--color-border-tertiary);
+}
+
+.msg-label {
+  font-size: 11px;
+  font-weight: 500;
+}
+
+.msg-label-success {
+  color: var(--color-text-success);
+}
+
+.msg-label-fail {
+  color: var(--color-text-secondary);
+}
+
+.msg-textarea {
+  border: none;
+  background: transparent;
+  color: inherit;
+  font-family: var(--font-sans);
+  font-size: 12px;
+  line-height: 1.5;
+  resize: vertical;
+  min-height: 60px;
+  outline: none;
+  width: 100%;
+}
+
+.msg-block-success .msg-textarea {
+  color: var(--color-text-success);
+}
+
+.msg-block-fail .msg-textarea {
+  color: var(--color-text-secondary);
+}
+
+/* Sub-block B: Compliance */
+.sub-divider {
+  border: none;
+  border-top: 0.5px solid var(--color-border-tertiary);
+  margin: 16px 0;
+}
+
+.compliance-rows {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.compliance-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.compliance-label {
+  font-size: 11px;
+  color: var(--color-text-tertiary);
+}
+
+.compliance-value {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--color-text-primary);
+}
+
+/* Sub-block C: Records table */
+.table-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.table-title {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--color-text-primary);
+}
+
+.table-search {
+  padding: 6px 10px;
+  font-size: 12px;
+  font-family: var(--font-sans);
+  border: 0.5px solid var(--color-border-tertiary);
+  background: var(--color-background-secondary);
+  border-radius: var(--border-radius-md);
+  color: var(--color-text-primary);
+  outline: none;
+  min-width: 180px;
+}
+
+.table-search:focus {
+  border-color: var(--color-border-primary);
+}
+
+.table-scroll {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+}
+
+thead th {
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--color-text-tertiary);
+  text-transform: uppercase;
+  text-align: left;
+  padding: 8px;
+  white-space: nowrap;
+}
+
+tbody td {
+  padding: 8px;
+  vertical-align: middle;
+}
+
+tbody tr:nth-child(odd) {
+  background: var(--color-background-secondary);
+}
+
+tbody tr:nth-child(even) {
+  background: transparent;
+}
+
+tbody tr {
+  transition: background 150ms ease;
+}
+
+tbody tr:hover {
+  background: var(--color-background-secondary);
+}
+
+.cell-id {
+  font-family: var(--font-mono);
+  color: var(--color-text-tertiary);
+}
+
+.cell-name {
+  font-weight: 500;
+  color: var(--color-text-primary);
+}
+
+.cell-secondary {
+  color: var(--color-text-secondary);
+}
+
+/* ================================================================
+   Section 3: System Administration
+   ================================================================ */
+
+/* Maintenance banner */
+.maintenance-banner {
+  background: var(--color-background-warning);
+  border: 0.5px solid var(--color-border-tertiary);
+  border-radius: var(--border-radius-md);
+  padding: 1rem 1.25rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.maintenance-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.maintenance-title {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--color-text-warning);
+}
+
+.maintenance-desc {
+  font-size: 11px;
+  color: var(--color-text-warning);
+}
+
+/* Toggle switch */
+.toggle-wrap {
+  position: relative;
+  display: inline-flex;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.toggle-input {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.toggle-track {
+  width: 46px;
+  height: 24px;
+  border-radius: 12px;
+  background: var(--color-border-tertiary);
+  position: relative;
+  transition: background 200ms ease;
+}
+
+.toggle-input:checked + .toggle-track {
+  background: var(--color-background-success);
+}
+
+.toggle-thumb {
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: var(--color-background-primary);
+  transition: transform 200ms ease;
+}
+
+.toggle-input:checked + .toggle-track .toggle-thumb {
+  transform: translateX(22px);
+}
+
+/* Duration select */
+.duration-row {
+  margin-top: 12px;
+}
+
+.duration-label {
+  font-size: 11px;
+  color: var(--color-text-tertiary);
+  margin-bottom: 4px;
+}
+
+/* Inputs & Forms */
+.field-group {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.field-label {
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--color-text-tertiary);
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+}
+
+.field-input,
+.field-select {
+  padding: 6px 10px;
+  font-size: 12px;
+  font-family: var(--font-sans);
+  border: 0.5px solid var(--color-border-tertiary);
+  background: var(--color-background-secondary);
+  border-radius: var(--border-radius-md);
+  color: var(--color-text-primary);
+  outline: none;
+  width: 100%;
+}
+
+.field-input:focus,
+.field-select:focus {
+  border-color: var(--color-border-primary);
+}
+
+/* Buttons */
+.btn {
+  padding: 7px 14px;
+  font-size: 12px;
+  font-family: var(--font-sans);
+  border: 0.5px solid var(--color-border-secondary);
+  background: transparent;
+  border-radius: var(--border-radius-md);
+  cursor: pointer;
+  color: var(--color-text-primary);
+  transition: background 150ms ease;
+}
+
+.btn:hover {
+  background: var(--color-background-secondary);
+}
+
+.btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+/* Forms grid */
+.forms-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.form-card {
+  border: 0.5px solid var(--color-border-tertiary);
+  border-radius: var(--border-radius-md);
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.form-card-title {
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--color-text-tertiary);
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+}
+
+.form-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+/* Permissions table */
+.perm-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+}
+
+.perm-table thead th {
+  font-size: 11px;
+  color: var(--color-text-tertiary);
+  text-transform: uppercase;
+  padding: 6px 8px;
+  text-align: center;
+  font-weight: 500;
+}
+
+.perm-table thead th:first-child {
+  text-align: left;
+}
+
+.perm-table tbody td {
+  padding: 6px 8px;
+  text-align: center;
+  vertical-align: middle;
+}
+
+.perm-table tbody td:first-child {
+  text-align: left;
+  color: var(--color-text-primary);
+}
+
+.perm-table tbody tr:nth-child(odd) {
+  background: var(--color-background-secondary);
+}
+
+.perm-table input[type="checkbox"] {
+  cursor: pointer;
+  accent-color: var(--color-text-info);
+}
+
+/* Lists grid */
+.lists-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.list-card {
+  border: 0.5px solid var(--color-border-tertiary);
+  border-radius: var(--border-radius-md);
+  padding: 1.25rem;
+}
+
+.list-card-title {
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--color-text-tertiary);
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  margin-bottom: 12px;
+}
+
+/* Row menu trigger */
+.row-menu-cell {
+  text-align: right;
+  position: relative;
+}
+
+.row-menu-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--color-text-tertiary);
+  padding: 2px 6px;
+  border-radius: var(--border-radius-md);
+  font-size: 14px;
+  line-height: 1;
+  letter-spacing: 2px;
+  transition: background 150ms ease;
+}
+
+.row-menu-btn:hover {
+  background: var(--color-background-secondary);
+  color: var(--color-text-primary);
+}
+
+/* Context menu */
+.context-menu {
+  position: absolute;
+  right: 0;
+  top: 100%;
+  z-index: 100;
+  background: var(--color-background-primary);
+  border: 0.5px solid var(--color-border-secondary);
+  border-radius: var(--border-radius-md);
+  min-width: 120px;
+  padding: 4px 0;
+  display: none;
+}
+
+.context-menu.active {
+  display: block;
+}
+
+.context-menu-item {
+  display: block;
+  width: 100%;
+  padding: 6px 12px;
+  font-size: 12px;
+  font-family: var(--font-sans);
+  color: var(--color-text-primary);
+  background: none;
+  border: none;
+  text-align: left;
+  cursor: pointer;
+  transition: background 150ms ease;
+}
+
+.context-menu-item:hover {
+  background: var(--color-background-secondary);
+}
+
+.context-menu-item-danger {
+  color: var(--color-text-danger);
+}
+
+/* Empty state */
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 2rem 1rem;
+}
+
+.empty-state-icon {
+  color: var(--color-text-tertiary);
+}
+
+.empty-state-text {
+  font-size: 12px;
+  color: var(--color-text-tertiary);
+  text-align: center;
+}
+
+/* ================================================================
+   Responsive
+   ================================================================ */
+@media (max-width: 1023px) {
+  .page-wrapper {
+    grid-template-columns: 200px 1fr;
+  }
+}
+
+@media (max-width: 767px) {
+  .page-wrapper {
+    grid-template-columns: 1fr;
+    padding: 1rem;
+    gap: 1.5rem;
+  }
+
+  .messages-grid,
+  .forms-grid,
+  .lists-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .maintenance-banner {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .table-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .table-search {
+    width: 100%;
+    min-width: 0;
+  }
+}
+
+/* ================================================================
+   Accessibility — focus-visible
+   ================================================================ */
+*:focus-visible {
+  outline: 2px solid var(--color-text-info);
+  outline-offset: 2px;
+}
+
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  outline: none;
+  border-color: var(--color-border-primary);
+}
+</style>
+</head>
+<body>
+
+<div class="page-wrapper" role="main">
+
+  <!-- ============================================================
+       SIDEBAR — User Profile
+       ============================================================ -->
+  <aside class="sidebar" aria-label="Perfil de usuario">
+    <div class="profile-card">
+      <div class="profile-header">
+        <div class="profile-avatar" role="img" aria-label="Avatar de Ahmed">A</div>
+        <div>
+          <div class="profile-name">Ahmed Martínez</div>
+          <div class="profile-position">Gerente de RH</div>
+        </div>
+      </div>
+
+      <hr class="profile-divider">
+
+      <div class="profile-rows">
+        <div class="profile-row">
+          <span class="profile-row-label">Departamento</span>
+          <span class="profile-row-value">Recursos Humanos</span>
+        </div>
+        <div class="profile-row">
+          <span class="profile-row-label">Rol</span>
+          <span class="pill pill-info"><span class="pill-dot"></span>super_admin</span>
+        </div>
+        <div class="profile-row">
+          <span class="profile-row-label">Género</span>
+          <span class="profile-row-value">Masculino</span>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ============================================================
+       MAIN CONTENT
+       ============================================================ -->
+  <div class="main-content">
+
+    <!-- ──────────────────────────────────────────────────────────
+         SECTION 2: Gestión del Mural de Reconocimiento
+         ────────────────────────────────────────────────────────── -->
+    <section class="card" aria-label="Gestión del Mural de Reconocimiento">
+      <div class="section-label">Gestión del Mural de Reconocimiento</div>
+
+      <!-- Sub-block A: Messages -->
+      <div class="messages-grid">
+        <div class="msg-block msg-block-success">
+          <label class="msg-label msg-label-success" for="msg-approved">Mensaje para aprobados</label>
+          <textarea
+            id="msg-approved"
+            class="msg-textarea"
+            aria-label="Mensaje para empleados aprobados"
+            rows="3"
+          >¡Felicidades, [Nombre]! Has aprobado tu examen teórico. Estás un paso más cerca de tu promoción.</textarea>
+        </div>
+        <div class="msg-block msg-block-fail">
+          <label class="msg-label msg-label-fail" for="msg-failed">Mensaje para reprobados</label>
+          <textarea
+            id="msg-failed"
+            class="msg-textarea"
+            aria-label="Mensaje para empleados reprobados"
+            rows="3"
+          >El aprendizaje es un proceso constante. Te invitamos a repasar y prepararte para tu siguiente intento. ¡Confiamos en ti!</textarea>
+        </div>
+      </div>
+
+      <!-- Sub-block B: Compliance -->
+      <hr class="sub-divider">
+      <div class="compliance-rows">
+        <div class="compliance-row">
+          <span class="compliance-label">WhatsApp de contacto</span>
+          <span class="compliance-value">4421234567</span>
+        </div>
+        <div class="compliance-row">
+          <span class="compliance-label">Periodo</span>
+          <span class="compliance-value">2o. Período 2026</span>
+        </div>
+        <div class="compliance-row">
+          <span class="compliance-label">Fechas de examen</span>
+          <span class="compliance-value">10 ene — 14 ene 2026</span>
+        </div>
+      </div>
+
+      <!-- Sub-block C: Records table -->
+      <hr class="sub-divider">
+      <div>
+        <div class="table-header">
+          <span class="table-title" id="records-count">Registros públicos (6)</span>
+          <input
+            type="search"
+            class="table-search"
+            placeholder="Buscar por ID, nombre o puesto…"
+            aria-label="Buscar registros del mural"
+            id="mural-search"
+          >
+        </div>
+        <div class="table-scroll">
+          <table aria-label="Registros del mural de reconocimiento" id="mural-table">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Nombre</th>
+                <th>Puesto actual</th>
+                <th>Destino</th>
+                <th>Estado</th>
+              </tr>
+            </thead>
+            <tbody id="mural-tbody">
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ──────────────────────────────────────────────────────────
+         SECTION 3: Administración del Sistema
+         ────────────────────────────────────────────────────────── -->
+    <section class="card" aria-label="Administración del Sistema">
+      <div class="section-label">Administración del Sistema</div>
+
+      <!-- Sub-block A: Maintenance mode -->
+      <div class="maintenance-banner">
+        <div class="maintenance-info">
+          <div class="maintenance-title">Modo mantenimiento</div>
+          <div class="maintenance-desc" id="maintenance-desc">La plataforma está accesible para todos.</div>
+        </div>
+        <label class="toggle-wrap" aria-label="Toggle modo mantenimiento">
+          <input type="checkbox" class="toggle-input" id="maintenance-toggle">
+          <span class="toggle-track">
+            <span class="toggle-thumb"></span>
+          </span>
+        </label>
+      </div>
+
+      <div class="duration-row" id="duration-row">
+        <div class="field-group">
+          <label class="duration-label" for="duration-select">Duración estimada</label>
+          <select class="field-select" id="duration-select" aria-label="Duración estimada de mantenimiento">
+            <option value="1">1 hora</option>
+            <option value="2" selected>2 horas</option>
+            <option value="4">4 horas</option>
+            <option value="8">8 horas</option>
+            <option value="12">12 horas</option>
+            <option value="24">24 horas</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Sub-block B: Side-by-side forms -->
+      <div class="forms-grid" style="margin-top: 16px;">
+        <!-- Left column: Create / edit user -->
+        <div class="form-card">
+          <div class="form-card-title">Crear / editar usuario</div>
+          <div class="field-group">
+            <label class="field-label" for="user-email">Correo electrónico</label>
+            <input class="field-input" type="email" id="user-email" placeholder="usuario@correo.com" aria-label="Correo electrónico">
+          </div>
+          <div class="field-group">
+            <label class="field-label" for="user-name">Nombre completo</label>
+            <input class="field-input" type="text" id="user-name" placeholder="Nombre del usuario" aria-label="Nombre completo">
+          </div>
+          <div class="field-group">
+            <label class="field-label" for="user-role">Rol asignado</label>
+            <select class="field-select" id="user-role" aria-label="Rol asignado">
+              <option value="admin">admin</option>
+              <option value="super_admin">super_admin</option>
+              <option value="instructor">instructor</option>
+            </select>
+          </div>
+          <div class="field-group">
+            <label class="field-label" for="user-avatar-seed">Semilla de avatar</label>
+            <input class="field-input" type="text" id="user-avatar-seed" placeholder="Opcional" aria-label="Semilla de avatar">
+          </div>
+          <div class="field-group">
+            <label class="field-label" for="user-sidebar-anim">Animación sidebar</label>
+            <select class="field-select" id="user-sidebar-anim" aria-label="Animación sidebar">
+              <option value="default">Destellos</option>
+              <option value="lightning">Rayos y estrellas</option>
+              <option value="hearts">Corazones</option>
+              <option value="books">Libros</option>
+              <option value="clouds">Nubes</option>
+            </select>
+          </div>
+          <div class="field-group">
+            <label class="field-label" for="user-password">Contraseña temporal</label>
+            <input class="field-input" type="password" id="user-password" placeholder="Mín. 6 caracteres" autocomplete="new-password" aria-label="Contraseña temporal">
+          </div>
+          <div class="form-actions">
+            <button class="btn" type="button" id="btn-create-user">Crear usuario</button>
+            <button class="btn" type="button" id="btn-clear-user">Limpiar</button>
+          </div>
+        </div>
+
+        <!-- Right column: Create / edit role -->
+        <div class="form-card">
+          <div class="form-card-title">Crear / editar rol</div>
+          <div class="field-group">
+            <label class="field-label" for="role-name">Nombre del rol</label>
+            <input class="field-input" type="text" id="role-name" placeholder="ej. manager, auditor" aria-label="Nombre del rol">
+          </div>
+          <div class="table-scroll">
+            <table class="perm-table" aria-label="Tabla de permisos del rol">
+              <thead>
+                <tr>
+                  <th>Página</th>
+                  <th>Ver</th>
+                  <th>Crear</th>
+                  <th>Editar</th>
+                  <th>Borrar</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Dashboard</td>
+                  <td><input type="checkbox" aria-label="Dashboard ver"></td>
+                  <td><input type="checkbox" aria-label="Dashboard crear"></td>
+                  <td><input type="checkbox" aria-label="Dashboard editar"></td>
+                  <td><input type="checkbox" aria-label="Dashboard borrar"></td>
+                </tr>
+                <tr>
+                  <td>Empleados</td>
+                  <td><input type="checkbox" aria-label="Empleados ver"></td>
+                  <td><input type="checkbox" aria-label="Empleados crear"></td>
+                  <td><input type="checkbox" aria-label="Empleados editar"></td>
+                  <td><input type="checkbox" aria-label="Empleados borrar"></td>
+                </tr>
+                <tr>
+                  <td>Capacitación</td>
+                  <td><input type="checkbox" aria-label="Capacitación ver"></td>
+                  <td><input type="checkbox" aria-label="Capacitación crear"></td>
+                  <td><input type="checkbox" aria-label="Capacitación editar"></td>
+                  <td><input type="checkbox" aria-label="Capacitación borrar"></td>
+                </tr>
+                <tr>
+                  <td>Perfil</td>
+                  <td><input type="checkbox" aria-label="Perfil ver"></td>
+                  <td><input type="checkbox" aria-label="Perfil crear"></td>
+                  <td><input type="checkbox" aria-label="Perfil editar"></td>
+                  <td><input type="checkbox" aria-label="Perfil borrar"></td>
+                </tr>
+                <tr>
+                  <td>Inducción</td>
+                  <td><input type="checkbox" aria-label="Inducción ver"></td>
+                  <td><input type="checkbox" aria-label="Inducción crear"></td>
+                  <td><input type="checkbox" aria-label="Inducción editar"></td>
+                  <td><input type="checkbox" aria-label="Inducción borrar"></td>
+                </tr>
+                <tr>
+                  <td>Mural</td>
+                  <td><input type="checkbox" aria-label="Mural ver"></td>
+                  <td><input type="checkbox" aria-label="Mural crear"></td>
+                  <td><input type="checkbox" aria-label="Mural editar"></td>
+                  <td><input type="checkbox" aria-label="Mural borrar"></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="form-actions">
+            <button class="btn" type="button" id="btn-create-role">Crear rol</button>
+            <button class="btn" type="button" id="btn-clear-role">Limpiar</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Sub-block C: Existing users & roles -->
+      <div class="lists-grid">
+        <!-- Existing users -->
+        <div class="list-card">
+          <div class="list-card-title">Usuarios existentes</div>
+          <div class="table-scroll">
+            <table aria-label="Lista de usuarios existentes">
+              <thead>
+                <tr>
+                  <th>Nombre</th>
+                  <th>Correo</th>
+                  <th>Rol</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody id="users-tbody">
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Existing roles -->
+        <div class="list-card">
+          <div class="list-card-title">Roles existentes</div>
+          <div id="roles-container">
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </div><!-- /main-content -->
+</div><!-- /page-wrapper -->
+
+<script>
+(function () {
+  'use strict';
+
+  /* ================================================================
+     Mock Data
+     ================================================================ */
+  var muralRecords = [
+    { id: '2950', name: 'Carlos',   position: 'Operador A',   destination: 'Operador B',   status: 'aprobado'  },
+    { id: '3012', name: 'Luisa',    position: 'Auxiliar',      destination: 'Analista',      status: 'aprobado'  },
+    { id: '3187', name: 'Roberto',  position: 'Técnico C',     destination: 'Técnico B',     status: 'reprobado' },
+    { id: '3201', name: 'María',    position: 'Operador B',    destination: 'Supervisor',    status: 'pendiente' },
+    { id: '3450', name: 'Jorge',    position: 'Inspector',     destination: 'Jefe turno',    status: 'aprobado'  },
+    { id: '3622', name: 'Ana',      position: 'Analista Jr',   destination: 'Analista Sr',   status: 'reprobado' },
+  ];
+
+  var users = [
+    { name: 'Ahmed Martínez',   email: 'ahmed@vinoplastic.com',   role: 'super_admin' },
+    { name: 'Laura García',     email: 'laura@vinoplastic.com',   role: 'admin'       },
+    { name: 'Pedro Sánchez',    email: 'pedro@vinoplastic.com',   role: 'instructor'  },
+  ];
+
+  /* ================================================================
+     Render mural table
+     ================================================================ */
+  var muralTbody = document.getElementById('mural-tbody');
+  var muralSearch = document.getElementById('mural-search');
+  var recordsCount = document.getElementById('records-count');
+
+  function renderMuralTable(filter) {
+    var q = (filter || '').trim().toLowerCase();
+    var filtered = muralRecords.filter(function (r) {
+      if (!q) return true;
+      return r.id.includes(q)
+        || r.name.toLowerCase().includes(q)
+        || r.position.toLowerCase().includes(q)
+        || r.destination.toLowerCase().includes(q);
+    });
+
+    recordsCount.textContent = 'Registros públicos (' + filtered.length + ')';
+
+    muralTbody.innerHTML = filtered.map(function (r) {
+      var pillClass = r.status === 'aprobado' ? 'pill-success'
+                    : r.status === 'reprobado' ? 'pill-danger'
+                    : 'pill-warning';
+      var label = r.status.charAt(0).toUpperCase() + r.status.slice(1);
+
+      return '<tr>'
+        + '<td class="cell-id">' + r.id + '</td>'
+        + '<td class="cell-name">' + r.name + '</td>'
+        + '<td class="cell-secondary">' + r.position + '</td>'
+        + '<td class="cell-secondary">' + r.destination + '</td>'
+        + '<td><span class="pill ' + pillClass + '"><span class="pill-dot"></span>' + label + '</span></td>'
+        + '</tr>';
+    }).join('');
+  }
+
+  renderMuralTable('');
+  muralSearch.addEventListener('input', function () {
+    renderMuralTable(this.value);
+  });
+
+  /* ================================================================
+     Render users table
+     ================================================================ */
+  var usersTbody = document.getElementById('users-tbody');
+
+  function renderUsersTable() {
+    usersTbody.innerHTML = users.map(function (u, i) {
+      return '<tr>'
+        + '<td class="cell-name">' + u.name + '</td>'
+        + '<td class="cell-secondary">' + u.email + '</td>'
+        + '<td class="cell-secondary">' + u.role + '</td>'
+        + '<td class="row-menu-cell">'
+        +   '<button class="row-menu-btn" aria-label="Opciones de ' + u.name + '" aria-haspopup="menu" data-menu="user-' + i + '">···</button>'
+        +   '<div class="context-menu" id="ctx-user-' + i + '" role="menu">'
+        +     '<button class="context-menu-item" role="menuitem">Editar</button>'
+        +     '<button class="context-menu-item context-menu-item-danger" role="menuitem">Eliminar</button>'
+        +   '</div>'
+        + '</td>'
+        + '</tr>';
+    }).join('');
+  }
+
+  renderUsersTable();
+
+  /* ================================================================
+     Render roles
+     ================================================================ */
+  var rolesContainer = document.getElementById('roles-container');
+
+  function renderRoles() {
+    rolesContainer.innerHTML =
+      '<div class="empty-state">'
+      + '<div class="empty-state-icon">'
+      + '<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'
+      + '<rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>'
+      + '<path d="M7 11V7a5 5 0 0 1 10 0v4"></path>'
+      + '</svg>'
+      + '</div>'
+      + '<p class="empty-state-text">No hay roles personalizados.</p>'
+      + '</div>';
+  }
+
+  renderRoles();
+
+  /* ================================================================
+     Maintenance toggle
+     ================================================================ */
+  var maintenanceToggle = document.getElementById('maintenance-toggle');
+  var maintenanceDesc = document.getElementById('maintenance-desc');
+  var durationRow = document.getElementById('duration-row');
+
+  maintenanceToggle.addEventListener('change', function () {
+    if (this.checked) {
+      maintenanceDesc.textContent = 'La plataforma está bloqueada para usuarios.';
+      durationRow.style.display = 'none';
+    } else {
+      maintenanceDesc.textContent = 'La plataforma está accesible para todos.';
+      durationRow.style.display = '';
+    }
+  });
+
+  /* ================================================================
+     Context menus (···)
+     ================================================================ */
+  document.addEventListener('click', function (e) {
+    var btn = e.target.closest('.row-menu-btn');
+
+    // Close all menus first
+    document.querySelectorAll('.context-menu.active').forEach(function (m) {
+      m.classList.remove('active');
+    });
+
+    if (btn) {
+      var menuId = 'ctx-' + btn.getAttribute('data-menu');
+      var menu = document.getElementById(menuId);
+      if (menu) {
+        menu.classList.add('active');
+        e.stopPropagation();
+      }
+    }
+  });
+
+  // Close on Escape
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape') {
+      document.querySelectorAll('.context-menu.active').forEach(function (m) {
+        m.classList.remove('active');
+      });
+    }
+  });
+
+  /* ================================================================
+     Clear form buttons
+     ================================================================ */
+  document.getElementById('btn-clear-user').addEventListener('click', function () {
+    document.getElementById('user-email').value = '';
+    document.getElementById('user-name').value = '';
+    document.getElementById('user-role').value = 'admin';
+    document.getElementById('user-avatar-seed').value = '';
+    document.getElementById('user-sidebar-anim').value = 'default';
+    document.getElementById('user-password').value = '';
+  });
+
+  document.getElementById('btn-clear-role').addEventListener('click', function () {
+    document.getElementById('role-name').value = '';
+    document.querySelectorAll('.perm-table input[type="checkbox"]').forEach(function (cb) {
+      cb.checked = false;
+    });
+  });
+
+})();
+</script>
+</body>
+</html>
