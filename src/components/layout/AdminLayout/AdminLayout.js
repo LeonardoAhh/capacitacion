@@ -212,9 +212,10 @@ export default function AdminLayout({ children, title = 'Dashboard' }) {
                     })}
                 </div>
 
-                {/* Right: actions + user */}
-                <div className={styles.navRight}>
+                {/* Right: unified actions bar */}
+                <div className={styles.actionsBar}>
                     <ThemeToggle />
+                    <span className={styles.actionsDivider} aria-hidden="true" />
                     <button
                         type="button"
                         className={styles.iconBtn}
@@ -225,6 +226,7 @@ export default function AdminLayout({ children, title = 'Dashboard' }) {
                     >
                         <LogOut size={16} />
                     </button>
+                    <span className={styles.actionsDivider} aria-hidden="true" />
                     <Link href="/profile" className={styles.userChip}>
                         <div className={styles.chipAvatar}>
                             <NextImage
