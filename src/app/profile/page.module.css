@@ -5,7 +5,9 @@
    ================================================================ */
 
 /* ── Page Layout ── */
-.container { width: 100%; }
+.container {
+  width: 100%;
+}
 
 .pageLayout {
   display: grid;
@@ -202,8 +204,13 @@
   font-weight: 500;
 }
 
-.msgLabelSuccess { color: var(--color-text-success); }
-.msgLabelFail { color: var(--color-text-secondary); }
+.msgLabelSuccess {
+  color: var(--color-text-success);
+}
+
+.msgLabelFail {
+  color: var(--color-text-secondary);
+}
 
 .msgTextarea {
   border: none;
@@ -218,20 +225,19 @@
   width: 100%;
 }
 
-.msgBlockSuccess .msgTextarea { color: var(--color-text-success); }
-.msgBlockFail .msgTextarea { color: var(--color-text-secondary); }
+.msgBlockSuccess .msgTextarea {
+  color: var(--color-text-success);
+}
 
-/* ── Compliance rows ── */
+.msgBlockFail .msgTextarea {
+  color: var(--color-text-secondary);
+}
+
+/* ── Compliance rows (read-only view) ── */
 .complianceRows {
   display: flex;
   flex-direction: column;
   gap: 10px;
-}
-
-.complianceRow {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
 }
 
 .complianceLabel {
@@ -252,11 +258,15 @@
   gap: 12px;
 }
 
-.complianceAdminHeader {
+.complianceTopRow {
   display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
+  align-items: flex-end;
   gap: 12px;
+}
+
+.complianceTopInfo {
+  flex: 0 0 auto;
+  align-self: center;
 }
 
 .complianceAdminTitle {
@@ -270,6 +280,16 @@
   font-size: 11px;
   color: var(--color-text-tertiary);
   margin: 2px 0 0;
+}
+
+.complianceWhatsappField {
+  flex: 0 0 150px;
+}
+
+.complianceDatesSection {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
 }
 
 .complianceDatesHeader {
@@ -307,6 +327,10 @@
   display: flex;
   gap: 8px;
   align-items: center;
+}
+
+.complianceDateLabel {
+  flex: 0 0 180px;
 }
 
 .complianceDateRange {
@@ -450,8 +474,13 @@
   background: var(--color-background-secondary);
 }
 
-.tableIconBtnGreen { color: var(--color-text-success); }
-.tableIconBtnRed { color: var(--color-text-danger); }
+.tableIconBtnGreen {
+  color: var(--color-text-success);
+}
+
+.tableIconBtnRed {
+  color: var(--color-text-danger);
+}
 
 .tableEmptyRow td {
   text-align: center;
@@ -527,8 +556,13 @@
   transition: background 200ms ease;
 }
 
-.toggleTrackOff { background: var(--color-border-tertiary); }
-.toggleTrackOn { background: var(--color-background-success); }
+.toggleTrackOff {
+  background: var(--color-border-tertiary);
+}
+
+.toggleTrackOn {
+  background: var(--color-background-success);
+}
 
 .toggleThumb {
   position: absolute;
@@ -541,7 +575,9 @@
 }
 
 /* ── Duration row ── */
-.durationRow { margin-top: 12px; }
+.durationRow {
+  margin-top: 12px;
+}
 
 .durationLabel {
   font-size: 11px;
@@ -1027,6 +1063,7 @@
 }
 
 .wizardStepPending .wizardStepBubble {}
+
 .wizardStepPending .wizardStepLabel {}
 
 .wizardStepLine {
@@ -1111,8 +1148,13 @@
   font-weight: 500;
 }
 
-.wizardResultPassed .wizardResultBadge { color: var(--color-text-success); }
-.wizardResultFailed .wizardResultBadge { color: var(--color-text-danger); }
+.wizardResultPassed .wizardResultBadge {
+  color: var(--color-text-success);
+}
+
+.wizardResultFailed .wizardResultBadge {
+  color: var(--color-text-danger);
+}
 
 .wizardResultScore {
   font-size: 11px;
@@ -1194,8 +1236,15 @@
 }
 
 @keyframes shimmer {
-  0%, 100% { opacity: 0.5; }
-  50% { opacity: 1; }
+
+  0%,
+  100% {
+    opacity: 0.5;
+  }
+
+  50% {
+    opacity: 1;
+  }
 }
 
 /* ── Admin management section ── */
@@ -1227,6 +1276,29 @@
     grid-template-columns: 1fr;
   }
 
+  .complianceTopRow {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .complianceWhatsappField {
+    flex: unset;
+    width: 100%;
+  }
+
+  .complianceDateRow {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .complianceDateLabel {
+    flex: unset;
+  }
+
+  .complianceDateRange {
+    width: 100%;
+  }
+
   .messagesGrid,
   .formsGrid,
   .listsGrid,
@@ -1247,17 +1319,5 @@
   .tableSearchInput {
     width: 100%;
     min-width: 0;
-  }
-
-  .complianceAdminHeader {
-    flex-direction: column;
-  }
-
-  .complianceDateRow {
-    flex-direction: column;
-  }
-
-  .complianceDateRange {
-    width: 100%;
   }
 }

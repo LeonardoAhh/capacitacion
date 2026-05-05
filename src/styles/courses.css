@@ -6,184 +6,237 @@
 
 /* ── Z-Index Scale ── */
 :root {
-    --z-course-backdrop: 999;
-    --z-course-overlay: 1000;
-    --z-course-header: 10;
-    --z-course-nav: 10;
-    --z-course-content: 1;
+  --z-course-backdrop: 999;
+  --z-course-overlay: 1000;
+  --z-course-header: 10;
+  --z-course-nav: 10;
+  --z-course-content: 1;
 }
 
 /* ── Course Color Tokens (Contratos Design System) ── */
 :root {
-    --course-accent:        #003ccc;
-    --course-accent-rgb:    0, 60, 204;
-    --course-accent-dim:    rgba(0, 60, 204, 0.08);
-    --course-accent-mid:    rgba(0, 60, 204, 0.18);
-    --course-accent-hover:  #0030aa;
-    --course-label-color:   #003ccc;
+  --course-accent: #003ccc;
+  --course-accent-rgb: 0, 60, 204;
+  --course-accent-dim: rgba(0, 60, 204, 0.08);
+  --course-accent-mid: rgba(0, 60, 204, 0.18);
+  --course-accent-hover: #0030aa;
+  --course-label-color: #003ccc;
 
-    --course-header-bg:     #ffffff;
-    --course-header-border: color-mix(in srgb, #111827 12%, transparent);
-    --course-header-text:   #111827;
+  --course-header-bg: #ffffff;
+  --course-header-border: color-mix(in srgb, #111827 12%, transparent);
+  --course-header-text: #111827;
 
-    --course-nav-bg:        #ffffff;
-    --course-nav-border:    color-mix(in srgb, #111827 12%, transparent);
+  --course-nav-bg: #ffffff;
+  --course-nav-border: color-mix(in srgb, #111827 12%, transparent);
 
-    --course-slide-bg:            #ffffff;
-    --course-slide-text:          #111827;
-    --course-slide-text-secondary:#6b7280;
-    --course-slide-text-muted:    #9ca3af;
+  --course-slide-bg: #ffffff;
+  --course-slide-text: #111827;
+  --course-slide-text-secondary: #6b7280;
+  --course-slide-text-muted: #9ca3af;
 
-    --course-overlay-bg:    #fafaf8;
-    --course-content-bg:    #fafaf8;
+  --course-overlay-bg: #fafaf8;
+  --course-content-bg: #fafaf8;
 
-    --course-card-bg:       #ffffff;
-    --course-card-border:   color-mix(in srgb, #111827 12%, transparent);
-    --course-card-hover-border: rgba(0, 60, 204, 0.30);
+  --course-card-bg: #ffffff;
+  --course-card-border: color-mix(in srgb, #111827 12%, transparent);
+  --course-card-hover-border: rgba(0, 60, 204, 0.30);
 
-    --course-btn-bg:        #ffffff;
-    --course-btn-border:    color-mix(in srgb, #111827 14%, transparent);
-    --course-btn-text:      #111827;
-    --course-btn-hover-bg:  rgba(0, 60, 204, 0.06);
+  --course-btn-bg: #ffffff;
+  --course-btn-border: color-mix(in srgb, #111827 14%, transparent);
+  --course-btn-text: #111827;
+  --course-btn-hover-bg: rgba(0, 60, 204, 0.06);
 
-    --course-btn-primary-bg:   #003ccc;
-    --course-btn-primary-text: #ffffff;
+  --course-btn-primary-bg: #003ccc;
+  --course-btn-primary-text: #ffffff;
 
-    --course-success:  #16a34a;
-    --course-danger:   #ef4444;
-    --course-warning:  #f59e0b;
-    --course-info:     #0ea5e9;
+  --course-success: #16a34a;
+  --course-danger: #ef4444;
+  --course-warning: #f59e0b;
+  --course-info: #0ea5e9;
 
-    --course-dot-bg:       color-mix(in srgb, #111827 14%, transparent);
-    --course-dot-active:   #003ccc;
-    --course-dot-visited:  rgba(0, 60, 204, 0.45);
+  --course-dot-bg: color-mix(in srgb, #111827 14%, transparent);
+  --course-dot-active: #003ccc;
+  --course-dot-visited: rgba(0, 60, 204, 0.45);
 
-    --course-progress-bg:   color-mix(in srgb, #111827 10%, transparent);
-    --course-progress-fill: #003ccc;
+  --course-progress-bg: color-mix(in srgb, #111827 10%, transparent);
+  --course-progress-fill: #003ccc;
 
-    /* Shadows (Contratos) */
-    --course-sh-card:  0 1px 4px rgba(0,0,0,0.06), 0 2px 12px rgba(0,0,0,0.04);
-    --course-sh-lift:  0 4px 20px rgba(0,0,0,0.10), 0 1px 6px rgba(0,0,0,0.06);
-    --course-sh-float: 0 8px 32px rgba(0,0,0,0.14), 0 1px 8px rgba(0,0,0,0.06);
+  /* Shadows (Contratos) */
+  --course-sh-card: 0 1px 4px rgba(0, 0, 0, 0.06), 0 2px 12px rgba(0, 0, 0, 0.04);
+  --course-sh-lift: 0 4px 20px rgba(0, 0, 0, 0.10), 0 1px 6px rgba(0, 0, 0, 0.06);
+  --course-sh-float: 0 8px 32px rgba(0, 0, 0, 0.14), 0 1px 8px rgba(0, 0, 0, 0.06);
 }
 
 /* ── Dark theme overrides for course tokens ── */
 [data-theme="dark"] {
-    --course-content-bg:   #0a0a0a;
-    --course-overlay-bg:   #0a0a0a;
-    --course-slide-bg:     #141414;
-    --course-slide-text:   #ededed;
-    --course-slide-text-secondary: #a1a1a1;
-    --course-slide-text-muted:     #707070;
-    --course-card-bg:      #141414;
-    --course-card-border:  rgba(255, 255, 255, 0.08);
-    --course-nav-bg:       #0a0a0a;
-    --course-nav-border:   rgba(255, 255, 255, 0.08);
-    --course-btn-bg:       #141414;
-    --course-btn-border:   rgba(255, 255, 255, 0.1);
-    --course-btn-text:     #ededed;
-    --course-btn-hover-bg: rgba(255, 255, 255, 0.06);
-    --course-dot-bg:       rgba(255, 255, 255, 0.12);
-    --course-progress-bg:  rgba(255, 255, 255, 0.1);
-    --course-sh-card:  0 1px 4px rgba(0,0,0,0.4),  0 2px 12px rgba(0,0,0,0.3);
-    --course-sh-lift:  0 4px 20px rgba(0,0,0,0.6),  0 1px 6px rgba(0,0,0,0.4);
-    --course-sh-float: 0 8px 32px rgba(0,0,0,0.8),  0 1px 8px rgba(0,0,0,0.5);
+  --course-content-bg: #0a0a0a;
+  --course-overlay-bg: #0a0a0a;
+  --course-slide-bg: #141414;
+  --course-slide-text: #ededed;
+  --course-slide-text-secondary: #a1a1a1;
+  --course-slide-text-muted: #707070;
+  --course-card-bg: #141414;
+  --course-card-border: rgba(255, 255, 255, 0.08);
+  --course-nav-bg: #0a0a0a;
+  --course-nav-border: rgba(255, 255, 255, 0.08);
+  --course-btn-bg: #141414;
+  --course-btn-border: rgba(255, 255, 255, 0.1);
+  --course-btn-text: #ededed;
+  --course-btn-hover-bg: rgba(255, 255, 255, 0.06);
+  --course-dot-bg: rgba(255, 255, 255, 0.12);
+  --course-progress-bg: rgba(255, 255, 255, 0.1);
+  --course-sh-card: 0 1px 4px rgba(0, 0, 0, 0.4), 0 2px 12px rgba(0, 0, 0, 0.3);
+  --course-sh-lift: 0 4px 20px rgba(0, 0, 0, 0.6), 0 1px 6px rgba(0, 0, 0, 0.4);
+  --course-sh-float: 0 8px 32px rgba(0, 0, 0, 0.8), 0 1px 8px rgba(0, 0, 0, 0.5);
 }
 
 /* ── Border Radius (Contratos) ── */
 :root {
-    --course-radius-sm:   8px;
-    --course-radius-md:   12px;
-    --course-radius-lg:   16px;
-    --course-radius-xl:   20px;
-    --course-radius-full: 9999px;
+  --course-radius-sm: 8px;
+  --course-radius-md: 12px;
+  --course-radius-lg: 16px;
+  --course-radius-xl: 20px;
+  --course-radius-full: 9999px;
 }
 
 /* ── Typography Scale ── */
 :root {
-    --course-font-xs:   0.75rem;
-    --course-font-sm:   0.875rem;
-    --course-font-base: 1rem;
-    --course-font-lg:   1.125rem;
-    --course-font-xl:   1.25rem;
-    --course-font-2xl:  1.5rem;
-    --course-font-3xl:  2rem;
-    --course-font-4xl:  2.5rem;
+  --course-font-xs: 0.75rem;
+  --course-font-sm: 0.875rem;
+  --course-font-base: 1rem;
+  --course-font-lg: 1.125rem;
+  --course-font-xl: 1.25rem;
+  --course-font-2xl: 1.5rem;
+  --course-font-3xl: 2rem;
+  --course-font-4xl: 2.5rem;
 }
 
 /* ── Spacing Tokens ── */
 :root {
-    --course-spacing-xs:  0.25rem;
-    --course-spacing-sm:  0.5rem;
-    --course-spacing-md:  1rem;
-    --course-spacing-lg:  1.5rem;
-    --course-spacing-xl:  2rem;
-    --course-spacing-2xl: 3rem;
+  --course-spacing-xs: 0.25rem;
+  --course-spacing-sm: 0.5rem;
+  --course-spacing-md: 1rem;
+  --course-spacing-lg: 1.5rem;
+  --course-spacing-xl: 2rem;
+  --course-spacing-2xl: 3rem;
 }
 
 /* ── Animation Tokens ── */
 :root {
-    --course-ease-spring:  cubic-bezier(0.25, 0.1, 0.25, 1);
-    --course-ease-out:     cubic-bezier(0.16, 1, 0.3, 1);
-    --course-ease-in-out:  cubic-bezier(0.4, 0, 0.2, 1);
+  --course-ease-spring: cubic-bezier(0.25, 0.1, 0.25, 1);
+  --course-ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --course-ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
 
-    --course-duration-fast: 150ms;
-    --course-duration-base: 250ms;
-    --course-duration-slow: 400ms;
+  --course-duration-fast: 150ms;
+  --course-duration-base: 250ms;
+  --course-duration-slow: 400ms;
 
-    --course-transition-fast: var(--course-duration-fast) var(--course-ease-spring);
-    --course-transition-base: var(--course-duration-base) var(--course-ease-spring);
-    --course-transition-slow: var(--course-duration-slow) var(--course-ease-out);
+  --course-transition-fast: var(--course-duration-fast) var(--course-ease-spring);
+  --course-transition-base: var(--course-duration-base) var(--course-ease-spring);
+  --course-transition-slow: var(--course-duration-slow) var(--course-ease-out);
 }
 
 /* ── Shared Course Animations ── */
 @keyframes courseFadeIn {
-    from { opacity: 0; transform: translateY(16px); }
-    to   { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 @keyframes courseSlideIn {
-    from { opacity: 0; transform: translateX(-20px); }
-    to   { opacity: 1; transform: translateX(0); }
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
 }
 
 @keyframes courseScaleIn {
-    from { opacity: 0; transform: scale(0.95); }
-    to   { opacity: 1; transform: scale(1); }
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
 }
 
 @keyframes coursePulse {
-    0%,100% { box-shadow: 0 0 0 0 rgba(0,60,204,0.2); }
-    50%      { box-shadow: 0 0 0 8px rgba(0,60,204,0); }
+
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 rgba(0, 60, 204, 0.2);
+  }
+
+  50% {
+    box-shadow: 0 0 0 8px rgba(0, 60, 204, 0);
+  }
 }
 
 /* ── Reduced Motion ── */
 @media (prefers-reduced-motion: reduce) {
-    :root {
-        --course-duration-fast: 0ms;
-        --course-duration-base: 0ms;
-        --course-duration-slow: 0ms;
+  :root {
+    --course-duration-fast: 0ms;
+    --course-duration-base: 0ms;
+    --course-duration-slow: 0ms;
+  }
+
+  @keyframes courseFadeIn {
+
+    from,
+    to {
+      opacity: 1;
+      transform: none;
     }
-    @keyframes courseFadeIn  { from,to { opacity:1; transform:none; } }
-    @keyframes courseSlideIn { from,to { opacity:1; transform:none; } }
-    @keyframes courseScaleIn { from,to { opacity:1; transform:none; } }
+  }
+
+  @keyframes courseSlideIn {
+
+    from,
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+
+  @keyframes courseScaleIn {
+
+    from,
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
 }
 
 /* ── Focus States ── */
 .course-focus-visible:focus-visible {
-    outline: 2px solid var(--course-accent);
-    outline-offset: 2px;
+  outline: 2px solid var(--course-accent);
+  outline-offset: 2px;
 }
+
 .course-focus-visible:focus:not(:focus-visible) {
-    outline: none;
+  outline: none;
 }
 
 /* ── High Contrast ── */
 @media (prefers-contrast: high) {
-    :root {
-        --course-btn-border:    currentColor;
-        --course-card-border:   currentColor;
-        --course-header-border: currentColor;
-        --course-nav-border:    currentColor;
-    }
+  :root {
+    --course-btn-border: currentColor;
+    --course-card-border: currentColor;
+    --course-header-border: currentColor;
+    --course-nav-border: currentColor;
+  }
 }
