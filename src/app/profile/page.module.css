@@ -1261,15 +1261,69 @@
 /* ================================================================
    Responsive
    ================================================================ */
+
+/* ── Tablet (768px – 1023px) ── */
 @media (max-width: 1023px) {
   .pageLayout {
-    grid-template-columns: 200px 1fr;
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+
+  .pageLayoutSingle {
+    grid-template-columns: 1fr;
+  }
+
+  .messagesGrid,
+  .formsGrid,
+  .listsGrid,
+  .wizardScoreRow {
+    grid-template-columns: 1fr;
+  }
+
+  .complianceTopRow {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .complianceWhatsappField {
+    flex: unset;
+    width: 100%;
+  }
+
+  .complianceDateRow {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .complianceDateLabel {
+    flex: unset;
+  }
+
+  .complianceDateRange {
+    width: 100%;
+  }
+
+  .maintenanceBanner {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .tableHeader {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .tableSearchInput {
+    width: 100%;
+    min-width: 0;
   }
 }
 
+/* ── Mobile (≤ 767px) ── */
 @media (max-width: 767px) {
   .pageLayout {
     grid-template-columns: 1fr;
+    gap: 1rem;
   }
 
   .pageLayoutSingle {
@@ -1319,5 +1373,13 @@
   .tableSearchInput {
     width: 100%;
     min-width: 0;
+  }
+
+  .profileCard {
+    padding: 1rem;
+  }
+
+  .card {
+    padding: 1rem;
   }
 }
